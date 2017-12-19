@@ -17,77 +17,91 @@
 
 package com.incadencecorp.coalesce.search.factory;
 
-import java.util.Map;
-
-import org.geotools.data.DataUtilities;
-import org.geotools.feature.SchemaException;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.incadencecorp.coalesce.api.ICoalesceMapper;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.mapper.impl.JavaMapperImpl;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.geometry.Geometry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * This factory creates different feature types used by geo tools for searching.
- * 
+ *
  * @author n78554
  */
 public class CoalesceFeatureTypeFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceFeatureTypeFactory.class);
 
-    /**
-     * @param fields
-     * @return {@link SimpleFeatureType} created from the map of fields passed
-     *         in.
-     * @throws CoalesceException
-     */
     public static SimpleFeatureType createSimpleFeatureType(Map<String, ECoalesceFieldDataTypes> fields)
             throws CoalesceException
     {
+        return createSimpleFeatureType("coalesce", fields, null);
+    }
 
-        StringBuilder sb = new StringBuilder();
+    /**
+     * @param fields
+     * @return {@link SimpleFeatureType} created from the map of fields passed
+     * in.
+     * @throws CoalesceException
+     */
+    public static SimpleFeatureType createSimpleFeatureType(String name,
+                                                            Map<String, ECoalesceFieldDataTypes> fields,
+                                                            ICoalesceMapper<Class<?>> mapper) throws CoalesceException
+    {
+        boolean hasGeometry = false;
 
-        JavaMapperImpl mapper = new JavaMapperImpl();
+        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        builder.setName(name);
+
+        if (mapper == null)
+        {
+            mapper = new JavaMapperImpl();
+        }
 
         // Create Content
         for (Map.Entry<String, ECoalesceFieldDataTypes> entry : fields.entrySet())
         {
-            if (sb.length() != 0)
+            Class<?> mappedType = mapper.map(entry.getValue());
+
+            if (mappedType != null)
             {
-                sb.append(",");
+                builder.add(entry.getKey(), mappedType);
+
+                if (LOGGER.isTraceEnabled())
+                {
+                    LOGGER.trace(entry.getKey() + " => " + mappedType.getName());
+                }
+
+                if (!hasGeometry && Geometry.class.isAssignableFrom(mappedType))
+                {
+                    builder.setDefaultGeometry(entry.getKey());
+                    hasGeometry = true;
+                }
             }
-
-            sb.append(entry.getKey() + ":" + mapper.map(entry.getValue()).getName());
-
-            if (LOGGER.isTraceEnabled())
+            else
             {
-                LOGGER.trace(entry.getKey() + "=>" + mapper.map(entry.getValue()).getName());
+                LOGGER.trace(entry.getKey() + "=> null (SKIPPING)");
             }
         }
 
         if (LOGGER.isInfoEnabled())
         {
-            LOGGER.info("Create Coalesce Feature w/ {} Fields", fields.size());
+            LOGGER.info("Created Feature ({}) w/ {} Fields (Default Geometry: {})", name, fields.size(), builder.getDefaultGeometry());
         }
 
-        try
-        {
-            return DataUtilities.createType("coalesce", sb.toString());
-        }
-        catch (SchemaException e)
-        {
-            throw new CoalesceException("Creating Feature Type", e);
-        }
-
+        return builder.buildFeatureType();
     }
 
     /**
      * @return {@link SimpleFeatureType} created from templates that have been
-     *         registered with {@link CoalesceTemplateUtil}.
+     * registered with {@link CoalesceTemplateUtil}.
      * @throws CoalesceException
      * @see CoalesceTemplateUtil#addTemplates(com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate...)
      * @see CoalesceTemplateUtil#addTemplates(com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor)

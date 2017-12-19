@@ -13,12 +13,6 @@
 		<relativePath>..</relativePath>
 	</parent>
 
-	<properties>
-		<com.vividsolutions.jts.version>1.9</com.vividsolutions.jts.version>
-		<org.geotools.version>16.1</org.geotools.version>
-		<org.eclipse.xsd.version>2.6.0</org.eclipse.xsd.version>
-	</properties>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -31,14 +25,19 @@
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Export-Package>
-							org.apache.accumulo.core*
+							org.apache.accumulo.core.*,
+<!-- 							org.locationtech.geomesa.*, -->
+							org.apache.hadoop*,
+							org.apache.commons.configuration*,
 						</Export-Package>
 						<Import-Package>
-							*; resolution:=optional
+							*;resolution:=optional
 						</Import-Package>
-						<Embed-Dependency>*; artifactId=!org.osgi.compendium;
-							scope=compile; type=!pom; inline=true</Embed-Dependency>
+						<Embed-Dependency>
+							*;artifactId=!org.osgi.compendium;scope=compile|runtime;type=!pom;inline=false
+						</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
+<!-- 						<SPI-Provider>org.geotools.data.DataStoreFactorySpi</SPI-Provider> -->
 					</instructions>
 				</configuration>
 
@@ -50,30 +49,30 @@
 		<dependency>
 			<groupId>org.apache.accumulo</groupId>
 			<artifactId>accumulo-core</artifactId>
-			<version>1.7.2</version>
+			<version>${accumulo.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.locationtech.geomesa</groupId>
-			<artifactId>geomesa-accumulo-datastore_2.11</artifactId>
-			<version>1.3.1</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>joda-time</artifactId>
-					<groupId>joda-time</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.locationtech.geomesa</groupId>
-			<artifactId>geomesa-utils_2.11</artifactId>
-			<version>1.3.1</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>joda-time</artifactId>
-					<groupId>joda-time</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.locationtech.geomesa</groupId> -->
+<!-- 			<artifactId>geomesa-accumulo-datastore_2.11</artifactId> -->
+<!-- 			<version>1.3.1</version> -->
+<!-- 			<exclusions> -->
+<!-- 				<exclusion> -->
+<!-- 					<artifactId>joda-time</artifactId> -->
+<!-- 					<groupId>joda-time</groupId> -->
+<!-- 				</exclusion> -->
+<!-- 			</exclusions> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.locationtech.geomesa</groupId> -->
+<!-- 			<artifactId>geomesa-utils_2.11</artifactId> -->
+<!-- 			<version>1.3.1</version> -->
+<!-- 			<exclusions> -->
+<!-- 				<exclusion> -->
+<!-- 					<artifactId>joda-time</artifactId> -->
+<!-- 					<groupId>joda-time</groupId> -->
+<!-- 				</exclusion> -->
+<!-- 			</exclusions> -->
+<!-- 		</dependency> -->
 	</dependencies>
 
 

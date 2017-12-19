@@ -1,25 +1,15 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.*;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import org.apache.commons.lang.NullArgumentException;
-import org.apache.xerces.impl.dv.util.Base64;
-import org.jdom2.JDOMException;
-
-import com.drew.imaging.ImageProcessingException;
-import com.incadencecorp.coalesce.api.ICoalesceBinaryField;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
-import com.incadencecorp.coalesce.common.helpers.FileHelper;
-import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
-import com.incadencecorp.coalesce.common.helpers.MimeHelper;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -59,7 +49,7 @@ public class CoalesceFileField extends CoalesceBinaryFieldBase<DocumentPropertie
 
             return properties;
         }
-        catch (ImageProcessingException | CoalesceCryptoException | IOException | JDOMException e)
+        catch (CoalesceException e)
         {
             throw new CoalesceDataFormatException("Invalid File");
         }
@@ -96,15 +86,13 @@ public class CoalesceFileField extends CoalesceBinaryFieldBase<DocumentPropertie
         }
     }
 
-    
-
     /**
      * Sets the Field's hash value. Also sets the filename, extension and MIME
      * type.
-     * 
-     * @param filename, field's filename
+     *
+     * @param filename,  field's filename
      * @param extension, field's extension
-     * @param hash, field's hash value
+     * @param hash,      field's hash value
      */
     public void setValue(String filename, String extension, String hash)
     {
@@ -119,16 +107,13 @@ public class CoalesceFileField extends CoalesceBinaryFieldBase<DocumentPropertie
         setHash(hash);
     }
 
-
-    
-
     /**
      * Returns the filename with directory path and file extension.
      * <code>NOTE:</code> This method relies on the configuration settings for
      * both {@link CoalesceSettings#getBinaryFileStoreBasePath()} and
      * {@link CoalesceSettings#getSubDirectoryLength()} to build the directory
      * path.
-     * 
+     *
      * @return String, full filename.
      */
     public String getCoalesceFullFilename()
@@ -147,7 +132,7 @@ public class CoalesceFileField extends CoalesceBinaryFieldBase<DocumentPropertie
 
     /**
      * Returns the base filename and extension.
-     * 
+     *
      * @return String, the filename and extension, without the path.
      */
     public String getCoalesceFilename()
@@ -170,7 +155,7 @@ public class CoalesceFileField extends CoalesceBinaryFieldBase<DocumentPropertie
 
     /**
      * Returns the thumbnail base filename and extension.
-     * 
+     *
      * @return String, the thumbnail's filename and extension, without the path.
      */
     public String getCoalesceThumbnailFilename()
@@ -220,7 +205,7 @@ public class CoalesceFileField extends CoalesceBinaryFieldBase<DocumentPropertie
      * modified datetime (Name?lastmodifiedlong). Returns empty string when
      * filename does not exist. If an error is encountered, only the thumbnail
      * filename is returned.
-     * 
+     *
      * @return String, full thumbnail filename with LastModifiedTag appended.
      */
     public String getCoalesceThumbnailFilenameWithLastModifiedTag()
@@ -247,7 +232,7 @@ public class CoalesceFileField extends CoalesceBinaryFieldBase<DocumentPropertie
      * Returns the filename with a long representation of last modified datetime
      * (Name?lastmodifiedlong). Returns empty string when filename does not
      * exist. If an error is encountered, only the filename is returned.
-     * 
+     *
      * @return String, full filename with LastModifiedTag appended.
      */
     public String getCoalesceFilenameWithLastModifiedTag()

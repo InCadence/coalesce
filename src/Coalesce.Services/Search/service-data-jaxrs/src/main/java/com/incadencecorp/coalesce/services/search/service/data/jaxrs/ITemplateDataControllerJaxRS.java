@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.incadencecorp.coalesce.api.Views;
+import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
@@ -43,13 +44,13 @@ public interface ITemplateDataControllerJaxRS {
     String getTemplateXml(@PathParam("name") String name, @PathParam("source") String source, @PathParam("version") String version) throws RemoteException;
 
     @GET
-    @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}{ext:(.json)?}")
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}{ext:(.json)?}")
     @JsonView(Views.Template.class)
     @Produces("application/json")
     CoalesceEntity getTemplate(@PathParam("key") String key) throws RemoteException;
 
     @GET
-    @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}.xml")
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}.xml")
     @JsonView(Views.Template.class)
     @Produces("application/xml")
     String getTemplateXml(@PathParam("key") String key) throws RemoteException;
@@ -65,33 +66,33 @@ public interface ITemplateDataControllerJaxRS {
     boolean setTemplateXml(@PathParam("key") String key, String xml) throws RemoteException;
     
     @PUT
-    @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}")
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}")
     boolean registerTemplate(@PathParam("key") String key) throws RemoteException;
 
     @DELETE
-    @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}")
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}")
     boolean deleteTemplate(@PathParam("key") String key) throws RemoteException;
 
     @GET
-    @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}/new{ext:(.json)?}")
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}/new{ext:(.json)?}")
     @JsonView(Views.Entity.class)
     @Produces("application/json")
     CoalesceEntity getNewEntity(@PathParam("key") String key) throws RemoteException;
 
     @GET
-    @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}/new.xml")
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}/new.xml")
     @JsonView(Views.Entity.class)
     @Produces("application/xml")
     String getNewEntityXml(@PathParam("key") String key) throws RemoteException;
 
     @GET
-    @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}/recordsets")
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}/recordsets")
     @JsonView(Views.Template.class)
     @Produces("application/json")
     List<CoalesceObjectImpl> getRecordSets(@PathParam("key") String key) throws RemoteException;
 
     @GET
-    @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}/recordsets/{recordsetKey}/fields")
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}/recordsets/{recordsetKey}/fields")
     @JsonView(Views.Template.class)
     @Produces("application/json")
     List<FieldData> getRecordSetFields(@PathParam("key") String key, @PathParam("recordsetKey") String recordsetKey)

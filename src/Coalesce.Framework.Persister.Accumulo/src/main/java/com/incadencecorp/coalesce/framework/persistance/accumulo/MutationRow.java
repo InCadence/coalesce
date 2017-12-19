@@ -17,54 +17,63 @@ authorize others to do so.
 Distribution Statement D. Distribution authorized to the Department of
 Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
+
 /**
-* @author Matt Defazio
-* May 13, 2016
-*/
+ * @author Matt Defazio
+ * May 13, 2016
+ */
 public class MutationRow {
 
-	private String columnFamily;
-	private String columnQualifier;
-	private Value value;
-	private String namePath;
+    private String columnFamily;
+    private String columnQualifier;
+    private Value value;
+    private String namePath;
 
-	public MutationRow(String columnFamily, String columnQualifier, byte[] value, String namePath) {
+    public MutationRow(String columnFamily, String columnQualifier, byte[] value, String namePath)
+    {
+        this.columnFamily = columnFamily;
+        this.columnQualifier = columnQualifier;
+        this.value = new Value(value);
+        this.namePath = namePath;
+    }
 
-		this.columnFamily = columnFamily;
-		this.columnQualifier = columnQualifier;
-		this.value = new Value(value);
-		this.namePath = namePath;
-	}
+    public String getColumnFamily()
+    {
+        return columnFamily;
+    }
 
-    public String getColumnFamily() {
-		return columnFamily;
-	}
+    public void setColumnFamily(String columnFamily)
+    {
+        this.columnFamily = columnFamily;
+    }
 
-	public void setColumnFamily(String columnFamily) {
-		this.columnFamily = columnFamily;
-	}
+    public String getColumnQualifier()
+    {
+        return columnQualifier;
+    }
 
-	public String getColumnQualifier() {
-		return columnQualifier;
-	}
+    public void setColumnQualifier(String columnQualifier)
+    {
+        this.columnQualifier = columnQualifier;
+    }
 
-	public void setColumnQualifier(String columnQualifier) {
-		this.columnQualifier = columnQualifier;
-	}
+    public Value getValue()
+    {
+        return value;
+    }
 
-	public Value getValue() {
-		return value;
-	}
+    public void setValue(Value value)
+    {
+        this.value = value;
+    }
 
-	public void setValue(Value value) {
-		this.value = value;
-	}
+    public String getNamePath()
+    {
+        return namePath;
+    }
 
-	public String getNamePath() {
-		return namePath;
-	}
-
-	public void setNamePath(String namePath) {
-		this.namePath = namePath;
-	}
+    public void setNamePath(String namePath)
+    {
+        this.namePath = namePath;
+    }
 }

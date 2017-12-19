@@ -1,21 +1,19 @@
-/**
- * ///-----------SECURITY CLASSIFICATION: UNCLASSIFIED------------------------
- * /// Copyright 2014 - Lockheed Martin Corporation, All Rights Reserved /// ///
- * Notwithstanding any contractor copyright notice, the government has ///
- * Unlimited Rights in this work as defined by DFARS 252.227-7013 and ///
- * 252.227-7014. Use of this work other than as specifically authorized by ///
- * these DFARS Clauses may violate government rights in this work. /// /// DFARS
- * Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16) /// Unlimited
- * Rights. The Government has the right to use, modify, /// reproduce, perform,
- * display, release or disclose this computer software /// in whole or in part,
- * in any manner, and for any purpose whatsoever, /// and to have or authorize
- * others to do so. /// /// Distribution Statement D. Distribution authorized to
- * the Department of /// Defense and U.S. DoD contractors only in support of US
- * DoD efforts. /// Other requests shall be referred to the ACINT Modernization
- * Program /// Management under the Director of the Office of Naval
- * Intelligence. ///
- * -------------------------------UNCLASSIFIED---------------------------------
- */
+/*-----------------------------------------------------------------------------'
+ Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 package com.incadencecorp.coalesce.framework.persistance.postgres;
 
@@ -266,7 +264,8 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
             throw new FilterToSQLException("Can't encode to a null writer.");
         }
 
-        if (capability.fullySupports(filter))
+        // TODO Cannot add Temporal support to capabilities therefore this check has been commented out.
+        if (true)//capability.fullySupports(filter))
         {
             try
             {
@@ -616,30 +615,11 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
 
         if (left instanceof PropertyName)
         {
-
             left = filterFactory.property(normalize(((PropertyName) left).getPropertyName(), false));
 
-            AttributeDescriptor attType = (AttributeDescriptor) left.evaluate(featureType);
-            if (attType != null)
-            {
-                rightContext = attType.getType().getBinding();
-            }
-
             currentProperty = ((PropertyName) left).getPropertyName();
-
-            if (rightContext != null)
-            {
-                if (LOGGER.isDebugEnabled())
-                {
-                    LOGGER.debug("Property ({}) Context ({})", currentProperty, rightContext.toString());
-                }
-            }
-            else
-            {
-                LOGGER.warn("Property ({}) Context (UNKNOWN)", currentProperty);
-            }
-
-        }
+            rightContext = getPropertyContext((PropertyName) left);
+       }
         else if (left instanceof Function)
         {
             // check for a function return type
@@ -652,29 +632,10 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
 
         if (right instanceof PropertyName)
         {
-
             right = filterFactory.property(normalize(((PropertyName) right).getPropertyName(), false));
 
-            AttributeDescriptor attType = (AttributeDescriptor) right.evaluate(featureType);
-            if (attType != null)
-            {
-                leftContext = attType.getType().getBinding();
-            }
-
-            currentProperty = ((PropertyName) right).getPropertyName();
-
-            if (leftContext != null)
-            {
-                if (LOGGER.isDebugEnabled())
-                {
-                    LOGGER.debug("Property ({}) Context ({})", currentProperty, leftContext.toString());
-                }
-            }
-            else
-            {
-                LOGGER.warn("Property ({}) Context (UNKNOWN)", currentProperty);
-            }
-
+            currentProperty = ((PropertyName) left).getPropertyName();
+            leftContext = getPropertyContext((PropertyName) left);
         }
         else if (right instanceof Function)
         {
@@ -753,6 +714,31 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
         {
             throw new RuntimeException(IO_ERROR, ioe);
         }
+    }
+
+    private Class<?> getPropertyContext(PropertyName name) {
+
+        Class<?> context = null;
+        AttributeDescriptor attType = (AttributeDescriptor) name.evaluate(featureType);
+
+        if (attType != null)
+        {
+            context = attType.getType().getBinding();
+        }
+
+        if (context != null)
+        {
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Property ({}) Context ({})", name.getPropertyName(), context.toString());
+            }
+        }
+        else
+        {
+            LOGGER.warn("Property ({}) Context (UNKNOWN)", name.getPropertyName());
+        }
+
+        return context;
     }
 
     /**

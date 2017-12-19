@@ -17,16 +17,24 @@
 
 package com.incadencecorp.coalesce.search;
 
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
-import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
+import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import org.geotools.data.Query;
+import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.cql2.CQLException;
+import org.joda.time.DateTime;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengis.filter.Filter;
@@ -42,6 +50,7 @@ import javax.sql.rowset.CachedRowSet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -58,9 +67,9 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     private static final FilterFactory FF = CoalescePropertyFactory.getFilterFactory();
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSearchTest.class);
 
-    private boolean isInitialized = false;
+    private Boolean isInitialized = false;
 
-    protected abstract T createPersister();
+    protected abstract T createPersister() throws CoalescePersistorException;
 
     /**
      * Registers the entities used by these tests.
@@ -68,22 +77,66 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     @Before
     public void registerEntities()
     {
-        if (!isInitialized)
+        synchronized (isInitialized)
         {
-            TestEntity entity = new TestEntity();
-            entity.initialize();
-
-            try
+            if (!isInitialized)
             {
-                createPersister().registerTemplate(CoalesceEntityTemplate.create(entity));
-            }
-            catch (CoalescePersistorException | SAXException | IOException e)
-            {
-                LOGGER.warn("Failed to register templates");
-            }
+                TestEntity entity = new TestEntity();
+                entity.initialize();
 
-            isInitialized = true;
+                try
+                {
+                    CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
+
+                    createPersister().registerTemplate(template);
+                    CoalesceTemplateUtil.addTemplates(template);
+                }
+                catch (CoalescePersistorException | SAXException | IOException e)
+                {
+                    LOGGER.warn("Failed to register templates");
+                }
+
+                isInitialized = true;
+            }
         }
+    }
+
+    /**
+     * This test persist an entity that contains linkages and verifies that they linkages can be retrieved doing a search.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void searchLinkages() throws Exception
+    {
+        T persister = createPersister();
+
+        // Create Entity
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize();
+
+        // Link Entities
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.IS_PARENT_OF, entity2);
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.HAS_MEMBER, entity2);
+
+        // Save Entity
+        persister.saveEntity(false, entity1);
+
+        List<PropertyName> properties = new ArrayList<>();
+        properties.add(CoalescePropertyFactory.getLinkageLabel());
+        properties.add(CoalescePropertyFactory.getLinkageStatus());
+        properties.add(CoalescePropertyFactory.getLinkageType());
+
+        Query query = new Query();
+        query.setFilter(CoalescePropertyFactory.getLinkageEntityKey(entity2.getKey()));
+        query.setProperties(properties);
+
+        SearchResults results = persister.search(query);
+
+        Assert.assertEquals(2, results.getTotal());
     }
 
     /**
@@ -119,9 +172,9 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Filter query2 = CoalescePropertyFactory.getEntityKey(entity2.getKey());
 
         Filter query = FF.or(query1, query2);
-        query = FF.and(FF.equals(CoalescePropertyFactory.getName(), FF.literal(TestEntity.NAME)), query);
+        query = FF.and(FF.equal(CoalescePropertyFactory.getName(), FF.literal(TestEntity.NAME), true), query);
 
-        List<PropertyName> properties = new ArrayList<PropertyName>();
+        List<PropertyName> properties = new ArrayList<>();
         properties.add(CoalescePropertyFactory.getName());
         properties.add(CoalescePropertyFactory.getSource());
         properties.add(CoalescePropertyFactory.getEntityTitle());
@@ -143,7 +196,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         CachedRowSet rowset = results.getResults();
 
-        // 5 Default columns +1 parameter
+        // 4 Default columns +1 parameter
         Assert.assertEquals(properties.size() + 1, rowset.getMetaData().getColumnCount());
         Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()).toLowerCase(),
                             rowset.getMetaData().getColumnName(1).toLowerCase());
@@ -168,6 +221,17 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         rowset = results.getResults();
 
+        // 4 Default columns +1 parameter
+        Assert.assertEquals(properties.size() + 1, rowset.getMetaData().getColumnCount());
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()).toLowerCase(),
+                            rowset.getMetaData().getColumnName(1).toLowerCase());
+
+        for (int ii = 0; ii < properties.size(); ii++)
+        {
+            Assert.assertEquals(CoalescePropertyFactory.getColumnName(properties.get(ii)).toLowerCase(),
+                                rowset.getMetaData().getColumnName(ii + 2).toLowerCase());
+        }
+
         Assert.assertTrue(rowset.next());
         Assert.assertEquals(entity2.getKey(), rowset.getString(1));
         Assert.assertEquals(field2.getValue(), rowset.getString(5));
@@ -175,12 +239,13 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Assert.assertEquals(entity1.getKey(), rowset.getString(1));
         Assert.assertEquals(field1.getValue(), rowset.getString(5));
 
+        rowset.close();
+
         // Cleanup
         entity1.markAsDeleted();
         entity2.markAsDeleted();
 
         persister.saveEntity(true, entity1, entity2);
-
     }
 
     /**
@@ -212,6 +277,8 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         // 5 Default columns
         Assert.assertEquals(1, rowset.getMetaData().getColumnCount());
         Assert.assertFalse(rowset.next());
+
+        rowset.close();
     }
 
     /**
@@ -250,9 +317,187 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Assert.assertEquals(3, rowset.getMetaData().getColumnCount());
         Assert.assertTrue(rowset.next());
 
+        rowset.close();
+
         entity.markAsDeleted();
 
         persister.saveEntity(true, entity);
+    }
+
+    /**
+     * This test creates a entity with a geo location and verifies that a bounding box search will return it.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testBoundingBoxSearch() throws Exception
+    {
+        T persistor = createPersister();
+
+        Assume.assumeTrue(persistor.getCapabilities().contains(EPersistorCapabilities.GEOSPATIAL_SEARCH));
+        Assume.assumeTrue(persistor.getCapabilities().contains(EPersistorCapabilities.TEMPORAL_SEARCH));
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
+
+        // Create Record
+        GeometryFactory factory = new GeometryFactory();
+        record.getGeoField().setValue(factory.createPoint(new Coordinate(51.4347, -3.18)));
+        record.getDateField().setValue(new DateTime(2006, 07, 25, 00, 00, 00, 00));
+        record.getIntegerField().setValue(562505648);
+        record.getStringField().setValue("EUROPE");
+
+        // Persist
+        persistor.saveEntity(false, entity);
+
+        // Verify
+        //CoalesceEntity[] entities = persistor.getEntity(entity.getKey());
+        //Assert.assertEquals(1, entities.length);
+        //Assert.assertEquals(entity.getKey(), entities[0].getKey());
+
+        // Create Filter
+        Filter cqlFilter = createFilter(CoalescePropertyFactory.getFieldProperty(record.getGeoField()).getPropertyName(),
+                                        -180,
+                                        -180,
+                                        180,
+                                        180,
+                                        CoalescePropertyFactory.getFieldProperty(record.getDateField()).getPropertyName(),
+                                        "2000-07-01T00:00:00.000Z",
+                                        "2016-12-31T00:00:00.000Z",
+                                        null);
+
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()));
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
+
+        // Create Query
+        Query query = new Query(TestEntity.getTest1RecordsetName(), cqlFilter);
+        query.setProperties(props);
+
+        CachedRowSet results = persistor.search(query).getResults();
+        Assert.assertTrue(results.size() > 0);
+        Assert.assertTrue(results.next());
+        Assert.assertEquals((int) record.getIntegerField().getValue(), results.getInt(2));
+        Assert.assertEquals(record.getStringField().getValue(), results.getString(3));
+        results.close();
+
+        entity.markAsDeleted();
+
+        persistor.saveEntity(true, entity);
+    }
+
+    /**
+     * This test creates an entity and updates it. Then verifies that returning the updated property shows the updated value and not the original.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testSearchUpdatedValues() throws Exception
+    {
+        T persistor = createPersister();
+
+        // Create Entity
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        // Create Record
+        TestRecord record = entity.addRecord1();
+        record.getIntegerField().setValue((new Random()).nextInt());
+        record.getStringField().setValue("MERICA");
+        record.getDateField().setValue(new DateTime());
+
+        // Persist
+        persistor.saveEntity(false, entity);
+
+        // update
+        record.getStringField().setValue("TEXAS");
+        persistor.saveEntity(false, entity);
+
+        String cql = "\"" + CoalescePropertyFactory.getFieldProperty(record.getIntegerField()).getPropertyName() + "\"="
+                + record.getIntegerField().getValue();
+
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()));
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
+
+        // Create Query
+        Query query = new Query(TestEntity.getTest1RecordsetName(), CQL.toFilter(cql));
+        query.setProperties(props);
+
+        // Search
+        CachedRowSet results = persistor.search(query).getResults();
+
+        // One and only 1 result
+        Assert.assertTrue(results.size() == 1);
+        Assert.assertTrue(results.next());
+        Assert.assertEquals((int) record.getIntegerField().getValue(), results.getInt(2));
+        Assert.assertEquals(record.getStringField().getValue(), results.getString(3));
+
+        results.close();
+
+        entity.markAsDeleted();
+
+        persistor.saveEntity(true, entity);
+    }
+
+    /**
+     * This test verifies searching for entities w/o geospatial fields.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testSearchNonGeoEntity() throws Exception
+    {
+        T persistor = createPersister();
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        // set fields
+        TestRecord record = entity.addRecord1();
+        record.getIntegerField().setValue((new Random()).nextInt());
+        record.getStringField().setValue("MERICA");
+        record.getDateField().setValue(new DateTime());
+
+        // Persist
+        persistor.saveEntity(false, entity);
+
+        String cql = "\"" + CoalescePropertyFactory.getFieldProperty(record.getIntegerField()).getPropertyName() + "\"="
+                + record.getIntegerField().getValue();
+
+        // Set up to return the GlobalEventID and Actor1Name fields
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()));
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
+
+        Query query = new Query(TestEntity.getTest1RecordsetName(), CQL.toFilter(cql));
+        query.setProperties(props);
+
+        CachedRowSet results = persistor.search(query).getResults();
+
+        Assert.assertTrue(results.next());
+
+        Assert.assertEquals((int) record.getIntegerField().getValue(), results.getInt(2));
+        Assert.assertEquals(record.getStringField().getValue(), results.getString(3));
+    }
+
+    private static Filter createFilter(String geomField,
+                                       double x0,
+                                       double y0,
+                                       double x1,
+                                       double y1,
+                                       String dateField,
+                                       String t0,
+                                       String t1,
+                                       String attributesQuery) throws CQLException, IOException
+    {
+
+        String cqlGeometry = "BBOX(\"" + geomField + "\", " + x0 + ", " + y0 + ", " + x1 + ", " + y1 + ")";
+        String cqlDates = "(\"" + dateField + "\" DURING " + t0 + "/" + t1 + ")";
+        String cqlAttributes = attributesQuery == null ? "INCLUDE" : attributesQuery;
+        String cql = cqlGeometry + " AND " + cqlDates + " AND " + cqlAttributes;
+        return CQL.toFilter(cql);
     }
 
 }

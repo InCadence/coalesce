@@ -1126,7 +1126,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
         map.put(new QName(ATTRIBUTE_LASTMODIFIED), JodaDateTimeHelper.toXmlDateTimeUTC(getLastModified()));
         map.put(new QName(ATTRIBUTE_NAME), getName());
         map.put(new QName(ATTRIBUTE_STATUS), getStatus().toString());
-        map.put(new QName("noindex"), Boolean.toString(isNoIndex()));
+        map.put(new QName(ATTRIBUTE_NOINDEX), Boolean.toString(isNoIndex()));
         map.put(new QName("objectversion"), Integer.toString(getObjectVersion()));
         map.put(new QName("objectversionstatus"), getObjectVersionStatus().toString());
         map.put(new QName("previoushistorykey"), getPreviousHistoryKey());

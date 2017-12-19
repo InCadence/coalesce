@@ -30,6 +30,9 @@
 							org.joda.time*;version="[1.6.2, 3)",
 							*; resolution:=optional
                         </Import-Package>
+                        <Embed-Dependency>
+                            gt-jdbc-postgis,
+                        </Embed-Dependency>
                     </instructions>
                 </configuration>
             </plugin>
@@ -51,8 +54,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.3-1102-jdbc41</version>
-            <!-- <version>9.4-1201-jdbc41</version> -->
+            <version>9.4-1201-jdbc41</version>
         </dependency>
         <dependency>
             <groupId>org.geotools.jdbc</groupId>

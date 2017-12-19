@@ -1,9 +1,9 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
+import org.apache.accumulo.core.data.Mutation;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.accumulo.core.data.Mutation;
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
@@ -20,33 +20,36 @@ authorize others to do so.
 Distribution Statement D. Distribution authorized to the Department of
 Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
+
 /**
-* @author Matt Defazio
-* May 13, 2016
-*/
+ * @author Matt Defazio
+ * May 13, 2016
+ */
 public class MutationWrapper {
 
-	private Mutation mutation;
-	
-	List <MutationRow> mutationGuyList;
+    private Mutation mutation;
+    private List<MutationRow> mutationGuyList;
 
-	public MutationWrapper(Mutation mutation){
-		this.mutation = mutation;
-		mutationGuyList = new ArrayList<MutationRow>();
-	}
-	
-	public Mutation getMutation() {
-		return mutation;
-	}
+    public MutationWrapper(Mutation mutation)
+    {
+        this.mutation = mutation;
+        mutationGuyList = new ArrayList<MutationRow>();
+    }
 
+    public Mutation getMutation()
+    {
+        return mutation;
+    }
 
-	public void addRow(MutationRow row){
-		mutationGuyList.add(row);
-		mutation.put(row.getColumnFamily(), row.getColumnQualifier(), row.getValue());
-	}
-	
-	public List <MutationRow> getMutationGuyList(){
-		return mutationGuyList;
-	}
-	
+    public void addRow(MutationRow row)
+    {
+        mutationGuyList.add(row);
+        mutation.put(row.getColumnFamily(), row.getColumnQualifier(), row.getValue());
+    }
+
+    public List<MutationRow> getMutationGuyList()
+    {
+        return mutationGuyList;
+    }
+
 }

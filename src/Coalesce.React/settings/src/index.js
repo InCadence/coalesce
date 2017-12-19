@@ -25,7 +25,7 @@ function saveCallback(data) {
   Popup.plugins().loader('Saving...');
 
   fetch(rootUrl + '/cxf/data/property', {
-    method: "POST",
+    method: "PUT",
     body: JSON.stringify(data),
     headers: new Headers({
       'content-type': 'application/json; charset=utf-8'

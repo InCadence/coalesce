@@ -68,7 +68,6 @@ public class JobMetricsType {
      */
     public JobMetricsType(String name)
     {
-
         this.name = name;
 
         total = 0;
@@ -278,7 +277,7 @@ public class JobMetricsType {
         else
         {
             // Not a batch job - single worker thread
-            MetricResults<CoalesceResponseType<Boolean>> metric = new MetricResults<CoalesceResponseType<Boolean>>(); 
+            MetricResults<CoalesceResponseType<Boolean>> metric = new MetricResults<CoalesceResponseType<Boolean>>(this.name);
             
             totalWorkerThreads += 1;
 

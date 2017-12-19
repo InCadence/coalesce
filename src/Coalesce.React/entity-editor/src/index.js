@@ -73,7 +73,7 @@ const NewEntity = ({match}) => {
   });
 }
 
-function saveEntity(entity, isNew) {
+function saveEntity(entity, isNew, view) {
 
   Popup.plugins().loader('Saving...');
 
@@ -89,6 +89,9 @@ function saveEntity(entity, isNew) {
       if (!res.ok) {
         throw Error(res.statusText);
       }
+
+      view.setIsNew(false);
+
   }).catch(function(error) {
       Popup.plugins().promptError("Saving: " + error);
   });
@@ -113,8 +116,7 @@ function renderEntity(key) {
               data: data,
               template: template,
               isNew: false,
-              saveEntity: saveEntity,
-              rootUrl: rootUrl
+              saveEntity: saveEntity
             }),
             document.getElementById('entityview')
           );
@@ -148,8 +150,7 @@ function renderNewEntity(key) {
               data: data,
               template: template,
               isNew: true,
-              saveEntity: saveEntity,
-              url: rootUrl
+              saveEntity: saveEntity
             }),
             document.getElementById('entityview')
           );
@@ -215,7 +216,7 @@ fetch(rootUrl + '/cxf/data/templates')
 registerLoader(Popup);
 registerPrompt(Popup);
 
-// TODO Uncomment this line for debugging. 
+// TODO Uncomment this line for debugging.
 //renderNewEntity('086f6440-997e-30a4-90a4-d134076e1587');
 
 ReactDOM.render(

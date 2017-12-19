@@ -526,7 +526,7 @@ public final class EnumerationProviderUtil {
             for (IEnumerationProvider provider : providers)
             {
                 // Handles Enumeration?
-                if (provider.handles(principal, enumeration))
+                if (provider != null && provider.handles(principal, enumeration))
                 {
                     return provider;
                 }

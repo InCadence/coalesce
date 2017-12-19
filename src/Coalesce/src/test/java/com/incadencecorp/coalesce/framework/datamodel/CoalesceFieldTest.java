@@ -1,12 +1,18 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
+import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
+import com.incadencecorp.coalesce.common.classification.Marking;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
+import com.incadencecorp.coalesce.common.helpers.*;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
+import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.io.WKTWriter;
+import com.vividsolutions.jts.util.GeometricShapeFactory;
+import org.apache.xerces.impl.dv.util.Base64;
+import org.joda.time.DateTime;
+import org.junit.*;
+import org.junit.rules.ExpectedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,38 +22,7 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.apache.xerces.impl.dv.util.Base64;
-import org.jdom2.JDOMException;
-import org.joda.time.DateTime;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import com.drew.imaging.ImageProcessingException;
-import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
-import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
-import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
-import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.common.helpers.MimeHelper;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.WKTWriter;
-import com.vividsolutions.jts.util.GeometricShapeFactory;
+import static org.junit.Assert.*;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -68,9 +43,8 @@ import com.vividsolutions.jts.util.GeometricShapeFactory;
 
 /**
  * Unit tests
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public class CoalesceFieldTest {
 
@@ -82,7 +56,8 @@ public class CoalesceFieldTest {
     @Rule
     public ExpectedException _thrown = ExpectedException.none();
 
-    private static final Marking TOPSECRETCLASSIFICATIONMARKING = new Marking("//JOINT TOP SECRET AND USA//FOUO-LES//SBU/ACCM-BOB");
+    private static final Marking TOPSECRETCLASSIFICATIONMARKING = new Marking(
+            "//JOINT TOP SECRET AND USA//FOUO-LES//SBU/ACCM-BOB");
     private static final String COORDINATE_ERROR_MESSAGE = "Coordinate out of range: MissionGeoLocation";
     // private static final String COORDINATES_ERROR_MESSAGE =
     // "Failed to parse coordinates value for: MissionGeoLocation";
@@ -199,8 +174,9 @@ public class CoalesceFieldTest {
         String serializedMission = mission.toXml();
         CoalesceEntity savedMission = CoalesceEntity.create(serializedMission);
 
-        CoalesceField<?> savedField = (CoalesceField<?>) savedMission.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH.replace(CoalesceTypeInstances.TEST_MISSION_NAME_NAME,
-                                                                                                                                                        "Testingname"));
+        CoalesceField<?> savedField = (CoalesceField<?>) savedMission.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH.replace(
+                CoalesceTypeInstances.TEST_MISSION_NAME_NAME,
+                "Testingname"));
 
         assertEquals("Testingname", savedField.getName());
 
@@ -460,7 +436,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceStringField field = (CoalesceStringField) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
+        CoalesceStringField field = (CoalesceStringField) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
 
         assertEquals(null, field.getInputLang());
 
@@ -471,7 +448,8 @@ public class CoalesceFieldTest {
         String entityXml = entity.toXml();
 
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
-        CoalesceStringField desField = (CoalesceStringField) desEntity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
+        CoalesceStringField desField = (CoalesceStringField) desEntity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
 
         assertEquals(new Locale("en"), desField.getInputLang());
 
@@ -495,17 +473,20 @@ public class CoalesceFieldTest {
 
         String entityXml = entity.toXml();
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
-        CoalesceStringField desField = (CoalesceStringField) desEntity.getCoalesceObjectForNamePath("Operation/NewSection/NewRecordset/NewRecordset Record/NewField");
+        CoalesceStringField desField = (CoalesceStringField) desEntity.getCoalesceObjectForNamePath(
+                "Operation/NewSection/NewRecordset/NewRecordset Record/NewField");
 
         assertEquals(Locale.UK, desField.getInputLang());
 
         CoalesceEntity desEntityEmptyLocale = CoalesceEntity.create(entityXml.replace("en-GB", ""));
-        CoalesceStringField desFieldEmtpyLocale = (CoalesceStringField) desEntityEmptyLocale.getCoalesceObjectForNamePath("Operation/NewSection/NewRecordset/NewRecordset Record/NewField");
+        CoalesceStringField desFieldEmtpyLocale = (CoalesceStringField) desEntityEmptyLocale.getCoalesceObjectForNamePath(
+                "Operation/NewSection/NewRecordset/NewRecordset Record/NewField");
 
         assertEquals(null, desFieldEmtpyLocale.getInputLang());
 
         CoalesceEntity desEntityBadLocale = CoalesceEntity.create(entityXml.replace("en-GB", "engb"));
-        CoalesceStringField desFieldBadLocale = (CoalesceStringField) desEntityBadLocale.getCoalesceObjectForNamePath("Operation/NewSection/NewRecordset/NewRecordset Record/NewField");
+        CoalesceStringField desFieldBadLocale = (CoalesceStringField) desEntityBadLocale.getCoalesceObjectForNamePath(
+                "Operation/NewSection/NewRecordset/NewRecordset Record/NewField");
 
         assertEquals(null, desFieldBadLocale.getInputLang());
 
@@ -574,7 +555,8 @@ public class CoalesceFieldTest {
         String entityXml = testEntity.toXml();
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
 
-        CoalesceIntegerField desNoTrackField = (CoalesceIntegerField) desEntity.getCoalesceObjectForNamePath("Test/TestSection/TestRecordset/TestRecordset Record/NoTrack");
+        CoalesceIntegerField desNoTrackField = (CoalesceIntegerField) desEntity.getCoalesceObjectForNamePath(
+                "Test/TestSection/TestRecordset/TestRecordset Record/NoTrack");
         assertEquals(2, desNoTrackField.getHistory().length);
         assertTrue(desNoTrackField.isDisableHistory());
         assertTrue(desNoTrackField.isSuspendHistory());
@@ -634,7 +616,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                               "Binary",
                                                                               ECoalesceFieldDataTypes.BINARY_TYPE);
@@ -670,7 +653,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceStringField actionNumber = (CoalesceStringField) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber");
+        CoalesceStringField actionNumber = (CoalesceStringField) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber");
 
         CoalesceFieldHistory history = actionNumber.getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
         assertNotNull(history);
@@ -994,7 +978,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                               "Uri",
                                                                               ECoalesceFieldDataTypes.URI_TYPE);
@@ -1014,7 +999,7 @@ public class CoalesceFieldTest {
     /**
      * This test ensures that if a date field has either never been set or
      * nulled out it will return null when attempting to read the value.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -1071,7 +1056,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                               "Binary",
                                                                               ECoalesceFieldDataTypes.BINARY_TYPE);
@@ -1087,7 +1073,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                               "Binary",
                                                                               ECoalesceFieldDataTypes.BINARY_TYPE);
@@ -1109,8 +1096,7 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void setTypedValueFileBytesTest()
-            throws CoalesceDataFormatException, ImageProcessingException, IOException, JDOMException, CoalesceCryptoException
+    public void setTypedValueFileBytesTest() throws Exception
     {
         CoalesceFileField field = getFileField();
 
@@ -1124,8 +1110,7 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void setTypedValueDocPropsTest()
-            throws IOException, ImageProcessingException, JDOMException, CoalesceDataFormatException, CoalesceCryptoException
+    public void setTypedValueDocPropsTest() throws Exception
     {
         CoalesceFileField field = getFileField();
 
@@ -1146,7 +1131,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                               "Boolean",
                                                                               ECoalesceFieldDataTypes.BOOLEAN_TYPE);
@@ -1182,7 +1168,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                               "Integer",
                                                                               ECoalesceFieldDataTypes.INTEGER_TYPE);
@@ -1199,7 +1186,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                               "Integer",
                                                                               ECoalesceFieldDataTypes.INTEGER_TYPE);
@@ -1235,7 +1223,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                               "GUID",
                                                                               ECoalesceFieldDataTypes.GUID_TYPE);
@@ -1252,7 +1241,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                               "GUID",
                                                                               ECoalesceFieldDataTypes.GUID_TYPE);
@@ -1289,7 +1279,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                               "Location",
                                                                               ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE);
@@ -1334,8 +1325,7 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void geolocationPointTests()
-            throws ImageProcessingException, CoalesceCryptoException, IOException, JDOMException, CoalesceDataFormatException
+    public void geolocationPointTests() throws Exception
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1376,7 +1366,7 @@ public class CoalesceFieldTest {
 
     /**
      * This test ensures that the Z-Axis is being set and read correctly.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -1433,7 +1423,7 @@ public class CoalesceFieldTest {
     /**
      * This test ensures that when the Z-Axis is retricted that NaN will throw
      * an error
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -1489,7 +1479,7 @@ public class CoalesceFieldTest {
 
     /**
      * This test ensures that setting the x or y axis to NaN throw an exception.
-     * 
+     *
      * @throws Exception
      */
     @Test(expected = CoalesceDataFormatException.class)
@@ -1514,7 +1504,7 @@ public class CoalesceFieldTest {
 
     /**
      * This test ensures that if you provide no coordinates its marked as empty.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -1538,7 +1528,7 @@ public class CoalesceFieldTest {
 
     /**
      * This test ensures that if you provide no coordinates its marked as empty.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -1552,8 +1542,7 @@ public class CoalesceFieldTest {
         CoalesceCoordinateListField field = (CoalesceCoordinateListField) record.getFieldByName(ECoalesceFieldDataTypes.GEOCOORDINATE_LIST_TYPE.toString());
 
         // Verify a Coordinate Using Lat / Long
-        field.setValue(new Coordinate[] {
-                                          null, null
+        field.setValue(new Coordinate[] { null, null
         });
         MultiPoint point = field.getValueAsMultiPoint();
 
@@ -1565,7 +1554,7 @@ public class CoalesceFieldTest {
     /**
      * This test ensures that the Z-Axis is being set and read correctly for
      * MultiPoints
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -1583,8 +1572,7 @@ public class CoalesceFieldTest {
         assertEquals(null, field.getBaseValue());
 
         // Verify
-        field.setValue(new Coordinate[] {
-                                          new Coordinate(1, 2, 3), new Coordinate(4, 5)
+        field.setValue(new Coordinate[] { new Coordinate(1, 2, 3), new Coordinate(4, 5)
         });
         coords = field.getCoordinateListValue();
 
@@ -2017,7 +2005,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((-70.6280916 34.6873833), (-77.056138 38.87116))");
 
@@ -2036,7 +2025,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((-70.6280916 34.6873833))");
 
@@ -2054,7 +2044,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT EMPTY");
 
@@ -2074,7 +2065,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((0 180.0000000000001), (0 0))");
 
@@ -2090,7 +2082,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((0 0), (0 -180.0000000000001))");
 
@@ -2106,7 +2099,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((180.0000000000001 0), (0 0))");
 
@@ -2122,7 +2116,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((0 0), (-180.0000000000001 0))");
 
@@ -2138,7 +2133,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((180.0000000000001 180.0000000000001), (0 0))");
 
@@ -2154,7 +2150,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((0 0), (-180.0000000000001 -180.0000000000001))");
 
@@ -2170,7 +2167,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT (0 0), (90 90))");
 
@@ -2186,7 +2184,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((0 0), (90 90)");
 
@@ -2223,7 +2222,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT (0 0, (89 9))");
 
@@ -2236,7 +2236,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT((0 0))");
 
@@ -2257,7 +2258,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("((0 0), (90 90))");
         field.getValue();
@@ -2272,7 +2274,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((X 0), (90 90))");
         field.getValue();
@@ -2286,7 +2289,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((90 90), (0 Y)");
         field.getValue();
@@ -2300,7 +2304,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((X Y), (0 0))");
         field.getValue();
@@ -2314,7 +2319,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((0), (0 0))");
         field.getValue();
@@ -2330,8 +2336,7 @@ public class CoalesceFieldTest {
 
         CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
-        field.setTypedValue(new Coordinate[] {
-                                               new Coordinate(0, 0)
+        field.setTypedValue(new Coordinate[] { new Coordinate(0, 0)
         });
 
     }
@@ -2345,8 +2350,7 @@ public class CoalesceFieldTest {
 
         CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_LOCATION_PATH);
 
-        field.setTypedValue(new Coordinate[] {
-                                               new Coordinate(0, 0)
+        field.setTypedValue(new Coordinate[] { new Coordinate(0, 0)
         });
 
     }
@@ -2453,7 +2457,8 @@ public class CoalesceFieldTest {
 
         String entityXml = entity.toXml();
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
-        CoalesceIntegerField desField = (CoalesceIntegerField) desEntity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/TestingName");
+        CoalesceIntegerField desField = (CoalesceIntegerField) desEntity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/TestingName");
 
         assertEquals("TestingValue", desField.getAttribute("TestAttribute"));
         assertEquals("TestingName", desField.getName());
@@ -2584,8 +2589,7 @@ public class CoalesceFieldTest {
 
         // Create Polygon
         GeometryFactory factory = new GeometryFactory();
-        LineString line = factory.createLineString(new Coordinate[] {
-                                                                      new Coordinate(0, 0), new Coordinate(1, 1),
+        LineString line = factory.createLineString(new Coordinate[] { new Coordinate(0, 0), new Coordinate(1, 1),
                                                                       new Coordinate(2, 2)
         });
 
@@ -2690,7 +2694,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                               "File",
                                                                               ECoalesceFieldDataTypes.FILE_TYPE);
@@ -2703,7 +2708,8 @@ public class CoalesceFieldTest {
 
         CoalesceEntity desEntity = CoalesceEntity.create(savedEntity);
 
-        CoalesceField<?> savedFileField = (CoalesceField<?>) desEntity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/File");
+        CoalesceField<?> savedFileField = (CoalesceField<?>) desEntity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/File");
 
         return new FileTestResult(fileField, savedFileField);
 
@@ -2725,7 +2731,8 @@ public class CoalesceFieldTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                               "File",
                                                                               ECoalesceFieldDataTypes.FILE_TYPE);

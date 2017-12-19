@@ -7,6 +7,7 @@ import com.incadencecorp.unity.common.SettingsBase;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -59,7 +60,6 @@ public class PropertyController {
      */
     public String getProperty(String name) throws RemoteException
     {
-
         return settings.getSetting(key, name, "", false);
     }
 
@@ -81,13 +81,31 @@ public class PropertyController {
     }
 
     /**
+     * @return specified properties and their values.
+     */
+    public Map<String, String> getProperties(String[] names) throws RemoteException
+    {
+        Map<String, String> results = new HashMap<>();
+
+        for (String name : names)
+        {
+            results.put(name, settings.getSetting(key, name, "", false));
+        }
+
+        return results;
+    }
+
+    /**
      * Sets multiple property's values. If the connector is readonly then this method wont do anything. Also this should be restricted to privileged users.
      */
     public void setProperties(Map<String, String> values) throws RemoteException
     {
         if (isReadOnly)
         {
-            throw new RemoteException(String.format(CoalesceErrors.NOT_SAVED, "Properties", "Map<String, String>", "Read Only"));
+            throw new RemoteException(String.format(CoalesceErrors.NOT_SAVED,
+                                                    "Properties",
+                                                    "Map<String, String>",
+                                                    "Read Only"));
         }
 
         for (Map.Entry<String, String> entry : values.entrySet())

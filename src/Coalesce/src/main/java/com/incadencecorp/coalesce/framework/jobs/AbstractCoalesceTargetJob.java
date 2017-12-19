@@ -174,7 +174,7 @@ public abstract class AbstractCoalesceTargetJob<INPUT, OUTPUT extends ICoalesceR
                     task.setError(e.getMessage());
                     task.setStatus(EResultStatus.FAILED);
 
-                    result = new MetricResults<TASKOUTPUT>();
+                    result = new MetricResults<>(getName());
                     result.setResults(task);
                     result.getResults().setStatus(EResultStatus.FAILED);
                 }

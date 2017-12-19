@@ -43,29 +43,25 @@ function promptForTemplate() {
               recordsets = recordsets.concat(getRecordsets(section));
             });
 
-            cache[value] = recordsets;
+            cache[value] = {
+              recordsets: recordsets,
+              name: template.name
+            };
+
             console.log('Size of client cache: ' + memorySizeOf(cache));
-
-            var criteria = [];
-
-            // Populate Default Criteria
-            if (recordsets.length > 0)
-            {
-              criteria.push({
-                recordset: 'CoalesceEntity',
-                field: 'name',
-                comparer: '=',
-                value: template.name,
-                matchCase: true
-              });
-            }
 
             // Add CoalesceEntity attributes as a recordset
             ReactDOM.render(
                 <FilterCreator
                   recordsets={recordsets}
                   onSearch={searchComplex}
-                  tabledata={criteria}
+                  tabledata={[{
+                    recordset: 'CoalesceEntity',
+                    field: 'name',
+                    comparer: '=',
+                    value: template.name,
+                    matchCase: true
+                  }]}
                 />,
                 document.getElementById('main')
             );
@@ -74,8 +70,15 @@ function promptForTemplate() {
     } else {
       ReactDOM.render(
           <FilterCreator
-            recordsets={cache[value]}
+            recordsets={cache[value].recordsets}
             onSearch={searchComplex}
+            tabledata={[{
+              recordset: 'CoalesceEntity',
+              field: 'name',
+              comparer: '=',
+              value: cache[value].name,
+              matchCase: true
+            }]}
           />,
           document.getElementById('main')
       );

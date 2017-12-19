@@ -65,7 +65,7 @@ public class CoalesceIteratorDataTypes extends CoalesceIterator<Map<String, ECoa
      */
     public Map<String, ECoalesceFieldDataTypes> getDataTypes(CoalesceEntity entity) throws CoalesceException
     {
-        Map<String, ECoalesceFieldDataTypes> results = new HashMap<String, ECoalesceFieldDataTypes>();
+        Map<String, ECoalesceFieldDataTypes> results = new HashMap<>();
 
         processAllElements(entity, results);
 
@@ -80,6 +80,20 @@ public class CoalesceIteratorDataTypes extends CoalesceIterator<Map<String, ECoa
     public Map<String, ECoalesceFieldDataTypes> getDataTypes(CoalesceEntityTemplate template) throws CoalesceException
     {
         return getDataTypes(template.createNewEntity());
+    }
+
+    /**
+     * @param recordset
+     * @return a map of datatypes used by this recordset.
+     * @throws CoalesceException
+     */
+    public Map<String, ECoalesceFieldDataTypes> getDataTypes(CoalesceRecordset recordset) throws CoalesceException
+    {
+        Map<String, ECoalesceFieldDataTypes> results = new HashMap<>();
+
+        visitCoalesceRecordset(recordset, results);
+
+        return results;
     }
 
     @Override

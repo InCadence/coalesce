@@ -33,45 +33,24 @@
 
 package com.incadencecorp.coalesce.search.resultset;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
+import java.sql.*;
 import java.sql.Date;
-import java.sql.NClob;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLDataException;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.*;
 
 /**
  * Abstract disconnected implementation of ResultSet to be used with persistors
  * that do not have a JDBC connector.
- * 
+ *
  * @author n78554
  */
 public abstract class CoalesceResultSetAbstract implements ResultSet {
@@ -88,7 +67,7 @@ public abstract class CoalesceResultSetAbstract implements ResultSet {
 
     /**
      * Creates a result set for the provided columns.
-     * 
+     *
      * @param columns
      */
     public CoalesceResultSetAbstract(List<CoalesceColumnMetadata> columns)
@@ -100,7 +79,7 @@ public abstract class CoalesceResultSetAbstract implements ResultSet {
 
     /**
      * Creates a result set for the provided columns as Strings.
-     * 
+     *
      * @param columns
      */
     public CoalesceResultSetAbstract(String... columns)
@@ -1269,10 +1248,11 @@ public abstract class CoalesceResultSetAbstract implements ResultSet {
 
     private Object get(int column) throws SQLDataException
     {
-        if (column < 1 || column > cols)
+        if (column < 1 || column > cols || column > currentRow().length)
         {
             throw new SQLDataException("Column " + column + " is invalid");
         }
+
         Object value = currentRow()[column - 1];
         wasNull = value == null;
         return value;

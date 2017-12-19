@@ -28,6 +28,11 @@
 			<artifactId>coalesce-search-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.services</groupId>
+			<artifactId>coalesce-services-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>joda-time</groupId>

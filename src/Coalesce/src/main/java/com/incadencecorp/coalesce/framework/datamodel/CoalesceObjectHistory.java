@@ -117,13 +117,13 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
             {
                 Map<QName, String> attributes = getAttributes();
 
-                attributes.remove(new QName("key"));
+                attributes.remove(new QName(ATTRIBUTE_KEY));
 
                 for (Map.Entry<QName, String> attribute : attributes.entrySet())
                 {
                     if (!StringHelper.isNullOrEmpty(attribute.getValue()))
                     {
-                        history.setAttribute(attribute.getKey().toString(), attribute.getValue());
+                        history.setAttribute(attribute.getKey().getLocalPart(), attribute.getValue());
                     }
                 }
                 

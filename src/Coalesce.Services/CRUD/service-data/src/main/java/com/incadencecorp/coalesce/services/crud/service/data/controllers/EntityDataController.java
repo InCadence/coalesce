@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -120,18 +122,9 @@ public class EntityDataController {
         // Load Template
         try
         {
-            String xml = persister.getEntityTemplateXml(name, source, version);
-
-            if (xml == null)
-            {
-                error(String.format(CoalesceErrors.NOT_FOUND,
-                                    "Template",
-                                    "name=" + name + ", source=" + source + ", version=" + version));
-            }
-
-            template = CoalesceEntityTemplate.create(xml);
+            template = persister.getEntityTemplate(name, source, version);
         }
-        catch (CoalesceException | SAXException | IOException e)
+        catch (CoalescePersistorException e)
         {
             error(String.format(CoalesceErrors.NOT_FOUND,
                                 "Template",

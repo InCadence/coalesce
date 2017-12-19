@@ -1,16 +1,14 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-
-import org.joda.time.DateTime;
-
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -37,7 +35,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 public abstract class CoalescePersistorBase implements ICoalescePersistor {
 
     /*--------------------------------------------------------------------------
-    	Private Member Variables
+        Private Member Variables
     --------------------------------------------------------------------------*/
 
     private ICoalesceCacher _cacher = null;
@@ -76,12 +74,16 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     Interface Implementation
     --------------------------------------------------------------------------*/
 
-    @Override
+    /**
+     * Sets the cacher.
+     *
+     * @param cacher Pass null if caching is not wanted
+     */
     public void setCacher(ICoalesceCacher cacher)
     {
         _cacher = cacher;
     }
-    
+
     protected ICoalesceCacher getCacher()
     {
         return _cacher;
@@ -180,58 +182,6 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     }
 
     @Override
-    public CoalesceEntity getEntity(String entityId, String entityIdType) throws CoalescePersistorException
-    {
-
-        CoalesceEntity entity = null;
-
-        // Load Entity's XML
-        String entityXml = this.getEntityXml(entityId, entityIdType);
-
-        // Found?
-        if (entityXml != null)
-        {
-
-            // Yes; Initialize Entity
-            entity = new CoalesceEntity();
-            entity.initialize(entityXml);
-
-            // Add Entity to Cache
-            addEntityToCache(entity);
-
-        }
-
-        return entity;
-
-    }
-
-    @Override
-    public CoalesceEntity getEntity(String name, String entityId, String entityIdType) throws CoalescePersistorException
-    {
-
-        CoalesceEntity entity = null;
-
-        // Load Entity's XML
-        String entityXml = this.getEntityXml(name, entityId, entityIdType);
-
-        // Found?
-        if (entityXml != null)
-        {
-
-            // Yes; Initialize Entity
-            entity = new CoalesceEntity();
-            entity.initialize(entityXml);
-
-            // Add Entity to Cache
-            addEntityToCache(entity);
-
-        }
-
-        return entity;
-
-    }
-
-    @Override
     public void saveTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = getDataConnector())
@@ -267,37 +217,10 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     public abstract String[] getEntityXml(String... keys) throws CoalescePersistorException;
 
     @Override
-    public abstract String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException;
+    public abstract CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException;
 
     @Override
-    public abstract String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException;
-
-    @Override
-    public abstract Object getFieldValue(String fieldKey) throws CoalescePersistorException;
-
-    @Override
-    public abstract ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException;
-
-    @Override
-    public abstract DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException;
-
-    @Override
-    public abstract List<String> getCoalesceEntityKeysForEntityId(String entityId,
-                                                                  String entityIdType,
-                                                                  String entityName,
-                                                                  String entitySource) throws CoalescePersistorException;
-
-    @Override
-    public abstract EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException;
-
-    @Override
-    public abstract byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException;
-
-    @Override
-    public abstract String getEntityTemplateXml(String key) throws CoalescePersistorException;
-
-    @Override
-    public abstract String getEntityTemplateXml(String name, String source, String version)
+    public abstract CoalesceEntityTemplate getEntityTemplate(String name, String source, String version)
             throws CoalescePersistorException;
 
     @Override
