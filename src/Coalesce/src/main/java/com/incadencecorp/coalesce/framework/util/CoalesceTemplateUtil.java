@@ -215,12 +215,27 @@ public final class CoalesceTemplateUtil {
     }
 
     /**
+     * @return a set of all record sets defined by the templates
+     */
+    public static Set<String> getRecordsets()
+    {
+        Set<String> results = new HashSet<>();
+
+        for (Set<String> recordsets : RECORDSETS.values())
+        {
+            results.addAll(recordsets);
+        }
+
+        return results;
+    }
+
+    /**
      * @param key Template's key
      * @return a map of all the fields of the specified template and their data types.
      */
-    public static List<String> getRecordsets(String key)
+    public static Set<String> getRecordsets(String key)
     {
-        List<String> results = new ArrayList<>();
+        Set<String> results = new HashSet<>();
         Set<String> recordsets = RECORDSETS.get(key);
 
         if (recordsets != null)
@@ -252,9 +267,9 @@ public final class CoalesceTemplateUtil {
      * @param name of the recordset
      * @return all a list of templates that contain the specified record set.
      */
-    public static List<String> getTemplateKey(String name)
+    public static Set<String> getTemplateKey(String name)
     {
-        List<String> results = new ArrayList<>();
+        Set<String> results = new HashSet<>();
         String normalizedName = normalizer.normalize(name);
 
         for (Map.Entry<String, Set<String>> entry : RECORDSETS.entrySet())

@@ -24,6 +24,7 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBas
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.postgres.CoalesceIndexInfo;
+import com.incadencecorp.coalesce.search.resultset.CoalesceCommonColumns;
 import org.apache.derby.jdbc.ClientDriver;
 import org.apache.derby.jdbc.EmbeddedDriver;
 import org.joda.time.DateTime;
@@ -39,7 +40,7 @@ import java.util.List;
 public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
     private static final DerbyNormalizer NORMALIZER = new DerbyNormalizer();
-    private static final CommonColumnNames COLUMNS = new CommonColumnNames(NORMALIZER);
+    private static final CoalesceCommonColumns COLUMNS = new CoalesceCommonColumns(NORMALIZER);
 
     private static String protocol = "jdbc";
     private static String databaseDriver = "derby";

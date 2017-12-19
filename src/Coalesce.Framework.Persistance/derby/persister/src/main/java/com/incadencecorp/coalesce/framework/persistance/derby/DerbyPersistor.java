@@ -31,6 +31,7 @@ import com.incadencecorp.coalesce.framework.persistance.postgres.mappers.StoredP
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
+import com.incadencecorp.coalesce.search.resultset.CoalesceCommonColumns;
 import org.geotools.data.Query;
 import org.geotools.data.jdbc.FilterToSQLException;
 import org.joda.time.DateTime;
@@ -55,7 +56,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     --------------------------------------------------------------------------*/
     private static final Logger LOGGER = LoggerFactory.getLogger(DerbyPersistor.class);
     private static final DerbyNormalizer NORMALIZER = new DerbyNormalizer();
-    private static final CommonColumnNames COLUMNS = new CommonColumnNames(NORMALIZER);
+    private static final CoalesceCommonColumns COLUMNS = new CoalesceCommonColumns(NORMALIZER);
 
     private String _schema;
     private DerbyDataConnector derbyDataConnector;
@@ -1086,6 +1087,18 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         {
             throw new CoalescePersistorException("getEntityTemplateMetadata", ex);
         }
+    }
+
+    @Override
+    public void deleteTemplate(String... keys) throws CoalescePersistorException
+    {
+        throw new CoalescePersistorException("Not Implemented");
+    }
+
+    @Override
+    public void unregisterTemplate(String... keys) throws CoalescePersistorException
+    {
+        throw new CoalescePersistorException("Not Implemented");
     }
 
     @Override

@@ -222,6 +222,18 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     }
 
     @Override
+    public void deleteTemplate(String... keys) throws CoalescePersistorException
+    {
+        throw new CoalescePersistorException("Not Implemented");
+    }
+
+    @Override
+    public void unregisterTemplate(String... keys) throws CoalescePersistorException
+    {
+        throw new CoalescePersistorException("Not Implemented");
+    }
+
+    @Override
     public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
         for (CoalesceEntityTemplate template : templates)
@@ -304,7 +316,10 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
         }
         catch (CoalescePersistorException e)
         {
-            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version), e);
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND,
+                                                               "Template",
+                                                               "Name: " + name + " Source: " + source + " Version: "
+                                                                       + version), e);
         }
     }
 

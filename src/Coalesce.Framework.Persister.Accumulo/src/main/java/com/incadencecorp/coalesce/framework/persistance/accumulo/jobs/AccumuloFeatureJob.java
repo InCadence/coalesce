@@ -17,11 +17,9 @@
 
 package com.incadencecorp.coalesce.framework.persistance.accumulo.jobs;
 
-import com.incadencecorp.coalesce.api.EResultStatus;
-import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
+import com.incadencecorp.coalesce.framework.jobs.AbstractStringResponseJob;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloDataConnector;
@@ -30,27 +28,21 @@ import com.incadencecorp.coalesce.framework.persistance.accumulo.tasks.AccumuloD
 import com.incadencecorp.coalesce.framework.persistance.accumulo.tasks.AccumuloFeatureTask;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.tasks.AccumuloWriteMutationTask;
 import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
-import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 import org.apache.accumulo.core.client.BatchWriterConfig;
 import org.apache.accumulo.core.data.Mutation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
- * This job creates {@link AccumuloFeatureTask} tasks.
+ * This job updates CoalesceEntity entries in the data store .
  *
  * @author Derek Clemenzi
  */
-public class AccumuloFeatureJob extends
-        AbstractCoalesceJob<AccumuloDataConnector, ICoalesceResponseType<List<CoalesceStringResponseType>>, CoalesceStringResponseType> {
+public class AccumuloFeatureJob extends AbstractStringResponseJob<AccumuloDataConnector> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloFeatureJob.class);
     private Map<String, AccumuloFeatureIterator.FeatureCollections> features;
     private BatchWriterConfig config;
     private List<Mutation> entityMutations;
@@ -84,129 +76,86 @@ public class AccumuloFeatureJob extends
     }
 
     @Override
-    protected ICoalesceResponseType<List<CoalesceStringResponseType>> doWork(ICoalescePrincipal principal,
-                                                                             AccumuloDataConnector params)
+    protected Collection<AbstractTask<?, CoalesceStringResponseType, ?>> getTasks(AccumuloDataConnector params)
             throws CoalesceException
     {
-        List<CoalesceStringResponseType> results = new ArrayList<>();
+        List<AbstractTask<?, CoalesceStringResponseType, ?>> tasks = new ArrayList<>();
 
-        try
+        // Create Tasks
+        for (Map.Entry<String, AccumuloFeatureIterator.FeatureCollections> entry : features.entrySet())
         {
-            List<AbstractTask<?, CoalesceStringResponseType, ?>> tasks = new ArrayList<>();
-
-            // Create Tasks
-            for (Map.Entry<String, AccumuloFeatureIterator.FeatureCollections> entry : features.entrySet())
+            if (entry.getValue().featuresToAdd.size() > 0 || entry.getValue().keysToDelete.size() > 0)
             {
-                if (entry.getValue().featuresToAdd.size() > 0 || entry.getValue().keysToDelete.size() > 0)
-                {
-                    AccumuloFeatureTask task = new AccumuloFeatureTask();
-                    task.setName(String.format("%s) Updating (%s [+%s / -%s]",
-                                               task.getName(),
-                                               entry.getKey(),
-                                               entry.getValue().featuresToAdd.size(),
-                                               entry.getValue().keysToDelete.size()));
-                    task.setParams(entry);
-                    task.setTarget(params.getGeoDataStore());
-                    task.setPrincipal(principal);
-
-                    tasks.add(task);
-                }
-            }
-
-            if (entityMutations != null && entityMutations.size() > 0)
-            {
-                AccumuloWriteMutationTask task = new AccumuloWriteMutationTask();
-                task.setName(String.format("%s) Updating (%s [+%s]",
+                AccumuloFeatureTask task = new AccumuloFeatureTask();
+                task.setName(String.format("%s) Updating (%s [+%s / -%s]",
                                            task.getName(),
-                                           AccumuloDataConnector.COALESCE_ENTITY_TABLE,
-                                           entityMutations.size()));
-                task.setConfig(config);
-                task.setTablename(AccumuloDataConnector.COALESCE_ENTITY_TABLE);
-                task.setParams(entityMutations);
-                task.setTarget(params);
+                                           entry.getKey(),
+                                           entry.getValue().featuresToAdd.size(),
+                                           entry.getValue().keysToDelete.size()));
+                task.setParams(entry);
+                task.setTarget(params.getGeoDataStore());
 
                 tasks.add(task);
             }
-
-            if (indexMutations != null && indexMutations.size() > 0)
-            {
-                AccumuloWriteMutationTask task = new AccumuloWriteMutationTask();
-                task.setName(String.format("%s) Updating (%s [+%s]",
-                                           task.getName(),
-                                           AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE,
-                                           indexMutations.size()));
-                task.setConfig(config);
-                task.setTablename(AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE);
-                task.setParams(indexMutations);
-                task.setTarget(params);
-
-                tasks.add(task);
-            }
-
-            if (keysToDelete != null && keysToDelete.size() > 0)
-            {
-                AccumuloDeleteMutationTask task1 = new AccumuloDeleteMutationTask();
-                task1.setName(String.format("%s) Updating (%s [-%s]",
-                                            task1.getName(),
-                                            AccumuloDataConnector.COALESCE_ENTITY_TABLE,
-                                            keysToDelete.size()));
-                task1.setConfig(config);
-                task1.setTablename(AccumuloDataConnector.COALESCE_ENTITY_TABLE);
-                task1.setParams(keysToDelete);
-                task1.setTarget(params);
-
-                AccumuloDeleteMutationTask task2 = new AccumuloDeleteMutationTask();
-                task2.setName(String.format("%s) Updating (%s [-%s]",
-                                            task2.getName(),
-                                            AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE,
-                                            keysToDelete.size()));
-                task2.setConfig(config);
-                task2.setTablename(AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE);
-                task2.setParams(keysToDelete);
-                task2.setTarget(params);
-
-                tasks.add(task1);
-                tasks.add(task2);
-            }
-
-            // Execute Tasks
-            for (Future<MetricResults<CoalesceStringResponseType>> future : getService().invokeAll(tasks))
-            {
-                MetricResults<CoalesceStringResponseType> metrics;
-
-                try
-                {
-                    metrics = future.get();
-                }
-                catch (InterruptedException | ExecutionException e)
-                {
-                    LOGGER.error("Interrupted Task", e);
-
-                    // Create Failed Result
-                    CoalesceStringResponseType task = createResults();
-                    task.setError(e.getMessage());
-                    task.setStatus(EResultStatus.FAILED);
-
-                    metrics = new MetricResults<>(getName());
-                    metrics.setResults(task);
-                    metrics.getResults().setStatus(EResultStatus.FAILED);
-                }
-
-                addResult(metrics);
-
-                results.add(metrics.getResults());
-            }
         }
-        catch (InterruptedException e)
+
+        if (entityMutations != null && entityMutations.size() > 0)
         {
-            throw new CoalesceException("Job Interrupted", e);
+            AccumuloWriteMutationTask task = new AccumuloWriteMutationTask();
+            task.setName(String.format("%s) Updating (%s [+%s]",
+                                       task.getName(),
+                                       AccumuloDataConnector.COALESCE_ENTITY_TABLE,
+                                       entityMutations.size()));
+            task.setConfig(config);
+            task.setTablename(AccumuloDataConnector.COALESCE_ENTITY_TABLE);
+            task.setParams(entityMutations);
+            task.setTarget(params);
+
+            tasks.add(task);
         }
 
-        CoalesceResponseType<List<CoalesceStringResponseType>> result = new CoalesceResponseType<>();
-        result.setResult(results);
-        result.setStatus(EResultStatus.SUCCESS);
+        if (indexMutations != null && indexMutations.size() > 0)
+        {
+            AccumuloWriteMutationTask task = new AccumuloWriteMutationTask();
+            task.setName(String.format("%s) Updating (%s [+%s]",
+                                       task.getName(),
+                                       AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE,
+                                       indexMutations.size()));
+            task.setConfig(config);
+            task.setTablename(AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE);
+            task.setParams(indexMutations);
+            task.setTarget(params);
 
-        return result;
+            tasks.add(task);
+        }
+
+        if (keysToDelete != null && keysToDelete.size() > 0)
+        {
+            AccumuloDeleteMutationTask task1 = new AccumuloDeleteMutationTask();
+            task1.setName(String.format("%s) Updating (%s [-%s]",
+                                        task1.getName(),
+                                        AccumuloDataConnector.COALESCE_ENTITY_TABLE,
+                                        keysToDelete.size()));
+            task1.setConfig(config);
+            task1.setTablename(AccumuloDataConnector.COALESCE_ENTITY_TABLE);
+            task1.setParams(keysToDelete);
+            task1.setTarget(params);
+
+            AccumuloDeleteMutationTask task2 = new AccumuloDeleteMutationTask();
+            task2.setName(String.format("%s) Updating (%s [-%s]",
+                                        task2.getName(),
+                                        AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE,
+                                        keysToDelete.size()));
+            task2.setConfig(config);
+            task2.setTablename(AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE);
+            task2.setParams(keysToDelete);
+            task2.setTarget(params);
+
+            tasks.add(task1);
+            tasks.add(task2);
+        }
+
+        return tasks;
     }
 
     @Override

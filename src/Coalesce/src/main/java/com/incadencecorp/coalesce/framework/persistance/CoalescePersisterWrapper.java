@@ -163,6 +163,18 @@ public class CoalescePersisterWrapper implements ICoalescePersistor {
     }
 
     @Override
+    public void deleteTemplate(String... keys) throws CoalescePersistorException
+    {
+        persister.deleteTemplate(keys);
+    }
+
+    @Override
+    public void unregisterTemplate(String... keys) throws CoalescePersistorException
+    {
+        persister.unregisterTemplate(keys);
+    }
+
+    @Override
     public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
         List<CoalesceEntityTemplate> allowed = new ArrayList<CoalesceEntityTemplate>();
@@ -185,7 +197,8 @@ public class CoalescePersisterWrapper implements ICoalescePersistor {
     }
 
     @Override
-    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version)
+            throws CoalescePersistorException
     {
         return persister.getEntityTemplate(name, source, version);
     }

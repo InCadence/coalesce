@@ -27,8 +27,6 @@ import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.jobs.AccumuloFeatureJob;
-import org.apache.accumulo.core.client.BatchWriterConfig;
-import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.client.IteratorSetting;
 import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.data.Key;
@@ -39,20 +37,11 @@ import org.apache.accumulo.core.iterators.user.RegExFilter;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.hadoop.io.Text;
-import org.geotools.data.*;
-import org.geotools.factory.CommonFactoryFinder;
-import org.omg.CORBA.TRANSACTION_MODE;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Derek Clemenzi
@@ -61,7 +50,6 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistor2.class);
 
-    private BatchWriterConfig config;
     private AccumuloFeatureIterator iterator = null;
 
     /**
@@ -69,7 +57,7 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
      *
      * @throws CoalescePersistorException
      */
-    public AccumuloPersistor2() throws CoalescePersistorException
+    public AccumuloPersistor2()
     {
         this(AccumuloSettings.getParameters());
     }
@@ -94,12 +82,6 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
     public AccumuloPersistor2(ExecutorService service, Map<String, String> params)
     {
         super(service, params);
-
-        config = new BatchWriterConfig();
-        config.setMaxLatency(1, TimeUnit.SECONDS);
-        config.setMaxMemory(52428800);
-        config.setTimeout(600, TimeUnit.SECONDS);
-        config.setMaxWriteThreads(AccumuloSettings.getWriteThreads());
     }
 
     @Override
@@ -159,7 +141,7 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
 
         AccumuloFeatureJob job = new AccumuloFeatureJob(getDataConnector());
         job.setFeatures(features);
-        job.setConfig(config);
+        job.setConfig(getConfig());
         job.setMutations(entityMutations, indexMutations);
         job.setKeysToDelete(keysToDelete);
         job.setExecutor(this);

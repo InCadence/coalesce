@@ -25,8 +25,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Derek Clemenzi
@@ -178,7 +178,7 @@ public class CoalesceTemplateUtilTest {
     @Test
     public void testTemplateKey() throws Exception
     {
-        List<String> types;
+        Set<String> types;
 
         // Verify Template 1
         types = CoalesceTemplateUtil.getTemplateKey(COMMON_RECORDSET_NAME);
@@ -204,7 +204,7 @@ public class CoalesceTemplateUtilTest {
     @Test
     public void testRecordsets() throws Exception
     {
-        List<String> types;
+        Set<String> types;
 
         // Verify Template 1
         types = CoalesceTemplateUtil.getRecordsets(template1Key);
@@ -216,6 +216,13 @@ public class CoalesceTemplateUtilTest {
         types = CoalesceTemplateUtil.getRecordsets(template2Key);
         Assert.assertEquals(2, types.size());
         Assert.assertTrue(types.contains(COMMON_RECORDSET_NAME));
+        Assert.assertTrue(types.contains(NORMALIZER.normalize(ENTITY2_RECORDSET_NAME)));
+
+        // Verify All
+        types = CoalesceTemplateUtil.getRecordsets();
+        Assert.assertEquals(3, types.size());
+        Assert.assertTrue(types.contains(COMMON_RECORDSET_NAME));
+        Assert.assertTrue(types.contains(NORMALIZER.normalize(ENTITY1_RECORDSET_NAME)));
         Assert.assertTrue(types.contains(NORMALIZER.normalize(ENTITY2_RECORDSET_NAME)));
 
         // Verify Invalid Key

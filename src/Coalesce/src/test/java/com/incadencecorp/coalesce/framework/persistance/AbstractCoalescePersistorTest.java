@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -236,6 +237,10 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         Assert.assertEquals(template1.getKey(), persister.getEntityTemplate(template1.getKey()).getKey());
         Assert.assertEquals(template2.getKey(), persister.getEntityTemplate(template2.getKey()).getKey());
+
+        List<ObjectMetaData> metadata = persister.getEntityTemplateMetadata();
+
+        Assert.assertTrue(metadata.size() >= 2);
     }
 
     /**

@@ -25,31 +25,33 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceExecutorServiceImpl;
-import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceTemplatePersister;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.jobs.AccumuloCreateSchemaJob;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.jobs.AccumuloDeleteSchemaJob;
+import com.incadencecorp.coalesce.search.resultset.CoalesceCommonColumns;
 import org.apache.accumulo.core.client.BatchWriterConfig;
+import org.apache.accumulo.core.client.IteratorSetting;
 import org.apache.accumulo.core.client.MutationsRejectedException;
 import org.apache.accumulo.core.client.TableNotFoundException;
+import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.Range;
 import org.apache.accumulo.core.data.Value;
+import org.apache.accumulo.core.iterators.user.WholeRowIterator;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.hadoop.io.Text;
+import org.joda.time.DateTime;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -63,6 +65,8 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
     private Map<String, String> params;
     private AccumuloDataConnector connector;
     private ICoalesceNormalizer normalizer;
+    private CoalesceCommonColumns columns;
+    private BatchWriterConfig config;
 
     private static String coalesceTemplateColumnFamily = "Coalesce:Template";
     private static String coalesceTemplateXMLQualifier = "xml";
@@ -102,6 +106,12 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
         LOGGER.debug("Instance: {} ", params.get(AccumuloDataConnector.INSTANCE_ID));
         LOGGER.debug("User: {} ", params.get(AccumuloDataConnector.USER));
         LOGGER.debug("Mock: {} ", params.get(AccumuloDataConnector.USE_MOCK));
+
+        config = new BatchWriterConfig();
+        config.setMaxLatency(1, TimeUnit.SECONDS);
+        config.setMaxMemory(52428800);
+        config.setTimeout(600, TimeUnit.SECONDS);
+        config.setMaxWriteThreads(AccumuloSettings.getWriteThreads());
     }
 
     /**
@@ -112,6 +122,7 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
     public void setNormalizer(ICoalesceNormalizer normalizer)
     {
         this.normalizer = normalizer;
+        this.columns = new CoalesceCommonColumns(normalizer);
     }
 
     @Override
@@ -192,6 +203,24 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
                                                                AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
                                                                e.getMessage()), e);
 
+        }
+    }
+
+    @Override
+    public void deleteTemplate(String... keys) throws CoalescePersistorException
+    {
+        unregisterTemplate(keys);
+    }
+
+    @Override
+    public void unregisterTemplate(String... keys) throws CoalescePersistorException
+    {
+        if (keys.length > 0)
+        {
+            AccumuloDeleteSchemaJob job = new AccumuloDeleteSchemaJob(getDataConnector(), Arrays.asList(keys));
+            job.setExecutor(this);
+            job.setConfig(getConfig());
+            checkResults(job.call());
         }
     }
 
@@ -326,7 +355,61 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
     @Override
     public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        return null;
+        List<ObjectMetaData> results = new ArrayList<>();
+
+        try (CloseableScanner scanner = new CloseableScanner(getDataConnector().getDBConnector(),
+                                                             AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
+                                                             Authorizations.EMPTY))
+        {
+            Text templateColumnFamily = new Text(coalesceTemplateColumnFamily);
+            scanner.fetchColumn(templateColumnFamily, new Text(columns.getName()));
+            scanner.fetchColumn(templateColumnFamily, new Text(columns.getSource()));
+            scanner.fetchColumn(templateColumnFamily, new Text(columns.getVersion()));
+            scanner.fetchColumn(templateColumnFamily, new Text(columns.getDateCreated()));
+            scanner.fetchColumn(templateColumnFamily, new Text(columns.getLastModified()));
+            IteratorSetting iter = new IteratorSetting(1, "rowiterator", WholeRowIterator.class);
+            scanner.addScanIterator(iter);
+
+            // Create Document
+            for (Map.Entry<Key, Value> entry : scanner)
+            {
+                // Create New Template Element
+                SortedMap<Key, Value> wholeRow = WholeRowIterator.decodeRow(entry.getKey(), entry.getValue());
+
+                SortedMap<String, Value> colmap = columnMap(wholeRow);
+
+                String key = entry.getKey().getRow().toString();
+                String name = colmap.get(coalesceTemplateColumnFamily + ":" + columns.getName()).toString();
+                String source = colmap.get(coalesceTemplateColumnFamily + ":" + columns.getSource()).toString();
+                String version = colmap.get(coalesceTemplateColumnFamily + ":" + columns.getVersion()).toString();
+                DateTime created = JodaDateTimeHelper.fromXmlDateTimeUTC(colmap.get(
+                        coalesceTemplateColumnFamily + ":" + columns.getDateCreated()).toString());
+                DateTime lastModified = JodaDateTimeHelper.fromXmlDateTimeUTC(colmap.get(
+                        coalesceTemplateColumnFamily + ":" + columns.getLastModified()).toString());
+
+                results.add(new ObjectMetaData(key, name, source, version, created, lastModified));
+            }
+        }
+        catch (IOException | TableNotFoundException e)
+        {
+            throw new CoalescePersistorException("Error Getting Template Metadata", e);
+        }
+
+        return results;
+    }
+
+    // Utility method to strip the row key, visibility, and timestamp from the
+    // SortedMap returned from decodeRow
+    private static SortedMap<String, Value> columnMap(SortedMap<Key, Value> row)
+    {
+        TreeMap<String, Value> colMap = new TreeMap<>();
+        for (Map.Entry<Key, Value> e : row.entrySet())
+        {
+            String cf = e.getKey().getColumnFamily().toString();
+            String cq = e.getKey().getColumnQualifier().toString();
+            colMap.put(cf + ":" + cq, e.getValue());
+        }
+        return colMap;
     }
 
     protected AccumuloDataConnector getDataConnector() throws CoalescePersistorException
@@ -334,6 +417,11 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
         if (connector == null)
         {
             connector = new AccumuloDataConnector(params);
+        }
+
+        if (columns == null)
+        {
+            columns = new CoalesceCommonColumns(getNormalizer());
         }
 
         return connector;
@@ -347,6 +435,11 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
         }
 
         return normalizer;
+    }
+
+    protected BatchWriterConfig getConfig()
+    {
+        return config;
     }
 
 }

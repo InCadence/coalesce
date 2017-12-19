@@ -33,7 +33,15 @@ public interface ICoalesceTemplatePersister {
      * @param templates an array of templates
      * @throws CoalescePersistorException on error
      */
-    void saveTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException;
+    void saveTemplate(final CoalesceEntityTemplate... templates) throws CoalescePersistorException;
+
+    /**
+     * Removes the template from the database
+     *
+     * @param keys template keys
+     * @throws CoalescePersistorException on error
+     */
+    void deleteTemplate(final String... keys) throws CoalescePersistorException;
 
     /**
      * Saves the template in the database as well as creates tables and indexes
@@ -45,6 +53,14 @@ public interface ICoalesceTemplatePersister {
     void registerTemplate(final CoalesceEntityTemplate... templates) throws CoalescePersistorException;
 
     /**
+     * Removes artifacts (schemas, tables, etc) created during registration.
+     *
+     * @param keys template keys
+     * @throws CoalescePersistorException on error
+     */
+    void unregisterTemplate(final String... keys) throws CoalescePersistorException;
+
+    /**
      * Returns the Coalesce entity template XML that matches the given
      * parameters.
      *
@@ -52,31 +68,33 @@ public interface ICoalesceTemplatePersister {
      * @return the matching Coalesce entity's XML.
      * @throws CoalescePersistorException on error
      */
-    CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException;
+    CoalesceEntityTemplate getEntityTemplate(final String key) throws CoalescePersistorException;
 
     /**
      * Returns the Coalesce entity template XML that matches the given
      * parameters.
      *
-     * @param name of the entity.
-     * @param source of the entity.
+     * @param name    of the entity.
+     * @param source  of the entity.
      * @param version of the entity.
      * @return the matching Coalesce entity's XML.
      * @throws CoalescePersistorException on error
      */
-    CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException;
+    CoalesceEntityTemplate getEntityTemplate(final String name, final String source, final String version)
+            throws CoalescePersistorException;
 
     /**
      * Returns the Coalesce entity template key that matches the given
      * parameters.
      *
-     * @param name of the entity.
-     * @param source of the entity.
+     * @param name    of the entity.
+     * @param source  of the entity.
      * @param version of the entity.
      * @return the matching Coalesce entity's primary key.
      * @throws CoalescePersistorException on error
      */
-    String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException;
+    String getEntityTemplateKey(final String name, final String source, final String version)
+            throws CoalescePersistorException;
 
     /**
      * Returns the Coalesce entity templates.

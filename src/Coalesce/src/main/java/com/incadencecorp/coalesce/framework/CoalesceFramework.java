@@ -13,11 +13,14 @@ import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveTemplateJob;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
+import com.incadencecorp.unity.common.IConfigurationsConnector;
+import com.incadencecorp.unity.common.factories.PropertyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -57,17 +60,17 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     private IExceptionHandler _handler;
     private boolean _isAsyncUpdates = true;
 
-    private ICoalescePersistor[] getSecondaryPersistors()
+    protected ICoalescePersistor[] getSecondaryPersistors()
     {
         return _persistors;
     }
 
-    private boolean hasSecondaryPersistors()
+    protected boolean hasSecondaryPersistors()
     {
         return _persistors != null && _persistors.length > 0;
     }
 
-    private ICoalescePersistor getAuthoritativePersistor()
+    protected ICoalescePersistor getAuthoritativePersistor()
     {
         return _authoritativePersistor;
     }
@@ -82,7 +85,50 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      */
     public CoalesceFramework()
     {
-        this(null);
+        this((ExecutorService) null);
+    }
+
+    /**
+     * Creates this framework with the persisters defined by the provided connector within the file persisters.cfg.
+     */
+    public CoalesceFramework(IConfigurationsConnector connector)
+    {
+        this();
+
+        PropertyFactory factory = new PropertyFactory(connector);
+        List<ICoalescePersistor> secondaryPersisters = new ArrayList<>();
+
+        // Iterate Over Specified Persisters
+        for (String perissterClassName : factory.getProperties("persisters.cfg").keySet())
+        {
+            try
+            {
+                Object persister = ClassLoader.getSystemClassLoader().loadClass(perissterClassName).newInstance();
+
+                if (persister instanceof ICoalescePersistor)
+                {
+                    if (!isInitialized())
+                    {
+                        setAuthoritativePersistor((ICoalescePersistor) persister);
+                        refreshCoalesceTemplateUtil();
+                    }
+                    else
+                    {
+                        secondaryPersisters.add((ICoalescePersistor) persister);
+                    }
+                }
+                else
+                {
+                    LOGGER.debug("(FAILED) Loading Persister " + perissterClassName + "Invalid Implementation");
+                }
+            }
+            catch (ClassNotFoundException | InstantiationException | IllegalAccessException e)
+            {
+                LOGGER.error("(FAILED) Loading Persister ({})" + perissterClassName, e);
+            }
+        }
+
+        setSecondaryPersistors(secondaryPersisters.toArray(new ICoalescePersistor[secondaryPersisters.size()]));
     }
 
     /**
@@ -302,7 +348,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     }
 
     /*--------------------------------------------------------------------------
-    	Template Functions
+        Template Functions
     --------------------------------------------------------------------------*/
 
     /**
@@ -351,6 +397,22 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
                 throw new CoalescePersistorException("(FAILED) Template Registration", e);
             }
         }
+    }
+
+    /**
+     * @see ICoalescePersistor#deleteTemplate(String...)
+     */
+    public void deleteTemplate(String... keys) throws CoalescePersistorException
+    {
+        getAuthoritativePersistor().deleteTemplate(keys);
+    }
+
+    /**
+     * @see ICoalescePersistor#unregisterTemplate(String...)
+     */
+    public void unregisterTemplate(String... keys) throws CoalescePersistorException
+    {
+        getAuthoritativePersistor().unregisterTemplate(keys);
     }
 
     /**
@@ -414,7 +476,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     }
 
     /*--------------------------------------------------------------------------
-    	Sync Shell Functions
+        Sync Shell Functions
     --------------------------------------------------------------------------*/
 
     public CoalesceEntitySyncShell getCoalesceEntitySyncShell(String key)
