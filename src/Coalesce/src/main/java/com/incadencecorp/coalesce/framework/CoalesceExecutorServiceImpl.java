@@ -66,6 +66,14 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
         ShutdownAutoCloseable.createShutdownHook(this);
     }
 
+    /**
+     * @return the service used to execute internal threads.
+     */
+    public final ExecutorService getExecutorService()
+    {
+        return _pool;
+    }
+
     @Override
     public final void execute(Runnable command)
     {

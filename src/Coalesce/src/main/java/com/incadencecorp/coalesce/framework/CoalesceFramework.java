@@ -1,13 +1,15 @@
 package com.incadencecorp.coalesce.framework;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.jobs.*;
+import com.incadencecorp.coalesce.framework.jobs.CoalesceRegisterTemplateJob;
+import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityJob;
+import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityProperties;
+import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveTemplateJob;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
@@ -16,12 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -55,7 +55,6 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     private ICoalescePersistor _persistors[];
     private ICoalescePersistor _authoritativePersistor;
     private IExceptionHandler _handler;
-    private ExecutorService _pool;
     private boolean _isAsyncUpdates = true;
 
     private ICoalescePersistor[] getSecondaryPersistors()
@@ -94,14 +93,6 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     public CoalesceFramework(ExecutorService service)
     {
         super(service);
-    }
-
-    /**
-     * @return the service used to execute threads.
-     */
-    public ExecutorService getExecutorService()
-    {
-        return _pool;
     }
 
     /**
@@ -196,7 +187,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     }
 
     /*--------------------------------------------------------------------------
-    	Get Entity
+        Get Entity
     --------------------------------------------------------------------------*/
 
     /**
@@ -224,7 +215,6 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
         }
 
         return results[0];
-
     }
 
     /**
@@ -256,7 +246,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     }
 
     /*--------------------------------------------------------------------------
-    	Other Entity Functions
+        Other Entity Functions
     --------------------------------------------------------------------------*/
 
     /**
@@ -433,54 +423,19 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
         return CoalesceEntitySyncShell.create(this.getCoalesceEntity(key));
     }
 
-    @Override
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException
-    {
-        if (LOGGER.isTraceEnabled())
-        {
-            LOGGER.trace("Invoking Tasks");
-        }
-
-        if (_pool.isShutdown())
-        {
-            if (LOGGER.isDebugEnabled())
-            {
-                LOGGER.debug("Pool is Shutdown");
-            }
-            return null;
-        }
-        else
-        {
-            return _pool.invokeAll(tasks);
-        }
-    }
-
-    @Override
     public <T> Future<T> submit(Callable<T> task) throws CoalescePersistorException
     {
-        return _pool.submit(task);
-    }
-
-    public <T, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Future<Y> submit(
-            AbstractCoalesceJob<T, Y, X> job) throws CoalescePersistorException
-    {
-
-        Future<Y> result = null;
+        Future<T> result = null;
 
         if (_isAsyncUpdates)
         {
-            if (LOGGER.isTraceEnabled())
-            {
-                LOGGER.trace("Submitting {} job", job.getClass().getName());
-            }
-
-            result = _pool.submit(job);
+            result = super.submit(task);
         }
         else
         {
             try
             {
-                job.call();
+                task.call();
             }
             catch (Exception e)
             {
@@ -489,55 +444,6 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
         }
 
         return result;
-    }
-
-    @Override
-    public void close()
-    {
-        if (LOGGER.isDebugEnabled())
-        {
-            LOGGER.debug("Closing Framework");
-        }
-
-        try
-        {
-            // Graceful shutdown (Allow 1 minute for jobs to finish)
-            _pool.shutdown();
-
-            if (!_pool.awaitTermination(1, TimeUnit.MINUTES))
-            {
-
-                LOGGER.warn("(FAILED) Graceful Pool Termination");
-
-                logFailedJobs(_pool.shutdownNow());
-
-                if (!_pool.awaitTermination(1, TimeUnit.MINUTES))
-                {
-                    LOGGER.error(" (FAILED) Pool Terminate");
-                }
-            }
-        }
-        catch (InterruptedException e)
-        {
-
-            LOGGER.warn("(FAILED) Graceful Pool Termination", e);
-
-            logFailedJobs(_pool.shutdownNow());
-
-            // Preserve Interrupt Status
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    private void logFailedJobs(List<Runnable> jobList)
-    {
-        for (Runnable job : jobList)
-        {
-            if (job instanceof AbstractCoalesceJob<?, ?, ?>)
-            {
-                LOGGER.warn("Job Failed {}", job.getClass().getName());
-            }
-        }
     }
 
 }
