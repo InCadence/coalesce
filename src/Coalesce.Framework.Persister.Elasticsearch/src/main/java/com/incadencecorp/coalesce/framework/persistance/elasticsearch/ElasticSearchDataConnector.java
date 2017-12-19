@@ -31,7 +31,7 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchDataConnector.class);
     private TransportClient client;
 
-    public ElasticSearchDataConnector(String prefix) throws CoalescePersistorException
+    public ElasticSearchDataConnector() throws CoalescePersistorException
     {
         try
         {
@@ -117,7 +117,7 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
     public static void main(String args[]) {
     	ElasticSearchDataConnector connector;
 		try {
-			connector = new ElasticSearchDataConnector("");
+			connector = new ElasticSearchDataConnector();
 			TransportClient client = connector.getDBConnector();
 			
 			System.out.println("Client connected");

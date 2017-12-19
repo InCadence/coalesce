@@ -52,7 +52,7 @@ public class ElasticSearchPersistorIT extends CoalescePersistorBaseTest {
 
 	@Override
 	protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException {
-		ElasticSearchDataConnector testConnector = new ElasticSearchDataConnector("test"); 
+		ElasticSearchDataConnector testConnector = new ElasticSearchDataConnector(); 
 		return testConnector;
 	}
 
@@ -112,9 +112,6 @@ public class ElasticSearchPersistorIT extends CoalescePersistorBaseTest {
     }
     
     /**
-     * This unit test ensures that when creating linkages within Neo4j place
-     * holders are created to preserve link information. Once the place holder's
-     * entity is saved its filled out.
      * 
      * @throws Exception
      */
@@ -177,6 +174,10 @@ public class ElasticSearchPersistorIT extends CoalescePersistorBaseTest {
 
     }
     
+    /**
+     * 
+     * @throws Exception
+     */
     @Test
     public void testGet() throws Exception {
     	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
@@ -185,12 +186,20 @@ public class ElasticSearchPersistorIT extends CoalescePersistorBaseTest {
     	System.out.println(keys.toString());
     }
     
+    /**
+     * 
+     * @throws Exception
+     */
     @Test
     public void testSearchAll() throws Exception {
     	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
     	persistor.searchAll();
     }
     
+    /**
+     * 
+     * @throws Exception
+     */
     @Test
     public void testSearchSpecific() throws Exception {
     	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
