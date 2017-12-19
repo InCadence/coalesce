@@ -17,32 +17,28 @@
 
 package com.incadencecorp.coalesce.framework.persistance.accumulo.jobs;
 
-import com.incadencecorp.coalesce.api.EResultStatus;
-import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
+import com.incadencecorp.coalesce.framework.jobs.AbstractStringResponseJob;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.tasks.AccumuloCreateSchemaTask;
-import com.incadencecorp.coalesce.framework.tasks.MetricResults;
+import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import org.geotools.data.DataStore;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * This job creates {@link AccumuloCreateSchemaTask} tasks.
  *
  * @author Derek Clemenzi
  */
-public class AccumuloCreateSchemaJob extends
-        AbstractCoalesceJob<List<SimpleFeatureType>, ICoalesceResponseType<List<CoalesceStringResponseType>>, CoalesceStringResponseType> {
+public class AccumuloCreateSchemaJob extends AbstractStringResponseJob<List<SimpleFeatureType>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloFeatureJob.class);
     private DataStore datastore;
@@ -55,65 +51,22 @@ public class AccumuloCreateSchemaJob extends
     }
 
     @Override
-    protected ICoalesceResponseType<List<CoalesceStringResponseType>> doWork(ICoalescePrincipal principal,
-                                                                             List<SimpleFeatureType> features)
+    protected Collection<AbstractTask<?, CoalesceStringResponseType, ?>> getTasks(List<SimpleFeatureType> features)
             throws CoalesceException
     {
-        List<CoalesceStringResponseType> results = new ArrayList<>();
+        List<AbstractTask<?, CoalesceStringResponseType, ?>> tasks = new ArrayList<>();
 
-        try
+        // Create Tasks
+        for (SimpleFeatureType feature : features)
         {
-            List<AccumuloCreateSchemaTask> tasks = new ArrayList<>();
+            AccumuloCreateSchemaTask task = new AccumuloCreateSchemaTask();
+            task.setParams(feature);
+            task.setTarget(datastore);
 
-            // Create Tasks
-            for (SimpleFeatureType feature : features)
-            {
-                AccumuloCreateSchemaTask task = new AccumuloCreateSchemaTask();
-                task.setParams(feature);
-                task.setTarget(datastore);
-                task.setPrincipal(principal);
-
-                tasks.add(task);
-            }
-
-            // Execute Tasks
-            for (Future<MetricResults<CoalesceStringResponseType>> future : getService().invokeAll(tasks))
-            {
-                MetricResults<CoalesceStringResponseType> metrics;
-
-                try
-                {
-                    metrics = future.get();
-                }
-                catch (InterruptedException | ExecutionException e)
-                {
-                    LOGGER.error("Interrupted Task", e);
-
-                    // Create Failed Result
-                    CoalesceStringResponseType task = createResults();
-                    task.setError(e.getMessage());
-                    task.setStatus(EResultStatus.FAILED);
-
-                    metrics = new MetricResults<>(getName());
-                    metrics.setResults(task);
-                    metrics.getResults().setStatus(EResultStatus.FAILED);
-                }
-
-                addResult(metrics);
-
-                results.add(metrics.getResults());
-            }
-        }
-        catch (InterruptedException e)
-        {
-            throw new CoalesceException("Job Interrupted", e);
+            tasks.add(task);
         }
 
-        CoalesceResponseType<List<CoalesceStringResponseType>> result = new CoalesceResponseType<>();
-        result.setResult(results);
-        result.setStatus(EResultStatus.SUCCESS);
-
-        return result;
+        return tasks;
     }
 
     @Override

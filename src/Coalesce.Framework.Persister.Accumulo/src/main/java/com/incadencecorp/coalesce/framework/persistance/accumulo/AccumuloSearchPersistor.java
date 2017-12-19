@@ -19,7 +19,9 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
+import com.incadencecorp.coalesce.mapper.impl.JavaMapperImpl;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
@@ -48,6 +50,8 @@ import java.util.concurrent.ExecutorService;
 public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoalesceSearchPersistor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloSearchPersistor.class);
+    private static final AccumuloTypeMapper MAPPER_TYPE = new AccumuloTypeMapper();
+    private static final JavaMapperImpl MAPPER_JAVA = new JavaMapperImpl();
 
     /**
      * Default constructor using {@link AccumuloSettings} for configuration
@@ -114,14 +118,32 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
             DataStore geoDataStore = getDataConnector().getGeoDataStore();
             SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(localquery.getTypeName());
 
+            Map<String, ECoalesceFieldDataTypes> types = CoalesceTemplateUtil.getDataTypes();
+
             // Normalize Column Headers
             List<CoalesceColumnMetadata> columnList = new ArrayList<>();
             for (PropertyName entry : properties)
             {
+                ECoalesceFieldDataTypes type = types.get(entry.getPropertyName());
+
                 // TODO - Why always String and VARCHAR.  Should these not be the real types
-                columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(entry.getPropertyName()),
-                                                          "String",
-                                                          Types.VARCHAR));
+                if (type != null)
+                {
+                    columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(entry.getPropertyName()),
+                                                              MAPPER_JAVA.map(type).getTypeName(),
+                                                              MAPPER_TYPE.map(type)));
+                }
+                else
+                {
+                    columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(entry.getPropertyName()),
+                                                              String.class.getTypeName(),
+                                                              Types.VARCHAR));
+                }
+            }
+
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug(localquery.toString());
             }
 
             // Execute Query
@@ -139,6 +161,8 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
                 throw new CoalescePersistorException(e.getMessage(), e);
             }
 
+            LOGGER.debug("Search Hits: {}", rowset.size());
+
             // Results > Page Size; Determine total size
             if (total >= query.getMaxFeatures())
             {
@@ -155,6 +179,8 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
                         featureItr.next();
                     }
                 }
+
+                LOGGER.debug("Search Total: {}", total);
             }
         }
         catch (IOException e)

@@ -75,6 +75,7 @@ public class AccumuloMapperImpl implements ICoalesceMapper<Class<?>> {
         case FLOAT_LIST_TYPE:
         case GUID_LIST_TYPE:
         case BOOLEAN_LIST_TYPE:
+        case ENUMERATION_LIST_TYPE:
             return String.class;
 
         case GUID_TYPE:

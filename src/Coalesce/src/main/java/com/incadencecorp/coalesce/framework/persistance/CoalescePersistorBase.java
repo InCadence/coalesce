@@ -190,6 +190,18 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
         }
     }
 
+    @Override
+    public void deleteTemplate(String... keys) throws CoalescePersistorException
+    {
+        throw new CoalescePersistorException("Not Implemented");
+    }
+
+    @Override
+    public void unregisterTemplate(String... keys) throws CoalescePersistorException
+    {
+        throw new CoalescePersistorException("Not Implemented");
+    }
+
     /*
      * TODO This method really should be in the search interface.
      */

@@ -1,27 +1,30 @@
 package com.incadencecorp.coalesce.framework;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.jobs.*;
+import com.incadencecorp.coalesce.framework.jobs.CoalesceRegisterTemplateJob;
+import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityJob;
+import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityProperties;
+import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveTemplateJob;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
+import com.incadencecorp.unity.common.IConfigurationsConnector;
+import com.incadencecorp.unity.common.factories.PropertyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -55,20 +58,19 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     private ICoalescePersistor _persistors[];
     private ICoalescePersistor _authoritativePersistor;
     private IExceptionHandler _handler;
-    private ExecutorService _pool;
     private boolean _isAsyncUpdates = true;
 
-    private ICoalescePersistor[] getSecondaryPersistors()
+    protected ICoalescePersistor[] getSecondaryPersistors()
     {
         return _persistors;
     }
 
-    private boolean hasSecondaryPersistors()
+    protected boolean hasSecondaryPersistors()
     {
         return _persistors != null && _persistors.length > 0;
     }
 
-    private ICoalescePersistor getAuthoritativePersistor()
+    protected ICoalescePersistor getAuthoritativePersistor()
     {
         return _authoritativePersistor;
     }
@@ -83,7 +85,50 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      */
     public CoalesceFramework()
     {
-        this(null);
+        this((ExecutorService) null);
+    }
+
+    /**
+     * Creates this framework with the persisters defined by the provided connector within the file persisters.cfg.
+     */
+    public CoalesceFramework(IConfigurationsConnector connector)
+    {
+        this();
+
+        PropertyFactory factory = new PropertyFactory(connector);
+        List<ICoalescePersistor> secondaryPersisters = new ArrayList<>();
+
+        // Iterate Over Specified Persisters
+        for (String perissterClassName : factory.getProperties("persisters.cfg").keySet())
+        {
+            try
+            {
+                Object persister = ClassLoader.getSystemClassLoader().loadClass(perissterClassName).newInstance();
+
+                if (persister instanceof ICoalescePersistor)
+                {
+                    if (!isInitialized())
+                    {
+                        setAuthoritativePersistor((ICoalescePersistor) persister);
+                        refreshCoalesceTemplateUtil();
+                    }
+                    else
+                    {
+                        secondaryPersisters.add((ICoalescePersistor) persister);
+                    }
+                }
+                else
+                {
+                    LOGGER.debug("(FAILED) Loading Persister " + perissterClassName + "Invalid Implementation");
+                }
+            }
+            catch (ClassNotFoundException | InstantiationException | IllegalAccessException e)
+            {
+                LOGGER.error("(FAILED) Loading Persister ({})" + perissterClassName, e);
+            }
+        }
+
+        setSecondaryPersistors(secondaryPersisters.toArray(new ICoalescePersistor[secondaryPersisters.size()]));
     }
 
     /**
@@ -94,14 +139,6 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     public CoalesceFramework(ExecutorService service)
     {
         super(service);
-    }
-
-    /**
-     * @return the service used to execute threads.
-     */
-    public ExecutorService getExecutorService()
-    {
-        return _pool;
     }
 
     /**
@@ -196,7 +233,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     }
 
     /*--------------------------------------------------------------------------
-    	Get Entity
+        Get Entity
     --------------------------------------------------------------------------*/
 
     /**
@@ -224,7 +261,6 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
         }
 
         return results[0];
-
     }
 
     /**
@@ -256,7 +292,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     }
 
     /*--------------------------------------------------------------------------
-    	Other Entity Functions
+        Other Entity Functions
     --------------------------------------------------------------------------*/
 
     /**
@@ -312,7 +348,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     }
 
     /*--------------------------------------------------------------------------
-    	Template Functions
+        Template Functions
     --------------------------------------------------------------------------*/
 
     /**
@@ -361,6 +397,22 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
                 throw new CoalescePersistorException("(FAILED) Template Registration", e);
             }
         }
+    }
+
+    /**
+     * @see ICoalescePersistor#deleteTemplate(String...)
+     */
+    public void deleteTemplate(String... keys) throws CoalescePersistorException
+    {
+        getAuthoritativePersistor().deleteTemplate(keys);
+    }
+
+    /**
+     * @see ICoalescePersistor#unregisterTemplate(String...)
+     */
+    public void unregisterTemplate(String... keys) throws CoalescePersistorException
+    {
+        getAuthoritativePersistor().unregisterTemplate(keys);
     }
 
     /**
@@ -424,7 +476,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     }
 
     /*--------------------------------------------------------------------------
-    	Sync Shell Functions
+        Sync Shell Functions
     --------------------------------------------------------------------------*/
 
     public CoalesceEntitySyncShell getCoalesceEntitySyncShell(String key)
@@ -433,54 +485,19 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
         return CoalesceEntitySyncShell.create(this.getCoalesceEntity(key));
     }
 
-    @Override
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException
-    {
-        if (LOGGER.isTraceEnabled())
-        {
-            LOGGER.trace("Invoking Tasks");
-        }
-
-        if (_pool.isShutdown())
-        {
-            if (LOGGER.isDebugEnabled())
-            {
-                LOGGER.debug("Pool is Shutdown");
-            }
-            return null;
-        }
-        else
-        {
-            return _pool.invokeAll(tasks);
-        }
-    }
-
-    @Override
     public <T> Future<T> submit(Callable<T> task) throws CoalescePersistorException
     {
-        return _pool.submit(task);
-    }
-
-    public <T, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Future<Y> submit(
-            AbstractCoalesceJob<T, Y, X> job) throws CoalescePersistorException
-    {
-
-        Future<Y> result = null;
+        Future<T> result = null;
 
         if (_isAsyncUpdates)
         {
-            if (LOGGER.isTraceEnabled())
-            {
-                LOGGER.trace("Submitting {} job", job.getClass().getName());
-            }
-
-            result = _pool.submit(job);
+            result = super.submit(task);
         }
         else
         {
             try
             {
-                job.call();
+                task.call();
             }
             catch (Exception e)
             {
@@ -489,55 +506,6 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
         }
 
         return result;
-    }
-
-    @Override
-    public void close()
-    {
-        if (LOGGER.isDebugEnabled())
-        {
-            LOGGER.debug("Closing Framework");
-        }
-
-        try
-        {
-            // Graceful shutdown (Allow 1 minute for jobs to finish)
-            _pool.shutdown();
-
-            if (!_pool.awaitTermination(1, TimeUnit.MINUTES))
-            {
-
-                LOGGER.warn("(FAILED) Graceful Pool Termination");
-
-                logFailedJobs(_pool.shutdownNow());
-
-                if (!_pool.awaitTermination(1, TimeUnit.MINUTES))
-                {
-                    LOGGER.error(" (FAILED) Pool Terminate");
-                }
-            }
-        }
-        catch (InterruptedException e)
-        {
-
-            LOGGER.warn("(FAILED) Graceful Pool Termination", e);
-
-            logFailedJobs(_pool.shutdownNow());
-
-            // Preserve Interrupt Status
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    private void logFailedJobs(List<Runnable> jobList)
-    {
-        for (Runnable job : jobList)
-        {
-            if (job instanceof AbstractCoalesceJob<?, ?, ?>)
-            {
-                LOGGER.warn("Job Failed {}", job.getClass().getName());
-            }
-        }
     }
 
 }

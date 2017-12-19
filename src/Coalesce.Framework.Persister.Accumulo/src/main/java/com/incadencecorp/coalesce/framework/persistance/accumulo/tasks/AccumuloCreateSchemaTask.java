@@ -68,8 +68,10 @@ public class AccumuloCreateSchemaTask extends AbstractTask<SimpleFeatureType, Co
                 }
                 else
                 {
-                    result.setStatus(EResultStatus.FAILED);
-                    result.setError(String.format("(FAILED) Updating Schema: %s (Not Supported)", feature.getName()));
+                    LOGGER.warn(String.format("(FAILED) Updating Schema: %s (Not Supported)", feature.getName()));
+                    result.setStatus(EResultStatus.SUCCESS);
+                    //result.setStatus(EResultStatus.FAILED);
+                    //result.setError(String.format("(FAILED) Updating Schema: %s (Not Supported)", feature.getName()));
                 }
 
                 if (result.isSuccessful() && LOGGER.isTraceEnabled())

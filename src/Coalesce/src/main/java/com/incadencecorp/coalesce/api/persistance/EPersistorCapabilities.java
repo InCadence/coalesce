@@ -65,6 +65,10 @@ public enum EPersistorCapabilities
      */
     TEMPORAL_SEARCH,
     /**
+     * Whether or not this persistor can search list data types.
+     */
+    LIST_SEARCH,
+    /**
      * Whether or not this persistor can index fields.
      */
     INDEX_FIELDS;

@@ -16,7 +16,7 @@
  *
  */
 
-package com.incadencecorp.coalesce.framework.persistance.derby;
+package com.incadencecorp.coalesce.search.resultset;
 
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
@@ -25,7 +25,7 @@ import org.opengis.filter.expression.PropertyName;
 /**
  * @author Derek Clemenzi
  */
-public class CommonColumnNames {
+public class CoalesceCommonColumns {
 
     private final String ENTITY_KEY_COLUMN_NAME;
     private final String ENTITY_XML_COLUMN_NAME;
@@ -53,7 +53,7 @@ public class CommonColumnNames {
 
     private final ICoalesceNormalizer normalizer;
 
-    public CommonColumnNames(ICoalesceNormalizer normalizer)
+    public CoalesceCommonColumns(ICoalesceNormalizer normalizer)
     {
         this.normalizer = normalizer;
 
@@ -195,7 +195,8 @@ public class CommonColumnNames {
 
     private String getColumnName(PropertyName name)
     {
-        return CoalescePropertyFactory.getColumnName(normalizer, name).split("[.]")[1];
+        String[] parts = CoalescePropertyFactory.getColumnName(normalizer, name).split("[.]");
+        return parts.length > 1 ? parts[1] : parts[0];
     }
 
 }

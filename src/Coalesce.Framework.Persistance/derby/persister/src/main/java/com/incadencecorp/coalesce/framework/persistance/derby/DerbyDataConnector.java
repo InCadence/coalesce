@@ -24,6 +24,7 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBas
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.postgres.CoalesceIndexInfo;
+import com.incadencecorp.coalesce.search.resultset.CoalesceCommonColumns;
 import org.apache.derby.jdbc.ClientDriver;
 import org.apache.derby.jdbc.EmbeddedDriver;
 import org.joda.time.DateTime;
@@ -39,7 +40,7 @@ import java.util.List;
 public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
     private static final DerbyNormalizer NORMALIZER = new DerbyNormalizer();
-    private static final CommonColumnNames COLUMNS = new CommonColumnNames(NORMALIZER);
+    private static final CoalesceCommonColumns COLUMNS = new CoalesceCommonColumns(NORMALIZER);
 
     private static String protocol = "jdbc";
     private static String databaseDriver = "derby";
@@ -576,42 +577,6 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         return false;
     }
 
-    // public static String normalizeFieldName(String fieldName)
-    // {
-    // switch (fieldName) {
-    // case "boolean":
-    // case "double":
-    // case "float":
-    // case "geocoordinatelist":
-    // case "geocoordinate":
-    // case "linestring":
-    // case "polygon":
-    // case "circle":
-    // case "enum":
-    // case "integer":
-    // case "string":
-    // case "uri":
-    // case "stringlist":
-    // case "doublelist":
-    // case "enumlist":
-    // case "integerlist":
-    // case "longlist":
-    // case "floatlist":
-    // case "guidlist":
-    // case "booleanlist":
-    // case "guid":
-    // case "datetime":
-    // case "long":
-    // case "file":
-    // case "binary":
-    // case "int":
-    // case "date":
-    // return fieldName + "Field";
-    // }
-    //
-    // return fieldName;
-    // }
-
     public static String getSQLType(final ECoalesceFieldDataTypes type)
     {
 
@@ -662,17 +627,6 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         default:
             return null;
         }
-    }
-
-    public static ServerConn getServerConnection()
-    {
-        ServerConn serCon = new ServerConn();
-        // InCadence Settings
-        serCon.setServerName("127.0.0.1");
-        serCon.setDatabase("CoalesceDatabase");
-        serCon.setUser("CoalesceUser");
-        serCon.setPassword("Passw0rd");
-        return serCon;
     }
 
     private static boolean tableAlreadyExists(SQLException sqlException)

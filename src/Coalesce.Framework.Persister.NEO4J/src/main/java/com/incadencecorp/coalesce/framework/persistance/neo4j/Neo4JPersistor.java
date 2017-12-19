@@ -19,7 +19,6 @@ package com.incadencecorp.coalesce.framework.persistance.neo4j;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
@@ -322,6 +321,18 @@ public class Neo4JPersistor extends CoalescePersistorBase {
             throw new CoalescePersistorException("Attempt Aborted", e1);
         }
 
+    }
+
+    @Override
+    public void deleteTemplate(String... keys) throws CoalescePersistorException
+    {
+        throw new CoalescePersistorException("Not Implemented");
+    }
+
+    @Override
+    public void unregisterTemplate(String... keys) throws CoalescePersistorException
+    {
+        throw new CoalescePersistorException("Not Implemented");
     }
 
     @Override
