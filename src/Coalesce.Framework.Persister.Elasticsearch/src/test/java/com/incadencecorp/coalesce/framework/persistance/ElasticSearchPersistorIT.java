@@ -20,7 +20,7 @@ import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSea
 import com.incadencecorp.coalesce.framework.persistance.testobjects.GDELT_Test_Entity;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 
-public class ElasticSearchPersistorIT extends CoalescePersistorBaseTest {
+public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<ElasticSearchPersistor> {
 
     private static final String NAME = "name";
     private static ServerConn conn;
@@ -39,38 +39,22 @@ public class ElasticSearchPersistorIT extends CoalescePersistorBaseTest {
         conn = new ServerConn.Builder().db(dbName).serverName(zookeepers).user(user).password(password).build();
     }
 
-	@Override
-	protected ServerConn getConnection() {
-		return conn;
-	}
-
-	@Override
-	protected ICoalescePersistor getPersistor(ServerConn conn) {
-		ElasticSearchPersistor testPersistor = new ElasticSearchPersistor();
-		return testPersistor;
-	}
-
-	@Override
-	protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException {
-		ElasticSearchDataConnector testConnector = new ElasticSearchDataConnector(); 
-		return testConnector;
-	}
-
     @Test
     public void testPersistRetrieveSearchEntity() throws Exception
     {
+        ICoalescePersistor persister  = createPersister();
         GDELT_Test_Entity gdeltEntity = new GDELT_Test_Entity();
 
         // Prerequisite setup
-        getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(gdeltEntity));
+        persister.saveTemplate(CoalesceEntityTemplate.create(gdeltEntity));
         CoalesceObjectFactory.register(GDELT_Test_Entity.class);
 
         // Persist
 
-        getFramework().saveCoalesceEntity(false, gdeltEntity);
+        persister.saveEntity(false, gdeltEntity);
 
         // Retrieve
-        CoalesceEntity[] entities = getFramework().getCoalesceEntities(gdeltEntity.getKey());
+        CoalesceEntity[] entities = persister.getEntity(gdeltEntity.getKey());
         assertEquals(1, entities.length);
         assertEquals(gdeltEntity.getKey(), entities[0].getKey());
 
@@ -206,4 +190,9 @@ public class ElasticSearchPersistorIT extends CoalescePersistorBaseTest {
     	persistor.searchSpecific();
     }
 
+    @Override
+    protected ElasticSearchPersistor createPersister() throws CoalescePersistorException
+    {
+        return new ElasticSearchPersistor();
+    }
 }

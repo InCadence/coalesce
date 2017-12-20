@@ -1,27 +1,20 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
+import org.elasticsearch.client.transport.TransportClient;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.geotools.data.DataStore;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
-
 public class ElasticSearchDataConnectorTest {
 
     private static final String NAME = "name";
     private static ServerConn conn;
-    
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
@@ -39,10 +32,10 @@ public class ElasticSearchDataConnectorTest {
     @Test
     public static void testGetDBConnection() throws CoalescePersistorException, SQLException
     {
-    	ElasticSearchDataConnector connector = new ElasticSearchDataConnector("ESearch");
-    	TransportClient client = connector.getDBConnector();
-    	connector.close();
-    	client.close();
+        ElasticSearchDataConnector connector = new ElasticSearchDataConnector();
+        TransportClient client = connector.getDBConnector();
+        connector.close();
+        client.close();
     }
 
 }
