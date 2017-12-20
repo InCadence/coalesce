@@ -18,6 +18,7 @@
 
 package com.incadencecorp.coalesce.notification.kafka.impl;
 
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.enums.EAuditCategory;
@@ -37,8 +38,12 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -71,8 +76,8 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
 
     public KafkaNotifierImpl()
     {
-        // TODO Not Implemented
-        throw new NotImplementedException();
+        this(loadProperties(Paths.get(CoalesceParameters.COALESCE_CONFIG_LOCATION,
+                                      KafkaNotifierImpl.class.getName() + ".properties")));
     }
 
     /**
@@ -230,4 +235,20 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         }
     }
 
+    private static Properties loadProperties(Path path)
+    {
+        LOGGER.info("Loading Properties ... {}", path.toString());
+
+        Properties props = new Properties();
+        try
+        {
+            props.load(new FileReader(new File(path.toString())));
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        return props;
+    }
 }
