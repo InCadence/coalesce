@@ -1,10 +1,8 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.sql.Blob;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -13,24 +11,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.SearchResults;
+import org.apache.commons.lang.NotImplementedException;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.geotools.data.Query;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
@@ -38,19 +32,9 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.exim.impl.JsonFullEximImpl;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
@@ -59,7 +43,6 @@ import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
 import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 
-import mil.nga.giat.data.elasticsearch.ElasticDataStore;
 import mil.nga.giat.data.elasticsearch.FilterToElastic;
 
 /*-----------------------------------------------------------------------------'
@@ -84,7 +67,7 @@ import mil.nga.giat.data.elasticsearch.FilterToElastic;
  *
  * @author n78554
  */
-public class ElasticSearchPersistor extends CoalescePersistorBase {
+public class ElasticSearchPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
 
     /*--------------------------------------------------------------------------
     Private Members
@@ -717,7 +700,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * parameters.
      *
      * @param coalesceObject the Coalesce object to be deleted
-     * @param conn is the PostGresDataConnector database connection
      * @return DeleteResponse
      * @throws SQLException
      */
@@ -848,5 +830,12 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
             enumSet = newCapabilities;
         }
         return enumSet;
+    }
+
+    @Override
+    public SearchResults search(Query query) throws CoalescePersistorException
+    {
+        // TODO Not Implemented
+        throw new NotImplementedException();
     }
 }
