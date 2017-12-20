@@ -219,28 +219,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     public void saveTemplate(CoalesceDataConnectorBase conn, CoalesceEntityTemplate... templates)
             throws CoalescePersistorException
     {
-        try
-        {
-            for (CoalesceEntityTemplate template : templates)
-            {
-                // Always persist template
-                conn.executeProcedure("CoalesceEntityTemplate_InsertOrUpdate",
-                                      new CoalesceParameter(template.getKey(), Types.OTHER),
-                                      new CoalesceParameter(template.getName()),
-                                      new CoalesceParameter(template.getSource()),
-                                      new CoalesceParameter(template.getVersion()),
-                                      new CoalesceParameter(template.toXml()),
-                                      new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.OTHER),
-                                      new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.OTHER));
-            }
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("PersistEntityTemplate", e);
-        }
-
+        // Do Nothing
     }
-
 
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
@@ -620,7 +600,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 			HashMap<String, Object> map = mapper.readValue(converter.exportValues(entity, true).toString(), mapType);
 
 			// convert JSON string to Map
-			response = conn.prepareIndex(entity.getName(), entity.getType(), "1").setSource(map).get();
+			response = conn.prepareIndex(entity.getName().toLowerCase(), entity.getType().toLowerCase(), "1").setSource(map).get();
  
 			System.out.println(response.toString());
 		} catch (CoalesceException e) {
