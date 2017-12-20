@@ -145,7 +145,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
                                                          String entityIdType,
                                                          String entityName,
@@ -173,7 +172,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -187,7 +185,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
@@ -204,7 +202,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+
     public byte[] getBinaryArray(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -260,7 +258,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
 
     }
 
-    @Override
+
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -275,7 +273,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+
     public String getFieldValue(String fieldKey) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -346,7 +344,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -375,7 +373,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+
     public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -526,8 +524,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
         {
@@ -541,7 +539,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                 value = results.getString("TemplateXml");
             }
 
-            return value;
+            return CoalesceEntityTemplate.create(value);
         }
         catch (SQLException e)
         {
@@ -553,8 +551,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
         {
@@ -571,7 +569,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                 value = results.getString("TemplateXml");
             }
 
-            return value;
+            return CoalesceEntityTemplate.create(value);
         }
         catch (SQLException e)
         {
