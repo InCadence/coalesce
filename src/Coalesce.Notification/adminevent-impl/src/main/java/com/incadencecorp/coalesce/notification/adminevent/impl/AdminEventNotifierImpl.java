@@ -17,18 +17,6 @@
 
 package com.incadencecorp.coalesce.notification.adminevent.impl;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventAdmin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.enums.EAuditCategory;
@@ -38,11 +26,22 @@ import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 /**
  * This implementation uses AdminEvents to push notifications and ONLY works
  * inside of a OSGi environment.
- * 
+ *
  * @author Derek Clemenzi
  */
 public class AdminEventNotifierImpl implements ICoalesceNotifier {
@@ -90,7 +89,7 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
     @Override
     public void sendMetrics(String task, MetricResults<?> results)
     {
-        Dictionary<String, Object> properties = new Hashtable<String, Object>();
+        Dictionary<String, Object> properties = new Hashtable<>();
         properties.put("name", task);
         properties.put("pending", results.getWatch().getPendingLife());
         properties.put("working", results.getWatch().getWorkLife());
@@ -107,7 +106,7 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
     @Override
     public void sendCrud(String task, ECrudOperations operation, ObjectMetaData data)
     {
-        Dictionary<String, Object> properties = new Hashtable<String, Object>();
+        Dictionary<String, Object> properties = new Hashtable<>();
         properties.put("name", task);
         properties.put("operation", operation.toString());
         properties.put("entitykey", data.getKey());
@@ -125,7 +124,7 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
                             ELinkTypes relationship,
                             ObjectMetaData entity2)
     {
-        Dictionary<String, Object> properties = new Hashtable<String, Object>();
+        Dictionary<String, Object> properties = new Hashtable<>();
         properties.put("name", task);
         properties.put("operation", operation.toString());
         properties.put("entity1key", entity1.getKey());
@@ -144,7 +143,7 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
     @Override
     public void sendAudit(String task, EAuditCategory category, EAuditLevels level, String message)
     {
-        Dictionary<String, Object> properties = new Hashtable<String, Object>();
+        Dictionary<String, Object> properties = new Hashtable<>();
         properties.put("name", task);
         properties.put("category", category.toString());
         properties.put("level", level.toString());
@@ -156,13 +155,24 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
     @Override
     public void sendJobComplete(AbstractCoalesceJob<?, ?, ?> job)
     {
-        Dictionary<String, Object> properties = new Hashtable<String, Object>();
+        Dictionary<String, Object> properties = new Hashtable<>();
         properties.put("name", job.getName());
         properties.put("id", job.getJobId());
         properties.put("status", job.getJobStatus().toString());
 
         sendEvent(new Event("com/incadence/job", properties));
     }
+
+    @Override
+    public <V> void sendMessage(String topic, String key, V value)
+    {
+        Dictionary<String, Object> properties = new Hashtable<>();
+        properties.put("key", key);
+        properties.put("value", value);
+
+        sendEvent(new Event(topic, properties));
+    }
+
 
     /*--------------------------------------------------------------------------
     Private Methods

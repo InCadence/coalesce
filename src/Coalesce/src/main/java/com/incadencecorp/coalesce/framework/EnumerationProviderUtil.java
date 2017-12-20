@@ -34,6 +34,8 @@ import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEnumerationField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEnumerationFieldBase;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.enumerationprovider.impl.ConstraintEnumerationProviderImpl;
+import com.incadencecorp.coalesce.framework.enumerationprovider.impl.JavaEnumerationProviderImpl;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import com.incadencecorp.unity.common.factories.PropertyFactory;
@@ -445,6 +447,14 @@ public final class EnumerationProviderUtil {
                     providers.add((IEnumerationProvider) clazz.newInstance());
                 }
             }
+
+            if (!isInitialized())
+            {
+                LOGGER.warn("Providers not found using: JavaEnumerationProviderImpl and ConstraintEnumerationProviderImpl");
+
+                providers.add(new JavaEnumerationProviderImpl());
+                providers.add(new ConstraintEnumerationProviderImpl());
+            }
         }
         catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NumberFormatException e)
         {
@@ -516,7 +526,7 @@ public final class EnumerationProviderUtil {
             for (IEnumerationProvider provider : providers)
             {
                 // Handles Enumeration?
-                if (provider.handles(principal, enumeration))
+                if (provider != null && provider.handles(principal, enumeration))
                 {
                     return provider;
                 }

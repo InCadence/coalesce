@@ -17,34 +17,29 @@
 
 package com.incadencecorp.coalesce.framework.jobs;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.incadencecorp.coalesce.api.EJobStatus;
-import com.incadencecorp.coalesce.api.EResultStatus;
-import com.incadencecorp.coalesce.api.ICoalesceJob;
-import com.incadencecorp.coalesce.api.ICoalescePrincipal;
-import com.incadencecorp.coalesce.api.ICoalesceResponseType;
+import com.incadencecorp.coalesce.api.*;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 import com.incadencecorp.coalesce.framework.util.CoalesceNotifierUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 /**
  * Abstract base for jobs in Coalesce.
- * 
- * @author Derek
- * @param <INPUT> input parameter type
- * @param <OUTPUT> output type which contains a list of TASKOUTPUT.
+ *
+ * @param <INPUT>      input parameter type
+ * @param <OUTPUT>     output type which contains a list of TASKOUTPUT.
  * @param <TASKOUTPUT> task result type.
+ * @author Derek
  */
 public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceResponseType<List<TASKOUTPUT>>, TASKOUTPUT extends ICoalesceResponseType<?>>
         extends CoalesceComponentImpl implements ICoalesceJob, Callable<OUTPUT> {
@@ -130,14 +125,7 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
             status = EJobStatus.COMPLETE;
         }
 
-        if (isAsync())
-        {
-            CoalesceNotifierUtil.sendJobComplete(this);
-        }
-        else
-        {
-            CoalesceNotifierUtil.sendMetrics(getName(), getTaskMetrics());
-        }
+        CoalesceNotifierUtil.sendJobComplete(this);
 
         return results;
     }
@@ -220,7 +208,7 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
 
     /**
      * @return <code>True</code> if the job is to be ran non-blocking, otherwise
-     *         <code>False</code>.
+     * <code>False</code>.
      */
     public boolean isAsync()
     {
@@ -229,7 +217,7 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
 
     /**
      * Sets the principal that created this job.
-     * 
+     *
      * @param principal
      */
     public void setPrincipal(ICoalescePrincipal principal)
@@ -251,7 +239,7 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
 
     /**
      * Sets the job's status.
-     * 
+     *
      * @param value
      */
     protected final void setJobStatus(EJobStatus value)
@@ -261,7 +249,7 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
 
     /**
      * Sets the job's ID
-     * 
+     *
      * @param value
      */
     protected final void setJobId(String value)
@@ -285,7 +273,7 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
 
     /**
      * Performs the work of the job.
-     * 
+     *
      * @param principal
      * @param params
      * @return

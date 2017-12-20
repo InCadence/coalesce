@@ -37,46 +37,8 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>xercesImpl</artifactId>
-					<groupId>xerces</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>stax-api</artifactId>
-					<groupId>stax</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jaxb2-basics</artifactId>
-					<groupId>*</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>scala-library</artifactId>
-					<groupId>org.scala-lang</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>
-						org.apache.servicemix.bundles.restlet
-					</artifactId>
-					<groupId>org.apache.servicemix.bundles</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>mysema-commons-lang</artifactId>
-					<groupId>com.mysema.commons</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>org.apache.felix.log</artifactId>
-					<groupId>org.apache.felix</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>scala-reflect</artifactId>
-					<groupId>org.scala-lang</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jsslutils</artifactId>
-					<groupId>org.jsslutils</groupId>
+					<groupId>org.neo4j</groupId>
+					<artifactId>*</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.incadencecorp.coalesce</groupId>

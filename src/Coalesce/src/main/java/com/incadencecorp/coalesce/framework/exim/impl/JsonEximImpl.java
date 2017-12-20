@@ -17,9 +17,10 @@
 
 package com.incadencecorp.coalesce.framework.exim.impl;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.incadencecorp.coalesce.api.CoalesceExim;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;

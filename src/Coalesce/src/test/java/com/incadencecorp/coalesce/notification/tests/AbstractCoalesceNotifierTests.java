@@ -66,7 +66,7 @@ public abstract class AbstractCoalesceNotifierTests {
 
         result = new CoalesceStringResponseType();
 
-        metric = new MetricResults<CoalesceStringResponseType>();
+        metric = new MetricResults<>("TEST");
         metric.setWatch(watch);
         metric.setResults(result);
 
@@ -75,7 +75,7 @@ public abstract class AbstractCoalesceNotifierTests {
         // Test Failure w/ No Reason
         result.setStatus(EResultStatus.FAILED);
 
-        metric = new MetricResults<CoalesceStringResponseType>();
+        metric = new MetricResults<>("TEST");
         metric.setWatch(watch);
         metric.setResults(result);
 
@@ -84,7 +84,7 @@ public abstract class AbstractCoalesceNotifierTests {
         // Test Failure w/ Reason
         result.setError("Hello World");
 
-        metric = new MetricResults<CoalesceStringResponseType>();
+        metric = new MetricResults<>("TEST");
         metric.setWatch(watch);
         metric.setResults(result);
 

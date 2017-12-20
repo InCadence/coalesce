@@ -935,16 +935,11 @@ public class GraphicsHelperTest {
         CoalesceRecord record = GraphicsHelperTest.getFieldThumbnailRecord();
 
         @SuppressWarnings("unchecked")
-        CoalesceField<byte[]> file = (CoalesceField<byte[]>) record.getFieldByName("File");
-        assertTrue("Thumbnail creation failed for file type",
-                   GraphicsHelper.createFieldThumbnail(record.getFieldByName("File")));
+        CoalesceFileField file = (CoalesceFileField) record.getFieldByName("File");
+        assertTrue("Thumbnail creation failed for file type", GraphicsHelper.createFieldThumbnail(file));
 
         File thumbnail = new File(file.getCoalesceFullThumbnailFilename());
         assertTrue("Thumbnail was not created correctly!", thumbnail.exists());
-
-        assertFalse("Thumbnail creation should have failed for a non-file type",
-                    GraphicsHelper.createFieldThumbnail(record.getFieldByName("NotFile")));
-
     }
 
     @Test
@@ -954,7 +949,7 @@ public class GraphicsHelperTest {
         CoalesceRecord record = GraphicsHelperTest.getFieldThumbnailRecord();
 
         @SuppressWarnings("unchecked")
-        CoalesceField<byte[]> file = (CoalesceField<byte[]>) record.getFieldByName("File");
+        CoalesceFileField file = (CoalesceFileField) record.getFieldByName("File");
         assertTrue("Thumbnail creation failed for file type",
                    GraphicsHelper.createFieldThumbnail(file.getCoalesceFullFilename()));
 
@@ -962,9 +957,6 @@ public class GraphicsHelperTest {
         assertTrue("Thumbnail was not created correctly!", thumbnail.exists());
 
         assertFalse("Thumbnail already exists", GraphicsHelper.createFieldThumbnail(file.getCoalesceFullFilename()));
-
-        assertFalse("Thumbnail creation should have failed for a non-file type",
-                    GraphicsHelper.createFieldThumbnail(record.getFieldByName("NotFile").getCoalesceFullFilename()));
 
     }
 
@@ -975,7 +967,7 @@ public class GraphicsHelperTest {
         CoalesceRecord record = GraphicsHelperTest.getFieldThumbnailRecord();
 
         @SuppressWarnings("unchecked")
-        CoalesceField<byte[]> file = (CoalesceField<byte[]>) record.getFieldByName("File");
+        CoalesceFileField file = (CoalesceFileField) record.getFieldByName("File");
 
         Files.createDirectory(Paths.get(file.getCoalesceFullThumbnailFilename()));
 
@@ -1019,16 +1011,16 @@ public class GraphicsHelperTest {
     {
         return getImage("Desert.jpg");
     }
-    
+
     private BufferedImage getDesertTall() throws IOException
     {
         return getImage("Desert_Tall.jpg");
     }
-    
+
     private BufferedImage getImage(String resource) throws IOException
     {
         String testPath = CoalesceUnitTestSettings.getResourceAbsolutePath(resource);
         return ImageIO.read(new File(testPath));
     }
-    
+
 }

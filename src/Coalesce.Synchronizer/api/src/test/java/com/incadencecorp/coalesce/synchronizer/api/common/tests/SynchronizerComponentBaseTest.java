@@ -79,7 +79,7 @@ public class SynchronizerComponentBaseTest {
     {
         UnitTestComponent component = new UnitTestComponent();
 
-        Assert.assertEquals(UnitTestComponent.class.getName(), component.getName());
+        Assert.assertEquals(UnitTestComponent.class.getSimpleName(), component.getName());
 
         component.setName("HelloWorld");
 

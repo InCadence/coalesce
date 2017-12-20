@@ -19,7 +19,7 @@ package com.incadencecorp.coalesce.services.search.service.data.model;
 
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 
-public class FieldData extends ObjectData {
+public class FieldData extends CoalesceObjectImpl {
 
     private ECoalesceFieldDataTypes type;
 

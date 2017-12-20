@@ -41,17 +41,19 @@ public class StopWatch {
     /**
      * Default constructor
      */
-    public StopWatch() {
-        created = System.currentTimeMillis();
+    public StopWatch()
+    {
+        reset();
     }
 
     /**
      * Exposed for Unit Test. Sets the created to to X minutes in the past from current system time.
      *
-     * @param minutes
-     *            minutes into the past
+     * @param minutes minutes into the past
      */
-    public StopWatch(long minutes) {
+    public StopWatch(long minutes)
+    {
+        reset();
         created = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(minutes);
     }
 
@@ -62,21 +64,24 @@ public class StopWatch {
     /**
      * @return the created
      */
-    public final long getCreated() {
+    public final long getCreated()
+    {
         return created;
     }
 
     /**
      * @return the started
      */
-    public final long getStarted() {
+    public final long getStarted()
+    {
         return started;
     }
 
     /**
      * @return the completed
      */
-    public final long getCompleted() {
+    public final long getCompleted()
+    {
         return finished;
     }
 
@@ -87,36 +92,76 @@ public class StopWatch {
     /**
      * Records the start time.
      */
-    public final void start() {
+    public final void start()
+    {
         started = System.currentTimeMillis();
+        finished = 0;
+    }
+
+    /**
+     * Records the start time.
+     */
+    public final void reset()
+    {
+        created = System.currentTimeMillis();
+        started = 0;
+        finished = 0;
     }
 
     /**
      * Records the finish time.
      */
-    public final void finish() {
+    public final void finish()
+    {
         finished = System.currentTimeMillis();
+    }
+
+    /**
+     * @return the total time the job was sitting in the queue before starting in ms.
+     */
+    public final long getPendingLife()
+    {
+        return getPendingLife(TimeUnit.MILLISECONDS);
     }
 
     /**
      * @return the total time the job was sitting in the queue before starting.
      */
-    public final long getPendingLife() {
-        return started - created;
+    public final long getPendingLife(TimeUnit unit)
+    {
+        return unit.convert(started - created, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * @return the total time the job took to perform its task in ms.
+     */
+    public final long getWorkLife()
+    {
+        return getWorkLife(TimeUnit.MILLISECONDS);
     }
 
     /**
      * @return the total time the job took to perform its task.
      */
-    public final long getWorkLife() {
-        return finished - started;
+    public final long getWorkLife(TimeUnit unit)
+    {
+        return unit.convert(finished - started, TimeUnit.MILLISECONDS);
     }
 
     /**
      * @return the total time from the job creation to it's completion.
      */
-    public final long getTotalLife() {
-        return finished - created;
+    public final long getTotalLife()
+    {
+        return getTotalLife(TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * @return the total time from the job creation to it's completion.
+     */
+    public final long getTotalLife(TimeUnit unit)
+    {
+        return unit.convert(finished - created, TimeUnit.MILLISECONDS);
     }
 
 }

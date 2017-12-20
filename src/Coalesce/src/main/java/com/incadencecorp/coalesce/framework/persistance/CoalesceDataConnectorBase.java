@@ -1,20 +1,14 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
-
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import javax.xml.parsers.ParserConfigurationException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -75,9 +69,9 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     /**
      * Returns the results from the executed SQL Command.
      *
-     * @param sql the statement to be executed against the database.
+     * @param sql        the statement to be executed against the database.
      * @param parameters the multiple parameters to be applied to the SQL
-     *            statement
+     *                   statement
      * @return ResultSet - A table of data representing a database result set.
      * @throws SQLException
      */
@@ -90,7 +84,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         {
             LOGGER.trace("Executing: {}", sql);
         }
-        
+
         PreparedStatement stmt = _conn.prepareStatement(sql);
 
         if (parameters != null)
@@ -114,7 +108,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
         if (LOGGER.isTraceEnabled())
         {
-            LOGGER.trace("Prepared Statement is: " + stmt.toString());
+            LOGGER.trace("Prepared Statement: " + stmt.toString());
         }
 
         results = stmt.executeQuery();
@@ -128,10 +122,10 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * Returns the results from the executed SQL Command, that contains LIKE
      * wildcards.
      *
-     * @param sql the statement to be executed against the database.
+     * @param sql        the statement to be executed against the database.
      * @param likeParams the number of like parameters in the SQL statement
      * @param parameters the multiple parameters to be applied to the SQL
-     *            statement
+     *                   statement
      * @return ResultSet - A table of data representing a database result set.
      * @throws SQLException
      */
@@ -165,9 +159,9 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     /**
      * Executes a SQL statement on a database.
      *
-     * @param sql the statement to be executed against the database.
+     * @param sql        the statement to be executed against the database.
      * @param parameters the multiple parameters to be applied to the SQL
-     *            statement
+     *                   statement
      * @return true = success
      * @throws SQLException
      */
@@ -215,9 +209,9 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * Executes a stored procedure(or function) on a database.
      *
      * @param procedureName the name of the stored procedure to be executed
-     *            against the database.
-     * @param parameters the multiple parameters to be applied to the SQL
-     *            statement
+     *                      against the database.
+     * @param parameters    the multiple parameters to be applied to the SQL
+     *                      statement
      * @return true = success
      * @throws SQLException
      */
@@ -270,7 +264,6 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
         stmt.executeUpdate();
 
-        
         return true;
 
     }
@@ -283,8 +276,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @throws SQLException
      * @throws ParserConfigurationException
      */
-    public final List<ObjectMetaData> getTemplateMetaData(final String sql) throws SQLException,
-            ParserConfigurationException
+    public final List<ObjectMetaData> getTemplateMetaData(final String sql) throws SQLException, ParserConfigurationException
     {
         List<ObjectMetaData> templates = new ArrayList<ObjectMetaData>();
 
@@ -366,6 +358,18 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
             {
                 throw new CoalescePersistorException("Failed to close connection: " + e.getMessage(), e);
             }
+        }
+    }
+
+    public final boolean isClosed()
+    {
+        try
+        {
+            return (_conn == null) ? true : _conn.isClosed();
+        }
+        catch (SQLException e)
+        {
+            return true;
         }
     }
 

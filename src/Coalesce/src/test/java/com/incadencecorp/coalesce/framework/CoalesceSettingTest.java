@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FilenameUtils;
@@ -36,7 +37,7 @@ public class CoalesceSettingTest {
     @BeforeClass
     public static void setUpBeforeClass() throws IOException
     {
-        assertEquals("Coalesce.config", CoalesceSettings.getConfigurationFileName());
+        assertEquals("coalesce.properties", CoalesceSettings.getConfigurationFileName());
 
         getDefaultApplicationRootNotSetTest();
 
@@ -60,7 +61,7 @@ public class CoalesceSettingTest {
     @Test
     public void getConfiguationFileNameTest()
     {
-        assertEquals("Coalesce.UnitTest.Coalesce.config", CoalesceSettings.getConfigurationFileName());
+        assertEquals("Coalesce.UnitTest.coalesce.properties", CoalesceSettings.getConfigurationFileName());
     }
 
     @Test
@@ -114,7 +115,7 @@ public class CoalesceSettingTest {
     @Test
     public void binaryFileStoreBasePathTest()
     {
-        assertEquals(FilenameUtils.concat(CoalesceSettings.getDefaultApplicationRoot(), "..\\images\\uploads\\"),
+        assertEquals(FilenameUtils.concat(CoalesceSettings.getDefaultApplicationRoot(), "files"),
                      CoalesceSettings.getBinaryFileStoreBasePath());
 
         CoalesceSettings.setBinaryFileStoreBasePath("C:\\UnitTesting.Coalesce.Testing.config");
@@ -122,7 +123,7 @@ public class CoalesceSettingTest {
         assertEquals("C:\\UnitTesting.Coalesce.Testing.config", CoalesceSettings.getBinaryFileStoreBasePath());
 
         CoalesceSettings.setBinaryFileStoreBasePath(FilenameUtils.concat(CoalesceSettings.getDefaultApplicationRoot(),
-                                                                         "..\\images\\uploads\\"));
+                                                                         "files"));
         
     }
 

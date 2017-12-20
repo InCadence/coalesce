@@ -28,6 +28,7 @@ import java.util.zip.ZipInputStream;
 //import org.apache.batik.transcoder.image.ImageTranscoder;
 //import org.apache.batik.transcoder.wmf.tosvg.WMFTranscoder;
 //import org.apache.batik.util.SVGConstants;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.NullArgumentException;
 import org.jdom2.Document;
@@ -74,7 +75,7 @@ import com.incadencecorp.unity.common.CallResult.CallResults;
 /**
  * Provides access to the properties of a file. If the file is an OpenXML document it will provide access to the internal
  * properties of the document.
- * 
+ *
  * @author InCadence
  *
  */
@@ -124,16 +125,12 @@ public class DocumentProperties {
      * Initializes a {@link DocumentProperties} from a file without encryption. If the file is an OpenXml file type then the
      * internal Core properties are extracted. If the file is an image then the properties of the image are extracted and a
      * thumbnail version of the file is generated.
-     * 
+     *
      * @param fullFilename the full path and filename of the file.
      * @return True if successful.
-     * @throws ImageProcessingException
-     * @throws IOException
-     * @throws JDOMException
-     * @throws CoalesceCryptoException
+     * @throws CoalesceException
      */
-    public boolean initialize(String fullFilename) throws ImageProcessingException, IOException, JDOMException,
-            CoalesceCryptoException
+    public boolean initialize(String fullFilename) throws CoalesceException
     {
         return initialize(fullFilename, false);
     }
@@ -142,17 +139,13 @@ public class DocumentProperties {
      * Initializes a {@link DocumentProperties} from a file without encryption. If the file is an OpenXml file type then the
      * internal Core properties are extracted. If the file is an image then the properties of the image are extracted and a
      * thumbnail version of the file is generated.
-     * 
+     *
      * @param fullFilename the full path and filename of the file.
      * @param encrypted Whether the file needs to be decrypted or not.
      * @return True if successful.
-     * @throws ImageProcessingException
-     * @throws IOException
-     * @throws JDOMException
-     * @throws CoalesceCryptoException
+     * @throws CoalesceException
      */
-    public boolean initialize(String fullFilename, boolean encrypted) throws ImageProcessingException, IOException,
-            JDOMException, CoalesceCryptoException
+    public boolean initialize(String fullFilename, boolean encrypted) throws CoalesceException
     {
 
         if (!initializeFileInfo(fullFilename)) return false;
@@ -163,20 +156,41 @@ public class DocumentProperties {
         case "xlsx":
 
             // Use XPS Packaging to extract from ExcelX
-            initializeOpenXmlProperties(fullFilename, encrypted);
+            try
+            {
+                initializeOpenXmlProperties(fullFilename, encrypted);
+            }
+            catch (JDOMException | IOException e)
+            {
+                throw new CoalesceException("Failed to Initialize", e);
+            }
 
             break;
 
         case "jpg":
 
             // Use EXIFLib to extract data about the JPEG image (Latitude, Longitude, etc...)
-            initializeJpegProperties(fullFilename, encrypted);
+            try
+            {
+                initializeJpegProperties(fullFilename, encrypted);
+            }
+            catch (ImageProcessingException | IOException e)
+            {
+                throw new CoalesceException("Failed to Initialize", e);
+            }
 
         }
 
         if (getThumbnail() == null)
         {
-            generateThumbnail(fullFilename);
+            try
+            {
+                generateThumbnail(fullFilename);
+            }
+            catch (IOException e)
+            {
+                throw new CoalesceException("Failed to Initialize", e);
+            }
         }
 
         return true;
@@ -751,7 +765,7 @@ public class DocumentProperties {
 //            transcoder.transcode(input, output);
 //            /*
 //             * String svgFile = "<storage location>" + StringUtils.replace(filename, "wmf", "svg");
-//             * 
+//             *
 //             * try (FileOutputStream fileOut = new FileOutputStream(svgFile)) { fileOut.write(svg.toByteArray());
 //             * fileOut.flush(); }
 //             */
@@ -832,7 +846,7 @@ public class DocumentProperties {
 
     /**
      * Returns the category of the file.
-     * 
+     *
      * @return the category of the file.
      */
     public String getCategory()
@@ -842,7 +856,7 @@ public class DocumentProperties {
 
     /**
      * Sets the category of the file.
-     * 
+     *
      * @param value the category of the file.
      */
     public void setCategory(String value)
@@ -852,7 +866,7 @@ public class DocumentProperties {
 
     /**
      * Returns the content status of the file.
-     * 
+     *
      * @return the content status of the file.
      */
     public String getContentStatus()
@@ -862,7 +876,7 @@ public class DocumentProperties {
 
     /**
      * Sets the content status of the file.
-     * 
+     *
      * @param value the content status of the file.
      */
     public void setContentStatus(String value)
@@ -872,7 +886,7 @@ public class DocumentProperties {
 
     /**
      * Returns the content type of the file.
-     * 
+     *
      * @return the content type of the file.
      */
     public String getContentType()
@@ -882,7 +896,7 @@ public class DocumentProperties {
 
     /**
      * Sets the content type of the file.
-     * 
+     *
      * @param value the content type of the file.
      */
     public void setContentType(String value)
@@ -892,7 +906,7 @@ public class DocumentProperties {
 
     /**
      * Returns when the file was created.
-     * 
+     *
      * @return When the file was created.
      */
     public DateTime getCreated()
@@ -902,7 +916,7 @@ public class DocumentProperties {
 
     /**
      * Sets when the file was created.
-     * 
+     *
      * @param value When the file was created.
      */
     public void setCreated(DateTime value)
@@ -912,7 +926,7 @@ public class DocumentProperties {
 
     /**
      * Returns the creator of the file.
-     * 
+     *
      * @return the creator of the file.
      */
     public String getCreator()
@@ -922,7 +936,7 @@ public class DocumentProperties {
 
     /**
      * Sets the creator of the file.
-     * 
+     *
      * @param value the creator of the file.
      */
     public void setCreator(String value)
@@ -932,7 +946,7 @@ public class DocumentProperties {
 
     /**
      * Returns the description of the file.
-     * 
+     *
      * @return the description of the file.
      */
     public String getDescription()
@@ -942,7 +956,7 @@ public class DocumentProperties {
 
     /**
      * Sets the description of the file.
-     * 
+     *
      * @param value the description of the file.
      */
     public void setDescription(String value)
@@ -952,7 +966,7 @@ public class DocumentProperties {
 
     /**
      * Returns the identifier for the file.
-     * 
+     *
      * @return the identifier for the file.
      */
     public String getIdentifier()
@@ -962,7 +976,7 @@ public class DocumentProperties {
 
     /**
      * Sets the identifier for the file.
-     * 
+     *
      * @param value the identifier for the file.
      */
     public void setIdentifier(String value)
@@ -972,7 +986,7 @@ public class DocumentProperties {
 
     /**
      * Returns the keywords associated with the file.
-     * 
+     *
      * @return the keywords associated with the file.
      */
     public String getKeywords()
@@ -982,7 +996,7 @@ public class DocumentProperties {
 
     /**
      * Sets the keywords associated with the file.
-     * 
+     *
      * @param value the keywords associated with the file.
      */
     public void setKeywords(String value)
@@ -992,7 +1006,7 @@ public class DocumentProperties {
 
     /**
      * Returns the language of the file.
-     * 
+     *
      * @return the language of the file.
      */
     public String getLanguage()
@@ -1002,7 +1016,7 @@ public class DocumentProperties {
 
     /**
      * Sets the language of the file.
-     * 
+     *
      * @param value the language of the file.
      */
     public void setLanguage(String value)
@@ -1012,7 +1026,7 @@ public class DocumentProperties {
 
     /**
      * Returns who the file was last modified by.
-     * 
+     *
      * @return Who the file was last modified by.
      */
     public String getLastModifiedBy()
@@ -1022,7 +1036,7 @@ public class DocumentProperties {
 
     /**
      * Sets who the file was last modified by.
-     * 
+     *
      * @param value Who the file was last modified by.
      */
     public void setLastModifiedBy(String value)
@@ -1032,7 +1046,7 @@ public class DocumentProperties {
 
     /**
      * Returns when the file was last printed.
-     * 
+     *
      * @return When the file was last printed.
      */
     public DateTime getLastPrinted()
@@ -1042,7 +1056,7 @@ public class DocumentProperties {
 
     /**
      * Sets when the file was last printed.
-     * 
+     *
      * @param value When the file was last printed.
      */
     public void setLastPrinted(DateTime value)
@@ -1052,7 +1066,7 @@ public class DocumentProperties {
 
     /**
      * Returns when the file was last modified.
-     * 
+     *
      * @return When the file was last modified.
      */
     public DateTime getModified()
@@ -1062,7 +1076,7 @@ public class DocumentProperties {
 
     /**
      * Sets when the file was last modified.
-     * 
+     *
      * @param value When the file was last modified.
      */
     public void setModified(DateTime value)
@@ -1072,7 +1086,7 @@ public class DocumentProperties {
 
     /**
      * Returns the revision of the file.
-     * 
+     *
      * @return the revision of the file.
      */
     public String getRevision()
@@ -1082,7 +1096,7 @@ public class DocumentProperties {
 
     /**
      * Sets the revision of the file.
-     * 
+     *
      * @param value the revision of the file.
      */
     public void setRevision(String value)
@@ -1092,7 +1106,7 @@ public class DocumentProperties {
 
     /**
      * Returns the subject of the file.
-     * 
+     *
      * @return the subject of the file.
      */
     public String getSubject()
@@ -1102,7 +1116,7 @@ public class DocumentProperties {
 
     /**
      * Sets the subject of the file.
-     * 
+     *
      * @param value the subject of the file.
      */
     public void setSubject(String value)
@@ -1112,7 +1126,7 @@ public class DocumentProperties {
 
     /**
      * Returns the title of the file.
-     * 
+     *
      * @return the title of the file.
      */
     public String getTitle()
@@ -1122,7 +1136,7 @@ public class DocumentProperties {
 
     /**
      * Sets the title of the file.
-     * 
+     *
      * @param value the title of the file.
      */
     public void setTitle(String value)
@@ -1132,7 +1146,7 @@ public class DocumentProperties {
 
     /**
      * Returns the version of the file.
-     * 
+     *
      * @return the version of the file.
      */
     public String getVersion()
@@ -1142,7 +1156,7 @@ public class DocumentProperties {
 
     /**
      * Sets the version of the file.
-     * 
+     *
      * @param value the version of the file.
      */
     public void setVersion(String value)
@@ -1152,7 +1166,7 @@ public class DocumentProperties {
 
     /**
      * Returns the full filename of the file including path.
-     * 
+     *
      * @return the full filename of the file including path.
      */
     public String getFullFilename()
@@ -1162,7 +1176,7 @@ public class DocumentProperties {
 
     /**
      * Sets the full filename of the file.
-     * 
+     *
      * @param value the full filename of the file including path.
      */
     public void setFullFilename(String value)
@@ -1172,7 +1186,7 @@ public class DocumentProperties {
 
     /**
      * Returns the filename of the file without path.
-     * 
+     *
      * @return the filename of the file without path.
      */
     public String getFilename()
@@ -1182,7 +1196,7 @@ public class DocumentProperties {
 
     /**
      * Sets the filename of the file.
-     * 
+     *
      * @param value the filename of the file without path.
      */
     public void setFilename(String value)
@@ -1192,7 +1206,7 @@ public class DocumentProperties {
 
     /**
      * Returns the extension of the file.
-     * 
+     *
      * @return the extension of the file.
      */
     public String getExtension()
@@ -1202,7 +1216,7 @@ public class DocumentProperties {
 
     /**
      * Sets the extension of the file.
-     * 
+     *
      * @param value the extension of the file.
      */
     public void setExtension(String value)
@@ -1212,7 +1226,7 @@ public class DocumentProperties {
 
     /**
      * Returns the filename of the file without extension or path.
-     * 
+     *
      * @return the filename of the file without extension or path.
      */
     public String getFilenameWithoutExtension()
@@ -1222,7 +1236,7 @@ public class DocumentProperties {
 
     /**
      * Sets the filename of the file without extension or path.
-     * 
+     *
      * @param value the filename of the file without extension or path.
      */
     public void setFilenameWithoutExtension(String value)
@@ -1232,7 +1246,7 @@ public class DocumentProperties {
 
     /**
      * Returns the mime type of the file.
-     * 
+     *
      * @return the mime type of the file.
      */
     public String getMimeType()
@@ -1242,7 +1256,7 @@ public class DocumentProperties {
 
     /**
      * Sets the mime type of the file.
-     * 
+     *
      * @param value the mime type of the file.
      */
     public void setMimeType(String value)
@@ -1252,7 +1266,7 @@ public class DocumentProperties {
 
     /**
      * Returns the document type of the file.
-     * 
+     *
      * @return the document type of the file.
      */
     public String getDocumentType()
@@ -1262,7 +1276,7 @@ public class DocumentProperties {
 
     /**
      * Sets the document type of the file.
-     * 
+     *
      * @param value the document type of the file.
      */
     public void setDocumentType(String value)
@@ -1272,7 +1286,7 @@ public class DocumentProperties {
 
     /**
      * Returns the size of the file in bytes.
-     * 
+     *
      * @return the size of the file in bytes.
      */
     public long getSize()
@@ -1282,7 +1296,7 @@ public class DocumentProperties {
 
     /**
      * Sets the size of the file in bytes.
-     * 
+     *
      * @param value the size of the file in bytes.
      */
     public void setSize(long value)
@@ -1292,7 +1306,7 @@ public class DocumentProperties {
 
     /**
      * Returns the number of pages contained in the file.
-     * 
+     *
      * @return the number of pages contained in the file.
      */
     public int getPageCount()
@@ -1302,7 +1316,7 @@ public class DocumentProperties {
 
     /**
      * Sets the number of pages contained in the file.
-     * 
+     *
      * @param value the number of pages contained in the file.
      */
     public void setPageCount(int value)
@@ -1312,7 +1326,7 @@ public class DocumentProperties {
 
     /**
      * Returns the height of the image file.
-     * 
+     *
      * @return the height of the image file.
      */
     public int getImageHeight()
@@ -1322,7 +1336,7 @@ public class DocumentProperties {
 
     /**
      * Sets the height of the image file.
-     * 
+     *
      * @param value the height of the image file.
      */
     public void setImageHeight(int value)
@@ -1332,7 +1346,7 @@ public class DocumentProperties {
 
     /**
      * Returns the width of the image file.
-     * 
+     *
      * @return the width of the image file.
      */
     public int getImageWidth()
@@ -1342,7 +1356,7 @@ public class DocumentProperties {
 
     /**
      * Sets the width of the image file.
-     * 
+     *
      * @param value the width of the image file.
      */
     public void setImageWidth(int value)
@@ -1352,7 +1366,7 @@ public class DocumentProperties {
 
     /**
      * Returns the latitude associated with the file.
-     * 
+     *
      * @return the latitude associated with the file.
      */
     public double getLatitude()
@@ -1362,7 +1376,7 @@ public class DocumentProperties {
 
     /**
      * Sets the latitude associated with the file.
-     * 
+     *
      * @param value the latitude associated with the file.
      */
     public void setLatitude(double value)
@@ -1372,7 +1386,7 @@ public class DocumentProperties {
 
     /**
      * Returns the longitude associated with the file.
-     * 
+     *
      * @return the longitude associated with the file.
      */
     public double getLongitude()
@@ -1382,7 +1396,7 @@ public class DocumentProperties {
 
     /**
      * Sets the longitude associated with the file.
-     * 
+     *
      * @param value the longitude associated with the file.
      */
     public void setLongitude(double value)
@@ -1392,7 +1406,7 @@ public class DocumentProperties {
 
     /**
      * Returns the thumbnail for the file.
-     * 
+     *
      * @return the thumbnail for the file.
      */
     public BufferedImage getThumbnail()
@@ -1402,7 +1416,7 @@ public class DocumentProperties {
 
     /**
      * Sets the thumbnail for the file.
-     * 
+     *
      * @param value the thumbnail for the file.
      */
     public void setThumbnail(BufferedImage value)
@@ -1412,7 +1426,7 @@ public class DocumentProperties {
 
     /**
      * Returns the filename of the thumbnail for the file.
-     * 
+     *
      * @return the filename of the thumbnail for the file.
      */
     public String getThumbnailFilename()
@@ -1422,7 +1436,7 @@ public class DocumentProperties {
 
     /**
      * Sets the filename of the thumbnail for the file.
-     * 
+     *
      * @param thumbnailFilename the filename of the thumbnail for the file.
      */
     public void setThumbnailFilename(String thumbnailFilename)

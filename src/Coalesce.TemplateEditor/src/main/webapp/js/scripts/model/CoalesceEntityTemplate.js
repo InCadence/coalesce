@@ -1,21 +1,25 @@
-function CoalesceEntityTemplate (name, sections){
-	this.templateName=name;
-	this.sections=sections;
+function CoalesceEntityTemplate (key, name, source, version, classname, sections){
+	this.key=key;
+	this.name=name;
+	this.source=source;
+	this.version=version;
+	this.className=classname;
+	this.sectionsAsList=sections;
 	this.objType=CoalesceObjectType.ENTITY;
 	this.addSection = function (section){
 		sections.push(section);
 	}
 
-	this.getTemplateName = function (){
-		return this.templateName;
+	this.getName = function (){
+		return this.name;
 	}
 
-	this.setTemplateName = function (name){
-		this.templateName = name;
+	this.setName = function (name){
+		this.name = name;
 	}
 
-	this.getSections = function (){
-		return this.sections;
+	this.getSectionsAsList = function (){
+		return this.sectionsAsList;
 	}
 
 	this.getCoalesceType = function(){
@@ -24,10 +28,13 @@ function CoalesceEntityTemplate (name, sections){
 
 	this.initialize = function (obj){
 		if(obj.objType == CoalesceObjectType.ENTITY){
-			this.templateName=obj.templateName;
+			this.key=obj.key;
+			this.name=obj.name;
+			this.source=obj.name;
+			this.version=obj.name;
 			this.objType=obj.objType;
-			this.sections=obj.sections;
-			this.className=obj.className;
+			this.sectionsAsList=obj.sectionsAsList;
+			this.classname=obj.classname;
 			return true;
 		}else{
 			return false;

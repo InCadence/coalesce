@@ -17,27 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.persistance;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.NotImplementedException;
-import org.joda.time.DateTime;
-import org.xml.sax.SAXException;
-
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.ICoalesceComponent;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
@@ -46,13 +26,19 @@ import com.incadencecorp.coalesce.common.helpers.FileHelper;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import org.xml.sax.SAXException;
+
+import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 
 /**
  * This implementation uses the file system to store and retrieve Coalesce
  * entities. This is idea for backing up and restoring entities.
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalescePersistor, ICoalesceComponent {
 
@@ -106,7 +92,7 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     public List<String> getPropertyList()
     {
         List<String> properties = super.getPropertyList();
-        
+
         properties.add(CoalesceParameters.PARAM_DIRECTORY);
         properties.add(CoalesceParameters.PARAM_SUBDIR_LEN);
 
@@ -236,6 +222,18 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     }
 
     @Override
+    public void deleteTemplate(String... keys) throws CoalescePersistorException
+    {
+        throw new CoalescePersistorException("Not Implemented");
+    }
+
+    @Override
+    public void unregisterTemplate(String... keys) throws CoalescePersistorException
+    {
+        throw new CoalescePersistorException("Not Implemented");
+    }
+
+    @Override
     public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
         for (CoalesceEntityTemplate template : templates)
@@ -273,9 +271,9 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     }
 
     @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-        String result = null;
+        CoalesceEntityTemplate result = null;
 
         Path sub = root.resolve(TEMPLATE_DIRECTORY);
         Path filename = sub.resolve(key);
@@ -293,27 +291,42 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
                     line = br.readLine();
                 }
 
-                result = sb.toString();
+                result = CoalesceEntityTemplate.create(sb.toString());
             }
-            catch (IOException e)
+            catch (IOException | SAXException e)
             {
-                throw new CoalescePersistorException("(FAILED) Reading Entity", e);
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), e);
             }
+        }
+        else
+        {
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
         }
 
         return result;
     }
 
     @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version)
+            throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        try
+        {
+            return getEntityTemplate(getEntityTemplateKey(name, source, version));
+        }
+        catch (CoalescePersistorException e)
+        {
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND,
+                                                               "Template",
+                                                               "Name: " + name + " Source: " + source + " Version: "
+                                                                       + version), e);
+        }
     }
 
     @Override
     public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        return UUID.nameUUIDFromBytes((name + source + version).getBytes()).toString();
     }
 
     @Override
@@ -378,80 +391,6 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
                           EPersistorCapabilities.UPDATE,
                           EPersistorCapabilities.DELETE,
                           EPersistorCapabilities.READ_TEMPLATES);
-    }
-
-    /*--------------------------------------------------------------------------
-    Not Implemented
-    --------------------------------------------------------------------------*/
-
-    @Override
-    public void setCacher(ICoalesceCacher cacher)
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public CoalesceEntity getEntity(String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public CoalesceEntity getEntity(String name, String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public Object getFieldValue(String fieldKey) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public List<String> getCoalesceEntityKeysForEntityId(String entityId,
-                                                         String entityIdType,
-                                                         String entityName,
-                                                         String entitySource)
-            throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
     }
 
 }

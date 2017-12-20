@@ -17,23 +17,28 @@
 
 package com.incadencecorp.coalesce.framework;
 
+import com.incadencecorp.coalesce.api.ICoalesceComponent;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.incadencecorp.coalesce.api.ICoalesceComponent;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-
 /**
  * Base implementation for components of the synchronizer.
- * 
+ *
  * @author n78554
  */
 public class CoalesceComponentImpl implements ICoalesceComponent {
 
+    // Use the CoalesceFramework
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceFramework.class);
+
     protected PropertyLoader loader;
-    protected Map<String, String> parameters = new HashMap<String, String>();;
+    protected Map<String, String> parameters = new HashMap<String, String>();
 
     private String name;
 
@@ -42,7 +47,15 @@ public class CoalesceComponentImpl implements ICoalesceComponent {
     {
         if (StringHelper.isNullOrEmpty(name))
         {
-            name = this.getClass().getName();
+            // Is CoalesceFramework has trace enabled use the full class name by default
+            if (LOGGER.isTraceEnabled())
+            {
+                name = this.getClass().getName();
+            }
+            else
+            {
+                name = this.getClass().getSimpleName();
+            }
         }
 
         return name;

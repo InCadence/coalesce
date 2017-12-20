@@ -27,14 +27,14 @@ import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 
 /**
  * Interface for sending out notifications.
- * 
+ *
  * @author Derek Clemenzi
  */
 public interface ICoalesceNotifier {
 
     /**
      * Send when metrics are collected.
-     * 
+     *
      * @param task
      * @param results
      */
@@ -42,7 +42,7 @@ public interface ICoalesceNotifier {
 
     /**
      * Send when a CRUD operation is performed on a object.
-     * 
+     *
      * @param task
      * @param data
      */
@@ -50,7 +50,7 @@ public interface ICoalesceNotifier {
 
     /**
      * Send when modifying linkages between objects.
-     * 
+     *
      * @param task
      * @param operation
      * @param entity1
@@ -65,7 +65,7 @@ public interface ICoalesceNotifier {
 
     /**
      * Send when an auditable event occurs.
-     * 
+     *
      * @param task
      * @param category
      * @param level
@@ -75,9 +75,19 @@ public interface ICoalesceNotifier {
 
     /**
      * Send when job completes.
-     * 
+     *
      * @param job
      */
     void sendJobComplete(AbstractCoalesceJob<?, ?, ?> job);
+
+    /**
+     * Sends a message
+     *
+     * @param topic the topic the message is related to.
+     * @param key the value's key
+     * @param value the value
+     * @param <V> the value object type
+     */
+    <V> void sendMessage(String topic, String key, V value);
 
 }

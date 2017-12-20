@@ -26,6 +26,7 @@ import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.enums.ECrudOperations;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
 import com.incadencecorp.coalesce.framework.util.CoalesceNotifierUtil;
@@ -89,7 +90,7 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
                                               ip,
                                               task.getLabel(),
                                               true,
-                                              true,
+                                              ECoalesceObjectStatus.READONLY,
                                               isSysAdmin);
 
                 CoalesceNotifierUtil.sendLinkage(getName(),
@@ -107,7 +108,7 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
                                               ip,
                                               task.getLabel(),
                                               true,
-                                              false,
+                                              ECoalesceObjectStatus.ACTIVE,
                                               isSysAdmin);
 
                 CoalesceNotifierUtil.sendLinkage(getName(),

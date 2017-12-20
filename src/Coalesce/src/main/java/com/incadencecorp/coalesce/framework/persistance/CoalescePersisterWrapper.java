@@ -17,31 +17,25 @@
 
 package com.incadencecorp.coalesce.framework.persistance;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.joda.time.DateTime;
-
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 
+import java.util.*;
+
 /**
  * This implementation is a wrapper for the interface allowing filters to be
  * specified to either exclude or include entities from being saved through the
  * specified persister. <code>*</code> can be used as wild cards.
- * 
+ *
  * @author n78554
  */
 public class CoalescePersisterWrapper implements ICoalescePersistor {
 
-    private static final String[] KEY_FORMATS = new String[] {
-            "%1$s.%2$s.%3$s", "%1$s.%2$s.*", "%1$s.*.*", "%1$s.*.%3$s", "*.%2$s.*", "*.%2$s.%3$s", "*.*.%3$s", "*.*.*"
+    private static final String[] KEY_FORMATS = new String[] { "%1$s.%2$s.%3$s", "%1$s.%2$s.*", "%1$s.*.*", "%1$s.*.%3$s",
+                                                               "*.%2$s.*", "*.%2$s.%3$s", "*.*.%3$s", "*.*.*"
     };
 
     /*--------------------------------------------------------------------------
@@ -58,15 +52,15 @@ public class CoalescePersisterWrapper implements ICoalescePersistor {
 
     /**
      * Creates a wrapper specifying filters to use for the specified persister.
-     * 
-     * @param persister is the persister that this implementation wraps.
+     *
+     * @param persister   is the persister that this implementation wraps.
      * @param isExclusion if <code>true</code> and an entity appears in the list
-     *            it will be denied and vice-versa if this value is
-     *            <code>false</code>.
-     * @param filters Specifying a * or leaving the property blank means it will
-     *            be treated as a wild. Setting
-     *            {@link ObjectMetaData#getCreated()} and
-     *            {@link ObjectMetaData#getLastModified()} has no affect.
+     *                    it will be denied and vice-versa if this value is
+     *                    <code>false</code>.
+     * @param filters     Specifying a * or leaving the property blank means it will
+     *                    be treated as a wild. Setting
+     *                    {@link ObjectMetaData#getCreated()} and
+     *                    {@link ObjectMetaData#getLastModified()} has no affect.
      */
     public CoalescePersisterWrapper(ICoalescePersistor persister, boolean isExclusion, ObjectMetaData... filters)
     {
@@ -135,12 +129,6 @@ public class CoalescePersisterWrapper implements ICoalescePersistor {
     --------------------------------------------------------------------------*/
 
     @Override
-    public void setCacher(ICoalesceCacher cacher)
-    {
-        persister.setCacher(cacher);
-    }
-
-    @Override
     public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
         List<CoalesceEntity> allowed = new ArrayList<CoalesceEntity>();
@@ -163,78 +151,27 @@ public class CoalescePersisterWrapper implements ICoalescePersistor {
     }
 
     @Override
-    public CoalesceEntity getEntity(String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        return persister.getEntity(entityId, entityIdType);
-    }
-
-    @Override
-    public CoalesceEntity getEntity(String name, String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        return persister.getEntity(name, entityId, entityIdType);
-    }
-
-    @Override
     public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
         return persister.getEntityXml(keys);
     }
 
     @Override
-    public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        return persister.getEntityXml(entityId, entityIdType);
-    }
-
-    @Override
-    public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        return persister.getEntityXml(name, entityId, entityIdType);
-    }
-
-    @Override
-    public Object getFieldValue(String fieldKey) throws CoalescePersistorException
-    {
-        return persister.getFieldValue(fieldKey);
-    }
-
-    @Override
-    public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
-    {
-        return persister.getXPath(key, objectType);
-    }
-
-    @Override
-    public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
-    {
-        return persister.getCoalesceObjectLastModified(key, objectType);
-    }
-
-    @Override
-    public List<String> getCoalesceEntityKeysForEntityId(String entityId,
-                                                         String entityIdType,
-                                                         String entityName,
-                                                         String entitySource) throws CoalescePersistorException
-    {
-        return persister.getCoalesceEntityKeysForEntityId(entityId, entityIdType, entityName, entitySource);
-    }
-
-    @Override
-    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
-    {
-        return persister.getCoalesceEntityIdAndTypeForKey(key);
-    }
-
-    @Override
-    public byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException
-    {
-        return persister.getBinaryArray(binaryFieldKey);
-    }
-
-    @Override
     public void saveTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
         persister.saveTemplate(templates);
+    }
+
+    @Override
+    public void deleteTemplate(String... keys) throws CoalescePersistorException
+    {
+        persister.deleteTemplate(keys);
+    }
+
+    @Override
+    public void unregisterTemplate(String... keys) throws CoalescePersistorException
+    {
+        persister.unregisterTemplate(keys);
     }
 
     @Override
@@ -254,15 +191,16 @@ public class CoalescePersisterWrapper implements ICoalescePersistor {
     }
 
     @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-        return persister.getEntityTemplateXml(key);
+        return persister.getEntityTemplate(key);
     }
 
     @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version)
+            throws CoalescePersistorException
     {
-        return persister.getEntityTemplateXml(name, source, version);
+        return persister.getEntityTemplate(name, source, version);
     }
 
     @Override

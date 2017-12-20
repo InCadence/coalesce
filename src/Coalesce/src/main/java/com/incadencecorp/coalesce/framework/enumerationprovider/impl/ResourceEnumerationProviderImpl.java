@@ -43,14 +43,24 @@ public class ResourceEnumerationProviderImpl extends AbstractEnumerationProvider
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceEnumerationProviderImpl.class);
 
+    private Class<?> context;
+    
     /**
      * Default Constructor
      */
     public ResourceEnumerationProviderImpl()
     {
-        // Do Nothing
+        context = ResourceEnumerationProviderImpl.class;
     }
 
+    /**
+     * Default Constructor
+     */
+    public ResourceEnumerationProviderImpl(Class<?> context)
+    {
+        this.context = context;
+    }
+    
     @Override
     protected List<String> lookup(Principal principal, String enumeration)
     {
@@ -61,7 +71,7 @@ public class ResourceEnumerationProviderImpl extends AbstractEnumerationProvider
             InputStream stream = null;
 
             // Is OSGI Environment?
-            Bundle bundle = FrameworkUtil.getBundle(ResourceEnumerationProviderImpl.class);
+            Bundle bundle = FrameworkUtil.getBundle(context);
             if (bundle != null)
             {
                 LOGGER.trace("Loading enumeration ({}) from OSGi", enumeration);

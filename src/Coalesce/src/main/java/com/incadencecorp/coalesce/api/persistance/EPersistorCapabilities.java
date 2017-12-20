@@ -61,6 +61,14 @@ public enum EPersistorCapabilities
      */
     GEOSPATIAL_SEARCH,
     /**
+     * Whether or not this persistor can temporally search entities.
+     */
+    TEMPORAL_SEARCH,
+    /**
+     * Whether or not this persistor can search list data types.
+     */
+    LIST_SEARCH,
+    /**
      * Whether or not this persistor can index fields.
      */
     INDEX_FIELDS;

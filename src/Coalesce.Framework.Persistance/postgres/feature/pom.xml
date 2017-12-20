@@ -38,17 +38,9 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>xercesImpl</artifactId>
-					<groupId>xerces</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>stax-api</artifactId>
-					<groupId>stax</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jaxb2-basics</artifactId>
-					<groupId>*</groupId>
-				</exclusion>
+					<groupId>org.geotools.jdbc</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>								
 				<exclusion>
 					<groupId>com.incadencecorp.coalesce</groupId>
 					<artifactId>coalesce-core</artifactId>

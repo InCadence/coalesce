@@ -17,48 +17,51 @@
 
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Data types supported by Coalesce.
- * 
+ *
  * @author n78554
  */
 @XmlType(name = "ECoalesceFieldDataTypes", namespace = "http://framework.coalesce.incadencecorp.com/datamodel")
 @XmlEnum
-public enum ECoalesceFieldDataTypes
-{
+public enum ECoalesceFieldDataTypes {
 
-    STRING_TYPE("string"), 
-    STRING_LIST_TYPE("stringlist"), 
-    DATE_TIME_TYPE("datetime"), 
-    URI_TYPE("uri"), 
-    BINARY_TYPE("binary"), 
-    BOOLEAN_TYPE("boolean"), 
-    BOOLEAN_LIST_TYPE("booleanlist"), 
-    INTEGER_TYPE("integer"), 
-    INTEGER_LIST_TYPE("integerlist"), 
-    GUID_TYPE("guid"), 
-    GUID_LIST_TYPE("guidlist"), 
-    GEOCOORDINATE_TYPE("geocoordinate"), 
-    GEOCOORDINATE_LIST_TYPE("geocoordinatelist"), 
-    LINE_STRING_TYPE("linestring"), 
-    POLYGON_TYPE("polygon"), 
+    STRING_TYPE("string"),
+    STRING_LIST_TYPE("stringlist"),
+    DATE_TIME_TYPE("datetime"),
+    URI_TYPE("uri"),
+    BINARY_TYPE("binary"),
+    BOOLEAN_TYPE("boolean"),
+    BOOLEAN_LIST_TYPE("booleanlist"),
+    INTEGER_TYPE("integer"),
+    INTEGER_LIST_TYPE("integerlist"),
+    GUID_TYPE("guid"),
+    GUID_LIST_TYPE("guidlist"),
+    GEOCOORDINATE_TYPE("geocoordinate"),
+    GEOCOORDINATE_LIST_TYPE("geocoordinatelist"),
+    LINE_STRING_TYPE("linestring"),
+    POLYGON_TYPE("polygon"),
     CIRCLE_TYPE("circle"),
-    FILE_TYPE("file"), 
-    DOUBLE_TYPE("double"), 
-    DOUBLE_LIST_TYPE("doublelist"), 
-    FLOAT_TYPE("float"), 
-    FLOAT_LIST_TYPE("floatlist"), 
-    LONG_TYPE("long"), 
+    FILE_TYPE("file"),
+    DOUBLE_TYPE("double"),
+    DOUBLE_LIST_TYPE("doublelist"),
+    FLOAT_TYPE("float"),
+    FLOAT_LIST_TYPE("floatlist"),
+    LONG_TYPE("long"),
     LONG_LIST_TYPE("longlist"),
     ENUMERATION_TYPE("enum"),
     ENUMERATION_LIST_TYPE("enumlist");
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ECoalesceFieldDataTypes.class);
     private String _label;
 
     /**
@@ -89,6 +92,15 @@ public enum ECoalesceFieldDataTypes
     }
 
     /**
+     * @return whether the data type is a geometry type.
+     */
+    public boolean isGeometryType()
+    {
+        return this == GEOCOORDINATE_TYPE || this == GEOCOORDINATE_LIST_TYPE || this == LINE_STRING_TYPE
+                || this == POLYGON_TYPE || this == CIRCLE_TYPE;
+    }
+
+    /**
      * @param coalesceType allowed object is {@link String }
      * @return the ECoalesceFieldDataTypes type for the String type parameter.
      */
@@ -97,11 +109,20 @@ public enum ECoalesceFieldDataTypes
         ECoalesceFieldDataTypes value = getMapping().get(coalesceType.trim().toLowerCase());
 
         if (value == null)
-            value = ECoalesceFieldDataTypes.STRING_TYPE;
+        {
+            try
+            {
+                value = valueOf(coalesceType);
+            }
+            catch (Exception e)
+            {
+                LOGGER.warn(String.format(CoalesceErrors.INVALID_INPUT_REASON, coalesceType, e.getMessage()));
+                value = ECoalesceFieldDataTypes.STRING_TYPE;
+            }
+        }
 
         return value;
     }
-
 
     private static synchronized Map<String, ECoalesceFieldDataTypes> getMapping()
     {

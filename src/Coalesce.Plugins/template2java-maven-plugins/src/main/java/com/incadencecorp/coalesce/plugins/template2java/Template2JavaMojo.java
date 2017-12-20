@@ -94,7 +94,7 @@ public class Template2JavaMojo extends AbstractMojo {
                     CoalesceEntityTemplate template;
                     try
                     {
-                        template = CoalesceEntityTemplate.create(persistor.getEntityTemplateXml(meta.getKey()));
+                        template = persistor.getEntityTemplate(meta.getKey());
 
                         LOGGER.info("Generating ({}) ({}) ({})",
                                     template.getName(),
@@ -111,7 +111,7 @@ public class Template2JavaMojo extends AbstractMojo {
                             it.generateCode(template);
                         }
                     }
-                    catch (SAXException | IOException | CoalesceException e)
+                    catch (CoalesceException e)
                     {
                         String errorMsg = String.format(CoalesceErrors.INVALID_OBJECT,
                                                         CoalesceEntityTemplate.class.getSimpleName(),

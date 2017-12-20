@@ -183,4 +183,16 @@ public final class CoalesceNotifierUtil {
         notifier.sendAudit(task, category, level, message);
     }
 
+    /**
+     * @see ICoalesceNotifier#sendMessage(String, String, Object)
+     * @param topic
+     * @param key
+     * @param value
+     * @param <V>
+     */
+    public static final <V> void sendMessage(String topic, String key, V value)
+    {
+        notifier.sendMessage(topic, key, value);
+    }
+
 }

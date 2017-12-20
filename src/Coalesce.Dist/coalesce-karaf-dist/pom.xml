@@ -15,17 +15,16 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.incadencecorp.coalesce.karaf</groupId>
 	<artifactId>coalesce-karaf-dist</artifactId>
 	<packaging>karaf-assembly</packaging>
 	<name>Coalesce Karaf Distribution</name>
 	<description>This is a self contained distribution of the Coalesce services within Karaf.</description>
 
 	<parent>
-		<groupId>com.incadencecorp.coalesce</groupId>
-		<artifactId>coalesce-pom</artifactId>
+		<groupId>com.incadencecorp.coalesce.dist</groupId>
+		<artifactId>coalesce-dist-parent</artifactId>
 		<version>0.0.25-SNAPSHOT</version>
-		<relativePath>../../Coalesce.Pom</relativePath>
+		<relativePath>..</relativePath>
 	</parent>
 
 	<properties>
@@ -92,10 +91,7 @@
 						<feature>cxf</feature>
 						<feature>war</feature>
 						<feature>persister-derby-feature</feature>
-						<feature>coalesce-crud-service-feature</feature>
-						<feature>coalesce-crud-service-data-feature</feature>
-						<feature>coalesce-search-service-feature</feature>
-						<feature>coalesce-search-service-data-feature</feature>
+						<feature>coalesce-frontend</feature>
 					</bootFeatures>
 					<installedFeatures>
 						<feature>standard</feature>

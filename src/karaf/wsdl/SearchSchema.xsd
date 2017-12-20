@@ -9,7 +9,6 @@
 	computer software and to have or authorize others to do so. Distribution 
 	Statement D. Distribution authorized to the Department of Defense and U.S. 
 	DoD contractors only in support of U.S. DoD efforts. -->
-
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	targetNamespace="http://api.services.coalesce.incadencecorp.com/search"
 	xmlns:tns="http://api.services.coalesce.incadencecorp.com/search"

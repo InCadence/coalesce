@@ -192,8 +192,17 @@ public class XSDEximImpl implements CoalesceExim<Document> {
 
                 while (recordElement != null)
                 {
-                    CoalesceRecord record = ArrayHelper.getItem(recordset.getRecords(),
-                                                                recordElement.getAttribute(CoalesceObject.ATTRIBUTE_KEY));
+                    CoalesceRecord record;
+                    List<CoalesceRecord> records = recordset.getAllRecords();
+                    if (recordset.getMaxRecords() == 1 && records.size() >= 1)
+                    {
+                        record = records.get(0);
+                    }
+                    else
+                    {
+                        record = ArrayHelper.getItem(records, recordElement.getAttribute(CoalesceObject.ATTRIBUTE_KEY));
+                    }
+
                     // Exists?
                     if (record == null)
                     {

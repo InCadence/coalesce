@@ -1,12 +1,7 @@
 package com.incadencecorp.coalesce.framework.testobjects.Photos;
 
-import java.io.IOException;
-
-import org.jdom2.JDOMException;
-
-import com.drew.imaging.ImageProcessingException;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
@@ -36,8 +31,9 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
     @Override
     public boolean initialize()
     {
-        if (!initializeEntity(PhotoGalleryEntity.SOURCE, "1.0", "")) return false;
-        
+        if (!initializeEntity(PhotoGalleryEntity.SOURCE, "1.0", ""))
+            return false;
+
         // Initialize References
         return this.initializeReferences();
     }
@@ -48,10 +44,12 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
         CoalesceSection section;
 
         // Already Initialized?
-        if (_photographRecordset != null) return false;
+        if (_photographRecordset != null)
+            return false;
 
         // Initialize Entity
-        if (!super.initializeEntity(source, version, title)) return false;
+        if (!super.initializeEntity(source, version, title))
+            return false;
 
         // Create Live Section
         section = CoalesceSection.create(this, "Photographs Section");
@@ -73,12 +71,13 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
     @Override
     protected boolean initializeReferences()
     {
-        if (!super.initializeReferences()) return false;
+        if (!super.initializeReferences())
+            return false;
 
         if (_photographRecordset == null)
         {
-            _photographRecordset = (CoalesceRecordset) getCoalesceObjectForNamePath(getName()
-                    + "/Photographs Section/Photographs Recordset");
+            _photographRecordset = (CoalesceRecordset) getCoalesceObjectForNamePath(
+                    getName() + "/Photographs Section/Photographs Recordset");
 
         }
 
@@ -117,7 +116,7 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
                 record = addPhoto(properties);
             }
         }
-        catch (ImageProcessingException | CoalesceCryptoException | IOException | JDOMException e)
+        catch (CoalesceException e)
         {
             record = null;
         }

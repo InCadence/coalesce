@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class CoalesceThreadFactoryImpl implements ThreadFactory {
 
-    private static final AtomicInteger POOLNUMBER = new AtomicInteger(1);
+    private static final AtomicInteger POOL_NUMBER = new AtomicInteger(1);
     private final ThreadGroup group;
     private final AtomicInteger threadNumber = new AtomicInteger(1);
     private final String namePrefix;
@@ -37,9 +37,7 @@ public class CoalesceThreadFactoryImpl implements ThreadFactory {
      */
     public CoalesceThreadFactoryImpl()
     {
-        SecurityManager s = System.getSecurityManager();
-        this.group = s != null ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-        this.namePrefix = "Coalesce pool-" + POOLNUMBER.getAndIncrement() + "-thread-";
+        this(System.getSecurityManager() != null ? System.getSecurityManager().getThreadGroup() : Thread.currentThread().getThreadGroup());
     }
 
     /**
@@ -50,13 +48,14 @@ public class CoalesceThreadFactoryImpl implements ThreadFactory {
     public CoalesceThreadFactoryImpl(ThreadGroup group)
     {
         this.group = group;
-        this.namePrefix = "Coalesce pool-" + POOLNUMBER.getAndIncrement() + "-thread-";
+        this.namePrefix = "coalesce-thread(" + POOL_NUMBER.getAndIncrement() + ":%s)-%s";
     }
 
     @Override
     public Thread newThread(Runnable r)
     {
-        Thread thread = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+        Thread thread = new Thread(group, r);
+        thread.setName(String.format(namePrefix, threadNumber.getAndIncrement(), thread.getId()));
         thread.setDaemon(true);
         thread.setPriority(Thread.NORM_PRIORITY);
         return thread;

@@ -3,6 +3,7 @@
  */
 package com.incadencecorp.coalesce.framework.datamodel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
@@ -41,6 +42,7 @@ public class CoalesceCoordinateField extends CoalesceField<Coordinate> {
      * @return possible object is {@link Point }
      * @throws CoalesceDataFormatException
      */
+    @JsonIgnore
     public Point getValueAsPoint() throws CoalesceDataFormatException
     {
         return getPointValue();

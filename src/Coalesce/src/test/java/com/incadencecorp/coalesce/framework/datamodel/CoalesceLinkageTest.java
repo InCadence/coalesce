@@ -72,7 +72,7 @@ public class CoalesceLinkageTest {
         Assert.assertEquals(0, entity1.getLinkages().size());
 
         // Link Entities
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, null, null, entity1.getKey(), true, false, false);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, null, null, entity1.getKey(), true, ECoalesceObjectStatus.ACTIVE, false);
 
         // Verify
         Assert.assertEquals(1, entity1.getLinkages().size());
@@ -176,12 +176,6 @@ public class CoalesceLinkageTest {
 
         assertEquals("DB7E0EAF-F4EF-4473-94A9-B93A7F46281E", linkage.getKey());
 
-        UUID guid = UUID.randomUUID();
-
-        linkage.setKey(guid);
-
-        assertEquals(guid.toString(), linkage.getKey());
-
         UUID guid2 = UUID.randomUUID();
 
         linkage.setKey(guid2.toString());
@@ -231,7 +225,7 @@ public class CoalesceLinkageTest {
         CoalesceEntity entity2 = new CoalesceEntity();
         entity2.initialize();
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, true, false);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, false);
         EntityLinkHelper.unLinkEntities(entity1, entity2, ELinkTypes.CREATED, "Derek", "127.0.0.1", false);
 
     }
@@ -250,8 +244,8 @@ public class CoalesceLinkageTest {
         CoalesceEntity entity2 = new CoalesceEntity();
         entity2.initialize();
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, true, false);
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, true, false);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, false);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, false);
 
     }
 
@@ -270,8 +264,8 @@ public class CoalesceLinkageTest {
         CoalesceEntity entity2 = new CoalesceEntity();
         entity2.initialize();
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, true, false);
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, true, true);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, false);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, true);
 
         assertTrue(verifyLinkage(entity1, entity2, ELinkTypes.CREATED));
 
@@ -298,10 +292,10 @@ public class CoalesceLinkageTest {
         entity2.initialize();
 
         // Create History
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek1", "127.0.0.1", "", true, false, true);
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek2", "127.0.0.1", "", true, true, true);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek1", "127.0.0.1", "", true, ECoalesceObjectStatus.ACTIVE, true);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek2", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, true);
         EntityLinkHelper.unLinkEntities(entity1, entity2, ELinkTypes.CREATED, "Derek3", "127.0.0.1", true);
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek4", "127.0.0.1", "", true, false, true);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek4", "127.0.0.1", "", true, ECoalesceObjectStatus.ACTIVE, true);
 
         // Get Linkages
         Map<String, CoalesceLinkage> linkages = entity1.getLinkageSection().getLinkages();
@@ -525,23 +519,23 @@ public class CoalesceLinkageTest {
 
         CoalesceLinkage linkage = getMissionLinkage(entity);
 
-        assertFalse(linkage.getNoIndex());
+        assertFalse(linkage.isNoIndex());
 
         linkage.setNoIndex(true);
 
-        assertTrue(linkage.getNoIndex());
+        assertTrue(linkage.isNoIndex());
 
         String entityXml = entity.toXml();
 
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
         CoalesceLinkage desLinkage = getMissionLinkage(desEntity);
 
-        assertTrue(desLinkage.getNoIndex());
+        assertTrue(desLinkage.isNoIndex());
 
         CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
         CoalesceLinkage newLinkage = newEntity.getLinkageSection().createLinkage();
 
-        assertFalse(newLinkage.getNoIndex());
+        assertFalse(newLinkage.isNoIndex());
 
     }
 
@@ -655,7 +649,7 @@ public class CoalesceLinkageTest {
         assertEquals("TestingValue", linkage.getAttribute("TestAttribute"));
 
         assertEquals("Linkage", linkage.getName());
-        assertEquals(false, linkage.getNoIndex());
+        assertEquals(false, linkage.isNoIndex());
 
         linkage.setAttribute("Name", "TestingName");
         assertEquals("TestingName", linkage.getName());
@@ -711,7 +705,7 @@ public class CoalesceLinkageTest {
         assertEquals(Locale.ENGLISH, linkage.getInputLang());
 
         linkage.setAttribute("NoIndex", "True");
-        assertEquals(true, linkage.getNoIndex());
+        assertEquals(true, linkage.isNoIndex());
 
         linkage.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, linkage.getStatus());
@@ -740,7 +734,7 @@ public class CoalesceLinkageTest {
         assertEquals(new Marking("(TS)"), desLinkage.getClassificationMarking());
         assertEquals("TestingUser", desLinkage.getModifiedBy());
         assertEquals(Locale.ENGLISH, desLinkage.getInputLang());
-        assertEquals(true, desLinkage.getNoIndex());
+        assertEquals(true, desLinkage.isNoIndex());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, desLinkage.getStatus());
 
     }

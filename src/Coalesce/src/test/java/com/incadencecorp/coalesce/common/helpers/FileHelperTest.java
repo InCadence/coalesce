@@ -374,7 +374,7 @@ public class FileHelperTest {
                                                                          GUID,
                                                                          false);
 
-        assertEquals(CoalesceUnitTestSettings.getBinaryFileStoreBasePath() + GUID.toUpperCase(), filename);
+        assertEquals(Paths.get(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(), GUID.toUpperCase()).toString(), filename);
     }
 
     @Test
@@ -415,7 +415,7 @@ public class FileHelperTest {
                                                                          GUID,
                                                                          false);
 
-        assertEquals(CoalesceUnitTestSettings.getBinaryFileStoreBasePath() + GUID.toUpperCase(), filename);
+        assertEquals(Paths.get(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(), GUID.toUpperCase()).toString(), filename);
     }
 
     @Test
@@ -428,7 +428,7 @@ public class FileHelperTest {
                                                                          GUID,
                                                                          false);
 
-        assertEquals(CoalesceUnitTestSettings.getBinaryFileStoreBasePath() + GUID.toUpperCase(), filename);
+        assertEquals(Paths.get(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(), GUID.toUpperCase()).toString(), filename);
     }
 
     private String callGetBaseFilenameWithFullDirectoryPathForKey(String binaryFileStoreBasePath,

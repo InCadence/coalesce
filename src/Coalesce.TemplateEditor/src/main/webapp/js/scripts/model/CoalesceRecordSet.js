@@ -1,21 +1,23 @@
-function CoalesceRecordSet (name,fields){
-	this.recordsetName=name;
-	this.fields=fields
+function CoalesceRecordSet (name,min,max,fields){
+	this.name=name;
+	this.minRecords=min;
+	this.maxRecords=max;
+	this.fieldDefinitions=fields
 	this.objType=CoalesceObjectType.RECORDSET;
 	this.addField = function (coalesceField) {
 		fields.push(coalesceField);
 	}
 
-	this.getRecordsetName = function (){
-		return this.recordsetName;
+	this.getName = function (){
+		return this.name;
 	}
 
-	this.setRecordsetName = function (name){
-		this.recordsetName = name;
+	this.setName = function (name){
+		this.name = name;
 	}
 
-	this.getFields = function (){
-		return this.fields;
+	this.getFieldsDefinitions = function (){
+		return this.fieldDefinitions;
 	}
 
 	this.getCoalesceType = function(){
@@ -24,9 +26,9 @@ function CoalesceRecordSet (name,fields){
 
 	this.initialize = function (obj){
 		if(obj.objType == CoalesceObjectType.RECORDSET){
-			this.recordsetName=obj.recordsetName;
+			this.name=obj.name;
 			this.objType=obj.objType;
-			this.fields=obj.fields;
+			this.fieldDefinitions=obj.fieldDefinitions;
 			return true;
 		}else{
 			return false;
