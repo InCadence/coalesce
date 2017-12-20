@@ -90,6 +90,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
 
     /**
      * Creates this framework with the persisters defined by the provided connector within the file persisters.cfg.
+     * Do NOT use this within an OSGi container.
      */
     public CoalesceFramework(IConfigurationsConnector connector)
     {

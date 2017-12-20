@@ -1,85 +1,91 @@
-/*-----------------------------------------------------------------------------'
- Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+/*
+ *  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+ *
+ *  Notwithstanding any contractor copyright notice, the Government has Unlimited
+ *  Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ *  of this work other than as specifically authorized by these DFARS Clauses may
+ *  violate Government rights in this work.
+ *
+ *  DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ *  Unlimited Rights. The Government has the right to use, modify, reproduce,
+ *  perform, display, release or disclose this computer software and to have or
+ *  authorize others to do so.
+ *
+ *  Distribution Statement D. Distribution authorized to the Department of
+ *  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ *
+ */
 
- Notwithstanding any contractor copyright notice, the Government has Unlimited
- Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
- of this work other than as specifically authorized by these DFARS Clauses may
- violate Government rights in this work.
-
- DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
- Unlimited Rights. The Government has the right to use, modify, reproduce,
- perform, display, release or disclose this computer software and to have or
- authorize others to do so.
-
- Distribution Statement D. Distribution authorized to the Department of
- Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
- -----------------------------------------------------------------------------*/
-
-package com.incadencecorp.coalesce.notification.adminevent.impl;
+package com.incadencecorp.coalesce.notification.kafka.impl;
 
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.enums.EAuditCategory;
 import com.incadencecorp.coalesce.enums.EAuditLevels;
 import com.incadencecorp.coalesce.enums.ECrudOperations;
+import com.incadencecorp.coalesce.framework.ShutdownAutoCloseable;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventAdmin;
+import kafka.admin.AdminUtils;
+import kafka.utils.ZKStringSerializer$;
+import kafka.utils.ZkUtils;
+import org.I0Itec.zkclient.ZkClient;
+import org.I0Itec.zkclient.ZkConnection;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.util.*;
 
 /**
- * This implementation uses AdminEvents to push notifications and ONLY works
- * inside of a OSGi environment.
+ * This implementation uses Kafka to push notifications.
  *
  * @author Derek Clemenzi
  */
-public class AdminEventNotifierImpl implements ICoalesceNotifier {
+public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AdminEventNotifierImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaNotifierImpl.class);
+
+    public static final String TOPIC_METRICS = "com/incadence/metrics";
+    public static final String TOPIC_CRUD = "com/incadence/crud";
+    public static final String TOPIC_LINKAGE = "com/incadence/linkage";
+    public static final String TOPIC_AUDIT = "com/incadence/audit";
+    public static final String TOPIC_JOB_COMPLETE = "com/incadence/job";
+
+    public static final String PROP_ZOOKEEPER = "zookeepers";
 
     /*--------------------------------------------------------------------------
     Member Variables
     --------------------------------------------------------------------------*/
 
-    private BundleContext context;
+    private KafkaProducer<String, Object> producer;
+    private String zookeeper;
 
     /*--------------------------------------------------------------------------
     Public Methods
     --------------------------------------------------------------------------*/
 
-    public BundleContext getContext()
+    public KafkaNotifierImpl()
     {
-        if (context == null)
-        {
-            Bundle bundle = FrameworkUtil.getBundle(AdminEventNotifierImpl.class);
-
-            if (bundle != null)
-            {
-                context = bundle.getBundleContext();
-            }
-            else
-            {
-                LOGGER.error("Bundle Context Not Found");
-            }
-        }
-
-        return context;
+        // TODO Not Implemented
+        throw new NotImplementedException();
     }
 
-    public void setContext(BundleContext context)
+    /**
+     * Default Constructor
+     *
+     * @param props configuration properties
+     */
+    public KafkaNotifierImpl(Properties props)
     {
-        this.context = context;
+        zookeeper = props.getProperty(PROP_ZOOKEEPER);
+        producer = new KafkaProducer<>(props);
+
+        ShutdownAutoCloseable.createShutdownHook(this);
     }
 
     /*--------------------------------------------------------------------------
@@ -89,7 +95,7 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
     @Override
     public void sendMetrics(String task, MetricResults<?> results)
     {
-        Dictionary<String, Object> properties = new Hashtable<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("name", task);
         properties.put("pending", results.getWatch().getPendingLife());
         properties.put("working", results.getWatch().getWorkLife());
@@ -100,7 +106,7 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
             properties.put("error", results.getResults().getError());
         }
 
-        sendEvent(new Event("com/incadence/metrics", properties));
+        sendRecord(new ProducerRecord<>(TOPIC_METRICS, properties));
     }
 
     @Override
@@ -114,7 +120,7 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
         properties.put("entitysource", data.getSource());
         properties.put("entityversion", data.getVersion());
 
-        sendEvent(new Event("com/incadence/crud", properties));
+        sendRecord(new ProducerRecord<>(TOPIC_CRUD, properties));
     }
 
     @Override
@@ -137,7 +143,7 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
         properties.put("entity2source", entity2.getSource());
         properties.put("entity2version", entity2.getVersion());
 
-        sendEvent(new Event("com/incadence/linkage", properties));
+        sendRecord(new ProducerRecord<>(TOPIC_LINKAGE, properties));
     }
 
     @Override
@@ -149,7 +155,7 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
         properties.put("level", level.toString());
         properties.put("message", message);
 
-        sendEvent(new Event("com/incadence/audit", properties));
+        sendRecord(new ProducerRecord<>(TOPIC_AUDIT, properties));
     }
 
     @Override
@@ -160,40 +166,66 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
         properties.put("id", job.getJobId());
         properties.put("status", job.getJobStatus().toString());
 
-        sendEvent(new Event("com/incadence/job", properties));
+        sendRecord(new ProducerRecord<>(TOPIC_JOB_COMPLETE, properties));
     }
 
     @Override
     public <V> void sendMessage(String topic, String key, V value)
     {
-        Dictionary<String, Object> properties = new Hashtable<>();
-        properties.put("key", key);
-        properties.put("value", value);
-
-        sendEvent(new Event(topic, properties));
+        sendRecord(new ProducerRecord<>(topic, key, value));
     }
 
+    @Override
+    public void close() throws Exception
+    {
+        producer.close();
+    }
 
     /*--------------------------------------------------------------------------
     Private Methods
     --------------------------------------------------------------------------*/
 
-    private void sendEvent(Event event)
+    private void sendRecord(ProducerRecord<String, Object> record)
     {
-        BundleContext context = getContext();
+        creatTopic(record.topic());
+        producer.send(record);
+    }
 
-        if (context != null)
+    private void creatTopic(String topic)
+    {
+        // TODO Consider caching whether the topic exixts.
+
+        String zookeeperConnect = zookeeper;
+        // TODO move these to properties
+        int sessionTimeoutMs = 10 * 1000;
+        int connectionTimeoutMs = 8 * 1000;
+        int partitions = 20;
+        int replication = 1;
+        boolean isSecureKafkaCluster = false;
+
+        ZkClient zkClient = null;
+
+        try
         {
-            ServiceReference ref = context.getServiceReference(EventAdmin.class.getName());
+            zkClient = new ZkClient(zookeeperConnect, sessionTimeoutMs, connectionTimeoutMs, ZKStringSerializer$.MODULE$);
+            ZkUtils zkUtils = new ZkUtils(zkClient, new ZkConnection(zookeeperConnect), isSecureKafkaCluster);
 
-            if (ref != null)
+            if (!AdminUtils.topicExists(zkUtils, topic))
             {
-                EventAdmin eventAdmin = (EventAdmin) context.getService(ref);
-                eventAdmin.sendEvent(event);
+                Properties topicConfig = new Properties(); // add per-topic configurations settings here
+                AdminUtils.createTopic(zkUtils,
+                                       topic,
+                                       partitions,
+                                       replication,
+                                       topicConfig,
+                                       AdminUtils.createTopic$default$6());
             }
-            else
+        }
+        finally
+        {
+            if (zkClient != null)
             {
-                LOGGER.error("Service Reference Not Found");
+                zkClient.close();
             }
         }
     }

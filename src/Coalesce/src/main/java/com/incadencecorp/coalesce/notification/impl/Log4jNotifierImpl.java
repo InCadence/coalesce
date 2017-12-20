@@ -106,6 +106,12 @@ public class Log4jNotifierImpl implements ICoalesceNotifier {
                     job.getMetrics().getTotalLife());
     }
 
+    @Override
+    public <V> void sendMessage(String topic, String key, V value)
+    {
+        LOGGER.info("Topic ({}): ({}) = ({})", topic, key, value);
+    }
+
     /*--------------------------------------------------------------------------
     Private Methods
     --------------------------------------------------------------------------*/
