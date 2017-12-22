@@ -18,6 +18,9 @@
 
 package com.incadencecorp.coalesce.notification.kafka.impl;
 
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
@@ -55,11 +58,11 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaNotifierImpl.class);
 
-    public static final String TOPIC_METRICS = "com/incadence/metrics";
-    public static final String TOPIC_CRUD = "com/incadence/crud";
-    public static final String TOPIC_LINKAGE = "com/incadence/linkage";
-    public static final String TOPIC_AUDIT = "com/incadence/audit";
-    public static final String TOPIC_JOB_COMPLETE = "com/incadence/job";
+    public static final String TOPIC_METRICS = "com.incadence.metrics";
+    public static final String TOPIC_CRUD = "com.incadence.crud";
+    public static final String TOPIC_LINKAGE = "com.incadence.linkage";
+    public static final String TOPIC_AUDIT = "com.incadence.audit";
+    public static final String TOPIC_JOB_COMPLETE = "com.incadence.job";
 
     public static final String PROP_ZOOKEEPER = "zookeepers";
 
@@ -111,13 +114,13 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
             properties.put("error", results.getResults().getError());
         }
 
-        sendRecord(new ProducerRecord<>(TOPIC_METRICS, properties));
+        sendRecord(new ProducerRecord<>(TOPIC_METRICS, toJSONString(properties)));
     }
 
     @Override
     public void sendCrud(String task, ECrudOperations operation, ObjectMetaData data)
     {
-        Dictionary<String, Object> properties = new Hashtable<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("name", task);
         properties.put("operation", operation.toString());
         properties.put("entitykey", data.getKey());
@@ -125,7 +128,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         properties.put("entitysource", data.getSource());
         properties.put("entityversion", data.getVersion());
 
-        sendRecord(new ProducerRecord<>(TOPIC_CRUD, properties));
+        sendRecord(new ProducerRecord<>(TOPIC_CRUD, toJSONString(properties)));
     }
 
     @Override
@@ -135,7 +138,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
                             ELinkTypes relationship,
                             ObjectMetaData entity2)
     {
-        Dictionary<String, Object> properties = new Hashtable<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("name", task);
         properties.put("operation", operation.toString());
         properties.put("entity1key", entity1.getKey());
@@ -148,30 +151,30 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         properties.put("entity2source", entity2.getSource());
         properties.put("entity2version", entity2.getVersion());
 
-        sendRecord(new ProducerRecord<>(TOPIC_LINKAGE, properties));
+        sendRecord(new ProducerRecord<>(TOPIC_LINKAGE, toJSONString(properties)));
     }
 
     @Override
     public void sendAudit(String task, EAuditCategory category, EAuditLevels level, String message)
     {
-        Dictionary<String, Object> properties = new Hashtable<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("name", task);
         properties.put("category", category.toString());
         properties.put("level", level.toString());
         properties.put("message", message);
 
-        sendRecord(new ProducerRecord<>(TOPIC_AUDIT, properties));
+        sendRecord(new ProducerRecord<>(TOPIC_AUDIT, toJSONString(properties)));
     }
 
     @Override
     public void sendJobComplete(AbstractCoalesceJob<?, ?, ?> job)
     {
-        Dictionary<String, Object> properties = new Hashtable<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("name", job.getName());
         properties.put("id", job.getJobId());
         properties.put("status", job.getJobStatus().toString());
 
-        sendRecord(new ProducerRecord<>(TOPIC_JOB_COMPLETE, properties));
+        sendRecord(new ProducerRecord<>(TOPIC_JOB_COMPLETE, toJSONString(properties)));
     }
 
     @Override
@@ -189,6 +192,22 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
     /*--------------------------------------------------------------------------
     Private Methods
     --------------------------------------------------------------------------*/
+
+    private String toJSONString(Map properties)
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+
+        try
+        {
+            return mapper.writeValueAsString(properties);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
 
     private void sendRecord(ProducerRecord<String, Object> record)
     {

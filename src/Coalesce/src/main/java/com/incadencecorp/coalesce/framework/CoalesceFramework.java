@@ -111,7 +111,6 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
                     if (!isInitialized())
                     {
                         setAuthoritativePersistor((ICoalescePersistor) persister);
-                        refreshCoalesceTemplateUtil();
                     }
                     else
                     {

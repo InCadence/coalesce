@@ -138,7 +138,7 @@ public abstract class AbstractCoalesceNotifierTests {
     @Test
     public void sendMessage() throws Exception
     {
-        CoalesceNotifierUtil.sendMessage("Hello Wolrd", "test", "test");
+        CoalesceNotifierUtil.sendMessage("unittest", "test", "test");
     }
 
 }

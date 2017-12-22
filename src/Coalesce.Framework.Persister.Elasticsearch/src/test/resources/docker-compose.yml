@@ -1,0 +1,15 @@
+version: "2"
+services:
+    elasticsearch5:
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
+        container_name: rbcf-elasticsearch
+        environment:
+            - cluster.name=elasticsearch
+            - http.host=0.0.0.0
+            - network.publish_host=127.0.0.1
+            - transport.tcp.port=9300
+            - discovery.type=single-node
+            - xpack.security.enabled=false
+        ports:
+            - "9200:9200"
+            - "9300:9300"
