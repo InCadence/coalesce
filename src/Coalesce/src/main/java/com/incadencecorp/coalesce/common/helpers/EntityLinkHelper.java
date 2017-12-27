@@ -807,10 +807,6 @@ public final class EntityLinkHelper {
                                                      String label,
                                                      boolean updateExisting) throws CoalesceException
     {
-
-        LOGGER.debug(
-                "Creating link: " + entity1.getKey() + " ---> " + entity2.getKey() + " of type " + linkType + " with label "
-                        + label);
         linkEntitiesUniDirectional(entity1,
                                    linkType,
                                    entity2,
@@ -849,10 +845,6 @@ public final class EntityLinkHelper {
                                                     String label,
                                                     boolean updateExisting) throws CoalesceException
     {
-
-        LOGGER.debug(
-                "Creating link: " + entity1.getKey() + " ---> " + entity2.getKey() + " of type " + linkType + " with label "
-                        + label);
         linkEntitiesBiDirectional(entity1,
                                   linkType,
                                   entity2,
@@ -893,10 +885,6 @@ public final class EntityLinkHelper {
                                        String label,
                                        boolean updateExisting) throws CoalesceException
     {
-
-        LOGGER.debug(
-                "Creating link: " + entity1.getKey() + " ---> " + entity2.getKey() + " of type " + linkType + " with label "
-                        + label);
         linkEntitiesBiDirectional(entity1,
                                   linkType,
                                   entity2,
@@ -983,9 +971,9 @@ public final class EntityLinkHelper {
 
         if (LOGGER.isDebugEnabled())
         {
-            LOGGER.debug("Linking: ({}) ({}) ({}) -[{}]-> ({}) ({}) ({})",
+            LOGGER.debug("Linking: ({} Name: {} Version: {})-[{}]->({} Name: {} Version: {}])",
                          entity.getKey(),
-                         entity.getClassName(),
+                         entity.getName(),
                          entity.getObjectVersion(),
                          linkType.toString(),
                          otherEntity.getKey(),
