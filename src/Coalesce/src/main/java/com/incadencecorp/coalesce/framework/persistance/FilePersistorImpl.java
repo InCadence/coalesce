@@ -47,10 +47,6 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     private int subDirLen = FilePersistorSettings.getSubDirectoryLength();
 
     /*--------------------------------------------------------------------------
-    Override Methods
-    --------------------------------------------------------------------------*/
-
-    /*--------------------------------------------------------------------------
     ICoalesceComponent Implementation
     --------------------------------------------------------------------------*/
 
@@ -128,7 +124,11 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
                         File directory = new File(sub.toString());
                         if (directory.list().length == 0 && !Files.isSameFile(sub, root))
                         {
-                            directory.delete();
+                            if (!directory.delete())
+                            {
+                                throw new CoalescePersistorException(
+                                        "(FAILED) Deleting Directory: " + directory.getAbsolutePath());
+                            }
                         }
                     }
                 }
@@ -183,12 +183,12 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     @Override
     public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
 
-        for (int ii = 0; ii < keys.length; ii++)
+        for (String key : keys)
         {
-            Path sub = root.resolve(keys[ii].substring(0, subDirLen));
-            Path filename = sub.resolve(keys[ii]);
+            Path sub = root.resolve(key.substring(0, subDirLen));
+            Path filename = sub.resolve(key);
 
             if (Files.exists(filename))
             {
@@ -273,7 +273,7 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     @Override
     public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-        CoalesceEntityTemplate result = null;
+        CoalesceEntityTemplate result;
 
         Path sub = root.resolve(TEMPLATE_DIRECTORY);
         Path filename = sub.resolve(key);
@@ -332,7 +332,7 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     @Override
     public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        List<ObjectMetaData> results = new ArrayList<ObjectMetaData>();
+        List<ObjectMetaData> results = new ArrayList<>();
 
         try
         {
