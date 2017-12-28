@@ -27,11 +27,13 @@ import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.enums.EAuditCategory;
 import com.incadencecorp.coalesce.enums.EAuditLevels;
 import com.incadencecorp.coalesce.enums.ECrudOperations;
+import com.incadencecorp.coalesce.framework.PropertyLoader;
 import com.incadencecorp.coalesce.framework.ShutdownAutoCloseable;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import kafka.admin.AdminUtils;
 import kafka.utils.ZKStringSerializer$;
 import kafka.utils.ZkUtils;
@@ -39,15 +41,12 @@ import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.ZkConnection;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * This implementation uses Kafka to push notifications.
@@ -55,8 +54,6 @@ import java.util.*;
  * @author Derek Clemenzi
  */
 public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaNotifierImpl.class);
 
     public static final String TOPIC_METRICS = "com.incadence.metrics";
     public static final String TOPIC_CRUD = "com.incadence.crud";
@@ -79,8 +76,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
 
     public KafkaNotifierImpl()
     {
-        this(loadProperties(Paths.get(CoalesceParameters.COALESCE_CONFIG_LOCATION,
-                                      KafkaNotifierImpl.class.getName() + ".properties")));
+        this(loadProperties());
     }
 
     /**
@@ -88,10 +84,13 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
      *
      * @param props configuration properties
      */
-    public KafkaNotifierImpl(Properties props)
+    public KafkaNotifierImpl(Map<String, String> props)
     {
-        zookeeper = props.getProperty(PROP_ZOOKEEPER);
-        producer = new KafkaProducer<>(props);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.putAll(props);
+
+        zookeeper = props.get(PROP_ZOOKEEPER);
+        producer = new KafkaProducer<>(parameters);
 
         ShutdownAutoCloseable.createShutdownHook(this);
     }
@@ -254,20 +253,11 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         }
     }
 
-    private static Properties loadProperties(Path path)
+    private static Map<String, String> loadProperties()
     {
-        LOGGER.info("Loading Properties ... {}", path.toString());
+        PropertyLoader loader = new PropertyLoader(new FilePropertyConnector(Paths.get(CoalesceParameters.COALESCE_CONFIG_LOCATION)),
+                                                   KafkaNotifierImpl.class.getName() + ".properties");
 
-        Properties props = new Properties();
-        try
-        {
-            props.load(new FileReader(new File(path.toString())));
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
-
-        return props;
+        return loader.getSettings();
     }
 }
