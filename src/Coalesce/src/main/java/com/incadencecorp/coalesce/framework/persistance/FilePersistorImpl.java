@@ -21,6 +21,7 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.ICoalesceComponent;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.FileHelper;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
@@ -293,7 +294,7 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
 
                 result = CoalesceEntityTemplate.create(sb.toString());
             }
-            catch (IOException | SAXException e)
+            catch (CoalesceException | IOException e)
             {
                 throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), e);
             }
@@ -366,7 +367,7 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
                                                        template.getSource(),
                                                        template.getVersion()));
                     }
-                    catch (SAXException e)
+                    catch (CoalesceException e)
                     {
                         throw new IOException(e);
                     }

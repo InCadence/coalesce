@@ -30,7 +30,7 @@ public class ElasticSearchDataConnectorTest {
     }
 
     @Test
-    public static void testGetDBConnection() throws CoalescePersistorException, SQLException
+    public void testGetDBConnection() throws Exception
     {
         ElasticSearchDataConnector connector = new ElasticSearchDataConnector();
         TransportClient client = connector.getDBConnector();

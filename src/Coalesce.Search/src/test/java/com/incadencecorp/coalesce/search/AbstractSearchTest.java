@@ -18,6 +18,7 @@
 package com.incadencecorp.coalesce.search;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -93,7 +94,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
                     createPersister().registerTemplate(template);
                     CoalesceTemplateUtil.addTemplates(template);
                 }
-                catch (CoalescePersistorException | SAXException | IOException e)
+                catch (CoalesceException e)
                 {
                     LOGGER.warn("Failed to register templates");
                 }

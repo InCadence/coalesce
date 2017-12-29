@@ -1124,7 +1124,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
             return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException | SAXException | IOException e)
+        catch (SQLException | CoalesceException e)
         {
             throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), e);
         }
@@ -1160,7 +1160,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
             return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException | SAXException | IOException e)
+        catch (SQLException | CoalesceException e)
         {
             throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND,
                                                                "Template",

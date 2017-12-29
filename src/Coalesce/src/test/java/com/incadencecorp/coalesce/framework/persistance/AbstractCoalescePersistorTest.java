@@ -63,16 +63,21 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         {
             if (!isInitialized)
             {
-                LOGGER.warn("Registering Entities");
-
-                TestEntity entity = new TestEntity();
-                entity.initialize();
-
                 try
                 {
-                    createPersister().registerTemplate(CoalesceEntityTemplate.create(entity));
+                    ICoalescePersistor persistor = createPersister();
+
+                    if (persistor.getCapabilities().contains(EPersistorCapabilities.READ_TEMPLATES))
+                    {
+                        LOGGER.warn("Registering Entities");
+
+                        TestEntity entity = new TestEntity();
+                        entity.initialize();
+
+                        persistor.registerTemplate(CoalesceEntityTemplate.create(entity));
+                    }
                 }
-                catch (CoalescePersistorException | SAXException | IOException e)
+                catch (CoalesceException e)
                 {
                     LOGGER.warn("Failed to register templates");
                 }

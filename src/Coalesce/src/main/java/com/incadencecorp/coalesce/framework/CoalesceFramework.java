@@ -2,6 +2,7 @@ package com.incadencecorp.coalesce.framework;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
@@ -392,7 +393,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
                 }
                 registerTemplates(CoalesceEntityTemplate.create(template));
             }
-            catch (SAXException | IOException e)
+            catch (CoalesceException e)
             {
                 throw new CoalescePersistorException("(FAILED) Template Registration", e);
             }

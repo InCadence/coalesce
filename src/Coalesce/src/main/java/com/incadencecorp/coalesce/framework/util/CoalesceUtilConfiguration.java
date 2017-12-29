@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -64,7 +65,7 @@ public final class CoalesceUtilConfiguration {
             {
                 CoalesceTemplateUtil.addTemplates(CoalesceEntityTemplate.create(entity));
             }
-            catch (SAXException | IOException e)
+            catch (CoalesceException e)
             {
                 LOGGER.error("(FAILED) Processing Template ({}) ({})", entity.getName(), entity.getSource(), e);
             }

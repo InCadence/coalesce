@@ -1360,7 +1360,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void createNewEntityTemplateTest() throws SAXException, IOException
+    public void createNewEntityTemplateTest() throws Exception
     {
         // Test Entity
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
