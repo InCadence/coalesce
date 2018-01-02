@@ -52,7 +52,7 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
         // so make sure it is the first in the list
         if ((newQuery.getTypeName() != null) && (!newQuery.getTypeName().equalsIgnoreCase("coalesce")))
         {
-            features.add(newQuery.getTypeName());
+            features.add(normalizer.normalize(newQuery.getTypeName()));
         }
         // Clear the type name from the query
         newQuery.setTypeName(null);
@@ -137,7 +137,7 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
         }
         else if (parts.length == 2)
         {
-            String feature = parts[0].toLowerCase();
+            String feature = normalizer.normalize(parts[0]);
 
             if (!features.contains(feature))
             {
