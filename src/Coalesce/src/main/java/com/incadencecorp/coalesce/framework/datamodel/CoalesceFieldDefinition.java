@@ -33,7 +33,7 @@ import com.incadencecorp.coalesce.framework.CoalesceSettings;
  */
 public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesceFieldDefinition {
 
-    private static final boolean NO_INDEX_DEFAULT = true;
+    private static final boolean NO_INDEX_DEFAULT = CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT;
 
     // -----------------------------------------------------------------------//
     // Protected Member Variables
