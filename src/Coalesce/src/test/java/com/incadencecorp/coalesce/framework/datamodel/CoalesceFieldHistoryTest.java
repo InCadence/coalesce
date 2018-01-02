@@ -929,7 +929,7 @@ public class CoalesceFieldHistoryTest {
         assertEquals("TestingValue", fh.getAttribute("TestAttribute"));
 
         assertEquals("ActionNumber", fh.getName());
-        assertEquals(false, fh.isNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, fh.isNoIndex());
 
         fh.setAttribute("Name", "TestingName");
         assertEquals("TestingName", fh.getName());

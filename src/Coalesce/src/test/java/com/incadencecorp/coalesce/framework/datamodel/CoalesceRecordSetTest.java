@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
@@ -401,7 +402,7 @@ public class CoalesceRecordSetTest {
 
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertFalse(recordset.isNoIndex());
+        Assert.assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, recordset.isNoIndex());
 
         recordset.setNoIndex(true);
 
@@ -416,7 +417,7 @@ public class CoalesceRecordSetTest {
         CoalesceSection newSection = CoalesceSection.create(newEntity, "Operation/New Section");
         CoalesceRecordset newRecordset = CoalesceRecordset.create(newSection, "New Recordset");
 
-        assertFalse(newRecordset.isNoIndex());
+        Assert.assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, newRecordset.isNoIndex());
 
     }
 
@@ -926,7 +927,7 @@ public class CoalesceRecordSetTest {
         assertEquals("TestingValue", recordset.getAttribute("TestAttribute"));
 
         assertEquals("Mission Information Recordset", recordset.getName());
-        assertEquals(false, recordset.isNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, recordset.isNoIndex());
 
         recordset.setAttribute("Name", "TestingName");
         assertEquals("TestingName", recordset.getName());

@@ -77,7 +77,7 @@ public class CoalesceLinkageSectionTest {
 
         assertNotNull(linkageSection);
         assertEquals(entity, linkageSection.getParent());
-        assertFalse(linkageSection.isNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, linkageSection.isNoIndex());
 
     }
 
@@ -220,7 +220,7 @@ public class CoalesceLinkageSectionTest {
 
         CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
 
-        assertFalse(newEntity.getLinkageSection().isNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, newEntity.getLinkageSection().isNoIndex());
 
     }
 
@@ -306,7 +306,7 @@ public class CoalesceLinkageSectionTest {
         assertEquals("TestingValue", linkageSection.getAttribute("TestAttribute"));
         
         assertEquals("Linkages", linkageSection.getName());
-        assertEquals(false, linkageSection.isNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, linkageSection.isNoIndex());
         
         linkageSection.setAttribute("Name", "TestingName");
         assertEquals("TestingName", linkageSection.getName());

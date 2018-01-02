@@ -519,7 +519,7 @@ public class CoalesceLinkageTest {
 
         CoalesceLinkage linkage = getMissionLinkage(entity);
 
-        assertFalse(linkage.isNoIndex());
+        Assert.assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, linkage.isNoIndex());
 
         linkage.setNoIndex(true);
 
@@ -535,7 +535,7 @@ public class CoalesceLinkageTest {
         CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
         CoalesceLinkage newLinkage = newEntity.getLinkageSection().createLinkage();
 
-        assertFalse(newLinkage.isNoIndex());
+        Assert.assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, newLinkage.isNoIndex());
 
     }
 
@@ -649,7 +649,7 @@ public class CoalesceLinkageTest {
         assertEquals("TestingValue", linkage.getAttribute("TestAttribute"));
 
         assertEquals("Linkage", linkage.getName());
-        assertEquals(false, linkage.isNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, linkage.isNoIndex());
 
         linkage.setAttribute("Name", "TestingName");
         assertEquals("TestingName", linkage.getName());

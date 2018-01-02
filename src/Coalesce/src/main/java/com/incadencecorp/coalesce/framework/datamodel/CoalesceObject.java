@@ -78,6 +78,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
      */
     public static final String ATTRIBUTE_NOINDEX = "noindex";
 
+    public static final boolean ATTRIBUTE_NOINDEX_DEFAULT = true;
+
     /**
      * @see ICoalesceObject#isFlatten()
      */
@@ -427,17 +429,6 @@ public abstract class CoalesceObject implements ICoalesceObject {
         }
     }
 
-    /**
-     * Sets the value of the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
-     * key by a UUID parameter.
-     * 
-     * @param guid UUID to be the Coalesce object's key.
-     */
-    /*
-     * public final void setKey(UUID guid) { setKey(guid.toString()); }
-     */
-
     @Override
     public final String getTag()
     {
@@ -497,7 +488,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
         if (value == null)
         {
-            value = false;
+            value = ATTRIBUTE_NOINDEX_DEFAULT;
         }
 
         return value;
@@ -506,7 +497,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     @Override
     public final void setNoIndex(boolean value)
     {
-        if (value)
+        if (value != ATTRIBUTE_NOINDEX_DEFAULT)
         {
             _object.setNoindex(value);
         }
