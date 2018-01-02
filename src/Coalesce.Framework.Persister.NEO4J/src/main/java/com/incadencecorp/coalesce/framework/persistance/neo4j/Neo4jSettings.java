@@ -25,7 +25,7 @@ import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 /**
  * Configuration properties for the Neo4j persistor implementation.
- * 
+ *
  * @author n78554
  */
 public class Neo4jSettings {
@@ -47,6 +47,7 @@ public class Neo4jSettings {
     private static final int DEFAULT_ONERROR_BACKOFF_INTERVAL = 500;
     private static final boolean DEFAULT_ALLOW_DELETE = false;
     private static final boolean DEFAULT_SSL_ENABLED = false;
+    private static final boolean DEFAULT_XML_ENABLED = false;
 
     /*--------------------------------------------------------------------------
     Property Names
@@ -63,6 +64,7 @@ public class Neo4jSettings {
     private static final String PROPERTY_RETRY_ATTEMPTS = PARAM_BASE + "onerror.retryattempts";
     private static final String PROPERTY_BACKOFF_INTERVAL = PARAM_BASE + "onerror.backoffinterval";
     private static final String PARAM_SSL_ENABLED = PARAM_BASE + "ssl.enabled";
+    private static final String PARAM_XML_ENABLED = PARAM_BASE + "xml.enabled";
 
     /*--------------------------------------------------------------------------
     Initialization
@@ -88,7 +90,7 @@ public class Neo4jSettings {
 
     /**
      * Configures the settings to use a particular connector and property name.
-     * 
+     *
      * @param connector
      * @param name
      */
@@ -112,7 +114,7 @@ public class Neo4jSettings {
 
     /**
      * Sets whether Neo4j indexing is enabled.
-     * 
+     *
      * @param value
      */
     public static void setIsEnabled(boolean value)
@@ -130,7 +132,7 @@ public class Neo4jSettings {
 
     /**
      * Sets the address of the database.
-     * 
+     *
      * @param databaseAddress
      */
     public static void setDatabaseAddress(String databaseAddress)
@@ -148,7 +150,7 @@ public class Neo4jSettings {
 
     /**
      * Sets the username used for accessing the database.
-     * 
+     *
      * @param userName
      */
     public static void setUserName(String userName)
@@ -166,7 +168,7 @@ public class Neo4jSettings {
 
     /**
      * Sets the password used for accessing the database.
-     * 
+     *
      * @param userPassword
      */
     public static void setUserPassword(String userPassword)
@@ -184,7 +186,7 @@ public class Neo4jSettings {
 
     /**
      * Sets the database name.
-     * 
+     *
      * @param databaseName
      */
     public static void setDatabaseName(String databaseName)
@@ -202,7 +204,7 @@ public class Neo4jSettings {
 
     /**
      * Sets the port to be used for accessing the database.
-     * 
+     *
      * @param databasePort
      */
     public static void setDatabasePort(int databasePort)
@@ -220,7 +222,7 @@ public class Neo4jSettings {
 
     /**
      * Sets the number of attempts that should be tried when an error occurs.
-     * 
+     *
      * @param value
      */
     public static void setRetryAttempts(int value)
@@ -238,7 +240,7 @@ public class Neo4jSettings {
 
     /**
      * Sets the number of milliseconds between retry attempts.
-     * 
+     *
      * @param millis
      */
     public static void setBackoffInterval(int millis)
@@ -256,7 +258,7 @@ public class Neo4jSettings {
 
     /**
      * Sets whether marking a entity as deleted will remove it from the DB.
-     * 
+     *
      * @param value
      */
     public static void setAllowDelete(boolean value)
@@ -266,7 +268,6 @@ public class Neo4jSettings {
 
     /**
      * @return whether or not to use SSL. Default: {@value #DEFAULT_SSL_ENABLED}
-     *         .
      */
     public static boolean isSSLEnabled()
     {
@@ -281,6 +282,24 @@ public class Neo4jSettings {
     public static void setSSLEnabled(boolean value)
     {
         settings.setSetting(config_name, PARAM_SSL_ENABLED, value);
+    }
+
+    /**
+     * @return whether or not to store entity's XML.. Default: {@value #DEFAULT_XML_ENABLED}
+     */
+    public static boolean isXMLEnabled()
+    {
+        return settings.getSetting(config_name, PARAM_XML_ENABLED, DEFAULT_XML_ENABLED, true);
+    }
+
+    /**
+     * Sets whether or not to store entity's XML.
+     *
+     * @param value
+     */
+    public static void setXMLEnabled(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_XML_ENABLED, value);
     }
 
     /**

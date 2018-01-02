@@ -114,8 +114,6 @@ public class Neo4JPersistor extends CoalescePersistorBase {
                                                      CoalesceLinkage.ATTRIBUTE_MODIFIEDBYIP, "classificationmarking"
     };
 
-    private boolean isIncludeXmlEnabled = false;
-
     /*--------------------------------------------------------------------------
     Constructor
     --------------------------------------------------------------------------*/
@@ -126,11 +124,6 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     public Neo4JPersistor()
     {
         setConnectionSettings(Neo4jSettings.getServerConn());
-    }
-
-    public void setIncludeXml(boolean value)
-    {
-        isIncludeXmlEnabled = value;
     }
 
     /*--------------------------------------------------------------------------
@@ -340,7 +333,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     {
         List<String> results = new ArrayList<String>();
 
-        if (isIncludeXmlEnabled)
+        if (Neo4jSettings.isXMLEnabled())
         {
             try (CoalesceDataConnectorBase conn = new Neo4JDataConnector(Neo4jSettings.getServerConn()))
             {
@@ -436,7 +429,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     protected boolean persistEntityObject(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Obtain a list of all field values
-        Map<String, CoalesceParameter> fieldValues = new HashMap<String, CoalesceParameter>();
+        Map<String, CoalesceParameter> fieldValues = new HashMap<>();
 
         // Add Coalesce Entity's Fields
         fieldValues.put(TITLE, new CoalesceParameter(entity.getTitle(), Types.CHAR));
@@ -446,7 +439,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         fieldValues.put(DATECREATED,
                         new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_DATECREATED), Types.DATE));
 
-        if (isIncludeXmlEnabled)
+        if (Neo4jSettings.isXMLEnabled())
         {
             fieldValues.put(ENTITYXML, new CoalesceParameter(entity.toXml(), Types.CHAR));
         }
@@ -614,6 +607,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
 
                 if (field.getBaseValue() != null)
                 {
+                    // TODO Replace this with the normalize API
                     String name = normalizeName(field.getName());
 
                     switch (field.getDataType())
@@ -645,7 +639,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
                                                              EPersistorCapabilities.DELETE,
                                                              EPersistorCapabilities.UPDATE);
 
-        if (isIncludeXmlEnabled)
+        if (Neo4jSettings.isXMLEnabled())
         {
             enumSet.add(EPersistorCapabilities.READ);
         }
@@ -679,6 +673,6 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     @Override
     public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        return new ArrayList<>();
     }
 }
