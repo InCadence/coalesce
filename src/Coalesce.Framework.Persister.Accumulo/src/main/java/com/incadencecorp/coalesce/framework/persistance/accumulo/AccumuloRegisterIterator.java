@@ -94,7 +94,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         LINKAGE_LAST_MODIFIED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLastModified());
         LINKAGE_LABEL_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageLabel());
         LINKAGE_LINK_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageType());
-        LINKAGE_LINK_STATUS_COLUMN_NAME =  getColumnName(CoalescePropertyFactory.getLinkageStatus());
+        LINKAGE_LINK_STATUS_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageStatus());
 
     }
 

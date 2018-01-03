@@ -1414,6 +1414,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                                                                      EPersistorCapabilities.DELETE,
                                                                      EPersistorCapabilities.SEARCH,
                                                                      EPersistorCapabilities.SUPPORTS_BLOB,
+                                                                     EPersistorCapabilities.CASE_INSENSITIVE_SEARCH,
                                                                      EPersistorCapabilities.GEOSPATIAL_SEARCH,
                                                                      EPersistorCapabilities.TEMPORAL_SEARCH,
                                                                      EPersistorCapabilities.INDEX_FIELDS);

@@ -4,13 +4,11 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 import com.incadencecorp.coalesce.search.api.EFilterEnumerationModes;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.Hints;
 import org.geotools.filter.FilterCapabilities;
 import org.geotools.filter.FunctionImpl;
-import org.geotools.filter.capability.FunctionNameImpl;
 import org.geotools.util.ConverterFactory;
 import org.geotools.util.Converters;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -28,8 +26,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.*;
 import java.util.regex.Pattern;
-
-import static org.geotools.filter.capability.FunctionNameImpl.parameter;
 
 /**
  * Encodes a filter into a cypher. It should hopefully be generic enough that
@@ -325,7 +321,26 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
     @Override
     public Object visit(Function expression, Object extraData)
     {
-        throw new UnsupportedOperationException("Function filter is not supported.");
+        try
+        {
+            out.write(expression.getName() + "(");
+            for (int ii=0; ii<expression.getParameters().size(); ii++)
+            {
+                if (ii != 0)
+                {
+                    out.write(",");
+                }
+
+                expression.getParameters().get(ii).accept(this, extraData);
+            }
+            out.write(")");
+        }
+        catch (IOException ioe)
+        {
+            throw new RuntimeException("IO problems writing expression", ioe);
+        }
+
+        return extraData;
     }
 
     @Override
@@ -890,23 +905,28 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
     {
         Expression left = filter.getExpression1();
         Expression right = filter.getExpression2();
-        Class<?> leftContext = null;
-        Class<?> rightContext = null;
+
+        PropertyName property;
+        Expression value;
+        Class<?> context;
+
         if (left instanceof PropertyName)
         {
-            left = FF.property(normalize(((PropertyName) left).getPropertyName()));
-
-            currentProperty = ((PropertyName) left).getPropertyName();
-            rightContext = getPropertyContext((PropertyName) left);
+            property = FF.property(normalize(((PropertyName) left).getPropertyName()));
+            value = right;
         }
-
-        if (right instanceof PropertyName)
+        else if (right instanceof PropertyName)
         {
-            right = FF.property(normalize(((PropertyName) right).getPropertyName()));
-
-            currentProperty = ((PropertyName) right).getPropertyName();
-            leftContext = getPropertyContext((PropertyName) right);
+            property = FF.property(normalize(((PropertyName) right).getPropertyName()));
+            value = left;
         }
+        else
+        {
+            throw new IllegalArgumentException("");
+        }
+
+        currentProperty = property.getPropertyName();
+        context = getPropertyContext(property);
 
         // case sensitivity
         boolean matchCase = true;
@@ -916,61 +936,42 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
             if (filter instanceof PropertyIsEqualTo || filter instanceof PropertyIsNotEqualTo)
             {
                 // and only for strings
-                if (String.class.equals(leftContext) || String.class.equals(rightContext))
+                if (String.class.equals(context))
                 {
                     matchCase = false;
                 }
             }
         }
 
-        String type = (String) extraData;
-
         try
         {
             if (matchCase)
             {
-                if (leftContext != null && isBinaryExpression(left))
+                property.accept(this, String.class);
+
+                out.write(" " + extraData + " ");
+
+                if (context != null && isBinaryExpression(right))
                 {
-                    writeBinaryExpression(left, leftContext);
+                    writeBinaryExpression(right, context);
                 }
                 else
                 {
-                    left.accept(this, leftContext);
-                }
-
-                out.write(" " + type + " ");
-
-                if (rightContext != null && isBinaryExpression(right))
-                {
-                    writeBinaryExpression(right, rightContext);
-                }
-                else
-                {
-                    right.accept(this, rightContext);
+                    value.accept(this, context);
                 }
             }
             else
             {
-                // wrap both sides in "lower"
-                FunctionImpl f = new FunctionImpl() {
-
-                    {
-                        functionName = new FunctionNameImpl("lower",
-                                                            parameter("lowercase", String.class),
-                                                            parameter("string", String.class));
-                    }
-                };
+                FunctionImpl f = new FunctionImpl();
                 f.setName("lower");
+                f.setParameters(Collections.singletonList(property));
+                f.accept(this, String.class);
 
-                f.setParameters(Arrays.asList(left));
-                f.accept(this, Arrays.asList(leftContext));
+                out.write(" " + extraData + " ");
 
-                out.write(" " + type + " ");
-
-                f.setParameters(Arrays.asList(right));
-                f.accept(this, Arrays.asList(rightContext));
+                f.setParameters(Collections.singletonList(value));
+                f.accept(this, context);
             }
-
         }
         catch (java.io.IOException ioe)
         {

@@ -47,10 +47,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static org.geotools.filter.capability.FunctionNameImpl.parameter;
@@ -599,8 +596,8 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
         {
             right = filterFactory.property(normalize(((PropertyName) right).getPropertyName(), false));
 
-            currentProperty = ((PropertyName) left).getPropertyName();
-            leftContext = getPropertyContext((PropertyName) left);
+            currentProperty = ((PropertyName) right).getPropertyName();
+            leftContext = getPropertyContext((PropertyName) right);
         }
         else if (right instanceof Function)
         {
@@ -626,8 +623,6 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
             }
         }
 
-        String type = (String) extraData;
-
         try
         {
             if (matchCase)
@@ -641,7 +636,7 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
                     left.accept(this, leftContext);
                 }
 
-                out.write(" " + type + " ");
+                out.write(" " + extraData + " ");
 
                 if (rightContext != null && isBinaryExpression2(right))
                 {
@@ -655,23 +650,15 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
             else
             {
                 // wrap both sides in "lower"
-                FunctionImpl f = new FunctionImpl() {
-
-                    {
-                        functionName = new FunctionNameImpl("lower",
-                                                            parameter("lowercase", String.class),
-                                                            parameter("string", String.class));
-                    }
-                };
+                FunctionImpl f = new FunctionImpl();
                 f.setName("lower");
+                f.setParameters(Collections.singletonList(left));
+                f.accept(this, Collections.singletonList(leftContext));
 
-                f.setParameters(Arrays.asList(left));
-                f.accept(this, Arrays.asList(leftContext));
+                out.write(" " + extraData + " ");
 
-                out.write(" " + type + " ");
-
-                f.setParameters(Arrays.asList(right));
-                f.accept(this, Arrays.asList(rightContext));
+                f.setParameters(Collections.singletonList(right));
+                f.accept(this, Collections.singletonList(rightContext));
             }
 
         }

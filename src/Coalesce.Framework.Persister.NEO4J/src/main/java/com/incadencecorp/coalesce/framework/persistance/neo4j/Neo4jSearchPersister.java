@@ -87,7 +87,7 @@ public class Neo4jSearchPersister extends Neo4JPersistor implements ICoalesceSea
             else
             {
                 properties.addAll(query.getProperties());
-                if (!properties.get(0).getPropertyName().equalsIgnoreCase(CoalescePropertyFactory.getEntityKey().getPropertyName()))
+                if (properties.size() == 0 || !properties.get(0).getPropertyName().equalsIgnoreCase(CoalescePropertyFactory.getEntityKey().getPropertyName()))
                 {
                     properties.add(0, CoalescePropertyFactory.getEntityKey());
                 }
@@ -222,6 +222,7 @@ public class Neo4jSearchPersister extends Neo4JPersistor implements ICoalesceSea
     {
         EnumSet<EPersistorCapabilities> results = super.getCapabilities();
         results.add(EPersistorCapabilities.SEARCH);
+        results.add(EPersistorCapabilities.CASE_INSENSITIVE_SEARCH);
 
         return results;
     }

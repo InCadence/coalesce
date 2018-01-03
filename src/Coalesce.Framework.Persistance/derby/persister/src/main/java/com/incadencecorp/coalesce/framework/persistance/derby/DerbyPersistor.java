@@ -1259,7 +1259,8 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         EnumSet<EPersistorCapabilities> newCapabilities = EnumSet.of(EPersistorCapabilities.READ_TEMPLATES,
                                                                      EPersistorCapabilities.UPDATE,
                                                                      EPersistorCapabilities.DELETE,
-                                                                     EPersistorCapabilities.SEARCH);
+                                                                     EPersistorCapabilities.SEARCH,
+                                                                     EPersistorCapabilities.CASE_INSENSITIVE_SEARCH);
         if (enumSet != null)
         {
             enumSet.addAll(newCapabilities);
