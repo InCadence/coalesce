@@ -2,15 +2,12 @@
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
 	name="coalesce-services">
 	<feature name="${project.artifactId}">
-		<feature prerequisite="false" dependency="true">war</feature>
-		<feature prerequisite="false" dependency="true">spring-web</feature>
-		<feature prerequisite="false" dependency="true">spring-dm</feature>
+		<feature prerequisite="false" dependency="true">blueprint-web</feature>
 		<feature prerequisite="false" dependency="true">spring-dm-web</feature>
+		<feature prerequisite="false" dependency="true">cxf-jaxrs</feature>
 		<feature prerequisite="false" dependency="true">coalesce-search-service-feature</feature>
-		<feature prerequisite="false" dependency="true">persister-neo4j-feature</feature>
-        <bundle>mvn:org.codehaus.jackson/jackson-jaxrs/1.9.0</bundle>
-        <bundle>mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-data/${project.version}</bundle>
-        <bundle>mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-data-jaxrs/${project.version}</bundle>
-        <bundle>mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-data-web/${project.version}/war</bundle>
+        <bundle start-level="75">mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson.jaxb.version}</bundle>
+        <bundle start-level="75">mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-data/${project.version}</bundle>
+        <bundle start-level="75">mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-data-jaxrs/${project.version}</bundle>
 	</feature>
 </features>

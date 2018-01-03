@@ -1,8 +1,9 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.io.IOException;
-import java.util.UUID;
-
+import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -10,9 +11,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import java.io.IOException;
+import java.util.UUID;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -34,9 +34,8 @@ import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 /**
  * Coalesce Templates are used for registering data objects with the system and
  * creating new data objects.
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate> {
 
@@ -52,49 +51,49 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates a {@link CoalesceEntityTemplate} based off of an
-     * {@link CoalesceEntity}.
-     * 
-     * @param entity {@link CoalesceEntity} that will be used to create the
-     *            {@link CoalesceEntityTemplate}
-     * @return {@link CoalesceEntityTemplate} created from the
-     *         {@link CoalesceEntity}
-     * 
-     * @throws SAXException
-     * @throws IOException
+     * Creates a {@link CoalesceEntityTemplate} based off of an {@link CoalesceEntity}.
+     *
+     * @param entity {@link CoalesceEntity} that will be used to create the {@link CoalesceEntityTemplate}
+     * @return {@link CoalesceEntityTemplate} created from the {@link CoalesceEntity}
+     * @throws CoalesceException on error
      */
-    public static CoalesceEntityTemplate create(CoalesceEntity entity) throws SAXException, IOException
+    public static CoalesceEntityTemplate create(CoalesceEntity entity) throws CoalesceException
     {
+        if (!entity.isInitialized())
+        {
+            entity.initialize();
+        }
+
         return CoalesceEntityTemplate.create(entity.toXml());
     }
 
     /**
      * Creates a {@link CoalesceEntityTemplate} based off of an (XML) String.
-     * 
+     *
      * @param templateXml String - xml string from/of an {@link CoalesceEntity}
      * @return {@link CoalesceEntityTemplate} created from the xml string
-     * 
-     * @throws SAXException
-     * @throws IOException
+     * @throws CoalesceException on error
      */
-    public static CoalesceEntityTemplate create(String templateXml) throws SAXException, IOException
+    public static CoalesceEntityTemplate create(String templateXml) throws CoalesceException
     {
-        return CoalesceEntityTemplate.create(XmlHelper.loadXmlFrom(templateXml));
+        try
+        {
+            return CoalesceEntityTemplate.create(XmlHelper.loadXmlFrom(templateXml));
+        }
+        catch (SAXException | IOException e)
+        {
+            throw new CoalesceException(e);
+        }
     }
 
     /**
-     * Creates a {@link CoalesceEntityTemplate} based off of an entity's
-     * org.w3c.dom Document.
-     * 
-     * @param doc org.w3c.dom Document that will be used to create the
-     *            {@link CoalesceEntityTemplate}
-     * @return {@link CoalesceEntityTemplate} created from the
-     *         {@link CoalesceEntity} entity's Document
-     * 
-     * @throws SAXException
-     * @throws IOException
+     * Creates a {@link CoalesceEntityTemplate} based off of an entity's org.w3c.dom Document.
+     *
+     * @param doc org.w3c.dom Document that will be used to create the {@link CoalesceEntityTemplate}
+     * @return {@link CoalesceEntityTemplate} created from the {@link CoalesceEntity} entity's Document
+     * @throws CoalesceException on error
      */
-    public static CoalesceEntityTemplate create(Document doc) throws SAXException, IOException
+    public static CoalesceEntityTemplate create(Document doc) throws CoalesceException
     {
         // Create a new CoalesceEntityTemplate
         CoalesceEntityTemplate entTemp = new CoalesceEntityTemplate();
@@ -112,40 +111,39 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
     // -----------------------------------------------------------------------//
 
     /**
-     * Initializes a previously new {@link CoalesceEntityTemplate} based off of
-     * an {@link CoalesceEntity}.
-     * 
-     * @param entity {@link CoalesceEntity} that will be used to initialize the
-     *            {@link CoalesceEntityTemplate}
+     * Initializes a previously new {@link CoalesceEntityTemplate} based off of an {@link CoalesceEntity}.
+     *
+     * @param entity {@link CoalesceEntity} that will be used to initialize the {@link CoalesceEntityTemplate}
      * @return boolean indicator of success/failure
-     * 
-     * @throws SAXException
-     * @throws IOException
+     * @throws CoalesceException on error
      */
-    public boolean initialize(CoalesceEntity entity) throws SAXException, IOException
+    public boolean initialize(CoalesceEntity entity) throws CoalesceException
     {
         return initialize(entity.toXml());
     }
 
     /**
-     * Initializes a previously new {@link CoalesceEntityTemplate} based off of
-     * a (XML) String.
-     * 
-     * @param entityTemplateXml (XML) String from/of an {@link CoalesceEntity}
+     * Initializes a previously new {@link CoalesceEntityTemplate} based off of a (XML) String.
+     *
+     * @param xml (XML) String from/of an {@link CoalesceEntity}
      * @return boolean indicator of success/failure
-     * 
-     * @throws SAXException
-     * @throws IOException
+     * @throws CoalesceException on error
      */
-    public boolean initialize(String entityTemplateXml) throws SAXException, IOException
+    public boolean initialize(String xml) throws CoalesceException
     {
-        return initialize(XmlHelper.loadXmlFrom(entityTemplateXml));
+        try
+        {
+            return initialize(XmlHelper.loadXmlFrom(xml));
+        }
+        catch (SAXException | IOException e)
+        {
+            throw new CoalesceException(e);
+        }
     }
 
     /**
-     * Initializes a previously new {@link CoalesceEntityTemplate} based off of
-     * an org.w3c.dom Document.
-     * 
+     * Initializes a previously new {@link CoalesceEntityTemplate} based off of an org.w3c.dom Document.
+     *
      * @param doc org.w3c.dom Document from/of an {@link CoalesceEntity}
      * @return boolean indicator of success/failure
      */
@@ -170,11 +168,9 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
     // -----------------------------------------------------------------------//
 
     /**
-     * Returns the {@link CoalesceEntityTemplate} 's (org.w3c.dom Document)
-     * Document.
-     * 
-     * @return Document representing the {@link CoalesceEntityTemplate} 's
-     *         entity
+     * Returns the {@link CoalesceEntityTemplate} 's (org.w3c.dom Document) Document.
+     *
+     * @return Document representing the {@link CoalesceEntityTemplate} 's entity
      */
     public Document getCoalesceObjectDocument()
     {
@@ -182,9 +178,8 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
     }
 
     /**
-     * Returns the {@link CoalesceEntityTemplate} 's (org.w3c.dom Node)
-     * EntityNode.
-     * 
+     * Returns the {@link CoalesceEntityTemplate} 's (org.w3c.dom Node) EntityNode.
+     *
      * @return Node representing the {@link CoalesceEntityTemplate} 's entity
      */
     public Node getEntityNode()
@@ -201,9 +196,9 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
     }
 
     /**
-     * Returns the value of the (EntityNode) Node's key attribute. By default
-     * this is based on a MD5 hash of the name, source, and version.
-     * 
+     * Returns the value of the (EntityNode) Node's key attribute. By default this is based on a MD5 hash of the name,
+     * source, and version.
+     *
      * @return String the Node's name attribute
      */
     public String getKey()
@@ -222,7 +217,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
 
     /**
      * Returns the value of the (EntityNode) Node's name attribute.
-     * 
+     *
      * @return String the Node's name attribute
      */
     public String getName()
@@ -232,7 +227,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
 
     /**
      * Returns the value of the (EntityNode) Node's source attribute.
-     * 
+     *
      * @return String the Node's source attribute
      */
     public String getSource()
@@ -242,7 +237,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
 
     /**
      * Returns the value of the (EntityNode) Node's version attribute.
-     * 
+     *
      * @return String the Node's version attribute
      */
     public String getVersion()
@@ -252,10 +247,10 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
 
     /**
      * Returns the value of the DateCreated attribute.
-     * 
+     *
      * @return DateTime of the
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         's DateCreated attribute.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     * 's DateCreated attribute.
      */
     public DateTime getDateCreated()
     {
@@ -282,23 +277,45 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates and initializes a new {@link CoalesceEntity} based off of this
-     * {@link CoalesceEntityTemplate} 's XML String.
-     * 
+     * Creates and initializes a new {@link CoalesceEntity} based off of this {@link CoalesceEntityTemplate} 's XML String.
+     *
      * @return {@link CoalesceEntity} of the new entity created from this
-     *         {@link CoalesceEntityTemplate}
+     * {@link CoalesceEntityTemplate}
      */
     public CoalesceEntity createNewEntity()
     {
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize(toXml());
+        entity.setKey(UUID.randomUUID().toString());
+
+        // Create Singleton Records
+        for (CoalesceSection section : entity.getSectionsAsList())
+        {
+            populateMinRecords(section);
+        }
 
         return entity;
     }
 
+    private void populateMinRecords(CoalesceSection section)
+    {
+        for (CoalesceSection subsection : section.getSectionsAsList())
+        {
+            populateMinRecords(subsection);
+        }
+
+        for (CoalesceRecordset recordset : section.getRecordsetsAsList())
+        {
+            for (int ii = 0; ii < recordset.getMinRecords(); ii++)
+            {
+                recordset.addNew();
+            }
+        }
+    }
+
     /**
      * Returns the UTF-8 (XML) String of the {@link CoalesceEntityTemplate} .
-     * 
+     *
      * @return String (XML) in UTF-8 of this {@link CoalesceEntityTemplate}
      */
     public String toXml()
@@ -307,9 +324,8 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
     }
 
     /**
-     * Returns the (XML) String in the desired encoding of the
-     * {@link CoalesceEntityTemplate} .
-     * 
+     * Returns the (XML) String in the desired encoding of the {@link CoalesceEntityTemplate} .
+     *
      * @param encoding the desired encoding.
      * @return (XML) String in the desired encoding.
      */
@@ -359,15 +375,16 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
                 {
 
                     Node attribute = attributeList.item(ii);
-                    if (!attribute.getNodeName().equalsIgnoreCase("name")
-                            && !attribute.getNodeName().equalsIgnoreCase("source")
-                            && !attribute.getNodeName().equalsIgnoreCase("version")
-                            && !attribute.getNodeName().equalsIgnoreCase("flatten")
-                            && !attribute.getNodeName().equalsIgnoreCase("noindex")
-                            && !attribute.getNodeName().equalsIgnoreCase("datatype")
-                            && !attribute.getNodeName().equalsIgnoreCase("maxrecords")
-                            && !attribute.getNodeName().equalsIgnoreCase("minrecords")
-                            && !attribute.getNodeName().equalsIgnoreCase("classname"))
+                    if (!attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NAME)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_SOURCE)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_VERSION)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_STATUS)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_FLATTEN)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NOINDEX)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceField.ATTRIBUTE_DATA_TYPE)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MAX)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MIN)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_CLASSNAME))
                     {
                         attribute.setNodeValue("");
                     }

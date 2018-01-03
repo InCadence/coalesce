@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.common.helpers;
 
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -22,11 +23,20 @@ import java.util.UUID;
 /**
  * Provides helper methods for working with GUIDs. The expected behavior of the functions contained in this class match the
  * behavior of the System.GUID class in .NET
- * 
- * @author InCadence
  *
+ * @author InCadence
  */
 public final class GUIDHelper {
+
+    /**
+     * Regex used to verify UUIDs
+     */
+    public static final String REGEX_UUID = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
+    /**
+     * Regex used to verify UUIDs w/ or w/o {}
+     */
+    public static final String REGEX_UUID_BRACES = REGEX_UUID + "|\\{" + REGEX_UUID + "\\}";
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX_UUID_BRACES);
 
     private GUIDHelper()
     {
@@ -40,53 +50,38 @@ public final class GUIDHelper {
     /**
      * Returns <code>true</code> if this value is a valid GUID. There must be matching {} or none at all, the characters used
      * must be valid hex characters and the length of the must equal 32 characters after removing all '-'.
-     * 
+     *
      * @param value the value to be tested
      * @return <code>true</code> if the value is a valid GUID.
      */
     public static boolean isValid(String value)
     {
-        try
-        {
-            if (value == null) return false;
-
-            if (GUIDHelper.hasSurroundingBrackets(value)) value = value.replaceAll("[{}]", "");
-
-            UUID.fromString(value);
-
-            return value.replaceAll("[-]", "").length() == 32;
-        }
-        catch (IllegalArgumentException ex)
-        {
-            // Invalid UUID
-            return false;
-        }
+        return value != null && REGEX_PATTERN.matcher(value).matches();
     }
 
     /**
      * Returns <code>true</code> if the value is a valid GUID and also has matching surrounding brackets.
-     * 
+     *
      * @param value the value to check.
      * @return <code>true</code> if the value is a valid GUID and surrounded by matching brackets.
      */
     public static boolean hasBrackets(String value)
     {
-        if (!GUIDHelper.isValid(value)) return false;
-
-        return GUIDHelper.hasSurroundingBrackets(value);
+        return GUIDHelper.isValid(value) && GUIDHelper.hasSurroundingBrackets(value);
     }
 
     /**
      * Returns the original value with surrounding brackets added. If the original value was not a valid GUID then
      * <code>null</code> is returned.
-     * 
+     *
      * @param value the value to add brackets to.
      * @return the original value with surrounding brackets added. If the original value was not a valid GUID then
-     *         <code>null</code> is returned.
+     * <code>null</code> is returned.
      */
     public static String addBrackets(String value)
     {
-        if (!GUIDHelper.isValid(value)) return null;
+        if (!GUIDHelper.isValid(value))
+            return null;
 
         if (!GUIDHelper.hasSurroundingBrackets(value))
         {
@@ -99,14 +94,15 @@ public final class GUIDHelper {
     /**
      * Returns the original value with surrounding brackets removed. If the original value was not a valid GUID then
      * <code>null</code> returned.
-     * 
+     *
      * @param value the value to remove brackets from.
      * @return the original value with surrounding brackets removed. If the original value was not a valid GUID then
-     *         <code>null</code> returned.
+     * <code>null</code> returned.
      */
     public static String removeBrackets(String value)
     {
-        if (!GUIDHelper.isValid(value)) return null;
+        if (!GUIDHelper.isValid(value))
+            return null;
 
         return value.replaceAll("[{}]", "").toUpperCase();
     }
@@ -114,14 +110,15 @@ public final class GUIDHelper {
     /**
      * Returns the {@link java.util.UUID} representing the value provided. If the value is not a valid GUID then
      * <code>null</code> is returned;
-     * 
+     *
      * @param value the value to be converted.
      * @return the {@link java.util.UUID} representing the value provided. If the value is not a valid GUID then
-     *         <code>null</code> is returned
+     * <code>null</code> is returned
      */
     public static UUID getGuid(String value)
     {
-        if (!GUIDHelper.isValid(value)) return null;
+        if (!GUIDHelper.isValid(value))
+            return null;
 
         return UUID.fromString(value.replaceAll("[{}]", ""));
 
@@ -129,7 +126,7 @@ public final class GUIDHelper {
 
     /**
      * Returns the string representation of the provided GUID without surrounding brackets.
-     * 
+     *
      * @param value the GUID
      * @return the string representation of the provided GUID without surrounding brackets.
      */
@@ -140,14 +137,15 @@ public final class GUIDHelper {
 
     /**
      * Returns the string representation of the provided GUID while conditionally adding surrounding brackets.
-     * 
-     * @param value the GUID value.
+     *
+     * @param value        the GUID value.
      * @param withBrackets whether to include surrounding brackets.
      * @return the string representation of the provided GUID with conditionally added brackets.
      */
     public static String getGuidString(UUID value, boolean withBrackets)
     {
-        if (value == null) return null;
+        if (value == null)
+            return null;
 
         if (withBrackets)
         {
@@ -158,14 +156,14 @@ public final class GUIDHelper {
             return value.toString().toUpperCase();
         }
     }
-    
+
     /**
      * Converts an array of Strings to UUIDs
-     * 
+     *
      * @param values
      * @return an array of UUIDs or throws an IllegalArgumentException if they
-     *         are not valid UUIDs.
-     * @throws IllegalArgumentException 
+     * are not valid UUIDs.
+     * @throws IllegalArgumentException
      */
     public static UUID[] toUUIDArray(String[] values) throws IllegalArgumentException
     {
@@ -175,8 +173,9 @@ public final class GUIDHelper {
         for (int ii = 0; ii < values.length; ii++)
         {
             result[ii] = GUIDHelper.getGuid(values[ii]);
-            
-            if (result[ii] == null) {
+
+            if (result[ii] == null)
+            {
                 throw new IllegalArgumentException("Invalid UUID string: " + values[ii]);
             }
         }
@@ -187,7 +186,7 @@ public final class GUIDHelper {
 
     /**
      * Converts an array of UUIDs to Strings
-     * 
+     *
      * @param values
      * @return an array of strings from the provided UUIDs.
      */
@@ -202,7 +201,7 @@ public final class GUIDHelper {
         }
 
         return result;
-        
+
     }
 
     // -----------------------------------------------------------------------//
@@ -211,8 +210,6 @@ public final class GUIDHelper {
 
     private static boolean hasSurroundingBrackets(String value)
     {
-        if (value == null) return false;
-
         return (value.startsWith("{") && value.endsWith("}"));
     }
 

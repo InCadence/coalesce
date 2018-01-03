@@ -17,10 +17,10 @@
 
 package com.incadencecorp.coalesce.services.crud.service.client.tests;
 
+import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import org.junit.BeforeClass;
 
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
-import com.incadencecorp.coalesce.framework.persistance.memory.MockPersister;
 import com.incadencecorp.coalesce.services.crud.api.test.AbstractCrudTests;
 import com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl;
 
@@ -35,7 +35,7 @@ public class CrudFrameworkClientImplTest extends AbstractCrudTests {
     public static void initialize() throws Exception
     {
         CoalesceFramework framework = new CoalesceFramework();
-        framework.setAuthoritativePersistor(new MockPersister());
+        framework.setAuthoritativePersistor(new DerbyPersistor());
 
         client = new CrudFrameworkClientImpl(framework);
     }

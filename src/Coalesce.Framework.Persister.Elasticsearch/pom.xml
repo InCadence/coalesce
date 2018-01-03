@@ -1,0 +1,257 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>coalesce-framework-persister-elasticsearch</artifactId>
+    <packaging>bundle</packaging>
+    <name>Coalesce Elastic Search Persister</name>
+    <description>Persister used by Coalesce to connect to ElasticSearch</description>
+    
+	<properties>
+		<gt.version>16.1</gt.version>
+	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<url>http://10.15.0.230:8081/repository/maven-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus</id>
+			<url>http://10.15.0.230:8081/repository/maven-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<parent>
+		<groupId>com.incadencecorp.coalesce</groupId>
+		<artifactId>coalesce-pom</artifactId>
+		<version>0.0.25-SNAPSHOT</version>
+		<relativePath>../Coalesce.Pom</relativePath>
+	</parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${maven.bundle.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>
+                            ${project.groupId}.framework.persistance.elasticsearch*
+                        </Export-Package>
+                        <Import-Package>
+							org.joda.time*;version="[1.6.2, 3)",
+							*; resolution:=optional
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <repositories>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net repository</name>
+			<url>http://download.java.net/maven/2</url>
+		</repository>
+		<repository>
+			<id>elasticsearch-releases</id>
+			<url>http://maven.elasticsearch.org/releases</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+	</repositories>
+
+    <dependencies>
+        <!-- Internal Dependencies -->
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-search</artifactId>
+        </dependency>
+
+        <!-- PostGreSQL Dependencies -->
+
+        <!-- Unit Test Dependencies -->
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <version>${project.version}</version>
+            <artifactId>coalesce-core</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.11.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-search</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+        
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>5.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>mil.nga.giat</groupId>
+			<artifactId>gt-elasticsearch</artifactId>
+			<version>2.12-SNAPSHOT</version>
+		</dependency>
+		<dependency> 
+	        <groupId>org.elasticsearch.client</groupId> 
+	        <artifactId>transport</artifactId> 
+	        <version>5.4.0</version> 
+	    </dependency> 
+	    <dependency> 
+            <groupId>org.apache.logging.log4j</groupId> 
+            <artifactId>log4j-api</artifactId> 
+            <version>2.7</version> 
+        </dependency> 
+        <dependency> 
+            <groupId>org.apache.logging.log4j</groupId> 
+            <artifactId>log4j-core</artifactId> 
+            <version>2.7</version> 
+        </dependency> 
+		<dependency>
+			<groupId>ironhide</groupId>
+			<artifactId>ironhide-client</artifactId>
+			<version>1.0.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-main</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-opengis</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-cql</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-metadata</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-data</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-imagemosaic</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_imageio</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-referencing</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>jgridshift</groupId>
+					<artifactId>jgridshift</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.opengis</groupId>
+			<artifactId>geoapi</artifactId>
+			<version>3.0.0</version>
+        </dependency>
+        
+		<dependency>
+			<artifactId>joda-time</artifactId>
+			<groupId>joda-time</groupId>
+			<version>2.8</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.fasterxml.jackson.jaxrs</groupId>
+		    <artifactId>jackson-jaxrs-json-provider</artifactId>
+		    <version>2.3.2</version>
+		</dependency>
+    </dependencies>
+
+</project>

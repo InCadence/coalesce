@@ -32,8 +32,12 @@
 						</Export-Package>
 						<Import-Package>
 							org.joda.time*;version="[1.6.2, 3)",
-							*; resolution:=optional
+							*;resolution:=optional
 						</Import-Package>
+						<Embed-Dependency>
+							neo4j-jdbc;inline=false,
+							neo4j-jdbc-driver;inline=false,
+						</Embed-Dependency>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -50,13 +54,6 @@
 			<artifactId>coalesce-search</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<version>${project.version}</version>
-			<artifactId>coalesce-core</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-jdbc</artifactId>
 			<version>${neo4j-jdbc-version}</version>
@@ -67,127 +64,22 @@
 			<version>${neo4j-jdbc-version}</version>
 		</dependency>
 
+		<!-- Test Dependencies -->
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.1.1</version>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-search</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.log</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-
-
-		<!-- Transitive Dependencies -->
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.13</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-core-asl</artifactId>
-			<version>1.9.13</version>
-		</dependency>
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-library</artifactId>
-			<version>2.10.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-reflect</artifactId>
-			<version>2.10.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.servicemix.bundles</groupId>
-			<artifactId>org.apache.servicemix.bundles.restlet</artifactId>
-			<version>1.1.10_3</version>
-		</dependency>
-		<dependency>
-			<groupId>net.jcip</groupId>
-			<artifactId>jcip-annotations</artifactId>
-			<version>1.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.james</groupId>
-			<artifactId>apache-mime4j</artifactId>
-			<version>0.6</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.4.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpmime</artifactId>
-			<version>4.4.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-			<version>4.4.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jsslutils</groupId>
-			<artifactId>jsslutils</artifactId>
-			<version>1.0.7</version>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<version>${project.version}</version>
+			<artifactId>coalesce-core</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.10</version>
-			<scope>provided</scope>
-		</dependency>
-
-
-		<!-- <dependency> -->
-		<!-- <groupId>com.mysema.querydsl</groupId> -->
-		<!-- <artifactId>querydsl-core</artifactId> -->
-		<!-- <version>3.6.3</version> -->
-		<!-- <exclusions> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>com.google.code.findbugs</groupId> -->
-		<!-- <artifactId>jsr305</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>com.infradna.tool</groupId> -->
-		<!-- <artifactId>bridge-method-annotation</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- </exclusions> -->
-		<!-- </dependency> -->
-
-		<!-- <dependency> -->
-		<!-- <groupId>com.google.guava</groupId> -->
-		<!-- <artifactId>guava</artifactId> -->
-		<!-- <version>18.0</version> -->
-		<!-- </dependency> -->
-		<dependency>
-			<groupId>com.mysema.commons</groupId>
-			<artifactId>mysema-commons-lang</artifactId>
-			<version>0.2.4</version>
-		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>com.infradna.tool</groupId> -->
-		<!-- <artifactId>bridge-method-annotation</artifactId> -->
-		<!-- <version>1.13</version> -->
-		<!-- <scope>provided</scope> -->
-		<!-- </dependency> -->
-        <dependency>
-            <groupId>com.incadencecorp.coalesce</groupId>
-            <artifactId>coalesce-search</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-            <type>test-jar</type>
-        </dependency>
-    </dependencies>
+	</dependencies>
 
 </project>

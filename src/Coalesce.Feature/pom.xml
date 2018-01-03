@@ -18,25 +18,11 @@
 			<plugin>
 				<groupId>org.apache.karaf.tooling</groupId>
 				<artifactId>karaf-maven-plugin</artifactId>
+				<configuration>
+					<aggregateFeatures>true</aggregateFeatures>
+				</configuration>
 			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.karaf.tooling</groupId>
-					<artifactId>karaf-maven-plugin</artifactId>
-					<version>4.0.8</version>
-					<extensions>true</extensions>
-					<configuration>
-						<instructions>
-							<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-						</instructions>
-						<unpackBundle>true</unpackBundle>
-						<aggregateFeatures>true</aggregateFeatures>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<dependencies>
@@ -46,7 +32,7 @@
 			<version>${project.version}</version>
 			<type>xml</type>
 			<classifier>features</classifier>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.services</groupId>
 			<artifactId>coalesce-services-feature</artifactId>
@@ -61,6 +47,28 @@
 			<type>xml</type>
 			<classifier>features</classifier>
 		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.synchronizer</groupId>
+			<artifactId>coalesce-synchronizer-feature</artifactId>
+			<version>${project.version}</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>	
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.react</groupId>
+			<artifactId>coalesce-react-feature</artifactId>
+			<version>${project.version}</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.dist</groupId>
+			<artifactId>coalesce-javadocs</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+
 	</dependencies>
 
 </project>

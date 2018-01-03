@@ -635,7 +635,7 @@ public class CoalesceValidator extends CoalesceIterator {
      * Attempts to load the validator from the OSGi container. If that fails it
      * checks the class path.
      *
-     * @param service
+     * @param name
      * @return
      * @throws CoalesceException
      */
@@ -670,7 +670,7 @@ public class CoalesceValidator extends CoalesceIterator {
     /**
      * Attempts to load a validator from the Service Loader.
      *
-     * @param service
+     * @param name
      * @return
      */
     private static ICustomValidator getValidatorFromServiceLoader(String name)
@@ -698,7 +698,7 @@ public class CoalesceValidator extends CoalesceIterator {
     /**
      * Attempts to load a validator from an OSGi container.
      *
-     * @param service
+     * @param name
      * @return
      * @throws CoalesceException
      */

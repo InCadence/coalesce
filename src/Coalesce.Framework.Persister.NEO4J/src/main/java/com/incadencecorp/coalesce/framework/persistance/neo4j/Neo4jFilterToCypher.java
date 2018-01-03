@@ -1,89 +1,31 @@
 package com.incadencecorp.coalesce.framework.persistance.neo4j;
 
-import static org.geotools.filter.capability.FunctionNameImpl.parameter;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
+import com.incadencecorp.coalesce.search.api.EFilterEnumerationModes;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import org.apache.commons.lang.StringUtils;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.Hints;
 import org.geotools.filter.FilterCapabilities;
 import org.geotools.filter.FunctionImpl;
-import org.geotools.filter.capability.FunctionNameImpl;
 import org.geotools.util.ConverterFactory;
 import org.geotools.util.Converters;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.filter.And;
-import org.opengis.filter.BinaryComparisonOperator;
-import org.opengis.filter.BinaryLogicOperator;
-import org.opengis.filter.ExcludeFilter;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.Id;
-import org.opengis.filter.IncludeFilter;
-import org.opengis.filter.Not;
-import org.opengis.filter.Or;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.PropertyIsGreaterThan;
-import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
-import org.opengis.filter.PropertyIsLessThan;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.PropertyIsNil;
-import org.opengis.filter.PropertyIsNotEqualTo;
-import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.expression.Add;
-import org.opengis.filter.expression.BinaryExpression;
-import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.Multiply;
-import org.opengis.filter.expression.NilExpression;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.expression.Subtract;
-import org.opengis.filter.spatial.BBOX;
-import org.opengis.filter.spatial.Beyond;
-import org.opengis.filter.spatial.BinarySpatialOperator;
-import org.opengis.filter.spatial.Contains;
-import org.opengis.filter.spatial.Crosses;
-import org.opengis.filter.spatial.DWithin;
-import org.opengis.filter.spatial.Disjoint;
-import org.opengis.filter.spatial.Equals;
-import org.opengis.filter.spatial.Intersects;
-import org.opengis.filter.spatial.Overlaps;
-import org.opengis.filter.spatial.Touches;
-import org.opengis.filter.spatial.Within;
-import org.opengis.filter.temporal.After;
-import org.opengis.filter.temporal.AnyInteracts;
-import org.opengis.filter.temporal.Before;
-import org.opengis.filter.temporal.Begins;
-import org.opengis.filter.temporal.BegunBy;
-import org.opengis.filter.temporal.BinaryTemporalOperator;
-import org.opengis.filter.temporal.During;
-import org.opengis.filter.temporal.EndedBy;
-import org.opengis.filter.temporal.Ends;
-import org.opengis.filter.temporal.Meets;
-import org.opengis.filter.temporal.MetBy;
-import org.opengis.filter.temporal.OverlappedBy;
-import org.opengis.filter.temporal.TContains;
-import org.opengis.filter.temporal.TEquals;
-import org.opengis.filter.temporal.TOverlaps;
+import org.opengis.filter.*;
+import org.opengis.filter.expression.*;
+import org.opengis.filter.spatial.*;
+import org.opengis.filter.temporal.*;
 import org.opengis.temporal.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Encodes a filter into a cypher. It should hopefully be generic enough that
@@ -92,22 +34,37 @@ import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
  */
 public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
 
-    /** Error message for exceptions */
+    /**
+     * Error message for exceptions
+     */
     protected static final String IO_ERROR = "io problem writing filter";
 
-    /** Filter factory */
+    /**
+     * Filter factory
+     */
     protected static final FilterFactory FF = CommonFactoryFinder.getFilterFactory(null);
 
-    /** Standard java logger */
+    /**
+     * Standard java logger
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jFilterToCypher.class);
 
-    /** Maps a node label to a node variable name. */
+    /** */
+    private static final EFilterEnumerationModes MODE = EFilterEnumerationModes.ENUMVALUE;
+
+    /**
+     * Maps a node label to a node variable name.
+     */
     protected Map<String, String> labelToNode = new HashMap<>();
 
-    /** Where to write the constructed string from visiting the filters. */
+    /**
+     * Where to write the constructed string from visiting the filters.
+     */
     protected Writer out;
 
-    /** The filter types that this class can encode */
+    /**
+     * The filter types that this class can encode
+     */
     protected FilterCapabilities capabilities;
 
     /**
@@ -116,10 +73,14 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
      */
     protected boolean inline;
 
-    /** The default property name replacement. */
+    /**
+     * The default property name replacement.
+     */
     private String defaultName = null;
 
     private String entityname = null;
+    private String currentProperty;
+    private SimpleFeatureType featureType;
 
     /**
      * Default constructor.
@@ -160,6 +121,19 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
     }
 
     /**
+     * Sets the featuretype the encoder is encoding sql for.
+     * <p>
+     * This is used for context for attribute expressions when encoding to sql.
+     * </p>
+     *
+     * @param featureType
+     */
+    public void setFeatureType(SimpleFeatureType featureType)
+    {
+        this.featureType = featureType;
+    }
+
+    /**
      * Sets the default property name replacement. If a label mapping does not
      * exist and a default has been set, then the default will be used.
      *
@@ -175,7 +149,7 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
      * contain the node label will be replaced with the node variable.
      *
      * @param label the label being replaced on a property
-     * @param node the node name
+     * @param node  the node name
      */
     public void addLabelMapping(String label, String node)
     {
@@ -184,7 +158,7 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
 
     /**
      * Encodes an OGS filter as a cypher expression.
-     * 
+     *
      * @param filter
      * @return
      * @throws CoalesceException
@@ -325,7 +299,7 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
      * Writes the cypher for the Math Expression.
      *
      * @param expression the Math phrase to be written.
-     * @param operator The operator of the expression.
+     * @param operator   The operator of the expression.
      */
     protected Object visit(BinaryExpression expression, String operator, Object extraData)
     {
@@ -347,14 +321,31 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
     @Override
     public Object visit(Function expression, Object extraData)
     {
-        throw new UnsupportedOperationException("Function filter is not supported.");
+        try
+        {
+            out.write(expression.getName() + "(");
+            for (int ii=0; ii<expression.getParameters().size(); ii++)
+            {
+                if (ii != 0)
+                {
+                    out.write(",");
+                }
+
+                expression.getParameters().get(ii).accept(this, extraData);
+            }
+            out.write(")");
+        }
+        catch (IOException ioe)
+        {
+            throw new RuntimeException("IO problems writing expression", ioe);
+        }
+
+        return extraData;
     }
 
     @Override
     public Object visit(Literal expression, Object context)
     {
-        LOGGER.debug("exporting LiteralExpression");
-
         // type to convert the literal to
         Class<?> target = null;
         if (context instanceof Class)
@@ -371,7 +362,6 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
             // behaviour (for writing out dates and the like using the BDMS
             // custom functions)
             writeLiteral(literal);
-
         }
         catch (IOException e)
         {
@@ -383,8 +373,6 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
     @Override
     public Object visit(PropertyName expression, Object extraData)
     {
-        LOGGER.debug("exporting PropertyName");
-
         Class<?> target = null;
         if (extraData instanceof Class)
         {
@@ -836,7 +824,7 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
      * Common implementation for BinaryLogicOperator filters. This way they're
      * all handled centrally.
      *
-     * @param filter the logic statement to be turned into cypher.
+     * @param filter    the logic statement to be turned into cypher.
      * @param extraData extra filter data. Not modified directly by this method.
      */
     protected Object visit(BinaryLogicOperator filter, Object extraData)
@@ -872,6 +860,37 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
         return extraData;
     }
 
+    private Class<?> getPropertyContext(PropertyName name)
+    {
+
+        Class<?> context = null;
+        AttributeDescriptor attType = (AttributeDescriptor) name.evaluate(featureType);
+
+        if (attType != null)
+        {
+            context = attType.getType().getBinding();
+        }
+
+        if (context != null)
+        {
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Property ({}) Context ({})", name.getPropertyName(), context.toString());
+            }
+        }
+        else
+        {
+            LOGGER.warn("Property ({}) Context (UNKNOWN)", name.getPropertyName());
+        }
+
+        return context;
+    }
+
+    private String normalize(String name)
+    {
+        return name.toLowerCase();
+    }
+
     /**
      * Common implementation for BinaryComparisonOperator filters. This way
      * they're all handled centrally. DJB: note, postgis overwrites this
@@ -879,36 +898,35 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
      * &lt;PropertyIsNull&gt; filters and &lt;PropertyIsEqual&gt; filters are handled. They
      * will come here with "property = null".
      *
-     * @param filter the comparison to be turned into cypher.
+     * @param filter    the comparison to be turned into cypher.
      * @param extraData the operator used
      */
     protected void visit(BinaryComparisonOperator filter, Object extraData)
     {
-        LOGGER.debug("exporting Cypher ComparisonFilter");
-
         Expression left = filter.getExpression1();
         Expression right = filter.getExpression2();
-        Class<?> leftContext = null;
-        Class<?> rightContext = null;
+
+        PropertyName property;
+        Expression value;
+        Class<?> context;
+
         if (left instanceof PropertyName)
         {
-            // aha! It's a propertyname, we should get the class and pass it in
-            // as context to the tree walker.
-            AttributeDescriptor attType = (AttributeDescriptor) left.evaluate(null);
-            if (attType != null)
-            {
-                rightContext = attType.getType().getBinding();
-            }
+            property = FF.property(normalize(((PropertyName) left).getPropertyName()));
+            value = right;
+        }
+        else if (right instanceof PropertyName)
+        {
+            property = FF.property(normalize(((PropertyName) right).getPropertyName()));
+            value = left;
+        }
+        else
+        {
+            throw new IllegalArgumentException("");
         }
 
-        if (right instanceof PropertyName)
-        {
-            AttributeDescriptor attType = (AttributeDescriptor) right.evaluate(null);
-            if (attType != null)
-            {
-                leftContext = attType.getType().getBinding();
-            }
-        }
+        currentProperty = property.getPropertyName();
+        context = getPropertyContext(property);
 
         // case sensitivity
         boolean matchCase = true;
@@ -918,61 +936,42 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
             if (filter instanceof PropertyIsEqualTo || filter instanceof PropertyIsNotEqualTo)
             {
                 // and only for strings
-                if (String.class.equals(leftContext) || String.class.equals(rightContext))
+                if (String.class.equals(context))
                 {
                     matchCase = false;
                 }
             }
         }
 
-        String type = (String) extraData;
-
         try
         {
             if (matchCase)
             {
-                if (leftContext != null && isBinaryExpression(left))
+                property.accept(this, String.class);
+
+                out.write(" " + extraData + " ");
+
+                if (context != null && isBinaryExpression(right))
                 {
-                    writeBinaryExpression(left, leftContext);
+                    writeBinaryExpression(right, context);
                 }
                 else
                 {
-                    left.accept(this, leftContext);
-                }
-
-                out.write(" " + type + " ");
-
-                if (rightContext != null && isBinaryExpression(right))
-                {
-                    writeBinaryExpression(right, rightContext);
-                }
-                else
-                {
-                    right.accept(this, rightContext);
+                    value.accept(this, context);
                 }
             }
             else
             {
-                // wrap both sides in "lower"
-                FunctionImpl f = new FunctionImpl() {
-
-                    {
-                        functionName = new FunctionNameImpl("lower",
-                                                            parameter("lowercase", String.class),
-                                                            parameter("string", String.class));
-                    }
-                };
+                FunctionImpl f = new FunctionImpl();
                 f.setName("lower");
+                f.setParameters(Collections.singletonList(property));
+                f.accept(this, String.class);
 
-                f.setParameters(Arrays.asList(left));
-                f.accept(this, Arrays.asList(leftContext));
+                out.write(" " + extraData + " ");
 
-                out.write(" " + type + " ");
-
-                f.setParameters(Arrays.asList(right));
-                f.accept(this, Arrays.asList(rightContext));
+                f.setParameters(Collections.singletonList(value));
+                f.accept(this, context);
             }
-
         }
         catch (java.io.IOException ioe)
         {
@@ -1200,6 +1199,44 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
         return filter instanceof During || filter instanceof TContains;
     }
 
+    private Object getLiteralEnumerationValue(EFilterEnumerationModes mode, Literal expression)
+    {
+
+        Object literalValue;
+
+        if (mode == EFilterEnumerationModes.MIXED)
+        {
+            mode = Pattern.matches("^[0-9]+$",
+                                   (String) expression.getValue()) ? EFilterEnumerationModes.ORDINAL : EFilterEnumerationModes.ENUMVALUE;
+        }
+
+        if (mode == EFilterEnumerationModes.ENUMVALUE)
+        {
+            // Convert to Ordinal
+            int ordinal = EnumerationProviderUtil.toPosition(null, currentProperty, (String) expression.getValue());
+
+            // TODO All types are stored as Strings within Neo4j. Until this is
+            // resolved we need to
+            // convert the ordinal position.
+            literalValue = Integer.toString(ordinal);
+
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Converted ({}) Value ({}) => ({})",
+                             currentProperty,
+                             (String) expression.getValue(),
+                             literalValue);
+            }
+        }
+        else
+        {
+            literalValue = expression.getValue();
+        }
+
+        return literalValue;
+
+    }
+
     void visitBegin(Period p, Object extraData)
     {
         FF.literal(p.getBeginning().getPosition().getDate()).accept(this, extraData);
@@ -1257,21 +1294,13 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
                     literal = safeConvertToNumber(expression, Number.class);
                 }
             }
+            else if (Enum.class.isAssignableFrom(target))
+            {
+                literal = getLiteralEnumerationValue(MODE, expression);
+            }
             else
             {
                 literal = expression.evaluate(null, target);
-            }
-        }
-
-        // check for conversion to number
-        if (target == null)
-        {
-            // we don't know the target type, check for a conversion to a number
-
-            Number number = safeConvertToNumber(expression, Number.class);
-            if (number != null)
-            {
-                literal = number;
             }
         }
 
@@ -1322,7 +1351,10 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
             }
 
             // single quotes must be escaped to have a valid cypher value
-            String escaped = encoding.replaceAll("'", "\'");
+            String escaped = StringUtils.replace(encoding, "'", "\\'");
+
+            LOGGER.debug("Escaped Expression = {}", escaped);
+
             out.write("\"" + escaped + "\"");
         }
     }
@@ -1332,8 +1364,9 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
      */
     Number safeConvertToNumber(Expression expression, Class<?> target)
     {
-        return (Number) Converters.convert(expression.evaluate(null), target, new Hints(ConverterFactory.SAFE_CONVERSION,
-                                                                                        true));
+        return (Number) Converters.convert(expression.evaluate(null),
+                                           target,
+                                           new Hints(ConverterFactory.SAFE_CONVERSION, true));
     }
 
     /**
@@ -1361,20 +1394,13 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
             }
         }
 
-        // Can be phased out when DSSNeo4jPersistor.KEY is modified to be
-        // DSSPropertyFactory.getEntityKey().getPropertyName()
-        if (propName.compareToIgnoreCase(CoalescePropertyFactory.getEntityKey().getPropertyName()) == 0)
-        {
-            propName = Neo4JPersistor.KEY;
-        }
-
         // replace the label with the default name
         if (defaultName != null)
         {
-            // split off the property name from the end and append to the
-            // default
+            // split off the property name from the end and append to the default
             String[] tokens = propName.split("\\.");
-            return defaultName + "." + tokens[tokens.length - 1];
+            // TODO Replace this with the normalize API
+            return defaultName + "." + tokens[tokens.length - 1].replaceAll("[^a-zA-Z0-9]", "_").toLowerCase();
         }
         return propName;
     }

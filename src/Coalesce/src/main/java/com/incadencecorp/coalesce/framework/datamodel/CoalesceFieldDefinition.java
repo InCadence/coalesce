@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
 
@@ -31,6 +32,8 @@ import com.incadencecorp.coalesce.framework.CoalesceSettings;
  * Wrapper for field definitions.
  */
 public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesceFieldDefinition {
+
+    private static final boolean NO_INDEX_DEFAULT = CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT;
 
     // -----------------------------------------------------------------------//
     // Protected Member Variables
@@ -62,7 +65,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     /**
      * @param parent
      * @param name
-     * @return a field definition for a enumeration list type with the enumeration mapping to the field name.
+     * @return a field definition for a enumeration list type with the
+     *         enumeration mapping to the field name.
      */
     public static CoalesceFieldDefinition createEnumerationListFieldDefinition(CoalesceRecordset parent, String name)
     {
@@ -103,14 +107,14 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     /**
      * @param parent
      * @param name
-     * @return a field definition for a enumeration type with the enumeration mapping to the field name.
+     * @return a field definition for a enumeration type with the enumeration
+     *         mapping to the field name.
      */
     public static CoalesceFieldDefinition createEnumerationFieldDefinition(CoalesceRecordset parent, String name)
     {
         return createEnumerationFieldDefinition(parent, name, name);
     }
 
-    
     /**
      * @param parent
      * @param name
@@ -187,7 +191,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters of name and datatype provided.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @param parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      *            that the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      *            belongs to.
@@ -203,7 +208,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent, String name, ECoalesceFieldDataTypes dataType)
     {
-        return CoalesceFieldDefinition.create(parent, name, dataType, false);
+        return CoalesceFieldDefinition.create(parent, name, dataType, NO_INDEX_DEFAULT);
     }
 
     /**
@@ -213,7 +218,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters of name, datatype and noindex provided.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @param parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      *            that the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      *            belongs to.
@@ -243,7 +249,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @param parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      *            that the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      *            belongs to.
@@ -263,7 +270,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
                                                  String defaultClassificationMarking,
                                                  boolean defaultValue)
     {
-        return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
+        return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, NO_INDEX_DEFAULT);
     }
 
     /**
@@ -273,7 +280,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @param parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      *            that the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      *            belongs to.
@@ -311,7 +319,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @param parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      *            that the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      *            belongs to.
@@ -331,7 +340,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
                                                  String defaultClassificationMarking,
                                                  int defaultValue)
     {
-        return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
+        return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, NO_INDEX_DEFAULT);
     }
 
     /**
@@ -341,7 +350,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @param parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      *            that the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      *            belongs to.
@@ -379,7 +389,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @param parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      *            that the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      *            belongs to.
@@ -409,7 +420,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
                                               label,
                                               defaultClassificationMarking,
                                               defaultValue,
-                                              false);
+                                              NO_INDEX_DEFAULT);
     }
 
     /**
@@ -419,7 +430,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @param parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      *            that the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      *            belongs to.
@@ -462,7 +474,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @param parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      *            that the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      *            belongs to
@@ -506,7 +519,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
         fieldDefinition.setDataType(dataType);
 
         fieldDefinition.setLabel(label);
-        fieldDefinition.setDefaultClassificationMarking(defaultClassificationMarking);
+        fieldDefinition.setDefaultClassificationMarkingAsString(defaultClassificationMarking);
         fieldDefinition.setDefaultValue(defaultValue);
 
         return fieldDefinition;
@@ -517,7 +530,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * Initializes a previously new Fielddefinition and ties it to its parent
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @param parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      *            that the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      *            belongs to.
@@ -636,26 +650,33 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     }
 
     @Override
+    public String getDefaultClassificationMarkingAsString()
+    {
+        return _entityFieldDefinition.getDefaultclassificationmarking();
+    }
+    
+    @JsonIgnore
     public Marking getDefaultClassificationMarking()
     {
-        return new Marking(_entityFieldDefinition.getDefaultclassificationmarking());
+        return new Marking(getDefaultClassificationMarkingAsString());
     }
 
-    /**
-     * Sets the Fielddefinition's DefaultClassificationMarking.
-     * 
-     * @param value String, the default classification marking for the field
-     *            type.
-     */
-    public void setDefaultClassificationMarking(String value)
+    @Override
+    public void setDefaultClassificationMarkingAsString(String value)
     {
         _entityFieldDefinition.setDefaultclassificationmarking(value);
     }
 
-    @Override
+    /**
+     * Sets the FieldDefinitions's DefaultClassificationMarking attribute based
+     * on the Marking class value parameter.
+     * 
+     * @param value Marking class to be the FieldDefinition's default
+     *            classification marking attribute.
+     */
     public void setDefaultClassificationMarking(Marking value)
     {
-        _entityFieldDefinition.setDefaultclassificationmarking(value.toPortionString());
+        setDefaultClassificationMarkingAsString(value.toPortionString());
     }
 
     @Override
@@ -755,7 +776,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
             setLabel(value);
             return true;
         case "defaultclassificationmarking":
-            setDefaultClassificationMarking(value);
+            setDefaultClassificationMarkingAsString(value);
             return true;
         case "defaultvalue":
             setDefaultValue(value);

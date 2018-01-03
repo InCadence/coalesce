@@ -18,7 +18,6 @@
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<version>${maven.bundle.version}</version>
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
@@ -43,7 +42,7 @@
 
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-			<artifactId>persister-memory</artifactId>
+			<artifactId>persister-derby</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>

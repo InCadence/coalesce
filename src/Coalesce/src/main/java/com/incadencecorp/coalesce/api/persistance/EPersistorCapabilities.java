@@ -57,11 +57,23 @@ public enum EPersistorCapabilities
      */
     SUPPORTS_BLOB,
     /**
+     * Whether or not this persistor can support case insensitive search.
+     */
+    CASE_INSENSITIVE_SEARCH,
+    /**
      * Whether or not this persistor can geospatially search entities.
      */
     GEOSPATIAL_SEARCH,
     /**
+     * Whether or not this persistor can temporally search entities.
+     */
+    TEMPORAL_SEARCH,
+    /**
+     * Whether or not this persistor can search list data types.
+     */
+    LIST_SEARCH,
+    /**
      * Whether or not this persistor can index fields.
      */
-    INDEX_FIELDS;
+    INDEX_FIELDS
 }

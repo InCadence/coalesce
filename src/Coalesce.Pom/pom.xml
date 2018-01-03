@@ -13,10 +13,21 @@
 
 	<profiles>
 		<profile>
+			<id>dist</id>
+			<modules>
+				<module>../Coalesce.Dist</module>
+			</modules>
+		</profile>
+		<profile>
 			<id>bundles</id>
 			<modules>
 				<module>../Coalesce.Bundles</module>
-		                <module>../Coalesce.Dist/coalesce-karaf-dist</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>react</id>
+			<modules>
+				<module>../Coalesce.React</module>
 			</modules>
 		</profile>
 	</profiles>

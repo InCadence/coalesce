@@ -17,25 +17,20 @@
 
 package com.incadencecorp.coalesce.framework.persistance.memory;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.joda.time.DateTime;
-
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
-import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
-import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This mock implementation uses a memory to store and retrieve entities.
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public class MockPersister extends CoalescePersistorBase {
 
@@ -54,7 +49,7 @@ public class MockPersister extends CoalescePersistorBase {
     /**
      * Sets whether when persisting an error should be thrown for testing error
      * cases in unit tests.
-     * 
+     *
      * @param value
      */
     public void setThrowException(boolean value)
@@ -87,65 +82,13 @@ public class MockPersister extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
         return null;
     }
 
     @Override
-    public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        return null;
-    }
-
-    @Override
-    public Object getFieldValue(String fieldKey) throws CoalescePersistorException
-    {
-        return null;
-    }
-
-    @Override
-    public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
-    {
-        return null;
-    }
-
-    @Override
-    public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
-    {
-        return null;
-    }
-
-    @Override
-    public List<String> getCoalesceEntityKeysForEntityId(String entityId,
-                                                         String entityIdType,
-                                                         String entityName,
-                                                         String entitySource)
-            throws CoalescePersistorException
-    {
-        return null;
-    }
-
-    @Override
-    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
-    {
-        return null;
-    }
-
-    @Override
-    public byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException
-    {
-        return null;
-    }
-
-    @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
-    {
-        return null;
-    }
-
-    @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
         return null;
     }

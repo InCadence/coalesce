@@ -17,10 +17,6 @@
 
 package com.incadencecorp.coalesce.notification.tests;
 
-import java.util.List;
-
-import org.junit.Test;
-
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
 import com.incadencecorp.coalesce.enums.EAuditCategory;
@@ -34,14 +30,14 @@ import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 import com.incadencecorp.coalesce.framework.util.CoalesceNotifierUtil;
+import org.junit.Test;
 
 /**
  * Because of the nature of how notification works these tests are primarily to
  * ensure that exceptions are not thrown and require a visual inspection to
  * ensure proper behavior.
- * 
- * @author Derek Clemenzi
  *
+ * @author Derek Clemenzi
  */
 public abstract class AbstractCoalesceNotifierTests {
 
@@ -66,7 +62,7 @@ public abstract class AbstractCoalesceNotifierTests {
 
         result = new CoalesceStringResponseType();
 
-        metric = new MetricResults<CoalesceStringResponseType>();
+        metric = new MetricResults<>("TEST");
         metric.setWatch(watch);
         metric.setResults(result);
 
@@ -75,7 +71,7 @@ public abstract class AbstractCoalesceNotifierTests {
         // Test Failure w/ No Reason
         result.setStatus(EResultStatus.FAILED);
 
-        metric = new MetricResults<CoalesceStringResponseType>();
+        metric = new MetricResults<>("TEST");
         metric.setWatch(watch);
         metric.setResults(result);
 
@@ -84,7 +80,7 @@ public abstract class AbstractCoalesceNotifierTests {
         // Test Failure w/ Reason
         result.setError("Hello World");
 
-        metric = new MetricResults<CoalesceStringResponseType>();
+        metric = new MetricResults<>("TEST");
         metric.setWatch(watch);
         metric.setResults(result);
 
@@ -137,6 +133,12 @@ public abstract class AbstractCoalesceNotifierTests {
         CoalesceSaveEntityJob job = new CoalesceSaveEntityJob(null);
 
         CoalesceNotifierUtil.sendJobComplete(job);
+    }
+
+    @Test
+    public void sendMessage() throws Exception
+    {
+        CoalesceNotifierUtil.sendMessage("unittest", "test", "test");
     }
 
 }

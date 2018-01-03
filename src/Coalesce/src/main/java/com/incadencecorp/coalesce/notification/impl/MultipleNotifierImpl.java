@@ -115,4 +115,13 @@ public class MultipleNotifierImpl implements ICoalesceNotifier {
         }
     }
 
+    @Override
+    public <V> void sendMessage(String topic, String key, V value)
+    {
+        for (ICoalesceNotifier notifier : notifiers)
+        {
+            notifier.sendMessage(topic, key, value);
+        }
+    }
+
 }

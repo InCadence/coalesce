@@ -1,34 +1,30 @@
-/**
- * ///-----------SECURITY CLASSIFICATION: UNCLASSIFIED------------------------
- * /// Copyright 2014 - Lockheed Martin Corporation, All Rights Reserved /// ///
- * Notwithstanding any contractor copyright notice, the government has ///
- * Unlimited Rights in this work as defined by DFARS 252.227-7013 and ///
- * 252.227-7014. Use of this work other than as specifically authorized by ///
- * these DFARS Clauses may violate government rights in this work. /// /// DFARS
- * Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16) /// Unlimited
- * Rights. The Government has the right to use, modify, /// reproduce, perform,
- * display, release or disclose this computer software /// in whole or in part,
- * in any manner, and for any purpose whatsoever, /// and to have or authorize
- * others to do so. /// /// Distribution Statement D. Distribution authorized to
- * the Department of /// Defense and U.S. DoD contractors only in support of US
- * DoD efforts. /// Other requests shall be referred to the ACINT Modernization
- * Program /// Management under the Director of the Office of Naval
- * Intelligence. ///
- * -------------------------------UNCLASSIFIED---------------------------------
- */
+/*-----------------------------------------------------------------------------'
+ Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 package com.incadencecorp.coalesce.framework.persistance.postgres;
 
-import static org.geotools.filter.capability.FunctionNameImpl.parameter;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
-
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
+import com.incadencecorp.coalesce.search.api.EFilterEnumerationModes;
+import com.incadencecorp.coalesce.search.api.ICoalesceExpressionVistor;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import com.vividsolutions.jts.geom.Geometry;
 import org.geotools.data.jdbc.FilterToSQL;
 import org.geotools.data.jdbc.FilterToSQLException;
 import org.geotools.data.postgis.PostGISPSDialect;
@@ -40,57 +36,21 @@ import org.geotools.filter.capability.FunctionNameImpl;
 import org.geotools.jdbc.JDBCDataStore;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.filter.BinaryComparisonOperator;
-import org.opengis.filter.ExcludeFilter;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.Id;
-import org.opengis.filter.IncludeFilter;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.PropertyIsNotEqualTo;
-import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.expression.BinaryExpression;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.*;
+import org.opengis.filter.expression.*;
 import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.spatial.BBOX;
-import org.opengis.filter.spatial.Beyond;
-import org.opengis.filter.spatial.BinarySpatialOperator;
-import org.opengis.filter.spatial.Contains;
-import org.opengis.filter.spatial.Crosses;
-import org.opengis.filter.spatial.DWithin;
-import org.opengis.filter.spatial.Disjoint;
-import org.opengis.filter.spatial.DistanceBufferOperator;
-import org.opengis.filter.spatial.Equals;
-import org.opengis.filter.spatial.Intersects;
-import org.opengis.filter.spatial.Overlaps;
-import org.opengis.filter.spatial.Touches;
-import org.opengis.filter.spatial.Within;
-import org.opengis.filter.temporal.After;
-import org.opengis.filter.temporal.Before;
-import org.opengis.filter.temporal.Begins;
-import org.opengis.filter.temporal.BegunBy;
-import org.opengis.filter.temporal.During;
-import org.opengis.filter.temporal.EndedBy;
-import org.opengis.filter.temporal.Ends;
-import org.opengis.filter.temporal.TContains;
-import org.opengis.filter.temporal.TEquals;
+import org.opengis.filter.spatial.*;
+import org.opengis.filter.temporal.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
-import com.incadencecorp.coalesce.search.api.EFilterEnumerationModes;
-import com.incadencecorp.coalesce.search.api.ICoalesceExpressionVistor;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.vividsolutions.jts.geom.Geometry;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.*;
+import java.util.regex.Pattern;
+
+import static org.geotools.filter.capability.FunctionNameImpl.parameter;
 
 /**
  * This class creates the SQL statements to perform structured searches against
@@ -108,14 +68,14 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
     private static final String QUESTION_MARK = "?";
     private static final String ST_FROM_TEXT = "ST_GeomFromText(?, %s)";
     private static final String DOT = ".";
-    private static final EFilterEnumerationModes MODE = EFilterEnumerationModes.ENUMVALUE;
+    private static final EFilterEnumerationModes MODE = EFilterEnumerationModes.ORDINAL;
     private static final int SSRID = PostGreSQLSettings.getSRID();
     private static final boolean USE_DISPLAY_NAME = false;
 
     /**
      * Param 1 = Enumeration Index Param 2 = Enumeration Type Param 3 =
      * Enumeration Field
-     * 
+     * <p>
      * TODO Enumeration joins need to be reworked.
      */
     private static final String SQL_ENUMVALUE_JOIN = " LEFT JOIN coalesce.enumvalue AS E%1$s ON E%1$s.enumtype=lower('%2$s') AND %3$s = E%1$s.ordering";
@@ -266,7 +226,8 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
             throw new FilterToSQLException("Can't encode to a null writer.");
         }
 
-        if (capability.fullySupports(filter))
+        // TODO Cannot add Temporal support to capabilities therefore this check has been commented out.
+        if (true)//capability.fullySupports(filter))
         {
             try
             {
@@ -616,29 +577,10 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
 
         if (left instanceof PropertyName)
         {
-
             left = filterFactory.property(normalize(((PropertyName) left).getPropertyName(), false));
 
-            AttributeDescriptor attType = (AttributeDescriptor) left.evaluate(featureType);
-            if (attType != null)
-            {
-                rightContext = attType.getType().getBinding();
-            }
-
             currentProperty = ((PropertyName) left).getPropertyName();
-
-            if (rightContext != null)
-            {
-                if (LOGGER.isDebugEnabled())
-                {
-                    LOGGER.debug("Property ({}) Context ({})", currentProperty, rightContext.toString());
-                }
-            }
-            else
-            {
-                LOGGER.warn("Property ({}) Context (UNKNOWN)", currentProperty);
-            }
-
+            rightContext = getPropertyContext((PropertyName) left);
         }
         else if (left instanceof Function)
         {
@@ -652,29 +594,10 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
 
         if (right instanceof PropertyName)
         {
-
             right = filterFactory.property(normalize(((PropertyName) right).getPropertyName(), false));
 
-            AttributeDescriptor attType = (AttributeDescriptor) right.evaluate(featureType);
-            if (attType != null)
-            {
-                leftContext = attType.getType().getBinding();
-            }
-
             currentProperty = ((PropertyName) right).getPropertyName();
-
-            if (leftContext != null)
-            {
-                if (LOGGER.isDebugEnabled())
-                {
-                    LOGGER.debug("Property ({}) Context ({})", currentProperty, leftContext.toString());
-                }
-            }
-            else
-            {
-                LOGGER.warn("Property ({}) Context (UNKNOWN)", currentProperty);
-            }
-
+            leftContext = getPropertyContext((PropertyName) right);
         }
         else if (right instanceof Function)
         {
@@ -700,8 +623,6 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
             }
         }
 
-        String type = (String) extraData;
-
         try
         {
             if (matchCase)
@@ -715,7 +636,7 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
                     left.accept(this, leftContext);
                 }
 
-                out.write(" " + type + " ");
+                out.write(" " + extraData + " ");
 
                 if (rightContext != null && isBinaryExpression2(right))
                 {
@@ -729,23 +650,15 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
             else
             {
                 // wrap both sides in "lower"
-                FunctionImpl f = new FunctionImpl() {
-
-                    {
-                        functionName = new FunctionNameImpl("lower",
-                                                            parameter("lowercase", String.class),
-                                                            parameter("string", String.class));
-                    }
-                };
+                FunctionImpl f = new FunctionImpl();
                 f.setName("lower");
+                f.setParameters(Collections.singletonList(left));
+                f.accept(this, Collections.singletonList(leftContext));
 
-                f.setParameters(Arrays.asList(left));
-                f.accept(this, Arrays.asList(leftContext));
+                out.write(" " + extraData + " ");
 
-                out.write(" " + type + " ");
-
-                f.setParameters(Arrays.asList(right));
-                f.accept(this, Arrays.asList(rightContext));
+                f.setParameters(Collections.singletonList(right));
+                f.accept(this, Collections.singletonList(rightContext));
             }
 
         }
@@ -753,6 +666,32 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
         {
             throw new RuntimeException(IO_ERROR, ioe);
         }
+    }
+
+    private Class<?> getPropertyContext(PropertyName name)
+    {
+
+        Class<?> context = null;
+        AttributeDescriptor attType = (AttributeDescriptor) name.evaluate(featureType);
+
+        if (attType != null)
+        {
+            context = attType.getType().getBinding();
+        }
+
+        if (context != null)
+        {
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Property ({}) Context ({})", name.getPropertyName(), context.toString());
+            }
+        }
+        else
+        {
+            LOGGER.warn("Property ({}) Context (UNKNOWN)", name.getPropertyName());
+        }
+
+        return context;
     }
 
     /**
@@ -808,7 +747,8 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
 
         if (mode == EFilterEnumerationModes.MIXED)
         {
-            mode = Pattern.matches("^[0-9]+$", (String) expression.getValue()) ? EFilterEnumerationModes.ORDINAL : EFilterEnumerationModes.ENUMVALUE;
+            mode = Pattern.matches("^[0-9]+$",
+                                   (String) expression.getValue()) ? EFilterEnumerationModes.ORDINAL : EFilterEnumerationModes.ENUMVALUE;
         }
 
         if (mode == EFilterEnumerationModes.ENUMVALUE)
@@ -872,8 +812,8 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
                 String stringValue = ((String) expressionValue).trim();
 
                 // Yes; Wrapped in Quotes?
-                if (stringValue.startsWith("'") && stringValue.endsWith("'") || stringValue.startsWith("\"")
-                        && stringValue.endsWith("\""))
+                if (stringValue.startsWith("'") && stringValue.endsWith("'")
+                        || stringValue.startsWith("\"") && stringValue.endsWith("\""))
                 {
 
                     FilterFactory ff = CommonFactoryFinder.getFilterFactory();
@@ -926,9 +866,8 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
 
                 // check if String literal is a geometry value
                 if (literalStr.toUpperCase().startsWith("POINT") || literalStr.toUpperCase().startsWith("MULTIPOINT")
-                        || literalStr.toUpperCase().startsWith("POLYGON")
-                        || literalStr.toUpperCase().startsWith("MULTIPOLYGON")
-                        || literalStr.toUpperCase().startsWith("LINESTRING")
+                        || literalStr.toUpperCase().startsWith("POLYGON") || literalStr.toUpperCase().startsWith(
+                        "MULTIPOLYGON") || literalStr.toUpperCase().startsWith("LINESTRING")
                         || literalStr.toUpperCase().startsWith("MULITILINESTRING"))
                 {
                     out.write(String.format(ST_FROM_TEXT, currentSRID));
@@ -1200,7 +1139,7 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
             {
                 // Create Join
                 sb.append(" LEFT JOIN " + currentTable + " ON " + currentTable + "." + column + "="
-                        + "coalesceentity.objectkey");
+                                  + "coalesceentity.objectkey");
             }
 
             lastTable = currentTable;
@@ -1220,7 +1159,7 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
 
     /**
      * @return the columns that should be returned as a part of the query w/o a
-     *         postfix.
+     * postfix.
      */
     public String getColumns()
     {
@@ -1238,13 +1177,19 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
 
         if (propertyNameList != null)
         {
+            Map<String, ECoalesceFieldDataTypes> types = CoalesceTemplateUtil.getDataTypes();
             for (String column : propertyNameList)
             {
+                ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataTypes().get(column);
 
-                if (isEnumeration(column))
+                if (type != null && type.isGeometryType())
                 {
-                    column = String.format(getEnumProperty(), enumList.indexOf(column)) + " AS "
-                            + column.replaceAll("[.]", "");
+                    column = "postgis.ST_AsText(" + column + ") AS " + column.replaceAll("[.]", "");
+                }
+                else if (isEnumeration(column))
+                {
+                    column = String.format(getEnumProperty(), enumList.indexOf(column)) + " AS " + column.replaceAll("[.]",
+                                                                                                                     "");
                 }
                 else
                 {
@@ -1261,9 +1206,8 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
 
     private boolean isEnumeration(String name)
     {
-
         boolean isEnumerationType = false;
-
+/* TODO This converts ordinals back into Strings when returning search results. Used by ACINT
         if (CoalesceTemplateUtil.getDataTypes().containsKey(name))
         {
             switch (CoalesceTemplateUtil.getDataTypes().get(name)) {
@@ -1282,9 +1226,8 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
 
             }
         }
-
+*/
         return isEnumerationType;
-
     }
 
     @Override

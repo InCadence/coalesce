@@ -73,6 +73,7 @@ public class PropertyDriverImplTest {
         operation.setTarget(source);
 
         PropertyLoader loader = new PropertyLoader(new MemoryConnector(), "unit-test.properties");
+        loader.setProperty("test", "test");
 
         IPersistorDriver driver = new PropertyDriverImpl();
         driver.setScan(scan);
@@ -108,6 +109,7 @@ public class PropertyDriverImplTest {
         params.put(SynchronizerParameters.PARAM_DRIVER_EXECUTE, "A");
 
         PropertyLoader loader = new PropertyLoader(new MemoryConnector(), "unit-test.properties");
+        loader.setProperty("test", "test");
 
         IPersistorDriver driver = new PropertyDriverImpl();
         driver.setPropertyLoader(loader);

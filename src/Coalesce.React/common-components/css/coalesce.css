@@ -1,0 +1,180 @@
+body {
+  background-color: #d7d6d6;
+  color: #000000;
+}
+
+.coalesce-banner {
+  font-weight: bold;
+  font-family: tohoma;
+  font-size: 64px;
+  color: #e68a00;
+  background-color: #3d3d3c;
+  width: 100%;
+  border-color: #FF9900;
+  border-width: 2px;
+  border-style: solid;
+  padding: 5px;
+}
+
+.form-buttons {
+  text-align: right;
+  padding-top: 0.1em;
+  font-weight: bold;
+  color: black;
+}
+
+.form-buttons button {
+  text-align: center;
+  margin: 0.1em;
+  width: 80px;
+}
+
+.coalesce-img-button.disabled {
+  background-color:inherit;
+}
+
+/* Coalesce Button Styles */
+.coalesce-img-button.enabled {
+  background-color:#3d3d3c;
+  border:2px solid #FF9900;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  color:#fff;
+}
+
+.coalesce-img-button.enabled:hover {
+    background-color:#686867;
+    box-shadow: 0 6px 12px 0 rgba(0,0,0,0.5);
+    cursor: pointer;
+}
+
+.coalesce-img-button {
+  padding: 2px;
+  text-align: center;
+  vertical-align: middle;
+  display: inline-block;
+  margin: 2px;
+  transition: 0.3s;
+  border-radius: 5px;
+  width: 32px;
+  height: 32px;
+}
+
+.coalesce-img-button.small {
+  width: 24px;
+  height: 24px;
+}
+
+/* Navbar Styles */
+.navbar img {
+  width: 40px;
+  height: 40px;
+}
+
+/* Coalesce Card Styles */
+.card .scroll-box {
+    height: 100px;
+    overflow-y: auto;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 1em;
+}
+
+.card label {
+  /*color: #FFBB00;*/
+  color: #FFFFFF;
+}
+
+.card {
+  color:#e2e2e2;
+  background-color:#3d3d3c;
+  border:2px solid #FF9900;
+  border-radius:5px;
+  margin-right:10px;
+  padding:10px 10px 10px 10px;
+  width: 250px;
+  text-align: center;
+  vertical-align: middle;
+  display: inline-block;
+  margin: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  border-radius: 5px;
+}
+
+.card:hover {
+  background-color:#686867;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.5);
+}
+
+/* Coalesce Accordion Styles */
+.ui-widget {
+  border-color: #FF9900; /*f7ba11;*/
+  border-width: 2px;
+  border-radius: 5px;
+  border-style: solid;
+  margin-bottom: 0.3em;
+}
+
+.ui-widget-header {
+  /*FF9900*/
+  color: #e2e2e2;
+  font-weight: bold;
+  background-color:  #3d3d3c; /*f7ba11;*/
+  border-width: 0px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+
+  padding: 1px 6px 1px 6px;
+
+  width: 100%;
+  text-align: left;
+}
+
+.ui-widget-content {
+  color: #000000;
+  background-color: #f7f4ef;
+}
+
+.ui-widget .ui-widget-content {
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  padding: 0.3em;
+  padding-left: 0.5em;
+}
+
+.ReactTable {
+  border-color: #FF9900;
+  /*background-color: #FFFFFF;*/
+}
+
+.ReactTable img {
+  margin: 0px;
+}
+
+.ReactTable input[type=checkbox] {
+  margin: 0px;
+}
+
+.slide-pane__header {
+  background-color: #3d3d3c;
+  color: #e2e2e2;
+}
+
+.slide-pane__content .col-sm-1,.col-sm-2,.col-sm-3,.col-sm-5 {
+  padding-right: 10px;
+  padding-left: 10px;
+  word-break:break-all;
+}
+
+.slide-pane__content {
+  background-color: #d7d6d6;
+  padding: 8px 8px 8px 8px;
+}
+
+#graph-id-graph-wrapper svg {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #FF9900;
+  border-radius: 5px;
+  background-color: #FFFFFF;
+}

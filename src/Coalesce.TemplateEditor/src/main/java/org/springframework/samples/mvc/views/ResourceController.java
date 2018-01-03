@@ -2,7 +2,6 @@ package org.springframework.samples.mvc.views;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -139,52 +138,51 @@ public class ResourceController {
 
     private CoalesceEntityTemplate createTemplate(String json) throws SAXException, IOException
     {
-
         JSONObject obj = new JSONObject(json);
-        String templateName = obj.getString("templateName");
         String className = obj.getString("className").replace('-', '.');
 
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
-        entity.setName(templateName);
-        entity.setAttribute("classname", className);
+        entity.setName(obj.getString("name"));
+        entity.setSource(obj.getString("source"));
+        entity.setVersion(obj.getString("version"));
+        entity.setAttribute(CoalesceEntity.ATTRIBUTE_CLASSNAME, className);
 
-        JSONArray jsonSections = obj.getJSONArray("sections");
+        JSONArray jsonSections = obj.getJSONArray("sectionsAsList");
 
         for (int i = 0; i < jsonSections.length(); i++)
         {
-
             JSONObject jsonSection = jsonSections.getJSONObject(i);
-            String SectionName = jsonSection.getString("sectionName");
+            String SectionName = jsonSection.getString("name");
 
             CoalesceSection section = entity.createSection(SectionName);
 
-            JSONArray jsonRecordSets = jsonSection.getJSONArray("recordsets");
+            JSONArray jsonRecordSets = jsonSection.getJSONArray("recordsetsAsList");
 
             for (int j = 0; j < jsonRecordSets.length(); j++)
             {
 
                 JSONObject jsonRecordSet = jsonRecordSets.getJSONObject(j);
-                String recordsetName = jsonRecordSet.getString("recordsetName");
+                String recordsetName = jsonRecordSet.getString("name");
                 CoalesceRecordset recordset = section.createRecordset(recordsetName);
+                recordset.setMinRecords(jsonRecordSet.getInt("minRecords"));
+                recordset.setMaxRecords(jsonRecordSet.getInt("maxRecords"));
 
-                JSONArray jsonFields = jsonRecordSet.getJSONArray("fields");
+                JSONArray jsonFields = jsonRecordSet.getJSONArray("fieldDefinitions");
 
                 for (int k = 0; k < jsonFields.length(); k++)
                 {
                     JSONObject jsonField = jsonFields.getJSONObject(k);
-                    String fieldName = jsonField.getString("fieldName");
-                    String fieldType = jsonField.getString("fieldType");
+                    String fieldName = jsonField.getString("name");
+                    String fieldType = jsonField.getString("dataType");
                     ECoalesceFieldDataTypes type = ECoalesceFieldDataTypes.getTypeForCoalesceType(fieldType);
 
                     recordset.createFieldDefinition(fieldName, type);
                 }
-
             }
         }
 
         return CoalesceEntityTemplate.create(entity);
-
     }
 
     public void zipFile(ZipOutputStream zos, File fileToZip, String parentDir) throws IOException 

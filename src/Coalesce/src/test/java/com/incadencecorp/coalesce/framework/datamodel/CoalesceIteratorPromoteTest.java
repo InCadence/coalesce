@@ -104,7 +104,7 @@ public class CoalesceIteratorPromoteTest {
         TestEntity v2b = new TestEntity();
         v2b.initialize(v1b.toXml());
 
-        EntityLinkHelper.linkEntities(v2b, ELinkTypes.CREATED, linkedEntity, "Derek3", "127.0.0.1", "", true, true, true);
+        EntityLinkHelper.linkEntities(v2b, ELinkTypes.CREATED, linkedEntity, "Derek3", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, true);
 
         // Merge to Create History
         TestEntity v3 = new TestEntity();

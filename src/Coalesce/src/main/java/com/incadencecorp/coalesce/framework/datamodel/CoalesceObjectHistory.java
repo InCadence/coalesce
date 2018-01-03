@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
 /**
@@ -116,13 +117,13 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
             {
                 Map<QName, String> attributes = getAttributes();
 
-                attributes.remove(new QName("key"));
+                attributes.remove(new QName(ATTRIBUTE_KEY));
 
                 for (Map.Entry<QName, String> attribute : attributes.entrySet())
                 {
                     if (!StringHelper.isNullOrEmpty(attribute.getValue()))
                     {
-                        history.setAttribute(attribute.getKey().toString(), attribute.getValue());
+                        history.setAttribute(attribute.getKey().getLocalPart(), attribute.getValue());
                     }
                 }
                 
@@ -143,6 +144,7 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
 
     }
 
+    @JsonIgnore
     @Override
     public boolean isDisableHistory()
     {
@@ -165,6 +167,7 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
 
     }
 
+    @JsonIgnore
     @Override
     public boolean isSuspendHistory()
     {
@@ -180,6 +183,7 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
         }
     }
 
+    @JsonIgnore
     @Override
     public CoalesceHistory[] getHistory()
     {

@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>common-components</artifactId>
+	<name>Coalesce React Common Components</name>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>com.incadencecorp.coalesce.react</groupId>
+		<artifactId>coalesce-react-parent</artifactId>
+		<version>0.0.25-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>npm link (process-sources)</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>process-sources</phase>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>link</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+
+</project>

@@ -1,18 +1,13 @@
-<!-- ///===========SECURITY CLASSIFICATION: UNCLASSIFIED======================== 
-	/// Copyright 2015 - Lockheed Martin Corporation, All Rights Reserved /// 
-	/// Notwithstanding any contractor copyright notice, the government has /// 
-	Unlimited Rights in this work as defined by DFARS 252.227-7013 and /// 252.227-7014. 
-	Use of this work other than as specifically authorized by /// these DFARS 
-	Clauses may violate government rights in this work. /// /// DFARS Clause 
-	reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16) /// Unlimited Rights. 
-	The Government has the right to use, modify, /// reproduce, perform, display, 
-	release or disclose this computer software /// in whole or in part, in any 
-	manner, and for any purpose whatsoever, /// and to have or authorize others 
-	to do so. /// /// Distribution Statement D. Distribution authorized to the 
-	Department of /// Defense and U.S. DoD contractors only in support of US 
-	DoD efforts. /// Other requests shall be referred to the ACINT Modernization 
-	Program /// Management under the Director of the Office of Naval Intelligence. 
-	/// ===============================UNCLASSIFIED================================= -->
+<!-- Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+	Notwithstanding any contractor copyright notice, the Government has Unlimited
+	Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014. Use
+	of this work other than as specifically authorized by these DFARS Clauses
+	may violate Government rights in this work. DFARS Clause reference: 252.227-7013
+	(a)(16) and 252.227-7014 (a)(16) Unlimited Rights. The Government has the
+	right to use, modify, reproduce, perform, display, release or disclose this
+	computer software and to have or authorize others to do so. Distribution
+	Statement D. Distribution authorized to the Department of Defense and U.S.
+	DoD contractors only in support of U.S. DoD efforts. -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws"
 	xmlns:wsa="http://cxf.apache.org/ws/addressing" xmlns:http="http://cxf.apache.org/transports/http/configuration"
@@ -59,38 +54,41 @@
 	<!-- ========================== -->
 	<!-- Persisters -->
 	<!-- ========================== -->
-	<bean id="postgres"
-		class="com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt">
-		<property name="connectionSettings">
-			<ref component-id="aws" />
-		</property>
-		<property name="schema" value="coalesce" />
-	</bean>
+<!-- 	<bean id="postgres" -->
+<!-- 		class="com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt"> -->
+<!-- 		<property name="connectionSettings"> -->
+<!-- 			<ref component-id="aws" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="schema" value="coalesce" /> -->
+<!-- 	</bean> -->
 
-	<bean id="neo4j"
-		class="com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister">
-		<property name="connectionSettings">
-			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
-				<property name="portNumber" value="7474" />
-				<property name="serverName" value="localhost" />
-			</bean>
-		</property>
-		<property name="includeXml" value="true" />
-	</bean>
+<!-- 	<bean id="neo4j" -->
+<!-- 		class="com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister"> -->
+<!-- 		<property name="connectionSettings"> -->
+<!-- 			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn"> -->
+<!-- 				<property name="portNumber" value="7474" /> -->
+<!-- 				<property name="serverName" value="localhost" /> -->
+<!-- 			</bean> -->
+<!-- 		</property> -->
+<!-- 		<property name="includeXml" value="true" /> -->
+<!-- 	</bean> -->
 	
-	<!--
-	<bean id="accumulo"
-		class="com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt">
-		<property name="connectionSettings">
-			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
-				<property name="database" value="rdk" />
-				<property name="serverName" value="bdpnode4:2181,bdpnode5:2181,bdpnode6:2181" />
-				<property name="user" value="root" />
-				<property name="password" value="cloudbase123" />
-			</bean>
-		</property>
-	</bean>
-	-->
+	<bean id="derby"
+		class="com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor">
+	</bean>		
+
+<!-- 	<bean id="accumulo" -->
+<!-- 		class="com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt"> -->
+<!-- 		<property name="connectionSettings"> -->
+<!-- 			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn"> -->
+<!-- 				<property name="database" value="rdk" /> -->
+<!-- 				<property name="serverName" value="bdpnode4:2181,bdpnode5:2181,bdpnode6:2181" /> -->
+<!-- 				<property name="user" value="root" /> -->
+<!-- 				<property name="password" value="cloudbase123" /> -->
+<!-- 			</bean> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+
 	<!-- ========================== -->
 	<!-- CRUD Configuration -->
 	<!-- ========================== -->
@@ -123,12 +121,12 @@
 	</bean>
 
 	<bean id="framework" class="com.incadencecorp.coalesce.framework.CoalesceFramework">
-		<property name="authoritativePersistor" ref="postgres" />
-		<property name="secondaryPersistors">
-            <array>
-                <ref component-id="neo4j"/>
-            </array>
-		</property>
+		<property name="authoritativePersistor" ref="derby" />
+<!-- 		<property name="secondaryPersistors"> -->
+<!--             <array> -->
+<!--                 <ref component-id="neo4j"/> -->
+<!--             </array> -->
+<!-- 		</property> -->
 	</bean>
 
 	<!-- ========================== -->
@@ -159,7 +157,7 @@
 
 	<bean id="searchservice"
 		class="com.incadencecorp.coalesce.services.search.service.SearchServiceImpl">
-		<argument ref="postgres" />
+		<argument ref="derby" />
 	</bean>
 
 	<!-- ======================== -->

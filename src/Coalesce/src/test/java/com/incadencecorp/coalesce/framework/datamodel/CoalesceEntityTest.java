@@ -1360,7 +1360,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void createNewEntityTemplateTest() throws SAXException, IOException
+    public void createNewEntityTemplateTest() throws Exception
     {
         // Test Entity
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
@@ -1386,7 +1386,7 @@ public class CoalesceEntityTest {
 
         CoalesceSection liveSection = entity.createSection("Live Status Section");
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
-        assertFalse(liveSection.getNoIndex());
+        assertFalse(liveSection.isNoIndex());
     }
 
     @Test
@@ -1405,13 +1405,13 @@ public class CoalesceEntityTest {
 
         CoalesceSection liveSection = entity.createSection("Live Status Section", true);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
-        assertTrue(liveSection.getNoIndex());
+        assertTrue(liveSection.isNoIndex());
 
         CoalesceSection liveSection2 = entity.createSection("Live Status Section");
         assertEquals(liveSection2, entity.getSection("TREXOperation/Live Status Section"));
         assertEquals(liveSection, liveSection2);
-        assertFalse(liveSection.getNoIndex());
-        assertFalse(liveSection2.getNoIndex());
+        assertFalse(liveSection.isNoIndex());
+        assertFalse(liveSection2.isNoIndex());
 
     }
 
@@ -1427,7 +1427,7 @@ public class CoalesceEntityTest {
 
         assertNotNull(newSection);
         assertEquals(newSection, entity.getSection("TREXMission/A New Section"));
-        assertFalse(newSection.getNoIndex());
+        assertFalse(newSection.isNoIndex());
 
     }
 
@@ -1447,7 +1447,7 @@ public class CoalesceEntityTest {
 
         CoalesceSection liveSection = entity.createSection("Live Status Section", false);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
-        assertFalse(liveSection.getNoIndex());
+        assertFalse(liveSection.isNoIndex());
     }
 
     @Test
@@ -1466,7 +1466,7 @@ public class CoalesceEntityTest {
 
         CoalesceSection liveSection = entity.createSection("Live Status Section", true);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
-        assertTrue(liveSection.getNoIndex());
+        assertTrue(liveSection.isNoIndex());
 
     }
 
@@ -1486,13 +1486,13 @@ public class CoalesceEntityTest {
 
         CoalesceSection liveSection = entity.createSection("Live Status Section", false);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
-        assertFalse(liveSection.getNoIndex());
+        assertFalse(liveSection.isNoIndex());
 
         CoalesceSection liveSection2 = entity.createSection("Live Status Section", true);
         assertEquals(liveSection2, entity.getSection("TREXOperation/Live Status Section"));
         assertEquals(liveSection, liveSection2);
-        assertTrue(liveSection.getNoIndex());
-        assertTrue(liveSection2.getNoIndex());
+        assertTrue(liveSection.isNoIndex());
+        assertTrue(liveSection2.isNoIndex());
 
     }
 
@@ -1508,7 +1508,7 @@ public class CoalesceEntityTest {
 
         assertNotNull(newSection);
         assertEquals(newSection, entity.getSection("TREXMission/A New Section"));
-        assertTrue(newSection.getNoIndex());
+        assertTrue(newSection.isNoIndex());
 
         String entityXml = entity.toXml();
 
@@ -1517,7 +1517,7 @@ public class CoalesceEntityTest {
         CoalesceSection desSection = desEntity.getSection("TREXMission/A New Section");
         assertEquals(newSection.getKey(), desSection.getKey());
         assertEquals(newSection.getName(), desSection.getName());
-        assertEquals(newSection.getNoIndex(), desSection.getNoIndex());
+        assertEquals(newSection.isNoIndex(), desSection.isNoIndex());
     }
 
     @Test
@@ -2359,11 +2359,11 @@ public class CoalesceEntityTest {
 
         // Validate Merge
         assertEquals("Should be the new value", mergedEntityMissionName.getBaseValue());
-        assertEquals("Should be added as history", (mergedEntityMissionName.getHistory()[0].getBaseValue()));
-        assertEquals("user", (mergedEntityMissionName.getModifiedBy()));
-        assertEquals("ip", (mergedEntityMissionName.getModifiedByIP()));
-        assertEquals(2, (mergedEntityMissionName.getObjectVersion()));
-
+        assertEquals("Should be added as history", mergedEntityMissionName.getHistory()[0].getBaseValue());
+        assertEquals("user", mergedEntityMissionName.getModifiedBy());
+        assertEquals("ip", mergedEntityMissionName.getModifiedByIP());
+        assertEquals(2, (int) mergedEntityMissionName.getObjectVersion());
+        
         CoalesceEntity Updated = new CoalesceEntity();
         Updated.initialize(mergedEntity.toXml());
 
@@ -2382,12 +2382,12 @@ public class CoalesceEntityTest {
 
         // Validate Merge
         assertEquals("Hello World", mergedEntityMissionName.getBaseValue());
-        assertEquals("user2", (mergedEntityMissionName.getModifiedBy()));
-        assertEquals("ip2", (mergedEntityMissionName.getModifiedByIP()));
-        assertEquals("Should be the new value", (mergedEntityMissionName.getHistory()[0].getBaseValue()));
-        assertEquals("user", (mergedEntityMissionName.getHistory()[0].getModifiedBy()));
-        assertEquals("ip", (mergedEntityMissionName.getHistory()[0].getModifiedByIP()));
-        assertEquals(3, (mergedEntityMissionName.getObjectVersion()));
+        assertEquals("user2", mergedEntityMissionName.getModifiedBy());
+        assertEquals("ip2", mergedEntityMissionName.getModifiedByIP());
+        assertEquals("Should be the new value", mergedEntityMissionName.getHistory()[0].getBaseValue());
+        assertEquals("user", mergedEntityMissionName.getHistory()[0].getModifiedBy());
+        assertEquals("ip", mergedEntityMissionName.getHistory()[0].getModifiedByIP());
+        assertEquals(3, (int) mergedEntityMissionName.getObjectVersion());
 
     }
 
@@ -2550,7 +2550,7 @@ public class CoalesceEntityTest {
         assertEquals("TestingValue", entity.getAttribute("TestAttribute"));
 
         assertEquals("TREXMission", entity.getName());
-        assertEquals(false, entity.getNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, entity.isNoIndex());
 
         entity.setAttribute("Name", "TestingName");
         assertEquals("TestingName", entity.getName());
@@ -2570,7 +2570,7 @@ public class CoalesceEntityTest {
         assertEquals(2, entity.getOtherAttributes().size());
 
         entity.setAttribute("NoIndex", "True");
-        assertEquals(true, entity.getNoIndex());
+        assertEquals(true, entity.isNoIndex());
 
         assertEquals(2, entity.getOtherAttributes().size());
 
@@ -2605,7 +2605,7 @@ public class CoalesceEntityTest {
         assertEquals(guid.toString(), desEntity.getKey());
         assertEquals(now, desEntity.getDateCreated());
         assertEquals(future, desEntity.getLastModified());
-        assertEquals(true, desEntity.getNoIndex());
+        assertEquals(true, desEntity.isNoIndex());
         assertEquals("OtherSource", desEntity.getSource());
         assertEquals("1.0.0.1", desEntity.getVersion());
         assertEquals("TestingEntityId", desEntity.getEntityId());

@@ -28,12 +28,19 @@
 			<artifactId>coalesce-search-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>com.incadencecorp.coalesce</groupId> -->
-		<!-- <artifactId>coalesce-search</artifactId> -->
-		<!-- <version>${project.version}</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.services</groupId>
+			<artifactId>coalesce-services-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.4</version>
+		</dependency>
+		
+		<!-- Test Dependencies -->
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.services.search</groupId>
 			<artifactId>coalesce-search-service</artifactId>
@@ -45,7 +52,7 @@
 			<artifactId>coalesce-crud-service</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-framework-persister-postgresql</artifactId>
@@ -53,11 +60,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.4</version>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -75,9 +77,7 @@
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
-						<Import-Package>*; resolution:=optional
-						</Import-Package>
-						<Export-Package>${project.groupId}.service.data*,!*</Export-Package>
+						<Export-Package>${project.groupId}.service.data*</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

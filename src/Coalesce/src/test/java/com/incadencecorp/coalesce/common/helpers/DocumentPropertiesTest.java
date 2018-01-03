@@ -1,19 +1,9 @@
 package com.incadencecorp.coalesce.common.helpers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-
-import javax.imageio.ImageIO;
-
+import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.NullArgumentException;
-import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -21,10 +11,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.drew.imaging.ImageProcessingException;
-import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
+import javax.imageio.ImageIO;
+import java.io.File;
+
+import static org.junit.Assert.*;
 
 public class DocumentPropertiesTest {
 
@@ -50,7 +40,7 @@ public class DocumentPropertiesTest {
      */
 
     @Test
-    public void initializeJpgTest() throws IOException, JDOMException, ImageProcessingException, CoalesceCryptoException
+    public void initializeJpgTest() throws Exception
     {
         DocumentProperties docProps = new DocumentProperties();
 
@@ -79,7 +69,7 @@ public class DocumentPropertiesTest {
     }
 
     @Test
-    public void initializeDocXTest() throws ImageProcessingException, IOException, JDOMException, CoalesceCryptoException
+    public void initializeDocXTest() throws Exception
     {
         DocumentProperties docProps = new DocumentProperties();
 
@@ -113,8 +103,7 @@ public class DocumentPropertiesTest {
     }
 
     @Test
-    public void initializeDocXMultiPageTest() throws ImageProcessingException, CoalesceCryptoException, IOException,
-            JDOMException
+    public void initializeDocXMultiPageTest() throws Exception
     {
         DocumentProperties docProps = new DocumentProperties();
 
@@ -126,8 +115,7 @@ public class DocumentPropertiesTest {
     }
 
     @Test
-    public void initializeNullFilenameTest() throws ImageProcessingException, IOException, JDOMException,
-            CoalesceCryptoException
+    public void initializeNullFilenameTest() throws Exception
     {
         _thrown.expect(NullArgumentException.class);
         _thrown.expectMessage("fullFilename");
@@ -138,8 +126,7 @@ public class DocumentPropertiesTest {
     }
 
     @Test
-    public void initializeEmptyFilenameTest() throws ImageProcessingException, IOException, JDOMException,
-            CoalesceCryptoException
+    public void initializeEmptyFilenameTest() throws Exception
     {
 
         DocumentProperties docProps = new DocumentProperties();
@@ -149,8 +136,7 @@ public class DocumentPropertiesTest {
     }
 
     @Test
-    public void initializeWhitespaceFilenameTest() throws ImageProcessingException, IOException, JDOMException,
-            CoalesceCryptoException
+    public void initializeWhitespaceFilenameTest() throws Exception
     {
 
         DocumentProperties docProps = new DocumentProperties();
@@ -160,8 +146,7 @@ public class DocumentPropertiesTest {
     }
 
     @Test
-    public void initializeInvalidFilenameTest() throws ImageProcessingException, IOException, JDOMException,
-            InvalidKeyException, NoSuchAlgorithmException, CoalesceCryptoException
+    public void initializeInvalidFilenameTest() throws Exception
     {
 
         DocumentProperties docProps = new DocumentProperties();
@@ -169,15 +154,14 @@ public class DocumentPropertiesTest {
         assertFalse(docProps.initialize("abc.xyz", true));
 
         assertFalse(docProps.initialize("abc<.txt", false));
-        
+
     }
 
     @Test
-    public void initializeEncryptedFileTest() throws ImageProcessingException, IOException, JDOMException,
-            CoalesceCryptoException
+    public void initializeEncryptedFileTest() throws Exception
     {
         CoalesceUnitTestSettings.verifyEncryption();
-        
+
         DocumentProperties plainTextDocProps = new DocumentProperties();
         String filePath = CoalesceUnitTestSettings.getResourceAbsolutePath("TestDocument.docx");
         assertTrue(plainTextDocProps.initialize(filePath, false));

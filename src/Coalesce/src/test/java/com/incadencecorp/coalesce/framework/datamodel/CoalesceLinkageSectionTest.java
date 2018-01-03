@@ -63,7 +63,7 @@ public class CoalesceLinkageSectionTest {
         CoalesceLinkageSection createdLinkageSection = CoalesceLinkageSection.create(entity);
 
         assertEquals(linkageSection, createdLinkageSection);
-        assertTrue(createdLinkageSection.getNoIndex());
+        assertTrue(createdLinkageSection.isNoIndex());
 
     }
 
@@ -77,7 +77,7 @@ public class CoalesceLinkageSectionTest {
 
         assertNotNull(linkageSection);
         assertEquals(entity, linkageSection.getParent());
-        assertFalse(linkageSection.getNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, linkageSection.isNoIndex());
 
     }
 
@@ -95,7 +95,7 @@ public class CoalesceLinkageSectionTest {
         assertNotNull(linkageSection);
         assertEquals(entity.getLinkageSection(), linkageSection);
         assertEquals(entity, linkageSection.getParent());
-        assertFalse(linkageSection.getNoIndex());
+        assertFalse(linkageSection.isNoIndex());
 
         assertTrue(entity.getChildCoalesceObjects().containsKey(linkageSection.getKey()));
 
@@ -114,12 +114,6 @@ public class CoalesceLinkageSectionTest {
         CoalesceLinkageSection linkageSection = getMissionLinkageSection();
 
         assertEquals("F4F126AF-4658-4D7F-A67F-4833F7EADDC3", linkageSection.getKey());
-
-        UUID guid = UUID.randomUUID();
-
-        linkageSection.setKey(guid);
-
-        assertEquals(guid.toString(), linkageSection.getKey());
 
         UUID guid2 = UUID.randomUUID();
 
@@ -211,22 +205,22 @@ public class CoalesceLinkageSectionTest {
 
         CoalesceLinkageSection linkageSection = entity.getLinkageSection();
 
-        assertTrue(linkageSection.getNoIndex());
+        assertTrue(linkageSection.isNoIndex());
 
         linkageSection.setNoIndex(false);
 
-        assertFalse(linkageSection.getNoIndex());
+        assertFalse(linkageSection.isNoIndex());
 
         String entityXml = entity.toXml();
 
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
         CoalesceLinkageSection desLinkageSection = desEntity.getLinkageSection();
 
-        assertFalse(desLinkageSection.getNoIndex());
+        assertFalse(desLinkageSection.isNoIndex());
 
         CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
 
-        assertFalse(newEntity.getLinkageSection().getNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, newEntity.getLinkageSection().isNoIndex());
 
     }
 
@@ -271,7 +265,7 @@ public class CoalesceLinkageSectionTest {
         assertEquals(linkageSection.getLinkages().size(), desLinkageSection.getLinkage().size());
         assertEquals(linkageSection.getKey(), desLinkageSection.getKey());
         assertEquals(linkageSection.getName(), desLinkageSection.getName());
-        assertEquals(linkageSection.getNoIndex(), desLinkageSection.isNoindex());
+        assertEquals(linkageSection.isNoIndex(), desLinkageSection.isNoindex());
         assertEquals(linkageSection.getDateCreated(), desLinkageSection.getDatecreated());
         assertEquals(linkageSection.getLastModified(), desLinkageSection.getLastmodified());
         assertEquals(linkageSection.getStatus(), desLinkageSection.getStatus());
@@ -312,7 +306,7 @@ public class CoalesceLinkageSectionTest {
         assertEquals("TestingValue", linkageSection.getAttribute("TestAttribute"));
         
         assertEquals("Linkages", linkageSection.getName());
-        assertEquals(false, linkageSection.getNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, linkageSection.isNoIndex());
         
         linkageSection.setAttribute("Name", "TestingName");
         assertEquals("TestingName", linkageSection.getName());
@@ -330,7 +324,7 @@ public class CoalesceLinkageSectionTest {
         assertEquals(now, linkageSection.getDateCreated());
         
         linkageSection.setAttribute("NoIndex", "True");
-        assertEquals(true, linkageSection.getNoIndex());
+        assertEquals(true, linkageSection.isNoIndex());
         
         linkageSection.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, linkageSection.getStatus());
@@ -347,7 +341,7 @@ public class CoalesceLinkageSectionTest {
         assertEquals(guid.toString(), desLinkageSection.getKey());
         assertEquals(now, desLinkageSection.getDateCreated());
         assertEquals(future, desLinkageSection.getLastModified());
-        assertEquals(true, desLinkageSection.getNoIndex());
+        assertEquals(true, desLinkageSection.isNoIndex());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, desLinkageSection.getStatus());
         
     }

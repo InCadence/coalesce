@@ -103,6 +103,46 @@ public class XSDEximImplTest {
     }
 
     /**
+     * This test was created to reveal an issue with the namespace being added
+     * as an attribute within the CoalesceEntity. The ExIm now filters out the
+     * xmlns tag and this to ensures it works.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testToAndFromXml() throws Exception
+    {
+        // Create Entity and Template
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
+
+        // Export Values
+        XSDEximImpl exim = new XSDEximImpl();
+        Document doc = exim.exportValues(entity, true);
+
+        // Serialize / Deserialize using XmlHelper
+        String xml = XmlHelper.formatXml(doc);
+        Document docFromXml = XmlHelper.loadXmlFrom(xml);
+
+        // Import Values
+        CoalesceEntity centity = new CoalesceEntity();
+        centity = exim.importValues(docFromXml, template);
+
+        // Verify Namespace is not included as am attribute
+        Assert.assertNull(centity.getAttribute("cns"));
+
+        Document xsd = XSDGeneratorUtil.createXsd(null, template);
+        Document doc2 = exim.exportValues(centity, true);
+
+        // Verify Schema Validation
+        XSDGeneratorUtil.validateXMLSchema(new DOMSource(xsd), new DOMSource(doc));
+        XSDGeneratorUtil.validateXMLSchema(new DOMSource(xsd), new DOMSource(docFromXml));
+        XSDGeneratorUtil.validateXMLSchema(new DOMSource(xsd), new DOMSource(doc2));
+    }
+
+    /**
      * This test attempts to validate an entity that is missing a mandatory
      * field which should result in an exception.
      * 
@@ -202,7 +242,7 @@ public class XSDEximImplTest {
                                       "01234567890123456789AA",
                                       null,
                                       true,
-                                      false,
+                                      com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus.ACTIVE,
                                       true);
         doc = exim.exportValues(entity, false);
 

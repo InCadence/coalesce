@@ -91,9 +91,9 @@ public class FileExceptionHandlerImpl extends CoalesceComponentImpl implements I
     }
 
     @Override
-    public List<String> getProperties()
+    public List<String> getPropertyList()
     {
-        List<String> properties = super.getProperties();
+        List<String> properties = super.getPropertyList();
         
         properties.add(CoalesceParameters.PARAM_DIRECTORY);
         properties.add(CoalesceParameters.PARAM_SUBDIR_LEN);

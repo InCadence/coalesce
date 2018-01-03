@@ -52,7 +52,8 @@ public class PropertyLoader {
      */
     public void setProperties(Map<String, String> properties)
     {
-        for (Map.Entry<String, String> entry: properties.entrySet()) {
+        for (Map.Entry<String, String> entry : properties.entrySet())
+        {
             setProperty(entry.getKey(), entry.getValue());
         }
     }
@@ -75,6 +76,14 @@ public class PropertyLoader {
     public String getProperty(String name)
     {
         return connector.getSetting(configurationName, name, null, SettingType.ST_STRING, false);
+    }
+
+    /**
+     * @return All the settings referenced by this loader.
+     */
+    public Map<String, String> getSettings()
+    {
+        return connector.getSettings(configurationName);
     }
 
 }

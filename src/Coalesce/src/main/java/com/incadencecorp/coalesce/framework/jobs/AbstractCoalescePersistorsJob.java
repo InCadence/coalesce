@@ -132,7 +132,7 @@ public abstract class AbstractCoalescePersistorsJob<INPUT> extends
                     task.setError(e.getMessage());
                     task.setStatus(EResultStatus.FAILED);
 
-                    metrics = new MetricResults<CoalesceStringResponseType>();
+                    metrics = new MetricResults<>(this.getName());
                     metrics.setResults(task);
                     metrics.getResults().setStatus(EResultStatus.FAILED);
                 }

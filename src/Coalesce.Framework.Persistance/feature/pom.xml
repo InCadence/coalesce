@@ -1,87 +1,80 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>persister-feature</artifactId>
-	<packaging>feature</packaging>
-	<name>Coalesce Persister Feature</name>
-	<description>Karaf feature for the CRUD service</description>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>persister-feature</artifactId>
+    <packaging>feature</packaging>
+    <name>Coalesce Persister Feature</name>
+    <description>Karaf feature for the CRUD service</description>
 
-	<parent>
-		<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-		<artifactId>persister-parent</artifactId>
-		<version>0.0.25-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
+    <parent>
+        <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+        <artifactId>persister-parent</artifactId>
+        <version>0.0.25-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.karaf.tooling</groupId>
-				<artifactId>karaf-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.karaf.tooling</groupId>
-					<artifactId>karaf-maven-plugin</artifactId>
-					<version>4.0.8</version>
-					<extensions>true</extensions>
-					<configuration>
-						<instructions>
-							<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-						</instructions>
-						<unpackBundle>true</unpackBundle>
-						<aggregateFeatures>true</aggregateFeatures>
-						<includeTransitiveDependency>false</includeTransitiveDependency>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+                <configuration>
+                    <aggregateFeatures>true</aggregateFeatures>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-	<dependencies>
+    <dependencies>
 
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-			<artifactId>persister-memory-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+            <artifactId>persister-memory-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
 
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-			<artifactId>persister-derby-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+            <artifactId>persister-derby-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
 
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-			<artifactId>persister-neo4j-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+            <artifactId>persister-neo4j-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
 
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-			<artifactId>persister-postgres-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+            <artifactId>persister-postgres-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
 
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-			<artifactId>persister-accumulo-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+            <artifactId>persister-accumulo-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
 
-	</dependencies>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+            <artifactId>persister-elasticsearch-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
+
+    </dependencies>
 
 </project>

@@ -2,27 +2,31 @@
 # Directories #
 build/
 bin/
-target/
-logs/
 config/
 .vpprefdata/
 
-
+#Maven
+target/
+logs/
  
-# OS Files #
-.DS_Store
- 
-*.class
+# Eclipse
 .settings/
 .classpath
 .project
 
-# Package Files #
-*.jar
-*.war
-*.ear
-*.db
- 
+#Intellij
+.idea/
+*.iml
+*.iws
+
+#Mac
+.DS_Store
+
+# React 
+package-lock.json
+node_modules/
+*~
+
 ######################
 # Windows
 ######################

@@ -72,7 +72,7 @@ CREATE TABLE :myschema.CoalesceLinkage
   DateCreated timestamp with time zone,
   LastModified timestamp with time zone,
   CONSTRAINT CoalesceLinkage_pkey PRIMARY KEY (ObjectKey),
-  FOREIGN KEY (Entity1Key) REFERENCES coalesce.coalesceentity (objectkey) ON DELETE CASCADE
+  FOREIGN KEY (Entity1Key) REFERENCES :myschema.coalesceentity (objectkey) ON DELETE CASCADE
 )
 WITH (
   OIDS=FALSE

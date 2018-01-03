@@ -37,7 +37,7 @@ import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 public class CoalesceEntityTemplateTest {
 
     @Test
-    public void testTemplateFromEntity() throws SAXException, IOException
+    public void testTemplateFromEntity() throws Exception
     {
         // Test Entity
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
@@ -47,14 +47,14 @@ public class CoalesceEntityTemplateTest {
     }
 
     @Test
-    public void testTemplateFromString() throws SAXException, IOException
+    public void testTemplateFromString() throws Exception
     {
         // Run Test
         CoalesceEntityTemplateTest.testTemplate(CoalesceEntityTemplate.create(CoalesceTypeInstances.TEST_MISSION));
     }
 
     @Test
-    public void testTemplateFromDocument() throws SAXException, IOException
+    public void testTemplateFromDocument() throws Exception
     {
         // Load Document
         Document xmlDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
@@ -98,9 +98,10 @@ public class CoalesceEntityTemplateTest {
                             && !attribute.getNodeName().equalsIgnoreCase("datatype")
                             && !attribute.getNodeName().equalsIgnoreCase("maxrecords")
                             && !attribute.getNodeName().equalsIgnoreCase("minrecords")
+                            && !attribute.getNodeName().equalsIgnoreCase("status")
                             && !attribute.getNodeName().equalsIgnoreCase("classname"))
                     {
-                        assertTrue(StringHelper.isNullOrEmpty(attribute.getNodeValue()));
+                        assertTrue(attribute.getNodeName(), StringHelper.isNullOrEmpty(attribute.getNodeValue()));
                     }
                     else
                     {
@@ -126,12 +127,9 @@ public class CoalesceEntityTemplateTest {
 
     /**
      * Test to verify the template compareTo method works correctly.
-     * 
-     * @throws SAXException
-     * @throws IOException
      */
     @Test
-    public void compareTemplateTest() throws SAXException, IOException
+    public void compareTemplateTest() throws Exception
     {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
@@ -145,12 +143,9 @@ public class CoalesceEntityTemplateTest {
     /**
      * Test to verify the template compareTo method correctly returns non-zero
      * when templates do not match.
-     * 
-     * @throws SAXException
-     * @throws IOException
      */
     @Test
-    public void compareTemplateFailureTest() throws SAXException, IOException
+    public void compareTemplateFailureTest() throws Exception
     {
 
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);

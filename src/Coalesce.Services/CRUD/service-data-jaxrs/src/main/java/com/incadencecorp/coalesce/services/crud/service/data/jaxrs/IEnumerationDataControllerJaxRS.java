@@ -12,6 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.entity.EnumerationPojoEntity;
+import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.record.MetadataPojoRecord;
 import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.record.ValuesPojoRecord;
 
 /**
@@ -25,7 +26,7 @@ public interface IEnumerationDataControllerJaxRS {
     @GET
     @Path("/")
     @Produces("application/json")
-    Map<String, String> getEnumerations() throws RemoteException;
+    List<MetadataPojoRecord> getEnumerations() throws RemoteException;
 
     @GET
     @Path("/{key}")

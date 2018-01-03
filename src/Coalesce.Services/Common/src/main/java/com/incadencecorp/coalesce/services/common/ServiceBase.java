@@ -17,45 +17,29 @@
 
 package com.incadencecorp.coalesce.services.common;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
+import com.incadencecorp.coalesce.api.EJobStatus;
+import com.incadencecorp.coalesce.api.EResultStatus;
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.CoalesceExecutorServiceImpl;
+import com.incadencecorp.coalesce.framework.jobs.JobManager;
+import com.incadencecorp.coalesce.services.api.common.*;
+import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.api.EJobStatus;
-import com.incadencecorp.coalesce.api.EResultStatus;
-import com.incadencecorp.coalesce.api.ICoalesceComponent;
-import com.incadencecorp.coalesce.api.ICoalesceResponseType;
-import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.jobs.JobManager;
-import com.incadencecorp.coalesce.services.api.common.BaseRequest;
-import com.incadencecorp.coalesce.services.api.common.BaseResponse;
-import com.incadencecorp.coalesce.services.api.common.JobRequest;
-import com.incadencecorp.coalesce.services.api.common.MultipleResponse;
-import com.incadencecorp.coalesce.services.api.common.ResponseResultsType;
-import com.incadencecorp.coalesce.services.api.common.ResultsType;
-import com.incadencecorp.coalesce.services.api.common.StatusResponse;
-import com.incadencecorp.coalesce.services.api.common.StatusType;
-import com.incadencecorp.coalesce.services.api.common.StringResponse;
-import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Base class for handling the queuing of jobs asynchronously, returning the
  * results, and the collection of metrics. Must call dispose to free up
  * resources.
- * 
+ *
  * @author Derek C.
  */
-public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCloseable {
+public abstract class ServiceBase<T> extends CoalesceExecutorServiceImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceBase.class);
 
@@ -67,7 +51,6 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
     private static final int TIME_TO_LIVE = 10;
 
     private JobManager<AbstractServiceJob<?, ?, ?, T>> jobs;
-    private ExecutorService service;
     private T target;
 
     // ----------------------------------------------------------------------//
@@ -76,13 +59,14 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
 
     /**
      * Construct service while specifying the service and framework to use.
-     * 
+     *
      * @param target
      * @param service
      */
     public ServiceBase(T target, ExecutorService service)
     {
-        this.service = service;
+        super(service);
+
         this.jobs = new JobManager<AbstractServiceJob<?, ?, ?, T>>();
         this.target = target;
     }
@@ -130,7 +114,7 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
     /**
      * @param request the request
      * @return the response of the job indicated by the request if completed.
-     *         Otherwise it returns the current status of job not found.
+     * Otherwise it returns the current status of job not found.
      */
     public final MultipleResponse pickupJobResults(JobRequest request)
     {
@@ -146,7 +130,8 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
             // Check the Job Manager for this Job's Status
             EJobStatus jobStatus = getJobStatus(key);
 
-            switch (jobStatus) {
+            switch (jobStatus)
+            {
 
             case CANCELED:
             case COMPLETE:
@@ -199,7 +184,7 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
      *
      * @param request the request
      * @return {@link BaseResponse#getStatus()} which states if cancel was
-     *         successful.
+     * successful.
      */
     public final StringResponse cancelJob(JobRequest request)
     {
@@ -250,11 +235,12 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
      *
      * @param job {@link AbstractServiceJob}
      * @return the response with results if {@link AbstractServiceJob#isAsync}
-     *         is false; Otherwise a response with no results and a
-     *         {@link AbstractServiceJob#getJobId()} that can be used to
-     *         request the results once the job has completed.
+     * is false; Otherwise a response with no results and a
+     * {@link AbstractServiceJob#getJobId()} that can be used to
+     * request the results once the job has completed.
      */
-    public final <REQUEST extends BaseRequest, RESPONSE extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> RESPONSE performJob(AbstractServiceJob<REQUEST, RESPONSE, X, T> job)
+    public final <REQUEST extends BaseRequest, RESPONSE extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> RESPONSE performJob(
+            AbstractServiceJob<REQUEST, RESPONSE, X, T> job)
     {
         RESPONSE response = null;
 
@@ -272,21 +258,31 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
             jobs.addJob(job);
 
             // Thread Pool Shutdown?
-            if (!service.isShutdown())
+            if (!isShutdown())
             {
                 // No; Add Job
-                job.setFuture(service.submit(job));
+                try
+                {
+                    job.setFuture(submit(job));
+                }
+                catch (CoalescePersistorException e)
+                {
+                    response.setStatus(EResultStatus.FAILED);
+                    response.setError(e.getMessage());
+                }
             }
             else
             {
                 response.setStatus(EResultStatus.FAILED);
+                response.setError("Thread pool has been shutdown");
             }
         }
         else
         {
             response = job.call();
             response.setId(job.getJobId().toString());
-            switch (job.getJobStatus()) {
+            switch (job.getJobStatus())
+            {
             case CANCELED:
             case FAILED:
             case NOT_FOUND:
@@ -320,94 +316,6 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
     public final List<AbstractServiceJob<?, ?, ?, T>> removeOldJobs(long minutes)
     {
         return jobs.removeOldJobs(minutes);
-    }
-
-    @Override
-    public final void close()
-    {
-        try
-        {
-            service.shutdown();
-            service.awaitTermination(1, TimeUnit.MINUTES);
-        }
-        catch (InterruptedException e)
-        {
-            // Force shutdown
-            List<Runnable> jobList = service.shutdownNow();
-
-            // Iterate through each failed job
-            for (Runnable runnable : jobList)
-            {
-                if (runnable instanceof AbstractServiceJob<?, ?, ?, ?>)
-                {
-                    LOGGER.warn("Job ({}) expired", ((AbstractServiceJob<?, ?, ?, ?>) runnable).getJobId());
-                }
-                else if (runnable instanceof ICoalesceComponent)
-                {
-                    LOGGER.warn("Runnable Expired ({})", ((ICoalesceComponent) runnable).getName());
-                }
-            }
-        }
-    }
-
-    /*--------------------------------------------------------------------------
-    ICoalesceExecutorService Implementation
-    --------------------------------------------------------------------------*/
-
-    @Override
-    public final void execute(Runnable command)
-    {
-        service.execute(command);
-    }
-
-    @Override
-    public final boolean isShutdown()
-    {
-        return service.isShutdown();
-    }
-
-    @Override
-    public final boolean isTerminated()
-    {
-        return service.isTerminated();
-    }
-
-    // @Override
-    public <REQUEST extends BaseRequest, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Future<Y> submit(AbstractServiceJob<REQUEST, Y, X, T> job)
-            throws CoalescePersistorException
-    {
-        return service.submit(job);
-    }
-
-    public final <TYPE> Future<TYPE> submit(Callable<TYPE> job)
-    {
-        return service.submit(job);
-    }
-
-    @Override
-    public final <TYPE> List<Future<TYPE>> invokeAll(Collection<? extends Callable<TYPE>> tasks) throws InterruptedException
-    {
-        return service.invokeAll(tasks);
-    }
-
-    @Override
-    public final <TYPE> List<Future<TYPE>> invokeAll(Collection<? extends Callable<TYPE>> tasks, long timeout, TimeUnit unit)
-            throws InterruptedException
-    {
-        return service.invokeAll(tasks, timeout, unit);
-    }
-
-    @Override
-    public final <TYPE> TYPE invokeAny(Collection<? extends Callable<TYPE>> tasks) throws InterruptedException, ExecutionException
-    {
-        return service.invokeAny(tasks);
-    }
-
-    @Override
-    public final <TYPE> TYPE invokeAny(Collection<? extends Callable<TYPE>> tasks, long timeout, TimeUnit unit)
-            throws InterruptedException, ExecutionException, TimeoutException
-    {
-        return service.invokeAny(tasks, timeout, unit);
     }
 
     /*--------------------------------------------------------------------------

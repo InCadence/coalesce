@@ -24,6 +24,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
@@ -343,6 +344,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * @return whether this object has been initialized or not.
      */
+    @JsonIgnore
     public boolean isInitialized()
     {
         return _entity != null;
@@ -569,6 +571,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * @return Map&lt;String, CoalesceLinkage&gt; CoalesceLinkages of relationships to
      *         this CoalesceEntity
      */
+    @JsonIgnore
     public Map<String, CoalesceLinkage> getLinkages()
     {
         return getLinkages((String) null);
@@ -584,10 +587,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * 
      * @return CoalesceEntityTemplate generated from this {@link CoalesceEntity}
      * 
-     * @throws SAXException
-     * @throws IOException
+     * @throws CoalesceException
      */
-    public CoalesceEntityTemplate createNewEntityTemplate() throws SAXException, IOException
+    public CoalesceEntityTemplate createNewEntityTemplate() throws CoalesceException
     {
 
         CoalesceEntityTemplate entTemp = new CoalesceEntityTemplate();
@@ -685,6 +687,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * @return Map&lt;String, CoalesceSection&gt; sections belonging to this
      *         CoalesceEntity
      */
+    @JsonIgnore
     public Map<String, CoalesceSection> getSections()
     {
         return getObjectsAsMap(_entity.getSection());
@@ -1024,6 +1027,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * @throws SAXException
      * @throws IOException
      */
+    @JsonIgnore
     public CoalesceEntitySyncShell getSyncEntity() throws SAXException, IOException
     {
         return CoalesceEntitySyncShell.create(this);

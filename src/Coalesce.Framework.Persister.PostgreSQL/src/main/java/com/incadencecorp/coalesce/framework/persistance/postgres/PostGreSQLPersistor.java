@@ -1,5 +1,6 @@
 package com.incadencecorp.coalesce.framework.persistance.postgres;
 
+import java.io.IOException;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -10,6 +11,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import org.joda.time.DateTime;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
@@ -35,6 +38,7 @@ import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
 import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import org.xml.sax.SAXException;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -97,7 +101,16 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         return _schema;
     }
 
-    @Override
+    /**
+     * Returns the Coalesce entity keys that matches the given parameters.
+     *
+     * @param entityId of the entity.
+     * @param entityIdType of the entity.
+     * @param entityName of the entity.
+     * @param entitySource of the entity.
+     * @return List$lt;String&gt; of primary keys for the matching Coalesce entity.
+     * @throws CoalescePersistorException
+     */
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
                                                          String entityIdType,
                                                          String entityName,
@@ -124,7 +137,13 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+    /**
+     * Returns the Coalesce entity meta data that matches the given parameters.
+     *
+     * @param key the primary key of the entity.
+     * @return EntityMetaData for the matching Coalesce entity.
+     * @throws CoalescePersistorException
+     */
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
@@ -141,7 +160,16 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+    /**
+     * Returns the last modified date for the Coalesce object (entity, field,
+     * record, linkage, etc.) that matches the given parameters.
+     *
+     * @param key the primary key of the Coalesce object.
+     * @param objectType is the Coalesce object to retrieve the information for.
+     * @return DateTime containing the last modified date for the Coalesce
+     *         object matching the values.
+     * @throws CoalescePersistorException
+     */
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
@@ -158,7 +186,13 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+    /**
+     * Returns the Coalesce field binary data that matches the given parameters.
+     *
+     * @param key the primary key of the Coalesce field.
+     * @return byte[] the binary data of the Coalesce field matching the value.
+     * @throws CoalescePersistorException
+     */
     public byte[] getBinaryArray(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
@@ -214,7 +248,15 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
     }
 
-    @Override
+    /**
+     * Returns the ElementMetaData for the Coalesce object that matches the
+     * given parameters.
+     *
+     * @param key the Coalesce object primary key
+     * @param objectType the Coalesce object type specification.
+     * @return ElementMetaData
+     * @throws CoalescePersistorException
+     */
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
@@ -231,7 +273,13 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+    /**
+     * Returns the value of the specified Coalesce field.
+     *
+     * @param fieldKey the primary key of the field.
+     * @return returns the value of the matching field.
+     * @throws CoalescePersistorException
+     */
     public String getFieldValue(String fieldKey) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
@@ -302,7 +350,14 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+    /**
+     * Returns the Coalesce entity that matches the given parameters.
+     *
+     * @param entityId the unique identifier, such as a TCN number for an EFT.
+     * @param entityIdType the type of entityId, such as TCN.
+     * @return the matching Coalesce entity.
+     * @throws CoalescePersistorException
+     */
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
@@ -331,7 +386,15 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+    /**
+     * Returns the Coalesce entity that matches the given parameters.
+     *
+     * @param name the name of the entity.
+     * @param entityId the unique identifier, such as a TCN number for an EFT.
+     * @param entityIdType the type of entityId, such as TCN.
+     * @return the matching Coalesce entity.
+     * @throws CoalescePersistorException
+     */
     public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
@@ -506,38 +569,40 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
-            String value = null;
+            String xml = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
                     + "CoalesceEntityTemplate WHERE TemplateKey=?", new CoalesceParameter(key, Types.OTHER));
 
-            while (results.next())
+            if (results.next())
             {
-                value = results.getString("TemplateXml");
+                xml = results.getString("TemplateXml");
             }
 
-            return value;
+            if (xml == null)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+            }
+
+            return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException e)
+        catch (CoalesceException | SQLException e)
         {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), e);
         }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
-        }
+
     }
 
     @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
-            String value = null;
+            String xml = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
                                                           + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
@@ -545,20 +610,21 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                                                   new CoalesceParameter(source),
                                                   new CoalesceParameter(version));
 
-            while (results.next())
+            if (results.next())
             {
-                value = results.getString("TemplateXml");
+                xml = results.getString("TemplateXml");
             }
 
-            return value;
+            if (xml == null)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version));
+            }
+
+            return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException e)
+        catch (SQLException | CoalesceException e)
         {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version), e);
         }
     }
 
@@ -981,10 +1047,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             return true;
         }
 
-        // TODO Phase out CoalesceLinkage_InsertOrUpdate2 on the next DB wipe.
-
         // Yes; Call Store Procedure
-        return conn.executeProcedure("CoalesceLinkage_InsertOrUpdate2",
+        return conn.executeProcedure("CoalesceLinkage_InsertOrUpdate",
                                      new CoalesceParameter(linkage.getKey(), Types.OTHER),
                                      new CoalesceParameter(linkage.getName()),
                                      new CoalesceParameter(linkage.getEntity1Key(), Types.OTHER),
@@ -998,9 +1062,9 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(linkage.getEntity2Name()),
                                      new CoalesceParameter(linkage.getEntity2Source()),
                                      new CoalesceParameter(linkage.getEntity2Version()),
-                                     new CoalesceParameter(""), // FIXME linkage.getClassificationMarking().toPortionString()),
+                                     new CoalesceParameter(linkage.getClassificationMarking().toPortionString()),
                                      new CoalesceParameter(linkage.getModifiedBy()),
-                                     new CoalesceParameter(""),
+                                     new CoalesceParameter(linkage.getInputLang().getDisplayName()),
                                      new CoalesceParameter(linkage.getParent().getKey(), Types.OTHER),
                                      new CoalesceParameter(linkage.getParent().getType()),
                                      new CoalesceParameter(linkage.getDateCreated().toString(), Types.OTHER),
@@ -1202,8 +1266,9 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
     {
         boolean isSuccessful = false;
-
-        if (coalesceObject.getFlatten())
+        boolean isDeleted = false; 
+        
+        if (coalesceObject.isFlatten())
         {
             switch (coalesceObject.getStatus()) {
             case READONLY:
@@ -1217,6 +1282,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                 {
                     // Delete Object
                     isSuccessful = deleteObject(coalesceObject, conn);
+                    isDeleted = coalesceObject instanceof CoalesceEntity;
                 }
                 else
                 {
@@ -1231,7 +1297,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             }
 
             // Successful?
-            if (isSuccessful)
+            if (isSuccessful && !isDeleted)
             {
                 // Yes; Iterate Through Children
                 for (CoalesceObject childObject : coalesceObject.getChildCoalesceObjects().values())
@@ -1343,13 +1409,14 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     public EnumSet<EPersistorCapabilities> getCapabilities()
     {
         EnumSet<EPersistorCapabilities> enumSet = super.getCapabilities();
-        EnumSet<EPersistorCapabilities> newCapabilities = EnumSet.of(EPersistorCapabilities.GET_FIELD_VALUE,
-                                                                     EPersistorCapabilities.READ_TEMPLATES,
+        EnumSet<EPersistorCapabilities> newCapabilities = EnumSet.of(EPersistorCapabilities.READ_TEMPLATES,
                                                                      EPersistorCapabilities.UPDATE,
                                                                      EPersistorCapabilities.DELETE,
                                                                      EPersistorCapabilities.SEARCH,
                                                                      EPersistorCapabilities.SUPPORTS_BLOB,
+                                                                     EPersistorCapabilities.CASE_INSENSITIVE_SEARCH,
                                                                      EPersistorCapabilities.GEOSPATIAL_SEARCH,
+                                                                     EPersistorCapabilities.TEMPORAL_SEARCH,
                                                                      EPersistorCapabilities.INDEX_FIELDS);
         if (enumSet != null)
         {

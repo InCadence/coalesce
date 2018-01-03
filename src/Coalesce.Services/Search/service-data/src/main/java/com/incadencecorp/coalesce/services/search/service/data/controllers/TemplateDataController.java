@@ -16,39 +16,30 @@
  -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.services.search.service.data.controllers;
 
-import java.io.IOException;
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
+import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.opengis.filter.expression.PropertyName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.opengis.filter.expression.PropertyName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-
-import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
-import com.incadencecorp.coalesce.services.search.service.data.model.ObjectData;
-import com.incadencecorp.unity.common.CallResult;
-import com.incadencecorp.unity.common.CallResult.CallResults;
-
 /**
  * Provides details of the registered templates within a Coalesce database.
- * 
+ *
  * @author Derek Clemenzi
  */
 public class TemplateDataController {
@@ -57,30 +48,30 @@ public class TemplateDataController {
     private static final String COALESCEENTITY_KEY = CoalesceEntity.class.getSimpleName();
 
     private final Map<String, TemplateNode> templates = new HashMap<String, TemplateNode>();
-    private ICoalescePersistor persister;
+    private CoalesceFramework framework;
 
     /**
      * Production Constructor
-     * 
-     * @param persister
+     *
+     * @param framework
      */
-    public TemplateDataController(ICoalescePersistor persister)
+    public TemplateDataController(CoalesceFramework framework)
     {
         try
         {
-            for (ObjectMetaData meta : persister.getEntityTemplateMetadata())
+            for (ObjectMetaData meta : framework.getCoalesceEntityTemplateMetadata())
             {
                 CoalesceEntityTemplate template;
                 try
                 {
-                    template = CoalesceEntityTemplate.create(persister.getEntityTemplateXml(meta.getKey()));
+                    template = framework.getCoalesceEntityTemplate(meta.getKey());
 
                     if (template != null)
                     {
                         templates.put(template.getKey(), new TemplateNode(template));
                     }
                 }
-                catch (SAXException | IOException e)
+                catch (CoalescePersistorException e)
                 {
                     String errorMsg = String.format(CoalesceErrors.INVALID_OBJECT,
                                                     CoalesceEntityTemplate.class.getSimpleName(),
@@ -98,7 +89,7 @@ public class TemplateDataController {
                 }
             }
 
-            this.persister = persister;
+            this.framework = framework;
         }
         catch (CoalescePersistorException e)
         {
@@ -141,16 +132,16 @@ public class TemplateDataController {
      * @param key
      * @return a list of record sets for the provided template key.
      */
-    public List<ObjectData> getRecordSets(String key) throws RemoteException
+    public List<CoalesceObjectImpl> getRecordSets(String key) throws RemoteException
     {
         LOGGER.debug("Retrieving Record Sets [Key: ({})]", key);
 
         // Also include the key
-        List<ObjectData> results = new ArrayList<ObjectData>();
+        List<CoalesceObjectImpl> results = new ArrayList<CoalesceObjectImpl>();
 
         if (templates.containsKey(key))
         {
-            results.add(new ObjectData(COALESCEENTITY_KEY, COALESCEENTITY_KEY));
+            results.add(new CoalesceObjectImpl(COALESCEENTITY_KEY, COALESCEENTITY_KEY));
 
             for (CoalesceSection section : templates.get(key).entity.getSectionsAsList())
             {
@@ -189,7 +180,8 @@ public class TemplateDataController {
         {
             if (templates.containsKey(key))
             {
-                CoalesceRecordset recordset = (CoalesceRecordset) templates.get(key).entity.getCoalesceObjectForKey(recordsetKey);
+                CoalesceRecordset recordset = (CoalesceRecordset) templates.get(key).entity.getCoalesceObjectForKey(
+                        recordsetKey);
 
                 if (recordset != null)
                 {
@@ -213,17 +205,46 @@ public class TemplateDataController {
         return results;
     }
 
+    public CoalesceEntity getTemplate(String name, String source, String version) throws RemoteException
+    {
+        CoalesceEntity result = null;
+
+        for (TemplateNode node : templates.values())
+        {
+            if (name.equalsIgnoreCase(node.template.getName()) && source.equalsIgnoreCase(node.template.getSource())
+                    && version.equalsIgnoreCase(node.template.getVersion()))
+            {
+                result = node.entity;
+            }
+        }
+
+        if (result == null)
+        {
+            error(String.format(CoalesceErrors.NOT_FOUND,
+                                "Template",
+                                "name=" + name + ", source=" + source + ", version=" + version));
+        }
+
+        return result;
+
+    }
+
+    public String getTemplateXml(String name, String source, String version) throws RemoteException
+    {
+        return getTemplate(name, source, version).toXml();
+    }
+
     /**
      * @param key
      * @return the {@link CoalesceEntityTemplate} for the specified key.
      */
-    public CoalesceEntityTemplate getTemplate(String key) throws RemoteException
+    public CoalesceEntity getTemplate(String key) throws RemoteException
     {
-        CoalesceEntityTemplate result = null;
+        CoalesceEntity result = null;
 
         if (templates.containsKey(key))
         {
-            result = templates.get(key).template;
+            result = templates.get(key).entity;
         }
         else
         {
@@ -233,40 +254,61 @@ public class TemplateDataController {
         return result;
     }
 
+    public String getTemplateXml(String key) throws RemoteException
+    {
+        return getTemplate(key).toXml();
+    }
+
+    public CoalesceEntity getNewEntity(String key) throws RemoteException
+    {
+        CoalesceEntity result = null;
+
+        if (templates.containsKey(key))
+        {
+            result = templates.get(key).template.createNewEntity();
+        }
+        else
+        {
+            error(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+        }
+
+        return result;
+    }
+
+    public String getNewEntityXml(String key) throws RemoteException
+    {
+        return getNewEntity(key).toXml();
+    }
+
     /**
      * Saves the specified template.
-     * 
-     * @param template
+     *
+     * @param entity
      * @return whether or not it was successfully saved.
      */
-    public boolean setTemplate(String xml) throws RemoteException
+    public boolean setTemplate(String key, CoalesceEntity entity) throws RemoteException
     {
         boolean result = false;
 
-        try
-        {
-            if (xml != null)
-            {
-                CoalesceEntityTemplate template = CoalesceEntityTemplate.create(xml);
-                LOGGER.info("Saving template {}, Key: {}", template.getName(), template.getKey());
-                persister.saveTemplate(template);
-                templates.put(template.getKey(), new TemplateNode(template));
+        CoalesceEntityTemplate template = null;
 
-                result = true;
-            }
-            else
+        if (entity != null)
+        {
+            try
             {
-                result = false;
+                template = CoalesceEntityTemplate.create(entity);
+            }
+            catch (CoalesceException e)
+            {
+                error(String.format(CoalesceErrors.NOT_SAVED,
+                                    key,
+                                    CoalesceEntityTemplate.class.getSimpleName(),
+                                    e.getMessage()), e);
             }
 
-        }
-        catch (CoalescePersistorException | SAXException | IOException e)
-        {
-            error(String.format(CoalesceErrors.NOT_SAVED,
-                                "key here",
-                                CoalesceEntityTemplate.class.getSimpleName(),
-                                e.getMessage()),
-                  e);
+            setTemplate(template);
+
+            result = true;
         }
 
         return result;
@@ -274,11 +316,12 @@ public class TemplateDataController {
 
     /**
      * Saves the specified template.
-     * 
-     * @param template
+     *
+     * @param key
+     * @param json
      * @return whether or not it was successfully saved.
      */
-    public boolean setTemplateJson(String json) throws RemoteException
+    public boolean setTemplateJson(String key, String json) throws RemoteException
     {
         boolean result = false;
 
@@ -286,12 +329,7 @@ public class TemplateDataController {
         {
             if (json != null)
             {
-                CoalesceEntityTemplate template = createTemplate(json);
-                LOGGER.info("Saving template {}, Key: {}", template.getName(), template.getKey());
-                persister.saveTemplate(template);
-                templates.put(template.getKey(), new TemplateNode(template));
-
-                result = true;
+                result = setTemplate(createTemplate(json));
             }
             else
             {
@@ -299,66 +337,122 @@ public class TemplateDataController {
             }
 
         }
-        catch (CoalescePersistorException | SAXException | IOException e)
+        catch (CoalesceException e)
         {
-            error(String.format(CoalesceErrors.NOT_SAVED,
-                                "key here",
-                                CoalesceEntityTemplate.class.getSimpleName(),
-                                e.getMessage()),
+            error(String.format(CoalesceErrors.NOT_SAVED, key, CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
                   e);
         }
 
         return result;
     }
 
-    private CoalesceEntityTemplate createTemplate(String json) throws SAXException, IOException
+    public boolean setTemplateXml(String key, String xml) throws RemoteException
     {
+        boolean results = false;
+        try
+        {
+            results = setTemplate(CoalesceEntityTemplate.create(xml));
+        }
+        catch (CoalesceException e)
+        {
+            error(String.format(CoalesceErrors.NOT_SAVED, key, CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
+                  e);
+        }
 
+        return results;
+    }
+
+    public boolean registerTemplate(String key) throws RemoteException
+    {
+        String xml;
+        try
+        {
+            framework.registerTemplates(framework.getCoalesceEntityTemplate(key));
+        }
+        catch (CoalescePersistorException e)
+        {
+            // TODO Use CoalesceErrors
+            error("Registeration Failed", e);
+        }
+
+        return true;
+    }
+
+    public boolean deleteTemplate(String key) throws RemoteException
+    {
+        throw new RemoteException("Not Implemented");
+    }
+
+    private boolean setTemplate(CoalesceEntityTemplate template) throws RemoteException
+    {
+        boolean result = false;
+
+        try
+        {
+            LOGGER.info("Saving template {}, Key: {}", template.getName(), template.getKey());
+            framework.saveCoalesceEntityTemplate(template);
+            templates.put(template.getKey(), new TemplateNode(template));
+
+            result = true;
+        }
+        catch (CoalescePersistorException e)
+        {
+            error(String.format(CoalesceErrors.NOT_SAVED,
+                                template.getKey(),
+                                CoalesceEntityTemplate.class.getSimpleName(),
+                                e.getMessage()), e);
+        }
+
+        return result;
+    }
+
+    private CoalesceEntityTemplate createTemplate(String json) throws CoalesceException
+    {
         JSONObject obj = new JSONObject(json);
-        String templateName = obj.getString("templateName");
-        String className = obj.getString("className").replace('-', '.');
+        String className = obj.getString("className");
 
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
-        entity.setName(templateName);
-        entity.setAttribute("classname", className);
-        
-        JSONArray jsonSections = obj.getJSONArray("sections");
+        entity.setName(obj.getString("name"));
+        entity.setSource(obj.getString("source"));
+        entity.setVersion(obj.getString("version"));
+        entity.setAttribute(CoalesceEntity.ATTRIBUTE_CLASSNAME, className);
+
+        JSONArray jsonSections = obj.getJSONArray("sectionsAsList");
 
         for (int i = 0; i < jsonSections.length(); i++)
         {
-
             JSONObject jsonSection = jsonSections.getJSONObject(i);
-            String SectionName = jsonSection.getString("sectionName");
+            String SectionName = jsonSection.getString("name");
 
             CoalesceSection section = entity.createSection(SectionName);
 
-            JSONArray jsonRecordSets = jsonSection.getJSONArray("recordsets");
+            JSONArray jsonRecordSets = jsonSection.getJSONArray("recordsetsAsList");
 
             for (int j = 0; j < jsonRecordSets.length(); j++)
             {
 
                 JSONObject jsonRecordSet = jsonRecordSets.getJSONObject(j);
-                String recordsetName = jsonRecordSet.getString("recordsetName");
+                String recordsetName = jsonRecordSet.getString("name");
                 CoalesceRecordset recordset = section.createRecordset(recordsetName);
+                recordset.setMinRecords(jsonRecordSet.getInt("minRecords"));
+                recordset.setMaxRecords(jsonRecordSet.getInt("maxRecords"));
 
-                JSONArray jsonFields = jsonRecordSet.getJSONArray("fields");
+                JSONArray jsonFields = jsonRecordSet.getJSONArray("fieldDefinitions");
 
                 for (int k = 0; k < jsonFields.length(); k++)
                 {
                     JSONObject jsonField = jsonFields.getJSONObject(k);
-                    String fieldName = jsonField.getString("fieldName");
-                    String fieldType = jsonField.getString("fieldType");
+                    String fieldName = jsonField.getString("name");
+                    String fieldType = jsonField.getString("dataType");
                     ECoalesceFieldDataTypes type = ECoalesceFieldDataTypes.getTypeForCoalesceType(fieldType);
 
                     recordset.createFieldDefinition(fieldName, type);
                 }
-
             }
         }
 
         return CoalesceEntityTemplate.create(entity);
-
     }
 
     private FieldData getField(PropertyName property, ECoalesceFieldDataTypes type)
@@ -366,9 +460,9 @@ public class TemplateDataController {
         return new FieldData(property.getPropertyName(), property.getPropertyName().split("\\.")[1], type);
     }
 
-    private List<ObjectData> getRecordsets(CoalesceSection section)
+    private List<CoalesceObjectImpl> getRecordsets(CoalesceSection section)
     {
-        List<ObjectData> results = new ArrayList<ObjectData>();
+        List<CoalesceObjectImpl> results = new ArrayList<CoalesceObjectImpl>();
 
         for (CoalesceSection childSection : section.getSectionsAsList())
         {
@@ -377,7 +471,7 @@ public class TemplateDataController {
 
         for (CoalesceRecordset recordset : section.getRecordsetsAsList())
         {
-            results.add(new ObjectData(recordset.getKey(), recordset.getName()));
+            results.add(new CoalesceObjectImpl(recordset));
         }
 
         return results;
@@ -391,6 +485,7 @@ public class TemplateDataController {
         public TemplateNode(CoalesceEntityTemplate template)
         {
             this.entity = template.createNewEntity();
+            this.entity.setKey(template.getKey());
             this.template = template;
         }
 

@@ -51,6 +51,8 @@ public class PostGreSQLSettings {
     private static final String PARAM_USER = PARAM_BASE + "dbUser";
     private static final String PARAM_HOST = PARAM_BASE + "dbServerName";
     private static final String PARAM_USE_FOREIGN_KEYS = PARAM_BASE + "usefk";
+    private static final String PARAM_SSL_ENABLED = PARAM_BASE + "ssl.enabled";
+    private static final String PARAM_SSL_CERT_VALIDATION = PARAM_BASE + "ssl.validate";
 
     /*--------------------------------------------------------------------------
     Default Values
@@ -59,6 +61,8 @@ public class PostGreSQLSettings {
     private static final String DEFAULT_USERNAME = "enterprisedb";
     private static final String DEFAULT_PASSWORD = DEFAULT_USERNAME;
     private static final boolean DEFAULT_USE_FOREIGN_KEYS = false;
+    private static final boolean DEFAULT_SSL_ENABLED = false;
+    private static final boolean DEFAULT_SSL_CERT_VALIDATION = false;
     private static final int DEFAULT_SRID = 4326; // WGS84
 
     /*--------------------------------------------------------------------------
@@ -264,4 +268,41 @@ public class PostGreSQLSettings {
         settings.setSetting(config_name, PARAM_USE_FOREIGN_KEYS, value);
     }
 
+    /**
+     * @return whether or not to use SSL. Default: {@value #DEFAULT_SSL_ENABLED}
+     *         .
+     */
+    public static boolean isSSLEnabled()
+    {
+        return settings.getSetting(config_name, PARAM_SSL_ENABLED, DEFAULT_SSL_ENABLED, true);
+    }
+
+    /**
+     * Sets whether or not to use SSL.
+     *
+     * @param value
+     */
+    public static void setSSLEnabled(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_SSL_ENABLED, value);
+    }
+
+    /**
+     * @return whether or not to validate certificate when using SSL. Default:
+     *         {@value #DEFAULT_SSL_CERT_VALIDATION}.
+     */
+    public static boolean isSSLValidate()
+    {
+        return settings.getSetting(config_name, PARAM_SSL_CERT_VALIDATION, DEFAULT_SSL_CERT_VALIDATION, true);
+    }
+
+    /**
+     * Sets whether or not to validate certificate when using SSL.
+     *
+     * @param value
+     */
+    public static void setSSLValidate(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_SSL_CERT_VALIDATION, value);
+    }
 }

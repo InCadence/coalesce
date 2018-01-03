@@ -21,11 +21,10 @@ import com.incadencecorp.coalesce.api.EResultStatus;
 
 /**
  * Generic class allowing status to be attached to the results returned from a
- * wed service.
- * 
- * @author Derek Clemenzi
+ * web service.
  *
  * @param <T>
+ * @author Derek Clemenzi
  */
 public class Results<T> {
 
@@ -44,7 +43,7 @@ public class Results<T> {
     /**
      * Constructs the result from a valid Coalesce object and sets the status to
      * {@link EResultStatus#SUCCESS}.
-     * 
+     *
      * @param result
      */
     public Results(final T result)
@@ -59,7 +58,7 @@ public class Results<T> {
     /**
      * Constructs a result from an error message setting the entity to null and
      * setting the status to {@link EResultStatus#FAILED}
-     * 
+     *
      * @param error
      */
     public Results(final String error)
@@ -77,7 +76,7 @@ public class Results<T> {
 
     /**
      * @return {@link EResultStatus#SUCCESS} if {@link #getResult()} wont return
-     *         null.
+     * null.
      */
     public EResultStatus getStatus()
     {
@@ -99,4 +98,13 @@ public class Results<T> {
     {
         return error;
     }
+
+    /**
+     * @return whether or not it was successful.
+     */
+    public boolean isSuccessful()
+    {
+        return status == EResultStatus.SUCCESS;
+    }
+
 }

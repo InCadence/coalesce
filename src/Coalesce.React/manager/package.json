@@ -1,0 +1,29 @@
+{
+  "name": "entity-editor",
+  "version": "0.1.0",
+  "author": "InCadence",
+  "description": "Generic interface for creating, viewing, and editing Coalesce entities.",
+  "main": "index.js",
+  "private": true,
+  "homepage": "/manager",
+  "dependencies": {
+    "react": "^16.0.0",
+    "react-d3-graph": "^0.4.0",
+    "react-dom": "^16.0.0",
+    "react-popup": "^0.8.0",
+    "react-table": "^6.7.4"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "react-scripts": "1.0.14"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "production": "webpack -p"
+  }
+}

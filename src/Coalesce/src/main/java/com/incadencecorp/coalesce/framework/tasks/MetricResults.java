@@ -8,6 +8,17 @@ public class MetricResults<T extends ICoalesceResponseTypeBase> {
 
     private T results;
     private StopWatch watch;
+    private String name;
+
+    public MetricResults(String name)
+    {
+        this.name = name;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
 
     public StopWatch getWatch()
     {
@@ -19,19 +30,18 @@ public class MetricResults<T extends ICoalesceResponseTypeBase> {
         this.watch = watch;
     }
 
-    
     public T getResults()
     {
         return results;
     }
 
-    
     public void setResults(T results)
     {
         this.results = results;
     }
-    
-    public boolean isSuccessful() {
+
+    public boolean isSuccessful()
+    {
         return results.getStatus() == EResultStatus.SUCCESS;
     }
 
