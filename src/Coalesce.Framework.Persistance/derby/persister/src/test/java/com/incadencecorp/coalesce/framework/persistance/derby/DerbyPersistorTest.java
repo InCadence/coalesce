@@ -28,7 +28,7 @@ import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
  * 
  * @author mdaconta
  */
-public class DerbyPersistorIT extends AbstractCoalescePersistorTest<DerbyPersistor> {
+public class DerbyPersistorTest extends AbstractCoalescePersistorTest<DerbyPersistor> {
 
     /**
      * Initializes the test configuration.
