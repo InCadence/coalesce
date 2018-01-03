@@ -127,6 +127,14 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         // Create Indexes
         createIndex(feature, ENTITY_KEY_COLUMN_NAME, EIndex.FULL, ECardinality.HIGH);
 
+        for (CoalesceFieldDefinition definition : recordset.getFieldDefinitions())
+        {
+            if (!definition.isNoIndex())
+            {
+                createIndex(feature, normalizer.normalize(definition.getName()), EIndex.JOIN, ECardinality.HIGH);
+            }
+        }
+
         feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
         feature.getUserData().put(DTG_INDEX, null);
 
