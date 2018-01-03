@@ -81,8 +81,8 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 /**
  * @author Dave Boyd May 13, 2016
- * @deprecated
  * @see AccumuloPersistor2
+ * @deprecated
  */
 public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
 
@@ -904,7 +904,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
             template = CoalesceEntityTemplate.create(xml);
         }
-        catch (TableNotFoundException | SAXException | IOException ex)
+        catch (TableNotFoundException | CoalesceException ex)
         {
             throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), ex);
         }

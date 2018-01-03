@@ -80,7 +80,7 @@ public class FilePersistorSettings {
      */
     public static Path getDirectory()
     {
-        Path result = null;
+        Path result;
         String value = settings.getSetting(config_name, CoalesceParameters.PARAM_DIRECTORY, "", true);
 
         if (StringHelper.isNullOrEmpty(value))

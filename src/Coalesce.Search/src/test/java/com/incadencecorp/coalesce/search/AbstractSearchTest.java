@@ -18,6 +18,7 @@
 package com.incadencecorp.coalesce.search;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -39,12 +40,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import javax.sql.rowset.CachedRowSet;
 import java.io.IOException;
@@ -93,7 +94,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
                     createPersister().registerTemplate(template);
                     CoalesceTemplateUtil.addTemplates(template);
                 }
-                catch (CoalescePersistorException | SAXException | IOException e)
+                catch (CoalesceException e)
                 {
                     LOGGER.warn("Failed to register templates");
                 }
@@ -481,7 +482,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
      * if they are duplicate. This test was created to reveal an issue with Neo4j
      * and duplicate properties.
      *
-     * @throws Exception
+     * @throws Exception on error
      */
     @Test
     public void testSearchDuplicateProperties() throws Exception
@@ -495,6 +496,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         List<PropertyName> properties = new ArrayList<>();
         properties.add(CoalescePropertyFactory.getName());
         properties.add(CoalescePropertyFactory.getName());
+        properties.add(CoalescePropertyFactory.getEntityKey());
 
         Query searchQuery = new Query();
         searchQuery.setStartIndex(1);
@@ -509,10 +511,106 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         CachedRowSet rowset = results.getResults();
 
         // Verify EntityKey and two requested columns
-        Assert.assertEquals(3, rowset.getMetaData().getColumnCount());
+        Assert.assertEquals(properties.size() + 1, rowset.getMetaData().getColumnCount());
         Assert.assertTrue(rowset.next());
 
         rowset.close();
+
+        entity.markAsDeleted();
+
+        persister.saveEntity(true, entity);
+    }
+
+    /**
+     * Verifies that the perisster can handle the property name being specified on the right instead of the left.
+     *
+     * @throws Exception on error
+     */
+    @Test
+    public void testReverseOrder() throws Exception
+    {
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        TestRecord record = entity.addRecord1();
+        record.getStringField().setValue("Hello");
+
+        T persister = createPersister();
+        persister.saveEntity(false, entity);
+
+        List<PropertyName> properties = new ArrayList<>();
+
+        PropertyName property = CoalescePropertyFactory.getFieldProperty(record.getStringField());
+        Expression value = FF.literal(record.getStringField().getValue());
+
+        Query searchQuery = new Query();
+        searchQuery.setStartIndex(1);
+        searchQuery.setMaxFeatures(200);
+        searchQuery.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()),
+                                     FF.equal(value, property, true)));
+        searchQuery.setProperties(properties);
+
+        SearchResults results = persister.search(searchQuery);
+        Assert.assertEquals(1, results.getTotal());
+
+        try (CachedRowSet rowset = results.getResults())
+        {
+            // Verify EntityKey and two requested columns
+            Assert.assertEquals(properties.size() + 1, rowset.getMetaData().getColumnCount());
+            Assert.assertTrue(rowset.next());
+        }
+
+        searchQuery.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()),
+                                     FF.equal(value, property, false)));
+
+        results = persister.search(searchQuery);
+        Assert.assertEquals(1, results.getTotal());
+
+        entity.markAsDeleted();
+
+        persister.saveEntity(true, entity);
+    }
+
+    /**
+     * Verifies that the perisster can handle the match case flag.
+     *
+     * @throws Exception on error
+     */
+    @Test
+    public void testMatchCase() throws Exception
+    {
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        TestRecord record = entity.addRecord1();
+        record.getStringField().setValue("Hello");
+
+        T persister = createPersister();
+
+        Assume.assumeTrue(persister.getCapabilities().contains(EPersistorCapabilities.CASE_INSENSITIVE_SEARCH));
+
+        persister.saveEntity(false, entity);
+
+        List<PropertyName> properties = new ArrayList<>();
+
+        PropertyName property = CoalescePropertyFactory.getFieldProperty(record.getStringField());
+        Expression value = FF.literal(record.getStringField().getValue().toLowerCase());
+
+        Query searchQuery = new Query();
+        searchQuery.setStartIndex(1);
+        searchQuery.setMaxFeatures(200);
+        searchQuery.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()),
+                                     FF.equal(property, value, true)));
+        searchQuery.setProperties(properties);
+
+        SearchResults results = persister.search(searchQuery);
+        Assert.assertEquals(0, results.getTotal());
+
+        searchQuery.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()),
+                                     FF.equal(value, property, false)));
+
+        results = persister.search(searchQuery);
+        Assert.assertEquals(1, results.getTotal());
 
         entity.markAsDeleted();
 
@@ -672,6 +770,11 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         CachedRowSet results = persistor.search(query).getResults();
 
         Assert.assertTrue(results.next());
+
+        for (int ii = 1; ii <= results.getMetaData().getColumnCount(); ii++)
+        {
+            System.out.println(results.getString(ii));
+        }
 
         Assert.assertEquals((int) record.getIntegerField().getValue(), results.getInt(2));
         Assert.assertEquals(record.getStringField().getValue(), results.getString(3));

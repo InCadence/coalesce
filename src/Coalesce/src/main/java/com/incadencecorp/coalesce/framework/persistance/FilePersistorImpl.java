@@ -21,6 +21,7 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.ICoalesceComponent;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.FileHelper;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
@@ -45,10 +46,6 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     private static final String TEMPLATE_DIRECTORY = "templates";
     private Path root = FilePersistorSettings.getDirectory();
     private int subDirLen = FilePersistorSettings.getSubDirectoryLength();
-
-    /*--------------------------------------------------------------------------
-    Override Methods
-    --------------------------------------------------------------------------*/
 
     /*--------------------------------------------------------------------------
     ICoalesceComponent Implementation
@@ -128,7 +125,11 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
                         File directory = new File(sub.toString());
                         if (directory.list().length == 0 && !Files.isSameFile(sub, root))
                         {
-                            directory.delete();
+                            if (!directory.delete())
+                            {
+                                throw new CoalescePersistorException(
+                                        "(FAILED) Deleting Directory: " + directory.getAbsolutePath());
+                            }
                         }
                     }
                 }
@@ -183,12 +184,12 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     @Override
     public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
 
-        for (int ii = 0; ii < keys.length; ii++)
+        for (String key : keys)
         {
-            Path sub = root.resolve(keys[ii].substring(0, subDirLen));
-            Path filename = sub.resolve(keys[ii]);
+            Path sub = root.resolve(key.substring(0, subDirLen));
+            Path filename = sub.resolve(key);
 
             if (Files.exists(filename))
             {
@@ -273,7 +274,7 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     @Override
     public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-        CoalesceEntityTemplate result = null;
+        CoalesceEntityTemplate result;
 
         Path sub = root.resolve(TEMPLATE_DIRECTORY);
         Path filename = sub.resolve(key);
@@ -293,7 +294,7 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
 
                 result = CoalesceEntityTemplate.create(sb.toString());
             }
-            catch (IOException | SAXException e)
+            catch (CoalesceException | IOException e)
             {
                 throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), e);
             }
@@ -332,7 +333,7 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     @Override
     public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        List<ObjectMetaData> results = new ArrayList<ObjectMetaData>();
+        List<ObjectMetaData> results = new ArrayList<>();
 
         try
         {
@@ -366,7 +367,7 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
                                                        template.getSource(),
                                                        template.getVersion()));
                     }
-                    catch (SAXException e)
+                    catch (CoalesceException e)
                     {
                         throw new IOException(e);
                     }

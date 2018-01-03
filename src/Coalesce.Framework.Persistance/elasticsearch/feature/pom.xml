@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>persister-elasticsearch-feature</artifactId>
+	<packaging>feature</packaging>
+	<name>Coalesce Elastic Search Persister Feature</name>
+	<description>Karaf feature for the Elastic Search persister</description>
+
+	<parent>
+		<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+		<artifactId>persister-elasticsearch-parent</artifactId>
+		<version>0.0.25-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.karaf.tooling</groupId>
+				<artifactId>karaf-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-framework-persister-elasticsearch</artifactId>
+			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.geotools</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.geotools.xsd</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.geotools.jdbc</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>								
+				<exclusion>
+					<groupId>com.incadencecorp.coalesce</groupId>
+					<artifactId>coalesce-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+	</dependencies>
+
+</project>

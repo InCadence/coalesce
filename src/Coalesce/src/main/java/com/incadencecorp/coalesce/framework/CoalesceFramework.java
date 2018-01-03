@@ -2,6 +2,8 @@ package com.incadencecorp.coalesce.framework;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
@@ -20,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -75,6 +78,27 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
         return _authoritativePersistor;
     }
 
+    /**
+     * @return the authoritative persistor or if it does not support {@link EPersistorCapabilities#READ} the first secondary persistor that does if available.
+     */
+    protected ICoalescePersistor getXmlPersistor()
+    {
+        ICoalescePersistor persistor = getAuthoritativePersistor();
+
+        if (!persistor.getCapabilities().contains(EPersistorCapabilities.READ))
+        {
+            for (ICoalescePersistor secondary : getSecondaryPersistors())
+            {
+                if (secondary.getCapabilities().contains(EPersistorCapabilities.READ))
+                {
+                    persistor = secondary;
+                    break;
+                }
+            }
+        }
+
+        return persistor;
+    }
     /*--------------------------------------------------------------------------
         Initialization Functions
     --------------------------------------------------------------------------*/
@@ -86,50 +110,6 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     public CoalesceFramework()
     {
         this((ExecutorService) null);
-    }
-
-    /**
-     * Creates this framework with the persisters defined by the provided connector within the file persisters.cfg.
-     * Do NOT use this within an OSGi container.
-     */
-    public CoalesceFramework(IConfigurationsConnector connector)
-    {
-        this();
-
-        PropertyFactory factory = new PropertyFactory(connector);
-        List<ICoalescePersistor> secondaryPersisters = new ArrayList<>();
-
-        // Iterate Over Specified Persisters
-        for (String perissterClassName : factory.getProperties("persisters.cfg").keySet())
-        {
-            try
-            {
-                Object persister = ClassLoader.getSystemClassLoader().loadClass(perissterClassName).newInstance();
-
-                if (persister instanceof ICoalescePersistor)
-                {
-                    if (!isInitialized())
-                    {
-                        setAuthoritativePersistor((ICoalescePersistor) persister);
-                        refreshCoalesceTemplateUtil();
-                    }
-                    else
-                    {
-                        secondaryPersisters.add((ICoalescePersistor) persister);
-                    }
-                }
-                else
-                {
-                    LOGGER.debug("(FAILED) Loading Persister " + perissterClassName + "Invalid Implementation");
-                }
-            }
-            catch (ClassNotFoundException | InstantiationException | IllegalAccessException e)
-            {
-                LOGGER.error("(FAILED) Loading Persister ({})" + perissterClassName, e);
-            }
-        }
-
-        setSecondaryPersistors(secondaryPersisters.toArray(new ICoalescePersistor[secondaryPersisters.size()]));
     }
 
     /**
@@ -244,7 +224,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      */
     public CoalesceEntity[] getCoalesceEntities(String... key) throws CoalescePersistorException
     {
-        return getAuthoritativePersistor().getEntity(key);
+        return getXmlPersistor().getEntity(key);
     }
 
     /**
@@ -254,7 +234,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      */
     public CoalesceEntity getCoalesceEntity(String key) throws CoalescePersistorException
     {
-        CoalesceEntity[] results = getAuthoritativePersistor().getEntity(key);
+        CoalesceEntity[] results = getCoalesceEntities(key);
 
         if (results == null || results.length == 0)
         {
@@ -271,7 +251,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      */
     public String[] getEntityXmls(String... key) throws CoalescePersistorException
     {
-        return getAuthoritativePersistor().getEntityXml(key);
+        return getXmlPersistor().getEntityXml(key);
     }
 
     /**
@@ -282,7 +262,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     public String getEntityXml(String key) throws CoalescePersistorException
     {
         String result = null;
-        String[] results = getAuthoritativePersistor().getEntityXml(key);
+        String[] results = getEntityXmls(key);
 
         if (results != null && results.length >= 1)
         {
@@ -393,7 +373,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
                 }
                 registerTemplates(CoalesceEntityTemplate.create(template));
             }
-            catch (SAXException | IOException e)
+            catch (CoalesceException e)
             {
                 throw new CoalescePersistorException("(FAILED) Template Registration", e);
             }

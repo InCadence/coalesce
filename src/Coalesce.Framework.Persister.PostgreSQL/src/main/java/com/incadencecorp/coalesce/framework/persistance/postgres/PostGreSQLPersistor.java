@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import org.joda.time.DateTime;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
@@ -589,7 +590,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
             return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException | SAXException | IOException e)
+        catch (CoalesceException | SQLException e)
         {
             throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), e);
         }
@@ -621,7 +622,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
             return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException | SAXException | IOException e)
+        catch (SQLException | CoalesceException e)
         {
             throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version), e);
         }
@@ -1413,6 +1414,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                                                                      EPersistorCapabilities.DELETE,
                                                                      EPersistorCapabilities.SEARCH,
                                                                      EPersistorCapabilities.SUPPORTS_BLOB,
+                                                                     EPersistorCapabilities.CASE_INSENSITIVE_SEARCH,
                                                                      EPersistorCapabilities.GEOSPATIAL_SEARCH,
                                                                      EPersistorCapabilities.TEMPORAL_SEARCH,
                                                                      EPersistorCapabilities.INDEX_FIELDS);

@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
@@ -905,7 +906,7 @@ public class CoalesceSectionTest {
 
         CoalesceSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
-        assertFalse(informationSection.isNoIndex());
+        Assert.assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, informationSection.isNoIndex());
 
         CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
         CoalesceSection newSection = CoalesceSection.create(newEntity, "Operation/New Section");
@@ -999,7 +1000,7 @@ public class CoalesceSectionTest {
         assertEquals("TestingValue", section.getAttribute("TestAttribute"));
 
         assertEquals("Mission Information Section", section.getName());
-        assertEquals(false, section.isNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, section.isNoIndex());
 
         section.setAttribute("Name", "TestingName");
         assertEquals("TestingName", section.getName());

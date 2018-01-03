@@ -33,6 +33,8 @@ import com.incadencecorp.coalesce.framework.CoalesceSettings;
  */
 public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesceFieldDefinition {
 
+    private static final boolean NO_INDEX_DEFAULT = CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT;
+
     // -----------------------------------------------------------------------//
     // Protected Member Variables
     // -----------------------------------------------------------------------//
@@ -206,7 +208,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent, String name, ECoalesceFieldDataTypes dataType)
     {
-        return CoalesceFieldDefinition.create(parent, name, dataType, false);
+        return CoalesceFieldDefinition.create(parent, name, dataType, NO_INDEX_DEFAULT);
     }
 
     /**
@@ -268,7 +270,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
                                                  String defaultClassificationMarking,
                                                  boolean defaultValue)
     {
-        return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
+        return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, NO_INDEX_DEFAULT);
     }
 
     /**
@@ -338,7 +340,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
                                                  String defaultClassificationMarking,
                                                  int defaultValue)
     {
-        return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
+        return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, NO_INDEX_DEFAULT);
     }
 
     /**
@@ -418,7 +420,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
                                               label,
                                               defaultClassificationMarking,
                                               defaultValue,
-                                              false);
+                                              NO_INDEX_DEFAULT);
     }
 
     /**

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>coalesce-framework-persister-elasticsearch</artifactId>
     <packaging>bundle</packaging>
-    <name>Coalesce ElasticSearch Persister</name>
+    <name>Coalesce Elastic Search Persister</name>
     <description>Persister used by Coalesce to connect to ElasticSearch</description>
     
 	<properties>
@@ -110,6 +110,11 @@
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
 			<version>5.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>mil.nga.giat</groupId>
+			<artifactId>gt-elasticsearch</artifactId>
+			<version>2.12-SNAPSHOT</version>
 		</dependency>
 		<dependency> 
 	        <groupId>org.elasticsearch.client</groupId> 

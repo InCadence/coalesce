@@ -98,6 +98,11 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
         return _pool.submit(task);
     }
 
+    public Future<?> submit(Runnable runnable) throws CoalescePersistorException
+    {
+        return _pool.submit(runnable);
+    }
+
     @Override
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException
     {

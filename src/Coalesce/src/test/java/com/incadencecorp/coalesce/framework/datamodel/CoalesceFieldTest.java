@@ -2407,7 +2407,7 @@ public class CoalesceFieldTest {
         assertEquals("TestingValue", field.getAttribute("TestAttribute"));
 
         assertEquals("MissionName", field.getName());
-        assertEquals(false, field.isNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, field.isNoIndex());
 
         field.setAttribute("Name", "TestingName");
         field.getFieldDefinition().setName(field.getName());

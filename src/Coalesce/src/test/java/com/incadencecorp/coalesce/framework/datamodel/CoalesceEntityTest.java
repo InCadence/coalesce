@@ -1360,7 +1360,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void createNewEntityTemplateTest() throws SAXException, IOException
+    public void createNewEntityTemplateTest() throws Exception
     {
         // Test Entity
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
@@ -2550,7 +2550,7 @@ public class CoalesceEntityTest {
         assertEquals("TestingValue", entity.getAttribute("TestAttribute"));
 
         assertEquals("TREXMission", entity.getName());
-        assertEquals(false, entity.isNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, entity.isNoIndex());
 
         entity.setAttribute("Name", "TestingName");
         assertEquals("TestingName", entity.getName());

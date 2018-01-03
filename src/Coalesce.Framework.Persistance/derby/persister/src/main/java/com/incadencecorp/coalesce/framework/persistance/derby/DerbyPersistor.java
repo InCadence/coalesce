@@ -37,11 +37,9 @@ import org.geotools.data.jdbc.FilterToSQLException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
-import java.io.IOException;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -1079,14 +1077,28 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     @Override
     public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
+        List<ObjectMetaData> templates = new ArrayList<>();
+
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
         {
-            return conn.getTemplateMetaData("SELECT * FROM " + getSchemaPrefix() + "CoalesceEntityTemplate");
+            ResultSet results = conn.executeQuery("SELECT * FROM " + getSchemaPrefix() + "CoalesceEntityTemplate");
+
+            while (results.next())
+            {
+                templates.add(new ObjectMetaData(results.getString(COLUMNS.getKey()),
+                                                 results.getString(COLUMNS.getName()),
+                                                 results.getString(COLUMNS.getSource()),
+                                                 results.getString(COLUMNS.getVersion()),
+                                                 JodaDateTimeHelper.getPostGresDateTim(results.getString(COLUMNS.getDateCreated())),
+                                                 JodaDateTimeHelper.getPostGresDateTim(results.getString(COLUMNS.getLastModified()))));
+            }
         }
         catch (Exception ex)
         {
             throw new CoalescePersistorException("getEntityTemplateMetadata", ex);
         }
+
+        return templates;
     }
 
     @Override
@@ -1124,7 +1136,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
             return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException | SAXException | IOException e)
+        catch (SQLException | CoalesceException e)
         {
             throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), e);
         }
@@ -1160,7 +1172,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
             return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException | SAXException | IOException e)
+        catch (SQLException | CoalesceException e)
         {
             throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND,
                                                                "Template",
@@ -1259,7 +1271,8 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         EnumSet<EPersistorCapabilities> newCapabilities = EnumSet.of(EPersistorCapabilities.READ_TEMPLATES,
                                                                      EPersistorCapabilities.UPDATE,
                                                                      EPersistorCapabilities.DELETE,
-                                                                     EPersistorCapabilities.SEARCH);
+                                                                     EPersistorCapabilities.SEARCH,
+                                                                     EPersistorCapabilities.CASE_INSENSITIVE_SEARCH);
         if (enumSet != null)
         {
             enumSet.addAll(newCapabilities);

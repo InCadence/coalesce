@@ -17,26 +17,33 @@
 
 package com.incadencecorp.coalesce.framework.util;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
 import com.incadencecorp.coalesce.api.IEnumerationProvider;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 /**
  * This class provides access to Coalesce utility classes as an instance to be
  * used within blueprints for initializing them.
- * 
+ *
  * @author Derek Clemenzi
  */
 public final class CoalesceUtilConfiguration {
@@ -44,8 +51,8 @@ public final class CoalesceUtilConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceUtilConfiguration.class);
 
     /**
-     * @see CoalesceNotifierUtil#setNotifier(ICoalesceNotifier)
      * @param value
+     * @see CoalesceNotifierUtil#setNotifier(ICoalesceNotifier)
      */
     public final void setNotifier(final ICoalesceNotifier value)
     {
@@ -53,8 +60,8 @@ public final class CoalesceUtilConfiguration {
     }
 
     /**
-     * @see CoalesceTemplateUtil#addTemplates(CoalesceEntityTemplate...)
      * @param entities
+     * @see CoalesceTemplateUtil#addTemplates(CoalesceEntityTemplate...)
      */
     public static void setTemplates(CoalesceEntity... entities)
     {
@@ -64,7 +71,7 @@ public final class CoalesceUtilConfiguration {
             {
                 CoalesceTemplateUtil.addTemplates(CoalesceEntityTemplate.create(entity));
             }
-            catch (SAXException | IOException e)
+            catch (CoalesceException e)
             {
                 LOGGER.error("(FAILED) Processing Template ({}) ({})", entity.getName(), entity.getSource(), e);
             }
@@ -72,8 +79,8 @@ public final class CoalesceUtilConfiguration {
     }
 
     /**
-     * @see CoalesceTemplateUtil#addTemplates(ICoalescePersistor)
      * @param persistors
+     * @see CoalesceTemplateUtil#addTemplates(ICoalescePersistor)
      */
     public static void setTemplates(ICoalescePersistor... persistors)
     {
@@ -91,21 +98,85 @@ public final class CoalesceUtilConfiguration {
     }
 
     /**
-     * @see EnumerationProviderUtil#setEnumerationProviders(IEnumerationProvider...)
      * @param values
+     * @see EnumerationProviderUtil#setEnumerationProviders(IEnumerationProvider...)
      */
-    public void setEnumerationProviders(IEnumerationProvider... values)
+    public static void setEnumerationProviders(IEnumerationProvider... values)
     {
         EnumerationProviderUtil.setEnumerationProviders(values);
     }
 
     /**
-     * @see EnumerationProviderUtil#setLookupEntries(Map)
      * @param values
+     * @see EnumerationProviderUtil#setLookupEntries(Map)
      */
     public static void setLookupEntries(Map<String, String> values)
     {
         EnumerationProviderUtil.setLookupEntries(values);
+    }
+
+    /**
+     * Initializes the framework with persistor configuration.
+     * Do NOT use this within an OSGi container.
+     *
+     * @param framework     to be initialized
+     * @param configuration property file containing a list of persistors to use.
+     */
+    public static void initializeFramework(CoalesceFramework framework, Path configuration) throws IOException
+    {
+        File file = new File(configuration.toString());
+
+        if (file.exists())
+        {
+            LineIterator iterator = FileUtils.lineIterator(file, "UTF-8");
+
+            try
+            {
+                List<ICoalescePersistor> secondaryPersisters = new ArrayList<>();
+                while (iterator.hasNext())
+                {
+                    String perissterClassName = iterator.nextLine();
+                    try
+                    {
+                        if (!perissterClassName.startsWith("#"))
+                        {
+                            Object persister = ClassLoader.getSystemClassLoader().loadClass(perissterClassName).newInstance();
+
+                            if (persister instanceof ICoalescePersistor)
+                            {
+                                if (!framework.isInitialized())
+                                {
+                                    framework.setAuthoritativePersistor((ICoalescePersistor) persister);
+                                }
+                                else
+                                {
+                                    secondaryPersisters.add((ICoalescePersistor) persister);
+                                }
+                            }
+                            else
+                            {
+                                LOGGER.debug("(FAILED) Loading Persister " + perissterClassName + "Invalid Implementation");
+                            }
+                        }
+                    }
+                    catch (ClassNotFoundException | InstantiationException | IllegalAccessException e)
+                    {
+                        LOGGER.error("(FAILED) Loading Persister ({})" + perissterClassName, e);
+                    }
+                }
+
+                framework.setSecondaryPersistors(secondaryPersisters.toArray(new ICoalescePersistor[secondaryPersisters.size()]));
+            }
+            finally
+            {
+                iterator.close();
+            }
+
+        }
+        else
+        {
+            throw new IOException(String.format(CoalesceErrors.NOT_FOUND, "File", configuration));
+        }
     }
 
 }

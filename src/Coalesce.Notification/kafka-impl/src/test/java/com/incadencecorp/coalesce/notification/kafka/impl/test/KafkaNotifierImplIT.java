@@ -18,18 +18,29 @@
 
 package com.incadencecorp.coalesce.notification.kafka.impl.test;
 
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.notification.kafka.impl.KafkaNotifierImpl;
 import com.incadencecorp.coalesce.notification.tests.AbstractCoalesceNotifierTests;
+import org.junit.BeforeClass;
+
+import java.nio.file.Paths;
 
 /**
  * This test ensures that using this implementation outside of an OSGi
  * environment wont throw an exception.
- * 
+ *
  * @author Derek Clemenzi
  */
-public class KafkaNotifierImplTest extends AbstractCoalesceNotifierTests {
+public class KafkaNotifierImplIT extends AbstractCoalesceNotifierTests {
 
-    public KafkaNotifierImplTest()
+    @BeforeClass
+    public static void initialize()
+    {
+        System.setProperty(CoalesceParameters.COALESCE_CONFIG_LOCATION_PROPERTY,
+                           Paths.get("src", "test", "resources").toString());
+    }
+
+    public KafkaNotifierImplIT()
     {
         super(new KafkaNotifierImpl());
     }

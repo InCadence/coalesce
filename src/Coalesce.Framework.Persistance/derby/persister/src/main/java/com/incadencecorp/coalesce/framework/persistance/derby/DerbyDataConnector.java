@@ -285,10 +285,8 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             String lastModified = fmt.print(new DateTime());
 
             // prepare the query
-            ResultSet result = null;
-
             Statement stmt = conn.createStatement();
-            result = stmt.executeQuery(
+            ResultSet result = stmt.executeQuery(
                     "select " + COLUMNS.getName() + " from " + schema + ".coalesceentitytemplate where " + COLUMNS.getName() + "='"
                             + template.getName() + "' and " + COLUMNS.getSource() + "='" + template.getSource() + "' and "
                             + COLUMNS.getVersion() + "='" + template.getVersion() + "'");
@@ -595,7 +593,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         case LINE_STRING_TYPE:
         case POLYGON_TYPE:
         case CIRCLE_TYPE:
-            return DerbyDataConnector.UNSUPPORTED_TYPE;
+            return "varchar(256)";
 
         case ENUMERATION_TYPE:
         case INTEGER_TYPE:

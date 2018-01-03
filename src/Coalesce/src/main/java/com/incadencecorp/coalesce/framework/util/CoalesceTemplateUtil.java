@@ -131,15 +131,18 @@ public final class CoalesceTemplateUtil {
     /**
      * Adds the data types for every template saved by the given persistor.
      *
-     * @param peristor to pull templates from.
+     * @param persistor to pull templates from.
      * @throws CoalescePersistorException on error
      */
-    public static void addTemplates(ICoalescePersistor peristor) throws CoalescePersistorException
+    public static void addTemplates(ICoalescePersistor persistor) throws CoalescePersistorException
     {
         List<CoalesceEntityTemplate> templates = new ArrayList<>();
 
+        LOGGER.debug("Refreshing Template Cache w/ ({})",
+                     LOGGER.isTraceEnabled() ? persistor.getClass().getName() : persistor.getClass().getSimpleName());
+
         // Iterate Through All Templates
-        for (ObjectMetaData metadata : peristor.getEntityTemplateMetadata())
+        for (ObjectMetaData metadata : persistor.getEntityTemplateMetadata())
         {
             if (LOGGER.isTraceEnabled())
             {
@@ -151,7 +154,7 @@ public final class CoalesceTemplateUtil {
 
             try
             {
-                templates.add(peristor.getEntityTemplate(metadata.getKey()));
+                templates.add(persistor.getEntityTemplate(metadata.getKey()));
 
                 if (StringHelper.isNullOrEmpty(metadata.getName()) || StringHelper.isNullOrEmpty(metadata.getSource())
                         || StringHelper.isNullOrEmpty(metadata.getVersion()))

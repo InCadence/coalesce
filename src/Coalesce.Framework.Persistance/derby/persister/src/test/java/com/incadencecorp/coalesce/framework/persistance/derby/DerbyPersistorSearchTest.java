@@ -28,7 +28,7 @@ import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
  * 
  * @author mdaconta
  */
-public class DerbyPersistorSearchIT extends AbstractSearchTest<DerbyPersistor>{
+public class DerbyPersistorSearchTest extends AbstractSearchTest<DerbyPersistor>{
 
     /**
      * Initializes the test configuration.

@@ -1,10 +1,8 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.sql.Blob;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -13,24 +11,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.SearchResults;
+import org.apache.commons.lang.NotImplementedException;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.geotools.data.Query;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
@@ -38,19 +32,9 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.exim.impl.JsonFullEximImpl;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
@@ -59,7 +43,6 @@ import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
 import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 
-import mil.nga.giat.data.elasticsearch.ElasticDataStore;
 import mil.nga.giat.data.elasticsearch.FilterToElastic;
 
 /*-----------------------------------------------------------------------------'
@@ -84,7 +67,7 @@ import mil.nga.giat.data.elasticsearch.FilterToElastic;
  *
  * @author n78554
  */
-public class ElasticSearchPersistor extends CoalescePersistorBase {
+public class ElasticSearchPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
 
     /*--------------------------------------------------------------------------
     Private Members
@@ -145,7 +128,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
                                                          String entityIdType,
                                                          String entityName,
@@ -173,7 +155,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -187,7 +168,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
@@ -204,7 +185,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+
     public byte[] getBinaryArray(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -238,29 +219,9 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     public void saveTemplate(CoalesceDataConnectorBase conn, CoalesceEntityTemplate... templates)
             throws CoalescePersistorException
     {
-        try
-        {
-            for (CoalesceEntityTemplate template : templates)
-            {
-                // Always persist template
-                conn.executeProcedure("CoalesceEntityTemplate_InsertOrUpdate",
-                                      new CoalesceParameter(template.getKey(), Types.OTHER),
-                                      new CoalesceParameter(template.getName()),
-                                      new CoalesceParameter(template.getSource()),
-                                      new CoalesceParameter(template.getVersion()),
-                                      new CoalesceParameter(template.toXml()),
-                                      new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.OTHER),
-                                      new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.OTHER));
-            }
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("PersistEntityTemplate", e);
-        }
-
+        // Do Nothing
     }
 
-    @Override
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -275,7 +236,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+
     public String getFieldValue(String fieldKey) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -346,7 +307,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -375,7 +336,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+
     public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -526,8 +487,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
         {
@@ -541,7 +502,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                 value = results.getString("TemplateXml");
             }
 
-            return value;
+            return CoalesceEntityTemplate.create(value);
         }
         catch (SQLException e)
         {
@@ -553,8 +514,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
         {
@@ -571,7 +532,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                 value = results.getString("TemplateXml");
             }
 
-            return value;
+            return CoalesceEntityTemplate.create(value);
         }
         catch (SQLException e)
         {
@@ -639,7 +600,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
 			HashMap<String, Object> map = mapper.readValue(converter.exportValues(entity, true).toString(), mapType);
 
 			// convert JSON string to Map
-			response = conn.prepareIndex(entity.getName(), entity.getType(), "1").setSource(map).get();
+			response = conn.prepareIndex(entity.getName().toLowerCase(), entity.getType().toLowerCase(), "1").setSource(map).get();
  
 			System.out.println(response.toString());
 		} catch (CoalesceException e) {
@@ -719,7 +680,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * parameters.
      *
      * @param coalesceObject the Coalesce object to be deleted
-     * @param conn is the PostGresDataConnector database connection
      * @return DeleteResponse
      * @throws SQLException
      */
@@ -850,5 +810,12 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
             enumSet = newCapabilities;
         }
         return enumSet;
+    }
+
+    @Override
+    public SearchResults search(Query query) throws CoalescePersistorException
+    {
+        // TODO Not Implemented
+        throw new NotImplementedException();
     }
 }

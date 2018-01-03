@@ -402,7 +402,7 @@ public class CoalesceRecordTest {
         CoalesceRecord record = recordset.addNew();
         record.setName("New Record");
 
-        assertFalse(record.isNoIndex());
+        Assert.assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, record.isNoIndex());
 
         record.setNoIndex(true);
 
@@ -419,7 +419,7 @@ public class CoalesceRecordTest {
         CoalesceRecordset newRecordset = CoalesceRecordset.create(newSection, "New Recordset");
         CoalesceRecord newRecord = newRecordset.addNew();
 
-        assertFalse(newRecord.isNoIndex());
+        Assert.assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, newRecord.isNoIndex());
 
     }
 
@@ -506,7 +506,7 @@ public class CoalesceRecordTest {
         assertEquals("TestingValue", record.getAttribute("TestAttribute"));
 
         assertEquals("Mission Information Recordset Record", record.getName());
-        assertEquals(false, record.isNoIndex());
+        assertEquals(CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT, record.isNoIndex());
 
         record.setAttribute("Name", "TestingName");
         assertEquals("TestingName", record.getName());

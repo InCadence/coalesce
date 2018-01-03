@@ -587,10 +587,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * 
      * @return CoalesceEntityTemplate generated from this {@link CoalesceEntity}
      * 
-     * @throws SAXException
-     * @throws IOException
+     * @throws CoalesceException
      */
-    public CoalesceEntityTemplate createNewEntityTemplate() throws SAXException, IOException
+    public CoalesceEntityTemplate createNewEntityTemplate() throws CoalesceException
     {
 
         CoalesceEntityTemplate entTemp = new CoalesceEntityTemplate();

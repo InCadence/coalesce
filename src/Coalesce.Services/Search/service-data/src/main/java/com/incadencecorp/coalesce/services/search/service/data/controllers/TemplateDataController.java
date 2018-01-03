@@ -16,37 +16,30 @@
  -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.services.search.service.data.controllers;
 
-import java.io.IOException;
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
+import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.opengis.filter.expression.PropertyName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.opengis.filter.expression.PropertyName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-
-import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.CoalesceFramework;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
-import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
-
 /**
  * Provides details of the registered templates within a Coalesce database.
- * 
+ *
  * @author Derek Clemenzi
  */
 public class TemplateDataController {
@@ -59,7 +52,7 @@ public class TemplateDataController {
 
     /**
      * Production Constructor
-     * 
+     *
      * @param framework
      */
     public TemplateDataController(CoalesceFramework framework)
@@ -187,7 +180,8 @@ public class TemplateDataController {
         {
             if (templates.containsKey(key))
             {
-                CoalesceRecordset recordset = (CoalesceRecordset) templates.get(key).entity.getCoalesceObjectForKey(recordsetKey);
+                CoalesceRecordset recordset = (CoalesceRecordset) templates.get(key).entity.getCoalesceObjectForKey(
+                        recordsetKey);
 
                 if (recordset != null)
                 {
@@ -288,7 +282,7 @@ public class TemplateDataController {
 
     /**
      * Saves the specified template.
-     * 
+     *
      * @param entity
      * @return whether or not it was successfully saved.
      */
@@ -304,17 +298,16 @@ public class TemplateDataController {
             {
                 template = CoalesceEntityTemplate.create(entity);
             }
-            catch (SAXException | IOException e)
+            catch (CoalesceException e)
             {
                 error(String.format(CoalesceErrors.NOT_SAVED,
                                     key,
                                     CoalesceEntityTemplate.class.getSimpleName(),
-                                    e.getMessage()),
-                      e);
+                                    e.getMessage()), e);
             }
 
             setTemplate(template);
-            
+
             result = true;
         }
 
@@ -323,7 +316,7 @@ public class TemplateDataController {
 
     /**
      * Saves the specified template.
-     * 
+     *
      * @param key
      * @param json
      * @return whether or not it was successfully saved.
@@ -344,12 +337,9 @@ public class TemplateDataController {
             }
 
         }
-        catch (SAXException | IOException e)
+        catch (CoalesceException e)
         {
-            error(String.format(CoalesceErrors.NOT_SAVED,
-                                key,
-                                CoalesceEntityTemplate.class.getSimpleName(),
-                                e.getMessage()),
+            error(String.format(CoalesceErrors.NOT_SAVED, key, CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
                   e);
         }
 
@@ -363,7 +353,7 @@ public class TemplateDataController {
         {
             results = setTemplate(CoalesceEntityTemplate.create(xml));
         }
-        catch (SAXException | IOException e)
+        catch (CoalesceException e)
         {
             error(String.format(CoalesceErrors.NOT_SAVED, key, CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
                   e);
@@ -410,14 +400,13 @@ public class TemplateDataController {
             error(String.format(CoalesceErrors.NOT_SAVED,
                                 template.getKey(),
                                 CoalesceEntityTemplate.class.getSimpleName(),
-                                e.getMessage()),
-                  e);
+                                e.getMessage()), e);
         }
 
         return result;
     }
 
-    private CoalesceEntityTemplate createTemplate(String json) throws SAXException, IOException
+    private CoalesceEntityTemplate createTemplate(String json) throws CoalesceException
     {
         JSONObject obj = new JSONObject(json);
         String className = obj.getString("className");

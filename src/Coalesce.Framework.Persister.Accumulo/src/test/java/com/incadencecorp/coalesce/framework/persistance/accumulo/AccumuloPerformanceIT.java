@@ -18,16 +18,14 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.vividsolutions.jts.geom.Coordinate;
 import org.junit.Before;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -52,7 +50,7 @@ public class AccumuloPerformanceIT {
             createPersister().registerTemplate(template);
             new AccumuloPersistor().saveTemplate(template);
         }
-        catch (CoalescePersistorException | SAXException | IOException e)
+        catch (CoalesceException e)
         {
             e.printStackTrace();
         }
@@ -77,7 +75,6 @@ public class AccumuloPerformanceIT {
         {
             System.out.println(results1[ii][0] + " " + results2[ii][0] + " " + results1[ii][1] + " " + results2[ii][1]);
         }
-
 
     }
 

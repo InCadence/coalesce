@@ -48,7 +48,6 @@ import org.joda.time.DateTime;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.*;
@@ -300,7 +299,7 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
 
             template = CoalesceEntityTemplate.create(xml);
         }
-        catch (TableNotFoundException | SAXException | IOException ex)
+        catch (TableNotFoundException | CoalesceException ex)
         {
             throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), ex);
         }

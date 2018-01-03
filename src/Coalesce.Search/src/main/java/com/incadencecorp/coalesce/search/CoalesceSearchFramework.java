@@ -20,6 +20,7 @@ package com.incadencecorp.coalesce.search;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
@@ -44,14 +45,6 @@ public class CoalesceSearchFramework extends CoalesceFramework {
     }
 
     /**
-     * Creates this framework with the persisters defined by the provided connector within the file persisters.cfg.
-     */
-    public CoalesceSearchFramework(IConfigurationsConnector connector)
-    {
-        super(connector);
-    }
-
-    /**
      * Creates this framework with the provided executor service.
      *
      * @param service
@@ -64,13 +57,41 @@ public class CoalesceSearchFramework extends CoalesceFramework {
     public SearchResults search(Query query) throws CoalescePersistorException
     {
         SearchResults results = null;
+        ICoalesceSearchPersistor persistor = getSearchPersistor();
 
-        if (getAuthoritativePersistor() instanceof ICoalesceSearchPersistor)
+        if (persistor != null)
         {
-            results = ((ICoalesceSearchPersistor) getAuthoritativePersistor()).search(query);
+            results = persistor.search(query);
         }
 
         return results;
+    }
+
+    /**
+     * @return the authoritative persistor if it implements {@link ICoalesceSearchPersistor} or the first secondary persistor that does if available.
+     */
+    protected ICoalesceSearchPersistor getSearchPersistor()
+    {
+        ICoalesceSearchPersistor result = null;
+        ICoalescePersistor persistor = getAuthoritativePersistor();
+
+        if (persistor instanceof ICoalesceSearchPersistor)
+        {
+            result = (ICoalesceSearchPersistor) persistor;
+        }
+        else
+        {
+            for (ICoalescePersistor secondary : getSecondaryPersistors())
+            {
+                if (secondary instanceof ICoalesceSearchPersistor)
+                {
+                    result = (ICoalesceSearchPersistor) secondary;
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 
 }
