@@ -82,7 +82,6 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
     private Connector connector;
 
     /**
-     *
      * @param params Configuration Parameters
      * @throws CoalescePersistorException on error
      */
@@ -103,8 +102,8 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
     /**
      * @param settings Configuration Settings
      * @throws CoalescePersistorException on error
-     * @deprecated
      * @see #AccumuloDataConnector(Map)
+     * @deprecated
      */
     public AccumuloDataConnector(ServerConn settings) throws CoalescePersistorException
     {
@@ -213,14 +212,14 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
                 }
 
                 watch.finish();
-                LOGGER.debug("Got Instance {}", watch.getTotalLife());
+                LOGGER.debug("Got Instance in {} ms", watch.getTotalLife());
                 watch.reset();
                 watch.start();
 
                 connector = instance.getConnector(dsConf.get(USER), new PasswordToken(dsConf.get(PASSWORD)));
 
                 watch.finish();
-                LOGGER.debug("Got Connector {}", watch.getTotalLife());
+                LOGGER.debug("Got Connector in {} ms", watch.getTotalLife());
                 watch.reset();
                 watch.start();
 
@@ -231,26 +230,26 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
                              COALESCE_SEARCH_TABLE);
 
                 watch.finish();
-                LOGGER.debug("Created Tables {}", watch.getTotalLife());
+                LOGGER.debug("Created Tables in {} ms", watch.getTotalLife());
                 watch.reset();
-                watch.start();
-
-                Iterator<DataStoreFactorySpi> availableStores = DataStoreFinder.getAvailableDataStores();
 
                 if (LOGGER.isDebugEnabled())
                 {
+                    watch.start();
+
+                    Iterator<DataStoreFactorySpi> availableStores = DataStoreFinder.getAvailableDataStores();
+
                     LOGGER.debug("List Available Stores:");
                     while (availableStores.hasNext())
                     {
                         LOGGER.debug("\t{}", availableStores.next().toString());
                     }
+
+                    watch.finish();
+                    LOGGER.debug("List Stores in {} ms", watch.getTotalLife());
+                    watch.reset();
+                    watch.start();
                 }
-
-                watch.finish();
-                LOGGER.debug("List Stores {}", watch.getTotalLife());
-                watch.reset();
-                watch.start();
-
 
                 // Now set up the GeoMesa connection verify that we can see this
                 // Accumulo destination in a GeoTools manner
@@ -268,6 +267,8 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
                     }
                     throw new CoalescePersistorException("Geomesa Accumulo Datastore not found in Factory.  Check classpath");
                 }
+
+                LOGGER.debug("Using Data Store: ", dataStore.getClass().getName());
 
                 watch.finish();
                 LOGGER.debug("Got Datastore {}", watch.getTotalLife());
