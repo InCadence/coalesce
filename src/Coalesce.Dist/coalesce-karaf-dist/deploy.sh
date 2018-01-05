@@ -6,13 +6,43 @@
 SERVER=$1
 DIR=$2
 
+SERVER_DEFAULT="oeservices"
+DIR_DEFAULT="/opt/coalesce"
+
 echo 
-echo root@${SERVER}:${DIR}
+
+if [ -z "${SERVER}" ] ; then
+
+    read -p "Server (${SERVER_DEFAULT}): " SERVER
+
+    if [ -z "${SERVER}" ] ; then
+
+        SERVER=$SERVER_DEFAULT
+
+    fi 
+
+fi
+
+if [ -z "${DIR}" ] ; then
+
+    read -p "Directory (${DIR_DEFAULT}): " DIR
+
+    if [ -z "${DIR}" ] ; then
+
+        DIR=$DIR_DEFAULT
+
+    fi 
+
+fi
+
+
 
 while true; do
 
+	
+
 	echo
-	echo "Menu:"
+	echo "Menu (root@${SERVER}:${DIR}):"
 	echo "1. Deploy (Auto Starts)"
 	echo "2. Start"
 	echo "3. Stop"
