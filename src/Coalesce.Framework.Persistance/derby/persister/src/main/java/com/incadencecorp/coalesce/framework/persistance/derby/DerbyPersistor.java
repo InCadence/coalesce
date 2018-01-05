@@ -462,7 +462,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
                             for (CoalesceParameter param : parameters)
                             {
-                                LOGGER.debug("{} : {}", param.getValue(), param.getType());
+                                LOGGER.debug("\t{} : {}", param.getValue(), param.getType());
                             }
                         }
 
