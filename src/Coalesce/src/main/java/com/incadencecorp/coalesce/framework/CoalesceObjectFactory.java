@@ -17,19 +17,23 @@
 
 package com.incadencecorp.coalesce.framework;
 
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-
 /**
  * This factory creates and loads Coalesce objects.
- * 
+ *
  * @author n78554
  */
 public final class CoalesceObjectFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceObjectFactory.class);
 
     /*--------------------------------------------------------------------------
     Private Members
@@ -45,7 +49,7 @@ public final class CoalesceObjectFactory {
 
     /**
      * Registers a class to a given class name.
-     * 
+     *
      * @param classname
      * @param clazz
      */
@@ -65,7 +69,7 @@ public final class CoalesceObjectFactory {
 
     /**
      * Registers the default class to be used if a matching one is not present.
-     * 
+     *
      * @param clazz
      */
     public static final void registerDefault(Class<? extends CoalesceEntity> clazz)
@@ -75,7 +79,7 @@ public final class CoalesceObjectFactory {
 
     /**
      * Registers a Coalesce object.
-     * 
+     *
      * @param clazz
      */
     public static final void register(Class<? extends CoalesceEntity> clazz)
@@ -85,7 +89,7 @@ public final class CoalesceObjectFactory {
 
     /**
      * Unregisters a Coalesce object.
-     * 
+     *
      * @param clazz
      */
     public static final void unregister(Class<? extends CoalesceEntity> clazz)
@@ -95,7 +99,6 @@ public final class CoalesceObjectFactory {
 
     /**
      * Unregisters the default.
-     * 
      */
     public static final void unregisterDefault()
     {
@@ -104,7 +107,7 @@ public final class CoalesceObjectFactory {
 
     /**
      * Unregisters a class name.
-     * 
+     *
      * @param classname
      */
     public static final void unregister(String classname)
@@ -118,17 +121,38 @@ public final class CoalesceObjectFactory {
      */
     public static final CoalesceEntity createAndLoad(CoalesceEntity entity)
     {
-
-        CoalesceEntity result;
+        CoalesceEntity result = entity;
 
         try
         {
+            if (entity != null)
+            {
+                if (entity.getClassName() != null)
+                {
+                    Constructor<? extends CoalesceEntity> constructor = getConstructor(entity.getClassName());
 
-            result = getConstructor(entity.getClassName()).newInstance();
-            if (!result.initialize(entity)) {
-                throw new IllegalArgumentException("Failed to intialize " + entity.getClassName());
+                    if (constructor != null)
+                    {
+                        result = constructor.newInstance();
+                        if (!result.initialize(entity))
+                        {
+                            throw new IllegalArgumentException("Failed to intialize " + entity.getClassName());
+                        }
+                    }
+                    else
+                    {
+                        LOGGER.warn("(FAILED) Locating Constructor for {}", entity.getClassName());
+                    }
+                }
+                else
+                {
+                    LOGGER.warn("Entity's Classname is Null");
+                }
             }
-
+            else
+            {
+                LOGGER.warn("Entity Argument is Null");
+            }
         }
         catch (InvocationTargetException | InstantiationException | IllegalAccessException e)
         {
@@ -147,30 +171,28 @@ public final class CoalesceObjectFactory {
      * Attempts to retrieve the constructor for the provided classname. If it
      * not found it will attempt to load it from the class path. If its still
      * not found it will use the default class if specified.
-     * 
-     * @param classname
-     * @return
+     *
+     * @param classname of the entity
+     * @return the entity's constructor
      */
     private static Constructor<? extends CoalesceEntity> getConstructor(String classname)
     {
-
         // Contain Class
         if (!map.containsKey(classname))
         {
             try
             {
-                
-                
                 // No; Attempt Class Path
                 Class<? extends CoalesceEntity> clazz = (Class<? extends CoalesceEntity>) Class.forName(classname);
 
                 Constructor<? extends CoalesceEntity> constructor = clazz.getConstructor();
 
                 map.put(classname, constructor);
-
             }
             catch (ClassNotFoundException | NoSuchMethodException | SecurityException | ClassCastException e)
             {
+                LOGGER.warn("(FAILED) Locating {} Constructor", classname);
+
                 // Default Defined?
                 if (map.containsKey(DEFAULT_KEY))
                 {
@@ -185,7 +207,6 @@ public final class CoalesceObjectFactory {
         }
 
         return map.get(classname);
-
     }
 
 }
