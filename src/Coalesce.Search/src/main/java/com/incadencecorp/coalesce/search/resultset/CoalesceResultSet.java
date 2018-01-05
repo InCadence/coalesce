@@ -17,22 +17,28 @@
 
 package com.incadencecorp.coalesce.search.resultset;
 
+import com.incadencecorp.coalesce.api.ICoalesceMapper;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
+import com.incadencecorp.coalesce.mapper.impl.JavaMapperImpl;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import org.opengis.filter.expression.PropertyName;
+
 import java.io.Closeable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import java.sql.Types;
+import java.util.*;
 
 /**
  * This implementation is to be used with persistors that do not have a JDBC
  * connector.
- * 
+ *
  * @author n78554
  */
 public class CoalesceResultSet extends CoalesceResultSetAbstract {
+
+    private static final JavaMapperImpl MAPPER_JAVA = new JavaMapperImpl();
 
     private Iterator<Object[]> data;
     private Object[] currentRow;
@@ -53,7 +59,7 @@ public class CoalesceResultSet extends CoalesceResultSetAbstract {
         {
             String columnName = resultset.getMetaData().getColumnName(ii);
 
-            if (columnName.replaceAll("[.]",  "").equalsIgnoreCase(entitykeyColumn))
+            if (columnName.replaceAll("[.]", "").equalsIgnoreCase(entitykeyColumn))
             {
                 keyIdx = ii;
                 break;
@@ -66,7 +72,7 @@ public class CoalesceResultSet extends CoalesceResultSetAbstract {
 
     /**
      * Creates a result sets for the provided data and columns.
-     * 
+     *
      * @param data
      * @param columns
      */
@@ -79,7 +85,7 @@ public class CoalesceResultSet extends CoalesceResultSetAbstract {
 
     /**
      * Creates a result sets for the provided data and columns as Strings.
-     * 
+     *
      * @param data
      * @param columns
      */
@@ -88,6 +94,40 @@ public class CoalesceResultSet extends CoalesceResultSetAbstract {
         super(columns);
         this.data = data;
         data.hasNext();
+    }
+
+    /**
+     * Utility method for creating column headers from {@link PropertyName}
+     *
+     * @param props  list of properties to use as columns
+     * @param mapper how Coalesce data types should be mapped to {@link Types}
+     * @return a list of column headers.
+     */
+    public static List<CoalesceColumnMetadata> getColumns(List<PropertyName> props, ICoalesceMapper<Integer> mapper)
+    {
+        Map<String, ECoalesceFieldDataTypes> types = CoalesceTemplateUtil.getDataTypes();
+
+        List<CoalesceColumnMetadata> columnList = new ArrayList<>();
+
+        for (PropertyName entry : props)
+        {
+            ECoalesceFieldDataTypes type = types.get(entry.getPropertyName());
+
+            if (type != null)
+            {
+                columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(entry.getPropertyName()),
+                                                          MAPPER_JAVA.map(type).getTypeName(),
+                                                          mapper.map(type)));
+            }
+            else
+            {
+                columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(entry.getPropertyName()),
+                                                          String.class.getTypeName(),
+                                                          Types.VARCHAR));
+            }
+        }
+
+        return columnList;
     }
 
     @Override
