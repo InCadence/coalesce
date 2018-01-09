@@ -184,9 +184,16 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         Assert.assertTrue(rowset.next());
 
-        for (int ii = 1; ii <= rowset.getMetaData().getColumnCount(); ii++)
+        if (LOGGER.isTraceEnabled())
         {
-            LOGGER.trace("{} ({})={}", rowset.getMetaData().getColumnName(ii), ii, rowset.getString(ii));
+            for (int ii = 1; ii <= rowset.getMetaData().getColumnCount(); ii++)
+            {
+                LOGGER.trace("{} ({}:{})={}",
+                             rowset.getMetaData().getColumnName(ii),
+                             ii,
+                             rowset.getMetaData().getColumnType(ii),
+                             rowset.getString(ii));
+            }
         }
 
         // Verify

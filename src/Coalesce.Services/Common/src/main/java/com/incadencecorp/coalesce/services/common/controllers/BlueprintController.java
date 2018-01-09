@@ -7,7 +7,6 @@ import com.incadencecorp.coalesce.services.common.controllers.datamodel.EGraphNo
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphLink;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphNode;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphObj;
-import org.apache.xerces.dom.DeferredElementNSImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -16,7 +15,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,7 +40,7 @@ public class BlueprintController {
     /**
      * Overrides the default directory to search for blueprints. By default it is the deploy directory.
      *
-     * @param path
+     * @param path directory to scan for xml documents
      */
     public void setDirectory(String path)
     {
@@ -58,19 +56,16 @@ public class BlueprintController {
 
         File directory = new File(root.toString());
 
-        FileFilter filter = new FileFilter() {
+        File[] files = directory.listFiles(pathname -> pathname.getAbsolutePath().toLowerCase().endsWith("xml"));
 
-            @Override public boolean accept(File pathname)
-            {
-                return pathname.getAbsolutePath().toLowerCase().endsWith("xml");
-            }
-        };
-
-        for (File file : directory.listFiles(filter))
+        if (files != null)
         {
-            if (file.isFile())
+            for (File file : files)
             {
-                results.add(file.getName());
+                if (file.isFile())
+                {
+                    results.add(file.getName());
+                }
             }
         }
 
@@ -78,9 +73,9 @@ public class BlueprintController {
     }
 
     /**
-     * @param name
+     * @param name filename to render.
      * @return nodes and linkages of the bean for the specified xml document.
-     * @throws RemoteException
+     * @throws RemoteException on error
      */
     public GraphObj getBlueprint(String name) throws RemoteException
     {
@@ -118,9 +113,9 @@ public class BlueprintController {
             // Link Server to Services
             for (int jj = 0; jj < services.getLength(); jj++)
             {
-                if (services.item(jj) instanceof DeferredElementNSImpl)
+                if (services.item(jj) instanceof Element)
                 {
-                    DeferredElementNSImpl service = (DeferredElementNSImpl) services.item(jj);
+                    Element service = (Element) services.item(jj);
 
                     GraphLink link = new GraphLink();
 
@@ -221,7 +216,7 @@ public class BlueprintController {
             {
                 Element node = (Element) children.item(ii);
 
-                if (node.getNodeName() == "ref")
+                if (node.getNodeName().equalsIgnoreCase("ref"))
                 {
                     LOGGER.debug("(REF) " + bean.getAttribute("id") + " -> " + node.getAttribute("component-id"));
 
@@ -231,7 +226,7 @@ public class BlueprintController {
 
                     results.getLinks().add(link);
                 }
-                else if (node.getNodeName() == "bean")
+                else if (node.getNodeName().equalsIgnoreCase("bean"))
                 {
                     LOGGER.debug("(BEAN) " + bean.getAttribute("id") + " -> " + node.getAttribute("id"));
 
