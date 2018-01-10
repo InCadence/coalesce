@@ -3,11 +3,13 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
+import com.incadencecorp.coalesce.framework.util.CoalesceCompressionUtil;
 import org.apache.accumulo.core.data.Mutation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.namespace.QName;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -38,6 +40,17 @@ public class MutationWrapperFactory extends CoalesceIterator<MutationWrapper> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MutationWrapperFactory.class);
 
     private int rowCount = 0;
+    private final boolean useCompression;
+
+    public MutationWrapperFactory()
+    {
+        this(false);
+    }
+
+    public MutationWrapperFactory(boolean useCompression)
+    {
+        this.useCompression = useCompression;
+    }
 
     public MutationWrapper createMutationGuy(CoalesceEntity entity) throws CoalesceException
     {
@@ -63,11 +76,30 @@ public class MutationWrapperFactory extends CoalesceIterator<MutationWrapper> {
         }
 
         addRow(entity, param);
-        String entity_xml = entity.toXml();
+
+        byte[] bytes;
+
+        if (useCompression)
+        {
+            try
+            {
+                bytes = CoalesceCompressionUtil.compress(entity);
+            }
+            catch (IOException e)
+            {
+                LOGGER.warn("(FAILED) Compressing XML; Storing as uncompressed.", e);
+                bytes = entity.toXml().getBytes();
+            }
+        }
+        else
+        {
+            bytes = entity.toXml().getBytes();
+        }
+
         // add the entity xml
         MutationRow row = new MutationRow(entity.getType() + ":" + entity.getNamePath(),
                                           "entityxml",
-                                          entity_xml.getBytes(),
+                                          bytes,
                                           entity.getNamePath());
         param.addRow(row);
 

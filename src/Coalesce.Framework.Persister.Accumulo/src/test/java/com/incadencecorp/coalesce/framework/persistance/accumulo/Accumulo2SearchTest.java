@@ -63,6 +63,7 @@ public class Accumulo2SearchTest extends AbstractSearchTest<AccumuloSearchPersis
         parameters.put(AccumuloDataConnector.CACHING, "false");
         parameters.put(AccumuloDataConnector.LOOSE_B_BOX, "false");
         parameters.put(AccumuloDataConnector.USE_MOCK, "true");
+        parameters.put(AccumuloDataConnector.USE_COMPRESSION, "true");
 
         return parameters;
     }
