@@ -1,12 +1,9 @@
 package com.incadencecorp.coalesce.services.common.jaxrs;
 
 import com.incadencecorp.coalesce.services.common.controllers.PropertyController;
-import com.incadencecorp.coalesce.services.common.controllers.datamodel.Group;
-import org.json.JSONObject;
 
 import javax.ws.rs.*;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Map;
 
 /**

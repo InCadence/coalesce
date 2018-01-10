@@ -49,7 +49,8 @@ public class CreateDataObjectTask extends AbstractFrameworkTask<String[], Result
             CoalesceEntity entity = new CoalesceEntity();
             if (entity.initialize(params[ii]))
             {
-                entity.getLinkageSection().clearLinkages();
+                // TODO This breaks the SOAP Persister Impl Tests
+                //entity.getLinkageSection().clearLinkages();
                 entity.setModifiedBy(parameters.getPrincipalName());
                 entity.setModifiedByIP(parameters.getPrincipalIp());
 
