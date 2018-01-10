@@ -122,7 +122,7 @@
                     <Set name="contextPath">/images</Set>
                     <Set name="handler">
                         <New class="org.eclipse.jetty.server.handler.ResourceHandler">
-                            <Set name="resourceBase">C:\apache-karaf-4.0.8\instances\crud\images</Set>
+                            <Set name="resourceBase">images</Set>
                             <Set name="directoriesListed">false</Set>
                         </New>
                     </Set>
