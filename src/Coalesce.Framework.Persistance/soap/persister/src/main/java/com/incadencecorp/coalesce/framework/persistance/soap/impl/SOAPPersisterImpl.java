@@ -42,6 +42,8 @@ import com.incadencecorp.coalesce.services.search.client.jaxws.SearchJaxwsClient
 import org.apache.commons.lang.NotImplementedException;
 import org.geotools.data.Query;
 import org.opengis.filter.expression.PropertyName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
@@ -61,11 +63,13 @@ import java.util.Map;
  */
 public class SOAPPersisterImpl implements ICoalescePersistor, ICoalesceSearchPersistor {
 
+    private static Logger LOGGER = LoggerFactory.getLogger(SOAPPersisterImpl.class);
+
     private final ICrudClient crud;
     private final ISearchClient search;
 
     /**
-     * This constructor pulls settings from {@link SOAPSettings}
+     * Default constructor pulling properties from {@link SOAPSettings}
      */
     public SOAPPersisterImpl()
     {
@@ -73,10 +77,22 @@ public class SOAPPersisterImpl implements ICoalescePersistor, ICoalesceSearchPer
     }
 
     /**
-     * @param props to initialize this persister.
+     * Default constructor with user defined configuration.
+     *
+     * @param props configuration
+     * @see SOAPSettings
      */
     public SOAPPersisterImpl(Map<String, String> props)
     {
+        if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug("Properties");
+            for (Map.Entry<String, String> entry : props.entrySet())
+            {
+                LOGGER.debug("\t{}={}", entry.getKey(), entry.getValue());
+            }
+        }
+
         if (!props.containsKey(SOAPSettings.PROPERTY_CRUD_URL))
         {
             throw new IllegalArgumentException(String.format(CoalesceErrors.NOT_SPECIFIED, SOAPSettings.PROPERTY_CRUD_URL));
@@ -103,7 +119,7 @@ public class SOAPPersisterImpl implements ICoalescePersistor, ICoalesceSearchPer
     /**
      * This constructor allows full controller over specifying the underlying services.
      *
-     * @param crud implementation to use.
+     * @param crud   implementation to use.
      * @param search implementation to use.
      */
     public SOAPPersisterImpl(ICrudClient crud, ISearchClient search)
