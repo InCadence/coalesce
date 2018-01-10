@@ -5,7 +5,14 @@ import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
@@ -114,4 +121,50 @@ public class PropertyController {
         }
     }
 
+    public String getJsonConfiguration(String name) throws RemoteException
+    {
+        JSONObject json;
+
+        try
+        {
+            Path path = Paths.get(CoalesceParameters.COALESCE_CONFIG_LOCATION).resolve(name + ".json");
+            try (InputStream stream = path.toUri().toURL().openStream())
+            {
+                json = new JSONObject(new JSONTokener(stream));
+            }
+        }
+        catch (IOException e)
+        {
+            throw new RemoteException(String.format(CoalesceErrors.NOT_FOUND, name, e.getMessage()), e);
+        }
+
+        return json.toString();
+    }
+
+    public void setJsonConfiguration(String name, String json) throws RemoteException
+    {
+        if (isReadOnly)
+        {
+            throw new RemoteException(String.format(CoalesceErrors.NOT_SAVED,
+                                                    name,
+                                                    JSONObject.class.getSimpleName(),
+                                                    "Read Only"));
+        }
+
+        try
+        {
+            Path path = Paths.get(CoalesceParameters.COALESCE_CONFIG_LOCATION).resolve(name + ".json");
+            try (FileWriter writer = new FileWriter(path.toString()))
+            {
+                writer.write(json);
+            }
+        }
+        catch (IOException e)
+        {
+            throw new RemoteException(String.format(CoalesceErrors.NOT_SAVED,
+                                                    name,
+                                                    JSONObject.class.getSimpleName(),
+                                                    e.getMessage()), e);
+        }
+    }
 }
