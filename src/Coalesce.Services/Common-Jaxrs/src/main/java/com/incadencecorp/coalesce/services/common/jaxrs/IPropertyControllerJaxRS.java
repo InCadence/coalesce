@@ -4,7 +4,6 @@ import com.incadencecorp.coalesce.services.common.controllers.PropertyController
 
 import javax.ws.rs.*;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,6 +13,16 @@ import java.util.Map;
  */
 @Path("property")
 interface IPropertyControllerJaxRS {
+
+    @GET
+    @Path("/{name}.json")
+    @Produces("application/json")
+    String getJsonConfiguration(@PathParam("name") String name) throws RemoteException;
+
+    @PUT
+    @Path("/{name}.json")
+    @Consumes("application/json")
+    void setJsonConfiguration(@PathParam("name") String name, String json) throws RemoteException;
 
     @GET
     @Path("/{name}")

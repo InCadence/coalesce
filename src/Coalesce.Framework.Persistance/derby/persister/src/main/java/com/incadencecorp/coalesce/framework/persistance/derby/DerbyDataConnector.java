@@ -772,7 +772,6 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         while (rs.next())
         {
             String retTableName = rs.getString(3);
-            LOGGER.trace("Table name is: " + retTableName);
             if (retTableName.equalsIgnoreCase(tableName.replaceAll("\"", "")))
             {
                 exists = true;

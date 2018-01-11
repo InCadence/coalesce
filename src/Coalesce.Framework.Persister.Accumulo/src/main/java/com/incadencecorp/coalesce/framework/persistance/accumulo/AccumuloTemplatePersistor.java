@@ -101,10 +101,15 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
         super(service);
 
         this.params = params;
-        LOGGER.debug("Zookeepers: {} ", params.get(AccumuloDataConnector.ZOOKEEPERS));
-        LOGGER.debug("Instance: {} ", params.get(AccumuloDataConnector.INSTANCE_ID));
-        LOGGER.debug("User: {} ", params.get(AccumuloDataConnector.USER));
-        LOGGER.debug("Mock: {} ", params.get(AccumuloDataConnector.USE_MOCK));
+
+        if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug("Zookeepers: {} ", params.get(AccumuloDataConnector.ZOOKEEPERS));
+            LOGGER.debug("Instance: {} ", params.get(AccumuloDataConnector.INSTANCE_ID));
+            LOGGER.debug("User: {} ", params.get(AccumuloDataConnector.USER));
+            LOGGER.debug("Mock: {} ", params.get(AccumuloDataConnector.USE_MOCK));
+            LOGGER.debug("Compression: {} ", params.get(AccumuloDataConnector.USE_COMPRESSION));
+        }
 
         config = new BatchWriterConfig();
         config.setMaxLatency(1, TimeUnit.SECONDS);

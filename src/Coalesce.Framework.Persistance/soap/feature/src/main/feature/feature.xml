@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  ~  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+  ~
+  ~  Notwithstanding any contractor copyright notice, the Government has Unlimited
+  ~  Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+  ~  of this work other than as specifically authorized by these DFARS Clauses may
+  ~  violate Government rights in this work.
+  ~
+  ~  DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+  ~  Unlimited Rights. The Government has the right to use, modify, reproduce,
+  ~  perform, display, release or disclose this computer software and to have or
+  ~  authorize others to do so.
+  ~
+  ~  Distribution Statement D. Distribution authorized to the Department of
+  ~  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+  ~
+  -->
+
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" name="coalesce-services">
+    <feature name="${project.artifactId}">
+        <feature prerequisite="false" dependency="true">cxf</feature>
+        <feature prerequisite="false" dependency="true">coalesce-core-feature</feature>
+        <bundle start-level="75">mvn:com.incadencecorp.coalesce.bundles/bundle-geotools/${project.version}
+        </bundle>
+    </feature>
+</features>
