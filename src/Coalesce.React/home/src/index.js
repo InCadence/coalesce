@@ -5,7 +5,6 @@ import {registerErrorPrompt} from 'common-components/lib/register.js'
 
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
-import './index.css'
 
 var rootUrl;
 
