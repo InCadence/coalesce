@@ -18,6 +18,7 @@
         <module>common-components</module>
         <module>entity-editor</module>
         <module>entity-search</module>
+        <module>json-editor</module>
         <module>map-viewer</module>
         <module>settings</module>
         <module>enumerations</module>

@@ -1,0 +1,27 @@
+{
+  "name": "json-editor",
+  "version": "1.0.0",
+  "description": " This UI is a map visualization of coalesce entities",
+  "main": "index.js",
+  "author": "InCadence",
+  "license": "ISC",
+  "private": true,
+  "homepage": "/jsoneditor",
+  "dependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-json-view": "^1.15.2",
+    "react-popup": "^0.8.0",
+    "react-table": "^6.7.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "production": "webpack -p"
+  },
+  "devDependencies": {
+    "react-scripts": "^1.0.14"
+  }
+}

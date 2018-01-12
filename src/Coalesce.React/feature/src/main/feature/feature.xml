@@ -40,4 +40,8 @@
     <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-manager/${project.version}/war</bundle>
 	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
 	</feature>
+	<feature name="coalesce-react-json-editor-feature" description="" version="${project.version}">
+    <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-json-editor/${project.version}/war</bundle>
+	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
+	</feature>
 </features>
