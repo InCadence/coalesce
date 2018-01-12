@@ -24,6 +24,7 @@
         <module>manager</module>
         <module>home</module>
         <module>feature</module>
+	<module>template-editor</module>
     </modules>
 
     <build>
@@ -66,5 +67,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
 </project>
