@@ -96,7 +96,7 @@ export class RecordsetView extends React.Component
               <div className='form-buttons'>
                 <input type='checkbox'  onClick={this.toggleShowAll} />
                 <label>Show All</label>
-                <img src={require('common-components/img/add.ico')} alt="Add" title="Add Row" className="coalesce-img-button enabled" onClick={this.createRow}/>
+                <img src='/images/svg/add.svg' alt="Add" title="Add Row" className="coalesce-img-button enabled" onClick={this.createRow}/>
               </div>
             </div>
           </Collapse>
@@ -259,7 +259,7 @@ export function createInput(type, id, value, onChange) {
       return (
         <div>
           <label>{value}</label>
-          <img src={require('common-components/img/load.ico')} alt="Download" title="Download" className="coalesce-img-button enabled"/>
+          <img src='/images/svg/load.svg' alt="Download" title="Download" className="coalesce-img-button enabled"/>
         </div>
       );
       break;

@@ -73,8 +73,8 @@ export class FilterCreator extends React.Component {
                 columns={createColumns(this, recordsets)}
               />
               <div className="form-buttons">
-                <img src={require('common-components/img/add.ico')} alt="Add" title="Add Criteria" className="coalesce-img-button enabled" onClick={this.addRow.bind(this)}/>
-                <img src={require('common-components/img/search2.ico')} alt="Search" title="Execute Query" className="coalesce-img-button enabled" onClick={this.props.onSearch.bind(this, this.state.tabledata)}/>
+                <img src="/images/svg/add.svg" alt="Add" title="Add Criteria" className="coalesce-img-button enabled" onClick={this.addRow.bind(this)}/>
+                <img src="/images/svg/search.svg" alt="Search" title="Execute Query" className="coalesce-img-button enabled" onClick={this.props.onSearch.bind(this, this.state.tabledata)}/>
               </div>
             </div>
           </Collapse>
@@ -211,7 +211,7 @@ function createColumns(that, recordsets) {
       sortable: false,
       width: 50,
       Cell: (cell) => (
-        <img src={require('common-components/img/remove.ico')} alt="Add" title="Remove Criteria" className="coalesce-img-button enabled" onClick={that.deleteRow.bind(that, cell.row.key)}/>
+        <img src="/images/svg/remove.svg" alt="Remove" title="Remove Criteria" className="coalesce-img-button enabled" onClick={that.deleteRow.bind(that, cell.row.key)}/>
       )
     });
 

@@ -93,8 +93,8 @@ function renderEnumerations(data) {
           properties={enumCols}
           createButtons={(row) => {
             return [
-              <img key={row.entityKey + '_view'} src={require('common-components/img/view.ico')} alt="view" title="View Entity" className="coalesce-img-button small enabled" onClick={() => loadValues(row.entityKey)}/>,
-              <img key={row.entityKey + '_edit'} src={require('common-components/img/edit.ico')} alt="Edit" title="Edit Enumeration" className="coalesce-img-button small enabled" onClick={() => window.open(rootUrl + "/entityeditor/?entitykey=" + row.entityKey)}/>
+              <img key={row.entityKey + '_view'} src="/images/svg/view.svg" alt="view" title="View Entity" className="coalesce-img-button small enabled" onClick={() => loadValues(row.entityKey)}/>,
+              <img key={row.entityKey + '_edit'} src="/images/svg/edit.svg" alt="Edit" title="Edit Enumeration" className="coalesce-img-button small enabled" onClick={() => window.open(rootUrl + "/entityeditor/?entitykey=" + row.entityKey)}/>
             ];
           }}
         />
@@ -166,13 +166,13 @@ function renderValues(key, data) {
           properties={valueCols}
           createButtons={(row) => {
             return [
-              <img src={require('common-components/img/view.ico')} alt="view" title="View Entity" className="coalesce-img-button small enabled" onClick={() => loadAssociatedValues(key, row.associatedkeys, row.associatedvalues)}/>,
+              <img src="/images/svg/view.svg" alt="view" title="View Entity" className="coalesce-img-button small enabled" onClick={() => loadAssociatedValues(key, row.associatedkeys, row.associatedvalues)}/>,
             ];
           }}
         />
         <div className='form-buttons'>
-          <img src={require('common-components/img/back.ico')} alt="back" title="Back" className="coalesce-img-button enabled" onClick={() => loadEnumerations()}/>
-          <img src={require('common-components/img/edit.ico')} alt="Edit" title="Edit Enumeration" className="coalesce-img-button enabled" onClick={() => window.open(rootUrl + "/entityeditor/?entitykey=" + key)}/>
+          <img src="/images/svg/back.svg" alt="back" title="Back" className="coalesce-img-button enabled" onClick={() => loadEnumerations()}/>
+          <img src="/images/svg/edit.svg" alt="Edit" title="Edit Enumeration" className="coalesce-img-button enabled" onClick={() => window.open(rootUrl + "/entityeditor/?entitykey=" + key)}/>
         </div>
       </div>
     </div>,
@@ -215,8 +215,8 @@ function loadAssociatedValues(key, keys, values) {
               ]}
           />
           <div className='form-buttons'>
-            <img src={require('common-components/img/back.ico')} alt="back" title="Back" className="coalesce-img-button enabled" onClick={() => loadValues(key)}/>
-            <img src={require('common-components/img/edit.ico')} alt="Edit" title="Edit Enumeration" className="coalesce-img-button enabled" onClick={() => loadValues(key)}/>
+            <img src="/images/svg/back.svg" alt="back" title="Back" className="coalesce-img-button enabled" onClick={() => loadValues(key)}/>
+            <img src="/images/svg/edit.svg" alt="Edit" title="Edit Enumeration" className="coalesce-img-button enabled" onClick={() => loadValues(key)}/>
           </div>
         </div>
       </div>,

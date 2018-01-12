@@ -16,8 +16,6 @@ if (window.location.port == 3000) {
 
 registerErrorPrompt(Popup);
 
-require.context('common-components/img');
-
 class Main extends React.Component {
 
   constructor(props) {
@@ -44,7 +42,7 @@ class Main extends React.Component {
         <a href={url} >
           <div className='card'>
             <div className="row">
-              <img src={img} alt={title} height="64"/>
+              <img src={img} alt={title} height="64" className="shadow"/>
             </div>
             <div className="row">
               <label>{title}</label>

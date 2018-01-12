@@ -35,7 +35,7 @@ export class SearchResults extends React.PureComponent {
       accessor: 'button',
       Cell: (cell) => (
         <div className="form-buttons">
-          <img id={cell.row.key} src={require('common-components/img/view.ico')} alt="view" title="View Entity" className="coalesce-img-button small enabled" onClick={() => window.open(this.props.url + "/entityeditor/?entitykey=" + cell.row.entityKey)}/>
+          <img id={cell.row.key} src="/images/svg/view.svg" alt="view" title="View Entity" className="coalesce-img-button small enabled" onClick={() => window.open(this.props.url + "/entityeditor/?entitykey=" + cell.row.entityKey)}/>
         </div>
       )
     });

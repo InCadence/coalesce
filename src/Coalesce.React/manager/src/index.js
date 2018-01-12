@@ -157,7 +157,7 @@ ReactDOM.render(
       {
         id: 'load',
         name: 'Load',
-        img: require('common-components/img/load.ico'),
+        img: "/images/svg/load.svg",
         title: 'Load Entity',
         onClick: () => {
           fetch(rootUrl + '/cxf/data/blueprints')
