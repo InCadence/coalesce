@@ -2,6 +2,7 @@
   "name": "template-editor",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/templateeditor",
   "dependencies": {
     "mxgraph-js": "^1.0.1",
     "react": "^16.2.0",
