@@ -1216,7 +1216,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
         if (!StringHelper.isNullOrEmpty(this.getBaseValue()))
         {
-            results = this.getBaseValue().split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+            //results = this.getBaseValue().split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+        	results = customSplit(this.getBaseValue());
 
             for (int ii = 0; ii < results.length; ii++)
             {
@@ -1232,6 +1233,32 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         return results;
 
     }
+
+    private String[] customSplit(String baseValue) {
+    	//Method to replace the slow Regex
+    	List<String> tokensList = new ArrayList<String>();
+    	boolean inQuotes = false;
+    	StringBuffer b = new StringBuffer();
+    	for (char c : baseValue.toCharArray()) {
+    	    switch (c) {
+    	    case ',':
+    	        if (inQuotes) {
+    	            b.append(c);
+    	        } else {
+    	            tokensList.add(b.toString());
+    	            b = new StringBuffer();
+    	        }
+    	        break;
+    	    case '\"':
+    	        inQuotes = !inQuotes;
+    	    default:
+    	        b.append(c);
+    	    break;
+    	    }
+    	}
+    	tokensList.add(b.toString());
+		return tokensList.toArray(new String[0]);
+	}
 
     protected void addArray(String[] values)
     {
