@@ -1,19 +1,20 @@
-/*-----------------------------------------------------------------------------'
- Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
-
- Notwithstanding any contractor copyright notice, the Government has Unlimited
- Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
- of this work other than as specifically authorized by these DFARS Clauses may
- violate Government rights in this work.
-
- DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
- Unlimited Rights. The Government has the right to use, modify, reproduce,
- perform, display, release or disclose this computer software and to have or
- authorize others to do so.
-
- Distribution Statement D. Distribution authorized to the Department of
- Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
- -----------------------------------------------------------------------------*/
+/*
+ *  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+ *
+ *  Notwithstanding any contractor copyright notice, the Government has Unlimited
+ *  Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ *  of this work other than as specifically authorized by these DFARS Clauses may
+ *  violate Government rights in this work.
+ *
+ *  DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ *  Unlimited Rights. The Government has the right to use, modify, reproduce,
+ *  perform, display, release or disclose this computer software and to have or
+ *  authorize others to do so.
+ *
+ *  Distribution Statement D. Distribution authorized to the Department of
+ *  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ *
+ */
 
 package com.incadencecorp.coalesce.framework;
 
@@ -29,28 +30,28 @@ import java.util.List;
 import java.util.concurrent.*;
 
 /**
- * This base implementation manages the {@link ExecutorService} used by extending classes.
+ * This base implementation manages the {@link ScheduledThreadPoolExecutor} used by extending classes.
  *
  * @author Derek Clemenzi
  */
-public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, AutoCloseable {
+public class CoalesceSchedulerServiceImpl implements ICoalesceExecutorService, AutoCloseable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceExecutorServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceSchedulerServiceImpl.class);
 
-    private final ExecutorService _pool;
+    private final ScheduledThreadPoolExecutor _pool;
 
     /**
      * Default Constructor
      */
-    public CoalesceExecutorServiceImpl()
+    public CoalesceSchedulerServiceImpl()
     {
         this(null);
     }
 
     /**
-     * @param service being wrapped
+     * @param service being wrapped.
      */
-    public CoalesceExecutorServiceImpl(ExecutorService service)
+    public CoalesceSchedulerServiceImpl(ScheduledThreadPoolExecutor service)
     {
         if (service == null)
         {
@@ -61,13 +62,7 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
                         CoalesceSettings.getMaxThreadsPerCore(),
                         factory.getPoolNumber());
 
-            service = new ThreadPoolExecutor(CoalesceSettings.getMinThreads(),
-                                             CoalesceSettings.getMaxThreads(),
-                                             CoalesceSettings.getKeepAliveTime(),
-                                             TimeUnit.SECONDS,
-                                             new SynchronousQueue<>(),
-                                             factory,
-                                             new ThreadPoolExecutor.CallerRunsPolicy());
+            service = new ScheduledThreadPoolExecutor(CoalesceSettings.getMaxThreads(), factory);
         }
 
         _pool = service;
@@ -154,6 +149,11 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
             throws InterruptedException, ExecutionException, TimeoutException
     {
         return _pool.invokeAny(tasks, timeout, unit);
+    }
+
+    public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit)
+    {
+        return _pool.scheduleAtFixedRate(command, initialDelay, period, unit);
     }
 
     @Override
