@@ -157,7 +157,7 @@ public class CoalesceSchedulerServiceImpl implements ICoalesceExecutorService, A
     }
 
     @Override
-    public void close() throws Exception
+    public void close()
     {
         if (!_pool.isShutdown())
         {
