@@ -44,9 +44,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * This implementation uses Kafka to push notifications.
@@ -55,32 +53,50 @@ import java.util.Properties;
  */
 public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
 
+    // Topic Definitions
     public static final String TOPIC_METRICS = "com.incadence.metrics";
     public static final String TOPIC_CRUD = "com.incadence.crud";
     public static final String TOPIC_LINKAGE = "com.incadence.linkage";
     public static final String TOPIC_AUDIT = "com.incadence.audit";
     public static final String TOPIC_JOB_COMPLETE = "com.incadence.job";
 
+    // Property Definitions
     public static final String PROP_ZOOKEEPER = "zookeepers";
+    public static final String PROP_SESSION_TIMEOUT = "kafka.session.timeout";
+    public static final String PROP_CONN_TIMEOUT = "kafka.connection.timeout";
+    public static final String PROP_PARTITIONS = "kafka.partitions";
+    public static final String PROP_REPLICATION = "kafka.replication";
+    public static final String PROP_IS_SECURE = "kafka.isSecure";
+
 
     /*--------------------------------------------------------------------------
     Member Variables
     --------------------------------------------------------------------------*/
 
-    private KafkaProducer<String, Object> producer;
-    private String zookeeper;
+    private final KafkaProducer<String, Object> producer;
+    private final String zookeeper;
+    private final List<String> topics = new ArrayList<>();
+
+    private final int sessionTimeoutMs;
+    private final int connectionTimeoutMs;
+    private final int partitions;
+    private final int replication;
+    private final boolean isSecureKafkaCluster;
 
     /*--------------------------------------------------------------------------
     Public Methods
     --------------------------------------------------------------------------*/
 
+    /**
+     * Default Constructor
+     */
     public KafkaNotifierImpl()
     {
         this(loadProperties());
     }
 
     /**
-     * Default Constructor
+     * Default Constructor w/ user properties
      *
      * @param props configuration properties
      */
@@ -93,6 +109,16 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         producer = new KafkaProducer<>(parameters);
 
         ShutdownAutoCloseable.createShutdownHook(this);
+
+        // Set Properties
+        sessionTimeoutMs = props.containsKey(PROP_SESSION_TIMEOUT) ? Integer.parseInt(props.get(PROP_SESSION_TIMEOUT)) :
+                10 * 1000;
+        connectionTimeoutMs = props.containsKey(PROP_CONN_TIMEOUT) ? Integer.parseInt(props.get(PROP_CONN_TIMEOUT)) :
+                8 * 1000;
+        partitions = props.containsKey(PROP_PARTITIONS) ? Integer.parseInt(props.get(PROP_PARTITIONS)) : 20;
+        replication = props.containsKey(PROP_REPLICATION) ? Integer.parseInt(props.get(PROP_REPLICATION)) : 1;
+        isSecureKafkaCluster = props.containsKey(PROP_IS_SECURE) && Boolean.parseBoolean(props.get(PROP_IS_SECURE));
+
     }
 
     /*--------------------------------------------------------------------------
@@ -188,6 +214,38 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         producer.close();
     }
 
+    /**
+     * Creates a topic within Kafka.
+     *
+     * @param topic to be created.
+     */
+    public void creatTopic(String topic)
+    {
+        ZkClient zkClient = new ZkClient(zookeeper, sessionTimeoutMs, connectionTimeoutMs, ZKStringSerializer$.MODULE$);
+
+        try
+        {
+            ZkUtils zkUtils = new ZkUtils(zkClient, new ZkConnection(zookeeper), isSecureKafkaCluster);
+
+            if (!AdminUtils.topicExists(zkUtils, topic))
+            {
+                Properties topicConfig = new Properties(); // add per-topic configurations settings here
+                AdminUtils.createTopic(zkUtils,
+                                       topic,
+                                       partitions,
+                                       replication,
+                                       topicConfig,
+                                       AdminUtils.createTopic$default$6());
+            }
+        }
+        finally
+        {
+            zkClient.close();
+        }
+
+        topics.add(topic);
+    }
+    
     /*--------------------------------------------------------------------------
     Private Methods
     --------------------------------------------------------------------------*/
@@ -210,47 +268,12 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
 
     private void sendRecord(ProducerRecord<String, Object> record)
     {
-        creatTopic(record.topic());
+        if (!topics.contains(record.topic()))
+        {
+            creatTopic(record.topic());
+        }
+
         producer.send(record);
-    }
-
-    private void creatTopic(String topic)
-    {
-        // TODO Consider caching whether the topic exixts.
-
-        String zookeeperConnect = zookeeper;
-        // TODO move these to properties
-        int sessionTimeoutMs = 10 * 1000;
-        int connectionTimeoutMs = 8 * 1000;
-        int partitions = 20;
-        int replication = 1;
-        boolean isSecureKafkaCluster = false;
-
-        ZkClient zkClient = null;
-
-        try
-        {
-            zkClient = new ZkClient(zookeeperConnect, sessionTimeoutMs, connectionTimeoutMs, ZKStringSerializer$.MODULE$);
-            ZkUtils zkUtils = new ZkUtils(zkClient, new ZkConnection(zookeeperConnect), isSecureKafkaCluster);
-
-            if (!AdminUtils.topicExists(zkUtils, topic))
-            {
-                Properties topicConfig = new Properties(); // add per-topic configurations settings here
-                AdminUtils.createTopic(zkUtils,
-                                       topic,
-                                       partitions,
-                                       replication,
-                                       topicConfig,
-                                       AdminUtils.createTopic$default$6());
-            }
-        }
-        finally
-        {
-            if (zkClient != null)
-            {
-                zkClient.close();
-            }
-        }
     }
 
     private static Map<String, String> loadProperties()

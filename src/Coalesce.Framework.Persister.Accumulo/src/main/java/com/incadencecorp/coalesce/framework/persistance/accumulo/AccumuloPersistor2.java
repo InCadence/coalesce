@@ -27,6 +27,7 @@ import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.jobs.AccumuloFeatureJob;
+import com.incadencecorp.coalesce.framework.util.CoalesceCompressionUtil;
 import org.apache.accumulo.core.client.IteratorSetting;
 import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.data.Key;
@@ -40,6 +41,7 @@ import org.apache.hadoop.io.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
@@ -54,8 +56,6 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
 
     /**
      * Default constructor using {@link AccumuloSettings} for configuration
-     *
-     * @throws CoalescePersistorException
      */
     public AccumuloPersistor2()
     {
@@ -70,7 +70,6 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
     public AccumuloPersistor2(Map<String, String> params)
     {
         this(null, params);
-
     }
 
     /**
@@ -104,7 +103,7 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
                 if (!allowRemoval || entity.getStatus() != ECoalesceObjectStatus.DELETED)
                 {
                     // Persist XML
-                    MutationWrapperFactory mfactory = new MutationWrapperFactory();
+                    MutationWrapperFactory mfactory = new MutationWrapperFactory(isCompressionEnabled());
                     MutationWrapper mutationGuy = mfactory.createMutationGuy(entity);
 
                     entityMutations.add(mutationGuy.getMutation());
@@ -198,8 +197,14 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
 
             for (Map.Entry<Key, Value> e : scanner)
             {
-                String xml = new String(e.getValue().get());
-                results.add(xml);
+                try
+                {
+                    results.add(CoalesceCompressionUtil.decompress(e.getValue().get()));
+                }
+                catch (IOException e1)
+                {
+                    throw new CoalescePersistorException(e1);
+                }
             }
         }
         catch (TableNotFoundException ex)

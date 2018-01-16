@@ -92,6 +92,7 @@
 						<feature>war</feature>
 						<feature>persister-derby-feature</feature>
 						<feature>coalesce-frontend</feature>
+						<feature>coalesce-javadocs</feature>
 					</bootFeatures>
 					<installedFeatures>
 						<feature>standard</feature>

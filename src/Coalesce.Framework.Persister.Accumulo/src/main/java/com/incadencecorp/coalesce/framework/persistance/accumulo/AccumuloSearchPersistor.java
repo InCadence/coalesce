@@ -55,10 +55,8 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
 
     /**
      * Default constructor using {@link AccumuloSettings} for configuration
-     *
-     * @throws CoalescePersistorException
      */
-    public AccumuloSearchPersistor() throws CoalescePersistorException
+    public AccumuloSearchPersistor()
     {
         super(AccumuloSettings.getParameters());
     }

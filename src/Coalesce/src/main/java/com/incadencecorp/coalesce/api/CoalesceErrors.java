@@ -117,14 +117,14 @@ public final class CoalesceErrors {
     public static final String INVALID_TYPE_CONSTRAINT = "Constraint (%s) not valid for field type (%s)";
 
     /**
-     * Error reported when failing to load a template Format:
-     * {@value #TEMPLATE_LOAD}
+     * Error reported when failing to load a template
+     * Format: {@value #TEMPLATE_LOAD}
      */
-    public static final String TEMPLATE_LOAD = "Template (%s) (%s) (%s) failed to load";
+    public static final String TEMPLATE_LOAD = "(FAILED) Loading Template (%s) (%s) (%s)";
 
     /**
-     * Error reported when a task fails to execute. Format: "(FAILED) Task
-     * {@value #FAILED_TASK}
+     * Error reported when a task fails to execute.
+     * Format: {@value #FAILED_TASK}
      */
     public static final String FAILED_TASK = "(FAILED) Task (%s) failed in (%s) because (%s).";
 

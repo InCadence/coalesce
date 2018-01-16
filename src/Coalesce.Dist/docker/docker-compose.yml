@@ -1,8 +1,0 @@
-version: '2'
-services:
-  coalesce:
-    build: .
-    ports:
-      - "8181:8181"
-    volumes:
-      - ../coalesce-karaf-dist/src/main/resources/deploy:/opt/karaf/deploy

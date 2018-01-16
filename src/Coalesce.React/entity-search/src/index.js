@@ -225,13 +225,13 @@ fetch(karafRootAddr + '/cxf/data/templates')
           {
             id: 'select',
             name: 'Select',
-            img: require('common-components/img/template.ico'),
+            img: "/images/svg/template.svg",
             title: 'Select Template',
             onClick: promptForTemplate
           }, {
             id: 'load',
             name: 'Load',
-            img: require('common-components/img/load.ico'),
+            img: "/images/svg/load.svg",
             title: 'Load Saved Criteria Selection',
             onClick: () => {
               Popup.plugins().promptError("(Comming Soon!!!) This will allow you to load previously saved criteria.")
@@ -239,7 +239,7 @@ fetch(karafRootAddr + '/cxf/data/templates')
           }, {
             id: 'save',
             name: 'Save',
-            img: require('common-components/img/save.ico'),
+            img: "/images/svg/save.svg",
             title: 'Save Criteria Selection',
             onClick: () => {
               Popup.plugins().promptError("(Comming Soon!!!) This will allow you to save criteria.")
@@ -247,7 +247,7 @@ fetch(karafRootAddr + '/cxf/data/templates')
           }, {
             id: 'reset',
             name: 'Reset',
-            img: require('common-components/img/erase.ico'),
+            img: "/images/svg/erase.svg",
             title: 'Reset Criteria',
             onClick: () => {
 

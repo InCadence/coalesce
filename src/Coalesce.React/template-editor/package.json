@@ -1,0 +1,23 @@
+{
+  "name": "template-editor",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "/templateeditor",
+  "dependencies": {
+    "mxgraph-js": "^1.0.1",
+    "react": "^16.2.0",
+    "react-bootstrap": "^0.31.5",
+    "react-dom": "^16.2.0",
+    "react-grid-layout": "^0.16.1",
+    "react-icons-kit": "^1.0.7",
+    "react-scripts": "1.0.17",
+    "react-sidenav": "^2.1.2",
+    "react-sortable-tree": "^1.5.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

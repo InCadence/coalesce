@@ -47,7 +47,7 @@ public class TemplateDataController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateDataController.class);
     private static final String COALESCEENTITY_KEY = CoalesceEntity.class.getSimpleName();
 
-    private final Map<String, TemplateNode> templates = new HashMap<String, TemplateNode>();
+    private final Map<String, TemplateNode> templates = new HashMap<>();
     private CoalesceFramework framework;
 
     /**
@@ -59,7 +59,11 @@ public class TemplateDataController {
     {
         try
         {
-            for (ObjectMetaData meta : framework.getCoalesceEntityTemplateMetadata())
+            List<ObjectMetaData> metadata = framework.getCoalesceEntityTemplateMetadata();
+
+            LOGGER.info("Loading {} Templates", metadata.size());
+
+            for (ObjectMetaData meta : metadata)
             {
                 CoalesceEntityTemplate template;
                 try
@@ -69,6 +73,24 @@ public class TemplateDataController {
                     if (template != null)
                     {
                         templates.put(template.getKey(), new TemplateNode(template));
+
+                        if (LOGGER.isDebugEnabled())
+                        {
+                            LOGGER.debug("Including ({}) ({}) ({}) ({})",
+                                         template.getKey(),
+                                         template.getName(),
+                                         template.getSource(),
+                                         template.getVersion());
+                        }
+
+                    }
+                    else
+                    {
+                        LOGGER.warn(String.format(CoalesceErrors.TEMPLATE_LOAD),
+                                    meta.getKey(),
+                                    meta.getName(),
+                                    meta.getSource(),
+                                    meta.getVersion());
                     }
                 }
                 catch (CoalescePersistorException e)
@@ -104,7 +126,7 @@ public class TemplateDataController {
     {
         LOGGER.debug("Retrieving Templates");
 
-        List<ObjectMetaData> results = new ArrayList<ObjectMetaData>();
+        List<ObjectMetaData> results = new ArrayList<>();
 
         for (TemplateNode node : templates.values())
         {
@@ -117,12 +139,14 @@ public class TemplateDataController {
                                            template.getDateCreated(),
                                            template.getLastModified()));
 
-            LOGGER.trace("Including ({}) ({}) ({}) ({})",
-                         template.getKey(),
-                         template.getName(),
-                         template.getSource(),
-                         template.getVersion());
-
+            if (LOGGER.isTraceEnabled())
+            {
+                LOGGER.trace("Including ({}) ({}) ({}) ({})",
+                             template.getKey(),
+                             template.getName(),
+                             template.getSource(),
+                             template.getVersion());
+            }
         }
 
         return results;
@@ -137,7 +161,7 @@ public class TemplateDataController {
         LOGGER.debug("Retrieving Record Sets [Key: ({})]", key);
 
         // Also include the key
-        List<CoalesceObjectImpl> results = new ArrayList<CoalesceObjectImpl>();
+        List<CoalesceObjectImpl> results = new ArrayList<>();
 
         if (templates.containsKey(key))
         {
@@ -165,7 +189,7 @@ public class TemplateDataController {
     {
         LOGGER.debug("Retrieving Fields [Key: ({}) Recordset: ({})]", key, recordsetKey);
 
-        List<FieldData> results = new ArrayList<FieldData>();
+        List<FieldData> results = new ArrayList<>();
 
         if (recordsetKey.equalsIgnoreCase(COALESCEENTITY_KEY))
         {
@@ -283,6 +307,7 @@ public class TemplateDataController {
     /**
      * Saves the specified template.
      *
+     * @param key    template's key
      * @param entity
      * @return whether or not it was successfully saved.
      */
@@ -317,8 +342,8 @@ public class TemplateDataController {
     /**
      * Saves the specified template.
      *
-     * @param key
-     * @param json
+     * @param key  template's key
+     * @param json template in json format
      * @return whether or not it was successfully saved.
      */
     public boolean setTemplateJson(String key, String json) throws RemoteException
@@ -327,15 +352,7 @@ public class TemplateDataController {
 
         try
         {
-            if (json != null)
-            {
-                result = setTemplate(createTemplate(json));
-            }
-            else
-            {
-                result = false;
-            }
-
+            result = json != null && setTemplate(createTemplate(json));
         }
         catch (CoalesceException e)
         {
@@ -364,7 +381,6 @@ public class TemplateDataController {
 
     public boolean registerTemplate(String key) throws RemoteException
     {
-        String xml;
         try
         {
             framework.registerTemplates(framework.getCoalesceEntityTemplate(key));
@@ -380,7 +396,19 @@ public class TemplateDataController {
 
     public boolean deleteTemplate(String key) throws RemoteException
     {
-        throw new RemoteException("Not Implemented");
+        boolean result = false;
+
+        try
+        {
+            framework.deleteTemplate(key);
+            result = true;
+        }
+        catch (CoalescePersistorException e)
+        {
+            error("Registeration Failed", e);
+        }
+
+        return result;
     }
 
     private boolean setTemplate(CoalesceEntityTemplate template) throws RemoteException
@@ -462,7 +490,7 @@ public class TemplateDataController {
 
     private List<CoalesceObjectImpl> getRecordsets(CoalesceSection section)
     {
-        List<CoalesceObjectImpl> results = new ArrayList<CoalesceObjectImpl>();
+        List<CoalesceObjectImpl> results = new ArrayList<>();
 
         for (CoalesceSection childSection : section.getSectionsAsList())
         {
@@ -482,7 +510,7 @@ public class TemplateDataController {
         private CoalesceEntity entity;
         private CoalesceEntityTemplate template;
 
-        public TemplateNode(CoalesceEntityTemplate template)
+        private TemplateNode(CoalesceEntityTemplate template)
         {
             this.entity = template.createNewEntity();
             this.entity.setKey(template.getKey());

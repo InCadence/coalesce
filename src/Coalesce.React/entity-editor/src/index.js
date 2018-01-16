@@ -181,7 +181,7 @@ fetch(rootUrl + '/cxf/data/templates')
             {
               id: 'new',
               name: 'New',
-              img: require('common-components/img/new.ico'),
+              img: '/images/svg/new.svg',
               title: 'Create New Entity',
               onClick: () => {
 
@@ -192,7 +192,7 @@ fetch(rootUrl + '/cxf/data/templates')
             }, {
               id: 'load',
               name: 'Load',
-              img: require('common-components/img/load.ico'),
+              img: '/images/svg/load.svg',
               title: 'Load Entity',
               onClick: () => {
                 Popup.plugins().prompt('Load', 'Entity Selection', '', 'Enter Entity Key', function (key) {

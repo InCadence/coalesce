@@ -16,34 +16,12 @@ if (window.location.port == 3000) {
 
 registerErrorPrompt(Popup);
 
-var defaultSettings = {
-  'search.url' : 'search',
-  'editor.url' : 'entityeditor',
-  'enumerations.url' : 'enumerations',
-  'templatecreator.url' : 'creator',
-  'map.url' : 'map',
-  'settings.url' : 'settings',
-  'manager.url' : 'manager',
-
-  'restapi.url' : 'https://github.com/InCadence/coalesce/wiki/REST-API',
-  'deployment.url' : 'https://github.com/InCadence/coalesce/wiki/Karaf-Distribution',
-  'javadocs.url' : 'javadocs',
-  'source.url' : 'https://github.com/InCadence/coalesce',
-}
-
 class Main extends React.Component {
 
   constructor(props) {
       super(props);
 
       this.promptNotAvailable = this.promptNotAvailable.bind(this);
-
-      Object.keys(defaultSettings).forEach(function (key) {
-          if (props.settings[key] == "") {
-            props.settings[key] = defaultSettings[key];
-          }
-      });
-
       this.state = props;
   }
 
@@ -64,13 +42,13 @@ class Main extends React.Component {
         <a href={url} >
           <div className='card'>
             <div className="row">
-              <img src={img} alt={title} height="64"/>
+              <img src={img} alt={title} height="64" className="shadow"/>
             </div>
             <div className="row">
               <label>{title}</label>
             </div>
             <div className="row">
-              <div class="scroll-box">
+              <div className="scroll-box">
                 <p>{description}</p>
               </div>
             </div>
@@ -79,37 +57,42 @@ class Main extends React.Component {
     )
   }
 
+  renderGroup(that, group) {
+
+    var cards = [];
+
+    group.cards.forEach(function (card) {
+      cards.push(that.renderCard(card.url, card.img, card.name, card.desc));
+    });
+
+    return (
+        <div>
+          <h2>{group.name}</h2>
+          {cards}
+        </div>
+    )
+  }
+
   render() {
     const {settings} = this.state;
+    const that = this;
+    var groups = [];
+
+    settings.groups.forEach(function (group) {
+      groups.push(that.renderGroup(that, group));
+    });
 
     return (
       <center>
-        <h1 className="coalesce-banner">Coalesce Enterprise Data Broker</h1>
-        <h2>Applications</h2>
-        <div>
-          {this.renderCard(settings['search.url'], require('common-components/img/search2.ico'), 'Search', 'Find Coalesce entities matching your criteria.')}
-          {this.renderCard(settings['editor.url'], require('common-components/img/edit.ico'), 'Editor', 'Edit or create new Coalesce entities.')}
-          {this.renderCard(settings['enumerations.url'], require('common-components/img/enum.ico'), 'Enumerations', 'Create and edit enumerations used by Coalesce.')}
-          {this.renderCard(settings['templatecreator.url'], require('common-components/img/template.ico'), 'Templates', 'Editor or create new templates for Coalesce entities.')}
-          {this.renderCard(settings['map.url'], require('common-components/img/map.ico'), 'Map', 'Visualize different layers provided by a Geo Server fed from a Coalesce database.')}
-          {this.renderCard(settings['settings.url'], require('common-components/img/settings.ico'), 'Settings', 'Configure server defined client properties.')}
-          {this.renderCard(settings['manager.url'], require('common-components/img/manager.ico'), 'Manager', 'Visualize how the services within this container are wired together.')}
-        </div>
-        <h2>Documentation</h2>
-        <div>
-          {this.renderCard(settings['restapi.url'], require('common-components/img/api.ico'), 'REST API', "View Coalesce's REST API to integrate your applications.")}
-          {this.renderCard(settings['deployment.url'], require('common-components/img/deploy.ico'), 'Deployment', 'View how to deploy and run a Coalesce server.')}
-          {this.renderCard(settings['javadocs.url'], require('common-components/img/java-docs.ico'), 'Java Docs', 'Generated code documentation.')}
-          {this.renderCard(settings['source.url'], require('common-components/img/code.ico'), 'Source Code', 'Download and contribute to the open source project.')}
-        </div>
+        <img alt="Coalesce" src={settings.banner} />
+        {groups}
       </center>
     )
   }
 }
 
-fetch(rootUrl + '/cxf/data/property', {
-  method: "POST",
-  body: JSON.stringify(Object.keys(defaultSettings)),
+fetch(rootUrl + '/cxf/data/property/home.json', {
+  method: "GET",
   headers: new Headers({
     'content-type': 'application/json; charset=utf-8'
   }),

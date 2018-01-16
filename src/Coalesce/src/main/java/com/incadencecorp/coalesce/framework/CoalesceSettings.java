@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * Contains all the settings used by Coalesce. Settings are not persisted
  * between application restarts unless you specify a connector by calling
- * {@link CoalesceSettings#initialize(com.incadencecorp.unity.common.IConfigurationsConnector)}
+ * {@link CoalesceSettings#setConnector(com.incadencecorp.unity.common.IConfigurationsConnector)}
  * .
  */
 public class CoalesceSettings {
@@ -75,9 +75,16 @@ public class CoalesceSettings {
     private static final String PARAM_MIN_THREADS = PARAM_COALESCE_THREADING + ".minThreads";
     private static final String PARAM_MAX_THREADS = PARAM_COALESCE_THREADING + ".maxThreads";
     /**
-     * In Seconds
+     * {@value #PARAM_THREAD_TIMOUT} specifies in seconds when terminating executor pools how long to wait on thread
+     * completions before sending an interrupt. Default {@value #DEFAULT_THREAD_TIMOUT}.
      */
-    private static final String PARAM_KEEP_ALIVE_TIME = PARAM_COALESCE_THREADING + ".keepAliveTime";
+    public static final String PARAM_THREAD_TIMOUT = PARAM_COALESCE_THREADING + ".timeout";
+
+    /**
+     * {@value #PARAM_KEEP_ALIVE_TIME} specifies in seconds how long a thread should remain around to be reused within a
+     * executor pool before being cleaned up. Default {@value #DEFAULT_KEEP_ALIVE_TIME}.
+     */
+    public static final String PARAM_KEEP_ALIVE_TIME = PARAM_COALESCE_THREADING + ".keepAliveTime";
 
     /*--------------------------------------------------------------------------
     Security Parameters
@@ -115,6 +122,7 @@ public class CoalesceSettings {
     private static final int DEFAULT_MAX_THREADS = 20;
 
     private static final int DEFAULT_KEEP_ALIVE_TIME = 60;
+    private static final int DEFAULT_THREAD_TIMOUT = 60;
 
     
 
@@ -141,18 +149,13 @@ public class CoalesceSettings {
      *
      * @param connector
      */
-    /**
-     * Configures the settings to use a particular connector.
-     *
-     * @param connector
-     */
     public static void setConnector(final IConfigurationsConnector connector)
     {
         settings = new SettingsBase(connector);
     }
 
     /*--------------------------------------------------------------------------
-    	Public Configuration Functions
+        Public Configuration Functions
     --------------------------------------------------------------------------*/
 
     public static String getConfigurationFileName()
@@ -424,7 +427,7 @@ public class CoalesceSettings {
     }
 
     /**
-     * @return the time to keep the thread alive.
+     * @see #PARAM_KEEP_ALIVE_TIME
      */
     public static int getKeepAliveTime()
     {
@@ -432,14 +435,29 @@ public class CoalesceSettings {
     }
 
     /**
-     * Sets the time to keep the thread alive.
-     *
-     * @param value
+     * @see #PARAM_KEEP_ALIVE_TIME
      */
     public static void setKeepAliveTime(int value)
     {
         settings.setSetting(getConfigurationFileName(), PARAM_KEEP_ALIVE_TIME, value);
     }
+
+    /**
+     * @see #PARAM_THREAD_TIMOUT
+     */
+    public static int getThreadTimeout()
+    {
+        return settings.getSetting(getConfigurationFileName(), PARAM_THREAD_TIMOUT, DEFAULT_THREAD_TIMOUT, true);
+    }
+
+    /**
+     * @see #PARAM_THREAD_TIMOUT
+     */
+    public static void setThreadTimeout(int value)
+    {
+        settings.setSetting(getConfigurationFileName(), PARAM_THREAD_TIMOUT, value);
+    }
+
     /*--------------------------------------------------------------------------
     Supported Axis
     --------------------------------------------------------------------------*/

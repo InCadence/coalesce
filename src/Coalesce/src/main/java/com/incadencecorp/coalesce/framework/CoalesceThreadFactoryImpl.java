@@ -22,27 +22,28 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This implementation creates threads prefixed with Coalesce.
- * 
+ *
  * @author Derek
  */
 public class CoalesceThreadFactoryImpl implements ThreadFactory {
 
     private static final AtomicInteger POOL_NUMBER = new AtomicInteger(1);
     private final ThreadGroup group;
-    private final AtomicInteger threadNumber = new AtomicInteger(1);
+    private final AtomicInteger THREAD_NUMBER = new AtomicInteger(1);
     private final String namePrefix;
 
     /**
-     * Default Constructor. 
+     * Default Constructor.
      */
     public CoalesceThreadFactoryImpl()
     {
-        this(System.getSecurityManager() != null ? System.getSecurityManager().getThreadGroup() : Thread.currentThread().getThreadGroup());
+        this(System.getSecurityManager()
+                     != null ? System.getSecurityManager().getThreadGroup() : Thread.currentThread().getThreadGroup());
     }
 
     /**
      * Constructor allowing the group to be specified.
-     * 
+     *
      * @param group
      */
     public CoalesceThreadFactoryImpl(ThreadGroup group)
@@ -51,11 +52,27 @@ public class CoalesceThreadFactoryImpl implements ThreadFactory {
         this.namePrefix = "coalesce-thread(" + POOL_NUMBER.getAndIncrement() + ":%s)-%s";
     }
 
+    /**
+     * @return the pool identifier
+     */
+    public int getPoolNumber()
+    {
+        return POOL_NUMBER.get();
+    }
+
+    /**
+     * @return the total number of threads that have been created for this pool.
+     */
+    public int getThreadNumber()
+    {
+        return THREAD_NUMBER.get();
+    }
+
     @Override
     public Thread newThread(Runnable r)
     {
         Thread thread = new Thread(group, r);
-        thread.setName(String.format(namePrefix, threadNumber.getAndIncrement(), thread.getId()));
+        thread.setName(String.format(namePrefix, THREAD_NUMBER.getAndIncrement(), thread.getId()));
         thread.setDaemon(true);
         thread.setPriority(Thread.NORM_PRIORITY);
         return thread;

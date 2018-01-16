@@ -34,7 +34,7 @@ export class LinkageView extends React.Component
     buttons['Header'] = '';
     buttons['accessor'] = 'entity2Key';
     buttons['Cell'] = (cell) => (
-      <img id={cell.row.key} src={require('common-components/img/view.ico')} alt="view" title="View Linked Entity" className="coalesce-img-button small enabled" onClick={this.handleEntity2KeyClick.bind(this, cell.row.entity2Key)}/>
+      <img id={cell.row.key} src='/images/svg/view.svg' alt="view" title="View Linked Entity" className="coalesce-img-button small enabled" onClick={this.handleEntity2KeyClick.bind(this, cell.row.entity2Key)}/>
     );
 
     columns.push(buttons);

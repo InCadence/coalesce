@@ -202,8 +202,8 @@ export class FeatureSelection extends React.Component {
             </div>
             <div className="col-sm-3">
               <div className="form-buttons">
-                <img src={isFirst ? '' : require('common-components/img/up.ico')} alt={isFirst ? '' : "Up"}  className={isFirst ? "coalesce-img-button small disabled" : "coalesce-img-button small enabled"} onClick={this.moveLayer.bind(this, feature, true)} />
-                <img src={isLast ? '' : require('common-components/img/down.ico')} alt={isLast ? '' : "Down"} className={isLast ? "coalesce-img-button small disabled" : "coalesce-img-button small enabled"} onClick={this.moveLayer.bind(this, feature, false)}/>
+                <img src={isFirst ? '' : "/images/svg/up.svg"} alt={isFirst ? '' : "Up"}  className={isFirst ? "coalesce-img-button small disabled" : "coalesce-img-button small enabled"} onClick={this.moveLayer.bind(this, feature, true)} />
+                <img src={isLast ? '' : "/images/svg/down.svg"} alt={isLast ? '' : "Down"} className={isLast ? "coalesce-img-button small disabled" : "coalesce-img-button small enabled"} onClick={this.moveLayer.bind(this, feature, false)}/>
               </div>
             </div>
           </div>
@@ -226,8 +226,8 @@ export class FeatureSelection extends React.Component {
         <div className="ui-widget-content">
           {features}
           <div className="form-buttons">
-            <img src={require('common-components/img/remove.ico')} alt="Remove" title="Remove Layer" className="coalesce-img-button enabled" onClick={this.onRmvClick.bind(this)}/>
-            <img src={require('common-components/img/add.ico')} alt="Add" title="Add Layer" className="coalesce-img-button enabled" onClick={this.onAddClick.bind(this)}/>
+            <img src="/images/svg/remove.svg" alt="Remove" title="Remove Layer" className="coalesce-img-button enabled" onClick={this.onRmvClick.bind(this)}/>
+            <img src="/images/svg/add.svg" alt="Add" title="Add Layer" className="coalesce-img-button enabled" onClick={this.onAddClick.bind(this)}/>
           </div>
         </div>
       </div>

@@ -21,6 +21,7 @@ import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphLink;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -34,17 +35,17 @@ public interface ILinkageDataControllerJaxRS {
 
     @DELETE
     @Path("/")
-    @Consumes("application/json")
+    @Consumes(MediaType.APPLICATION_JSON)
     void unlink(List<GraphLink> links) throws RemoteException;
 
     @PUT
     @Path("/")
-    @Consumes("application/json")
+    @Consumes(MediaType.APPLICATION_JSON)
     void link(List<GraphLink> links) throws RemoteException;
 
     @GET
     @Path("/{key:" + GUIDHelper.REGEX_UUID + "}")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     List<GraphLink> retrieveLinkages(@PathParam("key") String key) throws RemoteException;
 
 }

@@ -3,17 +3,10 @@ body {
   color: #000000;
 }
 
-.coalesce-banner {
-  font-weight: bold;
-  font-family: tohoma;
-  font-size: 64px;
-  color: #e68a00;
-  background-color: #3d3d3c;
-  width: 100%;
-  border-color: #FF9900;
-  border-width: 2px;
-  border-style: solid;
-  padding: 5px;
+.shadow {
+    /* Use -webkit- only if supporting: Chrome < 54, iOS < 9.3, Android < 4.4.4 */
+    -webkit-filter: drop-shadow( -5px -5px 5px #000 );
+            filter: drop-shadow( -5px -5px 5px #000 );
 }
 
 .form-buttons {

@@ -1,19 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ///===========SECURITY CLASSIFICATION: UNCLASSIFIED======================== 
-	/// Copyright 2014 - Lockheed Martin Corporation, All Rights Reserved /// 
-	/// Notwithstanding any contractor copyright notice, the government has /// 
-	Unlimited Rights in this work as defined by DFARS 252.227-7013 and /// 252.227-7014. 
-	Use of this work other than as specifically authorized by /// these DFARS 
-	Clauses may violate government rights in this work. /// /// DFARS Clause 
-	reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16) /// Unlimited Rights. 
-	The Government has the right to use, modify, /// reproduce, perform, display, 
-	release or disclose this computer software /// in whole or in part, in any 
-	manner, and for any purpose whatsoever, /// and to have or authorize others 
-	to do so. /// /// Distribution Statement D. Distribution authorized to the 
-	Department of /// Defense and U.S. DoD contractors only in support of US 
-	DoD efforts. /// Other requests shall be referred to the ACINT Modernization 
-	Program /// Management under the Director of the Office of Naval Intelligence. 
-	/// ===============================UNCLASSIFIED================================= -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:cxf="http://cxf.apache.org/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:sec="http://cxf.apache.org/configuration/security" xmlns:http="http://cxf.apache.org/transports/http/configuration"
@@ -51,8 +36,8 @@
 	<context:property-placeholder properties-ref="clientProperties" />
 
 	<util:properties id="clientProperties">
-		<prop key="clientstore">/etc/pki/CA/java/omega-clientkeystore.jks</prop>
-		<prop key="privatestore">/etc/pki/CA/java/omega-clientkeystore.jks</prop>
+		<prop key="clientstore">/etc/pki/CA/java/public.jks</prop>
+		<prop key="privatestore">/etc/pki/CA/java/private.jks</prop>
 
         <!-- Creates the STS URL -->
         <prop key="stsCertAlias">xfwp1</prop> 
@@ -93,6 +78,7 @@
 
 		<!-- These properties configure the location of the public and private 
 			keys needed for SSL (TLS) implementation. -->
+		<!--
 		<http:tlsClientParameters disableCNCheck="true">
 			<sec:keyManagers keyPassword="q1w2E3R4">
 				<sec:keyStore file="${privatestore}" type="JKS" />
@@ -101,8 +87,6 @@
 				<sec:keyStore file="${clientstore}" type="JKS" />
 			</sec:trustManagers>
 
-			<!-- These properties specify which TLS protocol(s) will be specifically 
-				allowed and disallowed by this client. -->
 			<sec:cipherSuitesFilter>
 				<sec:include>TLS.*_WITH_AES_.*</sec:include>
 				<sec:include>TLS.*_WITH_3DES_.*</sec:include>
@@ -112,7 +96,7 @@
 			</sec:cipherSuitesFilter>
 
 		</http:tlsClientParameters>
-
+-->
 		<!-- Timeout Properties: Connection Timeout = Specifies the amount of time 
 			the client will attempt to establish a connection with a service provider. 
 			Units: msec ; 0 = infinite Receive Timeout = Specifies the interval of time 

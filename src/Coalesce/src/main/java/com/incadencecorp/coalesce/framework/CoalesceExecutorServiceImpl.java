@@ -37,22 +37,36 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceExecutorServiceImpl.class);
 
-    private ExecutorService _pool;
+    private final ExecutorService _pool;
 
+    /**
+     * Default Constructor
+     */
+    public CoalesceExecutorServiceImpl()
+    {
+        this(null);
+    }
+
+    /**
+     * @param service being wrapped
+     */
     public CoalesceExecutorServiceImpl(ExecutorService service)
     {
         if (service == null)
         {
-            LOGGER.info("Using Default ExecutorService; Cores: {} Max Threads / Core: {}",
+            CoalesceThreadFactoryImpl factory = new CoalesceThreadFactoryImpl();
+
+            LOGGER.info("Using Default ExecutorService; Cores: {} Max Threads / Core: {} Pool: {}",
                         CoalesceSettings.getNumberOfCores(),
-                        CoalesceSettings.getMaxThreadsPerCore());
+                        CoalesceSettings.getMaxThreadsPerCore(),
+                        factory.getPoolNumber());
 
             service = new ThreadPoolExecutor(CoalesceSettings.getMinThreads(),
                                              CoalesceSettings.getMaxThreads(),
                                              CoalesceSettings.getKeepAliveTime(),
                                              TimeUnit.SECONDS,
                                              new SynchronousQueue<>(),
-                                             new CoalesceThreadFactoryImpl(),
+                                             factory,
                                              new ThreadPoolExecutor.CallerRunsPolicy());
         }
 
@@ -143,7 +157,7 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
     }
 
     @Override
-    public void close() throws Exception
+    public void close()
     {
         if (!_pool.isShutdown())
         {
@@ -157,14 +171,14 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
                 // Graceful shutdown (Allow 1 minute for jobs to finish)
                 _pool.shutdown();
 
-                if (!_pool.awaitTermination(1, TimeUnit.MINUTES))
+                if (!_pool.awaitTermination(CoalesceSettings.getThreadTimeout(), TimeUnit.SECONDS))
                 {
 
                     LOGGER.warn("(FAILED) Graceful Pool Termination");
 
                     logFailedJobs(_pool.shutdownNow());
 
-                    if (!_pool.awaitTermination(1, TimeUnit.MINUTES))
+                    if (!_pool.awaitTermination(CoalesceSettings.getThreadTimeout(), TimeUnit.SECONDS))
                     {
                         LOGGER.error(" (FAILED) Pool Terminate");
                     }

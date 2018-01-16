@@ -59,6 +59,7 @@ public class AccumuloSettings {
     private static final String PARAM_ZOOKEEPERS = PARAM_BASE + "zookeepers";
     private static final String PARAM_DATABASE_NAME = PARAM_BASE + "database";
     private static final String PARAM_USE_MOCK = PARAM_BASE + "useMock";
+    private static final String PARAM_USE_COMPRESSION = PARAM_BASE + "useCompression";
 
     private static final String PARAM_THREADS = PARAM_BASE + "threads.";
     private static final String PARAM_THREADS_QUERY = PARAM_THREADS + "query";
@@ -377,6 +378,24 @@ public class AccumuloSettings {
         settings.setSetting(config_name, PARAM_USE_MOCK, value);
     }
 
+        /**
+     * @return the number of write threads
+     */
+    public static boolean isCompressionEnabled()
+    {
+        return settings.getSetting(config_name, PARAM_USE_COMPRESSION, true, true);
+    }
+
+    /**
+     * Sets the number of write threads
+     *
+     * @param value
+     */
+    public static void setIsCompressionEnabled(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_USE_COMPRESSION, value);
+    }
+
     /**
      * @return Server Connection Properties
      * @deprecated
@@ -410,6 +429,7 @@ public class AccumuloSettings {
         params.put(AccumuloDataConnector.CACHING, "false");
         params.put(AccumuloDataConnector.LOOSE_B_BOX, "false");
         params.put(AccumuloDataConnector.USE_MOCK, Boolean.toString(AccumuloSettings.isMockMode()));
+        params.put(AccumuloDataConnector.USE_COMPRESSION, Boolean.toString(AccumuloSettings.isCompressionEnabled()));
 
         return params;
     }
