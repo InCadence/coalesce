@@ -171,14 +171,14 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
                 // Graceful shutdown (Allow 1 minute for jobs to finish)
                 _pool.shutdown();
 
-                if (!_pool.awaitTermination(1, TimeUnit.MINUTES))
+                if (!_pool.awaitTermination(CoalesceSettings.getThreadTimeout(), TimeUnit.SECONDS))
                 {
 
                     LOGGER.warn("(FAILED) Graceful Pool Termination");
 
                     logFailedJobs(_pool.shutdownNow());
 
-                    if (!_pool.awaitTermination(1, TimeUnit.MINUTES))
+                    if (!_pool.awaitTermination(CoalesceSettings.getThreadTimeout(), TimeUnit.SECONDS))
                     {
                         LOGGER.error(" (FAILED) Pool Terminate");
                     }
