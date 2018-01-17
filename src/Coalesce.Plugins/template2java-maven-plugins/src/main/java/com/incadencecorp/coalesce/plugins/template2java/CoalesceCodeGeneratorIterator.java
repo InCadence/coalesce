@@ -157,7 +157,7 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
         String filename = context.get("classname").toString() + "." + fileExtention;
         String packagename = context.get("packagename_root").toString() + "." + context.get("packagename_sub").toString();
 
-        Path file = directory.resolve(Paths.get("generated", packagename.split("[.]"))).resolve(filename);
+        Path file = directory.resolve(Paths.get(".", packagename.split("[.]"))).resolve(filename);
 
         try (StringWriter writer = new StringWriter())
         {
