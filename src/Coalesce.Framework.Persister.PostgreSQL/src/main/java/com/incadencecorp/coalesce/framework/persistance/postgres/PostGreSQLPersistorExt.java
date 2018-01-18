@@ -54,6 +54,7 @@ import com.incadencecorp.coalesce.framework.persistance.postgres.mappers.StoredP
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
+import org.geotools.filter.Capabilities;
 
 /**
  * This extension flattens record sets into their own tables.
@@ -409,6 +410,16 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
         }
 
         return results;
+    }
+
+    @Override
+    public Capabilities getSearchCapabilities()
+    {
+        Capabilities capability = new Capabilities();
+        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
+        capability.addAll(Capabilities.LOGICAL);
+
+        return capability;
     }
 
     private List<CoalesceParameter> getParameters(PostGresCoalescePreparedFilter filter) throws ParseException

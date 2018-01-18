@@ -34,6 +34,7 @@ import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
 import com.incadencecorp.coalesce.search.resultset.CoalesceCommonColumns;
 import org.geotools.data.Query;
 import org.geotools.data.jdbc.FilterToSQLException;
+import org.geotools.filter.Capabilities;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1259,6 +1260,16 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
 
         return results;
+    }
+
+    @Override
+    public Capabilities getSearchCapabilities()
+    {
+        Capabilities capability = new Capabilities();
+        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
+        capability.addAll(Capabilities.LOGICAL);
+
+        return capability;
     }
 
     /**

@@ -31,6 +31,7 @@ import org.geotools.data.DataStore;
 import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.FeatureIterator;
+import org.geotools.filter.Capabilities;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
@@ -203,5 +204,15 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
                                        EPersistorCapabilities.SEARCH));
 
         return capabilities;
+    }
+
+    @Override
+    public Capabilities getSearchCapabilities()
+    {
+        Capabilities capability = new Capabilities();
+        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
+        capability.addAll(Capabilities.LOGICAL);
+
+        return capability;
     }
 }

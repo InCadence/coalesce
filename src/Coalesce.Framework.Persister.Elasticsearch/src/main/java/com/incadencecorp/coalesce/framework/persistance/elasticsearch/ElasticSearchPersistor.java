@@ -44,6 +44,7 @@ import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 
 import mil.nga.giat.data.elasticsearch.FilterToElastic;
+import org.geotools.filter.Capabilities;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -817,5 +818,15 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     {
         // TODO Not Implemented
         throw new NotImplementedException();
+    }
+
+    @Override
+    public Capabilities getSearchCapabilities()
+    {
+        Capabilities capability = new Capabilities();
+        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
+        capability.addAll(Capabilities.LOGICAL);
+
+        return capability;
     }
 }

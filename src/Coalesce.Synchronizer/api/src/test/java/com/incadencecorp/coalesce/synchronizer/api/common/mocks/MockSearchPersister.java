@@ -25,6 +25,7 @@ import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 
 import org.geotools.data.Query;
+import org.geotools.filter.Capabilities;
 import org.opengis.filter.expression.PropertyName;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
@@ -100,4 +101,9 @@ public class MockSearchPersister extends MockPersister implements ICoalesceSearc
         return results;
     }
 
+    @Override
+    public Capabilities getSearchCapabilities()
+    {
+        return Capabilities.SIMPLE_COMPARISONS;
+    }
 }
