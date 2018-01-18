@@ -17,25 +17,19 @@
 
 package com.incadencecorp.coalesce.services.search.service.rest;
 
-import java.rmi.RemoteException;
-import java.util.List;
-import java.util.UUID;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
-import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
+import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.incadencecorp.coalesce.framework.persistance.MockPersister;
+import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.services.search.service.data.controllers.TemplateDataController;
 import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
 import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.rmi.RemoteException;
+import java.util.List;
+import java.util.UUID;
 
 public class TemplateDataControllerTest {
 
@@ -175,7 +169,7 @@ public class TemplateDataControllerTest {
 
     private TemplateDataController createController() throws Exception
     {
-        ICoalescePersistor persistor = new MockPersister();
+        ICoalescePersistor persistor = new DerbyPersistor();
 
         TestEntity entity = new TestEntity();
         entity.initialize();
@@ -185,7 +179,7 @@ public class TemplateDataControllerTest {
 
         CoalesceFramework framework = new CoalesceFramework();
         framework.setAuthoritativePersistor(persistor);
-        
+
         TemplateDataController controller = new TemplateDataController(framework);
         Assert.assertNotNull(controller.getTemplate(template.getKey()));
 

@@ -61,12 +61,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-			<artifactId>persister-memory</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
 			<artifactId>coalesce-crud-client-jaxws</artifactId>
 			<version>${project.version}</version>

@@ -17,34 +17,34 @@
 
 package com.incadencecorp.coalesce.services.search.service.rest;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
+import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
+import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
+import com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl;
+import com.incadencecorp.coalesce.services.search.service.data.controllers.SearchDataController;
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchCriteria;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
-import com.incadencecorp.coalesce.framework.persistance.memory.MockSearchPersister;
-import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
-import com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl;
-import com.incadencecorp.coalesce.services.search.service.data.controllers.SearchDataController;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SearchDataControllerTest {
 
     @Test
-    public void testFilterCreation() throws Exception {
-        
-        MockSearchPersister persister = new MockSearchPersister();
-        
+    public void testFilterCreation() throws Exception
+    {
+
+        DerbyPersistor persister = new DerbyPersistor();
+
         SearchDataController controller = new SearchDataController(new SearchFrameworkClientImpl(persister));
-        
-        TestEntity entity = new TestEntity(); 
+
+        TestEntity entity = new TestEntity();
         entity.initialize();
-        
+
         persister.saveEntity(false, entity);
-        
-        List<SearchCriteria> options = new ArrayList<SearchCriteria>();
+
+        List<SearchCriteria> options = new ArrayList<>();
 
         SearchCriteria option = new SearchCriteria();
         option.setRecordset(TestEntity.RECORDSET1);
@@ -52,16 +52,15 @@ public class SearchDataControllerTest {
         option.setValue("false");
         option.setComparer("=");
         option.setMatchCase(false);
-        
+
         options.add(option);
-        
+
         SearchDataObjectResponse results = controller.search(options);
-        
+
         Assert.assertEquals(1, results.getResult().size());
         Assert.assertEquals(1, results.getResult().get(0).getResult().getHits().size());
         Assert.assertEquals(entity.getKey(), results.getResult().get(0).getResult().getHits().get(0).getEntityKey());
-        
 
     }
-    
+
 }
