@@ -17,36 +17,51 @@
 
 package com.incadencecorp.coalesce.services.search.service.data.controllers;
 
-import java.io.IOException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
+import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import com.incadencecorp.coalesce.search.filter.FilterUtil;
+import com.incadencecorp.coalesce.services.api.search.HitType;
+import com.incadencecorp.coalesce.services.api.search.QueryResultType;
+import com.incadencecorp.coalesce.services.api.search.QueryType;
+import com.incadencecorp.coalesce.services.api.search.SortByType;
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchCriteria;
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchGroup;
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchQuery;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
+import com.vividsolutions.jts.io.ParseException;
+import org.geotools.data.Query;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.geometry.jts.WKTReader2;
+import org.geotools.referencing.CRS;
+import org.geotools.temporal.object.DefaultInstant;
+import org.geotools.temporal.object.DefaultPeriod;
+import org.geotools.temporal.object.DefaultPosition;
+import org.opengis.filter.*;
+import org.opengis.filter.capability.FilterCapabilities;
+import org.opengis.filter.capability.GeometryOperand;
+import org.opengis.filter.capability.Operator;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
+import org.opengis.filter.spatial.BBOX;
+import org.opengis.filter.temporal.During;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.temporal.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.incadencecorp.coalesce.search.filter.FilterUtil;
-import com.incadencecorp.coalesce.services.api.search.QueryType;
-import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
-import com.incadencecorp.coalesce.services.api.search.SortByType;
-import com.incadencecorp.coalesce.services.search.api.ISearchClient;
+import javax.sql.rowset.CachedRowSet;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.rmi.RemoteException;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * Converts a list of options into an OGC filter and passes it along to a search
@@ -58,68 +73,93 @@ public class SearchDataController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchDataController.class);
 
-    private ISearchClient client;
+    private static final String EPSG4326 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
 
-    public SearchDataController(ISearchClient value)
+    private final CoalesceSearchFramework framework;
+    private final CoordinateReferenceSystem crs;
+    private final FilterCapabilities capabilities;
+
+    public SearchDataController(CoalesceSearchFramework value)
     {
-        client = value;
+        framework = value;
+        capabilities = framework.getCapabilities().getContents();
+
+        try
+        {
+            crs = CRS.parseWKT(EPSG4326);
+        }
+        catch (FactoryException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
-     * @param options
+     * This simple interface AND all the provided criteria together and calls {@link #searchComplex(SearchQuery)}.
+     *
+     * @param options list of criteria
      * @return search results for the provided list of criteria.
      */
-    public SearchDataObjectResponse search(List<SearchCriteria> options)
+    public QueryResultType search(List<SearchCriteria> options)
     {
-        FilterFactory ff = CoalescePropertyFactory.getFilterFactory();
+        List<String> properties = new ArrayList<>();
+        properties.add(CoalescePropertyFactory.getName().getPropertyName());
+        properties.add(CoalescePropertyFactory.getSource().getPropertyName());
+        properties.add(CoalescePropertyFactory.getEntityTitle().getPropertyName());
 
         SearchGroup group = new SearchGroup();
         group.setBooleanComparer("AND");
         group.setCriteria(options);
 
-        try
-        {
-            Filter filter = getFilter(ff, group);
+        SearchQuery query = new SearchQuery();
+        query.setPageSize(200);
+        query.setPageNumber(1);
+        query.setGroup(group);
+        query.setPropertyNames(properties);
+        query.setSortBy(Collections.emptyList());
 
-            LOGGER.debug("Filter: {}", filter.toString());
-
-            return client.search(filter, 1);
-
-        }
-        catch (CoalesceException e)
-        {
-            throw new RuntimeException(e);
-        }
-
+        return searchComplex(query);
     }
 
-    public SearchDataObjectResponse searchComplex(SearchQuery query)
+    /**
+     * Expands on
+     *
+     * @param searchQuery list of criteria
+     * @return search results for the provided list of criteria.
+     */
+    public QueryResultType searchComplex(SearchQuery searchQuery)
     {
-        FilterFactory ff = CoalescePropertyFactory.getFilterFactory();
+        FilterFactory2 ff = CoalescePropertyFactory.getFilterFactory();
 
         try
         {
-            Filter filter = getFilter(ff, query.getGroup());
+            Filter filter = getFilter(ff, searchQuery.getGroup());
 
             // Convert Properties
-            PropertyName[] properties = new PropertyName[query.getPropertyNames().size()];
-            for (int ii = 0; ii < query.getPropertyNames().size(); ii++)
+            List<PropertyName> properties = new ArrayList<>();
+            for (int ii = 0; ii < searchQuery.getPropertyNames().size(); ii++)
             {
-                properties[ii] = CoalescePropertyFactory.getFilterFactory().property(query.getPropertyNames().get(ii));
+                properties.add(CoalescePropertyFactory.getFilterFactory().property(searchQuery.getPropertyNames().get(ii)));
             }
 
             // Convert Sort
-            SortBy[] sortBy = new SortBy[query.getSortBy().size()];
-            for (int ii = 0; ii < query.getSortBy().size(); ii++)
+            SortBy[] sortBy = new SortBy[searchQuery.getSortBy().size()];
+            for (int ii = 0; ii < searchQuery.getSortBy().size(); ii++)
             {
-                SortByType sort = query.getSortBy().get(ii);
+                SortByType sort = searchQuery.getSortBy().get(ii);
 
                 sortBy[ii] = CoalescePropertyFactory.getFilterFactory().sort(sort.getPropertyName(),
                                                                              SortOrder.valueOf(sort.getSortOrder().toString()));
             }
 
-            return client.search(filter, query.getPageNumber(), properties, sortBy, true);
+            Query query = new Query();
+            query.setFilter(filter);
+            query.setProperties(properties);
+            query.setSortBy(sortBy);
+            query.setStartIndex(searchQuery.getPageNumber());
+            query.setMaxFeatures(searchQuery.getPageSize());
 
+            return createResponse(framework.search(query), properties);
         }
         catch (CoalesceException e)
         {
@@ -127,20 +167,58 @@ public class SearchDataController {
         }
     }
 
-    public SearchDataObjectResponse searchOGC(QueryType query) throws RemoteException
+    private QueryResultType createResponse(SearchResults searchResults, List<PropertyName> properties)
+            throws CoalesceException
+    {
+        try (CachedRowSet rowset = searchResults.getResults())
+        {
+            QueryResultType results = new QueryResultType();
+            results.setTotal(BigInteger.valueOf(searchResults.getTotal()));
+
+            if (rowset.first())
+            {
+                // Obtain list of keys
+                do
+                {
+                    int idx = 1;
+
+                    HitType hit = new HitType();
+                    hit.setEntityKey(rowset.getString(idx++));
+
+                    if (properties != null)
+                    {
+                        for (int ii = idx; ii < properties.size() + idx; ii++)
+                        {
+                            hit.getValues().add(rowset.getString(ii));
+                        }
+                    }
+
+                    results.getHits().add(hit);
+                }
+                while (rowset.next());
+            }
+            return results;
+        }
+        catch (SQLException e)
+        {
+            throw new CoalesceException(e);
+        }
+    }
+
+    public QueryResultType searchOGC(QueryType searchQuery) throws RemoteException
     {
         // Convert Properties
-        PropertyName[] properties = new PropertyName[query.getPropertyNames().size()];
-        for (int ii = 0; ii < query.getPropertyNames().size(); ii++)
+        List<PropertyName> properties = new ArrayList<>();
+        for (int ii = 0; ii < searchQuery.getPropertyNames().size(); ii++)
         {
-            properties[ii] = CoalescePropertyFactory.getFilterFactory().property(query.getPropertyNames().get(ii));
+            properties.add(CoalescePropertyFactory.getFilterFactory().property(searchQuery.getPropertyNames().get(ii)));
         }
 
         // Convert Sort
-        SortBy[] sortBy = new SortBy[query.getSortBy().size()];
-        for (int ii = 0; ii < query.getSortBy().size(); ii++)
+        SortBy[] sortBy = new SortBy[searchQuery.getSortBy().size()];
+        for (int ii = 0; ii < searchQuery.getSortBy().size(); ii++)
         {
-            SortByType sort = query.getSortBy().get(ii);
+            SortByType sort = searchQuery.getSortBy().get(ii);
 
             sortBy[ii] = CoalescePropertyFactory.getFilterFactory().sort(sort.getPropertyName(),
                                                                          SortOrder.valueOf(sort.getSortOrder().toString()));
@@ -150,7 +228,7 @@ public class SearchDataController {
         Filter filter;
         try
         {
-            filter = FilterUtil.fromXml(query.getFilter());
+            filter = FilterUtil.fromXml(searchQuery.getFilter());
         }
         catch (SAXException | IOException | ParserConfigurationException e)
         {
@@ -158,9 +236,16 @@ public class SearchDataController {
         }
 
         // Execute Query
+        Query query = new Query();
+        query.setFilter(filter);
+        query.setProperties(properties);
+        query.setSortBy(sortBy);
+        query.setStartIndex(searchQuery.getPageNumber());
+        query.setMaxFeatures(searchQuery.getPageSize());
+
         try
         {
-            return client.search(filter, query.getPageNumber(), properties, sortBy, true);
+            return createResponse(framework.search(query), properties);
         }
         catch (CoalesceException e)
         {
@@ -168,7 +253,131 @@ public class SearchDataController {
         }
     }
 
-    private Filter getFilter(FilterFactory ff, SearchGroup group)
+    public Map<ECoalesceFieldDataTypes, Map<String, String>> getCapabilities() throws RemoteException
+    {
+        Map<ECoalesceFieldDataTypes, Map<String, String>> results = new HashMap<>();
+
+        // TODO Not Implemented
+
+        return results;
+    }
+
+    private class OperatorLabels implements Operator {
+
+        private String name;
+        private String label;
+
+        private OperatorLabels(String name, String label)
+        {
+            this.name = name;
+            this.label = label;
+        }
+
+        @Override
+        public String getName()
+        {
+            return name;
+        }
+
+        public String getLabel()
+        {
+            return label;
+        }
+
+    }
+
+    public Collection<Operator> getAllCapabilities() throws RemoteException
+    {
+        Collection<Operator> results = new HashSet<>();
+
+        if (capabilities.getScalarCapabilities() != null)
+        {
+            results.addAll(capabilities.getScalarCapabilities().getArithmeticOperators().getFunctions().getFunctionNames());
+            results.addAll(capabilities.getScalarCapabilities().getComparisonOperators().getOperators());
+        }
+
+        if (capabilities.getTemporalCapabilities() != null)
+        {
+            results.addAll(capabilities.getTemporalCapabilities().getTemporalOperators().getOperators());
+        }
+
+        if (capabilities.getSpatialCapabilities() != null)
+        {
+            results.addAll(capabilities.getSpatialCapabilities().getSpatialOperators().getOperators());
+        }
+
+        return results;
+    }
+
+    /**
+     * @return the capabilities of the underlying persister
+     * @throws RemoteException on error
+     */
+    public Collection<Operator> getComparisonCapabilities() throws RemoteException
+    {
+        Collection<Operator> results = new HashSet<>();
+
+        if (capabilities.getScalarCapabilities() != null)
+        {
+            results.addAll(capabilities.getScalarCapabilities().getComparisonOperators().getOperators());
+        }
+
+        return results;
+    }
+
+    public Collection<Operator> getFunctionCapabilities() throws RemoteException
+    {
+        Collection<Operator> results = new HashSet<>();
+
+        if (capabilities.getScalarCapabilities() != null)
+        {
+            results.addAll(capabilities.getScalarCapabilities().getArithmeticOperators().getFunctions().getFunctionNames());
+        }
+
+        return results;
+    }
+
+    public Collection<Operator> getTemporalCapabilities() throws RemoteException
+    {
+        Collection<Operator> results = new HashSet<>();
+
+        if (capabilities.getTemporalCapabilities() != null)
+        {
+            results.addAll(capabilities.getTemporalCapabilities().getTemporalOperators().getOperators());
+        }
+
+        return results;
+    }
+
+    public Collection<Operator> getSpatialCapabilities() throws RemoteException
+    {
+        Collection<Operator> results = new HashSet<>();
+
+        if (capabilities.getSpatialCapabilities() != null)
+        {
+            results.addAll(capabilities.getSpatialCapabilities().getSpatialOperators().getOperators());
+        }
+
+        return results;
+    }
+
+    public Collection<GeometryOperand> getGeometryCapabilities() throws RemoteException
+    {
+        Collection<GeometryOperand> results;
+
+        if (capabilities.getSpatialCapabilities() != null)
+        {
+            results = capabilities.getSpatialCapabilities().getGeometryOperands();
+        }
+        else
+        {
+            results = Collections.emptyList();
+        }
+
+        return results;
+    }
+
+    private Filter getFilter(FilterFactory2 ff, SearchGroup group) throws CoalesceException
     {
         List<Filter> filters = new ArrayList<>();
 
@@ -177,17 +386,80 @@ public class SearchDataController {
             filters.add(getFilter(ff, subgroup));
         }
 
+        LOGGER.debug("Criteria:");
+
         for (SearchCriteria criteria : group.getCriteria())
         {
             PropertyName property = CoalescePropertyFactory.getFieldProperty(criteria.getRecordset(), criteria.getField());
 
+            LOGGER.debug("\t{}.{} {} {}",
+                         criteria.getRecordset(),
+                         criteria.getField(),
+                         criteria.getComparer(),
+                         criteria.getValue());
+
             switch (criteria.getComparer())
             {
-            case "=":
+            case "=": // TODO Remove this legacy support
+            case PropertyIsEqualTo.NAME:
                 filters.add(ff.equal(property, ff.literal(criteria.getValue()), criteria.isMatchCase()));
                 break;
-            case "!=":
+            case PropertyIsGreaterThan.NAME:
+                filters.add(ff.greater(property, ff.literal(criteria.getValue()), criteria.isMatchCase()));
+                break;
+            case PropertyIsGreaterThanOrEqualTo.NAME:
+                filters.add(ff.greaterOrEqual(property, ff.literal(criteria.getValue()), criteria.isMatchCase()));
+                break;
+            case PropertyIsLessThan.NAME:
+                filters.add(ff.less(property, ff.literal(criteria.getValue()), criteria.isMatchCase()));
+                break;
+            case PropertyIsLessThanOrEqualTo.NAME:
+                filters.add(ff.lessOrEqual(property, ff.literal(criteria.getValue()), criteria.isMatchCase()));
+                break;
+            case "!=": // TODO Remove this legacy support
+            case PropertyIsNotEqualTo.NAME:
                 filters.add(ff.notEqual(property, ff.literal(criteria.getValue()), criteria.isMatchCase()));
+                break;
+            case PropertyIsLike.NAME:
+                filters.add(ff.like(property, criteria.getValue()));
+                break;
+            case PropertyIsBetween.NAME:
+                String[] values = criteria.getValue().split(" ");
+                if (values.length != 2)
+                {
+                    throw new CoalesceException(
+                            "Expected two values space separated '<from> <to>'; Actual: " + criteria.getValue());
+                }
+                filters.add(ff.between(property, ff.literal(values[0]), ff.literal(values[1])));
+                break;
+            case During.NAME:
+                String[] times = criteria.getValue().split(" ");
+                if (times.length != 2)
+                {
+                    throw new CoalesceException(
+                            "Expected two values space separated '<from> <to>'; Actual: " + criteria.getValue());
+                }
+
+                times[0] = times[0].replaceAll("\"", "");
+                times[1] = times[1].replaceAll("\"", "");
+
+                Instant start = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(times[0]).toDate()));
+                Instant end = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(times[1]).toDate()));
+
+                filters.add(ff.during(property, ff.literal(new DefaultPeriod(start, end))));
+                break;
+            case BBOX.NAME:
+                try
+                {
+                    WKTReader2 reader = new WKTReader2();
+                    ReferencedEnvelope bbox = new ReferencedEnvelope(reader.read(criteria.getValue()).getEnvelopeInternal(),
+                                                                     crs);
+                    filters.add(ff.bbox(property, bbox));
+                }
+                catch (ParseException e)
+                {
+                    throw new CoalesceException(e);
+                }
                 break;
             }
         }
@@ -199,9 +471,11 @@ public class SearchDataController {
         case "or":
             filter = ff.or(filters);
             break;
-        default:
+        case "and":
             filter = ff.and(filters);
             break;
+        default:
+            throw new CoalesceException("Invalid Operand: " + group.getBooleanComparer() + "; Expected (AND | OR)");
         }
 
         return filter;
