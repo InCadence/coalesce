@@ -57,7 +57,7 @@ public class SearchDataControllerTest {
         option.setRecordset(TestEntity.RECORDSET1);
         option.setField("boolean");
         option.setValue("false");
-        option.setComparer(PropertyIsEqualTo.NAME);
+        option.setOperator(PropertyIsEqualTo.NAME);
         option.setMatchCase(false);
 
         options.add(option);

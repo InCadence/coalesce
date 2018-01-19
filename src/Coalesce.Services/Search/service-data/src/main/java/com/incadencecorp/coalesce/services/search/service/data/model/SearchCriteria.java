@@ -23,7 +23,7 @@ public class SearchCriteria {
     private String key;
     private String recordset;
     private String field;
-    private String comparer;
+    private String operator;
     private String value;
     private boolean matchCase;
     
@@ -34,7 +34,7 @@ public class SearchCriteria {
     
     public void setKey(String key)
     {
-        this.key = recordset;
+        this.key = key;
     }
     
     public String getRecordset()
@@ -57,14 +57,14 @@ public class SearchCriteria {
         this.field = field;
     }
     
-    public String getComparer()
+    public String getOperator()
     {
-        return comparer;
+        return operator;
     }
     
-    public void setComparer(String comparer)
+    public void setOperator(String value)
     {
-        this.comparer = comparer;
+        this.operator = value;
     }
     
     public String getValue()

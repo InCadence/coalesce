@@ -108,7 +108,7 @@ public class SearchDataController {
         properties.add(CoalescePropertyFactory.getEntityTitle().getPropertyName());
 
         SearchGroup group = new SearchGroup();
-        group.setBooleanComparer("AND");
+        group.setOperator("AND");
         group.setCriteria(options);
 
         SearchQuery query = new SearchQuery();
@@ -262,30 +262,6 @@ public class SearchDataController {
         return results;
     }
 
-    private class OperatorLabels implements Operator {
-
-        private String name;
-        private String label;
-
-        private OperatorLabels(String name, String label)
-        {
-            this.name = name;
-            this.label = label;
-        }
-
-        @Override
-        public String getName()
-        {
-            return name;
-        }
-
-        public String getLabel()
-        {
-            return label;
-        }
-
-    }
-
     public Collection<Operator> getAllCapabilities() throws RemoteException
     {
         Collection<Operator> results = new HashSet<>();
@@ -395,10 +371,10 @@ public class SearchDataController {
             LOGGER.debug("\t{}.{} {} {}",
                          criteria.getRecordset(),
                          criteria.getField(),
-                         criteria.getComparer(),
+                         criteria.getOperator(),
                          criteria.getValue());
 
-            switch (criteria.getComparer())
+            switch (criteria.getOperator())
             {
             case "=": // TODO Remove this legacy support
             case PropertyIsEqualTo.NAME:
@@ -466,7 +442,7 @@ public class SearchDataController {
 
         Filter filter;
 
-        switch (group.getBooleanComparer().toLowerCase())
+        switch (group.getOperator().toLowerCase())
         {
         case "or":
             filter = ff.or(filters);
@@ -475,7 +451,7 @@ public class SearchDataController {
             filter = ff.and(filters);
             break;
         default:
-            throw new CoalesceException("Invalid Operand: " + group.getBooleanComparer() + "; Expected (AND | OR)");
+            throw new CoalesceException("Invalid Operand: " + group.getOperator() + "; Expected (AND | OR)");
         }
 
         return filter;
