@@ -43,6 +43,10 @@
 					<artifactId>metadata-extractor</artifactId>
 				</exclusion>
 				<exclusion>
+					<groupId>com.vividsolutions</groupId>
+					<artifactId>jts</artifactId>
+				</exclusion>
+				<exclusion>
 					<artifactId>jaxb2-basics</artifactId>
 					<groupId>*</groupId>
 				</exclusion>
