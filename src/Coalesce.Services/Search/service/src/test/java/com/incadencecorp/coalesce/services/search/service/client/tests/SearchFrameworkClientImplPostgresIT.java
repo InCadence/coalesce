@@ -17,10 +17,6 @@
 
 package com.incadencecorp.coalesce.services.search.service.client.tests;
 
-import java.nio.file.Paths;
-
-import org.junit.BeforeClass;
-
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLSettings;
@@ -28,10 +24,13 @@ import com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClie
 import com.incadencecorp.coalesce.services.search.api.test.AbstractSearchTests;
 import com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
+import org.junit.BeforeClass;
+
+import java.nio.file.Paths;
 
 /**
  * These unit test ensure correct behavior of the CRUD server.
- * 
+ *
  * @author Derek Clemenzi
  */
 public class SearchFrameworkClientImplPostgresIT extends AbstractSearchTests {
@@ -41,16 +40,14 @@ public class SearchFrameworkClientImplPostgresIT extends AbstractSearchTests {
     {
         FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
         connector.setReadOnly(true);
-        
+
         PostGreSQLSettings.setConnector(connector);
 
-        
-//        MockSearchPersister persistor = new MockSearchPersister();
-        PostGreSQLPersistorExt persistor = new PostGreSQLPersistorExt(); 
-        
+        PostGreSQLPersistorExt persistor = new PostGreSQLPersistorExt();
+
         CoalesceFramework framework = new CoalesceFramework();
         framework.setAuthoritativePersistor(persistor);
-        
+
         crud = new CrudFrameworkClientImpl(framework);
         client = new SearchFrameworkClientImpl(persistor);
     }

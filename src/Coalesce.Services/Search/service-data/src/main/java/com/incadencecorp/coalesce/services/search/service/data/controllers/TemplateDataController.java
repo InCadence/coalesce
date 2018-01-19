@@ -48,12 +48,12 @@ public class TemplateDataController {
     private static final String COALESCEENTITY_KEY = CoalesceEntity.class.getSimpleName();
 
     private final Map<String, TemplateNode> templates = new HashMap<>();
-    private CoalesceFramework framework;
+    private final CoalesceFramework framework;
 
     /**
      * Production Constructor
      *
-     * @param framework
+     * @param framework used for reading, saving, and registering templates.
      */
     public TemplateDataController(CoalesceFramework framework)
     {
@@ -96,7 +96,6 @@ public class TemplateDataController {
                 catch (CoalescePersistorException e)
                 {
                     String errorMsg = String.format(CoalesceErrors.INVALID_OBJECT,
-                                                    CoalesceEntityTemplate.class.getSimpleName(),
                                                     meta.getKey(),
                                                     e.getMessage());
 
@@ -110,17 +109,18 @@ public class TemplateDataController {
                     }
                 }
             }
-
-            this.framework = framework;
         }
         catch (CoalescePersistorException e)
         {
             LOGGER.error(String.format(CoalesceErrors.NOT_INITIALIZED, TemplateDataController.class.getSimpleName()), e);
         }
+
+        this.framework = framework;
     }
 
     /**
      * @return a list of templates registered with this service.
+     * @throws RemoteException on error
      */
     public List<ObjectMetaData> getEntityTemplateMetadata() throws RemoteException
     {
@@ -153,8 +153,9 @@ public class TemplateDataController {
     }
 
     /**
-     * @param key
+     * @param key recordset's key
      * @return a list of record sets for the provided template key.
+     * @throws RemoteException on error
      */
     public List<CoalesceObjectImpl> getRecordSets(String key) throws RemoteException
     {
@@ -181,9 +182,10 @@ public class TemplateDataController {
     }
 
     /**
-     * @param key
-     * @param recordsetKey
+     * @param key field's key
+     * @param recordsetKey recordset's key
      * @return a list of fields for the provided record set key.
+     * @throws RemoteException on error
      */
     public List<FieldData> getRecordSetFields(String key, String recordsetKey) throws RemoteException
     {
@@ -229,6 +231,13 @@ public class TemplateDataController {
         return results;
     }
 
+    /**
+     * @param name template's name
+     * @param source template's source
+     * @param version template's version
+     * @return an entity created by the template specified by the provided arguments.
+     * @throws RemoteException on error
+     */
     public CoalesceEntity getTemplate(String name, String source, String version) throws RemoteException
     {
         CoalesceEntity result = null;
@@ -259,8 +268,9 @@ public class TemplateDataController {
     }
 
     /**
-     * @param key
+     * @param key template's key
      * @return the {@link CoalesceEntityTemplate} for the specified key.
+     * @throws RemoteException on error
      */
     public CoalesceEntity getTemplate(String key) throws RemoteException
     {
@@ -307,9 +317,10 @@ public class TemplateDataController {
     /**
      * Saves the specified template.
      *
-     * @param key    template's key
-     * @param entity
+     * @param key template's key
+     * @param entity in which the template should be derived
      * @return whether or not it was successfully saved.
+     * @throws RemoteException on error
      */
     public boolean setTemplate(String key, CoalesceEntity entity) throws RemoteException
     {
@@ -345,6 +356,7 @@ public class TemplateDataController {
      * @param key  template's key
      * @param json template in json format
      * @return whether or not it was successfully saved.
+     * @throws RemoteException on error
      */
     public boolean setTemplateJson(String key, String json) throws RemoteException
     {
@@ -387,7 +399,6 @@ public class TemplateDataController {
         }
         catch (CoalescePersistorException e)
         {
-            // TODO Use CoalesceErrors
             error("Registeration Failed", e);
         }
 

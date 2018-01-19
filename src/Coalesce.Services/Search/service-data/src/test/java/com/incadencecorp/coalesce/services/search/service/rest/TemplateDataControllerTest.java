@@ -19,7 +19,6 @@ package com.incadencecorp.coalesce.services.search.service.rest;
 
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.*;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.services.search.service.data.controllers.TemplateDataController;
 import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
@@ -165,20 +164,20 @@ public class TemplateDataControllerTest {
 
         Assert.assertTrue(fieldResults.size() > 0);
 
+        controller.deleteTemplate(template.getKey());
+
     }
 
     private TemplateDataController createController() throws Exception
     {
-        ICoalescePersistor persistor = new DerbyPersistor();
-
         TestEntity entity = new TestEntity();
         entity.initialize();
 
         CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
-        persistor.saveTemplate(template, null);
 
         CoalesceFramework framework = new CoalesceFramework();
-        framework.setAuthoritativePersistor(persistor);
+        framework.setAuthoritativePersistor(new DerbyPersistor());
+        framework.saveCoalesceEntityTemplate(template);
 
         TemplateDataController controller = new TemplateDataController(framework);
         Assert.assertNotNull(controller.getTemplate(template.getKey()));

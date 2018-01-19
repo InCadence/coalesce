@@ -1105,7 +1105,19 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     @Override
     public void deleteTemplate(String... keys) throws CoalescePersistorException
     {
-        throw new CoalescePersistorException("Not Implemented");
+        try (CoalesceDataConnectorBase conn = this.getDataConnector())
+        {
+            String sql = "DELETE  FROM " + getSchemaPrefix() + "CoalesceEntityTemplate WHERE " + COLUMNS.getKey() + "=?";
+
+            for (String key : keys)
+            {
+                conn.executeUpdate(sql, new CoalesceParameter(key, Types.CHAR));
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new CoalescePersistorException(e);
+        }
     }
 
     @Override
@@ -1265,11 +1277,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     @Override
     public Capabilities getSearchCapabilities()
     {
-        Capabilities capability = new Capabilities();
-        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
-        capability.addAll(Capabilities.LOGICAL);
-
-        return capability;
+        return DerbyCoalescePreparedFilter.createCapabilities();
     }
 
     /**

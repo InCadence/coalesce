@@ -25,6 +25,7 @@ import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import org.geotools.data.Query;
+import org.geotools.filter.Capabilities;
 
 import java.util.concurrent.ExecutorService;
 
@@ -65,6 +66,16 @@ public class CoalesceSearchFramework extends CoalesceFramework {
         }
 
         return results;
+    }
+
+    /**
+     * @return the capabilities of the defined search persister.
+     */
+    public Capabilities getCapabilities()
+    {
+        ICoalesceSearchPersistor persistor = getSearchPersistor();
+
+        return (persistor == null) ? new Capabilities() : persistor.getSearchCapabilities();
     }
 
     /**

@@ -23,6 +23,7 @@ import com.incadencecorp.coalesce.framework.datamodel.*;
 import org.geotools.factory.CommonFactoryFinder;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
 
 /**
@@ -32,7 +33,7 @@ import org.opengis.filter.expression.PropertyName;
  */
 public class CoalescePropertyFactory {
 
-    private static FilterFactory ff;
+    private static FilterFactory2 ff;
 
     private static final String SEPERATOR = ".";
     private static final String COALESCE_ENTITY_TABLE = "coalesceentity" + SEPERATOR;
@@ -43,7 +44,7 @@ public class CoalescePropertyFactory {
      *
      * @param value
      */
-    public final static void initialize(FilterFactory value)
+    public final static void initialize(FilterFactory2 value)
     {
         ff = value;
     }
@@ -51,7 +52,7 @@ public class CoalescePropertyFactory {
     /**
      * @return the filter factory that this class has been initialized with.
      */
-    public final static FilterFactory getFilterFactory()
+    public final static FilterFactory2 getFilterFactory()
     {
 
         if (ff == null)

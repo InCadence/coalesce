@@ -70,7 +70,7 @@ public final class FilterUtil {
         /**
          * Uses a Filter Transformer instead.
          */
-        CUSTOM;
+        CUSTOM
 
     }
 

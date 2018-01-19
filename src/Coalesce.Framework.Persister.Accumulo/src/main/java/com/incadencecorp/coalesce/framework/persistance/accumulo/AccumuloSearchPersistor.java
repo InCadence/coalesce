@@ -33,7 +33,12 @@ import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.Capabilities;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.PropertyIsLike;
+import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.spatial.*;
+import org.opengis.filter.temporal.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,8 +107,8 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
 
         query.setProperties(properties);
 
-        CachedRowSet rowset = null;
-        int total = 0;
+        CachedRowSet rowset;
+        int total;
 
         // Re-write query parameters
         AccumuloQueryRewriter2 nameChanger = new AccumuloQueryRewriter2(getNormalizer());
@@ -210,9 +215,43 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
     public Capabilities getSearchCapabilities()
     {
         Capabilities capability = new Capabilities();
-        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
         capability.addAll(Capabilities.LOGICAL);
+        capability.addAll(Capabilities.LOGICAL_OPENGIS);
+        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
+        capability.addAll(Capabilities.SIMPLE_COMPARISONS_OPENGIS);
+        capability.addType(PropertyIsNull.class);
+        capability.addType(PropertyIsLike.class);
+        capability.addType(PropertyIsBetween.class);
+
+        // TODO Implement Functions
+        // capability.addName(ListSearchFunction.NAME.getName(),
+        // ListSearchFunction.NAME.getArgumentCount());
+
+        // temporal filters
+        capability.addType(After.class);
+        capability.addType(Before.class);
+        capability.addType(Begins.class);
+        capability.addType(BegunBy.class);
+        capability.addType(During.class);
+        capability.addType(Ends.class);
+        capability.addType(EndedBy.class);
+        capability.addType(TContains.class);
+        capability.addType(TEquals.class);
+
+        // Adding the spatial filters support
+        capability.addType(BBOX.class);
+        capability.addType(Contains.class);
+        capability.addType(Crosses.class);
+        capability.addType(Disjoint.class);
+        capability.addType(Equals.class);
+        capability.addType(Intersects.class);
+        capability.addType(Overlaps.class);
+        capability.addType(Touches.class);
+        capability.addType(Within.class);
+        capability.addType(DWithin.class);
+        capability.addType(Beyond.class);
 
         return capability;
     }
+
 }
