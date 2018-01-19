@@ -106,7 +106,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      */
     public CoalesceFramework()
     {
-        this((ExecutorService) null);
+        this(null);
     }
 
     /**
