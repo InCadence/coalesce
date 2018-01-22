@@ -58,7 +58,7 @@ function promptForTemplate() {
                   tabledata={[{
                     recordset: 'CoalesceEntity',
                     field: 'name',
-                    comparer: '=',
+                    operator: '=',
                     value: template.name,
                     matchCase: true
                   }]}
@@ -75,7 +75,7 @@ function promptForTemplate() {
             tabledata={[{
               recordset: 'CoalesceEntity',
               field: 'name',
-              comparer: '=',
+              operator: '=',
               value: cache[value].name,
               matchCase: true
             }]}
@@ -158,7 +158,7 @@ function searchComplex(data, e) {
     "pageNumber": 1,
     "propertyNames": [],
     "group": {
-      "booleanComparer": "AND",
+      "operator": "AND",
       "criteria": data
     }
   };
@@ -188,24 +188,13 @@ function searchComplex(data, e) {
 
 function renderResults(data, properties) {
   Popup.close();
-  if (data.result[0].status === "SUCCESS") {
     ReactDOM.render(
             <SearchResults
-              data={data.result[0].result}
+              data={data}
               properties={properties}
               url={karafRootAddr}
             />,
     document.getElementById('results'));
-  } else {
-    Popup.create({
-        title: 'Error',
-        content: data.result[0].error,
-        className: 'alert',
-        buttons: {
-            right: ['ok']
-        }
-    }, true);
-  }
 }
 
 ReactDOM.render(
@@ -313,7 +302,7 @@ function searchOGC(data, e) {
   }
 
   data.forEach(function (criteria) {
-    switch (criteria.comparer) {
+    switch (criteria.operator) {
       case "=":
         body.push("<ogc:PropertyIsEqualTo matchCase=\"" + criteria.matchCase + "\">");
         body.push(" <ogc:PropertyName>" + criteria.recordset + "." + criteria.field +  "</ogc:PropertyName>");

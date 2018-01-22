@@ -18,15 +18,22 @@
 
 package com.incadencecorp.coalesce.search;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.EResultStatus;
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
-import com.incadencecorp.unity.common.IConfigurationsConnector;
+import com.incadencecorp.coalesce.search.jobs.CoalesceSearchJob;
 import org.geotools.data.Query;
 import org.geotools.filter.Capabilities;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -42,7 +49,7 @@ public class CoalesceSearchFramework extends CoalesceFramework {
      */
     public CoalesceSearchFramework()
     {
-        super();
+        this(null);
     }
 
     /**
@@ -55,14 +62,66 @@ public class CoalesceSearchFramework extends CoalesceFramework {
         super(service);
     }
 
+    /**
+     * Executes a singular query
+     *
+     * @param query to execute
+     * @return the results of executing the provided query.
+     * @throws CoalescePersistorException on error
+     */
     public SearchResults search(Query query) throws CoalescePersistorException
     {
-        SearchResults results = null;
+        return searchBulk(query).get(0);
+    }
+
+    /**
+     * Executes multiple queries in parallel.
+     *
+     * @param query to execute
+     * @return the results of executing the provided query.
+     * @throws CoalescePersistorException on error
+     */
+    public List<SearchResults> searchBulk(Query... query) throws CoalescePersistorException
+    {
+        List<SearchResults> results = null;
         ICoalesceSearchPersistor persistor = getSearchPersistor();
 
         if (persistor != null)
         {
-            results = persistor.search(query);
+            try
+            {
+                CoalesceSearchJob job = new CoalesceSearchJob(Arrays.asList(query));
+                job.setTarget(persistor);
+                job.setExecutor(this);
+
+                ICoalesceResponseType<List<SearchResults>> response = submit(job).get();
+
+                if (response.getStatus() != EResultStatus.SUCCESS)
+                {
+                    throw new CoalescePersistorException(response.getError());
+                }
+                else
+                {
+                    results = response.getResult();
+                }
+            }
+            catch (InterruptedException | ExecutionException e)
+            {
+                throw new CoalescePersistorException(e);
+            }
+        }
+        else
+        {
+            results = new ArrayList<>();
+
+            for (int ii = 0; ii < query.length; ii++)
+            {
+                SearchResults result = new SearchResults();
+                result.setStatus(EResultStatus.FAILED);
+                result.setError(String.format(CoalesceErrors.NOT_INITIALIZED,
+                                              ICoalesceSearchPersistor.class.getSimpleName()));
+                results.add(new SearchResults());
+            }
         }
 
         return results;
@@ -81,7 +140,7 @@ public class CoalesceSearchFramework extends CoalesceFramework {
     /**
      * @return the authoritative persistor if it implements {@link ICoalesceSearchPersistor} or the first secondary persistor that does if available.
      */
-    protected ICoalesceSearchPersistor getSearchPersistor()
+    private ICoalesceSearchPersistor getSearchPersistor()
     {
         ICoalesceSearchPersistor result = null;
         ICoalescePersistor persistor = getAuthoritativePersistor();

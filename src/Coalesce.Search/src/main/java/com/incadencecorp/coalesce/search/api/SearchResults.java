@@ -17,9 +17,11 @@
 
 package com.incadencecorp.coalesce.search.api;
 
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
+
 import javax.sql.rowset.CachedRowSet;
 
-public class SearchResults {
+public class SearchResults extends CoalesceResponseType<CachedRowSet> {
 
     private CachedRowSet results;
     private int page;
