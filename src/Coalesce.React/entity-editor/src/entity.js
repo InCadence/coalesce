@@ -72,7 +72,7 @@ export class EntityView extends React.Component {
         {linkages}
         {sections}
         <div className="form-buttons">
-          <img src={require('common-components/img/save.ico')} alt="Save" title="Save Changes" className="coalesce-img-button enabled" onClick={this.onSave.bind(this)}/>
+          <img src='/images/svg/save.svg' alt="Save" title="Save Changes" className="coalesce-img-button enabled" onClick={this.onSave.bind(this)}/>
         </div>
       </div>
     )

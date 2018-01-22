@@ -52,13 +52,10 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistor2.class);
 
-    private final boolean useCompression;
     private AccumuloFeatureIterator iterator = null;
 
     /**
      * Default constructor using {@link AccumuloSettings} for configuration
-     *
-     * @throws CoalescePersistorException
      */
     public AccumuloPersistor2()
     {
@@ -84,15 +81,6 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
     public AccumuloPersistor2(ExecutorService service, Map<String, String> params)
     {
         super(service, params);
-
-        if (params.containsKey(AccumuloDataConnector.USE_COMPRESSION))
-        {
-            useCompression = Boolean.parseBoolean(params.get(AccumuloDataConnector.USE_COMPRESSION));
-        }
-        else
-        {
-            useCompression = false;
-        }
     }
 
     @Override
@@ -115,7 +103,7 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
                 if (!allowRemoval || entity.getStatus() != ECoalesceObjectStatus.DELETED)
                 {
                     // Persist XML
-                    MutationWrapperFactory mfactory = new MutationWrapperFactory(useCompression);
+                    MutationWrapperFactory mfactory = new MutationWrapperFactory(isCompressionEnabled());
                     MutationWrapper mutationGuy = mfactory.createMutationGuy(entity);
 
                     entityMutations.add(mutationGuy.getMutation());

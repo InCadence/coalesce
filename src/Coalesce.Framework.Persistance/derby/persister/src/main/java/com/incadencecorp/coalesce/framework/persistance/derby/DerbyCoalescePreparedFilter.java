@@ -16,70 +16,6 @@
  -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.framework.persistance.derby;
 
-import static org.geotools.filter.capability.FunctionNameImpl.parameter;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import org.geotools.data.jdbc.FilterToSQL;
-import org.geotools.data.jdbc.FilterToSQLException;
-import org.geotools.data.postgis.PostGISPSDialect;
-import org.geotools.data.postgis.PostgisPSFilterToSql;
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.filter.Capabilities;
-import org.geotools.filter.FunctionImpl;
-import org.geotools.filter.capability.FunctionNameImpl;
-import org.geotools.jdbc.JDBCDataStore;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.filter.BinaryComparisonOperator;
-import org.opengis.filter.ExcludeFilter;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.Id;
-import org.opengis.filter.IncludeFilter;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.PropertyIsNotEqualTo;
-import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.expression.BinaryExpression;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.spatial.BBOX;
-import org.opengis.filter.spatial.Beyond;
-import org.opengis.filter.spatial.BinarySpatialOperator;
-import org.opengis.filter.spatial.Contains;
-import org.opengis.filter.spatial.Crosses;
-import org.opengis.filter.spatial.DWithin;
-import org.opengis.filter.spatial.Disjoint;
-import org.opengis.filter.spatial.DistanceBufferOperator;
-import org.opengis.filter.spatial.Equals;
-import org.opengis.filter.spatial.Intersects;
-import org.opengis.filter.spatial.Overlaps;
-import org.opengis.filter.spatial.Touches;
-import org.opengis.filter.spatial.Within;
-import org.opengis.filter.temporal.After;
-import org.opengis.filter.temporal.Before;
-import org.opengis.filter.temporal.Begins;
-import org.opengis.filter.temporal.BegunBy;
-import org.opengis.filter.temporal.During;
-import org.opengis.filter.temporal.EndedBy;
-import org.opengis.filter.temporal.Ends;
-import org.opengis.filter.temporal.TContains;
-import org.opengis.filter.temporal.TEquals;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
@@ -91,6 +27,33 @@ import com.incadencecorp.coalesce.search.api.EFilterEnumerationModes;
 import com.incadencecorp.coalesce.search.api.ICoalesceExpressionVistor;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotools.data.jdbc.FilterToSQL;
+import org.geotools.data.jdbc.FilterToSQLException;
+import org.geotools.data.postgis.PostGISPSDialect;
+import org.geotools.data.postgis.PostgisPSFilterToSql;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.filter.Capabilities;
+import org.geotools.filter.FunctionImpl;
+import org.geotools.filter.capability.FunctionNameImpl;
+import org.geotools.jdbc.JDBCDataStore;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.filter.*;
+import org.opengis.filter.expression.*;
+import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.spatial.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import static org.geotools.filter.capability.FunctionNameImpl.parameter;
 
 /**
  * This class creates the SQL statements to perform structured searches against
@@ -117,7 +80,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     /**
      * Param 1 = Enumeration Index Param 2 = Enumeration Type Param 3 =
      * Enumeration Field
-     * 
+     * <p>
      * TODO Enumeration joins need to be reworked.
      */
     private static final String SQL_ENUMVALUE_JOIN = " LEFT JOIN coalesce.enumvalue AS E%1$s ON E%1$s.enumtype=lower('%2$s') AND %3$s = E%1$s.ordering";
@@ -717,9 +680,11 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
         }
     }
 
-    private Class<?> getPropertyContext(PropertyName name) {
+    private Class<?> getPropertyContext(PropertyName name)
+    {
 
-        AttributeDescriptor attType = (AttributeDescriptor) filterFactory.property(NORMALIZER.normalize(name.getPropertyName())).evaluate(featureType);
+        AttributeDescriptor attType = (AttributeDescriptor) filterFactory.property(NORMALIZER.normalize(name.getPropertyName())).evaluate(
+                featureType);
         Class<?> context = null;
 
         if (attType != null)
@@ -914,9 +879,8 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
                 // check if String literal is a geometry value
                 if (literalStr.toUpperCase().startsWith("POINT") || literalStr.toUpperCase().startsWith("MULTIPOINT")
-                        || literalStr.toUpperCase().startsWith("POLYGON")
-                        || literalStr.toUpperCase().startsWith("MULTIPOLYGON")
-                        || literalStr.toUpperCase().startsWith("LINESTRING")
+                        || literalStr.toUpperCase().startsWith("POLYGON") || literalStr.toUpperCase().startsWith(
+                        "MULTIPOLYGON") || literalStr.toUpperCase().startsWith("LINESTRING")
                         || literalStr.toUpperCase().startsWith("MULITILINESTRING"))
                 {
                     out.write(String.format(ST_FROM_TEXT, currentSRID));
@@ -1039,59 +1003,18 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     }
 
     /**
-     * Overriding the createFilterCapabilities() which returns deprecated
-     * FilterCapabilities object
-     *
-     * @return
+     * @return the capabilities of this implementation.
      */
-    protected Capabilities createCapabilities()
+    public static Capabilities createCapabilities()
     {
-
         Capabilities capability = new Capabilities();
-
-        capability.addAll(Capabilities.LOGICAL_OPENGIS);
-        capability.addAll(Capabilities.SIMPLE_COMPARISONS_OPENGIS);
-        capability.addAll(Capabilities.LOGICAL);
         capability.addAll(Capabilities.SIMPLE_COMPARISONS);
+        capability.addAll(Capabilities.LOGICAL);
         capability.addType(PropertyIsNull.class);
-        capability.addType(PropertyIsBetween.class);
-        capability.addType(Id.class);
-        capability.addType(IncludeFilter.class);
-        capability.addType(ExcludeFilter.class);
-        // TODO Implement Functions
-        // capability.addName(ListSearchFunction.NAME.getName(),
-        // ListSearchFunction.NAME.getArgumentCount());
-
-        // temporal filters
-        capability.addType(After.class);
-        capability.addType(Before.class);
-        capability.addType(Begins.class);
-        capability.addType(BegunBy.class);
-        capability.addType(During.class);
-        capability.addType(Ends.class);
-        capability.addType(EndedBy.class);
-        capability.addType(TContains.class);
-        capability.addType(TEquals.class);
-
-        // Adding PropertyIsLike to filter capabilities
         capability.addType(PropertyIsLike.class);
-        capability.addType(PropertyIsLessThanOrEqualTo.class);
-
-        // Adding the spatial filters support
-        capability.addType(BBOX.class);
-        capability.addType(Contains.class);
-        capability.addType(Crosses.class);
-        capability.addType(Disjoint.class);
-        capability.addType(Equals.class);
-        capability.addType(Intersects.class);
-        capability.addType(Overlaps.class);
-        capability.addType(Touches.class);
-        capability.addType(Within.class);
-        capability.addType(DWithin.class);
-        capability.addType(Beyond.class);
+        capability.addType(PropertyIsBetween.class);
 
         return capability;
-
     }
 
     /**
@@ -1175,14 +1098,14 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
             {
                 // from = currentTable;
                 sb.append(" LEFT JOIN " + currentTable + " ON " + currentTable + "." + column
-                        + "=coalesce.coalesceentity.objectkey");
+                                  + "=coalesce.coalesceentity.objectkey");
 
             }
             else
             {
                 // Create Join
                 sb.append(" LEFT JOIN " + currentTable + " ON " + currentTable + "." + column + "="
-                        + "coalesceentity.objectkey");
+                                  + "coalesceentity.objectkey");
             }
 
             lastTable = currentTable;
@@ -1202,7 +1125,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
     /**
      * @return the columns that should be returned as a part of the query w/o a
-     *         postfix.
+     * postfix.
      */
     public String getColumns()
     {
@@ -1223,7 +1146,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
             for (String column : propertyNameList)
             {
                 String normalizedColumn = column.replaceAll("coalesce\\.|[.\"]", "");
-                
+
                 if (isEnumeration(column))
                 {
                     column = String.format(getEnumProperty(), enumList.indexOf(column)) + " AS " + normalizedColumn;
@@ -1248,7 +1171,8 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
         if (CoalesceTemplateUtil.getDataTypes().containsKey(name))
         {
-            switch (CoalesceTemplateUtil.getDataTypes().get(name)) {
+            switch (CoalesceTemplateUtil.getDataTypes().get(name))
+            {
             case ENUMERATION_TYPE:
                 isEnumerationType = true;
 

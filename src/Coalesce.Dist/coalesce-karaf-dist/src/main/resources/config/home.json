@@ -1,0 +1,92 @@
+{
+  "banner": "/images/banner.svg",
+  "groups": [
+    {
+      "cards": [
+        {
+          "img": "/images/svg/search.svg",
+          "name": "Search",
+          "url": "/search",
+          "desc": "Find Coalesce entities matching your criteria."
+        },
+        {
+          "img": "/images/svg/edit.svg",
+          "name": "Editor",
+          "url": "/entityeditor",
+          "desc": "Edit or create new Coalesce entities."
+        },
+        {
+          "img": "/images/svg/template.svg",
+          "name": "Templates",
+          "url": "/templates",
+          "desc": "Editor or create new templates for Coalesce entities."
+        },
+        {
+          "img": "/images/svg/map.svg",
+          "name": "Map",
+          "url": "/map",
+          "desc": "Visualize different layers provided by a Geo Server fed from a Coalesce database."
+        }
+      ],
+      "name": "Application"
+    },
+    {
+      "cards": [
+        {
+          "img": "/images/svg/api.svg",
+          "name": "REST API",
+          "url": "https://github.com/InCadence/coalesce/wiki/REST-API",
+          "desc": "View Coalesce's REST API to integrate your applications."
+        },
+        {
+          "img": "/images/svg/deploy.svg",
+          "name": "Deployment",
+          "url": "https://github.com/InCadence/coalesce/wiki/Karaf-Distribution",
+          "desc": "View how to deploy and run a Coalesce server."
+        },
+        {
+          "img": "/images/svg/java-docs.svg",
+          "name": "Java Docs",
+          "url": "/javadocs",
+          "desc": "Generated code documentation."
+        },
+        {
+          "img": "/images/svg/code.svg",
+          "name": "Source Code",
+          "url": "https://github.com/InCadence/coalesce",
+          "desc": "Download and contribute to the open source project."
+        }
+      ],
+      "name": "Documentation"
+    },
+    {
+      "cards": [
+        {
+          "img": "/images/svg/json.svg",
+          "name": "JSON",
+          "url": "/jsoneditor",
+          "desc": "Update JSON configuration files."
+        },
+        {
+          "img": "/images/svg/settings.svg",
+          "name": "Settings",
+          "url": "/settings",
+          "desc": "Configure server defined client properties."
+        },
+        {
+          "img": "/images/svg/manager.svg",
+          "name": "Manager",
+          "url": "/manager",
+          "desc": "Visualize how the services within this container are wired together."
+        },
+        {
+          "img": "/images/svg/enum.svg",
+          "name": "Enumerations",
+          "url": "/enumerations",
+          "desc": "Create and edit enumerations used by Coalesce."
+        }
+      ],
+      "name": "Configuration"
+    }
+  ]
+}

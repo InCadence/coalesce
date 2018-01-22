@@ -46,6 +46,7 @@ public class ShutdownAutoCloseable<T extends AutoCloseable> implements Runnable 
     {
         try
         {
+            LOGGER.info("Shutdown Hook Invoked for {}", service.getClass().getSimpleName());
             service.close();
         }
         catch (Exception e)

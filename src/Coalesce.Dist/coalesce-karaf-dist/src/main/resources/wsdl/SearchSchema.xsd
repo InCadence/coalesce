@@ -14,8 +14,7 @@
 	targetNamespace="http://api.services.coalesce.incadencecorp.com/search"
 	xmlns:tns="http://api.services.coalesce.incadencecorp.com/search"
 	xmlns:cmn="http://api.services.coalesce.incadencecorp.com/common"
-	xmlns:dmn="http://framework.coalesce.incadencecorp.com/datamodel"
-	xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:enn="http://coalesce.incadencecorp.com/api"
+	xmlns:enn="http://coalesce.incadencecorp.com/api"
 	elementFormDefault="qualified">
 
 	<xs:import namespace="http://api.services.coalesce.incadencecorp.com/common"
@@ -24,92 +23,77 @@
 	<xs:import namespace="http://framework.coalesce.incadencecorp.com/datamodel"
 		schemaLocation="DataModelEnumerations.xsd" />
 
-	<!-- <xs:import namespace="http://www.opengis.net/fes/2.0" -->
-	<!-- schemaLocation="fes/2.0.0/filter.xsd" /> -->
+    <xs:complexType name="SearchDataObjectRequest">
+        <xs:complexContent>
+            <xs:extension base="cmn:BaseRequest">
+                <xs:sequence>
+                    <xs:element name="query" minOccurs="1" maxOccurs="unbounded" type="tns:QueryType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
-	<xs:complexType name="SearchDataObjectRequest">
-		<xs:complexContent>
-			<xs:extension base="cmn:BaseRequest">
-				<xs:sequence>
-					<xs:element name="query" minOccurs="1" maxOccurs="unbounded"
-						type="tns:QueryType" />
-				</xs:sequence>
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
+    <xs:complexType name="QueryType">
+        <xs:sequence>
+            <xs:element name="filter" type="xs:string" nillable="false"/>
+            <xs:element name="pageSize" type="xs:int" default="200"/>
+            <xs:element name="pageNumber" type="xs:int" default="1"/>
+            <xs:element name="sortBy" type="tns:SortByType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="propertyNames" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="QueryType">
-		<xs:sequence>
-			<xs:element name="filter" type="xs:string" nillable="false" />
-			<xs:element name="pageSize" type="xs:int" default="200" />
-			<xs:element name="pageNumber" type="xs:int" default="1" />
-			<xs:element name="includeHidden" type="xs:boolean"
-				default="false" />
-			<xs:element name="sortBy" type="tns:SortByType" minOccurs="0"
-				maxOccurs="unbounded" />
-			<xs:element name="propertyNames" type="xs:string"
-				minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="SortByType">
+        <xs:sequence>
+            <xs:element name="propertyName" type="xs:string"/>
+            <xs:element name="sortOrder" type="tns:ESortDirection"/>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="SortByType">
-		<xs:sequence>
-			<xs:element name="propertyName" type="xs:string" />
-			<xs:element name="sortOrder" type="tns:ESortDirection" />
-		</xs:sequence>
-	</xs:complexType>
+    <xs:simpleType name="ESortDirection">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DESC"/>
+            <xs:enumeration value="ASC"/>
+        </xs:restriction>
+    </xs:simpleType>
 
-	<xs:simpleType name="ESortDirection">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="DESC" />
-			<xs:enumeration value="ASC" />
-		</xs:restriction>
-	</xs:simpleType>
+    <!-- Response -->
 
-	<!-- Response -->
+    <xs:complexType name="SearchDataObjectResponse">
+        <xs:complexContent>
+            <xs:extension base="cmn:BaseResponse">
+                <xs:sequence>
+                    <xs:element name="result" type="tns:QueryResultsType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="query" type="tns:QueryType" nillable="false"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
-	<xs:complexType name="SearchDataObjectResponse">
-		<xs:complexContent>
-			<xs:extension base="cmn:BaseResponse">
-				<xs:sequence>
-					<xs:element name="result" type="tns:QueryResultsType"
-						minOccurs="0" maxOccurs="unbounded"></xs:element>
-					<xs:element name="query" type="tns:QueryType" nillable="false" />
-				</xs:sequence>
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
+    <xs:complexType name="QueryResultsType">
+        <xs:sequence>
+            <xs:element name="id" type="xs:string"/>
+            <xs:element name="status" type="enn:EResultStatus"/>
+            <xs:element name="error" type="xs:string"/>
+            <xs:element name="result" type="tns:QueryResultType"/>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="QueryResultsType">
-		<xs:sequence>
-			<xs:element name="id" type="xs:string"></xs:element>
-			<xs:element name="status" type="enn:EResultStatus"></xs:element>
-			<xs:element name="error" type="xs:string"></xs:element>
-			<xs:element name="result" type="tns:QueryResultType"></xs:element>
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="QueryResultType">
+        <xs:sequence>
+            <xs:element name="hits" type="tns:HitType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="total" type="xs:integer"/>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="QueryResultType">
-		<xs:sequence>
-			<xs:element name="hits" type="tns:HitType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="total" type="xs:integer" />
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="HitType">
+        <xs:sequence>
+            <xs:element name="entityKey" type="xs:string"/>
+            <xs:element name="values" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="HitType">
-		<xs:sequence>
-			<xs:element name="entityKey" type="xs:string" />
-			<xs:element name="title" type="xs:string" />
-			<xs:element name="name" type="xs:string" />
-			<xs:element name="source" type="xs:string" />
-			<xs:element name="type" type="xs:string" />
-			<xs:element name="excerpt" type="xs:string" />
-			<xs:element name="values" type="xs:string" minOccurs="0"
-				maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:element name="SearchDataObjectRequest" type="tns:SearchDataObjectRequest"></xs:element>
-	<xs:element name="SearchDataObjectResponse" type="tns:SearchDataObjectResponse"></xs:element>
+    <xs:element name="SearchDataObjectRequest" type="tns:SearchDataObjectRequest"/>
+    <xs:element name="SearchDataObjectResponse" type="tns:SearchDataObjectResponse"/>
 
 </xs:schema>

@@ -17,23 +17,18 @@
 
 package com.incadencecorp.coalesce.services.search.client.common;
 
-import javax.xml.transform.TransformerException;
-
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.search.filter.FilterUtil;
+import com.incadencecorp.coalesce.search.filter.FilterUtil.EConfiguration;
+import com.incadencecorp.coalesce.services.api.search.*;
+import com.incadencecorp.coalesce.services.client.common.AbstractBaseClient;
+import com.incadencecorp.coalesce.services.search.api.ISearchClient;
+import com.incadencecorp.coalesce.services.search.api.ISearchEvents;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.search.filter.FilterUtil;
-import com.incadencecorp.coalesce.search.filter.FilterUtil.EConfiguration;
-import com.incadencecorp.coalesce.services.api.search.ESortDirection;
-import com.incadencecorp.coalesce.services.api.search.QueryType;
-import com.incadencecorp.coalesce.services.api.search.SearchDataObjectRequest;
-import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
-import com.incadencecorp.coalesce.services.api.search.SortByType;
-import com.incadencecorp.coalesce.services.client.common.AbstractBaseClient;
-import com.incadencecorp.coalesce.services.search.api.ISearchClient;
-import com.incadencecorp.coalesce.services.search.api.ISearchEvents;
+import javax.xml.transform.TransformerException;
 
 public abstract class AbstractSearchClientImpl extends AbstractBaseClient<ISearchEvents> implements ISearchClient {
 
@@ -70,10 +65,9 @@ public abstract class AbstractSearchClientImpl extends AbstractBaseClient<ISearc
                                            int pageNumber,
                                            PropertyName[] properties,
                                            SortBy[] sortBy,
-                                           boolean includeHidden)
-            throws CoalesceException
+                                           boolean includeHidden) throws CoalesceException
     {
-        return search(createSearchDataObjectRequest(false, filter, pageNumber, properties, sortBy, includeHidden));
+        return search(createSearchDataObjectRequest(false, filter, pageNumber, properties, sortBy));
     }
 
     @Override
@@ -81,15 +75,9 @@ public abstract class AbstractSearchClientImpl extends AbstractBaseClient<ISearc
                               int pageNumber,
                               PropertyName[] properties,
                               SortBy[] sortBy,
-                              boolean includeHidden)
-            throws CoalesceException
+                              boolean includeHidden) throws CoalesceException
     {
-        SearchDataObjectRequest request = createSearchDataObjectRequest(true,
-                                                                        filter,
-                                                                        pageNumber,
-                                                                        properties,
-                                                                        sortBy,
-                                                                        includeHidden);
+        SearchDataObjectRequest request = createSearchDataObjectRequest(true, filter, pageNumber, properties, sortBy);
 
         return addAsyncResponse(search(request), request);
     }
@@ -108,9 +96,7 @@ public abstract class AbstractSearchClientImpl extends AbstractBaseClient<ISearc
                                                                   Filter filter,
                                                                   int pageNumber,
                                                                   PropertyName[] properties,
-                                                                  SortBy[] sortBy,
-                                                                  boolean includeHidden)
-            throws CoalesceException
+                                                                  SortBy[] sortBy) throws CoalesceException
     {
 
         String xml;
@@ -128,7 +114,6 @@ public abstract class AbstractSearchClientImpl extends AbstractBaseClient<ISearc
         query.setFilter(xml);
         query.setPageNumber(pageNumber);
         query.setPageSize(pageSize);
-        query.setIncludeHidden(includeHidden);
 
         if (properties != null)
         {

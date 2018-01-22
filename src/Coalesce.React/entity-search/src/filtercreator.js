@@ -36,7 +36,7 @@ export class FilterCreator extends React.Component {
         key: 0,
         recordset: recordsets[0].name,
         field: recordsets[0].definition[0].name,
-        comparer: '=',
+        operator: '=',
         value: '',
         matchCase: false});
 
@@ -73,8 +73,8 @@ export class FilterCreator extends React.Component {
                 columns={createColumns(this, recordsets)}
               />
               <div className="form-buttons">
-                <img src={require('common-components/img/add.ico')} alt="Add" title="Add Criteria" className="coalesce-img-button enabled" onClick={this.addRow.bind(this)}/>
-                <img src={require('common-components/img/search2.ico')} alt="Search" title="Execute Query" className="coalesce-img-button enabled" onClick={this.props.onSearch.bind(this, this.state.tabledata)}/>
+                <img src="/images/svg/add.svg" alt="Add" title="Add Criteria" className="coalesce-img-button enabled" onClick={this.addRow.bind(this)}/>
+                <img src="/images/svg/search.svg" alt="Search" title="Execute Query" className="coalesce-img-button enabled" onClick={this.props.onSearch.bind(this, this.state.tabledata)}/>
               </div>
             </div>
           </Collapse>
@@ -97,7 +97,7 @@ export class FilterCreator extends React.Component {
 
     row.recordset = e.target.value;
     row.field = defaultField;
-    row.comparer = '=';
+    row.operator = '=';
     row.value = '';
 
     this.setState({tabledata: tabledata});
@@ -108,17 +108,17 @@ export class FilterCreator extends React.Component {
     var row = this.getRow(tabledata, key);
 
     row.field = e.target.value;
-    row.comparer = '=';
+    row.operator = '=';
     row.value = '';
 
     this.setState({tabledata: tabledata});
   }
 
-  onComparerChange(key, e) {
+  onOperatorChange(key, e) {
     const {tabledata} = this.state;
     var row = this.getRow(tabledata, key);
 
-    row.comparer = e.target.value;
+    row.operator = e.target.value;
 
     this.setState({tabledata: tabledata});
   }
@@ -168,7 +168,7 @@ export class FilterCreator extends React.Component {
         key: keyvalue,
         recordset: recordsets[0].name,
         field: recordsets[0].definition[0].name,
-        comparer: '=',
+        operator: '=',
         value: '',
         matchCase: false
       });
@@ -211,7 +211,7 @@ function createColumns(that, recordsets) {
       sortable: false,
       width: 50,
       Cell: (cell) => (
-        <img src={require('common-components/img/remove.ico')} alt="Add" title="Remove Criteria" className="coalesce-img-button enabled" onClick={that.deleteRow.bind(that, cell.row.key)}/>
+        <img src="/images/svg/remove.svg" alt="Remove" title="Remove Criteria" className="coalesce-img-button enabled" onClick={that.deleteRow.bind(that, cell.row.key)}/>
       )
     });
 
@@ -261,12 +261,12 @@ function createColumns(that, recordsets) {
 
     columns.push({
       Header: '',
-      accessor: 'comparer',
+      accessor: 'operator',
       resizable: false,
       sortable: false,
       width: 80,
       Cell: (cell) => (
-        <select className="form-control"  value={cell.row.comparer} onChange={that.onComparerChange.bind(that, cell.row.key)}>
+        <select className="form-control"  value={cell.row.operator} onChange={that.onOperatorChange.bind(that, cell.row.key)}>
           <option>=</option>
           <option>!=</option>
         </select>

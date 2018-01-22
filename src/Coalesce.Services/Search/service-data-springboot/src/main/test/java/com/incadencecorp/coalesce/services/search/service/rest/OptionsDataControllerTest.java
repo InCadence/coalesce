@@ -35,7 +35,7 @@ public class OptionsDataControllerTest {
     @Test
     public void testFilterCreation() throws Exception {
         
-        MockSearchPersister persister = new MockSearchPersister();
+        DerbyPersistor persister = new DerbyPersistor();
         
         OptionsDataControllerSpring controller = new OptionsDataControllerSpring(new SearchFrameworkClientImpl(persister));
         

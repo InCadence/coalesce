@@ -25,8 +25,6 @@ import com.incadencecorp.coalesce.framework.CoalesceExecutorServiceImpl;
 import com.incadencecorp.coalesce.framework.jobs.JobManager;
 import com.incadencecorp.coalesce.services.api.common.*;
 import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,8 +38,6 @@ import java.util.concurrent.ExecutorService;
  * @author Derek C.
  */
 public abstract class ServiceBase<T> extends CoalesceExecutorServiceImpl {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceBase.class);
 
     // ----------------------------------------------------------------------//
     // Protected Member Variables
@@ -67,7 +63,7 @@ public abstract class ServiceBase<T> extends CoalesceExecutorServiceImpl {
     {
         super(service);
 
-        this.jobs = new JobManager<AbstractServiceJob<?, ?, ?, T>>();
+        this.jobs = new JobManager<>();
         this.target = target;
     }
 
@@ -242,7 +238,7 @@ public abstract class ServiceBase<T> extends CoalesceExecutorServiceImpl {
     public final <REQUEST extends BaseRequest, RESPONSE extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> RESPONSE performJob(
             AbstractServiceJob<REQUEST, RESPONSE, X, T> job)
     {
-        RESPONSE response = null;
+        RESPONSE response;
 
         job.setExecutor(this);
         job.setTarget(getTarget());

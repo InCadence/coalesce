@@ -61,21 +61,21 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloTemplatePersistor.class);
 
-    private Map<String, String> params;
     private AccumuloDataConnector connector;
     private ICoalesceNormalizer normalizer;
     private CoalesceCommonColumns columns;
-    private BatchWriterConfig config;
+    private final Map<String, String> params;
+    private final BatchWriterConfig config;
+    private final boolean useCompression;
+    private final boolean returnTotals;
 
     private static String coalesceTemplateColumnFamily = "Coalesce:Template";
     private static String coalesceTemplateXMLQualifier = "xml";
 
     /**
      * Default constructor using {@link AccumuloSettings} for configuration
-     *
-     * @throws CoalescePersistorException
      */
-    public AccumuloTemplatePersistor() throws CoalescePersistorException
+    public AccumuloTemplatePersistor()
     {
         this(AccumuloSettings.getParameters());
     }
@@ -102,13 +102,19 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
 
         this.params = params;
 
+        useCompression = params.containsKey(AccumuloDataConnector.USE_COMPRESSION) && Boolean.parseBoolean(params.get(
+                AccumuloDataConnector.USE_COMPRESSION));
+
+        returnTotals = params.containsKey(AccumuloDataConnector.RETURN_TOTALS) && Boolean.parseBoolean(params.get(
+                AccumuloDataConnector.RETURN_TOTALS));
+
         if (LOGGER.isDebugEnabled())
         {
             LOGGER.debug("Zookeepers: {} ", params.get(AccumuloDataConnector.ZOOKEEPERS));
             LOGGER.debug("Instance: {} ", params.get(AccumuloDataConnector.INSTANCE_ID));
             LOGGER.debug("User: {} ", params.get(AccumuloDataConnector.USER));
             LOGGER.debug("Mock: {} ", params.get(AccumuloDataConnector.USE_MOCK));
-            LOGGER.debug("Compression: {} ", params.get(AccumuloDataConnector.USE_COMPRESSION));
+            LOGGER.debug("Compression: {} ", useCompression);
         }
 
         config = new BatchWriterConfig();
@@ -439,6 +445,22 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
         }
 
         return normalizer;
+    }
+
+    /**
+     * @return whether or not compression should be used.
+     */
+    protected boolean isCompressionEnabled()
+    {
+        return useCompression;
+    }
+
+        /**
+     * @return whether or not a second query will be execute to get the totals if the result set exceeds the page size.
+     */
+    protected boolean isReturnTotalsEnabled()
+    {
+        return returnTotals;
     }
 
     protected BatchWriterConfig getConfig()

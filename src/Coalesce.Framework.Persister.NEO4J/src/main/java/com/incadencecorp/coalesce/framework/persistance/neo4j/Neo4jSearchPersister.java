@@ -26,6 +26,7 @@ import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.geotools.data.Query;
+import org.geotools.filter.Capabilities;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 
@@ -171,6 +172,16 @@ public class Neo4jSearchPersister extends Neo4JPersistor implements ICoalesceSea
         }
 
         return results;
+    }
+
+    @Override
+    public Capabilities getSearchCapabilities()
+    {
+        Capabilities capability = new Capabilities();
+        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
+        capability.addAll(Capabilities.LOGICAL);
+
+        return capability;
     }
 
     private String getLimit(Query query)

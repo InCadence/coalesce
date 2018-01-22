@@ -20,6 +20,7 @@ package com.incadencecorp.coalesce.search.api;
 import org.geotools.data.Query;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import org.geotools.filter.Capabilities;
 
 /**
  * This interface is used to provide searching capability to persistors.
@@ -36,5 +37,10 @@ public interface ICoalesceSearchPersistor {
      * @throws CoalescePersistorException
      */
     SearchResults search(Query query) throws CoalescePersistorException;
+
+    /**
+     * @return the search capabilities of this implementation.
+     */
+    Capabilities getSearchCapabilities();
 
 }

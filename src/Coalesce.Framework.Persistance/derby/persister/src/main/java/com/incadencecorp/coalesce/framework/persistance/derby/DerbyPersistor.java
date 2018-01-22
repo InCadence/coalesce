@@ -34,6 +34,7 @@ import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
 import com.incadencecorp.coalesce.search.resultset.CoalesceCommonColumns;
 import org.geotools.data.Query;
 import org.geotools.data.jdbc.FilterToSQLException;
+import org.geotools.filter.Capabilities;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1104,7 +1105,19 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     @Override
     public void deleteTemplate(String... keys) throws CoalescePersistorException
     {
-        throw new CoalescePersistorException("Not Implemented");
+        try (CoalesceDataConnectorBase conn = this.getDataConnector())
+        {
+            String sql = "DELETE  FROM " + getSchemaPrefix() + "CoalesceEntityTemplate WHERE " + COLUMNS.getKey() + "=?";
+
+            for (String key : keys)
+            {
+                conn.executeUpdate(sql, new CoalesceParameter(key, Types.CHAR));
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new CoalescePersistorException(e);
+        }
     }
 
     @Override
@@ -1259,6 +1272,12 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
 
         return results;
+    }
+
+    @Override
+    public Capabilities getSearchCapabilities()
+    {
+        return DerbyCoalescePreparedFilter.createCapabilities();
     }
 
     /**

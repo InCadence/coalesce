@@ -83,8 +83,8 @@ export class SettingsView extends React.Component {
             sorted={[{'id': 'name', 'desc': false}]}
           />
           <div className="form-buttons">
-            <img src={require('common-components/img/add.ico')} alt="Add" title="Add Setting" className="coalesce-img-button enabled" onClick={this.onAddSetting}/>
-            <img src={require('common-components/img/save.ico')} alt="Save" title="Save Settings" className="coalesce-img-button enabled" onClick={this.onSaveSettings}/>
+            <img src="/images/svg/add.svg" alt="Add" title="Add Setting" className="coalesce-img-button enabled" onClick={this.onAddSetting}/>
+            <img src="/images/svg/save.svg" alt="Save" title="Save Settings" className="coalesce-img-button enabled" onClick={this.onSaveSettings}/>
           </div>
           </div>
         </div>

@@ -35,6 +35,7 @@ import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.filter.Capabilities;
 import org.geotools.filter.text.cql2.CQLException;
 import org.joda.time.DateTime;
 import org.opengis.feature.Feature;
@@ -2229,31 +2230,14 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return results;
     }
 
-    @Deprecated
-    public List<CoalesceEntity> searchOld(Query query, CoalesceParameter... parameters) throws CoalescePersistorException
+    @Override
+    public Capabilities getSearchCapabilities()
     {
-        List<CoalesceEntity> coalesceEntities = new ArrayList<>();
-        try
-        {
-            DataStore geoDataStore = ((AccumuloDataConnector) getDataConnector()).getGeoDataStore();
+        Capabilities capability = new Capabilities();
+        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
+        capability.addAll(Capabilities.LOGICAL);
 
-            FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(query.getTypeName());
-            FeatureIterator<?> featureItr = featureSource.getFeatures(query).features();
-            List<String> entityKeys = new ArrayList<>();
-            while (featureItr.hasNext())
-            {
-                Feature feature = featureItr.next();
-                entityKeys.add((String) feature.getProperty(ENTITY_KEY_COLUMN_NAME).getValue());
-            }
-            featureItr.close();
-            CoalesceEntity[] entities = getEntity(entityKeys.toArray(new String[entityKeys.size()]));
-            coalesceEntities.addAll(Arrays.asList(entities));
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return coalesceEntities;
+        return capability;
     }
 
     public void close()

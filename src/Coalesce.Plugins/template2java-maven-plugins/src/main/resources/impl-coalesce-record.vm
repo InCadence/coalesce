@@ -85,7 +85,7 @@ public class ${classname} extends CoalesceRecord implements I${name}Record {
     
         private String label;
 
-        private E${name}Fields(final String label) 
+        E${name}Fields(final String label)
         {
              this.label = label;
         }

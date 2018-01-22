@@ -17,19 +17,16 @@
 
 package com.incadencecorp.coalesce.services.search.client.jaxws;
 
-import java.net.URL;
-import java.rmi.RemoteException;
-
-import com.incadencecorp.coalesce.services.api.common.BaseResponse;
-import com.incadencecorp.coalesce.services.api.common.JobRequest;
-import com.incadencecorp.coalesce.services.api.common.MultipleResponse;
-import com.incadencecorp.coalesce.services.api.common.StatusResponse;
-import com.incadencecorp.coalesce.services.api.common.StringResponse;
+import com.incadencecorp.coalesce.services.api.common.*;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectRequest;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
 import com.incadencecorp.coalesce.services.api.search.SearchManager;
 import com.incadencecorp.coalesce.services.client.common.jaxws.util.JAXWSUtil;
 import com.incadencecorp.coalesce.services.search.client.common.AbstractSearchClientImpl;
+import org.geotools.filter.Capabilities;
+
+import java.net.URL;
+import java.rmi.RemoteException;
 
 public class SearchJaxwsClientImpl extends AbstractSearchClientImpl {
 
@@ -37,7 +34,7 @@ public class SearchJaxwsClientImpl extends AbstractSearchClientImpl {
 
     /**
      * Constructs the client for the provided URL.
-     * 
+     *
      * @param url
      */
     public SearchJaxwsClientImpl(URL url)
@@ -68,19 +65,30 @@ public class SearchJaxwsClientImpl extends AbstractSearchClientImpl {
     {
         return client.searchDataObject(request);
     }
-    
+
+    @Override
+    public Capabilities getCapabilities()
+    {
+        // TODO Need to read this via the SOAP API
+        Capabilities capability = new Capabilities();
+        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
+        capability.addAll(Capabilities.LOGICAL);
+
+        return capability;
+    }
+
     @Override
     protected void processResponse(BaseResponse response)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     protected void processFailedTask(BaseResponse response, int task, String reason)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

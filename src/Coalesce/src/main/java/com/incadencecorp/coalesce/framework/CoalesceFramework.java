@@ -15,14 +15,11 @@ import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveTemplateJob;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
-import com.incadencecorp.unity.common.IConfigurationsConnector;
-import com.incadencecorp.unity.common.factories.PropertyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -109,7 +106,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      */
     public CoalesceFramework()
     {
-        this((ExecutorService) null);
+        this(null);
     }
 
     /**
@@ -361,23 +358,43 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
         }
     }
 
+    public void setTemplates(String... keys) throws CoalescePersistorException
+    {
+        List<CoalesceEntityTemplate> templateList = new ArrayList<>();
+
+        for (String key : keys)
+        {
+            try
+            {
+                templateList.add(getCoalesceEntityTemplate(key));
+            }
+            catch (CoalesceException e)
+            {
+                throw new CoalescePersistorException("(FAILED) Template Registration: " + key, e);
+            }
+        }
+
+        registerTemplates(templateList.toArray(new CoalesceEntityTemplate[templateList.size()]));
+    }
+
     public void setTemplates(CoalesceEntity... templates) throws CoalescePersistorException
     {
+        List<CoalesceEntityTemplate> templateList = new ArrayList<>();
+
         for (CoalesceEntity template : templates)
         {
             try
             {
-                if (!template.isInitialized())
-                {
-                    template.initialize();
-                }
-                registerTemplates(CoalesceEntityTemplate.create(template));
+                template.initialize();
+                templateList.add(CoalesceEntityTemplate.create(template));
             }
             catch (CoalesceException e)
             {
                 throw new CoalescePersistorException("(FAILED) Template Registration", e);
             }
         }
+
+        registerTemplates(templateList.toArray(new CoalesceEntityTemplate[templateList.size()]));
     }
 
     /**

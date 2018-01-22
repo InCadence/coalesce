@@ -33,17 +33,24 @@ import com.vividsolutions.jts.io.WKTReader;
 import org.geotools.data.Query;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
+import org.geotools.temporal.object.DefaultInstant;
+import org.geotools.temporal.object.DefaultPeriod;
+import org.geotools.temporal.object.DefaultPosition;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.temporal.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,11 +72,13 @@ import java.util.UUID;
  */
 public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesceSearchPersistor> {
 
-    private static final FilterFactory FF = CoalescePropertyFactory.getFilterFactory();
+    private static final FilterFactory2 FF = CoalescePropertyFactory.getFilterFactory();
     private static final GeometryFactory GF = new GeometryFactory();
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSearchTest.class);
     private static final WKTReader WKT_READER = new WKTReader();
+    private static final String EPSG4326 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
 
+    private CoordinateReferenceSystem crs;
     private Boolean isInitialized = false;
 
     protected abstract T createPersister() throws CoalescePersistorException;
@@ -78,12 +87,14 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
      * Registers the entities used by these tests.
      */
     @Before
-    public void registerEntities()
+    public void registerEntities() throws Exception
     {
         synchronized (isInitialized)
         {
             if (!isInitialized)
             {
+                crs = CRS.parseWKT(EPSG4326);
+
                 TestEntity entity = new TestEntity();
                 entity.initialize();
 
@@ -228,7 +239,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         persister.saveEntity(true, entity);
     }
 
-    public void assertField(CachedRowSet rowset, CoalesceField field) throws Exception
+    private void assertField(CachedRowSet rowset, CoalesceField field) throws Exception
     {
         String column = CoalescePropertyFactory.getColumnName(field);
 
@@ -306,8 +317,6 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
     /**
      * This test persist an entity that contains linkages and verifies that they linkages can be retrieved doing a search.
-     *
-     * @throws Exception
      */
     @Test
     public void searchLinkages() throws Exception
@@ -346,8 +355,6 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
      * Execute a search with one parameter and specifying the search order.
      * Verifies the default columns are returned along with the specified
      * property and that the persister respecting the sort ordering.
-     *
-     * @throws Exception
      */
     @Test
     public void testSearchWithSortingTest() throws Exception
@@ -454,8 +461,6 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     /**
      * Executes a search with an invalid entity key to ensure that the persister
      * can handle no results.
-     *
-     * @throws Exception
      */
     @Test
     public void testSearchNoResults() throws Exception
@@ -626,8 +631,6 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
     /**
      * This test creates a entity with a geo location and verifies that a bounding box search will return it.
-     *
-     * @throws Exception
      */
     @Test
     public void testBoundingBoxSearch() throws Exception
@@ -635,6 +638,130 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         T persistor = createPersister();
 
         Assume.assumeTrue(persistor.getCapabilities().contains(EPersistorCapabilities.GEOSPATIAL_SEARCH));
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
+
+        // Create Record
+        record.getGeoField().setValue(GF.createPoint(new Coordinate(51.4347, -3.18)));
+        //record.getDateField().setValue(new DateTime(2006, 07, 25, 00, 00, 00, 00));
+        record.getIntegerField().setValue(562505648);
+        record.getStringField().setValue("EUROPE");
+
+        // Persist
+        Assert.assertTrue(persistor.saveEntity(false, entity));
+
+        // Create Filter
+        Coordinate point1 = new Coordinate(40, -5);
+        Coordinate point2 = new Coordinate(60, 0);
+
+        ReferencedEnvelope bbox = new ReferencedEnvelope(createSquare(point1, point2).getEnvelopeInternal(), crs);
+
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()));
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
+
+        // Create Query
+        Query query = new Query();
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()),
+                               FF.bbox(CoalescePropertyFactory.getFieldProperty(record.getGeoField()), bbox)));
+        query.setProperties(props);
+
+        // Verify entity is returned
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+            Assert.assertEquals((int) record.getIntegerField().getValue(), results.getInt(2));
+            Assert.assertEquals(record.getStringField().getValue(), results.getString(3));
+        }
+
+        // Create bound box filter that excludes the field
+        bbox = new ReferencedEnvelope(createSquare(new Coordinate(60, -5), point2).getEnvelopeInternal(), crs);
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()),
+                               FF.bbox(CoalescePropertyFactory.getFieldProperty(record.getGeoField()), bbox)));
+
+        // Verify entity is not returned
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            Assert.assertEquals(0, results.size());
+        }
+
+        entity.markAsDeleted();
+
+        persistor.saveEntity(true, entity);
+    }
+
+    private Polygon createSquare(Coordinate p1, Coordinate p2)
+    {
+        return GF.createPolygon(new Coordinate[] { p1, new Coordinate(p1.x, p2.y), p2, new Coordinate(p2.x, p1.y), p1 });
+    }
+
+    /**
+     * This test verifies that the between filter works on an integer field.
+     */
+    @Test
+    public void testBetweenFilter() throws Exception
+    {
+        T persistor = createPersister();
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
+
+        // Create Record
+        record.getGeoField().setValue(GF.createPoint(new Coordinate(51.4347, -3.18)));
+        record.getDateField().setValue(JodaDateTimeHelper.nowInUtc());
+        record.getIntegerField().setValue(10);
+        record.getStringField().setValue("EUROPE");
+
+        // Persist
+        Assert.assertTrue(persistor.saveEntity(false, entity));
+
+        Filter filter = FF.between(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()),
+                                   FF.literal(5),
+                                   FF.literal(15));
+
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()));
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
+
+        // Create Query
+        Query query = new Query();
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), filter));
+        query.setProperties(props);
+
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+            Assert.assertEquals((int) record.getIntegerField().getValue(), results.getInt(2));
+            Assert.assertEquals(record.getStringField().getValue(), results.getString(3));
+        }
+
+        filter = FF.between(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()),
+                            FF.literal(0),
+                            FF.literal(5));
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), filter));
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            Assert.assertEquals(0, results.size());
+        }
+
+        entity.markAsDeleted();
+
+        persistor.saveEntity(true, entity);
+    }
+
+    /**
+     * This test ensure that the during operand works as expected.
+     */
+    @Test
+    public void testDuringFilter() throws Exception
+    {
+        T persistor = createPersister();
+
         Assume.assumeTrue(persistor.getCapabilities().contains(EPersistorCapabilities.TEMPORAL_SEARCH));
 
         TestEntity entity = new TestEntity();
@@ -642,45 +769,49 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         TestRecord record = entity.addRecord1();
 
         // Create Record
-        GeometryFactory factory = new GeometryFactory();
-        record.getGeoField().setValue(factory.createPoint(new Coordinate(51.4347, -3.18)));
-        record.getDateField().setValue(new DateTime(2006, 07, 25, 00, 00, 00, 00));
+        record.getDateField().setValue(JodaDateTimeHelper.nowInUtc());
         record.getIntegerField().setValue(562505648);
         record.getStringField().setValue("EUROPE");
 
         // Persist
-        persistor.saveEntity(false, entity);
+        Assert.assertTrue(persistor.saveEntity(false, entity));
 
-        // Verify
-        //CoalesceEntity[] entities = persistor.getEntity(entity.getKey());
-        //Assert.assertEquals(1, entities.length);
-        //Assert.assertEquals(entity.getKey(), entities[0].getKey());
+        Instant start = new DefaultInstant(new DefaultPosition(record.getDateField().getValue().minusDays(1).toDate()));
+        Instant end = new DefaultInstant(new DefaultPosition(record.getDateField().getValue().plusDays(1).toDate()));
 
-        // Create Filter
-        Filter cqlFilter = createFilter(CoalescePropertyFactory.getFieldProperty(record.getGeoField()).getPropertyName(),
-                                        -180,
-                                        -180,
-                                        180,
-                                        180,
-                                        CoalescePropertyFactory.getFieldProperty(record.getDateField()).getPropertyName(),
-                                        "2000-07-01T00:00:00.000Z",
-                                        "2016-12-31T00:00:00.000Z",
-                                        null);
+        Filter filter = FF.during(CoalescePropertyFactory.getFieldProperty(record.getDateField()),
+                                  FF.literal(new DefaultPeriod(start, end)));
 
         List<PropertyName> props = new ArrayList<>();
         props.add(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()));
         props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
 
         // Create Query
-        Query query = new Query(TestEntity.getTest1RecordsetName(), cqlFilter);
+        Query query = new Query();
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), filter));
         query.setProperties(props);
 
-        CachedRowSet results = persistor.search(query).getResults();
-        Assert.assertTrue(results.size() > 0);
-        Assert.assertTrue(results.next());
-        Assert.assertEquals((int) record.getIntegerField().getValue(), results.getInt(2));
-        Assert.assertEquals(record.getStringField().getValue(), results.getString(3));
-        results.close();
+        // Verify entity is returned
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+            Assert.assertEquals((int) record.getIntegerField().getValue(), results.getInt(2));
+            Assert.assertEquals(record.getStringField().getValue(), results.getString(3));
+        }
+
+        start = new DefaultInstant(new DefaultPosition(record.getDateField().getValue().minusDays(5).toDate()));
+        end = new DefaultInstant(new DefaultPosition(record.getDateField().getValue().minusDays(2).toDate()));
+
+        filter = FF.during(CoalescePropertyFactory.getFieldProperty(record.getDateField()),
+                           FF.literal(new DefaultPeriod(start, end)));
+
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), filter));
+
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            Assert.assertEquals(0, results.size());
+        }
 
         entity.markAsDeleted();
 
@@ -689,8 +820,6 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
     /**
      * This test creates an entity and updates it. Then verifies that returning the updated property shows the updated value and not the original.
-     *
-     * @throws Exception
      */
     @Test
     public void testSearchUpdatedValues() throws Exception
@@ -743,8 +872,6 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
     /**
      * This test verifies searching for entities w/o geospatial fields.
-     *
-     * @throws Exception
      */
     @Test
     public void testSearchNonGeoEntity() throws Exception
@@ -802,6 +929,9 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         String cqlDates = "(\"" + dateField + "\" DURING " + t0 + "/" + t1 + ")";
         String cqlAttributes = attributesQuery == null ? "INCLUDE" : attributesQuery;
         String cql = cqlGeometry + " AND " + cqlDates + " AND " + cqlAttributes;
+
+        System.out.println(cql);
+
         return CQL.toFilter(cql);
     }
 

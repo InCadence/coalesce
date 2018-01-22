@@ -30,6 +30,7 @@
 						<Export-Package>
 							org.opengis.*;version=${geotools.version};-split-package:=merge-last,
 							org.geotools.*;version=${geotools.version};-split-package:=merge-last,
+							com.vividsolutions.jts*
 						</Export-Package>
 						<Import-Package>
 							org.joda.time*;version="[1.6.2, 3)",

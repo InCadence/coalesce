@@ -1,0 +1,9 @@
+version: '2'
+services:
+  coalesce:
+    # build: .
+    image: coalesce
+    ports:
+      - "8181:8181"
+      - "8101:8101"
+

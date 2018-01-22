@@ -3,6 +3,7 @@ package com.incadencecorp.coalesce.services.common.jaxrs;
 import com.incadencecorp.coalesce.services.common.controllers.PropertyController;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.rmi.RemoteException;
 import java.util.Map;
 
@@ -16,38 +17,38 @@ interface IPropertyControllerJaxRS {
 
     @GET
     @Path("/{name}.json")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     String getJsonConfiguration(@PathParam("name") String name) throws RemoteException;
 
     @PUT
     @Path("/{name}.json")
-    @Consumes("application/json")
+    @Consumes(MediaType.APPLICATION_JSON)
     void setJsonConfiguration(@PathParam("name") String name, String json) throws RemoteException;
 
     @GET
     @Path("/{name}")
-    @Produces("application/text")
+    @Produces(MediaType.TEXT_PLAIN)
     String getProperty(@PathParam("name") String name) throws RemoteException;
 
     @PUT
     @Path("/{name}")
-    @Consumes("application/text")
+    @Consumes(MediaType.TEXT_PLAIN)
     void setProperty(@PathParam("name") String name, String value) throws RemoteException;
 
     @GET
     @Path("/")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     Map<String, String> getProperties() throws RemoteException;
 
     @POST
     @Path("/")
-    @Produces("application/json")
-    @Consumes("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     Map<String, String> getProperties(String[] names) throws RemoteException;
 
     @PUT
     @Path("/")
-    @Consumes("application/json")
+    @Consumes(MediaType.APPLICATION_JSON)
     void setProperties(Map<String, String> values) throws RemoteException;
 
 }

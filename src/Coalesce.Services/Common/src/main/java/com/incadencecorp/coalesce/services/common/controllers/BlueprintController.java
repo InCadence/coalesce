@@ -179,7 +179,7 @@ public class BlueprintController {
             {
                 node.setNodeType(EGraphNodeType.CONTROLLER);
             }
-            else if (simpleName.equals("coalesceframework"))
+            else if (simpleName.equals("coalesceframework") || simpleName.equals("coalescesearchframework") )
             {
                 node.setNodeType(EGraphNodeType.FRAMEWORK);
             }

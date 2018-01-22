@@ -990,25 +990,20 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
     }
 
     /**
-     * Overriding the createFilterCapabilities() which returns deprecated
-     * FilterCapabilities object
-     *
-     * @return
+     * @return the capabilities of this implementation.
      */
-    protected Capabilities createCapabilities()
+    public static Capabilities createCapabilities()
     {
-
         Capabilities capability = new Capabilities();
 
-        capability.addAll(Capabilities.LOGICAL_OPENGIS);
-        capability.addAll(Capabilities.SIMPLE_COMPARISONS_OPENGIS);
         capability.addAll(Capabilities.LOGICAL);
+        capability.addAll(Capabilities.LOGICAL_OPENGIS);
         capability.addAll(Capabilities.SIMPLE_COMPARISONS);
+        capability.addAll(Capabilities.SIMPLE_COMPARISONS_OPENGIS);
         capability.addType(PropertyIsNull.class);
+        capability.addType(PropertyIsLike.class);
         capability.addType(PropertyIsBetween.class);
-        capability.addType(Id.class);
-        capability.addType(IncludeFilter.class);
-        capability.addType(ExcludeFilter.class);
+
         // TODO Implement Functions
         // capability.addName(ListSearchFunction.NAME.getName(),
         // ListSearchFunction.NAME.getArgumentCount());
@@ -1024,10 +1019,6 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
         capability.addType(TContains.class);
         capability.addType(TEquals.class);
 
-        // Adding PropertyIsLike to filter capabilities
-        capability.addType(PropertyIsLike.class);
-        capability.addType(PropertyIsLessThanOrEqualTo.class);
-
         // Adding the spatial filters support
         capability.addType(BBOX.class);
         capability.addType(Contains.class);
@@ -1042,7 +1033,6 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
         capability.addType(Beyond.class);
 
         return capability;
-
     }
 
     /**

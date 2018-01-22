@@ -35,6 +35,7 @@ import com.incadencecorp.coalesce.services.api.search.SearchDataObjectRequest;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
 import com.incadencecorp.coalesce.services.search.client.common.AbstractSearchClientImpl;
 import com.incadencecorp.coalesce.services.search.service.SearchServiceImpl;
+import org.geotools.filter.Capabilities;
 
 /**
  * This implementation uses the service directly w/o going through a WSDL.
@@ -80,6 +81,12 @@ public class SearchFrameworkClientImpl extends AbstractSearchClientImpl {
     protected SearchDataObjectResponse search(SearchDataObjectRequest request)
     {
         return client.searchDataObject(request);
+    }
+
+    @Override
+    public Capabilities getCapabilities()
+    {
+        return client.getCapabilities();
     }
 
     @Override

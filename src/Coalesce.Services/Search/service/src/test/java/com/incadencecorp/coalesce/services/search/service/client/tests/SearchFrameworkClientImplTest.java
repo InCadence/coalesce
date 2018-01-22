@@ -17,18 +17,16 @@
 
 package com.incadencecorp.coalesce.services.search.service.client.tests;
 
-import org.junit.BeforeClass;
-
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
-import com.incadencecorp.coalesce.framework.persistance.memory.MockSearchPersister;
-import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl;
 import com.incadencecorp.coalesce.services.search.api.test.AbstractSearchTests;
 import com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl;
+import org.junit.BeforeClass;
 
 /**
  * These unit test ensure correct behavior of the CRUD server.
- * 
+ *
  * @author Derek Clemenzi
  */
 public class SearchFrameworkClientImplTest extends AbstractSearchTests {
@@ -36,13 +34,13 @@ public class SearchFrameworkClientImplTest extends AbstractSearchTests {
     @BeforeClass
     public static void initialize() throws Exception
     {
-        MockSearchPersister persistor = new MockSearchPersister();
+        DerbyPersistor persistor = new DerbyPersistor();
 
         CoalesceFramework framework = new CoalesceFramework();
         framework.setAuthoritativePersistor(persistor);
-        
+
         crud = new CrudFrameworkClientImpl(framework);
-        client = new SearchFrameworkClientImpl((ICoalesceSearchPersistor) persistor);
+        client = new SearchFrameworkClientImpl(persistor);
     }
 
 }
