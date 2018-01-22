@@ -168,7 +168,7 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
             LOGGER.debug("Search Hits: {}", rowset.size());
 
             // Results > Page Size; Determine total size
-            if (total >= query.getMaxFeatures())
+            if (total >= query.getMaxFeatures() && isReturnTotalsEnabled())
             {
                 localquery.setMaxFeatures(Query.DEFAULT_MAX);
                 localquery.setProperties(Query.NO_PROPERTIES);

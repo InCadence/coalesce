@@ -74,6 +74,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
     public static final String LOOSE_B_BOX = "looseBBox";
     public static final String USE_MOCK = "useMock";
     public static final String USE_COMPRESSION = "compression.enabled";
+    public static final String RETURN_TOTALS = "returnTotals";
     public static final String AUTHS = "auths";
 
     // These variables are for connecting to GeoMesa for the search
