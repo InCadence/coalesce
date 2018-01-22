@@ -566,7 +566,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
         String normalizedKey = normalizeCacheKey(name, schema);
 
         // Check Cache
-        Boolean exists = STORED_PROCEDURE_EXTSTS_CACHE.get(name);
+        Boolean exists = STORED_PROCEDURE_EXTSTS_CACHE.get(normalizedKey);
 
         // Cached?
         if (exists == null)
