@@ -39,8 +39,6 @@ import java.util.List;
 public class CoalesceSearchJob extends
         AbstractCoalesceTargetJob<Collection<Query>, ICoalesceResponseType<List<SearchResults>>, SearchResults, ICoalesceSearchPersistor> {
 
-    private ICoalesceSearchPersistor persister;
-
     public CoalesceSearchJob(Collection<Query> query)
     {
         super(query);
