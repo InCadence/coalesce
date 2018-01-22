@@ -20,12 +20,12 @@ package ${packagename_root}.${packagename_sub};
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus") ) #end
 #if( $imports.add("org.joda.time.DateTime") ) #end
 #if( $imports.add("${packagename_root}.api.entity.I${name}Entity") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
 #foreach($recordset in $recordsets)
 	#if( $imports.add("${packagename_root}.impl.pojo.record.$normalizer.normalize($recordset.getName())PojoRecord") ) #end
 	#if( $imports.add("${packagename_root}.api.record.I$normalizer.normalize($recordset.getName())Record") ) #end
-	#if($recordset.getMaxRecords() != 1)
+	#if($recordset.getMaxRecords() != 1 || $recordset.getMinRecords() != 1)
 		#if(!$imports.contains( "java.util.List" ) && $imports.add("java.util.List")) #end
-		#if(!$imports.contains( "com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException" ) && $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException")) #end
 		#if(!$imports.contains( "java.util.Map" ) && $imports.add("java.util.Map")) #end
 		#if(!$imports.contains( "java.util.HashMap" ) && $imports.add("java.util.HashMap")) #end
 		#if(!$imports.contains( "java.util.ArrayList" ) && $imports.add("java.util.ArrayList")) #end

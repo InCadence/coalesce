@@ -18,18 +18,18 @@
 package ${packagename_root}.${packagename_sub};
 #set($imports = [])
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity") ) #end
-#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceSection") ) #end
 #if( $imports.add("${packagename_root}.api.entity.I${name}Entity") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
 #foreach($recordset in $recordsets)
 	#if( $imports.add("${packagename_root}.impl.coalesce.record.$normalizer.normalize($recordset.getName())CoalesceRecord") ) #end
 	#if( $imports.add("${packagename_root}.api.record.I$normalizer.normalize($recordset.getName())Record") ) #end
-	#if($recordset.getMaxRecords() != 1)
+	#if($recordset.getMaxRecords() != 1 || $recordset.getMinRecords() != 1)
 		#if(!$imports.contains( "java.util.List" ) && $imports.add("java.util.List")) #end
-		#if(!$imports.contains( "com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException" ) && $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException")) #end
 		#if(!$imports.contains( "java.util.ArrayList" ) && $imports.add("java.util.ArrayList")) #end
-		#if(!$imports.contains( "com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord" ) && $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord")) #end
-	#end 
+		#if(!$imports.contains( "com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset" ) && $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset")) #end
+	#end
 #end
 $imports.sort(null)
 #foreach($import in $imports)
@@ -142,7 +142,7 @@ public class ${classname} extends CoalesceEntity implements I${name}Entity {
     }
 
 #foreach($recordset in $recordsets)
-#if($recordset.getMaxRecords() == 1)
+#if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
 #set($record_name = "record_$normalizer.normalize($recordset.getName())")
     @Override
     public $normalizer.normalize($recordset.getName())CoalesceRecord get$normalizer.normalize($recordset.getName())Record()
@@ -179,7 +179,7 @@ public class ${classname} extends CoalesceEntity implements I${name}Entity {
     public List<I$normalizer.normalize($recordset.getName())Record> get$normalizer.normalize($recordset.getName())Records()
     {
 		List<CoalesceRecord> records = ${recordset_name}.getRecords();
-		List<I$normalizer.normalize($recordset.getName())Record> results = new ArrayList<I$normalizer.normalize($recordset.getName())Record>();
+		List<I$normalizer.normalize($recordset.getName())Record> results = new ArrayList<>();
 
 		for (CoalesceRecord record : records) 
 		{

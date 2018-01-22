@@ -17,6 +17,25 @@
 
 package com.incadencecorp.coalesce.framework.persistance.postgres;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
+import com.incadencecorp.coalesce.framework.persistance.postgres.mappers.StoredProcedureArgumentMapper;
+import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
+import org.geotools.data.Query;
+import org.geotools.data.jdbc.FilterToSQLException;
+import org.geotools.filter.Capabilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -25,35 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.RowSetProvider;
-
-import org.geotools.data.Query;
-import org.geotools.data.jdbc.FilterToSQLException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
-import com.incadencecorp.coalesce.framework.persistance.postgres.mappers.StoredProcedureArgumentMapper;
-import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
-import com.incadencecorp.coalesce.search.api.SearchResults;
-import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
 
 /**
  * This extension flattens record sets into their own tables.
@@ -102,7 +92,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     /**
      * Uses {@link PostGreSQLSettings} to configure the database settings.
      *
-     * @param userId User ID used for connection to the DB.
+     * @param userId   User ID used for connection to the DB.
      * @param password User's password used for connecting to the DB.
      */
     public PostGreSQLPersistorExt(String userId, String password)
@@ -175,7 +165,8 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
 
                                 parameters.add(new CoalesceParameter(value, procedureMapper.map(field.getDataType())));
 
-                                switch (field.getDataType()) {
+                                switch (field.getDataType())
+                                {
                                 case CIRCLE_TYPE:
                                     // Add Additional Parameter for Radius
                                     if (field.isFlatten() && !StringHelper.isNullOrEmpty(field.getBaseValue()))
@@ -339,7 +330,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
         {
             query.setStartIndex(1);
         }
-        
+
         SearchResults results = new SearchResults();
         results.setPage(query.getStartIndex());
         results.setPageSize(query.getMaxFeatures());
@@ -367,11 +358,11 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
             try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
             {
                 String sql = String.format("SELECT DISTINCT %s FROM %s %s %s %s",
-                                    preparedFilter.getColumns(),
-                                    preparedFilter.getFrom(),
-                                    where,
-                                    preparedFilter.getSorting(),
-                                    preparedFilter.getLimit());
+                                           preparedFilter.getColumns(),
+                                           preparedFilter.getFrom(),
+                                           where,
+                                           preparedFilter.getSorting(),
+                                           preparedFilter.getLimit());
 
                 // Get Hits
                 CachedRowSet hits = RowSetProvider.newFactory().createCachedRowSet();
@@ -409,6 +400,12 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
         }
 
         return results;
+    }
+
+    @Override
+    public Capabilities getSearchCapabilities()
+    {
+        return PostGresCoalescePreparedFilter.createCapabilities();
     }
 
     private List<CoalesceParameter> getParameters(PostGresCoalescePreparedFilter filter) throws ParseException
@@ -468,7 +465,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
 
     /**
      * Executes the given query
-     * 
+     *
      * @param query
      * @param parameters
      * @return the results
@@ -542,24 +539,23 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     --------------------------------------------------------------------------*/
 
     /**
-     * @param info of the record set.
+     * @param info   of the record set.
      * @param schema of the procedure
-     * @param conn to use for the query
+     * @param conn   to use for the query
      * @return <code>true</code> if the stored procedure already exists.
      * @throws SQLException
      */
     public static boolean storedProcedureExists(final CoalesceIndexInfo info,
                                                 final String schema,
-                                                final CoalesceDataConnectorBase conn)
-            throws SQLException
+                                                final CoalesceDataConnectorBase conn) throws SQLException
     {
         return storedProcedureExists(info.getProcedureName(), schema, conn);
     }
 
     /**
-     * @param name of the procedure
+     * @param name   of the procedure
      * @param schema of the procedure
-     * @param conn to use for the query
+     * @param conn   to use for the query
      * @return <code>true</code> if the stored procedure already exists.
      * @throws SQLException
      */
@@ -570,7 +566,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
         String normalizedKey = normalizeCacheKey(name, schema);
 
         // Check Cache
-        Boolean exists = STORED_PROCEDURE_EXTSTS_CACHE.get(name);
+        Boolean exists = STORED_PROCEDURE_EXTSTS_CACHE.get(normalizedKey);
 
         // Cached?
         if (exists == null)

@@ -70,9 +70,6 @@ public abstract class AbstractSearchTests {
 
         // Verify Hit's Properties
         Assert.assertEquals(entity.getKey(), hit.getEntityKey());
-        Assert.assertEquals(entity.getName(), hit.getName());
-        Assert.assertEquals(entity.getSource(), hit.getSource());
-        Assert.assertEquals(entity.getTitle(), hit.getTitle());
     }
 
 }

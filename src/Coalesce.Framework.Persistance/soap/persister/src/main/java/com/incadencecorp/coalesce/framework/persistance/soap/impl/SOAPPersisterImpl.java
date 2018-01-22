@@ -41,6 +41,7 @@ import com.incadencecorp.coalesce.services.search.api.ISearchClient;
 import com.incadencecorp.coalesce.services.search.client.jaxws.SearchJaxwsClientImpl;
 import org.apache.commons.lang.NotImplementedException;
 import org.geotools.data.Query;
+import org.geotools.filter.Capabilities;
 import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -243,6 +244,16 @@ public class SOAPPersisterImpl implements ICoalescePersistor, ICoalesceSearchPer
         }
 
         return results;
+    }
+
+    @Override
+    public Capabilities getSearchCapabilities()
+    {
+        Capabilities capability = new Capabilities();
+        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
+        capability.addAll(Capabilities.LOGICAL);
+
+        return capability;
     }
 
     @Override

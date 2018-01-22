@@ -17,33 +17,23 @@
 
 package com.incadencecorp.coalesce.services.search.service;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectRequest;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
 import com.incadencecorp.coalesce.services.api.search.SearchManager;
 import com.incadencecorp.coalesce.services.common.ServiceBase;
 import com.incadencecorp.coalesce.services.search.service.jobs.SearchDataObjectJob;
+import org.geotools.filter.Capabilities;
+
+import java.util.concurrent.ExecutorService;
 
 public class SearchServiceImpl extends ServiceBase<ICoalesceSearchPersistor> implements SearchManager {
 
     public SearchServiceImpl(ICoalesceSearchPersistor persister)
     {
-        super(persister, new ThreadPoolExecutor(CoalesceSettings.getMinThreads(),
-                                                CoalesceSettings.getMaxThreads(),
-                                                CoalesceSettings.getKeepAliveTime(),
-                                                TimeUnit.SECONDS,
-                                                new SynchronousQueue<Runnable>(),
-                                                new CoalesceThreadFactoryImpl(),
-                                                new ThreadPoolExecutor.CallerRunsPolicy()));
+        super(persister, null);
     }
-    
+
     public SearchServiceImpl(ICoalesceSearchPersistor persister, ExecutorService service)
     {
         super(persister, service);
@@ -53,6 +43,11 @@ public class SearchServiceImpl extends ServiceBase<ICoalesceSearchPersistor> imp
     public SearchDataObjectResponse searchDataObject(SearchDataObjectRequest request)
     {
         return performJob(new SearchDataObjectJob(request));
+    }
+
+    public Capabilities getCapabilities()
+    {
+        return getTarget().getSearchCapabilities();
     }
 
 }

@@ -17,12 +17,16 @@
 
 package com.incadencecorp.coalesce.search.filter.tests;
 
-import java.util.Date;
-
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.search.filter.FilterHelper;
+import com.incadencecorp.coalesce.search.filter.FilterUtil;
+import com.incadencecorp.coalesce.search.filter.FilterUtil.EConfiguration;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.Hints;
 import org.geotools.filter.visitor.AbstractFilterVisitor;
 import org.geotools.geometry.GeometryBuilder;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.temporal.object.DefaultInstant;
 import org.geotools.temporal.object.DefaultPosition;
@@ -33,21 +37,21 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.spatial.BBOX;
+import org.opengis.filter.spatial.BinarySpatialOperator;
 import org.opengis.filter.spatial.Contains;
 import org.opengis.filter.temporal.After;
 import org.opengis.filter.temporal.Before;
 import org.opengis.filter.temporal.During;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.search.filter.FilterHelper;
-import com.incadencecorp.coalesce.search.filter.FilterUtil;
-import com.incadencecorp.coalesce.search.filter.FilterUtil.EConfiguration;
+import java.util.Date;
 
 /**
  * Test the OGC utility.
- * 
+ *
  * @author n78554
  */
 public class FilterUtilIT {
@@ -63,7 +67,7 @@ public class FilterUtilIT {
 
     /**
      * Tests parsing and serializing After and Before filters.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -107,7 +111,7 @@ public class FilterUtilIT {
 
     /**
      * Tests parsing and serializing After and Before filters.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -200,8 +204,8 @@ public class FilterUtilIT {
                     LOGGER.trace("Expression 2: {}", after.getExpression2());
                 }
 
-                isValid = after.getExpression1().toString().contains("Derek")
-                        && after.getExpression2().toString().contains("Instant:");
+                isValid = after.getExpression1().toString().contains("Derek") && after.getExpression2().toString().contains(
+                        "Instant:");
             }
 
             return isValid;
@@ -222,8 +226,9 @@ public class FilterUtilIT {
                     LOGGER.trace("Expression 2: {}", before.getExpression2());
                 }
 
-                isValid = before.getExpression1().toString().contains("Derek")
-                        && before.getExpression2().toString().contains("Instant:");
+                isValid =
+                        before.getExpression1().toString().contains("Derek") && before.getExpression2().toString().contains(
+                                "Instant:");
             }
 
             return isValid;
@@ -232,8 +237,55 @@ public class FilterUtilIT {
     }
 
     /**
+     * Tests parsing and serializing bbox filters
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testBoundingBox() throws Exception
+    {
+        String EPSG4326 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
+        CoordinateReferenceSystem coordinateReferenceSystem = CRS.parseWKT(EPSG4326);
+
+        ReferencedEnvelope bbox = new ReferencedEnvelope(0, 0, 1, 1, coordinateReferenceSystem);
+
+        Filter original = FF.bbox(FF.property("Derek"), bbox);
+
+        boolean isFailure = false;
+
+        for (EConfiguration version : EConfiguration.values())
+        {
+            try
+            {
+                String xml = FilterUtil.toXml(version, original);
+                // Serialize to XML and Back
+                Filter processed = FilterUtil.fromXml(xml);
+
+                if ((boolean) processed.accept(new AssertContainsFilterVistor(), null))
+                {
+                    LOGGER.warn("\t(SUCCESS) {}", version);
+                }
+                else
+                {
+                    LOGGER.error("\t(FAILED) {}", version);
+
+                    isFailure = true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                LOGGER.warn("(FAILED) {}: {}", version, e.getMessage());
+                isFailure = true;
+            }
+        }
+
+        Assert.assertFalse(isFailure);
+    }
+
+    /**
      * Tests parsing and serializing After and Before filters.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -275,6 +327,28 @@ public class FilterUtilIT {
     private class AssertContainsFilterVistor extends AbstractFilterVisitor {
 
         @Override
+        public Object visit(BBOX filter, Object data)
+        {
+            boolean isValid = false;
+
+            if (filter.getExpression1() != null && filter.getExpression2() != null)
+            {
+
+                if (LOGGER.isTraceEnabled())
+                {
+                    LOGGER.trace("Expression 1: {}", filter.getExpression1());
+                    LOGGER.trace("Expression 2: {}", filter.getExpression2());
+                }
+
+                isValid =
+                        filter.getExpression1().toString().contains("Derek") && filter.getExpression2().toString().contains(
+                                "POLYGON ((0 1, 0 1, 0 1, 0 1, 0 1))");
+            }
+
+            return isValid;// super.visit(filter, data);
+        }
+
+        @Override
         public Object visit(Contains filter, Object data)
         {
 
@@ -289,8 +363,9 @@ public class FilterUtilIT {
                     LOGGER.trace("Expression 2: {}", filter.getExpression2());
                 }
 
-                isValid = filter.getExpression1().toString().contains("Derek")
-                        && filter.getExpression2().toString().contains("Point(0.0 0.0)");
+                isValid =
+                        filter.getExpression1().toString().contains("Derek") && filter.getExpression2().toString().contains(
+                                "Point(0.0 0.0)");
             }
 
             return isValid;// super.visit(filter, data);
@@ -304,7 +379,7 @@ public class FilterUtilIT {
 
     /**
      * Tests parsing and serializing After and Before filters.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -355,7 +430,7 @@ public class FilterUtilIT {
         @Override
         public Object visit(PropertyIsEqualTo filter, Object extraData)
         {
-            return ((org.opengis.filter.BinaryComparisonOperator) filter).isMatchingCase();
+            return filter.isMatchingCase();
         }
 
     }

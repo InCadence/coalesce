@@ -89,7 +89,7 @@ public class FilePersistorSettings {
         }
         else
         {
-            result = Paths.get(URI.create(value));
+            result = Paths.get(value);
         }
 
         return result;

@@ -58,7 +58,7 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
 
         try
         {
-            List<String> properties = new ArrayList<String>();
+            List<String> properties = new ArrayList<>();
             properties.add(CoalescePropertyFactory.getName().getPropertyName());
             properties.add(CoalescePropertyFactory.getSource().getPropertyName());
             properties.add(CoalescePropertyFactory.getEntityTitle().getPropertyName());
@@ -102,9 +102,6 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
 
                     HitType hit = new HitType();
                     hit.setEntityKey(rowset.getString(idx++));
-                    hit.setName(rowset.getString(idx++));
-                    hit.setSource(rowset.getString(idx++));
-                    hit.setTitle(rowset.getString(idx++));
 
                     if (parameters.getParams().getPropertyNames() != null)
                     {

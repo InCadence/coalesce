@@ -35,7 +35,7 @@ import java.util.Map;
 public class CoalesceComponentImpl implements ICoalesceComponent {
 
     // Use the CoalesceFramework
-    private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceFramework.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceComponentImpl.class);
 
     protected PropertyLoader loader;
     protected Map<String, String> parameters = new HashMap<String, String>();

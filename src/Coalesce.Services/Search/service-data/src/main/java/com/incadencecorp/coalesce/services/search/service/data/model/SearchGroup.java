@@ -5,23 +5,23 @@ import java.util.List;
 
 public class SearchGroup {
 
-    private String booleanComparer = "AND";
+    private String operator = "AND";
     private List<SearchCriteria> criteria;
     private List<SearchGroup> groups;
 
-    public String getBooleanComparer()
+    public String getOperator()
     {
-        return booleanComparer;
+        return operator;
     }
 
-    public void setBooleanComparer(String booleanComparer)
+    public void setOperator(String booleanComparer)
     {
-        this.booleanComparer = booleanComparer;
+        this.operator = booleanComparer;
     }
 
     public List<SearchCriteria> getCriteria()
     {
-        return criteria != null ? criteria : new ArrayList<SearchCriteria>();
+        return criteria != null ? criteria : new ArrayList<>();
     }
 
     public void setCriteria(List<SearchCriteria> criteria)
@@ -31,7 +31,7 @@ public class SearchGroup {
 
     public List<SearchGroup> getGroups()
     {
-        return groups != null ? groups : new ArrayList<SearchGroup>();
+        return groups != null ? groups : new ArrayList<>();
     }
 
     public void setGroups(List<SearchGroup> groups)

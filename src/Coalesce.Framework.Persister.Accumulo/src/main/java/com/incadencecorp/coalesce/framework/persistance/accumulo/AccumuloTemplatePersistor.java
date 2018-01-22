@@ -67,6 +67,7 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
     private final Map<String, String> params;
     private final BatchWriterConfig config;
     private final boolean useCompression;
+    private final boolean returnTotals;
 
     private static String coalesceTemplateColumnFamily = "Coalesce:Template";
     private static String coalesceTemplateXMLQualifier = "xml";
@@ -103,6 +104,9 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
 
         useCompression = params.containsKey(AccumuloDataConnector.USE_COMPRESSION) && Boolean.parseBoolean(params.get(
                 AccumuloDataConnector.USE_COMPRESSION));
+
+        returnTotals = params.containsKey(AccumuloDataConnector.RETURN_TOTALS) && Boolean.parseBoolean(params.get(
+                AccumuloDataConnector.RETURN_TOTALS));
 
         if (LOGGER.isDebugEnabled())
         {
@@ -449,6 +453,14 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
     protected boolean isCompressionEnabled()
     {
         return useCompression;
+    }
+
+        /**
+     * @return whether or not a second query will be execute to get the totals if the result set exceeds the page size.
+     */
+    protected boolean isReturnTotalsEnabled()
+    {
+        return returnTotals;
     }
 
     protected BatchWriterConfig getConfig()
