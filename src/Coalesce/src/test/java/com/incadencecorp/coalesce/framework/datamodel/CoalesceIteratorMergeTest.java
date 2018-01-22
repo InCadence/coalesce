@@ -17,23 +17,74 @@
 
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import static org.junit.Assert.*;
-
+import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * These test ensure that you can promote versions of entities by specifing XML.
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public class CoalesceIteratorMergeTest {
+
+    @Test
+    public void testFieldMerge() throws Exception
+    {
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+
+        TestRecord record = entity1.addRecord1();
+        record.getStringField().setValue("A");
+
+        TestEntity updated = new TestEntity();
+        updated.initialize(entity1.toXml());
+
+        TestRecord updatedRecord = new TestRecord((CoalesceRecord) updated.getCoalesceObjectForKey(record.getKey()));
+        updatedRecord.getStringField().setValue("B");
+
+        CoalesceEntity merged = CoalesceEntity.mergeSyncEntity(entity1, updated, "", "");
+
+        Assert.assertEquals(2, (int) merged.getObjectVersion());
+
+        TestRecord mergedRecord = new TestRecord((CoalesceRecord) merged.getCoalesceObjectForKey(record.getKey()));
+
+        Assert.assertEquals(merged.getObjectVersion(), mergedRecord.getStringField().getObjectVersion());
+        Assert.assertEquals(1, mergedRecord.getStringField().getHistory().length);
+        Assert.assertEquals("B", mergedRecord.getStringField().getValue());
+        Assert.assertEquals("A", mergedRecord.getStringField().getHistory()[0].getValue());
+    }
+
+    /**
+     * This test verifies that the object's version is not incremented unless the object has been modified.
+     */
+    @Test
+    public void testNoChanges() throws Exception
+    {
+
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize(entity1.toXml());
+
+        CoalesceEntity entity3 = CoalesceEntity.mergeSyncEntity(entity1, entity2, "", "");
+
+        Assert.assertEquals(1, (int) entity3.getObjectVersion());
+
+        TestEntity updated = new TestEntity();
+        updated.initialize(entity3.toXml());
+        updated.setEntityId("Hello World");
+
+        CoalesceEntity merged = CoalesceEntity.mergeSyncEntity(entity3, updated, "", "");
+
+        Assert.assertEquals(2, (int) merged.getObjectVersion());
+    }
 
     /**
      * Ensures that promoting an earlier version of an entity with out a record
      * that was added later will mark the record as deleted.
-     * 
-     * @throws Exception
      */
     @Test
     public void testPromote() throws Exception
@@ -43,7 +94,7 @@ public class CoalesceIteratorMergeTest {
         CoalesceIteratorMerge merger = new CoalesceIteratorMerge();
         CoalesceIteratorGetVersion versioner = new CoalesceIteratorGetVersion();
 
-        // Get Entities
+        // Create Entities
         TestEntity entity1 = new TestEntity();
         TestEntity entity2 = new TestEntity();
 
@@ -60,6 +111,8 @@ public class CoalesceIteratorMergeTest {
 
         // Merge Entities (Entity2's record should be marked as version 2)
         CoalesceEntity result = CoalesceEntity.mergeSyncEntity(entity1, entity2, null, null);
+
+        Assert.assertEquals(2, (int) result.getObjectVersion());
 
         // Promote Version 1 
         TestEntity promoted = new TestEntity();

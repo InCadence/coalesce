@@ -30,6 +30,7 @@ import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.AbstractSearchTest;
 import com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl;
 import com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 
 import java.nio.file.Paths;
@@ -44,6 +45,9 @@ public class SOAPPersisterImplSearchTest extends AbstractSearchTest<SOAPPersiste
     @BeforeClass
     public static void initialize()
     {
+        // TODO Remove this assumption
+        Assume.assumeFalse(true); // Skipping due to lack of support for capabilities.
+
         System.setProperty(CoalesceParameters.COALESCE_CONFIG_LOCATION_PROPERTY,
                            Paths.get("src", "test", "resources").toString());
     }

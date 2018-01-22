@@ -17,6 +17,17 @@
 
 package com.incadencecorp.coalesce.framework.datamodel;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.CoalesceIterator;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -24,24 +35,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
-
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.output.XMLOutputter;
-import org.xml.sax.InputSource;
-
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.helpers.CoalesceIterator;
-
 /**
- * This iterator is responsible for merging Coalesce Entities.
- * 
- * @author n78554
+ * This iterator is responsible for merging Coalesce Entities. NOT Thread safe.
  *
+ * @author n78554
  */
 public class CoalesceIteratorMerge extends CoalesceIterator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceIteratorMerge.class);
 
     private int version;
     private CoalesceEntity original;
@@ -50,26 +51,30 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
 
     private List<String> childrenKeys;
 
-    boolean hasNewElements = false;
+    private boolean hasNewElements = false;
+    private boolean hasChanges = false;
 
-    private static final List<String> ATTRIBUTES_TO_IGNORE = Arrays.asList(new String[] {
-            "previoushistorykey", "modifiedby", "modifiedbyip", "objectversion", "key"
-    });
+    private static final List<String> ATTRIBUTES_TO_IGNORE = Arrays.asList("previoushistorykey",
+                                                                           "modifiedby",
+                                                                           "modifiedbyip",
+                                                                           "objectversion",
+                                                                           "key");
 
     /**
      * Merges the updated entity on top of the original.
-     * 
-     * @param user
-     * @param ip
-     * @param original
-     * @param updated
+     *
+     * @param user     The user making the merge request
+     * @param ip       The IP of the user making the merge request
+     * @param original entity
+     * @param updated  entity
      * @return the merged entity.
      * @throws CoalesceException if the entities don't share the same key or
-     *             there was an issue during the merge.
+     *                           there was an issue during the merge.
      */
     public CoalesceEntity merge(String user, String ip, CoalesceEntity original, CoalesceEntity updated)
             throws CoalesceException
     {
+        LOGGER.debug("Merging: {}", original.getKey());
 
         // Same Object?
         if (!original.getKey().equalsIgnoreCase(updated.getKey()))
@@ -88,7 +93,14 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
         // Update has new Elements?
         if (hasNewElements)
         {
-            original = addNewElements(original, updated, version);
+            original = addNewElements(original, updated);
+        }
+
+        if (hasChanges || hasNewElements)
+        {
+            LOGGER.debug("Incremented {} Version", original.getKey());
+
+            original.createHistory(user, ip, version);
         }
 
         return original;
@@ -98,18 +110,20 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
     /**
      * Promotes the updated entity on top of the original. Any elements in the
      * original that are not in the updated version are marked as deleted.
-     * 
-     * @param user
-     * @param ip
-     * @param original
-     * @param updated
+     *
+     * @param user     The user making the merge request
+     * @param ip       The IP of the user making the merge request
+     * @param original entity
+     * @param updated  entity
      * @return the promoted entity.
      * @throws CoalesceException if the entities don't share the same key or
-     *             there was an issue during the merge.
+     *                           there was an issue during the merge.
      */
     public CoalesceEntity promote(String user, String ip, CoalesceEntity original, CoalesceEntity updated)
             throws CoalesceException
     {
+        LOGGER.debug("Promoting: {}", original.getKey());
+
         // Same Object?
         if (!original.getKey().equalsIgnoreCase(updated.getKey()))
         {
@@ -122,7 +136,7 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
         this.ip = ip;
 
         // Populate List of Children
-        childrenKeys = new ArrayList<String>();
+        childrenKeys = new ArrayList<>();
         populateChildrenKeys(original, childrenKeys);
 
         // Process Update
@@ -132,7 +146,7 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
         if (hasNewElements)
         {
             // This Should Never Trigger on a Promote
-            original = addNewElements(original, updated, version);
+            original = addNewElements(original, updated);
         }
 
         // Process Any Children Not Visited (Don't exists in the version being
@@ -146,17 +160,26 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
             if (object != null && !childrenKeys.contains(object.getParent().getKey()))
             {
                 // No; Can Element Type be Marked as Deleted
-                if (object instanceof ICoalesceObjectHistory
-                        && !(object instanceof CoalesceHistory || object instanceof CoalesceFieldHistory))
+                if (object instanceof ICoalesceObjectHistory && !(object instanceof CoalesceHistory
+                        || object instanceof CoalesceFieldHistory))
                 {
+                    LOGGER.debug("Marking [{}:{}] as Deleted", object.getName(), object.getKey());
+
                     // Yes; Create History
                     ((ICoalesceObjectHistory) object).createHistory(user, ip, version);
 
                     // Mark as Deleted
                     object.setStatus(ECoalesceObjectStatus.DELETED);
                     object.updateLastModified();
+
+                    hasChanges = true;
                 }
             }
+        }
+
+        if (hasChanges || hasNewElements)
+        {
+            original.createHistory(user, ip, version);
         }
 
         return original;
@@ -177,9 +200,6 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceEntity(CoalesceEntity entity)
     {
-
-        original.createHistory(user, ip, version);
-
         // Always Create History
         mergeAttributes(original, entity, true);
 
@@ -223,7 +243,7 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
             for (CoalesceRecord record : recordset.getAllRecords())
             {
                 CoalesceRecord originalRecord = (CoalesceRecord) originalRecordset.getCoalesceObjectForKey(record.getKey());
-                
+
                 if (mergeElement(originalRecord, record))
                 {
                     // Merge fields based on the field name and not the key. When using
@@ -268,11 +288,12 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
         if (orig != null)
         {
             // No; Merge
-            mergeAttributes((CoalesceObject) orig, updated, false);
+            mergeAttributes(orig, updated, false);
             return true;
         }
         else
         {
+            LOGGER.debug("Adding [{}:{}] to {}", updated.getName(), updated.getKey(), original.getKey());
 
             // Yes; New Element
             hasNewElements = true;
@@ -297,7 +318,6 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
 
     private void clearHistory(ICoalesceObjectHistory updated)
     {
-
         updated.clearHistory();
 
         if (updated instanceof CoalesceObject)
@@ -313,7 +333,7 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
 
     }
 
-    protected boolean mergeAttributes(CoalesceObject original, CoalesceObject updated, boolean skipHistory)
+    private void mergeAttributes(CoalesceObject original, CoalesceObject updated, boolean skipHistory)
     {
         boolean historyCreated = false;
 
@@ -343,25 +363,27 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
             String updatedValue = attribute.getValue();
 
             // Modified?
-            if ((originalValue != null && !originalValue.equals(updatedValue))
-                    || (originalValue == null && updatedValue != null))
+            if ((originalValue != null && !originalValue.equals(updatedValue)) || (originalValue == null
+                    && updatedValue != null))
             {
-
                 // Yes; History Already Created? (Exclude last modified and date
                 // created changes, these can change when using ExIm)
-                if (!historyCreated && !skipHistory
-                        && !attribute.getKey().toString().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_LASTMODIFIED)
+                if (!historyCreated && !attribute.getKey().toString().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_LASTMODIFIED)
                         && !attribute.getKey().toString().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_DATECREATED))
                 {
-                    if (original instanceof ICoalesceObjectHistory)
+                    LOGGER.debug("Attribute Modified {} = {}", attribute.getKey(), updatedValue);
+
+                    hasChanges = true;
+
+                    if (original instanceof ICoalesceObjectHistory && !skipHistory)
                     {
                         // Create History
                         ((ICoalesceObjectHistory) original).setSuspendHistory(false);
                         ((ICoalesceObjectHistory) original).createHistory(user, ip, version);
                         ((ICoalesceObjectHistory) original).setSuspendHistory(true);
-                    }
 
-                    historyCreated = true;
+                        historyCreated = true;
+                    }
                 }
 
                 // Apply Change
@@ -379,19 +401,12 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
         {
             ((ICoalesceObjectHistory) original).setSuspendHistory(false);
         }
-
-        return historyCreated;
     }
 
     /**
      * This function will merge new elements and attribute changes.
-     * 
-     * @param original
-     * @param updated
-     * @return a merged entity.
-     * @throws CoalesceException
      */
-    private CoalesceEntity addNewElements(CoalesceEntity original, CoalesceEntity updated, int rev) throws CoalesceException
+    private CoalesceEntity addNewElements(CoalesceEntity original, CoalesceEntity updated) throws CoalesceException
     {
 
         try
@@ -402,7 +417,7 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
             org.jdom2.Document originalDoc = saxBuilder.build(new InputSource(new StringReader(original.toXml())));
             org.jdom2.Document updatedDoc = saxBuilder.build(new InputSource(new StringReader(updated.toXml())));
 
-            addNewElements(originalDoc.getRootElement(), updatedDoc.getRootElement(), rev);
+            addNewElements(originalDoc.getRootElement(), updatedDoc.getRootElement());
 
             XMLOutputter xmlOutPutter = new XMLOutputter();
             String output = xmlOutPutter.outputString(originalDoc);
@@ -418,12 +433,8 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
 
     /**
      * Recursive method that merges new elements and attribute changes.
-     * 
-     * @param original
-     * @param updated
-     * @param rev
      */
-    protected void addNewElements(Element original, Element updated, int rev)
+    private void addNewElements(Element original, Element updated)
     {
 
         // Get Children
@@ -443,7 +454,7 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
 
                 if (key.equalsIgnoreCase(updatedChild.getAttribute("key").getValue()))
                 {
-                    addNewElements(child, updatedChild, rev);
+                    addNewElements(child, updatedChild);
 
                     childExists = true;
                     break;
@@ -451,8 +462,10 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
             }
 
             // Evaluate
-            if (!childExists && updatedChild.getName() != "fieldhistory")
+            if (!childExists && !updatedChild.getName().equalsIgnoreCase("fieldhistory"))
             {
+                LOGGER.debug("Adding New Element: {}", updatedChild.getAttribute("name"));
+
                 // We don't have this child; add the entire Child data object
                 // from updatechild
                 Element child = updatedChild.clone();
