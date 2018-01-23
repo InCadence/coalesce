@@ -270,6 +270,7 @@ public class CoalesceIteratorUpdateVersionStatusTest {
 
         TestEntity v2b = new TestEntity();
         v2b.initialize(v2.toXml());
+        v2b.setEntityId("A");
 
         TestEntity v3 = new TestEntity();
         v3.initialize(CoalesceEntity.mergeSyncEntity(v2, v2b, "Derek", "127.0.0.1"));

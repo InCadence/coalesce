@@ -53,6 +53,7 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
 
     private boolean hasNewElements = false;
     private boolean hasChanges = false;
+    private boolean hasEntityChanged = false;
 
     private static final List<String> ATTRIBUTES_TO_IGNORE = Arrays.asList("previoushistorykey",
                                                                            "modifiedby",
@@ -96,9 +97,9 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
             original = addNewElements(original, updated);
         }
 
-        if (hasChanges || hasNewElements)
+        if (!hasEntityChanged && (hasChanges || hasNewElements))
         {
-            LOGGER.debug("Incremented {} Version", original.getKey());
+            LOGGER.debug("Incremented {} Version to {}", original.getKey(), version);
 
             original.createHistory(user, ip, version);
         }
@@ -177,7 +178,7 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
             }
         }
 
-        if (hasChanges || hasNewElements)
+        if (!hasEntityChanged && (hasChanges || hasNewElements))
         {
             original.createHistory(user, ip, version);
         }
@@ -201,7 +202,12 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
     protected boolean visitCoalesceEntity(CoalesceEntity entity)
     {
         // Always Create History
-        mergeAttributes(original, entity, true);
+        hasEntityChanged = mergeAttributes(original, entity);
+
+        if (hasEntityChanged)
+        {
+            LOGGER.debug("Incremented {} Version to {}", original.getKey(), version);
+        }
 
         // Process Children
         return true;
@@ -288,7 +294,7 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
         if (orig != null)
         {
             // No; Merge
-            mergeAttributes(orig, updated, false);
+            mergeAttributes(orig, updated);
             return true;
         }
         else
@@ -333,7 +339,7 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
 
     }
 
-    private void mergeAttributes(CoalesceObject original, CoalesceObject updated, boolean skipHistory)
+    private boolean mergeAttributes(CoalesceObject original, CoalesceObject updated)
     {
         boolean historyCreated = false;
 
@@ -358,7 +364,6 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
 
         for (Map.Entry<QName, String> attribute : attributes.entrySet())
         {
-
             String originalValue = original.getAttribute(attribute.getKey().toString());
             String updatedValue = attribute.getValue();
 
@@ -371,11 +376,11 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
                 if (!historyCreated && !attribute.getKey().toString().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_LASTMODIFIED)
                         && !attribute.getKey().toString().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_DATECREATED))
                 {
-                    LOGGER.debug("Attribute Modified {} = {}", attribute.getKey(), updatedValue);
+                    LOGGER.debug("Attribute in {} Modified {} = {}", original.getName(), attribute.getKey(), updatedValue);
 
                     hasChanges = true;
 
-                    if (original instanceof ICoalesceObjectHistory && !skipHistory)
+                    if (original instanceof ICoalesceObjectHistory)
                     {
                         // Create History
                         ((ICoalesceObjectHistory) original).setSuspendHistory(false);
@@ -401,6 +406,8 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
         {
             ((ICoalesceObjectHistory) original).setSuspendHistory(false);
         }
+
+        return historyCreated;
     }
 
     /**
