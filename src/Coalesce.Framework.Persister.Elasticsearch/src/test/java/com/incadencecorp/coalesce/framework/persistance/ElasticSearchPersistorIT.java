@@ -1,12 +1,14 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,11 +20,10 @@ import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
 import com.incadencecorp.coalesce.framework.persistance.testobjects.GDELT_Test_Entity;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 
 public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<ElasticSearchPersistor> {
 
-    private static final String NAME = "name";
+	private static final String NAME = "name";
     private static ServerConn conn;
     
     @BeforeClass
@@ -38,6 +39,92 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
         String password = props.getProperty("password");
         conn = new ServerConn.Builder().db(dbName).serverName(zookeepers).user(user).password(password).build();
     }
+
+    @Override
+	public void registerEntities() {
+		// We don't need to customize this yet... I think
+		super.registerEntities();
+	}
+
+	@Override
+	public void testCreation() throws Exception {
+        // Create Entities
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+        
+        //ElasticSearch requires names be lowercase
+        entity1.setName(entity1.getName().toLowerCase());
+
+        ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+
+        persistor.saveEntity(true, entity1);
+	}
+
+	@Override
+	public void testUpdates() throws Exception {
+        // Create Entities
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+        
+        //ElasticSearch requires names be lowercase
+        entity1.setName(entity1.getName().toLowerCase());
+
+        ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+
+        persistor.saveEntity(true, entity1);
+        
+        //TODO
+        //Now pull the created entity back and updated and confirm the update worked
+	}
+
+	@Override
+	public void testDeletion() throws Exception {
+        // Create Entities
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+        
+        //ElasticSearch requires names be lowercase
+        entity1.setName(entity1.getName().toLowerCase());
+
+        ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+
+        // Save Entity1 (Should create a place holder for entity2)
+        persistor.saveEntity(true, entity1);
+        
+        DeleteResponse response = persistor.deleteObject(entity1);
+        
+        assertNotNull(response);
+	}
+
+	@Override
+	public void testRetrieveInvalidKey() throws Exception {
+    	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+    	persistor.searchSpecific("twitter4", "tweet");
+	}
+
+	@Override
+	public void testTemplates() throws Exception {
+		// TODO Auto-generated method stub
+		super.testTemplates();
+	}
+
+	@Override
+	public void testTemplatesInvalid() throws Exception {
+		// TODO Auto-generated method stub
+		super.testTemplatesInvalid();
+	}
+
+	@Override
+	public void testAllDataTypes() throws Exception {
+		// TODO Auto-generated method stub
+		super.testAllDataTypes();
+	}
+
+	@Override
+	public String getFieldValue(String key) throws CoalescePersistorException {
+		// TODO Auto-generated method stub
+		return super.getFieldValue(key);
+	}
 
     @Test
     public void testPersistRetrieveSearchEntity() throws Exception
@@ -187,7 +274,7 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
     @Test
     public void testSearchSpecific() throws Exception {
     	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
-    	persistor.searchSpecific();
+    	persistor.searchSpecific("twitter4", "tweet");
     }
 
     @Override

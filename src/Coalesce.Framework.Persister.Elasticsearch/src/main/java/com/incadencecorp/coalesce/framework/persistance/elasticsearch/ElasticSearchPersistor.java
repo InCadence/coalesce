@@ -91,13 +91,13 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         }
     }
     
-    public void searchSpecific() {
+    public void searchSpecific(String searchValue, String searchType) {
     	
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
 	    	TransportClient client = conn.getDBConnector();
-	    	SearchResponse response = client.prepareSearch("twitter4")
-	    	        .setTypes("tweet")
+	    	SearchResponse response = client.prepareSearch(searchValue)
+	    	        .setTypes(searchType)
 	    	        //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 	    	        //.setQuery(QueryBuilders.termQuery("multi", "test"))                 // Query
 	    	        //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
@@ -585,7 +585,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     protected boolean persistEntityObject(CoalesceEntity entity, TransportClient conn) throws SQLException
     {
         // Return true if no update is required.
-    	//Worry about this later. Just gotta get this working
+    	//Worry about this later. 
 //        if (!checkLastModified(entity, conn))
 //        {
 //            return true;
@@ -684,12 +684,10 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      * @return DeleteResponse
      * @throws SQLException
      */
-    protected DeleteResponse deleteObject(CoalesceObject coalesceObject) throws SQLException
+    public DeleteResponse deleteObject(CoalesceObject coalesceObject) throws SQLException
     {
         String objectType = coalesceObject.getType();
         String objectKey = coalesceObject.getKey();
-        String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
-
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {

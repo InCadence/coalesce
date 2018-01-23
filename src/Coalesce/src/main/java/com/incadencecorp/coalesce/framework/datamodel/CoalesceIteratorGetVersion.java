@@ -17,23 +17,25 @@
 
 package com.incadencecorp.coalesce.framework.datamodel;
 
+import com.incadencecorp.coalesce.common.helpers.CoalesceIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.namespace.QName;
-
-import com.incadencecorp.coalesce.common.helpers.CoalesceIterator;
 
 /**
  * This iterator is responsible for reverting to older version of an entity. It
  * iterates through each field and reverts any marked with a version higher then
  * specified.
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public class CoalesceIteratorGetVersion extends CoalesceIterator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceIteratorGetVersion.class);
 
     /*--------------------------------------------------------------------------
     Private Members
@@ -49,9 +51,9 @@ public class CoalesceIteratorGetVersion extends CoalesceIterator {
     /**
      * Reverts the entity to specified version and removes all history leaving
      * the original entity alone.
-     * 
-     * @param entity
-     * @param version
+     *
+     * @param entity  to revert
+     * @param version to revert to
      * @return a new instance of the entity at the correct version.
      */
     public CoalesceEntity getClonedVersion(final CoalesceEntity entity, final int version)
@@ -66,14 +68,14 @@ public class CoalesceIteratorGetVersion extends CoalesceIterator {
 
     /**
      * Reverts the entity to specified version and removes all history.
-     * 
-     * @param entity
-     * @param version
+     *
+     * @param entity  to revert
+     * @param version to revert to
      */
     public void getVersion(final CoalesceEntity entity, final int version)
     {
         this.version = version;
-        objectsToPrune = new ArrayList<CoalesceObject>();
+        objectsToPrune = new ArrayList<>();
 
         // Valid Version?
         if (!entity.isValidObjectVersion(version))
@@ -95,7 +97,7 @@ public class CoalesceIteratorGetVersion extends CoalesceIterator {
     }
 
     /*--------------------------------------------------------------------------
-    OVerride Methods
+    Override Methods
     --------------------------------------------------------------------------*/
 
     @Override
@@ -116,7 +118,6 @@ public class CoalesceIteratorGetVersion extends CoalesceIterator {
                 // History Valid?
                 if (history.getObjectVersion() <= version)
                 {
-
                     Map<QName, String> attributes = history.getAttributes();
                     attributes.remove(new QName("key"));
 
@@ -126,6 +127,11 @@ public class CoalesceIteratorGetVersion extends CoalesceIterator {
                     }
 
                     validHistory = true;
+
+                    LOGGER.debug("Rolling back {} field to version {}: {}",
+                                 field.getName(),
+                                 history.getObjectVersion(),
+                                 history.getValue());
 
                     // Exit Loop
                     break;
@@ -139,6 +145,8 @@ public class CoalesceIteratorGetVersion extends CoalesceIterator {
             // Valid History?
             if (!validHistory)
             {
+                LOGGER.debug("Rolling back {} field to null", field.getName());
+
                 // No; Clear Field
                 field.setBaseValue(null);
             }
@@ -200,7 +208,7 @@ public class CoalesceIteratorGetVersion extends CoalesceIterator {
         // Version Newer?
         if (object.getObjectVersion() > version)
         {
-            
+
             validHistory = false;
 
             // Yes; Roll Back to History
@@ -212,7 +220,6 @@ public class CoalesceIteratorGetVersion extends CoalesceIterator {
                 // History Valid?
                 if (history.getObjectVersion() <= version)
                 {
-
                     Map<QName, String> attributes = history.getAttributes();
                     attributes.remove(new QName("key"));
 
@@ -222,6 +229,8 @@ public class CoalesceIteratorGetVersion extends CoalesceIterator {
                     }
 
                     validHistory = true;
+
+                    LOGGER.debug("Rolling back {} to version {}: {}", object.getName(), history.getObjectVersion(), history.getStatus());
 
                     // Exit Loop
                     break;
@@ -235,6 +244,8 @@ public class CoalesceIteratorGetVersion extends CoalesceIterator {
             // Valid History?
             if (!validHistory)
             {
+                LOGGER.debug("Pruning {}", object.getName());
+
                 // Mark For Removal
                 objectsToPrune.add(object);
             }
