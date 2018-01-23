@@ -686,8 +686,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      */
     public DeleteResponse deleteObject(CoalesceObject coalesceObject) throws SQLException
     {
-        String objectType = coalesceObject.getType();
-        String objectKey = coalesceObject.getKey();
+        String objectType = coalesceObject.getType().toLowerCase();
+        String objectKey = coalesceObject.getName().toLowerCase();
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {

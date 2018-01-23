@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import org.elasticsearch.action.DocWriteResponse.Result;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -93,7 +94,7 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
         
         DeleteResponse response = persistor.deleteObject(entity1);
         
-        assertNotNull(response);
+        assertEquals(Result.DELETED, response.getResult());
 	}
 
 	@Override
