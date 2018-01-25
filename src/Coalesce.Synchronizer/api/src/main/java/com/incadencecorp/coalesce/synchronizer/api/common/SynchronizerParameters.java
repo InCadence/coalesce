@@ -21,7 +21,7 @@ import com.incadencecorp.coalesce.api.CoalesceParameters;
 
 /**
  * Defines the parameters used by the synchronization service.
- * 
+ *
  * @author n78554
  * @see CoalesceParameters
  */
@@ -94,6 +94,11 @@ public final class SynchronizerParameters {
     public static final String PARAM_SCANNER_LAST_SUCCESS = SCANNERS + "lastscan";
 
     /**
+     * (String) CQL used to filter results. Property name syntax is 'recordset.fieldname' and MUST be wrapped in double quotes.
+     */
+    public static final String PARAM_SCANNER_FILTER = SCANNERS + "filter";
+
+    /**
      * (Integer) Number of days since last scanned to confine the scanner to a
      * time period. If not specified it defaults to
      * {@value #DEFAULT_SCANNER_DAYS}.
@@ -104,4 +109,15 @@ public final class SynchronizerParameters {
      * {@link #PARAM_SCANNER_DAYS} default value.
      */
     public static final int DEFAULT_SCANNER_DAYS = 0;
+
+    /**
+     * (Integer) Number of results returned per scan. If not specified; defaults to {@value DEFAULT_SCANNER_MAX}.
+     */
+    public static final String PARAM_SCANNER_MAX = SCANNERS + "max";
+
+    /**
+     * {@link #PARAM_SCANNER_MAX} default value.
+     */
+    public static final int DEFAULT_SCANNER_MAX = 200;
+
 }

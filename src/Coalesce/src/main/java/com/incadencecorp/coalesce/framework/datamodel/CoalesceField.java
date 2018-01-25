@@ -17,17 +17,6 @@
 
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.xml.namespace.QName;
-
-import org.apache.commons.lang.NotImplementedException;
-import org.joda.time.DateTime;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.api.CoalesceAttributes;
 import com.incadencecorp.coalesce.common.classification.Marking;
@@ -37,13 +26,17 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;
+import org.apache.commons.lang.NotImplementedException;
+import org.joda.time.DateTime;
+
+import javax.xml.namespace.QName;
+import java.util.*;
 
 /**
  * Base class providing common functionality across the different data types.
- * 
- * @author n78554
  *
  * @param <T>
+ * @author n78554
  */
 public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceObjectHistory {
 
@@ -76,21 +69,19 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      * and ties it to its parent
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
-     * 
-     * @param parent
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
-     *            that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
-     *            will belong to.
-     * @param fieldDefinition
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            "template" that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
-     *            will be based off of, for default values/settings.
+     *
+     * @param parent          {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     *                        that the
+     *                        {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
+     *                        will belong to.
+     * @param fieldDefinition {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                        "template" that the
+     *                        {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
+     *                        will be based off of, for default values/settings.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
-     *         , belonging to the parent
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
-     *         , resulting from the fieldDefinition.
+     * , belonging to the parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * , resulting from the fieldDefinition.
      */
     protected static CoalesceField<?> create(CoalesceRecord parent, CoalesceFieldDefinition fieldDefinition)
     {
@@ -131,13 +122,14 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
 
     /**
      * Factory class for initiating the correct template field.
-     * 
+     *
      * @param dataType
      * @return
      */
     protected static CoalesceField<?> createTypeField(ECoalesceFieldDataTypes dataType)
     {
-        switch (dataType) {
+        switch (dataType)
+        {
 
         case STRING_TYPE:
         case URI_TYPE:
@@ -220,9 +212,9 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
 
     /**
      * Returns an Field's value as type T.
-     * 
+     *
      * @return Object base type to contain the field's data, which could be any
-     *         data type.
+     * data type.
      * @throws CoalesceDataFormatException
      */
     @SuppressWarnings("unchecked")
@@ -230,7 +222,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     public T getValue() throws CoalesceDataFormatException
     {
 
-        switch (getDataType()) {
+        switch (getDataType())
+        {
         case STRING_TYPE:
         case URI_TYPE:
             return (T) getBaseValue();
@@ -305,13 +298,14 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
 
     /**
      * Sets the Field's value as type T.
-     * 
+     *
      * @throws CoalesceDataFormatException
      */
     @Override
     public void setValue(T value) throws CoalesceDataFormatException
     {
-        switch (getDataType()) {
+        switch (getDataType())
+        {
         case STRING_TYPE:
         case URI_TYPE:
             setTypedValue((String) value);
@@ -399,7 +393,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         case LONG_LIST_TYPE:
             setTypedValue((long[]) value);
             break;
-            
+
         default:
             throw new NotImplementedException(getDataType() + " not implemented");
         }
@@ -411,13 +405,12 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
      * The field may be new, but field history is tied in, in the event that the
      * field is not new.
-     * 
-     * @param parent
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
-     *            that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
-     *            will belong to.
-     * @param field Field being initialized.
+     *
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     *               that the
+     *               {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
+     *               will belong to.
+     * @param field  Field being initialized.
      * @return boolean indicator of success/failure.
      */
     protected boolean initialize(CoalesceRecord parent, CoalesceFieldDefinition definition, Field field)
@@ -505,10 +498,28 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     }
 
     /**
+     * @return whether this field has been set before
+     */
+    @JsonIgnore
+    public boolean isNull()
+    {
+        return getBaseValue() == null;
+    }
+
+    /**
+     * @return whether this field has a value
+     */
+    @JsonIgnore
+    public boolean isNullOrEmpty()
+    {
+        return StringHelper.isNullOrEmpty(getBaseValue());
+    }
+
+    /**
      * Sets the value of the Field's DataType attribute.
-     * 
+     *
      * @param value ECoalesceFieldDataTypes to be the Field's DataType
-     *            attribute.
+     *              attribute.
      */
     private void setDataType(ECoalesceFieldDataTypes value)
     {
@@ -624,11 +635,11 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     /**
      * Update the value and/or classification marking of the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
-     * 
-     * @param value String, value contained by the field.
+     *
+     * @param value   String, value contained by the field.
      * @param marking classification marking of the field.
-     * @param user user making the change.
-     * @param ip user ip responsible for the change.
+     * @param user    user making the change.
+     * @param ip      user ip responsible for the change.
      * @throws CoalesceDataFormatException
      */
     public void change(T value, Marking marking, String user, String ip) throws CoalesceDataFormatException
@@ -647,8 +658,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
 
     /**
      * @return an array of values if the field is a list type, array of size 0
-     *         if the field is null, or array of one with the basevalue if its a
-     *         non list.
+     * if the field is null, or array of one with the basevalue if its a
+     * non list.
      */
     @JsonIgnore
     public String[] getBaseValues()
@@ -664,8 +675,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         {
             if (!StringHelper.isNullOrEmpty(getBaseValue()))
             {
-                results = new String[] {
-                                         getBaseValue()
+                results = new String[] { getBaseValue()
                 };
             }
             else
@@ -696,7 +706,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         {
 
             // No; Check Type
-            switch (getDataType()) {
+            switch (getDataType())
+            {
             case BINARY_TYPE:
             case FILE_TYPE:
                 // Don't Create History Entry for these types
@@ -736,7 +747,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
                 if (!isSuspendHistory())
                 {
                     // No; Check Type
-                    switch (getDataType()) {
+                    switch (getDataType())
+                    {
                     case BINARY_TYPE:
                     case FILE_TYPE:
                         // Don't Create History Entry for these types
@@ -799,7 +811,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     @Override
     protected boolean setExtendedAttributes(String name, String value)
     {
-        switch (name.toLowerCase()) {
+        switch (name.toLowerCase())
+        {
         case ATTRIBUTE_DATA_TYPE:
             setDataType(ECoalesceFieldDataTypes.getTypeForCoalesceType(value));
             return true;
