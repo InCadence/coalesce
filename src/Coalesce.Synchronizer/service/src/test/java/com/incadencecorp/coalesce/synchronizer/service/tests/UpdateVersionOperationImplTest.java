@@ -44,7 +44,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class UpdateVersionOperationImplIT {
+public class UpdateVersionOperationImplTest {
 
     @BeforeClass
     public static void initialize() throws Exception

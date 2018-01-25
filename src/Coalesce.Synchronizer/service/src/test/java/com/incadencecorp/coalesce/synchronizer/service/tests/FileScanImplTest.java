@@ -17,31 +17,28 @@
 
 package com.incadencecorp.coalesce.synchronizer.service.tests;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.sql.rowset.CachedRowSet;
-
+import com.incadencecorp.coalesce.api.CoalesceParameters;
+import com.incadencecorp.coalesce.framework.persistance.AbstractFileHandlerTests;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import com.incadencecorp.coalesce.synchronizer.service.operations.CopyOperationImpl;
+import com.incadencecorp.coalesce.synchronizer.service.operations.ExceptionOperationImpl;
+import com.incadencecorp.coalesce.synchronizer.service.scanners.FileScanImpl;
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.api.CoalesceParameters;
-import com.incadencecorp.coalesce.framework.persistance.AbstractFileHandlerTests;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.incadencecorp.coalesce.synchronizer.service.scanners.FileScanImpl;
+import javax.sql.rowset.CachedRowSet;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
  * These test exercise the file scanner implementation.
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public class FileScanImplTest extends AbstractFileHandlerTests {
 
@@ -49,28 +46,42 @@ public class FileScanImplTest extends AbstractFileHandlerTests {
     private static final String FILE2 = UUID.randomUUID().toString();
     private static final int SUB_DIR_LEN = 2;
 
+    private static final Path ROOT = Paths.get("src", "test", "resources");
+
     /**
      * Creates files needed for these unit tests.
-     * 
+     *
      * @throws Exception
      */
     @BeforeClass
     public static void initialzie() throws Exception
     {
         // Create Files
-        Path path1 = Paths.get("src", "test", "resources", FILE1.substring(0, SUB_DIR_LEN), FILE1);
-        Path path2 = Paths.get("src", "test", "resources", FILE2.substring(0, SUB_DIR_LEN), FILE2);
+        Path path1 = ROOT.resolve(FILE1.substring(0, SUB_DIR_LEN)).resolve(FILE1);
+        Path path2 = ROOT.resolve(FILE2.substring(0, SUB_DIR_LEN)).resolve(FILE2);
 
-        Files.createDirectory(Paths.get("src", "test", "resources", FILE1.substring(0, SUB_DIR_LEN)));
-        Files.createDirectory(Paths.get("src", "test", "resources", FILE2.substring(0, SUB_DIR_LEN)));
+        Files.createDirectory(ROOT.resolve(FILE1.substring(0, SUB_DIR_LEN)));
+        Files.createDirectory(ROOT.resolve(FILE2.substring(0, SUB_DIR_LEN)));
 
         Files.createFile(path1);
         Files.createFile(path2);
+
+        if (Files.exists(ROOT.resolve(CopyOperationImpl.class.getSimpleName())))
+        {
+            FileUtils.cleanDirectory(new File(ROOT.resolve(CopyOperationImpl.class.getSimpleName()).toString()));
+            Files.deleteIfExists(ROOT.resolve(CopyOperationImpl.class.getSimpleName()));
+        }
+
+        if (Files.exists(ROOT.resolve(ExceptionOperationImpl.class.getSimpleName())))
+        {
+            FileUtils.cleanDirectory(new File(ROOT.resolve(ExceptionOperationImpl.class.getSimpleName()).toString()));
+            Files.deleteIfExists(ROOT.resolve(ExceptionOperationImpl.class.getSimpleName()));
+        }
     }
 
     /**
      * Ensures the scanner picks up the files created in initialization.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -100,20 +111,20 @@ public class FileScanImplTest extends AbstractFileHandlerTests {
         Assert.assertTrue(keys.contains(FILE1));
         Assert.assertTrue(keys.contains(FILE2));
 
-        Assert.assertTrue(Files.exists(Paths.get("src", "test", "resources", FILE1.substring(0, SUB_DIR_LEN))));
-        Assert.assertTrue(Files.exists(Paths.get("src", "test", "resources", FILE2.substring(0, SUB_DIR_LEN))));
+        Assert.assertTrue(Files.exists(ROOT.resolve(FILE1.substring(0, SUB_DIR_LEN))));
+        Assert.assertTrue(Files.exists(ROOT.resolve(FILE2.substring(0, SUB_DIR_LEN))));
 
-        Assert.assertTrue(Files.exists(Paths.get("src", "test", "resources", FILE1.substring(0, SUB_DIR_LEN), FILE1)));
-        Assert.assertTrue(Files.exists(Paths.get("src", "test", "resources", FILE2.substring(0, SUB_DIR_LEN), FILE2)));
+        Assert.assertTrue(Files.exists(ROOT.resolve(FILE1.substring(0, SUB_DIR_LEN)).resolve(FILE1)));
+        Assert.assertTrue(Files.exists(ROOT.resolve(FILE2.substring(0, SUB_DIR_LEN)).resolve(FILE2)));
 
         // This scanner should clean up its files.
         scanner.finished(true, results);
 
-        Assert.assertFalse(Files.exists(Paths.get("src", "test", "resources", FILE1.substring(0, SUB_DIR_LEN))));
-        Assert.assertFalse(Files.exists(Paths.get("src", "test", "resources", FILE2.substring(0, SUB_DIR_LEN))));
+        Assert.assertFalse(Files.exists(ROOT.resolve(FILE1.substring(0, SUB_DIR_LEN))));
+        Assert.assertFalse(Files.exists(ROOT.resolve(FILE2.substring(0, SUB_DIR_LEN))));
 
-        Assert.assertFalse(Files.exists(Paths.get("src", "test", "resources", FILE1.substring(0, SUB_DIR_LEN), FILE1)));
-        Assert.assertFalse(Files.exists(Paths.get("src", "test", "resources", FILE2.substring(0, SUB_DIR_LEN), FILE2)));
+        Assert.assertFalse(Files.exists(ROOT.resolve(FILE1.substring(0, SUB_DIR_LEN)).resolve(FILE1)));
+        Assert.assertFalse(Files.exists(ROOT.resolve(FILE2.substring(0, SUB_DIR_LEN)).resolve(FILE2)));
 
     }
 

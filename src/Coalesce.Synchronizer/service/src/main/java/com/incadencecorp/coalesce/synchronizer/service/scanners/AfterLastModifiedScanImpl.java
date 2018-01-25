@@ -94,10 +94,10 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
         DateTime end = start.plusDays(days);
 
         // Days not specified or end of window is in the future?
-        if (days == 0 || end.isAfterNow())
+        if (days == 0)
         {
             // Set the end of window to now
-            //end = JodaDateTimeHelper.nowInUtc();
+            end = JodaDateTimeHelper.nowInUtc().plusDays(1);
         }
 
         pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(end);

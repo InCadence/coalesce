@@ -18,6 +18,7 @@
 package com.incadencecorp.coalesce.synchronizer.api.common;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.sql.rowset.CachedRowSet;
@@ -44,15 +45,15 @@ public abstract class AbstractDriver extends CoalesceComponentImpl implements IP
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDriver.class);
     private boolean isInitialized = false;
 
-    protected IPersistorScan scanner;
-    protected IPersistorOperation operations[];
+    private IPersistorScan scanner;
+    private IPersistorOperation operations[];
 
     @Override
     public final void setup()
     {
         if (!isInitialized)
         {
-            Set<String> columns = new HashSet<String>();
+            Set<String> columns = new LinkedHashSet<>();
 
             for (IPersistorOperation operation : operations)
             {
@@ -94,16 +95,15 @@ public abstract class AbstractDriver extends CoalesceComponentImpl implements IP
         }
 
         // Perform Scan
-        CachedRowSet results = null;
         try
         {
-            results = scanner.scan();
+            CachedRowSet results = scanner.scan();
 
             try
             {
                 LOGGER.info("{} completed in {} ms with {} results.", scanner.getName(), watch.getTime(), results.size());
 
-                if (results != null && results.size() > 0)
+                if (results.size() > 0)
                 {
                     StopWatch operationWatch = new StopWatch();
 

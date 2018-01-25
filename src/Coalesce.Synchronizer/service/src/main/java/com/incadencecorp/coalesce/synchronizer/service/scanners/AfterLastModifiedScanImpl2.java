@@ -118,7 +118,7 @@ public class AfterLastModifiedScanImpl2 extends AbstractScan {
         try
         {
             result.last();
-            pendingLastScan = result.getString(properties.size());
+            pendingLastScan = result.getString(properties.size() + 1);
             result.beforeFirst();
         }
         catch (SQLException e)

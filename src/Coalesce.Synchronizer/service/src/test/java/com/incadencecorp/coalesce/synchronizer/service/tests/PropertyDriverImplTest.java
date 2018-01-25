@@ -17,33 +17,32 @@
 
 package com.incadencecorp.coalesce.synchronizer.service.tests;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.incadencecorp.coalesce.framework.PropertyLoader;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.synchronizer.api.IPersistorDriver;
 import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
 import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockOperation;
 import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockScanner;
-import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockSearchPersister;
 import com.incadencecorp.coalesce.synchronizer.service.drivers.PropertyDriverImpl;
 import com.incadencecorp.unity.common.connectors.MemoryConnector;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * These unit test are for the {@link PropertyDriverImpl} implementation.
- * 
+ *
  * @author n78554
  */
 public class PropertyDriverImplTest {
 
     /**
      * Ensures the scan skips if the property is not set.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -59,7 +58,7 @@ public class PropertyDriverImplTest {
         CoalesceEntity entity = CoalesceEntity.create("UNIT_TEST", "UNIT_TEST", "1", null, null);
         entity.initialize();
 
-        MockSearchPersister source = new MockSearchPersister();
+        DerbyPersistor source = new DerbyPersistor();
         source.saveEntity(false, entity);
 
         MockScanner scan = new MockScanner();
@@ -99,7 +98,7 @@ public class PropertyDriverImplTest {
 
     /**
      * Ensures setting parameters works correctly.
-     * 
+     *
      * @throws Exception
      */
     @Test
