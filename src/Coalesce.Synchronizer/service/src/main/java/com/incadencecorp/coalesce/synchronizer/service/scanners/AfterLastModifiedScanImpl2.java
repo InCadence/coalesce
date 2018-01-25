@@ -56,7 +56,7 @@ import java.util.Map;
  *
  * @author n78554
  * @see SynchronizerParameters#PARAM_SCANNER_LAST_SUCCESS
- * @see SynchronizerParameters#PARAM_SCANNER_FILTER
+ * @see SynchronizerParameters#PARAM_SCANNER_CQL
  */
 public class AfterLastModifiedScanImpl2 extends AbstractScan {
 

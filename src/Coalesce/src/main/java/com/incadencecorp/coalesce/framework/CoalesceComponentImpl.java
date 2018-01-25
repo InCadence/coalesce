@@ -73,6 +73,15 @@ public class CoalesceComponentImpl implements ICoalesceComponent {
         if (params != null)
         {
             this.parameters.putAll(params);
+
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Parameters: ");
+                for (Map.Entry<String, String> entry : params.entrySet())
+                {
+                    LOGGER.debug("{} = {}", entry.getKey(), entry.getValue());
+                }
+            }
         }
     }
 

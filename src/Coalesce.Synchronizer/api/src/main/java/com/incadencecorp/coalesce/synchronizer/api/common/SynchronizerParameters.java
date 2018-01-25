@@ -96,7 +96,7 @@ public final class SynchronizerParameters {
     /**
      * (String) CQL used to filter results. Property name syntax is 'recordset.fieldname' and MUST be wrapped in double quotes.
      */
-    public static final String PARAM_SCANNER_FILTER = SCANNERS + "filter";
+    public static final String PARAM_SCANNER_CQL = SCANNERS + "cql";
 
     /**
      * (Integer) Number of days since last scanned to confine the scanner to a

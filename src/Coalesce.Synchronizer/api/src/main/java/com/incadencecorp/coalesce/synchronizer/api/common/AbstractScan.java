@@ -28,6 +28,8 @@ import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.PropertyName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.rowset.CachedRowSet;
 import java.util.*;
@@ -37,9 +39,11 @@ import java.util.*;
  * implementations.
  *
  * @author n78554
- * @see SynchronizerParameters#PARAM_SCANNER_FILTER
+ * @see SynchronizerParameters#PARAM_SCANNER_CQL
  */
 public abstract class AbstractScan extends CoalesceComponentImpl implements IPersistorScan {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(AbstractScan.class);
 
     private boolean isInitialized = false;
 
@@ -65,13 +69,13 @@ public abstract class AbstractScan extends CoalesceComponentImpl implements IPer
         String cql = null;
 
         // Last Successful Scan Configured?
-        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_FILTER))
+        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_CQL))
         {
-            cql = parameters.get(SynchronizerParameters.PARAM_SCANNER_FILTER);
+            cql = parameters.get(SynchronizerParameters.PARAM_SCANNER_CQL);
         }
         else if (loader != null)
         {
-            cql = parameters.get(SynchronizerParameters.PARAM_SCANNER_FILTER);
+            cql = parameters.get(SynchronizerParameters.PARAM_SCANNER_CQL);
         }
 
         if (!StringHelper.isNullOrEmpty(cql))
@@ -84,6 +88,9 @@ public abstract class AbstractScan extends CoalesceComponentImpl implements IPer
             {
                 throw new RuntimeException(e);
             }
+
+            LOGGER.debug("CQL = {}", cql);
+            LOGGER.debug("Filter = {}", filter.toString());
         }
     }
 

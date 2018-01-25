@@ -20,13 +20,9 @@ package com.incadencecorp.coalesce.synchronizer.service.scanners;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractScan;
 import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
 import org.geotools.data.Query;
-import org.geotools.filter.SortByImpl;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +33,7 @@ import java.util.Map;
  * This implementation returns results as specified by the CQL.
  *
  * @author n78554
- * @see SynchronizerParameters#PARAM_SCANNER_FILTER
+ * @see SynchronizerParameters#PARAM_SCANNER_CQL
  */
 public class CQLScanImpl extends AbstractScan {
 
@@ -56,7 +52,7 @@ public class CQLScanImpl extends AbstractScan {
         query.setStartIndex(0);
         query.setMaxFeatures(max);
 
-        return getSource().search(query).getResults();
+            return getSource().search(query).getResults();
     }
 
     @Override

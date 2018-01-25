@@ -61,7 +61,7 @@ public class CQLScanImplTest {
 
         // Create Parameters
         Map<String, String> params = new HashMap<>();
-        params.put(SynchronizerParameters.PARAM_SCANNER_FILTER, cql);
+        params.put(SynchronizerParameters.PARAM_SCANNER_CQL, cql);
 
         // Create Scanner
         IPersistorScan scan = new CQLScanImpl();

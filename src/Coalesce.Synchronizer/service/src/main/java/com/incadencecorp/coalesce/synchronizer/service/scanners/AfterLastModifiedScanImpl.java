@@ -51,7 +51,7 @@ import java.util.Map;
  * @author n78554
  * @see SynchronizerParameters#PARAM_SCANNER_LAST_SUCCESS
  * @see SynchronizerParameters#PARAM_SCANNER_DAYS
- * @see SynchronizerParameters#PARAM_SCANNER_FILTER
+ * @see SynchronizerParameters#PARAM_SCANNER_CQL
  */
 public class AfterLastModifiedScanImpl extends AbstractScan {
 
@@ -127,7 +127,6 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
 
         query.setStartIndex(0);
         query.setMaxFeatures(0);
-        //query.setSortBy(new SortBy[] {new SortByImpl(CoalescePropertyFactory.getLastModified(), SortOrder.ASCENDING)});
 
         return getSource().search(query).getResults();
     }

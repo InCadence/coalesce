@@ -50,8 +50,6 @@ public class FileScanImplTest extends AbstractFileHandlerTests {
 
     /**
      * Creates files needed for these unit tests.
-     *
-     * @throws Exception
      */
     @BeforeClass
     public static void initialzie() throws Exception
@@ -81,14 +79,12 @@ public class FileScanImplTest extends AbstractFileHandlerTests {
 
     /**
      * Ensures the scanner picks up the files created in initialization.
-     *
-     * @throws Exception
      */
     @Test
     public void testFileScan() throws Exception
     {
         // Create Params
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(CoalesceParameters.PARAM_DIRECTORY, "/src/test/resources");
 
         // Test Scan
@@ -98,7 +94,7 @@ public class FileScanImplTest extends AbstractFileHandlerTests {
 
         Assert.assertEquals(2, results.size());
 
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
 
         results.first();
 

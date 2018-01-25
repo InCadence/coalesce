@@ -56,7 +56,7 @@ public class AfterLastModifiedScanImplTest {
         params.put(SynchronizerParameters.PARAM_SCANNER_DAYS, "3");
         params.put(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS,
                    JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusDays(2)));
-        params.put(SynchronizerParameters.PARAM_SCANNER_FILTER, "\"coalesceentity.name\" = 'OEEvent'");
+        params.put(SynchronizerParameters.PARAM_SCANNER_CQL, "\"coalesceentity.name\" = 'OEEvent'");
 
         DerbyPersistor source = new DerbyPersistor();
 
@@ -101,7 +101,7 @@ public class AfterLastModifiedScanImplTest {
         params.put(SynchronizerParameters.PARAM_SCANNER_DAYS, "3");
         params.put(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS,
                    JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusDays(2)));
-        params.put(SynchronizerParameters.PARAM_SCANNER_FILTER, "\"coalesceentity.name\" = 'OEEvent'");
+        params.put(SynchronizerParameters.PARAM_SCANNER_CQL, "\"coalesceentity.name\" = 'OEEvent'");
 
         DerbyPersistor source = new DerbyPersistor();
 

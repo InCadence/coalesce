@@ -40,6 +40,7 @@ import java.util.concurrent.Future;
  *
  * @param <T>
  * @author n78554
+ * @see SynchronizerParameters#PARAM_OP_WINDOW_SIZE
  */
 public abstract class AbstractOperation<T extends AbstractOperationTask> extends CoalesceComponentImpl
         implements IPersistorOperation, Callable<Boolean> {

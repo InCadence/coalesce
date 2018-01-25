@@ -34,15 +34,12 @@ import com.incadencecorp.coalesce.synchronizer.service.drivers.IntervalDriverImp
 public class IntervalDriverImplTest {
 
     /**
-     * Ensures that providing an invalid value throws an
-     * {@link IllegalArgumentException}.
-     * 
-     * @throws Exception
+     * Ensures that providing an invalid value throws an {@link IllegalArgumentException}.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidRangeDelay() throws Exception
     {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_DRIVER_DELAY, "-1");
 
         IntervalDriverImpl driver = new IntervalDriverImpl();
@@ -50,15 +47,12 @@ public class IntervalDriverImplTest {
     }
 
     /**
-     * Ensures that providing an invalid value throws an
-     * {@link IllegalArgumentException}.
-     * 
-     * @throws Exception
+     * Ensures that providing an invalid value throws an {@link IllegalArgumentException}.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidNumberDelay() throws Exception
     {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_DRIVER_DELAY, "A");
 
         IntervalDriverImpl driver = new IntervalDriverImpl();
@@ -66,15 +60,12 @@ public class IntervalDriverImplTest {
     }
 
     /**
-     * Ensures that providing an invalid value throws an
-     * {@link IllegalArgumentException}.
-     * 
-     * @throws Exception
+     * Ensures that providing an invalid value throws an {@link IllegalArgumentException}.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidRangeInterval() throws Exception
     {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_DRIVER_INTERVAL, "-1");
 
         IntervalDriverImpl driver = new IntervalDriverImpl();
@@ -82,15 +73,12 @@ public class IntervalDriverImplTest {
     }
 
     /**
-     * Ensures that providing an invalid value throws an
-     * {@link IllegalArgumentException}.
-     * 
-     * @throws Exception
+     * Ensures that providing an invalid value throws an {@link IllegalArgumentException}.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidNumberInterval() throws Exception
     {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_DRIVER_INTERVAL, "A");
 
         IntervalDriverImpl driver = new IntervalDriverImpl();
@@ -98,15 +86,12 @@ public class IntervalDriverImplTest {
     }
 
     /**
-     * Ensures that providing an invalid value throws an
-     * {@link IllegalArgumentException}.
-     * 
-     * @throws Exception
+     * Ensures that providing an invalid value throws an {@link IllegalArgumentException}.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidRangeThreads() throws Exception
     {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_DRIVER_MAX_THREADS, "-1");
 
         IntervalDriverImpl driver = new IntervalDriverImpl();
@@ -114,15 +99,12 @@ public class IntervalDriverImplTest {
     }
 
     /**
-     * Ensures that providing an invalid value throws an
-     * {@link IllegalArgumentException}.
-     * 
-     * @throws Exception
+     * Ensures that providing an invalid value throws an {@link IllegalArgumentException}.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidNumberThreads() throws Exception
     {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_DRIVER_MAX_THREADS, "A");
 
         IntervalDriverImpl driver = new IntervalDriverImpl();
@@ -130,15 +112,12 @@ public class IntervalDriverImplTest {
     }
 
     /**
-     * Ensures that providing an invalid value throws an
-     * {@link IllegalArgumentException}.
-     * 
-     * @throws Exception
+     * Ensures that providing an invalid value throws an {@link IllegalArgumentException}.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidTimeUnit() throws Exception
     {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_DRIVER_INTERVAL_UNITS, "HelloWorld");
 
         IntervalDriverImpl driver = new IntervalDriverImpl();
@@ -147,13 +126,11 @@ public class IntervalDriverImplTest {
 
     /**
      * Ensures proper parsing of time unites.
-     * 
-     * @throws Exception
      */
     @Test
     public void testTimeUnit() throws Exception
     {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_DRIVER_INTERVAL, "20");
         params.put(SynchronizerParameters.PARAM_DRIVER_DELAY, "10");
         params.put(SynchronizerParameters.PARAM_DRIVER_MAX_THREADS, "10");
