@@ -34,6 +34,7 @@ import java.util.Map;
  *
  * @author n78554
  * @see SynchronizerParameters#PARAM_SCANNER_CQL
+ * @see SynchronizerParameters#PARAM_SCANNER_MAX
  */
 public class CQLScanImpl extends AbstractScan {
 
