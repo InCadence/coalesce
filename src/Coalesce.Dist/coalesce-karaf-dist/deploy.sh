@@ -8,6 +8,7 @@ DIR=$2
 
 SERVER_DEFAULT="oeservices"
 DIR_DEFAULT="/opt/coalesce"
+FILENAME="coalesce-karaf-dist-0.0.25-SNAPSHOT.tar.gz"
 
 echo 
 
@@ -59,10 +60,10 @@ while true; do
 			ssh -i  ~/BDP_key.pem root@${SERVER} ${DIR}/bin/stop
 			echo "Deleting: ${DIR}"
 			ssh -i  ~/BDP_key.pem root@${SERVER} rm -rf ${DIR}
-			scp -i ~/BDP_key.pem target/coalesce-karaf-dist-0.0.25-SNAPSHOT.tar.gz root@${SERVER}:~/.
+			scp -i ~/BDP_key.pem target/${FILENAME} root@${SERVER}:~/.
 			ssh -i  ~/BDP_key.pem root@${SERVER} mkdir ${DIR}
 			echo "Extracting"
-			ssh -i  ~/BDP_key.pem root@${SERVER} tar -xf coalesce-karaf-dist-0.0.25-SNAPSHOT.tar.gz -C ${DIR}/.
+			ssh -i  ~/BDP_key.pem root@${SERVER} tar -xf ${FILENAME} -C ${DIR}/.
 			echo "Starting"
 			ssh -i  ~/BDP_key.pem root@${SERVER} ${DIR}/bin/start
 			;;
