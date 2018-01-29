@@ -117,7 +117,7 @@ public abstract class AbstractDriver extends CoalesceComponentImpl implements IP
 
                         operationWatch.start();
                         results = operation.execute(this, results);
-                        LOGGER.info("{} completed in {} ms", operation.getName(), watch.getTime());
+                        LOGGER.info("{} completed in {} ms", operation.getName(), operationWatch.getTime());
                         operationWatch.reset();
                     }
                 }
