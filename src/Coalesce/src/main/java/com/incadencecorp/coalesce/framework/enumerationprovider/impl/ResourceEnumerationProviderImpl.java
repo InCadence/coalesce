@@ -17,6 +17,12 @@
 
 package com.incadencecorp.coalesce.framework.enumerationprovider.impl;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,17 +32,10 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.incadencecorp.coalesce.api.CoalesceErrors;
-
 /**
  * This implementation will load the values of the enumeration from resources
  * with the following format "&lt;enumeration name&gt;.values".
- * 
+ *
  * @author n78554
  */
 public class ResourceEnumerationProviderImpl extends AbstractEnumerationProvider {
@@ -44,7 +43,7 @@ public class ResourceEnumerationProviderImpl extends AbstractEnumerationProvider
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceEnumerationProviderImpl.class);
 
     private Class<?> context;
-    
+
     /**
      * Default Constructor
      */
@@ -60,7 +59,7 @@ public class ResourceEnumerationProviderImpl extends AbstractEnumerationProvider
     {
         this.context = context;
     }
-    
+
     @Override
     protected List<String> lookup(Principal principal, String enumeration)
     {
@@ -71,7 +70,17 @@ public class ResourceEnumerationProviderImpl extends AbstractEnumerationProvider
             InputStream stream = null;
 
             // Is OSGI Environment?
-            Bundle bundle = FrameworkUtil.getBundle(context);
+            Bundle bundle;
+
+            try
+            {
+                bundle = FrameworkUtil.getBundle(context);
+            }
+            catch (Exception e)
+            {
+                bundle = null;
+            }
+
             if (bundle != null)
             {
                 LOGGER.trace("Loading enumeration ({}) from OSGi", enumeration);

@@ -1,42 +1,48 @@
-/*-----------------------------------------------------------------------------'
- Copyright 2016 - InCadence Strategic Solutions Inc., All Rights Reserved
-
- Notwithstanding any contractor copyright notice, the Government has Unlimited
- Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
- of this work other than as specifically authorized by these DFARS Clauses may
- violate Government rights in this work.
-
- DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
- Unlimited Rights. The Government has the right to use, modify, reproduce,
- perform, display, release or disclose this computer software and to have or
- authorize others to do so.
-
- Distribution Statement D. Distribution authorized to the Department of
- Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
- -----------------------------------------------------------------------------*/
+/*
+ *  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+ *
+ *  Notwithstanding any contractor copyright notice, the Government has Unlimited
+ *  Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ *  of this work other than as specifically authorized by these DFARS Clauses may
+ *  violate Government rights in this work.
+ *
+ *  DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ *  Unlimited Rights. The Government has the right to use, modify, reproduce,
+ *  perform, display, release or disclose this computer software and to have or
+ *  authorize others to do so.
+ *
+ *  Distribution Statement D. Distribution authorized to the Department of
+ *  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ *
+ */
 
 package com.incadencecorp.coalesce.synchronizer.service.scanners;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractScan;
 import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
 import org.geotools.data.Query;
+import org.geotools.filter.SortByImpl;
 import org.geotools.temporal.object.DefaultInstant;
-import org.geotools.temporal.object.DefaultPeriod;
 import org.geotools.temporal.object.DefaultPosition;
 import org.joda.time.DateTime;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.sort.SortOrder;
 import org.opengis.temporal.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.rowset.CachedRowSet;
-import java.util.HashMap;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,30 +56,17 @@ import java.util.Map;
  *
  * @author n78554
  * @see SynchronizerParameters#PARAM_SCANNER_LAST_SUCCESS
- * @see SynchronizerParameters#PARAM_SCANNER_DAYS
  * @see SynchronizerParameters#PARAM_SCANNER_CQL
  */
-public class AfterLastModifiedScanImpl extends AbstractScan {
+public class AfterLastModifiedScanImpl2 extends AbstractScan {
 
     private static final FilterFactory FF = CoalescePropertyFactory.getFilterFactory();
-    private static final Logger LOGGER = LoggerFactory.getLogger(AfterLastModifiedScanImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AfterLastModifiedScanImpl2.class);
 
     private String lastScanned = null;
     private String pendingLastScan = null;
-    private int days = SynchronizerParameters.DEFAULT_SCANNER_DAYS;
+    private int max = SynchronizerParameters.DEFAULT_SCANNER_MAX;
 
-    @Override
-    protected void doSetup()
-    {
-        // Initialize Defaults
-        setProperties(new HashMap<>());
-    }
-
-    // TODO Instead of using a date time window to constrain the number of
-    // entities being processes in a single query, consider using limits and
-    // determining when to start the next query based on the results. This
-    // version of Coalesce Search API does not fully support sort by preventing
-    // this from being implemented now.
     @Override
     public CachedRowSet doScan(Query query) throws CoalesceException
     {
@@ -91,22 +84,8 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
             throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT, lastScanned));
         }
 
-        DateTime end = start.plusDays(days);
-
-        // Days not specified or end of window is in the future?
-        if (days == 0)
-        {
-            // Set the end of window to now
-            end = JodaDateTimeHelper.nowInUtc().plusDays(1);
-        }
-
-        pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(end);
-
         Instant startInstant = new DefaultInstant(new DefaultPosition(start.toDate()));
-        Instant endInstant = new DefaultInstant(new DefaultPosition(end.toDate()));
-
-        Filter requiredFilter = FF.during(CoalescePropertyFactory.getLastModified(),
-                                          FF.literal(new DefaultPeriod(startInstant, endInstant)));
+        Filter requiredFilter = FF.after(CoalescePropertyFactory.getLastModified(), FF.literal(startInstant));
 
         // Filter Specified?
         if (query.getFilter() == null || query.getFilter() == Filter.INCLUDE)
@@ -125,10 +104,29 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
             LOGGER.trace("Filter Specified: {}", query.getFilter().toString());
         }
 
-        query.setStartIndex(0);
-        query.setMaxFeatures(0);
+        // Add Last Modified Property
+        List<PropertyName> properties = new ArrayList<>();
+        properties.addAll(query.getProperties());
+        properties.add(CoalescePropertyFactory.getLastModified());
 
-        return getSource().search(query).getResults();
+        query.setStartIndex(0);
+        query.setMaxFeatures(max);
+        query.setProperties(properties);
+        query.setSortBy(new SortBy[] { new SortByImpl(CoalescePropertyFactory.getLastModified(), SortOrder.ASCENDING) });
+
+        CachedRowSet result = getSource().search(query).getResults();
+        try
+        {
+            result.last();
+            pendingLastScan = result.getString(properties.size() + 1);
+            result.beforeFirst();
+        }
+        catch (SQLException e)
+        {
+            throw new CoalesceException(e);
+        }
+
+        return result;
     }
 
     @Override
@@ -146,18 +144,18 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
             lastScanned = loader.getProperty(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS);
         }
 
-        // Days Configured?
-        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_DAYS))
+        // Max Configured?
+        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_MAX))
         {
-            days = Integer.parseInt(parameters.get(SynchronizerParameters.PARAM_SCANNER_DAYS));
+            max = Integer.parseInt(parameters.get(SynchronizerParameters.PARAM_SCANNER_MAX));
         }
         else if (loader != null)
         {
-            String value = loader.getProperty(SynchronizerParameters.PARAM_SCANNER_DAYS);
+            String value = loader.getProperty(SynchronizerParameters.PARAM_SCANNER_MAX);
 
             if (!StringHelper.isNullOrEmpty(value))
             {
-                days = Integer.parseInt(value);
+                max = Integer.parseInt(value);
             }
         }
 

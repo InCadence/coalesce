@@ -15,7 +15,7 @@ var karafRootAddr;
 if (window.location.port == 3000) {
   karafRootAddr  = 'http://' + window.location.hostname + ':8181';
 } else {
-  karafRootAddr  = 'http://' + window.location.hostname + ':' + window.location.port;
+  karafRootAddr  = '';
 }
 
 registerErrorPrompt(Popup);

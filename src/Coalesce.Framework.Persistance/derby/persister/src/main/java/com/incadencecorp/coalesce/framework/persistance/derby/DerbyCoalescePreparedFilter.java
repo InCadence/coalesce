@@ -35,13 +35,16 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.Capabilities;
 import org.geotools.filter.FunctionImpl;
 import org.geotools.filter.capability.FunctionNameImpl;
+import org.geotools.filter.capability.TemporalCapabilitiesImpl;
 import org.geotools.jdbc.JDBCDataStore;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.*;
+import org.opengis.filter.capability.TemporalCapabilities;
 import org.opengis.filter.expression.*;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.spatial.*;
+import org.opengis.filter.temporal.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -230,7 +233,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
             throw new FilterToSQLException("Can't encode to a null writer.");
         }
 
-        if (capability.fullySupports(filter))
+        if (true)//capability.supports(filter))
         {
             try
             {
@@ -1013,6 +1016,16 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
         capability.addType(PropertyIsNull.class);
         capability.addType(PropertyIsLike.class);
         capability.addType(PropertyIsBetween.class);
+
+        capability.addType(After.class);
+        capability.addType(Before.class);
+        capability.addType(Begins.class);
+        capability.addType(BegunBy.class);
+        capability.addType(During.class);
+        capability.addType(Ends.class);
+        capability.addType(EndedBy.class);
+        capability.addType(TContains.class);
+        capability.addType(TEquals.class);
 
         return capability;
     }

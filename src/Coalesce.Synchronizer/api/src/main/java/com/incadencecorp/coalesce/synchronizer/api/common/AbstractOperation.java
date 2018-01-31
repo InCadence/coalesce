@@ -17,22 +17,6 @@
 
 package com.incadencecorp.coalesce.synchronizer.api.common;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-import javax.sql.rowset.CachedRowSet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
@@ -41,15 +25,25 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
 import com.incadencecorp.coalesce.synchronizer.api.IPersistorOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.sql.rowset.CachedRowSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Abstract implementation which is the base of all operations.
- * 
- * @author n78554
+ *
  * @param <T>
+ * @author n78554
+ * @see SynchronizerParameters#PARAM_OP_WINDOW_SIZE
  */
-public abstract class AbstractOperation<T extends AbstractOperationTask> extends CoalesceComponentImpl implements
-        IPersistorOperation, Callable<Boolean> {
+public abstract class AbstractOperation<T extends AbstractOperationTask> extends CoalesceComponentImpl
+        implements IPersistorOperation, Callable<Boolean> {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractOperation.class);
 
@@ -122,9 +116,7 @@ public abstract class AbstractOperation<T extends AbstractOperationTask> extends
     @Override
     public final Set<String> getRequiredColumns()
     {
-        Set<String> columns = new HashSet<String>();
-        columns.add(CoalescePropertyFactory.getEntityKey().getPropertyName());
-
+        Set<String> columns = new HashSet<>();
         Set<String> additionalColumns = getAdditionalRequiredColumns();
 
         if (additionalColumns != null)
@@ -217,21 +209,21 @@ public abstract class AbstractOperation<T extends AbstractOperationTask> extends
 
     private List<T> createTasks() throws CoalesceException
     {
-        List<T> tasks = new ArrayList<T>();
+        List<T> tasks = new ArrayList<>();
 
         try
         {
 
             if (rowset.first())
             {
-                List<String> keys = new ArrayList<String>();
+                List<String> keys = new ArrayList<>();
 
                 int keyIdx = CoalesceResultSet.getEntityKeyColumn(rowset);
 
                 if (keyIdx == -1)
                 {
-                    throw new IllegalArgumentException("Missing Column: "
-                            + CoalescePropertyFactory.getEntityKey().getPropertyName());
+                    throw new IllegalArgumentException(
+                            "Missing Column: " + CoalescePropertyFactory.getEntityKey().getPropertyName());
                 }
 
                 // Obtain list of keys

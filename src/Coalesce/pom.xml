@@ -47,6 +47,7 @@
 							${project.groupId}.framework.util,
 							${project.groupId}.framework.iterators,
 							${project.groupId}.framework.exim.impl,
+							${project.groupId}.framework.filter,
 							${project.groupId}.framework.compareables,
 							${project.groupId}.framework.datamodel,
 							${project.groupId}.framework.persistance,

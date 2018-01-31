@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>coalesce-synchronizer-service</artifactId>
     <packaging>bundle</packaging>
@@ -66,13 +66,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.incadencecorp.coalesce</groupId>
-            <artifactId>coalesce-framework-persister-postgresql</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.incadencecorp.coalesce</groupId>
-            <artifactId>coalesce-framework-persister-neo4j</artifactId>
+            <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+            <artifactId>persister-derby</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

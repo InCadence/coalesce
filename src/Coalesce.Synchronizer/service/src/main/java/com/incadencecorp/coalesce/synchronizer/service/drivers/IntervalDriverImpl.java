@@ -80,7 +80,7 @@ public class IntervalDriverImpl extends AbstractDriver {
             if (LOGGER.isDebugEnabled())
             {
                 // Yes; Run Once and Block Thread
-                LOGGER.warn("Driver is in Syncrhonize mode because logger is set to debug (or lower) and the interval was not set");
+                LOGGER.warn("Driver is in Synchronise mode because logger is set to debug (or lower) and the interval was not set");
                 try
                 {
                     future.get();

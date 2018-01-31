@@ -17,25 +17,13 @@
 
 package com.incadencecorp.coalesce.synchronizer.service.tests;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.ResultSetMetaData;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import javax.sql.rowset.CachedRowSet;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
+import com.incadencecorp.coalesce.framework.persistance.MockPersister;
+import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.handlers.FileExceptionHandlerImpl;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.synchronizer.api.IPersistorDriver;
@@ -44,26 +32,32 @@ import com.incadencecorp.coalesce.synchronizer.api.IPersistorScan;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperation;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperationTask;
 import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
-import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockSearchPersister;
 import com.incadencecorp.coalesce.synchronizer.service.SynchronizerService;
 import com.incadencecorp.coalesce.synchronizer.service.drivers.IntervalDriverImpl;
 import com.incadencecorp.coalesce.synchronizer.service.operations.CopyOperationImpl;
 import com.incadencecorp.coalesce.synchronizer.service.operations.ExceptionOperationImpl;
 import com.incadencecorp.coalesce.synchronizer.service.scanners.AfterLastModifiedScanImpl;
+import org.junit.Assert;
+import org.junit.Test;
+
+import javax.sql.rowset.CachedRowSet;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.ResultSetMetaData;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * These test ensure proper operation of the synchronizer service.
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public class SynchronizerTest {
 
     /**
      * This test ensures that entities are copied from the source to target
      * persistor.
-     * 
-     * @throws Exception
      */
     @Test
     public void testSynchronizer() throws Exception
@@ -71,12 +65,14 @@ public class SynchronizerTest {
 
         Map<String, String> params;
 
-        params = new HashMap<String, String>();
+        params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_DRIVER_INTERVAL_UNITS, TimeUnit.MINUTES.toString());
         params.put(SynchronizerParameters.PARAM_OP_WINDOW_SIZE, "1");
+        params.put(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS,
+                   JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusDays(2)));
 
-        MockSearchPersister source = new MockSearchPersister();
-        MockSearchPersister target = new MockSearchPersister();
+        DerbyPersistor source = new DerbyPersistor();
+        MockPersister target = new MockPersister();
 
         TestEntity entity = new TestEntity();
         entity.initialize();
@@ -91,6 +87,7 @@ public class SynchronizerTest {
 
         IPersistorScan scan = new AfterLastModifiedScanImpl();
         scan.setSource(source);
+        scan.setProperties(params);
 
         IPersistorOperation operation = new CopyOperationImpl();
         operation.setSource(source);
@@ -122,14 +119,14 @@ public class SynchronizerTest {
     {
         Map<String, String> params;
 
-        params = new HashMap<String, String>();
+        params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_DRIVER_INTERVAL_UNITS, TimeUnit.MINUTES.toString());
         params.put(SynchronizerParameters.PARAM_OP_WINDOW_SIZE, "1");
         params.put(CoalesceParameters.PARAM_DIRECTORY, Paths.get("src", "test", "resources").toUri().toString());
 
-        MockSearchPersister scanSource = new MockSearchPersister();
-        MockSearchPersister source = new MockSearchPersister();
-        MockSearchPersister target = new MockSearchPersister();
+        DerbyPersistor scanSource = new DerbyPersistor();
+        MockPersister source = new MockPersister();
+        MockPersister target = new MockPersister();
 
         TestEntity entity = new TestEntity();
         entity.initialize();
@@ -189,13 +186,13 @@ public class SynchronizerTest {
 
         Map<String, String> params;
 
-        params = new HashMap<String, String>();
+        params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_DRIVER_INTERVAL_UNITS, TimeUnit.MINUTES.toString());
         params.put(SynchronizerParameters.PARAM_OP_WINDOW_SIZE, "1");
         params.put(CoalesceParameters.PARAM_DIRECTORY, "src/test/resources");
 
-        MockSearchPersister source = new MockSearchPersister();
-        MockSearchPersister target = new MockSearchPersister();
+        DerbyPersistor source = new DerbyPersistor();
+        MockPersister target = new MockPersister();
 
         TestEntity entity = new TestEntity();
         entity.initialize();
@@ -240,43 +237,42 @@ public class SynchronizerTest {
     /**
      * This test ensures that the drivers compile the required columns
      * correctly.
-     * 
-     * @throws Exception
      */
     @Test
     public void testRequiredColumns() throws Exception
     {
         IPersistorScan scan = new AfterLastModifiedScanImpl();
-        scan.setSource(new MockSearchPersister());
+        scan.setSource(new DerbyPersistor());
+
+        IPersistorOperation op1 = new MockOperation(CoalescePropertyFactory.getName().toString(),
+                                                    CoalescePropertyFactory.getSource().toString());
+
+        IPersistorOperation op2 = new MockOperation(CoalescePropertyFactory.getSource().toString(),
+                                                    CoalescePropertyFactory.getDateCreated().toString());
 
         IPersistorDriver driver = new IntervalDriverImpl();
         driver.setScan(scan);
-        driver.setOperations(new MockOperation("A", "C"), new MockOperation("C", "B"));
+        driver.setOperations(op1, op2);
         driver.setup();
 
         CachedRowSet results = scan.scan();
 
         ResultSetMetaData metadata = results.getMetaData();
 
-        // A, B, C, objectkey; objectkey is auto included.
         Assert.assertEquals(4, metadata.getColumnCount());
-
-        Assert.assertEquals("A", metadata.getColumnLabel(1));
-        Assert.assertEquals("B", metadata.getColumnLabel(2));
-        Assert.assertEquals("C", metadata.getColumnLabel(3));
-        Assert.assertEquals(CoalescePropertyFactory.getEntityKey().getPropertyName(), metadata.getColumnLabel(4));
+        Assert.assertTrue(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()).equalsIgnoreCase(metadata.getColumnLabel(1)));
+        Assert.assertTrue(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName()).equalsIgnoreCase(metadata.getColumnLabel(2)));
+        Assert.assertTrue(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getDateCreated()).equalsIgnoreCase(metadata.getColumnLabel(3)));
+        Assert.assertTrue(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource()).equalsIgnoreCase(metadata.getColumnLabel(4)));
     }
 
     private class MockOperation extends AbstractOperation<AbstractOperationTask> {
 
-        private Set<String> columns = new HashSet<String>();
+        private Set<String> columns = new HashSet<>();
 
         private MockOperation(String... columns)
         {
-            for (String column : columns)
-            {
-                this.columns.add(column);
-            }
+            Collections.addAll(this.columns, columns);
         }
 
         @Override

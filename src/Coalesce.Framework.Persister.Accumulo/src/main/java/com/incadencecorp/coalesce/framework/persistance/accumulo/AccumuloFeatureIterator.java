@@ -469,90 +469,97 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                                      ECoalesceFieldDataTypes dataType,
                                      Object fieldValue) throws CoalesceDataFormatException
     {
-        try
+        if (fieldValue == null)
         {
-            switch (dataType)
-            {
-
-            // These types should be able to be handled directly
-            case ENUMERATION_TYPE:
-            case BOOLEAN_TYPE:
-            case DOUBLE_TYPE:
-            case FLOAT_TYPE:
-            case INTEGER_TYPE:
-            case LONG_TYPE:
-            case STRING_TYPE:
-            case URI_TYPE:
-                feature.setAttribute(fieldName, fieldValue);
-                break;
-
-            case STRING_LIST_TYPE:
-            case DOUBLE_LIST_TYPE:
-            case INTEGER_LIST_TYPE:
-            case LONG_LIST_TYPE:
-            case FLOAT_LIST_TYPE:
-            case GUID_LIST_TYPE:
-            case BOOLEAN_LIST_TYPE:
-            case ENUMERATION_LIST_TYPE:
-                feature.setAttribute(fieldName, fieldValue);
-                break;
-
-            case GUID_TYPE:
-                String guid = fieldValue.toString();
-                feature.setAttribute(fieldName, guid);
-                break;
-
-            case GEOCOORDINATE_LIST_TYPE:
-                MultiPoint points = new GeometryFactory().createMultiPoint((Coordinate[]) fieldValue);
-                feature.setAttribute(fieldName, points);
-                break;
-
-            case GEOCOORDINATE_TYPE:
-                Point point = new GeometryFactory().createPoint((Coordinate) fieldValue);
-                feature.setAttribute(fieldName, point);
-                break;
-
-            case LINE_STRING_TYPE:
-                feature.setAttribute(fieldName, fieldValue);
-                break;
-
-            case POLYGON_TYPE:
-                feature.setAttribute(fieldName, fieldValue);
-                break;
-
-            // Circles will be converted to polygons
-            case CIRCLE_TYPE:
-                // Create Polygon
-
-                CoalesceCircle circle = (CoalesceCircle) fieldValue;
-                GeometricShapeFactory factory = new GeometricShapeFactory();
-                factory.setSize(circle.getRadius());
-                factory.setNumPoints(360); // 1 degree points
-                factory.setCentre(circle.getCenter());
-                Polygon shape = factory.createCircle();
-                feature.setAttribute(fieldName, shape);
-                break;
-
-            case DATE_TIME_TYPE:
-                feature.setAttribute(fieldName, JodaDateTimeHelper.toXmlDateTimeUTC((DateTime) fieldValue));
-                break;
-            case FILE_TYPE:
-            case BINARY_TYPE:
-            default:
-                break;
-            }
-
-            if (LOGGER.isTraceEnabled())
-            {
-                LOGGER.trace("Set Feature ({}) = ({})", fieldName, feature.getAttribute(fieldName));
-            }
+            feature.setAttribute(fieldName, null);
         }
-        catch (IllegalAttributeException e)
+        else
         {
+            try
+            {
+                switch (dataType)
+                {
 
-            LOGGER.warn("{} => {}",
-                        feature.getName(),
-                        String.format(CoalesceErrors.INVALID_INPUT_REASON, fieldName, e.getMessage()));
+                // These types should be able to be handled directly
+                case ENUMERATION_TYPE:
+                case BOOLEAN_TYPE:
+                case DOUBLE_TYPE:
+                case FLOAT_TYPE:
+                case INTEGER_TYPE:
+                case LONG_TYPE:
+                case STRING_TYPE:
+                case URI_TYPE:
+                    feature.setAttribute(fieldName, fieldValue);
+                    break;
+
+                case STRING_LIST_TYPE:
+                case DOUBLE_LIST_TYPE:
+                case INTEGER_LIST_TYPE:
+                case LONG_LIST_TYPE:
+                case FLOAT_LIST_TYPE:
+                case GUID_LIST_TYPE:
+                case BOOLEAN_LIST_TYPE:
+                case ENUMERATION_LIST_TYPE:
+                    feature.setAttribute(fieldName, fieldValue);
+                    break;
+
+                case GUID_TYPE:
+                    String guid = fieldValue.toString();
+                    feature.setAttribute(fieldName, guid);
+                    break;
+
+                case GEOCOORDINATE_LIST_TYPE:
+                    MultiPoint points = new GeometryFactory().createMultiPoint((Coordinate[]) fieldValue);
+                    feature.setAttribute(fieldName, points);
+                    break;
+
+                case GEOCOORDINATE_TYPE:
+                    Point point = new GeometryFactory().createPoint((Coordinate) fieldValue);
+                    feature.setAttribute(fieldName, point);
+                    break;
+
+                case LINE_STRING_TYPE:
+                    feature.setAttribute(fieldName, fieldValue);
+                    break;
+
+                case POLYGON_TYPE:
+                    feature.setAttribute(fieldName, fieldValue);
+                    break;
+
+                // Circles will be converted to polygons
+                case CIRCLE_TYPE:
+                    // Create Polygon
+
+                    CoalesceCircle circle = (CoalesceCircle) fieldValue;
+                    GeometricShapeFactory factory = new GeometricShapeFactory();
+                    factory.setSize(circle.getRadius());
+                    factory.setNumPoints(360); // 1 degree points
+                    factory.setCentre(circle.getCenter());
+                    Polygon shape = factory.createCircle();
+                    feature.setAttribute(fieldName, shape);
+                    break;
+
+                case DATE_TIME_TYPE:
+                    feature.setAttribute(fieldName, JodaDateTimeHelper.toXmlDateTimeUTC((DateTime) fieldValue));
+                    break;
+                case FILE_TYPE:
+                case BINARY_TYPE:
+                default:
+                    break;
+                }
+
+                if (LOGGER.isTraceEnabled())
+                {
+                    LOGGER.trace("Set Feature ({}) = ({})", fieldName, feature.getAttribute(fieldName));
+                }
+            }
+            catch (IllegalAttributeException e)
+            {
+
+                LOGGER.warn("{} => {}",
+                            feature.getName(),
+                            String.format(CoalesceErrors.INVALID_INPUT_REASON, fieldName, e.getMessage()));
+            }
         }
     }
 

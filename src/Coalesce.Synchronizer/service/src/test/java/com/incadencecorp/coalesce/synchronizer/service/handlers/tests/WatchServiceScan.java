@@ -132,12 +132,6 @@ public class WatchServiceScan extends AbstractScan {
     }
 
     @Override
-    public CachedRowSet scan() throws CoalesceException
-    {
-        return scan(null);
-    }
-
-    @Override
     protected CachedRowSet doScan(Query query) throws CoalesceException
     {
         CachedRowSet results;

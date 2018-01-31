@@ -40,5 +40,5 @@ export class Menu extends React.Component {
 }
 
 Menu.defaultProps = {
-  home: 'http://' + window.location.hostname + ':' + window.location.port
+  home: '/'
 }

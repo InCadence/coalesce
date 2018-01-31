@@ -35,12 +35,14 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
     private static final DerbyNormalizer NORMALIZER = new DerbyNormalizer();
     private static final CoalesceCommonColumns COLUMNS = new CoalesceCommonColumns(NORMALIZER);
+    private static final DateTimeFormatter DATE_TIME_FOMRATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
     private static String protocol = "jdbc";
     private static String databaseDriver = "derby";
@@ -92,9 +94,8 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                                                  DateTime ivarlastmodified) throws SQLException
     {
 
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        String dateCreated = fmt.print(ivardatecreated);
-        String lastModified = fmt.print(ivarlastmodified);
+        String dateCreated = getDateString(ivardatecreated);
+        String lastModified = getDateString(ivarlastmodified);
 
         // get connection, insert or update
         Connection conn = this.getConnection();
@@ -110,14 +111,14 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             // insert
             Statement stmt2 = conn.createStatement();
             StringBuilder sql = new StringBuilder("insert into " + schema + ".coalesceentity (");
-            sql.append(COLUMNS.getKey() + ", ");
-            sql.append(COLUMNS.getName() + ", ");
-            sql.append(COLUMNS.getSource() + ", ");
-            sql.append(COLUMNS.getVersion() + ", ");
-            sql.append(COLUMNS.getEntityId() + ",");
-            sql.append(COLUMNS.getEntityIdType() + ", ");
-            sql.append(COLUMNS.getXml() + ", ");
-            sql.append(COLUMNS.getDateCreated() + ", ");
+            sql.append(COLUMNS.getKey()).append(", ");
+            sql.append(COLUMNS.getName()).append(", ");
+            sql.append(COLUMNS.getSource()).append(", ");
+            sql.append(COLUMNS.getVersion()).append(", ");
+            sql.append(COLUMNS.getEntityId()).append(",");
+            sql.append(COLUMNS.getEntityIdType()).append(", ");
+            sql.append(COLUMNS.getXml()).append(", ");
+            sql.append(COLUMNS.getDateCreated()).append(", ");
             sql.append(COLUMNS.getLastModified());
             sql.append(") values ('");
             sql.append(ivarobjectkey).append("','");
@@ -130,6 +131,8 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             sql.append(dateCreated).append("','");
             sql.append(lastModified);
             sql.append("')");
+
+            LOGGER.trace(sql.toString());
 
             stmt2.executeUpdate(sql.toString());
         }
@@ -146,10 +149,10 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             sql.append(String.format(format, COLUMNS.getEntityIdType(), ivarentityidtype));
             sql.append(String.format(format, COLUMNS.getXml(), ivarentityxml));
             sql.append(String.format(format, COLUMNS.getDateCreated(), dateCreated));
-            sql.append(COLUMNS.getLastModified() + "='" + lastModified + "'");
-            sql.append(" where " + COLUMNS.getKey() + "='" + ivarobjectkey + "'");
+            sql.append(COLUMNS.getLastModified()).append("='").append(lastModified).append("'");
+            sql.append(" where ").append(COLUMNS.getKey()).append("='").append(ivarobjectkey).append("'");
 
-            LOGGER.debug(sql.toString());
+            LOGGER.trace(sql.toString());
 
             stmt3.executeUpdate(sql.toString());
         }
@@ -164,9 +167,8 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         // prepare the query
         ResultSet result = null;
 
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        String dateCreated = fmt.print(linkage.getDateCreated());
-        String lastModified = fmt.print(linkage.getLastModified());
+        String dateCreated = getDateString(linkage.getDateCreated());
+        String lastModified = getDateString(linkage.getLastModified());
 
         Statement stmt = conn.createStatement();
         result = stmt.executeQuery("select name from coalesce.coalescelinkage where objectkey='" + linkage.getKey() + "'");
@@ -174,26 +176,26 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         {
             // insert
             StringBuilder sql2 = new StringBuilder("insert into " + schema + ".coalescelinkage (");
-            sql2.append(COLUMNS.getKey() + ",");
+            sql2.append(COLUMNS.getKey()).append(",");
             sql2.append("entitykey,");
-            sql2.append(COLUMNS.getName() + ",");
-            sql2.append(COLUMNS.getSource() + ",");
-            sql2.append(COLUMNS.getVersion() + ",");
-            sql2.append(COLUMNS.getLinkageType() + ",");
-            sql2.append(COLUMNS.getLinkageLabel() + ",");
-            sql2.append(COLUMNS.getLinkageStatus() + ",");
-            sql2.append(COLUMNS.getEntity2Key() + ",");
-            sql2.append(COLUMNS.getEntity2Name() + ",");
-            sql2.append(COLUMNS.getEntity2Source() + ",");
-            sql2.append(COLUMNS.getEntity2Version() + ",");
+            sql2.append(COLUMNS.getName()).append(",");
+            sql2.append(COLUMNS.getSource()).append(",");
+            sql2.append(COLUMNS.getVersion()).append(",");
+            sql2.append(COLUMNS.getLinkageType()).append(",");
+            sql2.append(COLUMNS.getLinkageLabel()).append(",");
+            sql2.append(COLUMNS.getLinkageStatus()).append(",");
+            sql2.append(COLUMNS.getEntity2Key()).append(",");
+            sql2.append(COLUMNS.getEntity2Name()).append(",");
+            sql2.append(COLUMNS.getEntity2Source()).append(",");
+            sql2.append(COLUMNS.getEntity2Version()).append(",");
             sql2.append("ClassificationMarking,");
             sql2.append("ModifiedBy,");
             sql2.append("InputLanguage,");
-            sql2.append(COLUMNS.getDateCreated() + ",");
+            sql2.append(COLUMNS.getDateCreated()).append(",");
             sql2.append(COLUMNS.getLastModified());
             sql2.append(") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
-            int ii=1;
+            int ii = 1;
 
             PreparedStatement stmt2 = conn.prepareStatement(sql2.toString());
             stmt2.setString(ii++, linkage.getKey());
@@ -223,26 +225,26 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             // update
             StringBuilder sql3 = new StringBuilder("update " + schema + ".coalescelinkage set ");
             sql3.append("entitykey=?,");
-            sql3.append(COLUMNS.getName() + "=?,");
-            sql3.append(COLUMNS.getSource() + "=?,");
-            sql3.append(COLUMNS.getVersion() + "=?,");
-            sql3.append(COLUMNS.getLinkageType() + "=?,");
-            sql3.append(COLUMNS.getLinkageLabel() + "=?,");
-            sql3.append(COLUMNS.getLinkageStatus() + "=?,");
-            sql3.append(COLUMNS.getEntity2Key() + "=?,");
-            sql3.append(COLUMNS.getEntity2Name() + "=?,");
-            sql3.append(COLUMNS.getEntity2Source() + "=?,");
-            sql3.append(COLUMNS.getEntity2Version() + "=?,");
+            sql3.append(COLUMNS.getName()).append("=?,");
+            sql3.append(COLUMNS.getSource()).append("=?,");
+            sql3.append(COLUMNS.getVersion()).append("=?,");
+            sql3.append(COLUMNS.getLinkageType()).append("=?,");
+            sql3.append(COLUMNS.getLinkageLabel()).append("=?,");
+            sql3.append(COLUMNS.getLinkageStatus()).append("=?,");
+            sql3.append(COLUMNS.getEntity2Key()).append("=?,");
+            sql3.append(COLUMNS.getEntity2Name()).append("=?,");
+            sql3.append(COLUMNS.getEntity2Source()).append("=?,");
+            sql3.append(COLUMNS.getEntity2Version()).append("=?,");
             sql3.append("ClassificationMarking=?,");
             sql3.append("ModifiedBy=?,");
             sql3.append("InputLanguage=?,");
             sql3.append("ParentKey=?,");
             sql3.append("ParentType=?,");
-            sql3.append(COLUMNS.getDateCreated() + "=?,");
-            sql3.append(COLUMNS.getLastModified() + "=? ");
-            sql3.append("where " + COLUMNS.getKey() + "=?");
+            sql3.append(COLUMNS.getDateCreated()).append("=?,");
+            sql3.append(COLUMNS.getLastModified()).append("=? ");
+            sql3.append("where ").append(COLUMNS.getKey()).append("=?");
 
-            int ii=1;
+            int ii = 1;
 
             PreparedStatement stmt3 = conn.prepareStatement(sql3.toString());
             stmt3.setString(ii++, linkage.getEntity1Key());
@@ -280,26 +282,25 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             // get connection, insert or update
             Connection conn = this.getConnection();
 
-            DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-            String dateCreated = fmt.print(new DateTime());
-            String lastModified = fmt.print(new DateTime());
+            String dateCreated = getDateString(new DateTime());
+            String lastModified = getDateString(new DateTime());
 
             // prepare the query
             Statement stmt = conn.createStatement();
             ResultSet result = stmt.executeQuery(
-                    "select " + COLUMNS.getName() + " from " + schema + ".coalesceentitytemplate where " + COLUMNS.getName() + "='"
-                            + template.getName() + "' and " + COLUMNS.getSource() + "='" + template.getSource() + "' and "
-                            + COLUMNS.getVersion() + "='" + template.getVersion() + "'");
+                    "select " + COLUMNS.getName() + " from " + schema + ".coalesceentitytemplate where " + COLUMNS.getName()
+                            + "='" + template.getName() + "' and " + COLUMNS.getSource() + "='" + template.getSource()
+                            + "' and " + COLUMNS.getVersion() + "='" + template.getVersion() + "'");
             if (!result.next())
             {
                 // insert
-                StringBuilder sql2 = new StringBuilder("insert into " + schema + ".coalesceentitytemplate (");
-                sql2.append(COLUMNS.getKey() + ",");
-                sql2.append(COLUMNS.getName() + ",");
-                sql2.append(COLUMNS.getSource() + ",");
-                sql2.append(COLUMNS.getVersion() + ",");
-                sql2.append(COLUMNS.getXml() + ",");
-                sql2.append(COLUMNS.getDateCreated() + ",");
+                StringBuilder sql2 = new StringBuilder("insert into ").append(schema + ".coalesceentitytemplate (");
+                sql2.append(COLUMNS.getKey()).append(",");
+                sql2.append(COLUMNS.getName()).append(",");
+                sql2.append(COLUMNS.getSource()).append(",");
+                sql2.append(COLUMNS.getVersion()).append(",");
+                sql2.append(COLUMNS.getXml()).append(",");
+                sql2.append(COLUMNS.getDateCreated()).append(",");
                 sql2.append(COLUMNS.getLinkageLastModified());
                 sql2.append(") values (?,?,?,?,?,?,?)");
 
@@ -317,16 +318,16 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             {
                 // update
                 StringBuilder sql3 = new StringBuilder("update " + schema + ".coalesceentitytemplate set ");
-                sql3.append(COLUMNS.getName() + "=?,");
-                sql3.append(COLUMNS.getSource() + "=?,");
-                sql3.append(COLUMNS.getVersion() + "=?,");
-                sql3.append(COLUMNS.getXml() + "=?,");
-                sql3.append(COLUMNS.getDateCreated() + "=?,");
-                sql3.append(COLUMNS.getLastModified() + "=?");
+                sql3.append(COLUMNS.getName()).append("=?,");
+                sql3.append(COLUMNS.getSource()).append("=?,");
+                sql3.append(COLUMNS.getVersion()).append("=?,");
+                sql3.append(COLUMNS.getXml()).append("=?,");
+                sql3.append(COLUMNS.getDateCreated()).append("=?,");
+                sql3.append(COLUMNS.getLastModified()).append("=?");
                 sql3.append(" where ");
-                sql3.append(COLUMNS.getName() + "=? and ");
-                sql3.append(COLUMNS.getSource() + "=? and ");
-                sql3.append(COLUMNS.getVersion() + "=?");
+                sql3.append(COLUMNS.getName()).append("=? and ");
+                sql3.append(COLUMNS.getSource()).append("=? and ");
+                sql3.append(COLUMNS.getVersion()).append("=?");
 
                 PreparedStatement stmt3 = conn.prepareStatement(sql3.toString());
                 stmt3.setString(1, template.getName());
@@ -377,8 +378,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
             Connection conn = this.getConnection();
             Statement stmt = conn.createStatement();
-            ResultSet result = null;
-            result = stmt.executeQuery(
+            ResultSet result = stmt.executeQuery(
                     "select " + COLUMNS.getKey() + " from " + schema + "." + NORMALIZER.normalize(tableName) + " where "
                             + COLUMNS.getKey() + "='" + parameters.get(0).getValue() + "'");
 
@@ -452,12 +452,12 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                     }
                 }
 
-                sql.append(" WHERE " + COLUMNS.getKey() + "=").append(quote(parameters.get(0).getValue()));
+                sql.append(" WHERE ").append(COLUMNS.getKey()).append("=").append(quote(parameters.get(0).getValue()));
             }
 
             //*/
 
-            LOGGER.trace("Insert Record SQL: " + sql);
+            LOGGER.trace("Insert Record SQL: {}", sql);
             stmt = conn.createStatement();
             stmt.executeUpdate(sql.toString());
             success = true;
@@ -783,7 +783,17 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         return exists;
     }
 
-    java.util.List<String> getColumnNames(String schema, String tableName) throws SQLException
+    public static String getDateString(DateTime date)
+    {
+        return DATE_TIME_FOMRATTER.print(date);
+    }
+
+    public static String getDateString(Date date)
+    {
+        return DATE_TIME_FOMRATTER.print(new DateTime(date));
+    }
+
+    public java.util.List<String> getColumnNames(String schema, String tableName) throws SQLException
     {
         Connection conn = this.getConnection();
         // get data base metadata
