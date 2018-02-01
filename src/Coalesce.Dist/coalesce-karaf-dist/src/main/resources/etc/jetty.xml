@@ -118,14 +118,13 @@
     <Get name="handler">
         <Call name="addHandler">
             <Arg>
-                <New class="org.eclipse.jetty.server.handler.ContextHandler">
+                <New class="org.eclipse.jetty.servlet.ServletContextHandler">
                     <Set name="contextPath">/images</Set>
-                    <Set name="handler">
-                        <New class="org.eclipse.jetty.server.handler.ResourceHandler">
-                            <Set name="resourceBase">images</Set>
-                            <Set name="directoriesListed">false</Set>
-                        </New>
-                    </Set>
+                    <Set name="resourceBase">images</Set>
+                    <Call name="addServlet">
+                        <Arg>org.eclipse.jetty.servlet.DefaultServlet</Arg>
+                        <Arg>/</Arg>
+                    </Call>
                 </New>
             </Arg>
         </Call>
