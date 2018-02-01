@@ -1,6 +1,6 @@
 package com.incadencecorp.coalesce.services.search.service.data.jaxrs;
 
-import com.incadencecorp.coalesce.services.api.search.QueryResultType;
+import com.incadencecorp.coalesce.services.api.search.QueryResult;
 import com.incadencecorp.coalesce.services.api.search.QueryType;
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchCriteria;
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchQuery;
@@ -25,19 +25,19 @@ public interface ISearchDataControllerJaxRS {
     @Path("/simple")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    QueryResultType search(List<SearchCriteria> options);
+    QueryResult search(List<SearchCriteria> options);
 
     @POST
     @Path("/complex")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    QueryResultType searchComplex(SearchQuery query) throws RemoteException;
+    QueryResult searchComplex(SearchQuery query) throws RemoteException;
 
     @POST
     @Path("/ogc")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    QueryResultType searchOGC(QueryType query) throws RemoteException;
+    QueryResult searchOGC(QueryType query) throws RemoteException;
 
     @GET
     @Path("/capabilities")
