@@ -120,7 +120,7 @@ public class CoalesceSearchFramework extends CoalesceFramework {
                 result.setStatus(EResultStatus.FAILED);
                 result.setError(String.format(CoalesceErrors.NOT_INITIALIZED,
                                               ICoalesceSearchPersistor.class.getSimpleName()));
-                results.add(new SearchResults());
+                results.add(result);
             }
         }
 
