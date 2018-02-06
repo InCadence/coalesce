@@ -29,14 +29,6 @@
 
         <dependency>
             <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-            <artifactId>persister-memory-feature</artifactId>
-            <version>${project.version}</version>
-            <type>xml</type>
-            <classifier>features</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
             <artifactId>persister-derby-feature</artifactId>
             <version>${project.version}</version>
             <type>xml</type>

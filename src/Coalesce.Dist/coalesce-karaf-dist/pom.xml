@@ -1,253 +1,254 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<!-- Licensed to the Apache Software Foundation (ASF) under one or more 
-		contributor license agreements. See the NOTICE file distributed with this 
-		work for additional information regarding copyright ownership. The ASF licenses 
-		this file to You under the Apache License, Version 2.0 (the "License"); you 
-		may not use this file except in compliance with the License. You may obtain 
-		a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless 
-		required by applicable law or agreed to in writing, software distributed 
-		under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
-		OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
-		the specific language governing permissions and limitations under the License. -->
+    <!-- Licensed to the Apache Software Foundation (ASF) under one or more
+        contributor license agreements. See the NOTICE file distributed with this
+        work for additional information regarding copyright ownership. The ASF licenses
+        this file to You under the Apache License, Version 2.0 (the "License"); you
+        may not use this file except in compliance with the License. You may obtain
+        a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless
+        required by applicable law or agreed to in writing, software distributed
+        under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+        OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+        the specific language governing permissions and limitations under the License. -->
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<artifactId>coalesce-karaf-dist</artifactId>
-	<packaging>karaf-assembly</packaging>
-	<name>Coalesce Karaf Distribution</name>
-	<description>This is a self contained distribution of the Coalesce services within Karaf.</description>
+    <artifactId>coalesce-karaf-dist</artifactId>
+    <packaging>karaf-assembly</packaging>
+    <name>Coalesce Karaf Distribution</name>
+    <description>This is a self contained distribution of the Coalesce services within Karaf.</description>
 
-	<parent>
-		<groupId>com.incadencecorp.coalesce.dist</groupId>
-		<artifactId>coalesce-dist-parent</artifactId>
-		<version>0.0.25-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
+    <parent>
+        <groupId>com.incadencecorp.coalesce.dist</groupId>
+        <artifactId>coalesce-dist-parent</artifactId>
+        <version>0.0.25-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
 
-	<properties>
-		<karaf.version>4.0.8</karaf.version>
-		<cxf-dosgi.version>2.1.0</cxf-dosgi.version>
-	</properties>
+    <properties>
+        <cxf-dosgi.version>2.1.0</cxf-dosgi.version>
+    </properties>
 
-	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
-				<includes>
-					<include>**/*</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>src/main/filtered-resources</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>**/*</include>
-				</includes>
-			</resource>
-		</resources>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.karaf.tooling</groupId>
-					<artifactId>karaf-maven-plugin</artifactId>
-					<version>${karaf.version}</version>
-					<extensions>true</extensions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<id>process-resources</id>
-						<goals>
-							<goal>resources</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.karaf.tooling</groupId>
-				<artifactId>karaf-maven-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<javase>1.8</javase>
-					<blacklistPolicy>Fail</blacklistPolicy>
-					<blacklistedBundles>
-						<blacklistedBundle>spring;range="[2,3.2.14.RELEASE)"</blacklistedBundle>
-					</blacklistedBundles>
-					<startupFeatures>
-						<feature>framework</feature>
-					</startupFeatures>
-					<bootFeatures>
-						<feature>minimal</feature>
-						<feature>cxf</feature>
-						<feature>war</feature>
-						<feature>persister-derby-feature</feature>
-						<feature>coalesce-frontend</feature>
-						<feature>coalesce-javadocs</feature>
-					</bootFeatures>
-					<installedFeatures>
-						<feature>standard</feature>
-						<feature>blueprint-web</feature>
- 						<feature>spring</feature>
-						<feature>spring-dm-web</feature>
-						<feature>coalesce-feature</feature>
-					</installedFeatures>
-					<usePathPrefix>false</usePathPrefix>
-				</configuration>
-				<executions>
-					<execution>
-						<id>verify</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>verify</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>mvn:org.apache.karaf.features/framework/${karaf.version}/xml/features</descriptor>
-								<descriptor>mvn:org.apache.karaf.features/standard/${karaf.version}/xml/features</descriptor>
-								<descriptor>mvn:org.apache.karaf.features/spring/${karaf.version}/xml/features</descriptor>
-								<descriptor>mvn:org.apache.karaf.features/enterprise/${karaf.version}/xml/features</descriptor>
-								<descriptor>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</descriptor>
-								<descriptor>mvn:org.apache.cxf.dosgi/cxf-dosgi/${cxf-dosgi.version}/xml/features</descriptor>
-							</descriptors>
-							<features>
-								<feature>coalesce-feature</feature>
-								<feature>coalesce-example</feature>
-							</features>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/filtered-resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.karaf.tooling</groupId>
+                    <artifactId>karaf-maven-plugin</artifactId>
+                    <version>${karaf.version}</version>
+                    <extensions>true</extensions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>process-resources</id>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <javase>1.8</javase>
+                    <blacklistPolicy>Fail</blacklistPolicy>
+                    <blacklistedBundles>
+                        <blacklistedBundle>spring;range="[2,3.2.14.RELEASE)"</blacklistedBundle>
+                    </blacklistedBundles>
+                    <startupFeatures>
+                        <feature>framework</feature>
+                    </startupFeatures>
+                    <bootFeatures>
+                        <feature>minimal</feature>
+                        <feature>cxf</feature>
+                        <feature>war</feature>
+                        <feature>persister-derby-feature</feature>
+                        <feature>coalesce-frontend</feature>
+                        <feature>coalesce-javadocs</feature>
+                    </bootFeatures>
+                    <installedFeatures>
+                        <feature>standard</feature>
+                        <feature>blueprint-web</feature>
+                        <feature>spring</feature>
+                        <feature>spring-dm-web</feature>
+                        <feature>coalesce-feature</feature>
+                    </installedFeatures>
+                    <usePathPrefix>false</usePathPrefix>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>verify</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>mvn:org.apache.karaf.features/framework/${karaf.version}/xml/features
+                                </descriptor>
+                                <descriptor>mvn:org.apache.karaf.features/standard/${karaf.version}/xml/features</descriptor>
+                                <descriptor>mvn:org.apache.karaf.features/spring/${karaf.version}/xml/features</descriptor>
+                                <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf.version}/xml/features
+                                </descriptor>
+                                <descriptor>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</descriptor>
+                                <descriptor>mvn:org.apache.cxf.dosgi/cxf-dosgi/${cxf-dosgi.version}/xml/features</descriptor>
+                            </descriptors>
+                            <features>
+                                <feature>coalesce-feature</feature>
+                                <feature>coalesce-example</feature>
+                            </features>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-	<dependencies>
+    <dependencies>
 
-		<!-- Required (Do Not Remove) - To prevent changes at runtime change this 
-			to static-framework -->
-		<dependency>
-			<groupId>org.apache.karaf.features</groupId>
-			<artifactId>framework</artifactId>
-			<version>${karaf.version}</version>
-			<type>kar</type>
-		</dependency>
-		
-		<!-- Specifies feature repositories available for pulling dependencies 
-			from -->
-		<dependency>
-			<groupId>org.apache.karaf.features</groupId>
-			<artifactId>standard</artifactId>
-			<version>${karaf.version}</version>
-			<classifier>features</classifier>
-			<type>xml</type>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.karaf.features</groupId>
-			<artifactId>enterprise</artifactId>
-			<version>${karaf.version}</version>
-			<classifier>features</classifier>
-			<type>xml</type>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.karaf.features</groupId>
-			<artifactId>spring</artifactId>
-			<version>${karaf.version}</version>
-			<classifier>features</classifier>
-			<type>xml</type>
-		</dependency>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf.karaf</groupId>
-			<artifactId>apache-cxf</artifactId>
-			<version>${cxf.version}</version>
-			<classifier>features</classifier>
-			<type>xml</type>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf.dosgi</groupId>
-			<artifactId>cxf-dosgi</artifactId>
-			<version>${cxf-dosgi.version}</version>
-			<classifier>features</classifier>
-			<type>xml</type>
-		</dependency>
-	</dependencies>
+        <!-- Required (Do Not Remove) - To prevent changes at runtime change this
+            to static-framework -->
+        <dependency>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>framework</artifactId>
+            <version>${karaf.version}</version>
+            <type>kar</type>
+        </dependency>
 
-	<repositories>
-		<!-- Apache ServiceMix repository (for region) -->
-		<repository>
-			<id>apache.servicemix.m2</id>
-			<name>Apache ServiceMix M2 repository</name>
-			<url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<!-- Gemini Blueprint repository -->
-		<repository>
-			<id>zodiac-repository</id>
-			<name>Zodiac Release Repository</name>
-			<url>http://repository.springsource.com/maven/bundles/release</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<!-- Spring EBR repository -->
-		<repository>
-			<id>spring-ebr-repository</id>
-			<name>Spring EBR Repository</name>
-			<url>http://repository.springsource.com/maven/bundles/external</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<!-- OPS4J SNAPSHOT repository -->
-		<repository>
-			<id>ops4j.sonatype.snapshots.deploy</id>
-			<name>OPS4J snapshot repository</name>
-			<url>https://oss.sonatype.org/content/repositories/ops4j-snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<!-- Apache SNAPSHOT -->
-		<repository>
-			<id>apache.snapshots.deploy</id>
-			<name>Apache snapshot repository</name>
-			<url>https://repository.apache.org/content/groups/snapshots-group</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+        <!-- Specifies feature repositories available for pulling dependencies
+            from -->
+        <dependency>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>standard</artifactId>
+            <version>${karaf.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>enterprise</artifactId>
+            <version>${karaf.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>spring</artifactId>
+            <version>${karaf.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf.karaf</groupId>
+            <artifactId>apache-cxf</artifactId>
+            <version>${cxf.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf.dosgi</groupId>
+            <artifactId>cxf-dosgi</artifactId>
+            <version>${cxf-dosgi.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <!-- Apache ServiceMix repository (for region) -->
+        <repository>
+            <id>apache.servicemix.m2</id>
+            <name>Apache ServiceMix M2 repository</name>
+            <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <!-- Gemini Blueprint repository -->
+        <repository>
+            <id>zodiac-repository</id>
+            <name>Zodiac Release Repository</name>
+            <url>http://repository.springsource.com/maven/bundles/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <!-- Spring EBR repository -->
+        <repository>
+            <id>spring-ebr-repository</id>
+            <name>Spring EBR Repository</name>
+            <url>http://repository.springsource.com/maven/bundles/external</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <!-- OPS4J SNAPSHOT repository -->
+        <repository>
+            <id>ops4j.sonatype.snapshots.deploy</id>
+            <name>OPS4J snapshot repository</name>
+            <url>https://oss.sonatype.org/content/repositories/ops4j-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <!-- Apache SNAPSHOT -->
+        <repository>
+            <id>apache.snapshots.deploy</id>
+            <name>Apache snapshot repository</name>
+            <url>https://repository.apache.org/content/groups/snapshots-group</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>
