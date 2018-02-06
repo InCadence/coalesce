@@ -10,7 +10,7 @@
 	<properties>
 		<unityVersion>0.0.5</unityVersion>
 		<maven.bundle.version>3.2.0</maven.bundle.version>
-        <karaf.version>4.0.8</karaf.version>
+	        <karaf.version>4.0.8</karaf.version>
 		<felix.osgi.version>1.4.0</felix.osgi.version>
 		<felix.scr.version>1.8.2</felix.scr.version>
 		<felix.scr.annotations.version>1.7.0</felix.scr.annotations.version>
