@@ -90,7 +90,6 @@
 		</dependency>
 
 		<dependency>
-			<!-- Required for implementing interfaces -->
 			<groupId>org.jvnet.jaxb2_commons</groupId>
 			<artifactId>jaxb2-basics</artifactId>
 			<version>1.11.1</version>

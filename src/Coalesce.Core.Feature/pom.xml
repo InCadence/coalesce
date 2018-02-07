@@ -1,66 +1,65 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>coalesce-core-feature</artifactId>
-	<packaging>feature</packaging>
-	<name>Coalesce Core Feature</name>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>coalesce-core-feature</artifactId>
+    <packaging>feature</packaging>
+    <name>Coalesce Core Feature</name>
 
-	<parent>
- 	        <groupId>com.incadencecorp.coalesce</groupId>
-	        <artifactId>coalesce-pom</artifactId>
-	        <version>0.0.25-SNAPSHOT</version>
-	        <relativePath>../Coalesce.Pom</relativePath>
-	</parent>
+    <parent>
+        <groupId>com.incadencecorp.coalesce</groupId>
+        <artifactId>coalesce-pom</artifactId>
+        <version>0.0.25-SNAPSHOT</version>
+        <relativePath>../Coalesce.Pom</relativePath>
+    </parent>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.karaf.tooling</groupId>
-				<artifactId>karaf-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-core</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>xercesImpl</artifactId>
-					<groupId>xerces</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>stax-api</artifactId>
-					<groupId>stax</groupId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.imgscalr</groupId>
-					<artifactId>imgscalr-lib</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.drewnoakes</groupId>
-					<artifactId>metadata-extractor</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.vividsolutions</groupId>
-					<artifactId>jts</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jaxb2-basics</artifactId>
-					<groupId>*</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xercesImpl</artifactId>
+                    <groupId>xerces</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>stax-api</artifactId>
+                    <groupId>stax</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.imgscalr</groupId>
+                    <artifactId>imgscalr-lib</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.drewnoakes</groupId>
+                    <artifactId>metadata-extractor</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.vividsolutions</groupId>
+                    <artifactId>jts</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.9.7</version>
-		</dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.9.7</version>
+        </dependency>
 
-	</dependencies>
-
+    </dependencies>
 
 
 </project>

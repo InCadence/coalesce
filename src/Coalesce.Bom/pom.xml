@@ -1,309 +1,308 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.incadencecorp.coalesce</groupId>
-	<artifactId>coalesce-bom</artifactId>
-	<version>0.0.25-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>coalesce.bom</name>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.incadencecorp.coalesce</groupId>
+    <artifactId>coalesce-bom</artifactId>
+    <version>0.0.25-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>coalesce.bom</name>
 
-	<properties>
-		<unityVersion>0.0.5</unityVersion>
-		<maven.bundle.version>3.2.0</maven.bundle.version>
-	        <karaf.version>4.0.8</karaf.version>
-		<felix.osgi.version>1.4.0</felix.osgi.version>
-		<felix.scr.version>1.8.2</felix.scr.version>
-		<felix.scr.annotations.version>1.7.0</felix.scr.annotations.version>
-		<cxf.version>3.2.1</cxf.version>
-		<cxf.xjc.version>3.2.0</cxf.xjc.version>
-		<geotools.version>15.1</geotools.version>
-		<accumulo.geomesa.version>1.3.3</accumulo.geomesa.version>
-		<accumulo.version>1.7.2</accumulo.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.version>4.2.2.RELEASE</spring.version>
+    <properties>
+        <unityVersion>0.0.5</unityVersion>
+        <maven.bundle.version>3.2.0</maven.bundle.version>
+        <karaf.version>4.0.8</karaf.version>
+        <felix.osgi.version>1.4.0</felix.osgi.version>
+        <felix.scr.version>1.8.2</felix.scr.version>
+        <felix.scr.annotations.version>1.7.0</felix.scr.annotations.version>
+        <cxf.version>3.2.1</cxf.version>
+        <cxf.xjc.version>3.2.1</cxf.xjc.version>
+        <geotools.version>15.1</geotools.version>
+        <accumulo.geomesa.version>1.3.3</accumulo.geomesa.version>
+        <accumulo.version>1.7.2</accumulo.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.version>4.2.2.RELEASE</spring.version>
 
-		<dependency.bndlib.version>2.4.0</dependency.bndlib.version>
-		<bundle-plugin.version>3.5.0</bundle-plugin.version>
+        <dependency.bndlib.version>2.4.0</dependency.bndlib.version>
+        <bundle-plugin.version>3.5.0</bundle-plugin.version>
 
-		<jackson.jaxb.version>2.0.5</jackson.jaxb.version>
+        <jackson.jaxb.version>2.9.1</jackson.jaxb.version>
 
-		<baseline.version>0.0.24</baseline.version>
-		<changelog.start.tag>coalesce-0.0.24</changelog.start.tag>
-		<changelog.end.tag>HEAD</changelog.end.tag>
+        <changelog.start.tag>coalesce-0.0.24</changelog.start.tag>
+        <changelog.end.tag>HEAD</changelog.end.tag>
 
-	</properties>
+    </properties>
 
-	<scm>
-		<connection>scm:git:ssh://mvnkimmel:29418/thirdparty</connection>
-	</scm>
+    <scm>
+        <connection>scm:git:ssh://mvnkimmel:29418/thirdparty</connection>
+    </scm>
 
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.3</version>
-					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
-					</configuration>
-				</plugin>
-				<!-- Required to use scp when deploying site documentation -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-site-plugin</artifactId>
-					<version>3.3</version>
-					<configuration>
-						<reportPlugins>
-							<plugin>
-								<groupId>org.apache.maven.plugins</groupId>
-								<artifactId>maven-javadoc-plugin</artifactId>
-								<reportSets>
-									<reportSet>
-										<id>aggregate</id>
-										<reports>
-											<report>aggregate</report>
-										</reports>
-									</reportSet>
-								</reportSets>
-								<configuration>
-									<additionalparam>-Xdoclint:none</additionalparam>
-								</configuration>
-							</plugin>
-							<!-- Here you can also configure more report plugins -->
-							<!-- for your site, such as maven-project-info-reports-plugin -->
-						</reportPlugins>
-					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.maven.wagon</groupId>
-							<artifactId>wagon-ssh</artifactId>
-							<version>1.0</version>
-						</dependency>
-					</dependencies>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.felix</groupId>
-					<artifactId>maven-bundle-plugin</artifactId>
-					<version>${bundle-plugin.version}</version>
-					<dependencies>
-						<dependency>
-							<groupId>biz.aQute.bnd</groupId>
-							<artifactId>bndlib</artifactId>
-							<version>${dependency.bndlib.version}</version>
-						</dependency>
-					</dependencies>
-					<configuration>
-						<supportedProjectTypes>
-							<supportedProjectType>jar</supportedProjectType>
-							<supportedProjectType>bundle</supportedProjectType>
-							<supportedProjectType>war</supportedProjectType>
-						</supportedProjectTypes>
-					</configuration>
-					<executions>
-						<execution>
-							<id>bundle</id>
-							<goals>
-								<goal>bundle</goal>
-							</goals>
-							<configuration>
-								<obrRepository>NONE</obrRepository>
-							</configuration>
-						</execution>
-						<!-- <execution> -->
-						<!-- <id>baseline</id> -->
-						<!-- <goals> -->
-						<!-- <goal>baseline</goal> -->
-						<!-- </goals> -->
-						<!-- <configuration> -->
-						<!-- <comparisonVersion>${baseline.version}</comparisonVersion> -->
-						<!-- <failOnWarning>false</failOnWarning> -->
-						<!-- </configuration> -->
-						<!-- </execution> -->
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.0.0</version>
-					<executions>
-						<execution>
-							<id>attach-javadocs</id>
-							<goals>
-								<goal>jar</goal>
-								<goal>test-javadoc</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.karaf.tooling</groupId>
-					<artifactId>karaf-maven-plugin</artifactId>
-					<version>${karaf.version}</version>
-					<extensions>true</extensions>
-					<configuration>
-						<instructions>
-							<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-						</instructions>
-						<startLevel>75</startLevel>
-					</configuration>
-				</plugin>				
-			</plugins>
-		</pluginManagement>
-	</build>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.3</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+                <!-- Required to use scp when deploying site documentation -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.3</version>
+                    <configuration>
+                        <reportPlugins>
+                            <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-javadoc-plugin</artifactId>
+                                <reportSets>
+                                    <reportSet>
+                                        <id>aggregate</id>
+                                        <reports>
+                                            <report>aggregate</report>
+                                        </reports>
+                                    </reportSet>
+                                </reportSets>
+                                <configuration>
+                                    <additionalparam>-Xdoclint:none</additionalparam>
+                                </configuration>
+                            </plugin>
+                            <!-- Here you can also configure more report plugins -->
+                            <!-- for your site, such as maven-project-info-reports-plugin -->
+                        </reportPlugins>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.wagon</groupId>
+                            <artifactId>wagon-ssh</artifactId>
+                            <version>1.0</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>${bundle-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>biz.aQute.bnd</groupId>
+                            <artifactId>bndlib</artifactId>
+                            <version>${dependency.bndlib.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <supportedProjectTypes>
+                            <supportedProjectType>jar</supportedProjectType>
+                            <supportedProjectType>bundle</supportedProjectType>
+                            <supportedProjectType>war</supportedProjectType>
+                        </supportedProjectTypes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>bundle</id>
+                            <goals>
+                                <goal>bundle</goal>
+                            </goals>
+                            <configuration>
+                                <obrRepository>NONE</obrRepository>
+                            </configuration>
+                        </execution>
+                        <!-- <execution> -->
+                        <!-- <id>baseline</id> -->
+                        <!-- <goals> -->
+                        <!-- <goal>baseline</goal> -->
+                        <!-- </goals> -->
+                        <!-- <configuration> -->
+                        <!-- <comparisonVersion>${baseline.version}</comparisonVersion> -->
+                        <!-- <failOnWarning>false</failOnWarning> -->
+                        <!-- </configuration> -->
+                        <!-- </execution> -->
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                                <goal>test-javadoc</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.karaf.tooling</groupId>
+                    <artifactId>karaf-maven-plugin</artifactId>
+                    <version>${karaf.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <instructions>
+                            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        </instructions>
+                        <startLevel>75</startLevel>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.incadencecorp.coalesce</groupId>
-				<artifactId>coalesce-core</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.incadencecorp.coalesce.synchronizer</groupId>
-				<artifactId>coalesce-synchronizer-api</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.incadencecorp.coalesce.synchronizer</groupId>
-				<artifactId>coalesce-synchronizer-service</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.incadencecorp.coalesce.synchronizer</groupId>
-				<artifactId>coalesce-synchronizer-feature</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.incadencecorp.coalesce</groupId>
-				<artifactId>coalesce-framework-persister-accumulo</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.incadencecorp.coalesce</groupId>
-				<artifactId>coalesce-framework-persister-postgresql</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<!-- <dependency> -->
-			<!-- <groupId>com.incadencecorp.coalesce</groupId> -->
-			<!-- <artifactId>coalesce-framework-persister-sqlserver</artifactId> -->
-			<!-- <version>${coalescePersisterVersionSQLServer}</version> -->
-			<!-- </dependency> -->
-			<dependency>
-				<groupId>com.incadencecorp.coalesce</groupId>
-				<artifactId>coalesce-framework-persister-neo4j</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.incadencecorp.coalesce</groupId>
-				<artifactId>coalesce-search</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.incadencecorp.coalesce</groupId>
-				<artifactId>coalesce-classification</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.incadencecorp.coalesce</groupId>
-				<artifactId>coalesce-exim-xsd</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.incadencecorp.coalesce.services</groupId>
-				<artifactId>coalesce-services-api</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.incadencecorp.coalesce.services</groupId>
-				<artifactId>coalesce-services-common</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.incadencecorp.coalesce</groupId>
+                <artifactId>coalesce-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.incadencecorp.coalesce.synchronizer</groupId>
+                <artifactId>coalesce-synchronizer-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.incadencecorp.coalesce.synchronizer</groupId>
+                <artifactId>coalesce-synchronizer-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.incadencecorp.coalesce.synchronizer</groupId>
+                <artifactId>coalesce-synchronizer-feature</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.incadencecorp.coalesce</groupId>
+                <artifactId>coalesce-framework-persister-accumulo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.incadencecorp.coalesce</groupId>
+                <artifactId>coalesce-framework-persister-postgresql</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- <dependency> -->
+            <!-- <groupId>com.incadencecorp.coalesce</groupId> -->
+            <!-- <artifactId>coalesce-framework-persister-sqlserver</artifactId> -->
+            <!-- <version>${coalescePersisterVersionSQLServer}</version> -->
+            <!-- </dependency> -->
+            <dependency>
+                <groupId>com.incadencecorp.coalesce</groupId>
+                <artifactId>coalesce-framework-persister-neo4j</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.incadencecorp.coalesce</groupId>
+                <artifactId>coalesce-search</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.incadencecorp.coalesce</groupId>
+                <artifactId>coalesce-classification</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.incadencecorp.coalesce</groupId>
+                <artifactId>coalesce-exim-xsd</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.incadencecorp.coalesce.services</groupId>
+                <artifactId>coalesce-services-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.incadencecorp.coalesce.services</groupId>
+                <artifactId>coalesce-services-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-	<profiles>
-		<profile>
-			<id>nexus-private</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<distributionManagement>
-				<repository>
-					<id>nexus</id>
-					<url>http://10.15.0.230:8081/repository/maven-releases</url>
-				</repository>
-				<snapshotRepository>
-					<id>nexus</id>
-					<url>http://10.15.0.230:8081/repository/maven-snapshots</url>
-				</snapshotRepository>
-			</distributionManagement>
-		</profile>
-		<profile>
-			<id>nexus-public</id>
-			<distributionManagement>
-				<repository>
-					<id>nexus</id>
-					<url>http://incadencenexus.incadencecorp.com:8081/nexus/content/repositories/releases/</url>
-				</repository>
-				<snapshotRepository>
-					<id>nexus-public</id>
-					<url>http://incadencenexus.incadencecorp.com:8081/nexus/content/repositories/snapshots/</url>
-				</snapshotRepository>
-			</distributionManagement>
-		</profile>
-	</profiles>
+    <profiles>
+        <profile>
+            <id>nexus-private</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>nexus</id>
+                    <url>http://10.15.0.230:8081/repository/maven-releases</url>
+                </repository>
+                <snapshotRepository>
+                    <id>nexus</id>
+                    <url>http://10.15.0.230:8081/repository/maven-snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>nexus-public</id>
+            <distributionManagement>
+                <repository>
+                    <id>nexus</id>
+                    <url>http://incadencenexus.incadencecorp.com:8081/nexus/content/repositories/releases/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>nexus-public</id>
+                    <url>http://incadencenexus.incadencecorp.com:8081/nexus/content/repositories/snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 
-	<repositories>
-		<repository>
-			<id>maven2-repository.dev.java.net</id>
-			<name>Java.net repository</name>
-			<url>http://download.java.net/maven/2</url>
-		</repository>
-		<repository>
-			<id>osgeo</id>
-			<name>Open Source Geospatial Foundation Repository</name>
-			<url>http://download.osgeo.org/webdav/geotools/</url>
-		</repository>
-		<repository>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<id>opengeo</id>
-			<name>OpenGeo Maven Repository</name>
-			<url>http://repo.opengeo.org</url>
-		</repository>
-		<repository>
-			<id>neo4j-release-repository</id>
-			<name>Neo4j Maven 2 release repository</name>
-			<url>http://m2.neo4j.org/content/repositories/releases/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+    <repositories>
+        <repository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net repository</name>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+        <repository>
+            <id>osgeo</id>
+            <name>Open Source Geospatial Foundation Repository</name>
+            <url>http://download.osgeo.org/webdav/geotools/</url>
+        </repository>
+        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>opengeo</id>
+            <name>OpenGeo Maven Repository</name>
+            <url>http://repo.opengeo.org</url>
+        </repository>
+        <repository>
+            <id>neo4j-release-repository</id>
+            <name>Neo4j Maven 2 release repository</name>
+            <url>http://m2.neo4j.org/content/repositories/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changelog-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<type>tag</type>
-					<tags>
-						<tag implementation="java.lang.String">${changelog.start.tag}</tag>
-						<tag implementation="java.lang.String">${changelog.end.tag}</tag>
-					</tags>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changelog-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <type>tag</type>
+                    <tags>
+                        <tag implementation="java.lang.String">${changelog.start.tag}</tag>
+                        <tag implementation="java.lang.String">${changelog.end.tag}</tag>
+                    </tags>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 
-	<modules>
-		<module>../Coalesce.Pom</module>
-	</modules>
+    <modules>
+        <module>../Coalesce.Pom</module>
+    </modules>
 </project>
