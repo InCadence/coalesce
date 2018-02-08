@@ -98,15 +98,10 @@
 		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.OptionsDataControllerJaxRS">
 	</bean>
 
-	<bean id="searchServiceImpl"
-		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.SearchDataControllerJaxRS">
-		<argument>
-			<bean
-				class="com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl">
-				<argument ref="persister" />
-			</bean>
-		</argument>
-	</bean>
+    <bean id="searchServiceImpl"
+          class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.SearchDataControllerJaxRS">
+        <argument ref="framework"/>
+    </bean>
 
 	<!-- ========================== -->
 	<!-- Persisters -->
@@ -122,7 +117,7 @@
 	<!-- ========================== -->
 	<!-- Framework -->
 	<!-- ========================== -->
-	<bean id="framework" class="com.incadencecorp.coalesce.framework.CoalesceFramework">
+	<bean id="framework" class="com.incadencecorp.coalesce.search.CoalesceSearchFramework">
 		<property name="authoritativePersistor" ref="persister" />
 	</bean>
 

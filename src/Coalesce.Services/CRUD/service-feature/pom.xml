@@ -1,59 +1,63 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>coalesce-crud-service-feature</artifactId>
-	<packaging>feature</packaging>
-	<name>Coalesce CRUD Service Feature</name>
-	<description>Karaf feature for the CRUD service</description>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>coalesce-crud-service-feature</artifactId>
+    <packaging>feature</packaging>
+    <name>Coalesce CRUD Service Feature</name>
+    <description>Karaf feature for the CRUD service</description>
 
-	<parent>
-		<groupId>com.incadencecorp.coalesce.services.crud</groupId>
-		<artifactId>coalesce-crud-parent</artifactId>
-		<version>0.0.25-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
+    <parent>
+        <groupId>com.incadencecorp.coalesce.services.crud</groupId>
+        <artifactId>coalesce-crud-parent</artifactId>
+        <version>0.0.25-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.karaf.tooling</groupId>
-				<artifactId>karaf-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
-			<artifactId>coalesce-crud-service</artifactId>
-			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.geotools</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.geotools.xsd</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>xercesImpl</artifactId>
-					<groupId>xerces</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>stax-api</artifactId>
-					<groupId>stax</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jaxb2-basics</artifactId>
-					<groupId>*</groupId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.incadencecorp.coalesce</groupId>
-					<artifactId>coalesce-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.services.crud</groupId>
+            <artifactId>coalesce-crud-service</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.geotools</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.geotools.xsd</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>xercesImpl</artifactId>
+                    <groupId>xerces</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>stax-api</artifactId>
+                    <groupId>stax</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.cxf.xjc-utils</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.incadencecorp.coalesce</groupId>
+                    <artifactId>coalesce-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
 	name="coalesce-services">
-	<feature name="coalesce-example">
+	<feature name="coalesce-example" version="${project.version}">
 <!-- 		<feature prerequisite="true" dependency="false">spifly</feature> -->
 		<feature prerequisite="false" dependency="false">persister-postgres-feature</feature>
 		<feature prerequisite="false" dependency="false">persister-neo4j-feature</feature>
@@ -19,14 +19,14 @@
 		<bundle>mvn:org.ow2.asm/asm-all/5.2</bundle>
 		<bundle>mvn:org.apache.aries/org.apache.aries.util/1.1.3</bundle>
 	</feature>	
-	<feature name="coalesce-frontend">
+	<feature name="coalesce-frontend" version="${project.version}">
 		<feature prerequisite="false" dependency="false">coalesce-crud-service-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-crud-service-data-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-react-feature</feature>
 	</feature>
-	<feature name="coalesce-javadocs" start-level="75">
+	<feature name="coalesce-javadocs" start-level="75" version="${project.version}">
 		<bundle>mvn:com.incadencecorp.coalesce.dist/coalesce-javadocs/${project.version}/war</bundle>
 	</feature>
 </features>

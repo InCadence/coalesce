@@ -11,27 +11,6 @@
 		<relativePath>../Coalesce.Bom</relativePath>
 	</parent>
 
-	<profiles>
-		<profile>
-			<id>dist</id>
-			<modules>
-				<module>../Coalesce.Dist</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>bundles</id>
-			<modules>
-				<module>../Coalesce.Bundles</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>react</id>
-			<modules>
-				<module>../Coalesce.React</module>
-			</modules>
-		</profile>
-	</profiles>
-
 	<modules>
 		<module>../Coalesce</module>
 		<module>../Coalesce.Classification</module>
@@ -45,6 +24,27 @@
 		<module>../Coalesce.Plugins</module>
 		<module>../Coalesce.Core.Feature</module>
 	</modules>
+
+	<profiles>
+		<profile>
+			<id>bundles</id>
+			<modules>
+				<module>../Coalesce.Bundles</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>react</id>
+			<modules>
+				<module>../Coalesce.React</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>dist</id>
+			<modules>
+				<module>../Coalesce.Dist</module>
+			</modules>
+		</profile>
+	</profiles>
 
 	<build>
 		<plugins>

@@ -102,7 +102,7 @@ public class FilePersistorSettings {
      */
     public static void setDirectory(Path value)
     {
-        settings.setSetting(config_name, CoalesceParameters.PARAM_DIRECTORY, value.toUri().toString());
+        settings.setSetting(config_name, CoalesceParameters.PARAM_DIRECTORY, value.toString());
     }
 
     /**
