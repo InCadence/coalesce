@@ -14,15 +14,22 @@ import java.util.Map;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import org.apache.commons.lang.NotImplementedException;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.cluster.metadata.IndexMetaData;
+import org.elasticsearch.cluster.metadata.MappingMetaData;
+import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.geotools.data.Query;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
@@ -91,13 +98,13 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         }
     }
     
-    public void searchSpecific() {
+    public void searchSpecific(String searchValue, String searchType) {
     	
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
 	    	TransportClient client = conn.getDBConnector();
-	    	SearchResponse response = client.prepareSearch("twitter4")
-	    	        .setTypes("tweet")
+	    	SearchResponse response = client.prepareSearch(searchValue)
+	    	        .setTypes(searchType)
 	    	        //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 	    	        //.setQuery(QueryBuilders.termQuery("multi", "test"))                 // Query
 	    	        //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
@@ -267,40 +274,25 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     @Override
     public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
+        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
+	    	TransportClient client = conn.getDBConnector();
             List<String> xmlList = new ArrayList<String>();
             List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
 
             StringBuilder sb = new StringBuilder("");
-
+            GetResponse response;
+            
             for (String key : keys)
             {
-                if (sb.length() > 0)
-                {
-                    sb.append(",");
-                }
-
-                sb.append("?");
-                parameters.add(new CoalesceParameter(key, Types.OTHER));
-            }
-
-            String SQL = String.format("SELECT EntityXml FROM %sCoalesceEntity WHERE ObjectKey IN (%s)",
-                                       "elasticsearch", //schema prefix?
-                                       sb.toString());
-
-            ResultSet results = conn.executeQuery(SQL, parameters.toArray(new CoalesceParameter[parameters.size()]));
-
-            while (results.next())
-            {
-                xmlList.add(results.getString("EntityXml"));
+	        	if(checkIfIndexExists(client, key)) {
+		        	response = client.prepareGet(key, key, key).get();
+		        	
+		        	xmlList.add(response.getSourceAsString());
+	        	}
             }
 
             return xmlList.toArray(new String[xmlList.size()]);
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetEntityXml", e);
         }
         catch (Exception e)
         {
@@ -585,7 +577,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     protected boolean persistEntityObject(CoalesceEntity entity, TransportClient conn) throws SQLException
     {
         // Return true if no update is required.
-    	//Worry about this later. Just gotta get this working
+    	//Worry about this later. 
 //        if (!checkLastModified(entity, conn))
 //        {
 //            return true;
@@ -597,11 +589,13 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			TypeFactory typeFactory = mapper.getTypeFactory();
-			MapType mapType = typeFactory.constructMapType(HashMap.class, String.class, Object.class);
-			HashMap<String, Object> map = mapper.readValue(converter.exportValues(entity, true).toString(), mapType);
+			byte[] json = mapper.writeValueAsBytes(converter.exportValues(entity, true));
+			HashMap<String, Object> map = mapper.readValue(converter.exportValues(entity, true).toString(), 
+					new TypeReference<Map<String, Object>>() {
+			});
 
 			// convert JSON string to Map
-			response = conn.prepareIndex(entity.getName().toLowerCase(), entity.getType().toLowerCase(), "1").setSource(map).get();
+			response = conn.prepareIndex(entity.getName().toLowerCase(), entity.getType().toLowerCase()).setSource(json).get();
  
 			System.out.println(response.toString());
 		} catch (CoalesceException e) {
@@ -684,12 +678,10 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      * @return DeleteResponse
      * @throws SQLException
      */
-    protected DeleteResponse deleteObject(CoalesceObject coalesceObject) throws SQLException
+    public DeleteResponse deleteObject(CoalesceObject coalesceObject) throws SQLException
     {
-        String objectType = coalesceObject.getType();
-        String objectKey = coalesceObject.getKey();
-        String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
-
+        String objectType = coalesceObject.getType().toLowerCase();
+        String objectKey = coalesceObject.getName().toLowerCase();
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
@@ -711,7 +703,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      * @param entityId of the entity.
      * @param entityIdType of the entity.
      * @param entityName of the entity.
-     * @return List<String> of primary keys for the matching Coalesce entity.
+     * @return List<String> of primary keys for the matching Coalesce entity, or null if not found
      * @throws SQLException ,Exception,CoalescePersistorException
      */
     private List<String> getCoalesceEntityKeysForEntityId(String entityId, String entityIdType, String entityName)
@@ -722,13 +714,30 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
         	TransportClient client = conn.getDBConnector();
-        	GetResponse response = client.prepareGet(entityId, entityIdType, entityName).get();
-        	
-        	keyList.add(response.getId());
-
-            return keyList;
+        	if(checkIfIndexExists(client, entityId)) {
+	        	GetResponse response = client.prepareGet(entityId, entityIdType, entityName).get();
+	        	
+	        	keyList.add(response.getId());
+	
+	            return keyList;
+        	} else {
+        		return null;
+        	}
         }
 
+    }
+    
+    private boolean checkIfIndexExists(TransportClient client, String index) {
+
+    	try {
+    		boolean hasIndex = client.admin().indices().exists(new IndicesExistsRequest(index)).actionGet().isExists(); 
+			
+	        return hasIndex;
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+
+    	return false;
     }
 
     private boolean updateCoalesceObject(CoalesceObject coalesceObject, TransportClient conn, boolean allowRemoval)
