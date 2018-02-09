@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
+
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import org.apache.commons.lang.NotImplementedException;
@@ -20,11 +23,15 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.metadata.IndexMetaData;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
+import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.geotools.data.Query;
 import org.joda.time.DateTime;
 
@@ -727,10 +734,10 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
     }
     
-    private boolean checkIfIndexExists(TransportClient client, String index) {
+    public boolean checkIfIndexExists(TransportClient client, String index) {
 
     	try {
-    		boolean hasIndex = client.admin().indices().exists(new IndicesExistsRequest(index)).actionGet().isExists(); 
+    		boolean hasIndex = client.admin().indices().exists(new IndicesExistsRequest(index.toLowerCase())).actionGet().isExists(); 
 			
 	        return hasIndex;
     	} catch (Exception e) {
@@ -825,8 +832,33 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     @Override
     public SearchResults search(Query query) throws CoalescePersistorException
     {
+    	CachedRowSet rowset = null;
+    	
+        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+        {
+        	rowset = RowSetProvider.newFactory().createCachedRowSet();
+	    	TransportClient client = conn.getDBConnector();
+	    	SearchResponse response = client.prepareSearch("gdelt_data")
+    	        .setQuery(QueryBuilders.termQuery("GlobalEventID", "410479387"))                 // Query
+    	        //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
+    	        //.setFrom(0).setSize(60).setExplain(true)
+    	        .get();
+
+	    	System.out.println(response.toString());
+        } catch (Exception e) {
+            throw new CoalescePersistorException(e.getMessage(), e);
+        }
         // TODO Not Implemented
-        throw new NotImplementedException();
+    	//query.getFilter().toString();
+    	//query.getAlias();
+    	
+    	//QueryBuilder qb = QueryBuilders.matchQuery(
+    	//		"GlobalEventID",
+    	//		"410479387");
+        
+        SearchResults queryResults = new SearchResults();
+        queryResults.setResults(rowset);
+        return queryResults;
     }
 
     @Override

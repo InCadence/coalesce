@@ -1,7 +1,7 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -9,16 +9,16 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
+import java.util.UUID;
 
 import org.elasticsearch.action.DocWriteResponse.Result;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.client.transport.TransportClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.CoalesceObjectFactory;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
@@ -26,8 +26,8 @@ import com.incadencecorp.coalesce.framework.persistance.testobjects.GDELT_Test_E
 
 public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<ElasticSearchPersistor> {
 
-	private static final String NAME = "name";
-    private static ServerConn conn;
+    private static ElasticSearchDataConnector conn;
+    private static TransportClient client;
     
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
@@ -40,7 +40,8 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
         String zookeepers = props.getProperty("zookeepers");
         String user = props.getProperty("userid");
         String password = props.getProperty("password");
-        conn = new ServerConn.Builder().db(dbName).serverName(zookeepers).user(user).password(password).build();
+        conn = new ElasticSearchDataConnector();
+    	client = conn.getDBConnector();
     }
 
     @Override
@@ -104,11 +105,25 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
 	public void testRetrieveInvalidKey() throws Exception {
     	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
 
-    	//Note in order for test to pass, there shouldn't be any entity with ID "NotStored"
-    	List<String> keys = persistor.getCoalesceEntityKeysForEntityId("NotStored", "NotStored", "NotStored", null);
+    	//Note in order for test to pass, there shouldn't be any entity with random ID
+    	List<String> keys = persistor.getCoalesceEntityKeysForEntityId(UUID.randomUUID().toString(), 
+    			UUID.randomUUID().toString(), UUID.randomUUID().toString(), null);
 
     	//keys list should be null because it's not found
 		assertNull(keys);
+	}
+	
+	@Test
+	public void testCheckExists() throws Exception {
+		ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+		
+        //Exists should be true
+		assertTrue(persistor.checkIfIndexExists(client, entity1.getName()));
+		
+		//Should be false on a fake one
+		assertFalse(persistor.checkIfIndexExists(client, UUID.randomUUID().toString()));
 	}
 
 	@Override
