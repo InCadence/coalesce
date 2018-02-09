@@ -1,5 +1,7 @@
 package com.incadencecorp.coalesce.framework.persistance.testobjects;
 
+import java.util.UUID;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.joda.time.DateTime;
 
