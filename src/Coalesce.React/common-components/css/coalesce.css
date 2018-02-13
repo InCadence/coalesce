@@ -94,6 +94,11 @@ body {
   border-radius: 5px;
 }
 
+.card-row {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
 .card:hover {
   background-color:#686867;
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.5);
