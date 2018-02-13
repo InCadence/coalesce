@@ -41,13 +41,13 @@ class Main extends React.Component {
     return (
         <a href={url} >
           <div className='card'>
-            <div className="row">
+            <div className="card-row">
               <img src={img} alt={title} height="64" className="shadow"/>
             </div>
-            <div className="row">
+            <div className="card-row">
               <label>{title}</label>
             </div>
-            <div className="row">
+            <div className="card-row">
               <div className="scroll-box">
                 <p>{description}</p>
               </div>
