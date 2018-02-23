@@ -35,7 +35,7 @@ public class GDELT_Test_Entity extends CoalesceEntity {
 	 * While all fields are defined here, only a few fields are populated for testing.
 	 */
 	
-	private static String NAME = "GDELT_DATA";
+	private static String NAME = "GDELT_DATA_TEST";
 	private static String SOURCE = "gdeltproject.org";
 	private static String VERSION = "1.0";
 	private static String TITLE = "G2_Core_GDELT";

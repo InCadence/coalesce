@@ -14,37 +14,30 @@ import java.util.Map;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 
-import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
-import com.incadencecorp.coalesce.search.api.SearchResults;
-import org.apache.commons.lang.NotImplementedException;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.cluster.metadata.IndexMetaData;
-import org.elasticsearch.cluster.metadata.MappingMetaData;
-import org.elasticsearch.common.collect.ImmutableOpenMap;
-import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.ingest.TemplateService.Template;
+import org.elasticsearch.script.mustache.TemplateQueryBuilder;
 import org.geotools.data.Query;
+import org.geotools.filter.Capabilities;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
@@ -56,9 +49,10 @@ import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
 import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.SearchResults;
 
 import mil.nga.giat.data.elasticsearch.FilterToElastic;
-import org.geotools.filter.Capabilities;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -90,7 +84,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
 
     /*--------------------------------------------------------------------------
-    Overrided Functions
+    Overridden Functions
     --------------------------------------------------------------------------*/
     
     public void searchAll() {
@@ -235,6 +229,79 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
             throws CoalescePersistorException
     {
         // Do Nothing
+    }
+
+    @Override
+    public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
+    {
+        JsonFullEximImpl converter = new JsonFullEximImpl();
+        
+        for (CoalesceEntityTemplate template : templates)
+        {
+            try(ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+            {
+    	    	TransportClient client = conn.getDBConnector();
+    	    	XmlMapper mapper = new XmlMapper();
+    	    	JsonNode node = mapper.readTree(template.toXml());
+
+    	    	ObjectMapper jsonMapper = new ObjectMapper();
+    	    	String json = jsonMapper.writeValueAsString(node);
+
+    			// persist entity template to ElasticSearch
+    	    	//String fakeJson = "{\"template\": \"te*\",\"classname\":\"com.incadencecorp.coalesce.framework.datamodel.TestEntity\",\"datecreated\":\"\",\"entityid\":\"\",\"entityidtype\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"UNIT_TEST\",\"source\":\"DSS\",\"title\":\"\",\"version\":1,\"linkagesection\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"Linkages\"},\"section\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"test section\",\"noindex\":\"false\",\"recordset\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"maxrecords\":\"0\",\"minrecords\":\"0\",\"name\":\"test1\",\"fielddefinition\":{\"datatype\":\"booleanlist\",\"datecreated\":\"\",\"defaultclassificationmarking\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"booleanlist\"}}}}";
+    	    	
+    	    	coalesceTemplateToESTemplate(template, client);
+    	    	//client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(coalesceTemplateToESTemplate(template, client)).get();
+            }
+            catch (CoalesceException e)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_SAVED,
+                                                                   "Template",
+                                                                   template.getKey(),
+                                                                   e.getMessage()), e);
+            } catch (Exception e) {
+            	e.printStackTrace();
+            }
+        } 
+    }
+    
+    private Map<String, Object> coalesceTemplateToESTemplate(CoalesceEntityTemplate template, TransportClient client) { 
+    	Map<String, Object> esTemplate = new HashMap<>();
+    	Map<String, Object> mappingMap = new HashMap<>();
+    	Map<String, Object> propertiesMap = new HashMap<>();
+    	Map<String, Object> messageMap = new HashMap<>();
+    	
+    	messageMap.put("type", "text");
+    	
+    	esTemplate.put("template", "*");
+
+    	mappingMap.put("properties", propertiesMap);
+    	propertiesMap.put("message", messageMap);
+
+        JsonFullEximImpl converter = new JsonFullEximImpl();
+        
+        CoalesceTemplateUtil.get
+    	
+    	client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(esTemplate)
+    	.addMapping("mapping", mappingMap).get();
+    	
+    	/*
+    	client.admin().indices().preparePutTemplate(template.getName().toLowerCase())
+        .addMapping("mapping", "{\n" +                
+                "    \"mapping\": {\n" +
+                "      \"properties\": {\n" +
+                "        \"message\": {\n" +
+                "          \"type\": \"text\"\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }")
+        .get();
+        */
+    	
+    	System.out.println("Saved index named: " + template.getName());
+    	
+    	return esTemplate;
     }
 
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
@@ -399,6 +466,11 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
                 throw new CoalescePersistorException("FlattenObject: " + e.getMessage(), e);
             }
+            catch (Exception e) 
+            {
+            	conn.rollback();
+            	e.printStackTrace();
+            }
 
         }
 
@@ -487,7 +559,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         }
     }
 
-
     public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -513,7 +584,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
             throw new CoalescePersistorException("GetEntityTemplateXml", e);
         }
     }
-
 
     public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
@@ -595,14 +665,16 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         IndexResponse response;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			TypeFactory typeFactory = mapper.getTypeFactory();
-			byte[] json = mapper.writeValueAsBytes(converter.exportValues(entity, true));
+			//TypeFactory typeFactory = mapper.getTypeFactory();
+			//mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+			//byte[] json = mapper.writeValueAsBytes(converter.exportValues(entity, true));
+			//String json = mapper.writeValueAsString(converter.exportValues(entity, true));
 			HashMap<String, Object> map = mapper.readValue(converter.exportValues(entity, true).toString(), 
 					new TypeReference<Map<String, Object>>() {
 			});
 
 			// convert JSON string to Map
-			response = conn.prepareIndex(entity.getName().toLowerCase(), entity.getType().toLowerCase()).setSource(json).get();
+			response = conn.prepareIndex(entity.getName().toLowerCase(), entity.getType().toLowerCase()).setSource(map).get();
  
 			System.out.println(response.toString());
 		} catch (CoalesceException e) {
@@ -610,9 +682,14 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 			return  false;
 		} catch (JsonParseException e) {
 			e.printStackTrace();
+			return  false;
 		} catch (JsonMappingException e) {
 			e.printStackTrace();
+			return  false;
 		} catch (IOException e) {
+			e.printStackTrace();
+			return  false;
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
 		

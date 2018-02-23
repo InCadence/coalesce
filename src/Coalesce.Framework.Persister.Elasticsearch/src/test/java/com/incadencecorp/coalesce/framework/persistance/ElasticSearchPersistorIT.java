@@ -16,15 +16,22 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
 import com.incadencecorp.coalesce.framework.persistance.testobjects.GDELT_Test_Entity;
 
 public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<ElasticSearchPersistor> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistorIT.class);
 
     private static ElasticSearchDataConnector conn;
     private static TransportClient client;
@@ -46,8 +53,29 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
 
     @Override
 	public void registerEntities() {
-		// We don't need to customize this yet... I think
-		super.registerEntities();
+        try
+        {
+            ICoalescePersistor persistor = createPersister();
+
+            if (persistor.getCapabilities().contains(EPersistorCapabilities.READ_TEMPLATES))
+            {
+                LOGGER.warn("Registering Entities");
+
+                TestEntity entity = new TestEntity();
+                entity.initialize();
+
+                persistor.registerTemplate(CoalesceEntityTemplate.create(entity));
+
+                GDELT_Test_Entity gdelt_entity = new GDELT_Test_Entity();
+                gdelt_entity.initialize();
+
+                persistor.registerTemplate(CoalesceEntityTemplate.create(gdelt_entity));
+            }
+        }
+        catch (CoalesceException e)
+        {
+            LOGGER.warn("Failed to register templates");
+        }
 	}
 
 	@Override
@@ -63,6 +91,25 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
 
         //As long as there are no problems with saving the new entity, should return true
         assertTrue(persistor.saveEntity(true, entity1));
+	}
+
+	@Test
+	public void testGDELTCreation() throws Exception {
+		try {
+        // Create Entities
+        GDELT_Test_Entity entity1 = new GDELT_Test_Entity();
+        entity1.initialize();
+        
+        //ElasticSearch requires names be lowercase
+        entity1.setName(entity1.getName().toLowerCase());
+
+        ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+
+        //As long as there are no problems with saving the new entity, should return true
+        assertTrue(persistor.saveEntity(true, entity1));
+		} catch (Exception e) {
+        	e.printStackTrace();
+        }
 	}
 
 	@Override
@@ -128,7 +175,13 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
 
 	@Override
 	public void testTemplates() throws Exception {
-		//Not using templates for now
+		ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+        
+        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity1);
+        
+        //persistor.registerTemplate(template);
 	}
 
 	@Override
