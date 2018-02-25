@@ -1,14 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Popup from 'react-popup';
-import {Menu} from 'common-components/lib/menu.js'
 import {FilterCreator} from './filtercreator.js'
 import {SearchResults} from './results.js'
 import {registerLoader, registerTemplatePrompt, registerErrorPrompt} from 'common-components/lib/register.js'
 
-import './index.css'
+// TODO Should reference menu.js from common but this is not working
+//import {Menu} from 'common-components/lib/menu.js'
+import {Menu} from './menu.js'
+import 'common-components/bootstrap/css/bootstrap.min.css'
+
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
+import './index.css'
+
+var pjson = require('../package.json');
+document.title = pjson.title;
 
 var karafRootAddr;
 
@@ -210,7 +217,7 @@ fetch(karafRootAddr + '/cxf/data/templates')
     registerTemplatePrompt(Popup, karafRootAddr, data);
 
     ReactDOM.render(
-        <Menu items={[
+        <Menu logoSrc={pjson.icon} title={pjson.title} items={[
           {
             id: 'select',
             name: 'Select',
@@ -257,7 +264,7 @@ fetch(karafRootAddr + '/cxf/data/templates')
 
 }).catch(function(error) {
     ReactDOM.render(
-        <Menu items={[]}/>,
+        <Menu logoSrc={pjson.icon} title={pjson.title} items={[]}/>,
         document.getElementById('myNavbar')
     );
 

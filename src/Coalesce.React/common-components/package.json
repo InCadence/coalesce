@@ -4,14 +4,17 @@
   "author": "InCadence",
   "description": "Common components used in Coalesce applications",
   "private": true,
+  "main": "index.js",
   "files": [
     "src/",
     "css/",
-    "img/"
+    "img/",
+    "bootstrap/ "
   ],
   "dependencies": {
     "jquery": "^3.2.1",
     "react": "^16.0.0",
+    "react-bootstrap": "^0.32.1",
     "react-collapse": "^4.0.3",
     "react-dom": "^16.0.0",
     "react-fetch": "^0.0.9",

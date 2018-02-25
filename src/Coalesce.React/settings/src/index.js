@@ -2,11 +2,18 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import Popup from 'react-popup';
 import {registerLoader, registerErrorPrompt, registerPrompt} from 'common-components/lib/register.js'
-import {Menu} from 'common-components/lib/menu.js'
 import {SettingsView} from './settings.js'
+
+// TODO Should reference menu.js from common but this is not working
+//import { Menu } from 'common-components/lib/menu.js'
+import {Menu} from './menu.js'
+import 'common-components/bootstrap/css/bootstrap.min.css'
 
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
+
+var pjson = require('../package.json');
+document.title = pjson.title;
 
 var rootUrl;
 
@@ -57,7 +64,7 @@ ReactDOM.render(
 );
 
 ReactDOM.render(
-    <Menu items={[/* No Options */]}/>,
+    <Menu logoSrc={pjson.icon} title={pjson.title} items={[/* No Options */]} isTextOnly={false} />,
     document.getElementById('myNavbar')
 );
 

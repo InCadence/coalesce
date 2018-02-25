@@ -1,5 +1,7 @@
 {
   "name": "entity-editor",
+  "title": "Entity Editor",
+  "icon": "/images/svg/edit.svg",
   "version": "0.1.0",
   "author": "InCadence",
   "description": "Generic interface for creating, viewing, and editing Coalesce entities.",
@@ -7,6 +9,7 @@
   "private": true,
   "homepage": "/entityeditor",
   "dependencies": {
+    "react-bootstrap": "^0.32.1",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
     "react-collapse": "^4.0.3",

@@ -1,7 +1,9 @@
 {
   "name": "json-editor",
+  "title": "JSON Editor",
+  "icon": "/images/svg/json.svg",
   "version": "1.0.0",
-  "description": " This UI is a map visualization of coalesce entities",
+  "description": " This UI is for viewing and modifying JSON properties.",
   "main": "index.js",
   "author": "InCadence",
   "license": "ISC",
@@ -12,6 +14,7 @@
     "react-dom": "^16.0.0",
     "react-json-view": "^1.15.2",
     "react-popup": "^0.8.0",
+    "react-bootstrap": "^0.32.1",
     "react-table": "^6.7.4"
   },
   "scripts": {

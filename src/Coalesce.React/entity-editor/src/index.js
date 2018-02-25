@@ -3,12 +3,19 @@ import ReactDOM from 'react-dom';
 import {EntityView} from './entity.js'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Popup from 'react-popup';
-import {Menu} from 'common-components/lib/menu.js'
 import {registerLoader, registerPrompt, registerTemplatePrompt, registerErrorPrompt} from 'common-components/lib/register.js'
 
-import './index.css'
+// TODO Should reference menu.js from common but this is not working
+//import {Menu} from 'common-components/lib/menu.js'
+import {Menu} from './menu.js'
+import 'common-components/bootstrap/css/bootstrap.min.css'
+
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
+import './index.css'
+
+var pjson = require('../package.json');
+document.title = pjson.title;
 
 var rootUrl;
 
@@ -177,7 +184,7 @@ fetch(rootUrl + '/cxf/data/templates')
       registerTemplatePrompt(Popup, rootUrl, data);
 
       ReactDOM.render(
-          <Menu items={[
+          <Menu logoSrc={pjson.icon} title={pjson.title} items={[
             {
               id: 'new',
               name: 'New',
@@ -206,7 +213,7 @@ fetch(rootUrl + '/cxf/data/templates')
 
 }).catch(function(error) {
     ReactDOM.render(
-        <Menu items={[]}/>,
+        <Menu logoSrc={pjson.icon} title={pjson.title} items={[]}/>,
         document.getElementById('myNavbar')
     );
 

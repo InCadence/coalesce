@@ -46,7 +46,7 @@ export class Menu extends React.Component {
             <img src={this.props.logoSrc} alt="logo" className="coalesce-img-button"  title="logo"  />
           </Navbar.Brand>
           <Navbar.Brand>
-            <a id="templateName" href="#"><div>{this.state.title}</div></a>
+            <a id="templateName" href="#">{this.state.title}</a>
           </Navbar.Brand>
           <Navbar.Toggle />
         </Navbar.Header>

@@ -1,8 +1,10 @@
 {
-  "name": "entity-editor",
+  "name": "manager",
+  "title": "Manager",
+  "icon": "/images/svg/manager.svg",
   "version": "0.1.0",
   "author": "InCadence",
-  "description": "Generic interface for creating, viewing, and editing Coalesce entities.",
+  "description": "UI for viewing blueprint configurations",
   "main": "index.js",
   "private": true,
   "homepage": "/manager",
@@ -11,6 +13,7 @@
     "react-d3-graph": "^0.4.0",
     "react-dom": "^16.0.0",
     "react-popup": "^0.8.0",
+    "react-bootstrap": "^0.32.1",
     "react-table": "^6.7.4"
   },
   "devDependencies": {

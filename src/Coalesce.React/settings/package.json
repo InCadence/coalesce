@@ -1,7 +1,9 @@
 {
-  "name": "map-viewer",
+  "name": "settings",
+  "title": "Settings",
+  "icon": "/images/svg/settings.svg",
   "version": "1.0.0",
-  "description": " This UI is a map visualization of coalesce entities",
+  "description": " This UI for modifying settings on a server",
   "main": "index.js",
   "author": "InCadence",
   "license": "ISC",
@@ -11,6 +13,7 @@
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-popup": "^0.8.0",
+    "react-bootstrap": "^0.32.1",
     "react-table": "^6.7.4"
   },
   "scripts": {

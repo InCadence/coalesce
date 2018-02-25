@@ -1,13 +1,16 @@
 {
-  "name": "entity-editor",
+  "name": "expert-search",
+  "title": "Expert Search",
+  "icon": "/images/svg/search.svg",
   "version": "0.1.0",
   "author": "InCadence",
-  "description": "Generic interface for creating, viewing, and editing Coalesce entities.",
+  "description": "This UI is for search for Coalesce entities.",
   "main": "index.js",
   "private": true,
   "homepage": "/search",
   "dependencies": {
     "react": "^16.0.0",
+    "react-bootstrap": "^0.32.1",
     "react-collapse": "^4.0.3",
     "react-dom": "^16.0.0",
     "react-fetch": "^0.0.9",
