@@ -16,76 +16,19 @@ if (window.location.port == 3000) {
 
 registerErrorPrompt(Popup);
 
-class Main extends React.Component {
+class Main extends React.PureComponent {
 
   constructor(props) {
       super(props);
-
-      this.promptNotAvailable = this.promptNotAvailable.bind(this);
-      this.state = props;
-  }
-
-  promptNotAvailable() {
-    Popup.create({
-        title: 'Not Availble',
-        content: 'This service is still coalescing and will be available soon!!!',
-        className: 'alert',
-        buttons: {
-            right: ['ok']
-        }
-    }, true);
-  }
-
-  renderCard(url, img, title, description) {
-    //target={url !== '#' ? "_blank" : ""}
-    return (
-        <a href={url} >
-          <div className='card'>
-            <div className="card-row">
-              <img src={img} alt={title} height="64" className="shadow"/>
-            </div>
-            <div className="card-row">
-              <label>{title}</label>
-            </div>
-            <div className="card-row">
-              <div className="scroll-box">
-                <p>{description}</p>
-              </div>
-            </div>
-          </div>
-        </a>
-    )
-  }
-
-  renderGroup(that, group) {
-
-    var cards = [];
-
-    group.cards.forEach(function (card) {
-      cards.push(that.renderCard(card.url, card.img, card.name, card.desc));
-    });
-
-    return (
-        <div>
-          <h2>{group.name}</h2>
-          {cards}
-        </div>
-    )
   }
 
   render() {
-    const {settings} = this.state;
-    const that = this;
-    var groups = [];
-
-    settings.groups.forEach(function (group) {
-      groups.push(that.renderGroup(that, group));
-    });
+    const {settings} = this.props;
 
     return (
       <center>
-        <img alt="Coalesce" src={settings.banner} />
-        {groups}
+        <img alt="Coalesce" src={rootUrl + settings.banner} />
+        {settings.groups.map(renderGroup)}
       </center>
     )
   }
@@ -106,3 +49,32 @@ fetch(rootUrl + '/cxf/data/property/home.json', {
 }).catch(function(error) {
   Popup.plugins().promptError("Loading Properties: " + error);
 });
+
+function renderGroup(group) {
+  return (
+      <div>
+        <h2>{group.name}</h2>
+        {group.cards.map(renderCard)}
+      </div>
+  )
+}
+
+function renderCard(card) {
+  return (
+      <a href={card.url} >
+        <div className='card'>
+          <div className="card-row">
+            <img src={rootUrl + card.img} alt={card.name} height="64" className="shadow"/>
+          </div>
+          <div className="card-row">
+            <label>{card.name}</label>
+          </div>
+          <div className="card-row">
+            <div className="scroll-box">
+              <p>{card.desc}</p>
+            </div>
+          </div>
+        </div>
+      </a>
+  )
+}
