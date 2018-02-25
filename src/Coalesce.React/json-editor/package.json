@@ -10,14 +10,16 @@
   "private": true,
   "homepage": "/jsoneditor",
   "dependencies": {
+    "common-components": "file:../common-components",
     "react": "^16.0.0",
+    "react-bootstrap": "^0.32.1",
     "react-dom": "^16.0.0",
     "react-json-view": "^1.15.2",
     "react-popup": "^0.8.0",
-    "react-bootstrap": "^0.32.1",
     "react-table": "^6.7.4"
   },
   "scripts": {
+    "preinstall": "npm install ../common-components/",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

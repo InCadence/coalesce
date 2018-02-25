@@ -5,6 +5,8 @@
   "description": "Common components used in Coalesce applications",
   "private": true,
   "main": "index.js",
+  "jsnext:main": "es/index.js",
+  "module": "es/index.js",
   "files": [
     "src/",
     "css/",
@@ -12,11 +14,7 @@
     "bootstrap/ "
   ],
   "dependencies": {
-    "jquery": "^3.2.1",
-    "react": "^16.0.0",
-    "react-bootstrap": "^0.32.1",
     "react-collapse": "^4.0.3",
-    "react-dom": "^16.0.0",
     "react-fetch": "^0.0.9",
     "react-motion": "^0.5.2",
     "react-popup": "^0.8.0",
@@ -37,8 +35,15 @@
     "react-scripts": "1.0.14"
   },
   "scripts": {
+    "start": "react-scripts start",
+    "build-all": "react-scripts build",
     "build:node": "babel src --out-dir lib --source-maps inline",
     "build": "npm-run-all build:*"
+  },
+  "peerDependencies": {
+    "react": "^0.14.0 || ^15.0.0 || ^16.0.0",
+    "react-dom": "^0.14.0 || ^15.0.0 || ^16.0.0",
+    "react-bootstrap": "^0.32.1"
   },
   "babel": {
     "presets": [

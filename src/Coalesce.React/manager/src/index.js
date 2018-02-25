@@ -4,9 +4,7 @@ import Popup from 'react-popup';
 import {registerLoader, registerErrorPrompt, registerPromptDropdown} from 'common-components/lib/register.js'
 import {GraphView} from './graph.js'
 
-// TODO Should reference menu.js from common but this is not working
-//import {Menu} from 'common-components/lib/menu.js'
-import {Menu} from './menu.js'
+import {Menu} from 'common-components/lib/index.js'
 import 'common-components/bootstrap/css/bootstrap.min.css'
 
 import 'common-components/css/coalesce.css'

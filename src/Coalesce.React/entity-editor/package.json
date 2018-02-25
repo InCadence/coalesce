@@ -9,9 +9,10 @@
   "private": true,
   "homepage": "/entityeditor",
   "dependencies": {
-    "react-bootstrap": "^0.32.1",
+    "common-components": "file:../common-components",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
+    "react-bootstrap": "^0.32.1",
     "react-collapse": "^4.0.3",
     "react-dom": "^16.0.0",
     "react-fetch": "^0.0.9",
@@ -28,6 +29,7 @@
     "react-scripts": "1.0.14"
   },
   "scripts": {
+    "preinstall": "npm install ../common-components/",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

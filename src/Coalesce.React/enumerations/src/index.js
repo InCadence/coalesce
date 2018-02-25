@@ -5,9 +5,7 @@ import {registerLoader, registerErrorPrompt, registerPrompt} from 'common-compon
 import {SearchResults} from './results.js'
 import ReactTable from 'react-table'
 
-// TODO Should reference menu.js from common but this is not working
-//import {Menu} from 'common-components/lib/menu.js'
-import {Menu} from './menu.js'
+import {Menu} from 'common-components/lib/index.js'
 import 'common-components/bootstrap/css/bootstrap.min.css'
 
 import 'common-components/css/coalesce.css'

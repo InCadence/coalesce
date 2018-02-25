@@ -9,6 +9,7 @@
   "private": true,
   "homepage": "/search",
   "dependencies": {
+    "common-components": "file:../common-components",
     "react": "^16.0.0",
     "react-bootstrap": "^0.32.1",
     "react-collapse": "^4.0.3",
@@ -28,6 +29,7 @@
     "react-scripts": "1.0.14"
   },
   "scripts": {
+    "preinstall": "npm install ../common-components/",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
