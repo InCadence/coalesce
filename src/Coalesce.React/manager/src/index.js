@@ -37,7 +37,7 @@ function loadBlueprint(filename) {
 
       var totals = {
         'SERVER': 0,
-        'CONTROLLER': 0,
+        'CONTROLLER_ENDPOINT': 0,
         'ENDPOINT': 0,
         'FRAMEWORK': 0,
         'PERSISTER': 0,
@@ -81,6 +81,13 @@ function loadBlueprint(filename) {
 
       data.nodes.forEach(function(node) {
 
+        // Consolidate Node Types
+        if (node.nodeType === 'CONTROLLER') {
+            node.nodeType = "ENDPOINT";
+        } else if (node.nodeType === 'CLIENT') {
+          node.nodeType = "PERSISTER";
+        }
+
         node.x=counts[node.nodeType].x;
         node.y=counts[node.nodeType].y++ * rowWidth;
 
@@ -93,7 +100,7 @@ function loadBlueprint(filename) {
             node.strokeColor = '#FF9900';
             node.strokeWidth=1.5
             break;
-          case "CONTROLLER":
+          case "CONTROLLER_ENDPOINT":
             node.symbolType = 'wye';
             node.color = '#0868ac';
             node.size = 800;

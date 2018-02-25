@@ -177,7 +177,14 @@ public class BlueprintController {
             }
             else if (simpleName.contains("controller"))
             {
-                node.setNodeType(EGraphNodeType.CONTROLLER);
+                if (simpleName.contains("jaxrs"))
+                {
+                    node.setNodeType(EGraphNodeType.CONTROLLER_ENDPOINT);
+                }
+                else
+                {
+                    node.setNodeType(EGraphNodeType.CONTROLLER);
+                }
             }
             else if (simpleName.equals("coalesceframework") || simpleName.equals("coalescesearchframework") )
             {
@@ -190,6 +197,10 @@ public class BlueprintController {
             else if (simpleName.equals("serverconn"))
             {
                 node.setNodeType(EGraphNodeType.SETTINGS);
+            }
+            else if(simpleName.contains("client"))
+            {
+                node.setNodeType(EGraphNodeType.CLIENT);
             }
             else
             {
