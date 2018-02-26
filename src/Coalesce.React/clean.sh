@@ -1,0 +1,10 @@
+rm -rf common-components/node_modules
+rm -rf entity-editor/node_modules
+rm -rf entity-search/node_modules
+rm -rf enumerations/node_modules
+rm -rf home/node_modules
+rm -rf json-editor/node_modules
+rm -rf manager/node_modules
+rm -rf map-viewer/node_modules
+rm -rf settings/node_modules
+rm -rf template-editor/node_modules
