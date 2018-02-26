@@ -82,7 +82,7 @@ export class Menu extends React.PureComponent {
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav pullRight>
-              {home}
+            {home}
             {this.props.items.map(this.renderNavItem.bind(this))}
           </Nav>
         </Navbar.Collapse>
