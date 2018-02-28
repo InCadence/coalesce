@@ -21,8 +21,6 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.ingest.TemplateService.Template;
-import org.elasticsearch.script.mustache.TemplateQueryBuilder;
 import org.geotools.data.Query;
 import org.geotools.filter.Capabilities;
 import org.joda.time.DateTime;
@@ -32,7 +30,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
@@ -42,6 +39,7 @@ import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.exim.impl.JsonFullEximImpl;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
@@ -49,6 +47,7 @@ import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
 import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 
@@ -280,7 +279,11 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         JsonFullEximImpl converter = new JsonFullEximImpl();
         
-        CoalesceTemplateUtil.get
+        CoalesceTemplateUtil.addTemplates(template);
+        
+        CoalesceTemplateUtil.getRecordsets(template.getKey());
+        
+        Map<String, ECoalesceFieldDataTypes> typeMap = CoalesceTemplateUtil.getDataTypes();
     	
     	client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(esTemplate)
     	.addMapping("mapping", mappingMap).get();
@@ -549,9 +552,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
         {
-            return conn.getTemplateMetaData("SELECT * FROM "
-            									//schema prefix?
-            									+ "CoalesceEntityTemplate");
+        	//Don't do this because it's still sql in the parent
+            return new ArrayList<>();
         }
         catch (Exception ex)
         {
