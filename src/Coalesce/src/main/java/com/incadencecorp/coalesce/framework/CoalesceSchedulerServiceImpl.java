@@ -38,7 +38,7 @@ public class CoalesceSchedulerServiceImpl implements ICoalesceExecutorService, A
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceSchedulerServiceImpl.class);
 
-    private final ScheduledThreadPoolExecutor _pool;
+    private final ScheduledExecutorService _pool;
 
     /**
      * Default Constructor
@@ -51,7 +51,7 @@ public class CoalesceSchedulerServiceImpl implements ICoalesceExecutorService, A
     /**
      * @param service being wrapped.
      */
-    public CoalesceSchedulerServiceImpl(ScheduledThreadPoolExecutor service)
+    public CoalesceSchedulerServiceImpl(ScheduledExecutorService service)
     {
         if (service == null)
         {
