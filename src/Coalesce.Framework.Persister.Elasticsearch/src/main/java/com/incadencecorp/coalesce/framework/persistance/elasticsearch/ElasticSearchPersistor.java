@@ -268,41 +268,34 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     	Map<String, Object> esTemplate = new HashMap<>();
     	Map<String, Object> mappingMap = new HashMap<>();
     	Map<String, Object> propertiesMap = new HashMap<>();
-    	Map<String, Object> messageMap = new HashMap<>();
-    	
-    	messageMap.put("type", "text");
-    	
-    	esTemplate.put("template", "*");
-
-    	mappingMap.put("properties", propertiesMap);
-    	propertiesMap.put("message", messageMap);
-
-        JsonFullEximImpl converter = new JsonFullEximImpl();
+    	Map<String, Object> innerMap = new HashMap<>();
+    	ElasticSearchMapperImpl mapper = new ElasticSearchMapperImpl();
         
         CoalesceTemplateUtil.addTemplates(template);
         
         CoalesceTemplateUtil.getRecordsets(template.getKey());
         
-        Map<String, ECoalesceFieldDataTypes> typeMap = CoalesceTemplateUtil.getDataTypes();
+        Map<String, ECoalesceFieldDataTypes> typeMap = CoalesceTemplateUtil.getTemplateDataTypes(template.getKey());
+    	
+    	esTemplate.put("template", "*");
+
+    	mappingMap.put("properties", propertiesMap);
+    	//propertiesMap.put("message", messageMap);
+        
+        for (String typeName : typeMap.keySet()) {
+        	if(mapper.mapToString(typeMap.get(typeName)) != null)
+        	{
+				innerMap = new HashMap<String, Object>();
+				
+				innerMap.put("type", mapper.mapToString(typeMap.get(typeName)));
+				propertiesMap.put(typeName.replace(template.getName(), ""), innerMap);
+        	}
+        }
     	
     	client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(esTemplate)
     	.addMapping("mapping", mappingMap).get();
     	
-    	/*
-    	client.admin().indices().preparePutTemplate(template.getName().toLowerCase())
-        .addMapping("mapping", "{\n" +                
-                "    \"mapping\": {\n" +
-                "      \"properties\": {\n" +
-                "        \"message\": {\n" +
-                "          \"type\": \"text\"\n" +
-                "        }\n" +
-                "      }\n" +
-                "    }\n" +
-                "  }")
-        .get();
-        */
-    	
-    	System.out.println("Saved index named: " + template.getName());
+    	System.out.println("Saved template named: " + template.getName());
     	
     	return esTemplate;
     }
