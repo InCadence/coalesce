@@ -25,7 +25,7 @@ import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.filter.FilterUtil;
 import com.incadencecorp.coalesce.services.api.search.HitType;
-import com.incadencecorp.coalesce.services.api.search.QueryResultType;
+import com.incadencecorp.coalesce.services.api.search.QueryResult;
 import com.incadencecorp.coalesce.services.api.search.QueryType;
 import com.incadencecorp.coalesce.services.api.search.SortByType;
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchCriteria;
@@ -100,7 +100,7 @@ public class SearchDataController {
      * @param options list of criteria
      * @return search results for the provided list of criteria.
      */
-    public QueryResultType search(List<SearchCriteria> options)
+    public QueryResult search(List<SearchCriteria> options)
     {
         List<String> properties = new ArrayList<>();
         properties.add(CoalescePropertyFactory.getName().getPropertyName());
@@ -127,7 +127,7 @@ public class SearchDataController {
      * @param searchQuery list of criteria
      * @return search results for the provided list of criteria.
      */
-    public QueryResultType searchComplex(SearchQuery searchQuery)
+    public QueryResult searchComplex(SearchQuery searchQuery)
     {
         FilterFactory2 ff = CoalescePropertyFactory.getFilterFactory();
 
@@ -167,12 +167,11 @@ public class SearchDataController {
         }
     }
 
-    private QueryResultType createResponse(SearchResults searchResults, List<PropertyName> properties)
-            throws CoalesceException
+    private QueryResult createResponse(SearchResults searchResults, List<PropertyName> properties) throws CoalesceException
     {
         try (CachedRowSet rowset = searchResults.getResults())
         {
-            QueryResultType results = new QueryResultType();
+            QueryResult results = new QueryResult();
             results.setTotal(BigInteger.valueOf(searchResults.getTotal()));
 
             if (rowset.first())
@@ -205,7 +204,7 @@ public class SearchDataController {
         }
     }
 
-    public QueryResultType searchOGC(QueryType searchQuery) throws RemoteException
+    public QueryResult searchOGC(QueryType searchQuery) throws RemoteException
     {
         // Convert Properties
         List<PropertyName> properties = new ArrayList<>();

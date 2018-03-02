@@ -82,6 +82,7 @@
         </xs:sequence>
     </xs:complexType>
 
+
     <xs:complexType name="QueryResultType">
         <xs:sequence>
             <xs:element name="hits" type="tns:HitType" minOccurs="0" maxOccurs="unbounded"/>
@@ -98,5 +99,14 @@
 
     <xs:element name="SearchDataObjectRequest" type="tns:SearchDataObjectRequest"/>
     <xs:element name="SearchDataObjectResponse" type="tns:SearchDataObjectResponse"/>
+
+	<xs:element name="QueryResult">
+        <xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="tns:QueryResultType">
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+    </xs:element>
 
 </xs:schema>

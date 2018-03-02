@@ -14,8 +14,8 @@
 	</parent>
 
 	<modules>
-		<module>coalesce-karaf-dist</module>
 		<module>coalesce-javadocs</module>
+		<module>coalesce-karaf-dist</module>
 	</modules>
 
 </project>

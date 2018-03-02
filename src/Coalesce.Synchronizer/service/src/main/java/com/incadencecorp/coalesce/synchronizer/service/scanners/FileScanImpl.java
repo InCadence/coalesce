@@ -50,9 +50,10 @@ import com.incadencecorp.coalesce.synchronizer.api.common.AbstractScan;
 
 /**
  * This implementation checks a directory for files that have been created with
- * their names being keys of entities. You can pair this with the
- * FileHandlerImpl.
- * 
+ * their names being keys of entities. You can pair this with the FileHandlerImpl.
+ * <p />
+ * This implementation ignore the specified source.
+ *
  * @author n78554
  * @see CoalesceParameters#PARAM_DIRECTORY
  */
@@ -91,19 +92,13 @@ public class FileScanImpl extends AbstractScan {
     }
 
     @Override
-    public CachedRowSet scan() throws CoalesceException
-    {
-        return scan(new Query());
-    }
-
-    @Override
     public CachedRowSet doScan(Query query) throws CoalesceException
     {
         CachedRowSet results;
 
         lastScanned = JodaDateTimeHelper.nowInUtc().getMillis();
 
-        final List<Object[]> rows = new ArrayList<Object[]>();
+        final List<Object[]> rows = new ArrayList<>();
 
         if (LOGGER.isDebugEnabled())
         {
@@ -170,7 +165,7 @@ public class FileScanImpl extends AbstractScan {
             LOGGER.trace("Total Rows: {}", rows.size());
         }
 
-        List<String> columns = new ArrayList<String>();
+        List<String> columns = new ArrayList<>();
         columns.add(CoalescePropertyFactory.getEntityKey().getPropertyName());
         columns.add(COLUMN_PATH);
 
@@ -207,7 +202,10 @@ public class FileScanImpl extends AbstractScan {
                             {
                                 LOGGER.debug("Deleting {}", fullPath);
                             }
-                            file.delete();
+                            if (!file.delete())
+                            {
+                                LOGGER.warn("(FAILED) Deleting {}", fullPath);
+                            }
                         }
                         else
                         {
@@ -229,7 +227,8 @@ public class FileScanImpl extends AbstractScan {
                     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException
                     {
                         File file = new File(dir.toString());
-                        if (file.list().length == 0 && !Files.isSameFile(dir, root))
+                        String[] files = file.list();
+                        if (files != null && files.length == 0 && !Files.isSameFile(dir, root))
                         {
                             if (LOGGER.isDebugEnabled())
                             {

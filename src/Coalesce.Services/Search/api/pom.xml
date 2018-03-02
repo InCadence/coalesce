@@ -42,7 +42,7 @@
 			<plugin>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>${cxf.xjc.version}</version>
+				<version>${cxf.version}</version>
 				<executions>
 					<execution>
 						<id>generate-sources</id>
@@ -102,12 +102,6 @@
 			<version>${cxf.xjc.version}</version>
 			<scope>compile</scope>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>xml-apis</groupId> -->
-<!-- 			<artifactId>xml-apis</artifactId> -->
-<!-- 			<version>1.4.01</version> -->
-<!-- 			<scope>compile</scope> -->
-<!-- 		</dependency> -->
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.services</groupId>
 			<artifactId>coalesce-services-api</artifactId>

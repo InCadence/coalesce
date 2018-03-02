@@ -1,66 +1,49 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>coalesce-react-manager</artifactId>
-	<name>Coalesce React Manager</name>
-	<packaging>war</packaging>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>coalesce-react-manager</artifactId>
+    <name>Coalesce React Manager</name>
+    <packaging>war</packaging>
 
-	<parent>
-		<groupId>com.incadencecorp.coalesce.react</groupId>
-		<artifactId>coalesce-react-parent</artifactId>
-		<version>0.0.25-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
+    <parent>
+        <groupId>com.incadencecorp.coalesce.react</groupId>
+        <artifactId>coalesce-react-parent</artifactId>
+        <version>0.0.25-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
 
-	<build>
+    <build>
 
-		<resources>
-			<resource>
-				<directory>build</directory>
-			</resource>
-		</resources>
+        <resources>
+            <resource>
+                <directory>build</directory>
+            </resource>
+        </resources>
 
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>npm link (process-sources)</id>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<phase>process-sources</phase>
-						<configuration>
-							<executable>npm</executable>
-							<arguments>
-								<argument>link</argument>
-								<argument>common-components</argument>
-							</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Web-ContextPath>manager</Web-ContextPath>
+                        <Webapp-Context>manager</Webapp-Context>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
 
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<configuration>
-					<instructions>
-						<Web-ContextPath>manager</Web-ContextPath>
-						<Webapp-Context>manager</Webapp-Context>
-					</instructions>
-				</configuration>
-			</plugin>
-		</plugins>
+    </build>
 
-	</build>
-
-  <dependencies>
-          <dependency>
-                  <groupId>com.incadencecorp.coalesce.react</groupId>
-                  <artifactId>common-components</artifactId>
-                  <version>${project.version}</version>
-          </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.react</groupId>
+            <artifactId>common-components</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

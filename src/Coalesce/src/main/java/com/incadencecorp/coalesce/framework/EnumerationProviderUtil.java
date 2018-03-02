@@ -17,17 +17,6 @@
 
 package com.incadencecorp.coalesce.framework;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.IEnumerationProvider;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
@@ -39,13 +28,18 @@ import com.incadencecorp.coalesce.framework.enumerationprovider.impl.JavaEnumera
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import com.incadencecorp.unity.common.factories.PropertyFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.security.Principal;
+import java.util.*;
 
 /**
  * This utility class allows for multiple implementations of
  * {@link IEnumerationProvider} to be used for defining enumerations used by the
  * {@link CoalesceEnumerationField}. If this utility is not initialized before
  * using it will call {@link EnumerationProviderUtil#initializeFromConnector()}.
- * 
+ *
  * @author n78554
  */
 public final class EnumerationProviderUtil {
@@ -74,6 +68,8 @@ public final class EnumerationProviderUtil {
     private static final Map<String, String> lookup = new HashMap<String, String>();
     private static Principal defaultPrincipal;
 
+    private static final Object SYNC_OBJECT = new Object();
+
     /*
      * -----------------------------------------------------------------------
      * Initialization Methods
@@ -82,7 +78,7 @@ public final class EnumerationProviderUtil {
 
     /**
      * Sets the providers to be used by the enumeration field types.
-     * 
+     *
      * @param values
      */
     public static void setEnumerationProviders(IEnumerationProvider... values)
@@ -93,7 +89,7 @@ public final class EnumerationProviderUtil {
 
     /**
      * Adds providers to be used by the enumeration field types.
-     * 
+     *
      * @param values
      */
     public static void addEnumerationProviders(IEnumerationProvider... values)
@@ -103,7 +99,7 @@ public final class EnumerationProviderUtil {
 
     /**
      * Sets lookup entries to map enumeration names to a different value.
-     * 
+     *
      * @param values
      */
     public static void setLookupEntries(Map<String, String> values)
@@ -114,7 +110,7 @@ public final class EnumerationProviderUtil {
 
     /**
      * Adds lookup entries to map enumeration names to a different value.
-     * 
+     *
      * @param values
      */
     public static void addLookupEntries(Map<String, String> values)
@@ -124,7 +120,7 @@ public final class EnumerationProviderUtil {
 
     /**
      * Populates providers with the given principal.
-     * 
+     *
      * @param principal
      */
     public static void populate(Principal principal)
@@ -139,7 +135,7 @@ public final class EnumerationProviderUtil {
      * Sets the principal to use if non are provided. If a SAML principal is
      * used keep in mind that tokens expire and the principal should be
      * refreshed before each call into this utility.
-     * 
+     *
      * @param principal
      */
     public static void setPrincipal(Principal principal)
@@ -150,7 +146,7 @@ public final class EnumerationProviderUtil {
     /**
      * @param name
      * @return whether a lookup entry was created for the given enumeration
-     *         name.
+     * name.
      */
     public static boolean hasLookup(String name)
     {
@@ -209,9 +205,8 @@ public final class EnumerationProviderUtil {
     /**
      * Calls {@link IEnumerationProvider#toString(Principal, String, int)} on
      * the first provider that handles the given enumeration.
-     * 
+     *
      * @param principal
-     * 
      * @param enumeration
      * @param value
      * @return {@link IEnumerationProvider#toString(Principal, String, int)}
@@ -235,7 +230,7 @@ public final class EnumerationProviderUtil {
      * @param value
      * @param defaultValue
      * @return {@link #toString(Principal, String, int)}; Returns the default
-     *         value instead of an {@link IndexOutOfBoundsException} on failure.
+     * value instead of an {@link IndexOutOfBoundsException} on failure.
      */
     public static String toString(Principal principal, String enumeration, int value, String defaultValue)
     {
@@ -256,9 +251,8 @@ public final class EnumerationProviderUtil {
     /**
      * Calls {@link IEnumerationProvider#toPosition(Principal, String, String)}
      * on the first provider that handles the given enumeration.
-     * 
+     *
      * @param principal
-     * 
      * @param enumeration
      * @param value
      * @return {@link IEnumerationProvider#toPosition(Principal, String, String)}
@@ -282,8 +276,8 @@ public final class EnumerationProviderUtil {
      * @param value
      * @param defaultValue
      * @return {@link #toPosition(Principal, String, String)}; Returns the
-     *         default value instead of an {@link IndexOutOfBoundsException} on
-     *         failure.
+     * default value instead of an {@link IndexOutOfBoundsException} on
+     * failure.
      */
     public static int toPosition(Principal principal, String enumeration, String value, int defaultValue)
     {
@@ -304,9 +298,8 @@ public final class EnumerationProviderUtil {
     /**
      * Calls {@link IEnumerationProvider#isValid(Principal, String, int)} on the
      * first provider that handles the given enumeration.
-     * 
+     *
      * @param principal
-     * 
      * @param enumeration
      * @param value
      * @return {@link IEnumerationProvider#isValid(Principal, String, int)}
@@ -326,7 +319,7 @@ public final class EnumerationProviderUtil {
     /**
      * Calls {@link IEnumerationProvider#isValid(Principal, String, String)} on
      * the first provider that handles the given enumeration.
-     * 
+     *
      * @param principal
      * @param enumeration
      * @param value
@@ -347,7 +340,7 @@ public final class EnumerationProviderUtil {
     /**
      * Calls {@link IEnumerationProvider#getValues(Principal, String)} on the
      * first provider that handles the given enumeration.
-     * 
+     *
      * @param principal
      * @param enumeration
      * @return {@link IEnumerationProvider#getValues(Principal, String)}
@@ -367,7 +360,7 @@ public final class EnumerationProviderUtil {
     /**
      * @param clazz
      * @return the first instance of the specified provider if it exists;
-     *         otherwise <code>null</code>.
+     * otherwise <code>null</code>.
      */
     public static <E extends IEnumerationProvider> E getProvider(Class<E> clazz)
     {
@@ -401,7 +394,7 @@ public final class EnumerationProviderUtil {
 
     /**
      * Initializes this utility using the specified connector.
-     * 
+     *
      * @param connector
      */
     public static void initializeFromConnector(IConfigurationsConnector connector)
@@ -472,7 +465,7 @@ public final class EnumerationProviderUtil {
 
     /**
      * Looks up an enumeration from the enumeration map.
-     * 
+     *
      * @param enumeration
      * @return the enumeration used to retrieve values.
      */
@@ -488,7 +481,7 @@ public final class EnumerationProviderUtil {
 
     /**
      * Looks up an enumeration from a provided field.
-     * 
+     *
      * @param field
      * @return the enumeration used to retrieve values.
      */
@@ -516,9 +509,12 @@ public final class EnumerationProviderUtil {
 
     private static IEnumerationProvider getProvider(Principal principal, String enumeration)
     {
-        if (!isInitialized())
+        synchronized (SYNC_OBJECT)
         {
-            initializeFromConnector();
+            if (!isInitialized())
+            {
+                initializeFromConnector();
+            }
         }
 
         if (enumeration != null)

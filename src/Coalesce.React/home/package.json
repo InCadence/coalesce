@@ -8,11 +8,13 @@
   "private": true,
   "homepage": "/home",
   "dependencies": {
+    "common-components": "file:../common-components",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-popup": "^0.8.0"
   },
   "scripts": {
+    "preinstall": "npm install ../common-components/",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

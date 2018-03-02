@@ -62,12 +62,6 @@ public class MockScanner extends AbstractScan {
     }
 
     @Override
-    public CachedRowSet scan() throws CoalesceException
-    {
-        return scan(new Query());
-    }
-
-    @Override
     public CachedRowSet doScan(Query query) throws CoalesceException
     {
         CachedRowSet results;

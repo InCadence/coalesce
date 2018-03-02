@@ -4,16 +4,16 @@ import Popup from 'react-popup';
 import {MapView} from './map.js'
 import {registerErrorPrompt} from 'common-components/lib/register.js'
 
-import './index.css'
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
+import './index.css'
 
 var rootUrl;
 
 if (window.location.port == 3000) {
   rootUrl  = 'http://' + window.location.hostname + ':8181';
 } else {
-  rootUrl  = 'http://' + window.location.hostname + ':' + window.location.port;
+  rootUrl  = '';
 }
 
 registerErrorPrompt(Popup);

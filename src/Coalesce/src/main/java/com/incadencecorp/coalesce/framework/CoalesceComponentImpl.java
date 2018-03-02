@@ -38,7 +38,7 @@ public class CoalesceComponentImpl implements ICoalesceComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceComponentImpl.class);
 
     protected PropertyLoader loader;
-    protected Map<String, String> parameters = new HashMap<String, String>();
+    protected Map<String, String> parameters = new HashMap<>();
 
     private String name;
 
@@ -73,6 +73,15 @@ public class CoalesceComponentImpl implements ICoalesceComponent {
         if (params != null)
         {
             this.parameters.putAll(params);
+
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Parameters: ");
+                for (Map.Entry<String, String> entry : params.entrySet())
+                {
+                    LOGGER.debug("{} = {}", entry.getKey(), entry.getValue());
+                }
+            }
         }
     }
 
@@ -90,7 +99,7 @@ public class CoalesceComponentImpl implements ICoalesceComponent {
     @Override
     public List<String> getPropertyList()
     {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
 }

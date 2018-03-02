@@ -80,14 +80,6 @@
             <version>${geotools.version}</version>
         </dependency>
 
-        <!-- ResultSet -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.jaxb.version}</version>
-		</dependency>
-
-
         <!-- Unit Test Dependencies -->
         <dependency>
             <groupId>com.incadencecorp.coalesce</groupId>

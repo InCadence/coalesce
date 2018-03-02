@@ -2,8 +2,9 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import Popup from 'react-popup';
 import {registerLoader, registerErrorPrompt, registerPrompt} from 'common-components/lib/register.js'
-import {Menu} from 'common-components/lib/menu.js'
 import ReactJson from 'react-json-view'
+
+import {Menu, IconButton} from 'common-components/lib/index.js'
 
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
@@ -13,8 +14,11 @@ var rootUrl;
 if (window.location.port == 3000) {
   rootUrl  = 'http://' + window.location.hostname + ':8181';
 } else {
-  rootUrl  = 'http://' + window.location.hostname + ':' + window.location.port;
+  rootUrl  = '';
 }
+
+var pjson = require('../package.json');
+document.title = pjson.title;
 
 registerLoader(Popup);
 registerErrorPrompt(Popup);
@@ -120,7 +124,7 @@ class Main extends React.Component {
         <div className="ui-widget-content" >
           <ReactJson src={data} collapsed='3' onEdit={this.onEdit.bind(this)} onAdd={this.onAdd.bind(this)} onDelete={this.onDelete.bind(this)} iconStyle="square"/>
           <div className="form-buttons">
-            <img src='/images/svg/save.svg' alt="Save" title="Save Changes" className="coalesce-img-button enabled" onClick={this.onSave.bind(this)}/>
+            <IconButton icon="/images/svg/save.svg" title="Save Changes" onClick={this.onSave.bind(this)} />
           </div>
         </div>
       </div>
@@ -172,7 +176,7 @@ ReactDOM.render(
 );
 
 ReactDOM.render(
-  <Menu items={[
+  <Menu logoSrc={pjson.icon} title={pjson.title} items={[
     {
       id: 'load',
       name: 'Load',

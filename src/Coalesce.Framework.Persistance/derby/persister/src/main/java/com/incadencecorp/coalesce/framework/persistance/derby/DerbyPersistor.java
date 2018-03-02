@@ -43,10 +43,8 @@ import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 import java.sql.*;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.Date;
 
 public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
 
@@ -1221,7 +1219,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
             String where = preparedFilter.encodeToString(query.getFilter());
 
             // Add Parameters
-            List<CoalesceParameter> paramList = new ArrayList<CoalesceParameter>();
+            List<CoalesceParameter> paramList = new ArrayList<>();
             paramList.addAll(getParameters(preparedFilter));
 
             CoalesceParameter[] params = paramList.toArray(new CoalesceParameter[paramList.size()]);
@@ -1236,6 +1234,8 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                                            where,
                                            preparedFilter.getSorting());
 
+                LOGGER.debug("Executing: {}", sql);
+
                 // Get Hits
                 CachedRowSet hits = RowSetProvider.newFactory().createCachedRowSet();
                 hits.populate(conn.executeQuery(sql, params));
@@ -1244,8 +1244,10 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                 int numberOfHits = hits.getRow();
                 hits.beforeFirst();
 
+                LOGGER.debug("Hits: {}", numberOfHits);
+
                 // Hits Exceeds a Page?
-                if (numberOfHits >= query.getMaxFeatures())
+                if (numberOfHits >= query.getMaxFeatures() && query.getMaxFeatures() != 0)
                 {
                     // Yes; Get Total Hits
                     sql = String.format("SELECT DISTINCT COUNT(*) FROM %s %s", preparedFilter.getFrom(), where);
@@ -1291,7 +1293,8 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                                                                      EPersistorCapabilities.UPDATE,
                                                                      EPersistorCapabilities.DELETE,
                                                                      EPersistorCapabilities.SEARCH,
-                                                                     EPersistorCapabilities.CASE_INSENSITIVE_SEARCH);
+                                                                     EPersistorCapabilities.CASE_INSENSITIVE_SEARCH,
+                                                                     EPersistorCapabilities.TEMPORAL_SEARCH);
         if (enumSet != null)
         {
             enumSet.addAll(newCapabilities);
@@ -1305,12 +1308,19 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
     private List<CoalesceParameter> getParameters(DerbyCoalescePreparedFilter filter) throws ParseException
     {
-        List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
+        List<CoalesceParameter> parameters = new ArrayList<>();
 
         // Add Parameters
         for (Object value : filter.getLiteralValues())
         {
-            parameters.add(new CoalesceParameter(value.toString(), Types.VARCHAR));
+            if (value instanceof Date)
+            {
+                parameters.add(new CoalesceParameter(DerbyDataConnector.getDateString((Date) value), Types.DATE));
+            }
+            else
+            {
+                parameters.add(new CoalesceParameter(value.toString(), Types.VARCHAR));
+            }
         }
 
         return parameters;

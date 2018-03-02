@@ -2,18 +2,23 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import Popup from 'react-popup';
 import {registerLoader, registerErrorPrompt, registerPrompt} from 'common-components/lib/register.js'
-import {Menu} from 'common-components/lib/menu.js'
 import {SettingsView} from './settings.js'
+
+import {Menu} from 'common-components/lib/index.js'
+import 'common-components/bootstrap/css/bootstrap.min.css'
 
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
+
+var pjson = require('../package.json');
+document.title = pjson.title;
 
 var rootUrl;
 
 if (window.location.port == 3000) {
   rootUrl  = 'http://' + window.location.hostname + ':8181';
 } else {
-  rootUrl  = 'http://' + window.location.hostname + ':' + window.location.port;
+  rootUrl  = '';
 }
 
 registerLoader(Popup);
@@ -57,7 +62,7 @@ ReactDOM.render(
 );
 
 ReactDOM.render(
-    <Menu items={[/* No Options */]}/>,
+    <Menu logoSrc={pjson.icon} title={pjson.title} items={[/* No Options */]} isTextOnly={false} />,
     document.getElementById('myNavbar')
 );
 

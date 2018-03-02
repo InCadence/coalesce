@@ -173,7 +173,7 @@ public final class JAXWSUtil {
             throw new WSSecurityException(ErrorCode.INVALID_SECURITY_TOKEN, "Failed to find created / expire conditions");
         }
 
-        return new SecurityToken(id, assertionNode, created, expires);
+        return new SecurityToken(id, assertionNode, created.toInstant(), expires.toInstant());
 
     }
 
@@ -221,7 +221,7 @@ public final class JAXWSUtil {
     public static SecurityToken renewToken(SecurityToken token, String username, String password) throws WSSecurityException
     {
         if (token.isExpired()
-                || new DateTime(DateTimeZone.UTC).plusSeconds(EXPIRATION_THRESHOLD).isAfter(token.getExpires().getTime()))
+                || new DateTime(DateTimeZone.UTC).plusSeconds(EXPIRATION_THRESHOLD).isAfter(token.getExpires().getEpochSecond()))
         {
             token = createToken(token.getToken(), username, password);
         }

@@ -17,28 +17,19 @@
 
 package com.incadencecorp.coalesce.synchronizer.api.common.tests;
 
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
+import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
+import com.incadencecorp.coalesce.synchronizer.api.common.mocks.*;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
-import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockDriver;
-import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockHandler;
-import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockOperation;
-import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockSearchPersister;
-import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockScanner;
+import java.sql.ResultSet;
+import java.util.*;
 
 /**
  * These tests exercise the abstract components of the synchronizer service.
- * 
+ *
  * @author n78554
  */
 public class AbstractComponentTest {
@@ -46,7 +37,7 @@ public class AbstractComponentTest {
     /**
      * This test ensures a null pointer exceptions occurs if the scanner and
      * operations are not configured.
-     * 
+     *
      * @throws Exception
      */
     @Test(expected = NullPointerException.class)
@@ -59,7 +50,7 @@ public class AbstractComponentTest {
     /**
      * This test ensures a null pointer exception occurs if the operations are
      * not configured.
-     * 
+     *
      * @throws Exception
      */
     @Test(expected = NullPointerException.class)
@@ -68,7 +59,7 @@ public class AbstractComponentTest {
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
 
-        MockSearchPersister source = new MockSearchPersister();
+        DerbyPersistor source = new DerbyPersistor();
         source.saveEntity(false, entity);
 
         MockScanner scanner = new MockScanner();
@@ -83,7 +74,7 @@ public class AbstractComponentTest {
     /**
      * Verifies that the driver using the MockOperation successfully changes the
      * entity's title.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -93,7 +84,7 @@ public class AbstractComponentTest {
 
         CoalesceEntity entity = CoalesceEntity.create("UNIT_TEST", "MockPersister", "1", null, null);
 
-        MockSearchPersister persistor = new MockSearchPersister();
+        DerbyPersistor persistor = new DerbyPersistor();
         persistor.saveEntity(false, entity);
 
         Assert.assertEquals(entity.getTitle(), persistor.getEntity(entity.getKey())[0].getTitle());
@@ -106,7 +97,7 @@ public class AbstractComponentTest {
     /**
      * Setting the title to null will cause the MockOperation to throw an
      * exception which should leave the entity's title unmodified.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -114,7 +105,7 @@ public class AbstractComponentTest {
     {
         CoalesceEntity entity = CoalesceEntity.create("UNIT_TEST", "MockPersister", "1", null, null);
 
-        MockSearchPersister persistor = new MockSearchPersister();
+        DerbyPersistor persistor = new DerbyPersistor();
         persistor.saveEntity(false, entity);
 
         Assert.assertEquals(entity.getTitle(), persistor.getEntity(entity.getKey())[0].getTitle());
@@ -126,7 +117,7 @@ public class AbstractComponentTest {
 
     /**
      * This unit test ensure the correct operation of the Mock Scanner.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -139,12 +130,10 @@ public class AbstractComponentTest {
         columns.add("objectkey");
         columns.add("2");
 
-        Object[] row1 = new Object[] {
-                UUID.randomUUID().toString(), "B", "C"
+        Object[] row1 = new Object[] { UUID.randomUUID().toString(), "B", "C"
         };
 
-        Object[] row2 = new Object[] {
-                UUID.randomUUID().toString(), "C"
+        Object[] row2 = new Object[] { UUID.randomUUID().toString(), "C"
         };
 
         List<Object[]> rows = new ArrayList<Object[]>();
@@ -171,7 +160,7 @@ public class AbstractComponentTest {
         Assert.assertFalse(results.next());
     }
 
-    private MockDriver createDriver(MockSearchPersister persistor, String title) throws Exception
+    private MockDriver createDriver(DerbyPersistor persistor, String title) throws Exception
     {
         Map<String, String> params = new HashMap<String, String>();
         params.put(SynchronizerParameters.PARAM_OP_WINDOW_SIZE, "1");

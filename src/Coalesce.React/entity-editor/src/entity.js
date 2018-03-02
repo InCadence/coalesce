@@ -10,8 +10,11 @@ export class EntityView extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = props;
-    }
+    this.state = {
+        data: props.data,
+        isNew: props.isNew
+    };
+  }
 
   setIsNew(isNew) {
     this.setState({
@@ -24,8 +27,9 @@ export class EntityView extends React.Component {
   }
 
   render() {
-    const {data, template} = this.state;
+    const {data} = this.state;
 
+    var template = this.props.template;
     var sections = [];
     var linkages;
 

@@ -3,13 +3,17 @@ import ReactTable from 'react-table'
 import Popup from 'react-popup';
 import { ReactTableDefaults } from 'react-table'
 
+import { IconButton} from 'common-components/lib/index.js'
 import 'react-table/react-table.css'
 
 export class SettingsView extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = props;
+
+    this.state = {
+      settings: props.settings
+    };
 
     this.onAddSetting = this.onAddSetting.bind(this);
     this.onSaveSettings = props.saveCallback.bind(this, this.state.settings);
@@ -83,8 +87,8 @@ export class SettingsView extends React.Component {
             sorted={[{'id': 'name', 'desc': false}]}
           />
           <div className="form-buttons">
-            <img src="/images/svg/add.svg" alt="Add" title="Add Setting" className="coalesce-img-button enabled" onClick={this.onAddSetting}/>
-            <img src="/images/svg/save.svg" alt="Save" title="Save Settings" className="coalesce-img-button enabled" onClick={this.onSaveSettings}/>
+            <IconButton icon="/images/svg/add.svg" title="Add Setting" onClick={this.onAddSetting} />
+            <IconButton icon="/images/svg/save.svg" title="Save Settings" onClick={this.onSaveSettings} />
           </div>
           </div>
         </div>

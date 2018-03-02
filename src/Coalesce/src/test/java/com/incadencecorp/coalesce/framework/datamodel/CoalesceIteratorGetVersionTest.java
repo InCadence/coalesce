@@ -223,7 +223,6 @@ public class CoalesceIteratorGetVersionTest {
         v2.initialize(CoalesceEntity.mergeSyncEntity(v1a, v1b, "Derek", "127.0.0.1"));
 
         // Verify Entity History LastModified
-        Assert.assertNotEquals(v2.getLastModified().getMillis(), v2.getHistory()[0].getLastModified().getMillis());
         Assert.assertEquals(v1a.getLastModified().getMillis(), v2.getHistory()[0].getLastModified().getMillis(), 50);
         Assert.assertEquals(recordv1b.getBooleanField().getLastModified().getMillis(),
                             v2.getHistory()[0].getLastModified().getMillis(),

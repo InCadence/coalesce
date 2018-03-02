@@ -17,40 +17,41 @@
 
 package com.incadencecorp.coalesce.synchronizer.service.scanners;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.rowset.CachedRowSet;
-
-import org.geotools.data.Query;
-import org.joda.time.DateTime;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractScan;
 import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
+import org.geotools.data.Query;
+import org.geotools.temporal.object.DefaultInstant;
+import org.geotools.temporal.object.DefaultPeriod;
+import org.geotools.temporal.object.DefaultPosition;
+import org.joda.time.DateTime;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.temporal.Instant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.sql.rowset.CachedRowSet;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This implementation looks for changes after a given DateTime which is either
  * passed in as a parameter or read from the configured property loader. Setting
  * the last scanned parameter will override the property loader.
- * 
+ * <p>
  * After a successful scan it records the start time of that scan and sequential
  * scans will be from the last successful. If the property loader is configured
  * the last successful scan is persisted between restarts.
- * 
+ *
  * @author n78554
  * @see SynchronizerParameters#PARAM_SCANNER_LAST_SUCCESS
  * @see SynchronizerParameters#PARAM_SCANNER_DAYS
+ * @see SynchronizerParameters#PARAM_SCANNER_CQL
  */
 public class AfterLastModifiedScanImpl extends AbstractScan {
 
@@ -65,13 +66,7 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
     protected void doSetup()
     {
         // Initialize Defaults
-        setProperties(new HashMap<String, String>());
-    }
-
-    @Override
-    public CachedRowSet scan() throws CoalesceException
-    {
-        return scan(new Query());
+        setProperties(new HashMap<>());
     }
 
     // TODO Instead of using a date time window to constrain the number of
@@ -82,8 +77,6 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
     @Override
     public CachedRowSet doScan(Query query) throws CoalesceException
     {
-        List<CoalesceParameter> params = new ArrayList<CoalesceParameter>();
-
         // Last Scan Specified?
         if (lastScanned == null)
         {
@@ -92,19 +85,28 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
         }
 
         DateTime start = JodaDateTimeHelper.fromXmlDateTimeUTC(lastScanned);
+
+        if (start == null)
+        {
+            throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT, lastScanned));
+        }
+
         DateTime end = start.plusDays(days);
 
         // Days not specified or end of window is in the future?
-        if (days == 0 || end.isAfterNow())
+        if (days == 0)
         {
             // Set the end of window to now
-            end = JodaDateTimeHelper.nowInUtc();
+            end = JodaDateTimeHelper.nowInUtc().plusDays(1);
         }
 
-        pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(end);// JodaDateTimeHelper.nowInUtc());
+        pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(end);
 
-        Filter requiredFilter = FF.and(FF.after(CoalescePropertyFactory.getLastModified(), FF.literal(lastScanned)),
-                                       FF.before(CoalescePropertyFactory.getLastModified(), FF.literal(pendingLastScan)));
+        Instant startInstant = new DefaultInstant(new DefaultPosition(start.toDate()));
+        Instant endInstant = new DefaultInstant(new DefaultPosition(end.toDate()));
+
+        Filter requiredFilter = FF.during(CoalescePropertyFactory.getLastModified(),
+                                          FF.literal(new DefaultPeriod(startInstant, endInstant)));
 
         // Filter Specified?
         if (query.getFilter() == null || query.getFilter() == Filter.INCLUDE)
@@ -114,17 +116,17 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
         }
         else
         {
-            if (LOGGER.isTraceEnabled())
-            {
-                LOGGER.trace("Filter Specified: {}", query.getFilter().toString());
-            }
-
             // Yes; Append Required Filter
             query.setFilter(FF.and(query.getFilter(), requiredFilter));
         }
 
-        query.setMaxFeatures(0);
+        if (LOGGER.isTraceEnabled())
+        {
+            LOGGER.trace("Filter Specified: {}", query.getFilter().toString());
+        }
+
         query.setStartIndex(0);
+        query.setMaxFeatures(0);
 
         return getSource().search(query).getResults();
     }

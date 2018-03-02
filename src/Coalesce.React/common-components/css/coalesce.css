@@ -3,6 +3,15 @@ body {
   color: #000000;
 }
 
+/* Overrides Bootstrap spacing for icon in navbar */
+.nav>li>a {
+    padding: 2px 2px;
+}
+
+.nav>li>a>div {
+  padding: 13px 15px;
+}
+
 .shadow {
     /* Use -webkit- only if supporting: Chrome < 54, iOS < 9.3, Android < 4.4.4 */
     -webkit-filter: drop-shadow( -5px -5px 5px #000 );
@@ -92,6 +101,11 @@ body {
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   transition: 0.3s;
   border-radius: 5px;
+}
+
+.card-row {
+    margin-right: -15px;
+    margin-left: -15px;
 }
 
 .card:hover {
