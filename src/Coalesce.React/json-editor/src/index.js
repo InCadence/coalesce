@@ -28,7 +28,9 @@ class Main extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = props;
+    this.state = {
+      data: props.data
+    }
   }
 
   onEdit(update)
@@ -77,16 +79,23 @@ class Main extends React.Component {
   {
     var newObj={};
 
-    for (var key in obj)
-    {
-      if (Array.isArray(obj[key]))
-      {
-        newObj[key]=[this.cloneKeys(obj[key][0])];
-      }
-      else
-      {
-        newObj[key]='';
-      }
+    switch (typeof(obj)) {
+      case 'object':
+        for (var key in obj)
+        {
+          if (Array.isArray(obj[key]))
+          {
+            newObj[key]=[this.cloneKeys(obj[key][0])];
+          }
+          else
+          {
+            newObj[key]='';
+          }
+        }
+        break;
+      case 'string':
+        newObj='';
+        break;
     }
 
     return newObj;
@@ -107,10 +116,7 @@ class Main extends React.Component {
   }
 
   onSave() {
-
-    const data=this.state;
-
-    saveConfiguration('home.json', data.data);
+    saveConfiguration(this.props.name, this.state.data);
   }
 
   render() {
@@ -119,7 +125,7 @@ class Main extends React.Component {
     return (
       <div className="ui-widget">
         <div className="ui-widget-header">
-          home.json
+          {this.props.name}
         </div>
         <div className="ui-widget-content" >
           <ReactJson src={data} collapsed='3' onEdit={this.onEdit.bind(this)} onAdd={this.onAdd.bind(this)} onDelete={this.onDelete.bind(this)} iconStyle="square"/>
@@ -160,8 +166,9 @@ function loadConfiguration(name) {
   fetch(rootUrl + '/cxf/data/property/' + name)
     .then(res => res.json())
     .then(data => {
+      ReactDOM.unmountComponentAtNode(document.getElementById('main'));
       ReactDOM.render(
-        <Main data={data}/>,
+        <Main name={name} data={data}/>,
         document.getElementById('main')
       );
   }).catch(function(error) {
@@ -185,9 +192,15 @@ ReactDOM.render(
       onClick: () => {
         loadConfiguration('home.json');
       }
+    },{
+      id: 'load',
+      name: 'Load',
+      img: '/images/svg/spider.svg',
+      title: 'Load JSON',
+      onClick: () => {
+        loadConfiguration('filter.json');
+      }
     }
   ]}/>,
   document.getElementById('myNavbar')
 );
-
-loadConfiguration('home.json');
