@@ -97,6 +97,6 @@ Menu.defaultProps = {
   logoSrc: 'set package.json.icon',
   title: 'set package.json.title',
   homeEnabled: true,
-  home: '/',
+  home: '/home',
   isTextOnly: false,
 }
