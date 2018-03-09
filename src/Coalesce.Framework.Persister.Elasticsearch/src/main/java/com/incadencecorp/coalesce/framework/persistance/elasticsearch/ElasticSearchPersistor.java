@@ -24,6 +24,8 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.geotools.data.Query;
 import org.geotools.filter.Capabilities;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -38,7 +40,11 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.exim.impl.JsonFullEximImpl;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
@@ -81,6 +87,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     Private Members
     --------------------------------------------------------------------------*/
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistor.class);
 
     /*--------------------------------------------------------------------------
     Overridden Functions
@@ -259,7 +266,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
                                                                    template.getKey(),
                                                                    e.getMessage()), e);
             } catch (Exception e) {
-            	e.printStackTrace();
+                LOGGER.warn("Failed to register templates: " + e.getMessage());
             }
         } 
     }
@@ -280,7 +287,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     	esTemplate.put("template", "*");
 
     	mappingMap.put("properties", propertiesMap);
-    	//propertiesMap.put("message", messageMap);
         
         for (String typeName : typeMap.keySet()) {
         	if(mapper.mapToString(typeMap.get(typeName)) != null)
@@ -295,7 +301,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     	client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(esTemplate)
     	.addMapping("mapping", mappingMap).get();
     	
-    	System.out.println("Saved template named: " + template.getName());
+    	LOGGER.debug("Saved template named: " + template.getName());
     	
     	return esTemplate;
     }
@@ -664,9 +670,22 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 			//mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 			//byte[] json = mapper.writeValueAsBytes(converter.exportValues(entity, true));
 			//String json = mapper.writeValueAsString(converter.exportValues(entity, true));
-			HashMap<String, Object> map = mapper.readValue(converter.exportValues(entity, true).toString(), 
-					new TypeReference<Map<String, Object>>() {
-			});
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			
+			for(CoalesceSection section : entity.getSectionsAsList()) {
+				for(CoalesceRecordset recordset : section.getRecordsetsAsList()) {
+					for(CoalesceRecord record : recordset.getAllRecords()) {
+						for(CoalesceField field : record.getFields()) {
+							map.put(field.getKey(), field.getValue());
+							//System.out.println("Adding field " + field.getName() + " with value: " + field.getValue());
+						}
+					}
+				}
+			}
+					
+			//map = mapper.readValue(converter.exportValues(entity, true).toString(), 
+			//		new TypeReference<Map<String, Object>>() {
+			//});
 
 			// convert JSON string to Map
 			response = conn.prepareIndex(entity.getName().toLowerCase(), entity.getType().toLowerCase()).setSource(map).get();
@@ -675,7 +694,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 		} catch (CoalesceException e) {
 			e.printStackTrace();
 			return  false;
-		} catch (JsonParseException e) {
+		/*} catch (JsonParseException e) {
 			e.printStackTrace();
 			return  false;
 		} catch (JsonMappingException e) {
@@ -684,6 +703,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 		} catch (IOException e) {
 			e.printStackTrace();
 			return  false;
+			*/
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
