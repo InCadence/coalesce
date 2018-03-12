@@ -1,54 +1,152 @@
 import React from 'react';
+import Checkbox from 'material-ui/Checkbox';
+import TextField from 'material-ui/TextField';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import DatePicker from 'material-ui/DatePicker';
+import TimePicker from 'material-ui/TimePicker';
+import { IconButton } from 'common-components/lib/components/IconButton.js'
 
-export class FieldInput extends React.PureComponent {
+import { Row, Col } from 'react-bootstrap';
 
-  constructor(props) {
-    super(props);
-  }
+export class FieldInput extends React.Component {
 
   render() {
     return this.createInput(
       this.props.field.dataType,
+      this.props.field.name,
       this.props.field.key,
       this.props.field.value,
       this.props.onChange
     );
   }
 
-  createInput(type, id, value, onChange) {
-    console.log(type);
+  createInput(type, name, id, value, onChange) {
     switch (type) {
+      case 'ENUMERATION_LIST_TYPE':
+        return (
+          <SelectField
+            floatingLabelText={this.props.showLabels ? name : null}
+            fullWidth={true}
+            multiple={true}
+            value={value}
+            onChange={(event, index, values) => onChange({target: {id: id, value: values}})}
+          >
+            <MenuItem value={0} primaryText="Option 1" />
+            <MenuItem value={1} primaryText="Option 2" />
+            <MenuItem value={2} primaryText="Option 3" />
+          </SelectField>
+        )
+      case 'ENUMERATION_TYPE':
+        return (
+          <SelectField
+            floatingLabelText={this.props.showLabels ? name : null}
+            fullWidth={true}
+            value={value}
+            onChange={(event, value) => onChange({target: {id: id, value: value}})}
+          >
+            <MenuItem value={0} primaryText="Option 1" />
+            <MenuItem value={1} primaryText="Option 2" />
+            <MenuItem value={2} primaryText="Option 3" />
+          </SelectField>
+        )
       case 'URI_TYPE':
       case 'STRING_TYPE':
-        return (<input type="text" id={id} className="form-control" value={value}  onChange={onChange}/>);
-        break;
+        return (
+          <TextField
+            id={id}
+            fullWidth={true}
+            floatingLabelText={this.props.showLabels ? name : null}
+            value={value}
+            onChange={(event, value) => onChange({target: {id: id, value: value}})}
+          />
+        );
       case 'FLOAT_TYPE':
       case 'DOUBLE_TYPE':
       case 'LONG_TYPE':
-        return (<input type="number" id={id} className="form-control" value={value} step='0.01' onChange={onChange}/>);
-        break;
+        return (
+          <TextField
+            id={id}
+            type='number'
+            step='0.01'
+            fullWidth={true}
+            floatingLabelText={this.props.showLabels ? name : null}
+            value={value}
+            onChange={(event, value) => onChange({target: {id: id, value: value}})}
+          />
+        );
       case 'INTEGER_TYPE':
-        return (<input type="number" id={id} className="form-control" value={value}  onChange={onChange}/>);
-        break;
+        return (
+          <TextField
+            id={id}
+            type='number'
+            fullWidth={true}
+            floatingLabelText={this.props.showLabels ? name : null}
+            value={value}
+            onChange={(event, value) => onChange({target: {id: id, value: value}})}
+          />
+        );
       case 'BOOLEAN_TYPE':
         return (
-          <input type="checkbox" id={id} className="form-control" value={value}  onChange={onChange}/>
+          <Checkbox
+            id={id}
+            label={this.props.showLabels ? name : null}
+            checked={value}
+            onCheck={(event, checked) => onChange({target: {id: id, value: checked}})}
+          />
         );
-        break;
       case 'DATE_TIME_TYPE':
-        return (<input type="datetime-local" id={id} className="form-control" value={value}  onChange={onChange}/>);
-        break;
+        return (
+          <Row>
+            <Col xs={6}>
+              <DatePicker
+                id={id + 'date'}
+                floatingLabelText={this.props.showLabels ? name + " Date" : null}
+                mode="landscape"
+              />
+            </Col>
+            <Col xs={6}>
+              <TimePicker
+                id={id + 'time'}
+                floatingLabelText={this.props.showLabels ? "Time" : null}
+                format="24hr"
+              />
+            </Col>
+        </Row>
+        );
       case 'BINARY_TYPE':
       case 'FILE_TYPE':
         return (
           <div>
-            <label>{value}</label>
-            <img src='/images/svg/load.svg' alt="Download" title="Download" className="coalesce-img-button enabled"/>
+            <IconButton id={id} icon="/images/svg/load.svg" title={"Download " + name} onClick={null} /> {this.props.showLabel ? <label>Download {name}</label> : null}
           </div>
         );
-        break;
       case 'GEOCOORDINATE_TYPE':
         return (
+            <Row>
+              <Col xs={6}>
+                <TextField
+                  id={id + 'lat'}
+                  type='number'
+                  step='0.01'
+                  floatingLabelText={this.props.showLabels ? name + " Latitude" : null}
+                  fullWidth={false}
+                  onChange={(event, value) => onChange({target: {id: id, value: value}})}
+                />
+              </Col>
+              <Col xs={6}>
+                <TextField
+                  id={id + 'long'}
+                  type='number'
+                  step='0.01'
+                  floatingLabelText={this.props.showLabels ? "Longitude" : null}
+                  fullWidth={false}
+                  onChange={(event, value) => onChange({target: {id: id, value: value}})}
+                />
+              </Col>
+          </Row>
+        );
+          /*
           <div className="row">
             <div className="form-group col-sm-2">
               <label for="{id + '_x'}" className="col-form-label">Lat</label>
@@ -60,9 +158,43 @@ export class FieldInput extends React.PureComponent {
             </div>
           </div>
         )
-        break;
+        */
       case 'CIRCLE_TYPE':
         return (
+          <Row>
+            <Col xs={4}>
+              <TextField
+                id={id + 'lat'}
+                type='number'
+                step='0.01'
+                floatingLabelText={this.props.showLabels ? name + " Latitude" : null}
+                fullWidth={false}
+                onChange={(event, value) => onChange({target: {id: id, value: value}})}
+              />
+            </Col>
+            <Col xs={4}>
+              <TextField
+                id={id + 'long'}
+                type='number'
+                step='0.01'
+                floatingLabelText={this.props.showLabels ? "Longitude" : null}
+                fullWidth={false}
+                onChange={(event, value) => onChange({target: {id: id, value: value}})}
+              />
+            </Col>
+            <Col xs={4}>
+              <TextField
+                id={id + 'radius'}
+                type='number'
+                step='0.01'
+                floatingLabelText={this.props.showLabels ? "Radius" : null}
+                fullWidth={false}
+                onChange={(event, value) => onChange({target: {id: id, value: value}})}
+              />
+            </Col>
+          </Row>
+      );
+      /*
           <div className="row">
             <div className="form-group col-sm-2">
               <label for="{id + '_x'}" className="col-form-label">Lat</label>
@@ -78,14 +210,32 @@ export class FieldInput extends React.PureComponent {
             </div>
           </div>
         )
-        break;
+        */
       case 'GUID_TYPE':
-        return (<input type="text" id={id} className="form-control" value={value} pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" onChange={onChange}/>);
-        break;
+        return (
+          <TextField
+            id={id}
+            fullWidth={true}
+            floatingLabelText={this.props.showLabels ? name : null}
+            inputProps={{ pattern: "[a-z]" }}
+            onChange={(event, value) => onChange({target: {id: id, value: value}})}
+          />
+        );
       default:
-      return (<input type="text" id={id} className="form-control" value={value}  disabled/>);
-        break;
+        return (
+          <TextField
+            id={id}
+            fullWidth={true}
+            floatingLabelText={this.props.showLabels ? name : null}
+            disabled
+            onChange={(event, value) => onChange({target: {id: id, value: value}})}
+          />
+        );
     }
   }
 
+}
+
+FieldInput.defaultProps = {
+  showLabels: true
 }
