@@ -676,19 +676,20 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 				for(CoalesceRecordset recordset : section.getRecordsetsAsList()) {
 					for(CoalesceRecord record : recordset.getAllRecords()) {
 						for(CoalesceField field : record.getFields()) {
-							map.put(field.getKey(), field.getValue());
-							//System.out.println("Adding field " + field.getName() + " with value: " + field.getValue());
+							map.put(field.getName(), field.getValue());
+							System.out.println("Adding field " + field.getName() + " with value: " + field.getValue());
 						}
 					}
 				}
 			}
-					
+			
 			//map = mapper.readValue(converter.exportValues(entity, true).toString(), 
 			//		new TypeReference<Map<String, Object>>() {
 			//});
 
 			// convert JSON string to Map
 			response = conn.prepareIndex(entity.getName().toLowerCase(), entity.getType().toLowerCase()).setSource(map).get();
+			System.out.println("Saved Index called: " + entity.getName());
  
 			System.out.println(response.toString());
 		} catch (CoalesceException e) {
