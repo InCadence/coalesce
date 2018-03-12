@@ -22,11 +22,17 @@ class TemplateNavBar extends Component {
         this.handleTemplateAdd = this.handleTemplateAdd.bind(this);
         this.handleGraphAdd = this.handleGraphAdd.bind(this);
         this.handleFreeze = this.handleFreeze.bind(this);
+        this.handleTemplateLoad = this.handleTemplateLoad.bind(this);
     }
 
     handleTemplateAdd(e) {
         console.log("adding template to workspace...triggered");
         this.props.onTemplateAdd();
+    }
+
+    handleTemplateLoad(e) {
+        console.log("Loading template to workspace...triggered");
+        this.props.onTemplateLoad();
     }
 
     handleGraphAdd(e) {
@@ -74,7 +80,7 @@ class TemplateNavBar extends Component {
                     <Nav id='templates'>
                         <NavIcon><Icon icon={stack} /></NavIcon>
                         <NavText>Templates</NavText>
-   
+
                         <Nav id='templates2'>
                             <NavText> New Template </NavText>
                         </Nav>
@@ -93,7 +99,7 @@ class TemplateNavBar extends Component {
                         <NavIcon><Icon icon={plus} /></NavIcon>
                         <NavText>New Template</NavText>
                     </Nav>
-                    <Nav id='templatesload' >
+                    <Nav id='templatesload' onNavClick={this.handleTemplateLoad}>
                         <NavIcon><Icon icon={enter} /></NavIcon>
                         <NavText>Load Template</NavText>
                     </Nav>
