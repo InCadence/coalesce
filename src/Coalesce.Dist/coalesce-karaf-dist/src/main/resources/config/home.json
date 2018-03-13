@@ -18,7 +18,7 @@
         {
           "img": "/images/svg/template.svg",
           "name": "Templates",
-          "url": "/templates",
+          "url": "/templateeditor",
           "desc": "Editor or create new templates for Coalesce entities."
         },
         {

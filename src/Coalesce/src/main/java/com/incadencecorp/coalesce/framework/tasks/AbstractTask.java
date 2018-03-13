@@ -148,7 +148,7 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
 
         if (!result.isSuccessful())
         {
-            LOGGER.error("({}) ({}) Pending ({}) Working ({}) Total ({}) {}",
+            LOGGER.warn("({}) ({}) Pending ({}) Working ({}) Total ({}) {}",
                          result.isSuccessful() ? "SUCCESS" : "FAILED",
                          getName(),
                          result.getWatch().getPendingLife(),

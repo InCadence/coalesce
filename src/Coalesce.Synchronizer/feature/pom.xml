@@ -1,82 +1,43 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>coalesce-synchronizer-feature</artifactId>
-	<packaging>feature</packaging>
-	<name>Coalesce Synchronizer Feature</name>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>coalesce-synchronizer-feature</artifactId>
+    <packaging>feature</packaging>
+    <name>Coalesce Synchronizer Feature</name>
 
-	<parent>
-		<groupId>com.incadencecorp.coalesce.synchronizer</groupId>
-		<artifactId>coalesce-synchronizer-parent</artifactId>
-		<version>0.0.25-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
+    <parent>
+        <groupId>com.incadencecorp.coalesce.synchronizer</groupId>
+        <artifactId>coalesce-synchronizer-parent</artifactId>
+        <version>0.0.25-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.karaf.tooling</groupId>
-				<artifactId>karaf-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.apache.karaf.tooling
-										</groupId>
-										<artifactId>
-											karaf-maven-plugin
-										</artifactId>
-										<versionRange>
-											[3.0.1,)
-										</versionRange>
-										<goals>
-											<goal>
-												features-generate-descriptor
-											</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.synchronizer</groupId>
-			<artifactId>coalesce-synchronizer-service</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>*</artifactId>
-					<groupId>org.geotools</groupId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.geotools.xsd</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.incadencecorp.coalesce</groupId>
-					<artifactId>coalesce-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-	</dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.synchronizer</groupId>
+            <artifactId>coalesce-synchronizer-service</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>*</artifactId>
+                    <groupId>org.geotools</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.geotools.xsd</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.incadencecorp.coalesce</groupId>
+                    <artifactId>coalesce-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
 </project>
