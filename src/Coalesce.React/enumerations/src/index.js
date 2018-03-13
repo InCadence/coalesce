@@ -2,12 +2,17 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import Popup from 'react-popup';
 import {registerLoader, registerErrorPrompt, registerPrompt} from 'common-components/lib/register.js'
-import {Menu} from 'common-components/lib/menu.js'
 import {SearchResults} from './results.js'
 import ReactTable from 'react-table'
 
+import {Menu} from 'common-components/lib/index.js'
+import 'common-components/bootstrap/css/bootstrap.min.css'
+
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
+
+var pjson = require('../package.json');
+document.title = pjson.title;
 
 var enums;
 var enumCols = ["metadata.enumname", "metadata.description", "CoalesceEntity.datecreated", "CoalesceEntity.lastmodified"];
@@ -228,7 +233,7 @@ function loadAssociatedValues(key, keys, values) {
 
 
 ReactDOM.render(
-    <Menu items={[/* No Options */]}/>,
+    <Menu logoSrc={pjson.icon} title={pjson.title} items={[/* No Options */]}/>,
     document.getElementById('myNavbar')
 );
 

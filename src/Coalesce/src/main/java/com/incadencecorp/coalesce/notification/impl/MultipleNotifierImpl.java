@@ -28,10 +28,11 @@ import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
+import org.osgi.framework.BundleContext;
 
 /**
  * This implementation allows for multiple notifiers to be initialized and used.
- * 
+ *
  * @author Derek Clemenzi
  */
 public class MultipleNotifierImpl implements ICoalesceNotifier {
@@ -48,7 +49,7 @@ public class MultipleNotifierImpl implements ICoalesceNotifier {
 
     /**
      * Default Constructor
-     * 
+     *
      * @param values
      */
     public MultipleNotifierImpl(ICoalesceNotifier... values)
@@ -65,6 +66,15 @@ public class MultipleNotifierImpl implements ICoalesceNotifier {
     /*--------------------------------------------------------------------------
     Override Methods
     --------------------------------------------------------------------------*/
+
+    @Override
+    public void setContext(BundleContext context)
+    {
+        for (ICoalesceNotifier notifier : notifiers)
+        {
+            notifier.setContext(context);
+        }
+    }
 
     @Override
     public void sendMetrics(String task, MetricResults<?> results)

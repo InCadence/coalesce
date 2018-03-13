@@ -198,7 +198,7 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
 
             JSONArray jsonRecords = json.getJSONArray("allRecords");
 
-            if (recordset.getMaxRecords() == 1)
+            if (recordset.getMaxRecords() == 1 && recordset.getMinRecords() == 1)
             {
                 copyRecord(jsonRecords.getJSONObject(0), recordset.getAllRecords().get(0));
             }

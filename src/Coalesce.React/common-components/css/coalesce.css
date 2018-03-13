@@ -3,6 +3,15 @@ body {
   color: #000000;
 }
 
+/* Overrides Bootstrap spacing for icon in navbar */
+.nav>li>a {
+    padding: 2px 2px;
+}
+
+.nav>li>a>div {
+  padding: 13px 15px;
+}
+
 .shadow {
     /* Use -webkit- only if supporting: Chrome < 54, iOS < 9.3, Android < 4.4.4 */
     -webkit-filter: drop-shadow( -5px -5px 5px #000 );

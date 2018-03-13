@@ -25,6 +25,7 @@ import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,12 @@ public class Log4jNotifierImpl implements ICoalesceNotifier {
     /*--------------------------------------------------------------------------
     Override Methods
     --------------------------------------------------------------------------*/
+
+    @Override
+    public void setContext(BundleContext context)
+    {
+        // Do Nothing
+    }
 
     @Override
     public void sendMetrics(String task, MetricResults<?> results)

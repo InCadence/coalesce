@@ -3,6 +3,7 @@ import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
 import {Toggle} from 'common-components/lib/toggle.js'
 import {Collapse} from 'react-collapse';
+import {IconButton} from 'common-components/lib/components/IconButton.js'
 
 import 'react-table/react-table.css'
 
@@ -73,8 +74,8 @@ export class FilterCreator extends React.Component {
                 columns={createColumns(this, recordsets)}
               />
               <div className="form-buttons">
-                <img src="/images/svg/add.svg" alt="Add" title="Add Criteria" className="coalesce-img-button enabled" onClick={this.addRow.bind(this)}/>
-                <img src="/images/svg/search.svg" alt="Search" title="Execute Query" className="coalesce-img-button enabled" onClick={this.props.onSearch.bind(this, this.state.tabledata)}/>
+                <IconButton icon="/images/svg/add.svg" title="Add Criteria" onClick={this.addRow.bind(this)} />
+                <IconButton icon="/images/svg/search.svg" title="Execute Query" onClick={this.props.onSearch.bind(this, this.state.tabledata)} />
               </div>
             </div>
           </Collapse>
@@ -211,7 +212,7 @@ function createColumns(that, recordsets) {
       sortable: false,
       width: 50,
       Cell: (cell) => (
-        <img src="/images/svg/remove.svg" alt="Remove" title="Remove Criteria" className="coalesce-img-button enabled" onClick={that.deleteRow.bind(that, cell.row.key)}/>
+        <IconButton icon={"/images/svg/remove.svg"} title="Remove Criteria" onClick={that.deleteRow.bind(that, cell.row.key)} enabled={true} />
       )
     });
 

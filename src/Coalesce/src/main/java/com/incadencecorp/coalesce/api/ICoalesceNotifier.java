@@ -24,6 +24,7 @@ import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
+import org.osgi.framework.BundleContext;
 
 /**
  * Interface for sending out notifications.
@@ -31,6 +32,13 @@ import com.incadencecorp.coalesce.framework.tasks.MetricResults;
  * @author Derek Clemenzi
  */
 public interface ICoalesceNotifier {
+
+    /**
+     * Used to set the context in OSGi environments.
+     *
+     * @param context
+     */
+    void setContext(BundleContext context);
 
     /**
      * Send when metrics are collected.
@@ -84,9 +92,9 @@ public interface ICoalesceNotifier {
      * Sends a message
      *
      * @param topic the topic the message is related to.
-     * @param key the value's key
+     * @param key   the value's key
      * @param value the value
-     * @param <V> the value object type
+     * @param <V>   the value object type
      */
     <V> void sendMessage(String topic, String key, V value);
 
