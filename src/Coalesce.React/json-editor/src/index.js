@@ -35,16 +35,9 @@ class Main extends React.Component {
 
   onEdit(update)
   {
-    if (!isInteger(update.name))
-    {
-       this.setState({
-         data: update.updated_src.data
-       })
-    }
-    else
-    {
-        return false;
-    }
+     this.setState({
+       data: update.updated_src.data
+     })
   }
 
   onAdd(update)
@@ -66,12 +59,12 @@ class Main extends React.Component {
       }
       else
       {
-        return false;
+        pointer[update.name].push(null);
       }
     }
     else
     {
-        return false;
+      pointer[update.name].push(null);
     }
   }
 
@@ -111,7 +104,7 @@ class Main extends React.Component {
     }
     else
     {
-        return false;
+        return true;
     }
   }
 
