@@ -41,6 +41,7 @@ import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
@@ -82,6 +83,21 @@ import mil.nga.giat.data.elasticsearch.FilterToElastic;
  * @author n78554
  */
 public class ElasticSearchPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
+	
+    // Some constants for the linkage records
+	// TODO: Move this to a common area in Coalesce
+    public static final String LINKAGE_ENTITY1_KEY_COLUMN_NAME = "entity1Key";
+    public static final String LINKAGE_ENTITY1_NAME_COLUMN_NAME = "entity1Name";
+    public static final String LINKAGE_ENTITY1_SOURCE_COLUMN_NAME = "entity1Source";
+    public static final String LINKAGE_ENTITY1_VERSION_COLUMN_NAME = "entity1Version";
+    public static final String LINKAGE_ENTITY2_KEY_COLUMN_NAME = "entity2Key";
+    public static final String LINKAGE_ENTITY2_NAME_COLUMN_NAME = "entity2Name";
+    public static final String LINKAGE_ENTITY2_SOURCE_COLUMN_NAME = "entity2Source";
+    public static final String LINKAGE_ENTITY2_VERSION_COLUMN_NAME = "entity2Version";
+    public static final String LINKAGE_KEY_COLUMN_NAME = "objectKey";
+    public static final String LINKAGE_LAST_MODIFIED_COLUMN_NAME = "lastModified";
+    public static final String LINKAGE_LINK_TYPE_COLUMN_NAME = "linkType";
+    public static final String LINKAGE_LABEL_COLUMN_NAME = "label";
 
     /*--------------------------------------------------------------------------
     Private Members
@@ -652,7 +668,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      * @return True = No Update required.
      * @throws SQLException
      */
-    protected boolean persistEntityObject(CoalesceEntity entity, TransportClient conn) throws SQLException
+    private boolean persistEntityObject(CoalesceEntity entity, TransportClient conn) throws SQLException
     {
         // Return true if no update is required.
     	//Worry about this later. 
@@ -683,6 +699,10 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 				}
 			}
 			
+			Map<String, Object> linkageMap = createLinkageMap(entity);
+	        
+	        conn.prepareIndex("entitylinkage", entity.getType().toLowerCase()).setSource(linkageMap).get();
+			
 			//map = mapper.readValue(converter.exportValues(entity, true).toString(), 
 			//		new TypeReference<Map<String, Object>>() {
 			//});
@@ -711,6 +731,38 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 		
 		//If the index response is returned and no exception was thrown, the index operation was successful
         return true;
+    }
+    
+    /**
+     * persist the Linkage for an Entity. This will create a new document of the Linkage index
+     * 
+     * @param entity The entity to persist the linkages for
+     * @return returns true if no exceptions were thrown
+     */
+    private Map<String, Object> createLinkageMap(CoalesceEntity entity) {
+    	//HashMap representation of the linkage for indexing in ElasticSearch
+		HashMap<String, Object> linkageMap = new HashMap<String, Object>();
+		
+		Map<String, CoalesceLinkage> linkages = entity.getLinkages();
+        for (Map.Entry<String, CoalesceLinkage> mlink : linkages.entrySet()) {
+        	CoalesceLinkage link = mlink.getValue();
+        	
+        	linkageMap.put(LINKAGE_KEY_COLUMN_NAME, link.getKey());
+        	linkageMap.put(LINKAGE_LABEL_COLUMN_NAME, link.getName());
+        	linkageMap.put(LINKAGE_ENTITY1_KEY_COLUMN_NAME, link.getEntity1Key());
+        	linkageMap.put(LINKAGE_ENTITY1_NAME_COLUMN_NAME, link.getEntity1Name());
+        	linkageMap.put(LINKAGE_ENTITY1_SOURCE_COLUMN_NAME, link.getEntity1Source());
+        	linkageMap.put(LINKAGE_ENTITY1_VERSION_COLUMN_NAME, link.getEntity1Version());
+        	linkageMap.put(LINKAGE_ENTITY2_KEY_COLUMN_NAME, link.getEntity2Key());
+        	linkageMap.put(LINKAGE_ENTITY2_NAME_COLUMN_NAME, link.getEntity2Name());
+        	linkageMap.put(LINKAGE_ENTITY2_SOURCE_COLUMN_NAME, link.getEntity2Source());
+        	linkageMap.put(LINKAGE_LABEL_COLUMN_NAME, link.getLabel());
+        	linkageMap.put(LINKAGE_LAST_MODIFIED_COLUMN_NAME, link.getLastModifiedAsString());
+        	linkageMap.put(LINKAGE_LINK_TYPE_COLUMN_NAME, link.getLinkType().getLabel());
+        }
+
+		//If the index response is returned and no exception was thrown, the index operation was successful
+        return linkageMap;
     }
 
     /*--------------------------------------------------------------------------
