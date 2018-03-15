@@ -194,6 +194,7 @@ public final class CoalesceTemplateUtil {
         Map<String, ECoalesceFieldDataTypes> results = new HashMap<>();
 
         for (Map<String, ECoalesceFieldDataTypes> types : TYPES.values())
+        	
         {
             results.putAll(types);
         }

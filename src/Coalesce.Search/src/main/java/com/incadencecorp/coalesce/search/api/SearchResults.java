@@ -28,11 +28,23 @@ public class SearchResults extends CoalesceResponseType<CachedRowSet> {
     private int pageSize;
     private long total;
 
+    /**
+     * WARNING: The parent class CoalesceResponseType has a very similar looking method called "getResult"
+     * which is used in most parts of Coalesce, such as in the EntityExistsUtil. Make sure you really want
+     * to use this method and not that one
+     * 
+     */
     public CachedRowSet getResults()
     {
         return results;
     }
 
+    /**
+     * WARNING: The parent class CoalesceResponseType has a very similar looking method called "setResult"
+     * which is used in most parts of Coalesce, such as in the EntityExistsUtil. Make sure you really want
+     * to use this method and not that one
+     * 
+     */
     public void setResults(CachedRowSet results)
     {
         this.results = results;
