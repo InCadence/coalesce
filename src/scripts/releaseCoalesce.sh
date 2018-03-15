@@ -98,7 +98,7 @@ function release {
     path=$1
 
     echo "Deploying ${name}..."
-    mvn clean deploy -Dmaven.test.skip.exec=true -f ${path}
+    mvn clean deploy -DskipTests -P bundles,react,dist -f ${path}
 
     while true; do
 	read -p "Did you run out of memory? " doSuck
@@ -114,7 +114,7 @@ function release {
 	read -p "Enter artifact Id to resume from: " artifactid
 
 	echo "Resuming deploy..."
-	mvn clean deploy -Dmaven.test.skip.exec=true -f ${path} -rf :${artifactid}
+	mvn clean deploy -DskipTests -P bundles,react,dist -f ${path} -rf :${artifactid}
 
     fi
 }

@@ -94,7 +94,7 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
         {
             results = this.doWork(principal, params);
         }
-        catch (CoalesceException e)
+        catch (CoalesceException | InterruptedException e)
         {
             LOGGER.error("(FAILED) Job", e);
 
@@ -279,7 +279,7 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
      * @return
      * @throws CoalesceException
      */
-    protected abstract OUTPUT doWork(ICoalescePrincipal principal, INPUT params) throws CoalesceException;
+    protected abstract OUTPUT doWork(ICoalescePrincipal principal, INPUT params) throws CoalesceException, InterruptedException;
 
     protected abstract OUTPUT createResponse();
 
