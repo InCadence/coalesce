@@ -701,7 +701,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 			
 			Map<String, Object> linkageMap = createLinkageMap(entity);
 	        
-	        conn.prepareIndex("entitylinkage", "entitylinkage").setSource(linkageMap).get();
+	        conn.prepareIndex((entity.getName() + "Linkage").toLowerCase(), (entity.getName() + "Linkage").toLowerCase()).setSource(linkageMap).get();
+			System.out.println("Indexed linkage for entity " + entity.getName());
 			
 			//map = mapper.readValue(converter.exportValues(entity, true).toString(), 
 			//		new TypeReference<Map<String, Object>>() {
