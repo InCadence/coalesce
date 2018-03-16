@@ -242,7 +242,7 @@
             <id>nexus-public</id>
             <distributionManagement>
                 <repository>
-                    <id>nexus</id>
+                    <id>nexus-public</id>
                     <url>http://incadencenexus.incadencecorp.com:8081/nexus/content/repositories/releases/</url>
                 </repository>
                 <snapshotRepository>
