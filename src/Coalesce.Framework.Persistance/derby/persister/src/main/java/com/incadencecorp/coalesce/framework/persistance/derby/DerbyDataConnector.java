@@ -100,16 +100,19 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         // get connection, insert or update
         Connection conn = this.getConnection();
 
-        // prepare the query
-        Statement stmt = conn.createStatement();
-        ResultSet result = null;
-        result = stmt.executeQuery(
+        String existsSQL =
                 "select " + COLUMNS.getName() + " from " + schema + ".coalesceentity where " + COLUMNS.getKey() + "='"
-                        + ivarobjectkey + "'");
+                        + ivarobjectkey + "'";
+
+        // prepare the query
+        PreparedStatement stmt = conn.prepareStatement(existsSQL);
+        ResultSet result = stmt.executeQuery();
+
+        int ii = 1;
+
         if (!result.next())
         {
             // insert
-            Statement stmt2 = conn.createStatement();
             StringBuilder sql = new StringBuilder("insert into " + schema + ".coalesceentity (");
             sql.append(COLUMNS.getKey()).append(", ");
             sql.append(COLUMNS.getName()).append(", ");
@@ -120,42 +123,51 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             sql.append(COLUMNS.getXml()).append(", ");
             sql.append(COLUMNS.getDateCreated()).append(", ");
             sql.append(COLUMNS.getLastModified());
-            sql.append(") values ('");
-            sql.append(ivarobjectkey).append("','");
-            sql.append(ivarname).append("','");
-            sql.append(ivarsource).append("','");
-            sql.append(ivarversion).append("','");
-            sql.append(ivarentityid).append("','");
-            sql.append(ivarentityidtype).append("','");
-            sql.append(ivarentityxml).append("','");
-            sql.append(dateCreated).append("','");
-            sql.append(lastModified);
-            sql.append("')");
+            sql.append(") values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-            LOGGER.trace(sql.toString());
-
-            stmt2.executeUpdate(sql.toString());
+            stmt = conn.prepareStatement(sql.toString());
+            stmt.setObject(ii++, ivarobjectkey);
+            stmt.setObject(ii++, ivarname);
+            stmt.setObject(ii++, ivarsource);
+            stmt.setObject(ii++, ivarversion);
+            stmt.setObject(ii++, ivarentityid);
+            stmt.setObject(ii++, ivarentityidtype);
+            stmt.setObject(ii++, ivarentityxml);
+            stmt.setObject(ii++, dateCreated);
+            stmt.setObject(ii, lastModified);
         }
         else
         {
-            String format = "%s='%s', ";
             // update
-            Statement stmt3 = conn.createStatement();
             StringBuilder sql = new StringBuilder("update " + schema + ".coalesceentity set ");
-            sql.append(String.format(format, COLUMNS.getName(), ivarname));
-            sql.append(String.format(format, COLUMNS.getSource(), ivarsource));
-            sql.append(String.format(format, COLUMNS.getVersion(), ivarversion));
-            sql.append(String.format(format, COLUMNS.getEntityId(), ivarentityid));
-            sql.append(String.format(format, COLUMNS.getEntityIdType(), ivarentityidtype));
-            sql.append(String.format(format, COLUMNS.getXml(), ivarentityxml));
-            sql.append(String.format(format, COLUMNS.getDateCreated(), dateCreated));
-            sql.append(COLUMNS.getLastModified()).append("='").append(lastModified).append("'");
-            sql.append(" where ").append(COLUMNS.getKey()).append("='").append(ivarobjectkey).append("'");
+            sql.append(COLUMNS.getName()).append("=?, ");
+            sql.append(COLUMNS.getSource()).append("=?, ");
+            sql.append(COLUMNS.getVersion()).append("=?, ");
+            sql.append(COLUMNS.getEntityId()).append("=?, ");
+            sql.append(COLUMNS.getEntityIdType()).append("=?, ");
+            sql.append(COLUMNS.getXml()).append("=?, ");
+            sql.append(COLUMNS.getDateCreated()).append("=?, ");
+            sql.append(COLUMNS.getLastModified()).append("=?");
+            sql.append(" where ").append(COLUMNS.getKey()).append("=?");
 
-            LOGGER.trace(sql.toString());
+            stmt = conn.prepareStatement(sql.toString());
+            stmt.setObject(ii++, ivarname);
+            stmt.setObject(ii++, ivarsource);
+            stmt.setObject(ii++, ivarversion);
+            stmt.setObject(ii++, ivarentityid);
+            stmt.setObject(ii++, ivarentityidtype);
+            stmt.setObject(ii++, ivarentityxml);
+            stmt.setObject(ii++, dateCreated);
+            stmt.setObject(ii++, lastModified);
+            stmt.setObject(ii, ivarobjectkey);
 
-            stmt3.executeUpdate(sql.toString());
+            stmt.executeUpdate();
         }
+
+        LOGGER.trace("{}", stmt);
+
+        stmt.executeUpdate();
+
         return true;
     }
 
@@ -832,7 +844,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             sb.append(COLUMNS.getVersion() + " VARCHAR(256),");
             sb.append(COLUMNS.getEntityId() + " VARCHAR(256),");
             sb.append(COLUMNS.getEntityIdType() + " VARCHAR(256),");
-            sb.append(COLUMNS.getXml() + " LONG VARCHAR,");
+            sb.append(COLUMNS.getXml() + " CLOB,");
             sb.append(COLUMNS.getDateCreated() + " timestamp,");
             sb.append(COLUMNS.getLastModified() + " timestamp,");
             sb.append(COLUMNS.getTitle() + " VARCHAR(256),");

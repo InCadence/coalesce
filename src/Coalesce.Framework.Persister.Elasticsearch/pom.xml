@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>com.incadencecorp.coalesce</groupId>
 		<artifactId>coalesce-pom</artifactId>
-		<version>0.0.25-SNAPSHOT</version>
+		<version>0.0.25</version>
 		<relativePath>../Coalesce.Pom</relativePath>
 	</parent>
 
@@ -246,11 +246,15 @@
 			<groupId>joda-time</groupId>
 			<version>2.8</version>
 		</dependency>
-		
 		<dependency>
 		    <groupId>com.fasterxml.jackson.jaxrs</groupId>
 		    <artifactId>jackson-jaxrs-json-provider</artifactId>
-		    <version>2.3.2</version>
+		    <version>${jackson.jaxb.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>${jackson.jaxb.version}</version>
 		</dependency>
     </dependencies>
 

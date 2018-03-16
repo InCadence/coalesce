@@ -58,12 +58,11 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
     Public Methods
     --------------------------------------------------------------------------*/
 
-    public BundleContext getContext()
+    private BundleContext getContext()
     {
         if (context == null)
         {
             Bundle bundle = FrameworkUtil.getBundle(AdminEventNotifierImpl.class);
-
             if (bundle != null)
             {
                 context = bundle.getBundleContext();
@@ -77,14 +76,16 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
         return context;
     }
 
-    public void setContext(BundleContext context)
-    {
-        this.context = context;
-    }
 
     /*--------------------------------------------------------------------------
     Override Methods
     --------------------------------------------------------------------------*/
+
+    @Override
+    public void setContext(BundleContext context)
+    {
+        this.context = context;
+    }
 
     @Override
     public void sendMetrics(String task, MetricResults<?> results)
@@ -170,7 +171,7 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
         properties.put("key", key);
         properties.put("value", value);
 
-        sendEvent(new Event(topic, properties));
+        sendEvent(new Event(topic.replace("\\.", "/"), properties));
     }
 
 
@@ -195,6 +196,10 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
             {
                 LOGGER.error("Service Reference Not Found");
             }
+        }
+        else
+        {
+            LOGGER.error("Bundle Context Not Found");
         }
     }
 

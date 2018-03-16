@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.incadencecorp.coalesce.notification</groupId>
 		<artifactId>coalesce-notification-parent</artifactId>
-		<version>0.0.25-SNAPSHOT</version>
+		<version>0.0.25</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -22,9 +22,9 @@
 					<instructions>
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-						<Import-Package>
-							org.joda.time*;version="[1.6.2, 3)"
-						</Import-Package>
+                        <Export-Package>
+                            ${project.groupId}.kafka.impl*
+                        </Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

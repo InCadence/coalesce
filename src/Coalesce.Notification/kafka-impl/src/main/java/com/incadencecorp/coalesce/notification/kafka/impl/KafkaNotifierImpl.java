@@ -41,6 +41,7 @@ import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.ZkConnection;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.osgi.framework.BundleContext;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -124,6 +125,12 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
     /*--------------------------------------------------------------------------
     Override Methods
     --------------------------------------------------------------------------*/
+
+    @Override
+    public void setContext(BundleContext context)
+    {
+        // Do Nothing
+    }
 
     @Override
     public void sendMetrics(String task, MetricResults<?> results)

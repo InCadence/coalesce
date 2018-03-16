@@ -2,11 +2,17 @@ package com.incadencecorp.coalesce.services.common.controllers;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
+import com.incadencecorp.coalesce.api.ICoalesceNotifier;
+import com.incadencecorp.coalesce.enums.ECrudOperations;
+import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import com.incadencecorp.coalesce.notification.impl.Log4jNotifierImpl;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,6 +20,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +35,7 @@ public class PropertyController {
     private SettingsBase settings = new SettingsBase(connector);
     private String key = "client.properties";
     private boolean isReadOnly = false;
+    private ICoalesceNotifier notifier = new Log4jNotifierImpl();
 
     /**
      * Sets the connector to use when getting / setting properties.
@@ -62,6 +70,21 @@ public class PropertyController {
     }
 
     /**
+     * @param notifier to use for sending update notifications.
+     */
+    public void setNotifier(ICoalesceNotifier notifier)
+    {
+        Bundle bundle = FrameworkUtil.getBundle(PropertyController.class);
+
+        if (bundle != null)
+        {
+            notifier.setContext(bundle.getBundleContext());
+        }
+
+        this.notifier = notifier;
+    }
+
+    /**
      * @param name
      * @return a single property's value.
      */
@@ -72,11 +95,7 @@ public class PropertyController {
 
     public void setProperty(String name, String value) throws RemoteException
     {
-        if (isReadOnly)
-        {
-            throw new RemoteException(String.format(CoalesceErrors.NOT_SAVED, name, "String", "Read Only"));
-        }
-        settings.setSetting(key, name, value);
+        setProperties(Collections.singletonMap(name, value));
     }
 
     /**
@@ -118,6 +137,8 @@ public class PropertyController {
         for (Map.Entry<String, String> entry : values.entrySet())
         {
             settings.setSetting(key, entry.getKey(), entry.getValue());
+
+            notifier.sendMessage("property/" + key, entry.getKey(), entry.getValue());
         }
     }
 
@@ -158,6 +179,8 @@ public class PropertyController {
             {
                 writer.write(json);
             }
+
+            notifier.sendMessage("property/" + name, name, json);
         }
         catch (IOException e)
         {
