@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.incadencecorp.coalesce.notification</groupId>
 		<artifactId>coalesce-notification-parent</artifactId>
-		<version>0.0.25</version>
+		<version>0.0.26-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
