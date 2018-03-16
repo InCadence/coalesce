@@ -10,17 +10,6 @@
 		<gt.version>16.1</gt.version>
 	</properties>
 
-	<distributionManagement>
-		<repository>
-			<id>nexus</id>
-			<url>http://10.15.0.230:8081/repository/maven-releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>nexus</id>
-			<url>http://10.15.0.230:8081/repository/maven-snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
-
 	<parent>
 		<groupId>com.incadencecorp.coalesce</groupId>
 		<artifactId>coalesce-pom</artifactId>
