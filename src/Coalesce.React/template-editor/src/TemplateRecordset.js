@@ -42,8 +42,6 @@ export class RecordSet extends Component {
   render() {
     const { recordset } = this.state;
 
-    console.log(JSON.stringify(recordset));
-
     return (
       <div className="ui-widget-content" style={{'overflowY': 'auto', 'overflowX': 'hidden','maxHeight': '500px'}}>
         <Row>

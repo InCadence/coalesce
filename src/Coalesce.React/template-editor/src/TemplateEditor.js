@@ -40,20 +40,6 @@ class TemplateEditor extends Component {
     })
   }
 
-  handleSectionChange(key, attr, value){
-    const {template} = this.state;
-
-    template.sectionsAsList.forEach(function (item) {
-        if (item.key === key) {
-          item[attr] = value;
-        }
-    });
-
-    this.setState({
-      template: template
-    })
-  }
-
   render() {
 
     const { template } = this.state;
@@ -84,19 +70,7 @@ class TemplateEditor extends Component {
             />
           </Col>
         </Row>
-        <Tabs>
-          {template.sectionsAsList.map((item) => {return (
-            <Tab key={item.key} label={<TextField
-              fullWidth={true}
-              inputStyle={{'color': 'rgb(255, 255, 255)', 'text-align': 'center'}}
-              value={item.name}
-              underlineShow={false}
-              onChange={(event, value) => {this.handleSectionChange(item.key, "name", value);}}
-            />}>
-              <Section data={item}/>
-            </Tab>
-          )})}
-        </Tabs>
+        <Section data={template} />
       </Panel>
     );
   }
