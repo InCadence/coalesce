@@ -83,6 +83,14 @@ public class CoalesceSchedulerServiceImpl implements ICoalesceExecutorService, A
         return _pool;
     }
 
+    /**
+     * @return the thread status if the underlying ExecutorService is a ThreadPoolExecutor.
+     */
+    public final ThreadStatus getStatus()
+    {
+        return (_pool instanceof ThreadPoolExecutor) ? new ThreadStatus((ThreadPoolExecutor) _pool) : new ThreadStatus();
+    }
+
     @Override
     public final void execute(Runnable command)
     {
