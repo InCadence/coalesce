@@ -17,7 +17,8 @@
     "react-scripts": "1.0.17",
     "react-sidenav": "^2.1.2",
     "react-sortable-tree": "^1.5.3",
-    "react-table": "^6.8.0"
+    "react-table": "^6.8.0",
+    "uuid": "^3.2.1"
   },
   "scripts": {
     "preinstall": "npm install ../common-components/",

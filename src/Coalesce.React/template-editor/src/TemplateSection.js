@@ -7,6 +7,8 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import { DialogAddOptions } from './DialogAddOptions';
+import uuid from 'uuid';
+
 export class Section extends React.Component {
 
   constructor(props) {
@@ -164,7 +166,7 @@ export class Section extends React.Component {
     for (var ii=0; ii<section.recordsetsAsList.length; ii++) {
         if (section.recordsetsAsList[ii].key === key) {
           section.recordsetsAsList[ii].fieldDefinitions.push({
-            key: uuidv4(),
+            key: uuid.v4(),
             name: "newField",
             dataType: "STRING_TYPE"
           })
@@ -235,7 +237,7 @@ export class Section extends React.Component {
 
 function createSection() {
   return {
-    key: uuidv4(),
+    key: uuid.v4(),
     name: "ChangeMe",
     sectionsAsList: [],
     recordsetsAsList: []
@@ -245,16 +247,10 @@ function createSection() {
 function createRecordset() {
 
   return {
-    key: uuidv4(),
+    key: uuid.v4(),
     name: "ChangeMe2",
     fieldDefinitions: [],
     minRecords: 0,
     maxRecords: 1,
   }
-}
-
-function uuidv4() {
-  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-  )
 }
