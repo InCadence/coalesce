@@ -57,7 +57,7 @@ import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 
-import mil.nga.giat.data.elasticsearch.FilterToElastic;
+//import mil.nga.giat.data.elasticsearch.FilterToElastic;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -124,24 +124,24 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         }
     }
     
-    public void searchElasticGeo() {
-    	
-    	FilterToElastic filterElastic = new FilterToElastic();
-    	
-    	Map<String, Object> queryBuilder = filterElastic.getNativeQueryBuilder();
-    	
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-	    	TransportClient client = conn.getDBConnector();
-	    	SearchResponse response = client.prepareSearch("twitter4")
-	    	        .setTypes("tweet")
-	    	        .get();
-
-	    	System.out.println(response.toString());
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-    }
+//    public void searchElasticGeo() {
+//    	
+//    	FilterToElastic filterElastic = new FilterToElastic();
+//    	
+//    	Map<String, Object> queryBuilder = filterElastic.getNativeQueryBuilder();
+//    	
+//        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+//        {
+//	    	TransportClient client = conn.getDBConnector();
+//	    	SearchResponse response = client.prepareSearch("twitter4")
+//	    	        .setTypes("tweet")
+//	    	        .get();
+//
+//	    	System.out.println(response.toString());
+//        } catch (Exception e) {
+//        	e.printStackTrace();
+//        }
+//    }
 
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
                                                          String entityIdType,
