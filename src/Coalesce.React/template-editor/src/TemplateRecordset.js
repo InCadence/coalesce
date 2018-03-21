@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import Checkbox from 'material-ui/Checkbox';
-import {
-  Row, Col
-} from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import TextField from 'material-ui/TextField';
 
 import { Definitions } from './TemplateDefinitions'

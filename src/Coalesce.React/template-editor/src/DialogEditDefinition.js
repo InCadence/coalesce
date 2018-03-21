@@ -3,7 +3,15 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import {List, ListItem} from 'material-ui/List';
 import TextField from 'material-ui/TextField';
+import Checkbox from 'material-ui/Checkbox';
+import { Row, Col } from 'react-bootstrap';
+import ActionDelete from 'material-ui/svg-icons/action/delete';
+import EditorModeEdit from 'material-ui/svg-icons/editor/mode-edit';
+import Subheader from 'material-ui/Subheader';
+
+// TODO Move this to a common file
 
 const dataTypes = [
   "STRING_TYPE",
@@ -95,6 +103,65 @@ export class DialogEditDefinition extends React.Component {
             return (<MenuItem key={type} value={dataTypes.indexOf(type)} primaryText={type} />);
           })}
         </SelectField>
+        <TextField
+          fullWidth={true}
+          floatingLabelText="Default Value"
+          value={definition.defaultValue}
+          onChange={(event, value) => {this.handleChange("defaultValue", value);}}
+        />
+        <Row>
+          <Col xs={4}>
+            <Checkbox
+              label="Flatten"
+              checked={definition.flatten}
+              onCheck={(event, checked) => {
+                this.handleChange("flatten", checked);
+              }}
+            />
+          </Col>
+          <Col xs={4}>
+            <Checkbox
+              label="Index"
+              checked={!definition.noIndex}
+              onCheck={(event, checked) => {
+                this.handleChange("noIndex", !checked);
+              }}
+            />
+          </Col>
+          <Col xs={4}>
+            <Checkbox
+              label="Disable History"
+              checked={definition.disableHistory}
+              onCheck={(event, checked) => {
+                this.handleChange("disableHistory", checked);
+              }}
+            />
+          </Col>
+        </Row>
+        <List>
+          <Subheader>Constraints</Subheader>
+          {definition.constraints.map((item) => {return (
+              <ListItem
+                key={item.key}
+                primaryText={item.name}
+                secondaryText={item.type}
+                leftIcon={
+                  <EditorModeEdit
+                    color="#3d3d3c"
+                    hoverColor="#FF9900"
+                    onClick={() => {this.setState({selected: item})}}
+                  />
+                }
+                rightIcon={
+                  <ActionDelete
+                    color="#3d3d3c"
+                    hoverColor="#FF9900"
+                    onClick={() => {this.handleDeleteDefinition(item.key)}}
+                  />
+                }
+              />
+          )})}
+        </List>
       </Dialog>
     )
   }
