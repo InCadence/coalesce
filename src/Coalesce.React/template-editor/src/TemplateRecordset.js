@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import {Tabs, Tab} from 'material-ui/Tabs';
-import {List, ListItem} from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
 import {
   Row, Col
@@ -13,19 +11,13 @@ export class RecordSet extends Component {
 
   constructor(props) {
     super(props);
-    this.handleClick = this.handleClick.bind(this);
+
     this.handleChange = this.handleChange.bind(this);
-    this.handleEditToggle = this.handleEditToggle.bind(this);
+    this.handleDeleteDefinition = this.handleDeleteDefinition.bind(this);
 
     this.state = {
       recordset: props.data,
-      open: false,
-      edit: false,
     };
-  }
-
-  handleClick() {
-    this.setState({ open: !this.state.open })
   }
 
   handleChange(attr, value) {
@@ -34,8 +26,16 @@ export class RecordSet extends Component {
     this.setState({ recordset: recordset })
   }
 
-  handleEditToggle(e) {
-    this.setState({ edit: !this.state.edit })
+  handleDeleteDefinition(key) {
+    const { recordset } = this.state;
+
+    for (var ii=0; ii<recordset.fieldDefinitions.length; ii++) {
+      if (recordset.fieldDefinitions[ii].key === key) {
+        recordset.fieldDefinitions.splice(ii, 1);
+      }
+    }
+
+    this.setState({ recordset: recordset })
   }
 
   render() {
@@ -54,11 +54,12 @@ export class RecordSet extends Component {
               }}
             />
           </Col>
-          <Col xs={4} style={{'text-align': 'right'}}>
+          <Col xs={4} style={{'textAlign': 'right'}}>
             Min / Max
           </Col>
           <Col xs={2}>
             <TextField
+              id={recordset.key + "_min"}
               type='number'
               fullWidth={true}
               underlineShow={false}
@@ -69,6 +70,7 @@ export class RecordSet extends Component {
           </Col>
           <Col xs={2}>
             <TextField
+              id={recordset.key + "_max"}
               type='number'
               fullWidth={true}
               underlineShow={false}
@@ -78,7 +80,7 @@ export class RecordSet extends Component {
             />
           </Col>
         </Row>
-        <Definitions data={recordset.fieldDefinitions} />
+        <Definitions data={recordset.fieldDefinitions} onDelete={this.handleDeleteDefinition} />
       </div>
     );
   }

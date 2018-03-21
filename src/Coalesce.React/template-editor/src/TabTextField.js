@@ -2,11 +2,9 @@ import React from 'react'
 
 import TextField from 'material-ui/TextField';
 import AvPlaylistAdd from 'material-ui/svg-icons/av/playlist-add';
-import EditorModeEditAdd from 'material-ui/svg-icons/editor/mode-edit';
-import ContentRemoveCircle from 'material-ui/svg-icons/content/remove-circle';
 import ContentDeleteSweep from 'material-ui/svg-icons/content/delete-sweep';
 import {blue500, red500, greenA200} from 'material-ui/styles/colors';
-import { Row, Col } from 'react-bootstrap'
+import { Row } from 'react-bootstrap'
 
 const iconStyles = {
   marginRight: 2,
@@ -21,9 +19,10 @@ export class TabTextField extends React.PureComponent {
       <div style={{'display': 'table'}}>
         <div style={{'display': 'table-cell'}}>
           <TextField
+            id={this.props.item.key}
             fullWidth={true}
             underlineShow={false}
-            inputStyle={{'color': 'rgb(255, 255, 255)', 'text-align': 'center'}}
+            inputStyle={{'color': 'rgb(255, 255, 255)', 'textAlign': 'center'}}
             value={this.props.item.name}
             onChange={(event, value) => {this.props.onNameChange(this.props.item.key, "name", value);}}
           />
@@ -33,8 +32,8 @@ export class TabTextField extends React.PureComponent {
           <Row style={{height: '24px'}}>
             <ContentDeleteSweep
               style={iconStyles}
-              color={red500}
-              hoverColor={greenA200}
+              color="#3d3d3c"
+              hoverColor="#FF9900"
               onClick={() => this.props.onDelete(this.props.item.key)}
             />
           </Row>
@@ -43,8 +42,8 @@ export class TabTextField extends React.PureComponent {
           <Row style={{height: '24px'}}>
             <AvPlaylistAdd
               style={iconStyles}
-              color={red500}
-              hoverColor={greenA200}
+              color="#3d3d3c"
+              hoverColor="#FF9900"
               onClick={() => this.props.onAdd(this.props.item.key)}
             />
           </Row>

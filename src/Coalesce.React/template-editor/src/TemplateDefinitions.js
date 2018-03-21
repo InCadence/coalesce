@@ -1,56 +1,59 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Icon from 'react-icons-kit';
 import {List, ListItem} from 'material-ui/List';
-import { stack } from 'react-icons-kit/icomoon/stack';
-import TextField from 'material-ui/TextField';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
+import ActionDelete from 'material-ui/svg-icons/action/delete';
+import EditorModeEdit from 'material-ui/svg-icons/editor/mode-edit';
+import { DialogEditDefinition } from './DialogEditDefinition';
 
-export class Definitions extends Component {
+export class Definitions extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleClick = this.handleClick.bind(this);
-    this.handlePropsChange = this.handlePropsChange.bind(this);
-    this.handleEditToggle = this.handleEditToggle.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-
     this.state = {
-      definitions: props.data,
-      open: "false",
+      selected: null,
     };
   }
-  handleClick() {
-    this.setState({ open: !this.state.open })
-  }
 
-  handlePropsChange(value) {
-    this.setState({ name: value })
-  }
-
-  handleEditToggle(e) {
-    this.setState({ edit: !this.state.edit })
-  }
-
-  handleChange(attr, value) {
-
+  handleDeleteDefinition(key) {
+    this.props.onDelete(key);
   }
 
   render() {
 
-    const { definitions } = this.state;
-
     return (
+      <div>
         <List>
-          {definitions.map((item) => {return (
+          {this.props.data.map((item) => {return (
               <ListItem
                 key={item.key}
                 primaryText={item.name}
                 secondaryText={item.dataType}
-                rightIcon={<Icon icon={stack} />}
+                leftIcon={
+                  <EditorModeEdit
+                    color="#3d3d3c"
+                    hoverColor="#FF9900"
+                    onClick={() => {this.setState({selected: item})}}
+                  />
+                }
+                rightIcon={
+                  <ActionDelete
+                    color="#3d3d3c"
+                    hoverColor="#FF9900"
+                    onClick={() => {this.handleDeleteDefinition(item.key)}}
+                  />
+                }
               />
           )})}
         </List>
+        {this.state.selected != null &&
+          <DialogEditDefinition
+            opened={true}
+            definition={this.state.selected}
+            onClose={() => {this.setState({selected: null})}}
+            onDelete={this.props.onDelete}
+          />
+        }
+      </div>
     );
   }
 }

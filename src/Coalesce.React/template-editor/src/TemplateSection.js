@@ -1,11 +1,7 @@
 import React from 'react';
 import {Tabs, Tab} from 'material-ui/Tabs';
-import TextField from 'material-ui/TextField';
 import { RecordSet } from './TemplateRecordset'
 import { TabTextField } from './TabTextField'
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
 import { DialogAddOptions } from './DialogAddOptions';
 import uuid from 'uuid';
 

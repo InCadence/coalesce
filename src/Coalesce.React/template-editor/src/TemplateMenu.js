@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
-import { Panel, ButtonGroup, DropdownButton, MenuItem } from 'react-bootstrap';
+import { ButtonGroup, DropdownButton, MenuItem } from 'react-bootstrap';
 
 class TemplateMenu extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         return (
-          
+
                 <ButtonGroup >
                     <DropdownButton title="File" bsStyle="default" noCaret id="dropdown-no-caret">
                         <MenuItem eventKey="1">Save Templates</MenuItem>
@@ -31,7 +28,7 @@ class TemplateMenu extends Component {
                         <MenuItem eventKey="4">Documentation</MenuItem>
                     </DropdownButton>
                 </ButtonGroup>
-           
+
         );
     }
 }

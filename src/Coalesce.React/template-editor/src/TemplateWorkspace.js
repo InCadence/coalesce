@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import ReactGridLayout from 'react-grid-layout';
 import TemplateGraph from './TemplateGraph.js';
-import TemplateOutline from './TemplateOutline.js';
 import TemplateEditor from './TemplateEditor.js';
-import TemplateNavBar from './TemplateNavBar.js';
 import { Template } from './TemplateObjects.js';
-import { Panel, Grid, Row, Col, Button } from 'react-bootstrap';
-import EditModal from './EditModal.js';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import uuid from 'uuid';
 
 import { loadTemplates, loadTemplate, saveTemplate,registerTemplate } from './fetch';
 import {Menu} from 'common-components/lib/index.js'
@@ -36,6 +33,7 @@ class TemplateWorkspace extends Component {
     this.handleTemplateAdd = this.handleTemplateAdd.bind(this);
     this.handleTemplateLoad = this.handleTemplateLoad.bind(this);
     this.handleTemplateSave = this.handleTemplateSave.bind(this);
+    this.handleTemplateRemove = this.handleTemplateRemove.bind(this);
     this.handleTemplateRegister = this.handleTemplateRegister.bind(this);
     this.handleGraphAdd = this.handleGraphAdd.bind(this);
     this.handleEditModalToggle = this.handleEditModalToggle.bind(this);
@@ -54,12 +52,12 @@ class TemplateWorkspace extends Component {
       items: this.state.items.concat({
         i: "n" + this.state.newCounter,
         x: ((this.state.items.length * 5) % (this.state.cols || 12)) + 1,
-        y: Infinity, // puts it at the bottom
+        y: 0, // puts it at the bottom
         w: 5,
-        h: 10,
+        h: 15,
         static: false,
         widgetType: "template",
-        template: new Template("n" + this.state.newCounter, null, "New Template"),
+        template: {key: uuid.v4(), sectionsAsList: []},
       }),
       // Increment the counter to ensure key is always unique.
       newCounter: this.state.newCounter + 1,
@@ -132,6 +130,23 @@ class TemplateWorkspace extends Component {
     });
 
   }
+
+  handleTemplateRemove(key) {
+
+    console.log("Removing Template: " + key);
+
+    const { items } = this.state;
+
+    for (var ii=0; ii<items.length; ii++) {
+      if (items[ii].template.key === key) {
+        items.splice(ii, 1);
+      }
+    }
+
+    this.setState(items);
+
+  }
+
   handleGraphAdd() {
 
     this.setState({
@@ -161,7 +176,11 @@ class TemplateWorkspace extends Component {
     if (item.widgetType === "template") {
       widget = (
 
-          <TemplateEditor onSave={this.handleTemplateSave} template={item.template} />
+          <TemplateEditor
+            template={item.template}
+            onSave={this.handleTemplateSave}
+            onRemove={this.handleTemplateRemove}
+          />
 
       );
     } else {
