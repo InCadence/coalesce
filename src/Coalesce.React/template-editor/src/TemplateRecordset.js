@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import {List, ListItem} from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
-import ReactTable from 'react-table';
 import {
   Row, Col
 } from 'react-bootstrap';

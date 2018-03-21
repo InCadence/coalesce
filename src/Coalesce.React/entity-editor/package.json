@@ -9,6 +9,7 @@
   "private": true,
   "homepage": "/entityeditor",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "common-components": "file:../common-components",
     "material-ui": "^0.20.0",
     "prop-types": "^15.6.0",

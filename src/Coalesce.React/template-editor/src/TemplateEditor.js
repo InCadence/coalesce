@@ -11,7 +11,6 @@ import EditModal from './EditModal';
 import { TemplateObject, TemplateObjectTypes } from './TemplateObjects.js';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import {List, ListItem} from 'material-ui/List';
-import ReactTable from 'react-table';
 import TextField from 'material-ui/TextField';
 import { stack } from 'react-icons-kit/icomoon/stack';
 
