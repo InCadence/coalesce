@@ -42,17 +42,17 @@ class Main extends React.Component {
 
   onAdd(update)
   {
-    if (!isInteger(update.name))
+    const data=this.state;
+    update.updated_src.data=data.data;
+    var pointer=data;
+
+    for (var ii=0; ii<update.namespace.length; ii++)
     {
-      const data=this.state;
-      update.updated_src.data=data.data;
-      var pointer=data;
+        pointer = pointer[update.namespace[ii]];
+    }
 
-      for (var ii=0; ii<update.namespace.length; ii++)
-      {
-          pointer = pointer[update.namespace[ii]];
-      }
-
+    if (Array.isArray(pointer[update.name]))
+    {
       if (update.existing_value.length > 0)
       {
         pointer[update.name].push(this.cloneKeys(update.existing_value[0]));
@@ -64,7 +64,7 @@ class Main extends React.Component {
     }
     else
     {
-      pointer[update.name].push(null);
+      pointer[update.name] = update.new_value;
     }
   }
 
