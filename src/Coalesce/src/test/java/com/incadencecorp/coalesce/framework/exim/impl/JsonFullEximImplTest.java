@@ -26,8 +26,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.api.Views;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.framework.compareables.CoalesceFieldComparator;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
@@ -51,7 +49,7 @@ public class JsonFullEximImplTest {
      * This is an example of how to use the ObjectMapper to perform the same
      * function as JsonFullEximImpl
      *
-     * @throws Exception
+     * @throws Exception on error
      */
     @Test public void eximTest() throws Exception
     {
@@ -92,7 +90,7 @@ public class JsonFullEximImplTest {
      * Record Sets, passing them in at any other level will throw a runtime
      * exception.
      *
-     * @throws Exception
+     * @throws Exception on error
      */
     @Test(expected = RuntimeException.class) public void invalidJSONTest() throws Exception
     {
@@ -115,7 +113,7 @@ public class JsonFullEximImplTest {
      * This test creates an object, exports to JSON, and imports it into another
      * object with an additional record set.
      *
-     * @throws Exception
+     * @throws Exception on error
      */
     @Test public void importIntoExpandedEntityTests() throws Exception
     {
@@ -163,7 +161,7 @@ public class JsonFullEximImplTest {
     /**
      * This test ensures that you can export and import values.
      *
-     * @throws Exception
+     * @throws Exception on error
      */
     @Test public void importExportTest() throws Exception
     {
@@ -250,7 +248,7 @@ public class JsonFullEximImplTest {
      * This test creates a {@link TestEntity}, exports its values, and attempts
      * to import into an invalid entity type.
      *
-     * @throws Exception
+     * @throws Exception on error
      */
     @Test public void invalidObjectTest() throws Exception
     {
