@@ -17,23 +17,19 @@
 
 package com.incadencecorp.coalesce.framework.exim.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+import com.incadencecorp.coalesce.api.Views;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.util.GeometricShapeFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.api.Views;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
-import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This unit test covers the {@link JsonFullEximImpl}
@@ -51,7 +47,8 @@ public class JsonFullEximImplTest {
      *
      * @throws Exception on error
      */
-    @Test public void eximTest() throws Exception
+    @Test
+    public void eximTest() throws Exception
     {
         JsonFullEximImpl exim = new JsonFullEximImpl();
         exim.setView(Views.Entity.class);
@@ -92,7 +89,8 @@ public class JsonFullEximImplTest {
      *
      * @throws Exception on error
      */
-    @Test(expected = RuntimeException.class) public void invalidJSONTest() throws Exception
+    @Test(expected = RuntimeException.class)
+    public void invalidJSONTest() throws Exception
     {
 
         JsonFullEximImpl exim = new JsonFullEximImpl();
@@ -115,7 +113,8 @@ public class JsonFullEximImplTest {
      *
      * @throws Exception on error
      */
-    @Test public void importIntoExpandedEntityTests() throws Exception
+    @Test
+    public void importIntoExpandedEntityTests() throws Exception
     {
 
         JsonFullEximImpl exim = new JsonFullEximImpl();
@@ -163,7 +162,8 @@ public class JsonFullEximImplTest {
      *
      * @throws Exception on error
      */
-    @Test public void importExportTest() throws Exception
+    @Test
+    public void importExportTest() throws Exception
     {
         TestEntity entity = new TestEntity();
         entity.initialize();
@@ -250,7 +250,8 @@ public class JsonFullEximImplTest {
      *
      * @throws Exception on error
      */
-    @Test public void invalidObjectTest() throws Exception
+    @Test
+    public void invalidObjectTest() throws Exception
     {
 
         TestEntity entity = new TestEntity();
@@ -278,6 +279,47 @@ public class JsonFullEximImplTest {
 
         // Since we are importing into a CoalesceEntity the section should not be created because it does not exists within the template.
         Assert.assertNull(entity2.getCoalesceRecordsetForNamePath(entity.getRecordset1().getNamePath()));
+    }
+
+    /**
+     * This test ensures that you can export / import DateTime and Geometry fields.
+     *
+     * @throws Exception on error
+     *  TODO There is a mismatch and they do not work.
+     */
+    @Test
+    public void importExportDateTimeTest() throws Exception
+    {
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        TestRecord record;
+
+                GeometricShapeFactory factory = new GeometricShapeFactory();
+        factory.setSize(10);
+        factory.setNumPoints(4);
+        factory.setCentre(new Coordinate(0, 0));
+        Polygon shape = factory.createCircle();
+
+
+        // Create Record 1
+        record = entity.addRecord1();
+        record.getDateField().setValue(JodaDateTimeHelper.nowInUtc());
+        //record.getPolygonField().setValue(shape);
+
+        JsonFullEximImpl exim = new JsonFullEximImpl();
+
+        JSONObject json = exim.exportValues(entity, true);
+
+        System.out.println(json);
+
+        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
+
+        entity = new TestEntity();
+        entity.initialize(exim.importValues(json, template));
+
+        System.out.println(entity.toXml());
+
     }
 
 }
