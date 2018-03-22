@@ -164,7 +164,8 @@ export class Section extends React.Component {
           section.recordsetsAsList[ii].fieldDefinitions.push({
             key: uuid.v4(),
             name: "newField",
-            dataType: "STRING_TYPE"
+            dataType: "STRING_TYPE",
+            constraints: []
           })
           break;
         }
