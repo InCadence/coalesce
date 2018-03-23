@@ -1,6 +1,6 @@
 package com.incadencecorp.coalesce.services.common.jaxrs;
 
-import com.incadencecorp.coalesce.services.common.controllers.PropertyController;
+import com.incadencecorp.coalesce.services.common.api.IPropertyController;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -8,12 +8,12 @@ import java.rmi.RemoteException;
 import java.util.Map;
 
 /**
- * JaxRS annotations used on {@link PropertyController}
+ * Extends {@link IPropertyController} and appends JAX-RS annotations.
  *
  * @author Derek Clemenzi
  */
 @Path("property")
-interface IPropertyControllerJaxRS {
+interface IPropertyControllerJaxRS extends IPropertyController {
 
     @GET
     @Path("/{name}.json")

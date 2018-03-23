@@ -5,6 +5,7 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
 import com.incadencecorp.coalesce.services.api.mappers.CoalesceMapper;
+import com.incadencecorp.coalesce.services.common.api.IBlueprintController;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.EGraphNodeType;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphLink;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphNode;
@@ -30,7 +31,7 @@ import java.util.*;
  *
  * @author Derek Clemenzi
  */
-public class BlueprintController {
+public class BlueprintController implements IBlueprintController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BlueprintController.class);
     private static final List<String> IGNORE_LIST = Arrays.asList(CoalesceThreadFactoryImpl.class.getSimpleName(),
@@ -49,9 +50,7 @@ public class BlueprintController {
         root = Paths.get(path);
     }
 
-    /**
-     * @return a list of xml documents within the configured directory.
-     */
+    @Override
     public List<String> getBlueprints()
     {
         List<String> results = new ArrayList<>();
@@ -74,11 +73,7 @@ public class BlueprintController {
         return results;
     }
 
-    /**
-     * @param name filename to render.
-     * @return nodes and linkages of the bean for the specified xml document.
-     * @throws RemoteException on error
-     */
+    @Override
     public GraphObj getBlueprint(String name) throws RemoteException
     {
         GraphObj result = new GraphObj();

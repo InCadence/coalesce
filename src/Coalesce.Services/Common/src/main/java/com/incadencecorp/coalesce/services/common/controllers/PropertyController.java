@@ -6,6 +6,7 @@ import com.incadencecorp.coalesce.api.ICoalesceNotifier;
 import com.incadencecorp.coalesce.enums.ECrudOperations;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.notification.impl.Log4jNotifierImpl;
+import com.incadencecorp.coalesce.services.common.api.IPropertyController;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
@@ -29,7 +30,7 @@ import java.util.Map;
  *
  * @author Derek Clemenzi
  */
-public class PropertyController {
+public class PropertyController implements IPropertyController {
 
     private IConfigurationsConnector connector = new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION);
     private SettingsBase settings = new SettingsBase(connector);
@@ -84,31 +85,25 @@ public class PropertyController {
         this.notifier = notifier;
     }
 
-    /**
-     * @param name
-     * @return a single property's value.
-     */
+    @Override
     public String getProperty(String name) throws RemoteException
     {
         return settings.getSetting(key, name, "", false);
     }
 
+    @Override
     public void setProperty(String name, String value) throws RemoteException
     {
         setProperties(Collections.singletonMap(name, value));
     }
 
-    /**
-     * @return all the properties and their values that are handled by this controller.
-     */
+    @Override
     public Map<String, String> getProperties() throws RemoteException
     {
         return connector.getSettings(key);
     }
 
-    /**
-     * @return specified properties and their values.
-     */
+    @Override
     public Map<String, String> getProperties(String[] names) throws RemoteException
     {
         Map<String, String> results = new HashMap<>();
@@ -121,9 +116,7 @@ public class PropertyController {
         return results;
     }
 
-    /**
-     * Sets multiple property's values. If the connector is readonly then this method wont do anything. Also this should be restricted to privileged users.
-     */
+    @Override
     public void setProperties(Map<String, String> values) throws RemoteException
     {
         if (isReadOnly)
@@ -142,6 +135,7 @@ public class PropertyController {
         }
     }
 
+    @Override
     public String getJsonConfiguration(String name) throws RemoteException
     {
         JSONObject json;
@@ -162,6 +156,7 @@ public class PropertyController {
         return json.toString();
     }
 
+    @Override
     public void setJsonConfiguration(String name, String json) throws RemoteException
     {
         if (isReadOnly)
