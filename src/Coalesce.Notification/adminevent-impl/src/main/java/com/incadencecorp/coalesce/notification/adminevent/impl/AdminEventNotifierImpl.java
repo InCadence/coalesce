@@ -18,6 +18,7 @@
 package com.incadencecorp.coalesce.notification.adminevent.impl;
 
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
+import com.incadencecorp.coalesce.api.subscriber.events.*;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.enums.EAuditCategory;
 import com.incadencecorp.coalesce.enums.EAuditLevels;
@@ -47,6 +48,11 @@ import java.util.Hashtable;
 public class AdminEventNotifierImpl implements ICoalesceNotifier {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminEventNotifierImpl.class);
+    public static final String TOPIC_METRICS = "com/incadence/metrics";
+    public static final String TOPIC_CRUD = "com/incadence/crud";
+    public static final String TOPIC_LINKAGE = "com/incadence/linkage";
+    public static final String TOPIC_AUDIT = "com/incadence/audit";
+    public static final String TOPIC_JOB = "com/incadence/job";
 
     /*--------------------------------------------------------------------------
     Member Variables
@@ -55,7 +61,7 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
     private BundleContext context;
 
     /*--------------------------------------------------------------------------
-    Public Methods
+    Private Methods
     --------------------------------------------------------------------------*/
 
     private BundleContext getContext()
@@ -90,32 +96,32 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
     @Override
     public void sendMetrics(String task, MetricResults<?> results)
     {
-        Dictionary<String, Object> properties = new Hashtable<>();
-        properties.put("name", task);
-        properties.put("pending", results.getWatch().getPendingLife());
-        properties.put("working", results.getWatch().getWorkLife());
-        properties.put("total", results.getWatch().getTotalLife());
-        properties.put("successful", results.isSuccessful());
-        if (!results.isSuccessful() && !StringHelper.isNullOrEmpty(results.getResults().getError()))
-        {
-            properties.put("error", results.getResults().getError());
-        }
+        MetricsEvent event = new MetricsEvent();
+        event.setName(task);
+        event.setPending(results.getWatch().getPendingLife());
+        event.setWorking(results.getWatch().getWorkLife());
+        event.setTotal(results.getWatch().getTotalLife());
+        event.setSuccessful(results.isSuccessful());
+        event.setError(results.getResults().getError());
 
-        sendEvent(new Event("com/incadence/metrics", properties));
+        Dictionary<String, Object> properties = new Hashtable<>();
+        properties.put("event", event);
+
+        sendEvent(new Event(TOPIC_METRICS, properties));
     }
 
     @Override
     public void sendCrud(String task, ECrudOperations operation, ObjectMetaData data)
     {
-        Dictionary<String, Object> properties = new Hashtable<>();
-        properties.put("name", task);
-        properties.put("operation", operation.toString());
-        properties.put("entitykey", data.getKey());
-        properties.put("entityname", data.getName());
-        properties.put("entitysource", data.getSource());
-        properties.put("entityversion", data.getVersion());
+        CrudEvent event = new CrudEvent();
+        event.setName(task);
+        event.setOperation(operation);
+        event.setMeta(data);
 
-        sendEvent(new Event("com/incadence/crud", properties));
+        Dictionary<String, Object> properties = new Hashtable<>();
+        properties.put("event", event);
+
+        sendEvent(new Event(TOPIC_CRUD, properties));
     }
 
     @Override
@@ -125,51 +131,57 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
                             ELinkTypes relationship,
                             ObjectMetaData entity2)
     {
-        Dictionary<String, Object> properties = new Hashtable<>();
-        properties.put("name", task);
-        properties.put("operation", operation.toString());
-        properties.put("entity1key", entity1.getKey());
-        properties.put("entity1name", entity1.getName());
-        properties.put("entity1source", entity1.getSource());
-        properties.put("entity1version", entity1.getVersion());
-        properties.put("relationship", relationship.toString());
-        properties.put("entity2key", entity2.getKey());
-        properties.put("entity2name", entity2.getName());
-        properties.put("entity2source", entity2.getSource());
-        properties.put("entity2version", entity2.getVersion());
+        LinkageEvent event = new LinkageEvent();
+        event.setName(task);
+        event.setOperation(operation);
+        event.setEntity1(entity1);
+        event.setRelationship(relationship);
+        event.setEntity2(entity2);
 
-        sendEvent(new Event("com/incadence/linkage", properties));
+        Dictionary<String, Object> properties = new Hashtable<>();
+        properties.put("event", event);
+
+        sendEvent(new Event(TOPIC_LINKAGE, properties));
     }
 
     @Override
     public void sendAudit(String task, EAuditCategory category, EAuditLevels level, String message)
     {
-        Dictionary<String, Object> properties = new Hashtable<>();
-        properties.put("name", task);
-        properties.put("category", category.toString());
-        properties.put("level", level.toString());
-        properties.put("message", message);
+        AuditEvent event = new AuditEvent();
+        event.setName(task);
+        event.setCategory(category);
+        event.setLevel(level);
+        event.setMessage(message);
 
-        sendEvent(new Event("com/incadence/audit", properties));
+        Dictionary<String, Object> properties = new Hashtable<>();
+        properties.put("event", event);
+
+        sendEvent(new Event(TOPIC_AUDIT, properties));
     }
 
     @Override
     public void sendJobComplete(AbstractCoalesceJob<?, ?, ?> job)
     {
-        Dictionary<String, Object> properties = new Hashtable<>();
-        properties.put("name", job.getName());
-        properties.put("id", job.getJobId());
-        properties.put("status", job.getJobStatus().toString());
+        JobEvent event = new JobEvent();
+        event.setName(job.getName());
+        event.setId(job.getJobId());
+        event.setStatus(job.getJobStatus());
 
-        sendEvent(new Event("com/incadence/job", properties));
+        Dictionary<String, Object> properties = new Hashtable<>();
+        properties.put("event", event);
+
+        sendEvent(new Event(TOPIC_JOB, properties));
     }
 
     @Override
     public <V> void sendMessage(String topic, String key, V value)
     {
+        KeyValuePairEvent<V> event = new KeyValuePairEvent<>();
+        event.setKey(key);
+        event.setValue(value);
+
         Dictionary<String, Object> properties = new Hashtable<>();
-        properties.put("key", key);
-        properties.put("value", value);
+        properties.put("event", event);
 
         sendEvent(new Event(topic.replace("\\.", "/"), properties));
     }
