@@ -6,8 +6,8 @@
 
 
 	<parent>
-		<groupId>com.incadencecorp.coalesce.notification</groupId>
-		<artifactId>coalesce-notification-parent</artifactId>
+		<groupId>com.incadencecorp.coalesce.notification.kafka</groupId>
+		<artifactId>notification-kafka-parent</artifactId>
 		<version>0.0.26-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
@@ -23,7 +23,7 @@
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>
-                            ${project.groupId}.kafka.impl*
+                            ${project.groupId}.impl*
                         </Export-Package>
 					</instructions>
 				</configuration>

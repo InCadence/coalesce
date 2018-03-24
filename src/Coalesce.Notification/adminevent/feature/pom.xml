@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>notification-adminevent-feature</artifactId>
+    <packaging>feature</packaging>
+    <name>Coalesce Notification AdminEvent Feature</name>
+
+    <parent>
+        <groupId>com.incadencecorp.coalesce.notification.adminevent</groupId>
+        <artifactId>notification-adminevent-parent</artifactId>
+        <version>0.0.26-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+                <configuration>
+                    <aggregateFeatures>true</aggregateFeatures>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.notification.adminevent</groupId>
+            <artifactId>notification-adminevent-impl</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.incadencecorp.coalesce</groupId>
+                    <artifactId>coalesce-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+    </dependencies>
+
+</project>

@@ -19,7 +19,6 @@
 package com.incadencecorp.coalesce.api.subscriber;
 
 import com.incadencecorp.coalesce.api.subscriber.events.*;
-import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 import org.osgi.framework.BundleContext;
 
 /**
