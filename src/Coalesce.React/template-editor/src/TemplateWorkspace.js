@@ -6,7 +6,7 @@ import { Template } from './TemplateObjects.js';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import uuid from 'uuid';
 
-import { loadTemplates, loadTemplate, saveTemplate,registerTemplate } from './fetch';
+import { loadTemplates, loadTemplate, saveTemplate,registerTemplate } from 'common-components/lib/js/templateController.js';
 import {Menu} from 'common-components/lib/index.js'
 
 import {DialogTemplateSelection} from './DialogTemplateSelection'
