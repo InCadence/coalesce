@@ -285,7 +285,6 @@ public class JsonFullEximImplTest {
      * This test ensures that you can export / import DateTime and Geometry fields.
      *
      * @throws Exception on error
-     *  TODO There is a mismatch and they do not work.
      */
     @Test
     public void importExportDateTimeTest() throws Exception
@@ -305,21 +304,20 @@ public class JsonFullEximImplTest {
         // Create Record 1
         record = entity.addRecord1();
         record.getDateField().setValue(JodaDateTimeHelper.nowInUtc());
-        //record.getPolygonField().setValue(shape);
+        record.getPolygonField().setValue(shape);
 
         JsonFullEximImpl exim = new JsonFullEximImpl();
 
         JSONObject json = exim.exportValues(entity, true);
 
-        System.out.println(json);
-
         CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
 
-        entity = new TestEntity();
-        entity.initialize(exim.importValues(json, template));
+        TestEntity imported = new TestEntity();
+        imported.initialize(exim.importValues(json, template));
+        TestRecord recordImported = new TestRecord(imported.getRecordset1().getRecords().get(0));
 
-        System.out.println(entity.toXml());
-
+        Assert.assertEquals(record.getDateField().getBaseValue(), recordImported.getDateField().getBaseValue());
+        Assert.assertEquals(record.getPolygonField().getBaseValue(), recordImported.getPolygonField().getBaseValue());
     }
 
 }
