@@ -3,8 +3,6 @@ package com.incadencecorp.coalesce.services.common.controllers;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
-import com.incadencecorp.coalesce.enums.ECrudOperations;
-import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.notification.impl.Log4jNotifierImpl;
 import com.incadencecorp.coalesce.services.common.api.IPropertyController;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
