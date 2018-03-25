@@ -7,6 +7,10 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Popup from 'react-popup';
 import {registerLoader, registerPrompt, registerTemplatePrompt, registerErrorPrompt} from 'common-components/lib/register.js'
 
+import { loadTemplate, loadTemplates, createNewEntity, loadTemplateByName, loadTemplateByEntity } from 'common-components/lib/js/templateController'
+import { saveEntity, loadEntity } from 'common-components/lib/js/entityController'
+
+
 import {Menu} from 'common-components/lib/index.js'
 import 'common-components/bootstrap/css/bootstrap.min.css'
 
@@ -80,28 +84,17 @@ const NewEntity = ({match}) => {
   });
 }
 
-function saveEntity(entity, isNew, view) {
+function handleSaveEntity(entity, isNew, view) {
 
   Popup.plugins().loader('Saving...');
 
-  fetch(rootUrl + '/cxf/data/entity/' + entity.key, {
-    method: ((isNew) ? "PUT" : "POST"),
-    body: JSON.stringify(entity),
-    headers: new Headers({
-      'content-type': 'application/json; charset=utf-8'
-    }),
-  }).then(res => {
-      Popup.close();
-
-      if (!res.ok) {
-        throw Error(res.statusText);
-      }
-
-      view.setIsNew(false);
-
-  }).catch(function(error) {
-      Popup.plugins().promptError("Saving: " + error);
+  saveEntity(entity, isNew).then((value) => {
+    Popup.close();
+    view.setIsNew(false);
+  }).catch((err) => {
+    Popup.plugins().promptError("Saving: " + err);
   });
+
 }
 
 function renderEntity(key) {
@@ -109,30 +102,24 @@ function renderEntity(key) {
 
   Popup.plugins().loader('Loading Entity...');
 
-  fetch(rootUrl + '/cxf/data/entity/' + key)
-    .then(res => res.json())
-    .then(data => {
+  loadEntity(key).then((entity) => {
 
-      fetch(rootUrl + '/cxf/data/templates/' + data.name + '/' + data.source + '/' + data.version)
-        .then(res => res.json())
-        .then(template => {
+      loadTemplateByEntity(entity).then((template) => {
+        ReactDOM.render(
+          React.createElement(EntityView, {
+            data: entity,
+            template: template,
+            isNew: false,
+            saveEntity: handleSaveEntity
+          }),
+          document.getElementById('entityview')
+        );
 
+        Popup.close();
+      }).catch((err) => {
+          Popup.plugins().promptError('Failed to load template (' + entity.name + ', ' + entity.source + ', ' + entity.version + ')');
+      })
 
-          ReactDOM.render(
-            React.createElement(EntityView, {
-              data: data,
-              template: template,
-              isNew: false,
-              saveEntity: saveEntity
-            }),
-            document.getElementById('entityview')
-          );
-
-          Popup.close();
-
-        }).catch(function(error) {
-          Popup.plugins().promptError('Failed to load template (' + data.name + ', ' + data.source + ', ' + data.version + ')');
-        });
     }).catch(function(error) {
       Popup.plugins().promptError('Failed to load entity (' + key + ')');
     });
@@ -143,32 +130,26 @@ function renderNewEntity(key) {
 
   Popup.plugins().loader('Creating Entity...');
 
-  fetch(rootUrl + '/cxf/data/templates/' + key)
-    .then(res => res.json())
-    .then(template => {
+  loadTemplate(key).then((template) => {
+    createNewEntity(key).then((entity) => {
+      console.log('got here 2');
+      ReactDOM.render(
+        React.createElement(EntityView, {
+          data: entity,
+          template: template,
+          isNew: true,
+          saveEntity: handleSaveEntity
+        }),
+        document.getElementById('entityview')
+      );
 
-      fetch(rootUrl + '/cxf/data/templates/' + key + "/new")
-        .then(res => res.json())
-        .then(data => {
-
-
-          ReactDOM.render(
-            React.createElement(EntityView, {
-              data: data,
-              template: template,
-              isNew: true,
-              saveEntity: saveEntity
-            }),
-            document.getElementById('entityview')
-          );
-
-          Popup.close();
-        }).catch(function(error) {
-          Popup.plugins().promptError('Failed to create new entity (' + key + ')');
-        });
-    }).catch(function(error) {
-      Popup.plugins().promptError('Failed to load template (' + key + ')');
-    });
+      Popup.close();
+    }).catch((err) => {
+      Popup.plugins().promptError('Failed to create new entity (' + key + ')');
+    })
+  }).catch((err) => {
+    Popup.plugins().promptError('Failed to load template (' + key + ')');
+  });
 }
 
 // Default Component
@@ -178,9 +159,8 @@ ReactDOM.render(
 );
 
 /** Prompt plugin */
-fetch(rootUrl + '/cxf/data/templates')
-  .then(res => res.json())
-  .then(data => {
+loadTemplates().then((data) => {
+
       registerTemplatePrompt(Popup, rootUrl, data);
 
       ReactDOM.render(
