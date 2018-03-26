@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.incadencecorp.coalesce</groupId>
     <artifactId>coalesce-bom</artifactId>
-    <version>0.0.26</version>
+    <version>0.0.27-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>coalesce.bom</name>
 
@@ -27,8 +27,8 @@
 
         <jackson.jaxb.version>2.9.1</jackson.jaxb.version>
 
-        <changelog.start.tag>coalesce-0.0.25</changelog.start.tag>
-        <changelog.end.tag>coalesce-0.0.26</changelog.end.tag>
+        <changelog.start.tag>coalesce-0.0.26</changelog.start.tag>
+        <changelog.end.tag>HEAD</changelog.end.tag>
 
     </properties>
 
