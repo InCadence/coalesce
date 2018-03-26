@@ -2,8 +2,7 @@ import React from 'react';
 import {LinkageView} from './linkagetable'
 import {RecordsetView} from './recordset'
 import {RecordView} from './record'
-import { IconButton } from 'common-components/lib/components/IconButton.js'
-
+import {Row, Col} from 'react-bootstrap'
 import {Tabs, Tab} from 'material-ui/Tabs';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
@@ -18,6 +17,13 @@ export class EntityView extends React.Component {
         data: props.data,
         isNew: props.isNew
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      data: nextProps.data,
+      isNew: nextProps.isNew
+    })
   }
 
   setIsNew(isNew) {
@@ -37,32 +43,62 @@ export class EntityView extends React.Component {
 
     return (
       <MuiThemeProvider>
-        <div>
-          <div className="row">
-            <label className="col-sm-2 col-form-label">Title</label>
-            <div className="col-sm-4">{data != null ? data.title : ''}</div>
-            <label className="col-sm-2 col-form-label">Name</label>
-            <div className="col-sm-4">{template != null ? template.name : ''}</div>
-          </div>
-          <div className="row">
-            <label className="col-sm-2 col-form-label">Created</label>
-            <div className="col-sm-4">{data != null ? data.dateCreatedAsString : ''}</div>
-            <label className="col-sm-2 col-form-label">Source</label>
-            <div className="col-sm-4">{template != null ? template.source : ''}</div>
-          </div>
-          <div className="row">
-            <label className="col-sm-2 col-form-label">Last Modified</label>
-            <div className="col-sm-4">{data != null ? data.lastModifiedAsString : ''}</div>
-            <label className="col-sm-2 col-form-label">Version</label>
-            <div className="col-sm-4">{template != null ? template.version : ''}</div>
-          </div>
-          <div className="row">
-            <label className="col-sm-2 col-form-label">Key</label>
-            <div className="col-sm-4">{data != null ? data.key : ''}</div>
-            <label className="col-sm-2 col-form-label">Revision</label>
-            <div className="col-sm-4">{data != null ? data.objectVersion : ''}</div>
-          </div>
-        </div>
+        <Row>
+          <Col xs={2}>
+            <label>Title</label>
+          </Col>
+          <Col xs={4}>
+            {data != null ? data.title : ''}
+          </Col>
+          <Col xs={2}>
+            <label>Name</label>
+          </Col>
+          <Col xs={4}>
+            {template != null ? template.name : ''}
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={2}>
+            <label>Created</label>
+          </Col>
+          <Col xs={4}>
+            {data != null ? data.dateCreatedAsString : ''}
+          </Col>
+          <Col xs={2}>
+            <label>Source</label>
+          </Col>
+          <Col xs={4}>
+            {template != null ? template.source : ''}
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={2}>
+            <label>Last Modified</label>
+          </Col>
+          <Col xs={4}>
+            {data != null ? data.lastModifiedAsString : ''}
+          </Col>
+          <Col xs={2}>
+            <label>Version</label>
+          </Col>
+          <Col xs={4}>
+            {template != null ? template.version : ''}
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={2}>
+            <label>Key</label>
+          </Col>
+          <Col xs={4}>
+            {data != null ? data.key : ''}
+          </Col>
+          <Col xs={2}>
+            <label>Revision</label>
+          </Col>
+          <Col xs={4}>
+            {data != null ? data.objectVersion : ''}
+          </Col>
+        </Row>
         { template != null && data != null &&
         <Tabs>
           {template.sectionsAsList.map((section) => {return renderSection(section, getElement(section.name, data.sectionsAsList))})}
@@ -71,9 +107,6 @@ export class EntityView extends React.Component {
           </Tab>
         </Tabs>
         }
-        <div className="form-buttons">
-          <IconButton icon="/images/svg/save.svg" title="Add Record" onClick={this.onSave.bind(this)} />
-        </div>
       </MuiThemeProvider>
     )
   }

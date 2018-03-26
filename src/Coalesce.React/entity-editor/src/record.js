@@ -1,8 +1,5 @@
 import React from 'react';
-import ReactTable from 'react-table'
-import { ReactTableDefaults } from 'react-table'
 import {FieldInput} from './FieldInput.js'
-import { IconButton } from 'common-components/lib/components/IconButton.js'
 
 export class  RecordView extends React.Component {
 
