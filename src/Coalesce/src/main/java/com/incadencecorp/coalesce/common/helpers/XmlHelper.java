@@ -417,7 +417,7 @@ public final class XmlHelper {
             final DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
             final LSSerializer writer = impl.createLSSerializer();
 
-            writer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
+            writer.getDomConfig().setParameter("format-pretty-print", LOGGER.isDebugEnabled() ? Boolean.TRUE : Boolean.FALSE);
             writer.getDomConfig().setParameter("xml-declaration", Boolean.FALSE);
 
             return writer.writeToString(node);

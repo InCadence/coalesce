@@ -1,12 +1,8 @@
 import React from 'react';
 import ReactTable from 'react-table'
-import {Toggle} from 'common-components/lib/toggle.js'
-import {Accordion} from 'common-components/lib/accordion.js'
-import {Collapse} from 'react-collapse';
 
 export class LinkageView extends React.Component
 {
-
   constructor(props) {
     super(props);
     this.state = props;
@@ -17,7 +13,7 @@ export class LinkageView extends React.Component
   }
 
   render() {
-    const {linkages, isOpened} = this.state;
+    const {linkages} = this.state;
 
     var columns = [
       {Header: 'Key', accessor: 'key', show: false},
@@ -61,31 +57,13 @@ export class LinkageView extends React.Component
     }
 
     return (
-      <Accordion id="linkages" key="linkages" label="Linkage Section" isOpened={false}>
-        <div className="section">
-          <ReactTable columns={columns} data={data} />
-        </div>
-      </Accordion>
+      <div className="ui-widget-content section">
+        <ReactTable columns={columns} data={data} />
+      </div>
     )
   }
 }
-/*
-<div className="ui-widget">
-  <Toggle
-    ontext="Linkage Section"
-    offtext="Linkage Section"
-    isToggleOn={isOpened}
-    onToggle={(value) => {
-      this.setState({isOpened: value});
-    }}
-    />
-    <Collapse className="ui-widget-content" isOpened={isOpened}>
-      <div className="section">
-        <ReactTable columns={columns} data={data} />
-      </div>
-    </Collapse>
-</div>
-*/
+
 LinkageView.defaultProps = {
   isOpened: false
 }

@@ -17,17 +17,6 @@
 
 package com.incadencecorp.coalesce.framework.exim.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -35,22 +24,23 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.CoalesceExim;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.datamodel.*;
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This implementation of the {@link CoalesceExim} interface creates
  * {@link JSONObject}s
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
 
@@ -58,9 +48,7 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
     private Class<?> view = Views.Entity.class;
 
     /**
-     * Sets the JSON view to use.
-     * 
-     * @param clazz
+     * @param clazz the JSON view to use.
      */
     public void setView(Class<?> clazz)
     {
@@ -83,13 +71,13 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
             throw new CoalesceException(e);
         }
     }
-    
+
     public JSONObject exportValuesAsBytes(CoalesceEntity entity, boolean includeEntityType) throws CoalesceException
     {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         mapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
-        
+
         System.out.println("Doing the bytes one");
 
         try
@@ -113,16 +101,29 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
         return entity;
     }
 
-    static final List<String> OMMIT = Arrays.asList(new String[] {
-                                                                   "namepath", "sectionsaslist", "otherattributes",
-                                                                   "recordsetsaslist", "linkagesection", "tag",
-                                                                   "fielddefinitions", "allrecords", "fields",
-                                                                   "linkagesaslist", "datatype", "datecreatedasstring",
-                                                                   "lastmodifiedasstring", "type", "classname",
-                                                                   "portionmarking", "classificationmarkingasstring",
-                                                                   "allowedit", "allownew", "allowremove", "count",
-                                                                   "hasactiverecords", "hasrecords"
-    });
+    private static final List<String> OMMIT = Arrays.asList("namepath",
+                                                            "sectionsaslist",
+                                                            "otherattributes",
+                                                            "recordsetsaslist",
+                                                            "linkagesection",
+                                                            "tag",
+                                                            "fielddefinitions",
+                                                            "allrecords",
+                                                            "fields",
+                                                            "linkagesaslist",
+                                                            "datatype",
+                                                            "datecreatedasstring",
+                                                            "lastmodifiedasstring",
+                                                            "type",
+                                                            "classname",
+                                                            "portionmarking",
+                                                            "classificationmarkingasstring",
+                                                            "allowedit",
+                                                            "allownew",
+                                                            "allowremove",
+                                                            "count",
+                                                            "hasactiverecords",
+                                                            "hasrecords");
 
     @Override
     public void importValues(JSONObject values, CoalesceEntity entity) throws CoalesceException
@@ -248,11 +249,11 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
                 }
                 else if (value instanceof Integer)
                 {
-                    node.setAttribute(name, String.valueOf((Integer) value));
+                    node.setAttribute(name, String.valueOf(value));
                 }
                 else if (value instanceof Boolean)
                 {
-                    node.setAttribute(name, String.valueOf((Boolean) value));
+                    node.setAttribute(name, String.valueOf(value));
                 }
                 else if (value.getClass().getSimpleName().equalsIgnoreCase("Null"))
                 {
@@ -262,9 +263,10 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
                         && ((CoalesceField<?>) node).isListType())
                 {
                     JSONArray values = (JSONArray) value;
-                    List<String> baseValue = new ArrayList<String>();
+                    List<String> baseValue = new ArrayList<>();
 
-                    switch (((CoalesceField<?>) node).getDataType()) {
+                    switch (((CoalesceField<?>) node).getDataType())
+                    {
                     case STRING_LIST_TYPE:
                         for (int ii = 0; ii < values.length(); ii++)
                         {
@@ -280,9 +282,8 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
 
                     }
 
-                    ((CoalesceField<?>) node).setAttribute(CoalesceField.ATTRIBUTE_VALUE,
-                                                           StringUtils.join(baseValue.toArray(new String[baseValue.size()]),
-                                                                            ","));
+                    node.setAttribute(CoalesceField.ATTRIBUTE_VALUE,
+                                      StringUtils.join(baseValue.toArray(new String[baseValue.size()]), ","));
                 }
                 else
                 {

@@ -1,10 +1,13 @@
 {
   "name": "template-editor",
   "version": "0.1.0",
+  "title": "Template editor",
+  "icon": "/images/svg/template.svg",
   "private": true,
   "homepage": "/templateeditor",
   "dependencies": {
     "common-components": "file:../common-components",
+    "material-ui": "^0.20.0",
     "mxgraph-js": "^1.0.1",
     "react": "^16.2.0",
     "react-bootstrap": "^0.31.5",
@@ -13,7 +16,9 @@
     "react-icons-kit": "^1.0.7",
     "react-scripts": "1.0.17",
     "react-sidenav": "^2.1.2",
-    "react-sortable-tree": "^1.5.3"
+    "react-sortable-tree": "^1.5.3",
+    "react-table": "^6.8.0",
+    "uuid": "^3.2.1"
   },
   "scripts": {
     "preinstall": "npm install ../common-components/",

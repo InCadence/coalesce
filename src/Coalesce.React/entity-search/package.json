@@ -9,7 +9,9 @@
   "private": true,
   "homepage": "/search",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "common-components": "file:../common-components",
+    "material-ui": "^0.20.0",
     "react": "^16.0.0",
     "react-bootstrap": "^0.32.1",
     "react-collapse": "^4.0.3",

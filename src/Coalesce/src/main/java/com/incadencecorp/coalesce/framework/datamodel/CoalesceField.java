@@ -18,6 +18,7 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.incadencecorp.coalesce.api.CoalesceAttributes;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
@@ -441,13 +442,14 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     // Public Properties
     // -----------------------------------------------------------------------//
 
-    @JsonIgnore
+    @JsonProperty("value")
     @Override
     public String getBaseValue()
     {
         return _entityField.getValue();
     }
 
+    @JsonProperty("value")
     @Override
     protected void setBaseValue(String value)
     {

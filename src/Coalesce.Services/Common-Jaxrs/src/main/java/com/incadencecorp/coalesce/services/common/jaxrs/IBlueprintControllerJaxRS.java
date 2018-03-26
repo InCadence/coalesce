@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.services.common.jaxrs;
 
+import com.incadencecorp.coalesce.services.common.api.IBlueprintController;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphObj;
 
 import javax.ws.rs.GET;
@@ -28,12 +29,12 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 /**
- * JaxRS annotations used on {@link com.incadencecorp.coalesce.services.common.controllers.BlueprintController}
+ * Extends {@link IBlueprintController} and appends JAX-RS annotations.
  *
  * @author Derek Clemenzi
  */
 @Path("blueprints")
-interface IBlueprintControllerJaxRS {
+interface IBlueprintControllerJaxRS extends IBlueprintController {
 
     @GET
     @Path("/")
