@@ -42,12 +42,12 @@ class Main extends React.Component {
 
   saveConfiguration() {
 
-    const { name, data } = this.state;
+    const { item, data } = this.state;
     const that = this;
 
     this.setState({message: 'Saving...'});
 
-    saveJSON(name, data).then((result) => {
+    saveJSON(item.key, data).then((result) => {
       this.setState({message: 'Saved'});
     }).catch(function(error) {
       that.setState({error: `Saving: ${error}`, message: null})
