@@ -18,6 +18,7 @@
 package com.incadencecorp.coalesce.framework.exim.impl;
 
 import com.incadencecorp.coalesce.api.Views;
+import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -294,12 +295,11 @@ public class JsonFullEximImplTest {
 
         TestRecord record;
 
-                GeometricShapeFactory factory = new GeometricShapeFactory();
+        GeometricShapeFactory factory = new GeometricShapeFactory();
         factory.setSize(10);
         factory.setNumPoints(4);
         factory.setCentre(new Coordinate(0, 0));
         Polygon shape = factory.createCircle();
-
 
         // Create Record 1
         record = entity.addRecord1();
@@ -318,6 +318,36 @@ public class JsonFullEximImplTest {
 
         Assert.assertEquals(record.getDateField().getBaseValue(), recordImported.getDateField().getBaseValue());
         Assert.assertEquals(record.getPolygonField().getBaseValue(), recordImported.getPolygonField().getBaseValue());
+    }
+
+    /**
+     * This test ensures that you can export / import linkages.
+     *
+     * @throws Exception on error
+     */
+    @Test
+    public void importLinkageTest() throws Exception
+    {
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize();
+
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.IS_PARENT_OF, entity2);
+
+        JsonFullEximImpl exim = new JsonFullEximImpl();
+
+        JSONObject json = exim.exportValues(entity1, true);
+
+        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity1);
+
+        TestEntity imported = new TestEntity();
+        imported.initialize(exim.importValues(json, template));
+
+        Assert.assertEquals(1, imported.getLinkages().size());
+        Assert.assertEquals(1, imported.getLinkageSection().getLinkagesAsList().size());
+        Assert.assertEquals(entity2.getKey(), imported.getLinkageSection().getLinkagesAsList().get(0).getEntity2Key());
     }
 
 }
