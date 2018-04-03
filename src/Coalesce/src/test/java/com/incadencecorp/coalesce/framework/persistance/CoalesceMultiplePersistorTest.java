@@ -158,20 +158,17 @@ public class CoalesceMultiplePersistorTest extends AbstractFileHandlerTests {
 
         try (CoalesceFramework framework = new CoalesceFramework())
         {
+            framework.setIsAnsyncUpdates(false);
+
             // Save Entity
             framework.setAuthoritativePersistor(authoritative);
             framework.setSecondaryPersistors(secondary1, secondary2);
             framework.saveCoalesceEntity(entity);
-
-            // TODO Allow enough time for the job to submit the tasks. (This is a
-            // potential race condition)
-            Thread.sleep(10);
         }
 
         // Verify
         Assert.assertEquals(1, secondary1.getEntity(entity.getKey()).length);
         Assert.assertEquals(1, secondary2.getEntity(entity.getKey()).length);
-
     }
 
     @Test
