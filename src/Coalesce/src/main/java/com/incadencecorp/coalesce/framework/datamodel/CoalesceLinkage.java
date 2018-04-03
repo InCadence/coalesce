@@ -288,7 +288,7 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public int getEntity2ObjectVersion()
     {
-        return _entityLinkage.getEntity2Objectversion();
+        return (_entityLinkage.getEntity2Objectversion() != null) ? _entityLinkage.getEntity2Objectversion() : 0;
     }
 
     @Override
