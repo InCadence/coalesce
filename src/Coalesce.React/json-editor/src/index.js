@@ -23,6 +23,9 @@ const options=[
   },{
     key: 'nlpconfig',
     name: 'NLP Configuration',
+  },{
+    key: 'theme',
+    name: 'Theme Configuration',
   }
 ]
 

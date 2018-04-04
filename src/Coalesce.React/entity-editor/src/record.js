@@ -6,7 +6,12 @@ export class  RecordView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {record: props.record};
-    this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      record: nextProps.record
+    })
   }
 
   render() {
@@ -28,7 +33,7 @@ export class  RecordView extends React.Component {
     field.dataType = fd.dataType;
 
     return (
-      <FieldInput field={field} onChange={this.handleChange} />
+      <FieldInput key={field.key} field={field} />
     )
 
   }
@@ -59,16 +64,5 @@ export class  RecordView extends React.Component {
     return result;
   }
 
-  handleChange (e){
-    const value = e.target.value;
-    const record = this.state.record;
-    const field = this.getFieldByKey(record, e.target.id)
 
-    console.log(e.target.id + " = " + e.target.value);
-
-    field.value = value;
-    this.setState({
-      record: record
-    });
-  }
 }

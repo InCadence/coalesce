@@ -6,10 +6,7 @@ import AvPlaylistAdd from 'material-ui/svg-icons/av/playlist-add';
 import IconButton from 'material-ui/IconButton';
 import { Section } from './TemplateSection'
 import uuid from 'uuid';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import baseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
-import * as Colors from 'material-ui/styles/colors';
 import { fade } from 'material-ui/utils/colorManipulator'
 
 class TemplateEditor extends Component {
@@ -24,6 +21,7 @@ class TemplateEditor extends Component {
     this.handleAddSection = this.handleAddSection.bind(this);
 
   }
+
 
   handleRemove() {
     this.props.onRemove(this.props.template.key);
@@ -49,17 +47,7 @@ class TemplateEditor extends Component {
 
     const { template } = this.state;
 
-    const muiTheme = getMuiTheme({
-      palette: {
-        primary1Color: Colors.grey500,
-        accent1Color: Colors.yellow800,
-        primary2Color: Colors.grey700,
-        pickerHeaderColor: Colors.cyan800
-      },
-    });
-
     return (
-      <MuiThemeProvider muiTheme={muiTheme}>
         <Panel className="ui-widget-content" id={template.key} style={{ 'overflowY': 'hidden' }}>
           <div style={{ 'display': 'table' }}>
             <div style={{ 'display': 'table-cell', width: '100%' }}>
@@ -120,7 +108,6 @@ class TemplateEditor extends Component {
           </div>
           <Section data={template} />
         </Panel>
-      </MuiThemeProvider>
     );
   }
 }

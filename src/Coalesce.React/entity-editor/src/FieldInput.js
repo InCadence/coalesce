@@ -16,7 +16,37 @@ export class FieldInput extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {field: props.field};
+    var style;
+
+    if (this.props.showLabels) {
+      style = {
+        root: {
+        },
+        none: {
+        }
+      }
+    } else {
+      style = {
+        root: {
+          'height': '20px',
+          'lineHeight': '20px',
+          'top': '0px',
+          'padding': '0px',
+          'display': '',
+          'backgroundColor': '#FFFFFF'
+        },
+        none: {
+          'display': 'none'
+        }
+
+      }
+    }
+
+    this.state = {
+      field: props.field,
+      style: style
+    };
+
 
     this.handleOnChange = this.handleOnChange.bind(this);
   }
@@ -24,39 +54,65 @@ export class FieldInput extends React.Component {
   handleOnChange(attr, value) {
     const {field} = this.state;
     field[attr] = value;
+
+    console.log(`${attr}=${value}`);
     this.setState(field);
   }
 
   render() {
 
-    const {field} = this.state;
+    const {field, style} = this.state;
 
-    switch (field.dataType) {
+    var type = (this.props.dataType != null) ? this.props.dataType : field.dataType;
+    var attr = (this.props.attr != null) ? this.props.attr : 'value';
+    var label = this.props.showLabels ? (field.label != null && field.label.length > 0 ? field.label : field.name) : null;
+
+    switch (type) {
       case 'ENUMERATION_LIST_TYPE':
         return (
           <SelectField
-            floatingLabelText={this.props.showLabels ? field.name : null}
+            id={field.key}
             fullWidth={true}
+            floatingLabelText={label}
+            underlineShow={this.props.showLabels}
             multiple={true}
-            value={field.value}
-            onChange={(event, index, values) => {this.handleOnChange('value', values)}}
+            value={field[attr]}
+            style={style.root}
+            labelStyle={style.root}
+            iconStyle={style.none}
+            hintStyle={style.none}
+            floatingLabelStyle={style.none}
+            errorStyle={style.none}
+            onChange={(event, index, values) => {this.handleOnChange(attr, values)}}
           >
-            <MenuItem value={0} primaryText="Option 1" />
-            <MenuItem value={1} primaryText="Option 2" />
-            <MenuItem value={2} primaryText="Option 3" />
+            {this.props.options && this.props.options.map((item) => {
+              return (
+                <MenuItem key={item.enum} value={item.enum} primaryText={item.label} />
+              )
+            })}
           </SelectField>
         )
       case 'ENUMERATION_TYPE':
         return (
           <SelectField
-            floatingLabelText={this.props.showLabels ? field.name : null}
+            id={field.key}
             fullWidth={true}
-            value={field.value}
-            onChange={(event, value) => {this.handleOnChange('value', value)}}
+            floatingLabelText={label}
+            underlineShow={this.props.showLabels}
+            style={style.root}
+            labelStyle={style.root}
+            iconStyle={style.none}
+            hintStyle={style.none}
+            floatingLabelStyle={style.none}
+            errorStyle={style.none}
+            value={field[attr]}
+            onChange={(event, value) => {this.handleOnChange(attr, this.props.options[value].enum)}}
           >
-            <MenuItem value={0} primaryText="Option 1" />
-            <MenuItem value={1} primaryText="Option 2" />
-            <MenuItem value={2} primaryText="Option 3" />
+            {this.props.options && this.props.options.map((item) => {
+              return (
+                <MenuItem key={item.enum} value={item.enum} primaryText={item.label} />
+              )
+            })}
           </SelectField>
         )
       case 'URI_TYPE':
@@ -65,9 +121,11 @@ export class FieldInput extends React.Component {
           <TextField
             id={field.key}
             fullWidth={true}
-            floatingLabelText={this.props.showLabels ? field.name : null}
-            value={field.value}
-            onChange={(event, value) => {this.handleOnChange('value', value)}}
+            floatingLabelText={label}
+            underlineShow={this.props.showLabels}
+            style={style.root}
+            value={field[attr]}
+            onChange={(event, value) => {this.handleOnChange(attr, value)}}
           />
         );
       case 'FLOAT_TYPE':
@@ -79,9 +137,11 @@ export class FieldInput extends React.Component {
             type='number'
             step='0.01'
             fullWidth={true}
-            floatingLabelText={this.props.showLabels ? field.name : null}
-            value={field.value}
-            onChange={(event, value) => {this.handleOnChange('value', value)}}
+            floatingLabelText={label}
+            underlineShow={this.props.showLabels}
+            style={style.root}
+            value={field[attr]}
+            onChange={(event, value) => {this.handleOnChange(attr, value)}}
           />
         );
       case 'INTEGER_TYPE':
@@ -90,18 +150,21 @@ export class FieldInput extends React.Component {
             id={field.key}
             type='number'
             fullWidth={true}
-            floatingLabelText={this.props.showLabels ? field.name : null}
-            value={field.value}
-            onChange={(event, value) => {this.handleOnChange('value', value)}}
+            floatingLabelText={label}
+            underlineShow={this.props.showLabels}
+            style={style.root}
+            value={field[attr]}
+            onChange={(event, value) => {this.handleOnChange(attr, value)}}
           />
         );
       case 'BOOLEAN_TYPE':
         return (
           <Checkbox
             id={field.key}
-            label={this.props.showLabels ? field.name : null}
-            checked={field.value}
-            onCheck={(event, checked) => {this.handleOnChange('value', checked)}}
+            label={label}
+            style={style.root}
+            checked={field[attr]}
+            onCheck={(event, checked) => {this.handleOnChange(attr, checked)}}
           />
         );
       case 'DATE_TIME_TYPE':
@@ -119,7 +182,9 @@ export class FieldInput extends React.Component {
             <Col xs={6}>
               <DatePicker
                 id={field.key + 'date'}
-                floatingLabelText={this.props.showLabels ? field.name + " Date" : null}
+                floatingLabelText={this.props.showLabels ? label + " Date" : null}
+                underlineShow={this.props.showLabels}
+                style={style.root}
                 mode="landscape"
                 value={dateTime}
                 onChange={(tmp, date) => {
@@ -127,7 +192,7 @@ export class FieldInput extends React.Component {
                   newDateTime.setFullYear(date.getFullYear());
                   newDateTime.setMonth(date.getMonth());
                   newDateTime.setDate(date.getDate());
-                  this.handleOnChange('value', newDateTime.toISOString());
+                  this.handleOnChange(attr, newDateTime.toISOString());
                 }}
               />
             </Col>
@@ -135,13 +200,15 @@ export class FieldInput extends React.Component {
               <TimePicker
                 id={field.key + 'time'}
                 floatingLabelText={this.props.showLabels ? "Time" : null}
-                format="24hr"
+                underlineShow={this.props.showLabels}
+                style={style.root}
                 value={dateTime}
+                format="24hr"
                 onChange={(tmp, date) => {
                   var newDateTime = dateTime != null ? dateTime : new Date();
                   newDateTime.setHours(date.getHours());
                   newDateTime.setMinutes(date.getMinutes());
-                  this.handleOnChange('value', newDateTime.toISOString());
+                  this.handleOnChange(attr, newDateTime.toISOString());
                 }}
               />
             </Col>
@@ -151,7 +218,13 @@ export class FieldInput extends React.Component {
       case 'FILE_TYPE':
         return (
           <div>
-            <IconButton id={field.key} icon="/images/svg/load.svg" title={"Download " + field.name} onClick={null} /> {this.props.showLabel ? <label>Download {field.name}</label> : null}
+            <IconButton
+              id={field.key}
+              icon="/images/svg/load.svg"
+              title={"Download " + label}
+              onClick={null}
+            />
+            {this.props.showLabel ? <label>Download {label}</label> : null}
           </div>
         );
       case 'GEOCOORDINATE_TYPE':
@@ -166,37 +239,43 @@ export class FieldInput extends React.Component {
 
         return (
             <Row>
-              <Col xs={3}>
+              <Col xs={4}>
                 <TextField
                   id={field.key + 'x'}
                   type='number'
                   step='0.01'
-                  floatingLabelText={this.props.showLabels ? field.name + " Latitude" : null}
-                  fullWidth={false}
+                  floatingLabelText={this.props.showLabels ? label + " Latitude" : null}
+                  underlineShow={this.props.showLabels}
+                  style={style.root}
+                  fullWidth={true}
                   value={geo.coordinates[0]}
-                  onChange={(event, value) => {this.handleOnChange('value', `POINT(${value} ${geo.coordinates[1]} ${geo.coordinates[2]})`)}}
+                  onChange={(event, value) => {this.handleOnChange(attr, `POINT(${value} ${geo.coordinates[1]} ${geo.coordinates[2]})`)}}
                 />
               </Col>
-              <Col xs={3}>
+              <Col xs={4}>
                 <TextField
                   id={field.key + 'y'}
                   type='number'
                   step='0.01'
                   floatingLabelText={this.props.showLabels ? "Longitude" : null}
-                  fullWidth={false}
+                  underlineShow={this.props.showLabels}
+                  style={style.root}
+                  fullWidth={true}
                   value={geo.coordinates[1]}
-                  onChange={(event, value) => {this.handleOnChange('value', `POINT(${geo.coordinates[0]} ${value} ${geo.coordinates[2]})`)}}
+                  onChange={(event, value) => {this.handleOnChange(attr, `POINT(${geo.coordinates[0]} ${value} ${geo.coordinates[2]})`)}}
                 />
               </Col>
-              <Col xs={3}>
+              <Col xs={4}>
                 <TextField
                   id={field.key + 'z'}
                   type='number'
                   step='0.01'
                   floatingLabelText={this.props.showLabels ? "Attitude" : null}
-                  fullWidth={false}
+                  underlineShow={this.props.showLabels}
+                  style={style.root}
+                  fullWidth={true}
                   value={geo.coordinates[2]}
-                  onChange={(event, value) => {this.handleOnChange('value', `POINT(${geo.coordinates[0]} ${geo.coordinates[1]} ${value})`)}}
+                  onChange={(event, value) => {this.handleOnChange(attr, `POINT(${geo.coordinates[0]} ${geo.coordinates[1]} ${value})`)}}
                 />
               </Col>
           </Row>
@@ -218,10 +297,12 @@ export class FieldInput extends React.Component {
                 id={field.key + 'x'}
                 type='number'
                 step='0.01'
-                floatingLabelText={this.props.showLabels ? field.name + " Latitude" : null}
-                fullWidth={false}
+                floatingLabelText={this.props.showLabels ? label + " Latitude" : null}
+                underlineShow={this.props.showLabels}
+                style={style.root}
+                fullWidth={true}
                 value={center.coordinates[0]}
-                onChange={(event, value) => {this.handleOnChange('value', `POINT(${value} ${center.coordinates[1]} ${center.coordinates[2]})`)}}
+                onChange={(event, value) => {this.handleOnChange(attr, `POINT(${value} ${center.coordinates[1]} ${center.coordinates[2]})`)}}
               />
             </Col>
             <Col xs={3}>
@@ -230,9 +311,11 @@ export class FieldInput extends React.Component {
                 type='number'
                 step='0.01'
                 floatingLabelText={this.props.showLabels ? "Longitude" : null}
-                fullWidth={false}
+                underlineShow={this.props.showLabels}
+                style={style.root}
+                fullWidth={true}
                 value={center.coordinates[1]}
-                onChange={(event, value) => {this.handleOnChange('value', `POINT(${center.coordinates[0]} ${value} ${center.coordinates[2]})`)}}
+                onChange={(event, value) => {this.handleOnChange(attr, `POINT(${center.coordinates[0]} ${value} ${center.coordinates[2]})`)}}
               />
             </Col>
             <Col xs={3}>
@@ -241,9 +324,11 @@ export class FieldInput extends React.Component {
                 type='number'
                 step='0.01'
                 floatingLabelText={this.props.showLabels ? "Attitude" : null}
-                fullWidth={false}
+                underlineShow={this.props.showLabels}
+                style={style.root}
+                fullWidth={true}
                 value={center.coordinates[2]}
-                onChange={(event, value) => {this.handleOnChange('value', `POINT(${center.coordinates[0]} ${center.coordinates[1]} ${value})`)}}
+                onChange={(event, value) => {this.handleOnChange(attr, `POINT(${center.coordinates[0]} ${center.coordinates[1]} ${value})`)}}
               />
             </Col>
             <Col xs={3}>
@@ -253,7 +338,9 @@ export class FieldInput extends React.Component {
                 step='0.01'
                 value={field.radius}
                 floatingLabelText={this.props.showLabels ? "Radius" : null}
-                fullWidth={false}
+                underlineShow={this.props.showLabels}
+                style={style.root}
+                fullWidth={true}
                 onChange={(event, value) => {this.handleOnChange('radius', value)}}
               />
             </Col>
@@ -264,10 +351,12 @@ export class FieldInput extends React.Component {
           <TextField
             id={field.key}
             fullWidth={true}
-            floatingLabelText={this.props.showLabels ? field.name : null}
+            floatingLabelText={label}
+            underlineShow={this.props.showLabels}
             //inputProps={{ pattern: "[a-z]" }}
-            value={field.value}
-            onChange={(event, value) => {this.handleOnChange('value', value)}}
+            style={style.root}
+            value={field[attr]}
+            onChange={(event, value) => {this.handleOnChange(attr, value)}}
           />
         );
       default:
@@ -275,10 +364,12 @@ export class FieldInput extends React.Component {
           <TextField
             id={field.key}
             fullWidth={true}
-            floatingLabelText={this.props.showLabels ? field.name : null}
+            floatingLabelText={label}
+            underlineShow={this.props.showLabels}
+            style={style.root}
             disabled
-            value={field.value}
-            onChange={(event, value) => {this.handleOnChange('value', value)}}
+            value={field[attr]}
+            onChange={(event, value) => {this.handleOnChange(attr, value)}}
           />
         );
     }

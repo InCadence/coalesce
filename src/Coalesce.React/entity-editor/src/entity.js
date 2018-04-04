@@ -42,7 +42,7 @@ export class EntityView extends React.Component {
     var template = this.props.template;
 
     return (
-      <MuiThemeProvider>
+      <div>
         <Row>
           <Col xs={2}>
             <label>Title</label>
@@ -107,7 +107,7 @@ export class EntityView extends React.Component {
           </Tab>
         </Tabs>
         }
-      </MuiThemeProvider>
+      </div>
     )
   }
 
@@ -171,7 +171,7 @@ function renderRecordset(recordset, data) {
     }
 
     return (
-      <Tab label={recordset.name}>
+      <Tab key={recordset.key} label={recordset.name}>
         <RecordView
           definition={recordset.fieldDefinitions}
           record={record}
@@ -183,7 +183,7 @@ function renderRecordset(recordset, data) {
   else
   {
     return (
-      <Tab label={recordset.name}>
+      <Tab key={recordset.key} label={recordset.name}>
         <RecordsetView
           recordset={recordset}
           data={recordsetdata}

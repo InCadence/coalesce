@@ -4,9 +4,12 @@ import TemplateGraph from './TemplateGraph.js';
 import TemplateEditor from './TemplateEditor.js';
 import { Template } from './TemplateObjects.js';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { getDefaultTheme } from 'common-components/lib/js/theme'
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import uuid from 'uuid';
 
 import { loadTemplates, loadTemplate, saveTemplate,registerTemplate } from 'common-components/lib/js/templateController.js';
+import { loadJSON } from 'common-components/lib/js/propertyController'
 import {Menu} from 'common-components/lib/index.js'
 
 import {DialogTemplateSelection} from './DialogTemplateSelection'
@@ -25,7 +28,7 @@ class TemplateWorkspace extends Component {
       rowHeight: 30,
       width: 1200,
       showEditModal: false,
-
+      theme: getDefaultTheme()
     }
 
     this.handlePromptTemplate = this.handlePromptTemplate.bind(this);
@@ -37,6 +40,19 @@ class TemplateWorkspace extends Component {
     this.handleTemplateRegister = this.handleTemplateRegister.bind(this);
     this.handleGraphAdd = this.handleGraphAdd.bind(this);
     this.handleEditModalToggle = this.handleEditModalToggle.bind(this);
+  }
+
+  componentDidMount() {
+
+    var that = this;
+
+    loadJSON('theme').then((value) => {
+      that.setState({
+        theme: getMuiTheme(value)
+      })
+    }).catch((err) => {
+      console.log("Loading Theme: " + err);
+    })
   }
 
   handleEditModalToggle() {
@@ -202,8 +218,14 @@ class TemplateWorkspace extends Component {
 
     return (
       <div>
-        <Menu logoSrc={pjson.icon} title={pjson.title} items={[
+        <Menu logoSrc={pjson.icon} title={pjson.title} homeEnabled={false} items={[
           {
+            id: 'home',
+            name: 'Home',
+            img: "/images/svg/home.svg",
+            title: 'Home',
+            onClick: () => {window.location.href = "/home"}
+          },{
             id: 'select',
             name: 'Select',
             img: "/images/svg/load.svg",
@@ -229,7 +251,7 @@ class TemplateWorkspace extends Component {
             onClick: () => {this.handleTemplateRegister()}
           }
         ]}/>
-        <MuiThemeProvider>
+        <MuiThemeProvider muiTheme={this.state.theme}>
           <ReactGridLayout className="layout" layout={this.state.items} cols={this.state.cols} rowHeight={this.state.rowHeight} width={this.state.width} draggableCancel="input,textarea">
             {this.state.items.map((item) => this.createElement(item))}
           </ReactGridLayout>

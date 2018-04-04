@@ -93,6 +93,12 @@ export class DialogEditDefinition extends React.Component {
           value={definition.name}
           onChange={(event, value) => {this.handleChange("name", value);}}
         />
+        <TextField
+          fullWidth={true}
+          floatingLabelText="Label"
+          value={definition.label}
+          onChange={(event, value) => {this.handleChange("label", value);}}
+        />
         <SelectField
           fullWidth={true}
           floatingLabelText="Type"
