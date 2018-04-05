@@ -47,14 +47,9 @@ public class KafkaSubscriberPartitionerIT {
     @Test
     public void testPartitioner() throws Exception
     {
-        Map<String, String> params1 = new HashMap<>();
-        params1.put(CoalesceParameters.PARAM_DIRECTORY, Paths.get("src", "test", "resources").toString());
-        params1.put(CoalesceParameters.PARAM_INTERVAL, "1");
-        params1.put(CoalesceParameters.PARAM_INTERVAL_UNIT, "SECONDS");
-
         Map<String, Object> params2 = new HashMap<>();
         params2.put(KafkaSubscriberPartitioner.PARAM_TOPIC, "test");
-        params2.put(KafkaSubscriberPartitioner.PARAM_SUBSCRIBER, new KafkaFileSubscriberImpl(params1));
+        params2.put(KafkaSubscriberPartitioner.PARAM_SUBSCRIBER, KafkaFileSubscriberImpl.class.getName());
 
         Partitioner partitioner = new KafkaSubscriberPartitioner();
         partitioner.configure(params2);

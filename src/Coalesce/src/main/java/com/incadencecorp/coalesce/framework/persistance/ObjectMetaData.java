@@ -17,14 +17,13 @@
 
 package com.incadencecorp.coalesce.framework.persistance;
 
-import org.joda.time.DateTime;
-
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import org.joda.time.DateTime;
 
 /**
  * This class is used by {@link ICoalescePersistor} to return metadata
  * information about templates and entities.
- * 
+ *
  * @author n78554
  */
 public class ObjectMetaData {
@@ -37,8 +36,15 @@ public class ObjectMetaData {
     private DateTime lastModified;
 
     /**
+     * Default Constructor
+     */
+    public ObjectMetaData()
+    {
+    }
+
+    /**
      * Creates a new instance.
-     * 
+     *
      * @param entity
      */
     public ObjectMetaData(CoalesceEntity entity)
@@ -53,7 +59,7 @@ public class ObjectMetaData {
 
     /**
      * Creates a new instance.
-     * 
+     *
      * @param key
      * @param name
      * @param source
@@ -66,7 +72,7 @@ public class ObjectMetaData {
 
     /**
      * Creates a new instance.
-     * 
+     *
      * @param key
      * @param name
      * @param source

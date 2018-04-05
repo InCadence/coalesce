@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
+import com.incadencecorp.coalesce.api.subscriber.events.*;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.enums.EAuditCategory;
 import com.incadencecorp.coalesce.enums.EAuditLevels;
@@ -42,6 +43,8 @@ import org.I0Itec.zkclient.ZkConnection;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -53,6 +56,8 @@ import java.util.*;
  * @author Derek Clemenzi
  */
 public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaNotifierImpl.class);
 
     // Topic Definitions
     public static final String TOPIC_METRICS = "com.incadence.metrics";
@@ -112,14 +117,25 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         ShutdownAutoCloseable.createShutdownHook(this);
 
         // Set Properties
-        sessionTimeoutMs = props.containsKey(PROP_SESSION_TIMEOUT) ? Integer.parseInt(props.get(PROP_SESSION_TIMEOUT)) :
-                10 * 1000;
-        connectionTimeoutMs = props.containsKey(PROP_CONN_TIMEOUT) ? Integer.parseInt(props.get(PROP_CONN_TIMEOUT)) :
-                8 * 1000;
-        partitions = props.containsKey(PROP_PARTITIONS) ? Integer.parseInt(props.get(PROP_PARTITIONS)) : 20;
-        replication = props.containsKey(PROP_REPLICATION) ? Integer.parseInt(props.get(PROP_REPLICATION)) : 1;
+        sessionTimeoutMs = Integer.parseInt(props.getOrDefault(props.get(PROP_SESSION_TIMEOUT), "10000"));
+        connectionTimeoutMs = Integer.parseInt(props.getOrDefault(props.get(PROP_CONN_TIMEOUT), "8000"));
+        partitions = Integer.parseInt(props.getOrDefault(props.get(PROP_PARTITIONS), "20"));
+        replication = Integer.parseInt(props.getOrDefault(props.get(PROP_REPLICATION), "1"));
         isSecureKafkaCluster = props.containsKey(PROP_IS_SECURE) && Boolean.parseBoolean(props.get(PROP_IS_SECURE));
 
+        createTopic(TOPIC_AUDIT);
+        createTopic(TOPIC_CRUD);
+        createTopic(TOPIC_JOB_COMPLETE);
+        createTopic(TOPIC_LINKAGE);
+        createTopic(TOPIC_METRICS);
+
+        for (String topic : props.getOrDefault(props.get(PROP_SESSION_TIMEOUT), "").split(","))
+        {
+            if (!StringHelper.isNullOrEmpty(topic))
+            {
+                createTopic(topic);
+            }
+        }
     }
 
     /*--------------------------------------------------------------------------
@@ -135,32 +151,30 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
     @Override
     public void sendMetrics(String task, MetricResults<?> results)
     {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("name", task);
-        properties.put("pending", results.getWatch().getPendingLife());
-        properties.put("working", results.getWatch().getWorkLife());
-        properties.put("total", results.getWatch().getTotalLife());
-        properties.put("successful", results.isSuccessful());
+        MetricsEvent event = new MetricsEvent();
+        event.setName(task);
+        event.setPending(results.getWatch().getPendingLife());
+        event.setWorking(results.getWatch().getWorkLife());
+        event.setTotal(results.getWatch().getTotalLife());
+        event.setSuccessful(results.isSuccessful());
+
         if (!results.isSuccessful() && !StringHelper.isNullOrEmpty(results.getResults().getError()))
         {
-            properties.put("error", results.getResults().getError());
+            event.setError(results.getResults().getError());
         }
 
-        sendRecord(new ProducerRecord<>(TOPIC_METRICS, toJSONString(properties)));
+        sendRecord(new ProducerRecord<>(TOPIC_METRICS, toJSONString(event)));
     }
 
     @Override
     public void sendCrud(String task, ECrudOperations operation, ObjectMetaData data)
     {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("name", task);
-        properties.put("operation", operation.toString());
-        properties.put("entitykey", data.getKey());
-        properties.put("entityname", data.getName());
-        properties.put("entitysource", data.getSource());
-        properties.put("entityversion", data.getVersion());
+        CrudEvent event = new CrudEvent();
+        event.setName(task);
+        event.setOperation(operation);
+        event.setMeta(new ObjectMetaData(data.getKey(), data.getName(), data.getSource(), data.getVersion()));
 
-        sendRecord(new ProducerRecord<>(TOPIC_CRUD, toJSONString(properties)));
+        sendRecord(new ProducerRecord<>(TOPIC_CRUD, toJSONString(event)));
     }
 
     @Override
@@ -170,49 +184,44 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
                             ELinkTypes relationship,
                             ObjectMetaData entity2)
     {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("name", task);
-        properties.put("operation", operation.toString());
-        properties.put("entity1key", entity1.getKey());
-        properties.put("entity1name", entity1.getName());
-        properties.put("entity1source", entity1.getSource());
-        properties.put("entity1version", entity1.getVersion());
-        properties.put("relationship", relationship.toString());
-        properties.put("entity2key", entity2.getKey());
-        properties.put("entity2name", entity2.getName());
-        properties.put("entity2source", entity2.getSource());
-        properties.put("entity2version", entity2.getVersion());
+        LinkageEvent event = new LinkageEvent();
+        event.setName(task);
+        event.setRelationship(relationship);
+        event.setOperation(operation);
 
-        sendRecord(new ProducerRecord<>(TOPIC_LINKAGE, toJSONString(properties)));
+        event.setEntity1(new ObjectMetaData(entity1.getKey(), entity1.getName(), entity1.getSource(), entity1.getVersion()));
+        event.setEntity2(new ObjectMetaData(entity2.getKey(), entity2.getName(), entity2.getSource(), entity2.getVersion()));
+
+        sendRecord(new ProducerRecord<>(TOPIC_LINKAGE, toJSONString(event)));
     }
 
     @Override
     public void sendAudit(String task, EAuditCategory category, EAuditLevels level, String message)
     {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("name", task);
-        properties.put("category", category.toString());
-        properties.put("level", level.toString());
-        properties.put("message", message);
+        AuditEvent event = new AuditEvent();
+        event.setName(task);
+        event.setCategory(category);
+        event.setLevel(level);
+        event.setMessage(message);
 
-        sendRecord(new ProducerRecord<>(TOPIC_AUDIT, toJSONString(properties)));
+        sendRecord(new ProducerRecord<>(TOPIC_AUDIT, toJSONString(event)));
     }
 
     @Override
     public void sendJobComplete(AbstractCoalesceJob<?, ?, ?> job)
     {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("name", job.getName());
-        properties.put("id", job.getJobId());
-        properties.put("status", job.getJobStatus().toString());
+        JobEvent event = new JobEvent();
+        event.setName(job.getName());
+        event.setId(job.getJobId());
+        event.setStatus(job.getJobStatus());
 
-        sendRecord(new ProducerRecord<>(TOPIC_JOB_COMPLETE, toJSONString(properties)));
+        sendRecord(new ProducerRecord<>(TOPIC_JOB_COMPLETE, toJSONString(event)));
     }
 
     @Override
     public <V> void sendMessage(String topic, String key, V value)
     {
-        sendRecord(new ProducerRecord<>(topic, key, value));
+        sendRecord(new ProducerRecord<>(topic, key, toJSONString(value)));
     }
 
     @Override
@@ -226,7 +235,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
      *
      * @param topic to be created.
      */
-    public void creatTopic(String topic)
+    public void createTopic(String topic)
     {
         ZkClient zkClient = new ZkClient(zookeeper, sessionTimeoutMs, connectionTimeoutMs, ZKStringSerializer$.MODULE$);
 
@@ -257,7 +266,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
     Private Methods
     --------------------------------------------------------------------------*/
 
-    private String toJSONString(Map properties)
+    private String toJSONString(Object value)
     {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -265,7 +274,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
 
         try
         {
-            return mapper.writeValueAsString(properties);
+            return mapper.writeValueAsString(value);
         }
         catch (IOException e)
         {
@@ -277,7 +286,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
     {
         if (!topics.contains(record.topic()))
         {
-            creatTopic(record.topic());
+            createTopic(record.topic());
         }
 
         producer.send(record);

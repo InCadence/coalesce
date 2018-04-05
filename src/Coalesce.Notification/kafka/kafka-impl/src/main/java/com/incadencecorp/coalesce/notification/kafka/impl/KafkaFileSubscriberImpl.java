@@ -111,7 +111,7 @@ public class KafkaFileSubscriberImpl implements ICoalesceSubscriber, Closeable {
     }
 
     @Override
-    public <V> void subscribeTopic(String topic, ICoalesceEventHandler<KeyValuePairEvent<V>> handler)
+    public <V> void subscribeTopic(String topic, ICoalesceEventHandler<KeyValuePairEvent<V>> handler, Class<V> clazz)
     {
         // Seed
         handleTopic(topic, handler);

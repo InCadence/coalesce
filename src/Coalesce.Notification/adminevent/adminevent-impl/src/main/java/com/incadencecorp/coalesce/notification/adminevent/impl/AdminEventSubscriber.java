@@ -147,7 +147,7 @@ public class AdminEventSubscriber implements ICoalesceSubscriber {
     }
 
     @Override
-    public <V> void subscribeTopic(String topic, ICoalesceEventHandler<KeyValuePairEvent<V>> handler)
+    public <V> void subscribeTopic(String topic, ICoalesceEventHandler<KeyValuePairEvent<V>> handler, Class<V> clazz)
     {
         if (context != null)
         {

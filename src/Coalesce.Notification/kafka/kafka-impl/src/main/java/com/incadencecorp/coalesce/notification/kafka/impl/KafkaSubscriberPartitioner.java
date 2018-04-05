@@ -103,9 +103,7 @@ public class KafkaSubscriberPartitioner extends DefaultPartitioner implements Pa
             String topic = (String) configs.get(PARAM_TOPIC);
 
             ICoalesceSubscriber subscriber = (ICoalesceSubscriber) Class.forName((String) configs.get(PARAM_SUBSCRIBER)).newInstance();
-            subscriber.subscribeTopic(topic,
-                                      (ICoalesceEventHandler<KeyValuePairEvent<List<Integer>>>) event -> setPartition(topic,
-                                                                                                                      event.getValue()));
+            subscriber.subscribeTopic(topic, event -> setPartition(topic, event.getValue()), List.class);
         }
         catch (Throwable e)
         {

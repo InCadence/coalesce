@@ -77,6 +77,6 @@ public interface ICoalesceSubscriber {
      * @param handler event's handler
      * @param <V>     the value object type
      */
-    <V> void subscribeTopic(String topic, ICoalesceEventHandler<KeyValuePairEvent<V>> handler);
+    <V> void subscribeTopic(String topic, ICoalesceEventHandler<KeyValuePairEvent<V>> handler, Class<V> clazz);
 
 }
