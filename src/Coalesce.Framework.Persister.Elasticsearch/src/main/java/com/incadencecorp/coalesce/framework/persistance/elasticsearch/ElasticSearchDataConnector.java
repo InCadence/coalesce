@@ -1,11 +1,14 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Properties;
 import java.util.stream.Stream;
 
 import org.elasticsearch.ElasticsearchException;
@@ -26,9 +29,15 @@ import com.google.common.net.HostAndPort;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 
+import ironhide.client.IronhideClient;
+import ironhide.client.IronhideClient.Builder;
+
 public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchDataConnector.class);
+    private static final String KEYSTORE_FILE_PROPERTY = "keystore_file";
+    private static final String TRUSTSTORE_FILE_PROPERTY = "truststore_file";
+    public static final String ELASTICHOSTS_PROPERTY = "elastichosts";
 
 	public TransportClient getDBConnector() throws CoalescePersistorException {
 		TransportClient client = null;
@@ -95,6 +104,56 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
     protected String getProcedurePrefix()
     {
         return "";
+    }
+    
+    public IronhideClient connectElasticSearch(Properties props)
+    {
+
+        IronhideClient client = null;
+        // on startup
+        String keypath = props.getProperty(KEYSTORE_FILE_PROPERTY);
+        String trustpath = props.getProperty(TRUSTSTORE_FILE_PROPERTY);
+
+        try
+        {
+
+            Builder clientBuild = IronhideClient.builder().setClusterName("BDP.oerepodev.incadencecorp.com")
+            		.clientSSLSettings(keypath, "changeit",
+            				trustpath, "changeit");
+
+            String eshosts = props.getProperty(ELASTICHOSTS_PROPERTY);
+            Stream.of(eshosts.split(",")).map(host -> {
+                HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
+
+                try
+                {
+                    String chost = hostAndPort.getHostText();
+                    InetAddress addr = InetAddress.getByName(chost);
+                    return new InetSocketTransportAddress(addr, hostAndPort.getPort());
+                }
+                catch (UnknownHostException ex)
+                {
+                    // TODO Auto-generated catch block
+                    LOGGER.error(ex.getMessage(), ex);
+                    return null;
+                }
+
+            }).forEach(clientBuild::addTransportAddress);
+            client = clientBuild.build();
+
+            //			        .addTransportAddress(new InetSocketTransportAddress("bdpnode3", 9300))
+            //			        .addTransportAddress(new InetSocketTransportAddress("bdpnode4", 9300));
+            //			        .addTransportAddress(new InetSocketTransportAddress("bdpnode5", 9300));
+
+        }
+        catch (ElasticsearchException | FileNotFoundException ex)
+        {
+            // TODO Auto-generated catch block
+            LOGGER.error(ex.getMessage(), ex);
+            return null;
+        }
+
+        return client;
     }
 
     public static void main(String args[]) {

@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +11,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
@@ -58,6 +60,7 @@ import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 
+import ironhide.client.IronhideClient;
 import mil.nga.giat.data.elasticsearch.FilterToElastic;
 
 /*-----------------------------------------------------------------------------'
@@ -252,6 +255,15 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     {
         // Do Nothing
     }
+    
+    public Properties getProps() throws IOException {
+        InputStream in = ElasticSearchDataConnector.class.getResourceAsStream("/elasticsearch-config.properties");
+        Properties props = new Properties();
+        props.load(in);
+        in.close();
+        
+        return props;
+    }
 
     @Override
     public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
@@ -262,7 +274,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         {
             try(ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
             {
-    	    	TransportClient client = conn.getDBConnector();
+    	    	IronhideClient client = conn.connectElasticSearch(getProps());
     	    	XmlMapper mapper = new XmlMapper();
     	    	JsonNode node = mapper.readTree(template.toXml());
 
@@ -287,7 +299,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         } 
     }
     
-    private Map<String, Object> coalesceTemplateToESTemplate(CoalesceEntityTemplate template, TransportClient client) { 
+    private Map<String, Object> coalesceTemplateToESTemplate(CoalesceEntityTemplate template, IronhideClient client) { 
     	Map<String, Object> esTemplate = new HashMap<>();
     	Map<String, Object> mappingMap = new HashMap<>();
     	Map<String, Object> propertiesMap = new HashMap<>();
@@ -468,7 +480,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
             // Create a Database Connection
             try
             {
-               TransportClient client = conn.getDBConnector();
+               IronhideClient client = conn.connectElasticSearch(getProps());
 
                 for (CoalesceEntity entity : entities)
                 {
@@ -510,7 +522,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
             for (CoalesceEntity entity : entities)
             {
-                if (persistEntityObject(entity, conn.getDBConnector()))
+                if (persistEntityObject(entity, conn.connectElasticSearch(getProps())))
                 {
                     isSuccessful = true;
                 }
@@ -642,7 +654,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      * @return isSuccessful = True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistObject(CoalesceObject coalesceObject, TransportClient conn) throws SQLException
+    protected boolean persistObject(CoalesceObject coalesceObject, IronhideClient conn) throws SQLException
     {
         boolean isSuccessful = true;
 
@@ -668,7 +680,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      * @return True = No Update required.
      * @throws SQLException
      */
-    private boolean persistEntityObject(CoalesceEntity entity, TransportClient conn) throws SQLException
+    private boolean persistEntityObject(CoalesceEntity entity, IronhideClient conn) throws SQLException
     {
         // Return true if no update is required.
     	//Worry about this later. 
@@ -893,7 +905,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     	return false;
     }
 
-    private boolean updateCoalesceObject(CoalesceObject coalesceObject, TransportClient conn, boolean allowRemoval)
+    private boolean updateCoalesceObject(CoalesceObject coalesceObject, IronhideClient conn, boolean allowRemoval)
             throws SQLException
 
     {

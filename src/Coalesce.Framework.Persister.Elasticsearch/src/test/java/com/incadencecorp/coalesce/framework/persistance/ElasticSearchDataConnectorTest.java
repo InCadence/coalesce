@@ -2,9 +2,14 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
+
+import ironhide.client.IronhideClient;
+
 import org.elasticsearch.client.transport.TransportClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -38,4 +43,18 @@ public class ElasticSearchDataConnectorTest {
         client.close();
     }
 
+    @Test
+	public void testIronhideConnection() throws Exception 
+    {
+        IronhideClient client = null;
+        ElasticSearchDataConnector connector = new ElasticSearchDataConnector();
+        InputStream in = ElasticSearchDataConnector.class.getResourceAsStream("/elasticsearch-config.properties");
+        Properties props = new Properties();
+        props.load(in);
+        in.close();
+        
+    	client = connector.connectElasticSearch(props);
+    	assertNotNull(client);
+        connector.close();
+	}
 }
