@@ -1,22 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.incadencecorp.coalesce.notification</groupId>
-	<artifactId>coalesce-notification-parent</artifactId>
-	<name>Coalesce Notification Implementation Parent</name>
+	<groupId>com.incadencecorp.coalesce.notification.direct</groupId>
+	<artifactId>notification-direct-parent</artifactId>
+	<name>Coalesce Notification Kafka Parent</name>
 	<packaging>pom</packaging>
 
 	<parent>
-		<groupId>com.incadencecorp.coalesce</groupId>
-		<artifactId>coalesce-pom</artifactId>
+		<groupId>com.incadencecorp.coalesce.notification</groupId>
+		<artifactId>coalesce-notification-parent</artifactId>
 		<version>0.0.27-SNAPSHOT</version>
-		<relativePath>../Coalesce.Pom</relativePath>
+		<relativePath>..</relativePath>
 	</parent>
 
 	<modules>
-		<module>adminevent</module>
-		<module>kafka</module>
-		<module>direct</module>
+		<module>direct-impl</module>
 		<module>feature</module>
 	</modules>
 
