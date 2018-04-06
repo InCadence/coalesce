@@ -70,6 +70,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
     public static final String PROP_ZOOKEEPER = "zookeepers";
     public static final String PROP_SESSION_TIMEOUT = "kafka.session.timeout";
     public static final String PROP_CONN_TIMEOUT = "kafka.connection.timeout";
+    public static final String PROP_TOPICS = "kafka.topics";
     public static final String PROP_PARTITIONS = "kafka.partitions";
     public static final String PROP_REPLICATION = "kafka.replication";
     public static final String PROP_IS_SECURE = "kafka.isSecure";
@@ -129,11 +130,11 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         createTopic(TOPIC_LINKAGE);
         createTopic(TOPIC_METRICS);
 
-        for (String topic : props.getOrDefault(props.get(PROP_SESSION_TIMEOUT), "").split(","))
+        for (String topic : props.getOrDefault(PROP_TOPICS, "").split(","))
         {
             if (!StringHelper.isNullOrEmpty(topic))
             {
-                createTopic(topic);
+                createTopic(normalize(topic));
             }
         }
     }
@@ -221,7 +222,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
     @Override
     public <V> void sendMessage(String topic, String key, V value)
     {
-        sendRecord(new ProducerRecord<>(topic, key, toJSONString(value)));
+        sendRecord(new ProducerRecord<>(normalize(topic), key, toJSONString(value)));
     }
 
     @Override
@@ -230,41 +231,28 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         producer.close();
     }
 
-    /**
-     * Creates a topic within Kafka.
-     *
-     * @param topic to be created.
-     */
-    public void createTopic(String topic)
-    {
-        ZkClient zkClient = new ZkClient(zookeeper, sessionTimeoutMs, connectionTimeoutMs, ZKStringSerializer$.MODULE$);
-
-        try
-        {
-            ZkUtils zkUtils = new ZkUtils(zkClient, new ZkConnection(zookeeper), isSecureKafkaCluster);
-
-            if (!AdminUtils.topicExists(zkUtils, topic))
-            {
-                Properties topicConfig = new Properties(); // add per-topic configurations settings here
-                AdminUtils.createTopic(zkUtils,
-                                       topic,
-                                       partitions,
-                                       replication,
-                                       topicConfig,
-                                       AdminUtils.createTopic$default$6());
-            }
-        }
-        finally
-        {
-            zkClient.close();
-        }
-
-        topics.add(topic);
-    }
-    
     /*--------------------------------------------------------------------------
     Private Methods
     --------------------------------------------------------------------------*/
+
+    private void createTopic(String topic)
+    {
+        if (topics.add(topic))
+        {
+            KafkaUtil.createTopic(topic,
+                                  zookeeper,
+                                  sessionTimeoutMs,
+                                  connectionTimeoutMs,
+                                  isSecureKafkaCluster,
+                                  partitions,
+                                  replication);
+        }
+    }
+
+    private String normalize(String value)
+    {
+        return value.replaceAll("[^\\w._-]", ".");
+    }
 
     private String toJSONString(Object value)
     {

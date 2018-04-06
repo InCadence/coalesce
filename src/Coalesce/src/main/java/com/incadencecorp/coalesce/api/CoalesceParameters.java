@@ -59,6 +59,11 @@ public final class CoalesceParameters {
      public static final String PARAM_INTERVAL_UNIT = INC + "interval.unit";
 
     /**
+     * ({@link Long}) Specifies the timeout.
+     */
+     public static final String PARAM_TIMEOUT = INC + "timeout";
+
+    /**
      * (Integer) When creating filenames from UUIDs this determines the
      * sub-directory which is based of the first X characters of the UUID.
      */
