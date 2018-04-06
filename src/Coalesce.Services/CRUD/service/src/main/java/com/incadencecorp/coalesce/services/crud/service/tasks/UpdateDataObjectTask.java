@@ -58,7 +58,8 @@ public class UpdateDataObjectTask extends AbstractFrameworkTask<String[], Result
                 {
                     CoalesceIteratorMerge merger = new CoalesceIteratorMerge();
 
-                    updated.pruneCoalesceObject(updated.getLinkageSection());
+                    // TODO Add this back?
+                    //updated.pruneCoalesceObject(updated.getLinkageSection());
                     updated = merger.merge(parameters.getPrincipalName(), parameters.getPrincipalIp(), original, updated);
 
                     // TODO Enable this
