@@ -110,4 +110,11 @@ public class CoalesceResponseType<T> implements ICoalesceResponseType<T> {
         return _status == EResultStatus.SUCCESS;
     }
 
+    /**
+     * Does nothing only used for JSON serialization
+     */
+    public final void setSuccessful(boolean value) {
+        // Do Nothing
+    }
+
 }
