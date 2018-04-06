@@ -1,80 +1,90 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>template2java-maven-plugin</artifactId>
-	<name>Coalesce Plugin Template2Java</name>
-	<packaging>maven-plugin</packaging>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>template2java-maven-plugin</artifactId>
+    <name>Coalesce Plugin Template2Java</name>
+    <packaging>maven-plugin</packaging>
 
 
-	<parent>
-		<groupId>com.incadencecorp.coalesce.plugins</groupId>
-		<artifactId>coalesce-plugins-parent</artifactId>
-		<version>0.0.27-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
+    <parent>
+        <groupId>com.incadencecorp.coalesce.plugins</groupId>
+        <artifactId>coalesce-plugins-parent</artifactId>
+        <version>0.0.27-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-plugin-api</artifactId>
-			<version>3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-core</artifactId>
-			<version>0.0.27-SNAPSHOT</version>
-			<scope>test</scope>
-			<type>test-jar</type>
-		</dependency>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.3</version>
+            </plugin>
+        </plugins>
+    </build>
 
-		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity-tools</artifactId>
-			<version>2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity</artifactId>
-			<version>1.7</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-core</artifactId>
+            <version>0.0.27-SNAPSHOT</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
 
-		<!-- dependencies to annotations -->
-		<dependency>
-			<groupId>org.apache.maven.plugin-tools</groupId>
-			<artifactId>maven-plugin-annotations</artifactId>
-			<version>3.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-project</artifactId>
-			<version>2.2.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-artifact</artifactId>
-			<version>3.5.0</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-tools</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-core</artifactId>
-			<version>3.5.0</version>
-		</dependency>
+        <!-- dependencies to annotations -->
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>3.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+            <version>2.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
+            <version>3.5.0</version>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-plugin-api</artifactId>
-			<version>3.5.0</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>3.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>3.5.0</version>
+        </dependency>
 
 
-	</dependencies>
+    </dependencies>
 
 </project>
