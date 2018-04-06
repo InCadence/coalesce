@@ -17,17 +17,15 @@
 
 package com.incadencecorp.coalesce.common.helpers;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 
 /**
  * Factory class for manipulating arrays.
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public final class ArrayHelper {
 
@@ -266,7 +264,7 @@ public final class ArrayHelper {
 
     /**
      * Searching a list of objects for a given key.
-     * 
+     *
      * @param list
      * @param key
      * @return the object if found; otherwise <code>null</code>.
@@ -282,6 +280,14 @@ public final class ArrayHelper {
         }
 
         return null;
+    }
+
+    /**
+     * @return a list collections of string as a list all lowercased.
+     */
+    public static List<String> tolowerCase(Collection<String> strings)
+    {
+        return strings.stream().map(String::toLowerCase).collect(Collectors.toList());
     }
 
 }
