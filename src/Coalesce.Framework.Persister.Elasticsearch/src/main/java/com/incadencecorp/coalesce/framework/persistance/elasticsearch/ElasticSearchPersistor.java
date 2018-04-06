@@ -721,8 +721,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 			//});
 
 			// convert JSON string to Map
-			response = conn.prepareIndex(entity.getName().toLowerCase(), entity.getType().toLowerCase()).setSource(map).get();
-			System.out.println("Saved Index called: " + entity.getName());
+			response = conn.prepareIndex(entity.getName().toLowerCase() + "_estest", entity.getType().toLowerCase()).setSource(map).get();
+			System.out.println("Saved Index called: " + entity.getName() + "_estest");
  
 			System.out.println(response.toString());
 		} catch (CoalesceException e) {
