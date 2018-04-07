@@ -186,51 +186,63 @@ public class KafkaSubscriberImpl extends CoalesceSchedulerServiceImpl implements
     @Override
     public <V> void subscribeTopic(String topic, ICoalesceEventHandler<KeyValuePairEvent<V>> handler, Class<V> clazz)
     {
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(params);
-        consumer.subscribe(Collections.singleton(normalize(topic)));
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        try
+        {
 
-        this.scheduleAtFixedRate(() -> {
-            ConsumerRecords<String, String> records = consumer.poll(timeout);
+            Thread.currentThread().setContextClassLoader(null);//KafkaConsumer.class.getClassLoader());
 
-            if (records.count() > 0)
-            {
-                for (TopicPartition partition : records.partitions())
+            KafkaConsumer<String, String> consumer = new KafkaConsumer<>(params);
+
+            consumer.subscribe(Collections.singleton(normalize(topic)));
+
+            this.scheduleAtFixedRate(() -> {
+                ConsumerRecords<String, String> records = consumer.poll(timeout);
+
+                if (records.count() > 0)
                 {
-                    List<ConsumerRecord<String, String>> partitionRecords = records.records(partition);
-
-                    for (ConsumerRecord<String, String> record : partitionRecords)
+                    for (TopicPartition partition : records.partitions())
                     {
-                        try
+                        List<ConsumerRecord<String, String>> partitionRecords = records.records(partition);
+
+                        for (ConsumerRecord<String, String> record : partitionRecords)
                         {
-                            LOGGER.debug("Received Topic {}", record.topic());
-
-                            KeyValuePairEvent<V> kvp = new KeyValuePairEvent<>();
-                            kvp.setKey(record.key());
-                            kvp.setValue(readValue(record.value(), clazz));
-
-                            if (LOGGER.isTraceEnabled())
+                            try
                             {
-                                LOGGER.trace("Handling Topic {} : {}", record.topic(), record.value());
-                            }
-                            else
-                            {
-                                LOGGER.debug("Handling Topic {}", record.topic());
-                            }
+                                LOGGER.debug("Received Topic {}", record.topic());
 
-                            handler.handle(kvp);
+                                KeyValuePairEvent<V> kvp = new KeyValuePairEvent<>();
+                                kvp.setKey(record.key());
+                                kvp.setValue(readValue(record.value(), clazz));
+
+                                if (LOGGER.isTraceEnabled())
+                                {
+                                    LOGGER.trace("Handling Topic {} : {}", record.topic(), record.value());
+                                }
+                                else
+                                {
+                                    LOGGER.debug("Handling Topic {}", record.topic());
+                                }
+
+                                handler.handle(kvp);
+                            }
+                            catch (Exception e)
+                            {
+                                LOGGER.error(e.getMessage(), e);
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            LOGGER.error(e.getMessage(), e);
-                        }
+
+                        long lastOffset = partitionRecords.get(partitionRecords.size() - 1).offset();
+                        consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(lastOffset + 1)));
                     }
-
-                    long lastOffset = partitionRecords.get(partitionRecords.size() - 1).offset();
-                    consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(lastOffset + 1)));
                 }
-            }
 
-        }, interval, interval, intervalUnit);
+            }, interval, interval, intervalUnit);
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader(cl);
+        }
     }
 
     private String normalize(String value)

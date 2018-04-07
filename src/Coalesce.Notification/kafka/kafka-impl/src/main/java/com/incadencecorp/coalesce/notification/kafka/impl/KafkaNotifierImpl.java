@@ -50,6 +50,14 @@ import java.util.*;
  * This implementation uses Kafka to push notifications.
  *
  * @author Derek Clemenzi
+ * @see #PROP_CONFIG_DIR
+ * @see #PROP_ZOOKEEPER
+ * @see #PROP_SESSION_TIMEOUT
+ * @see #PROP_CONN_TIMEOUT
+ * @see #PROP_TOPICS
+ * @see #PROP_PARTITIONS
+ * @see #PROP_REPLICATION
+ * @see #PROP_IS_SECURE
  */
 public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
 
@@ -113,37 +121,49 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
      */
     public KafkaNotifierImpl(Map<String, String> props)
     {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.putAll(props);
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-        zookeeper = props.get(PROP_ZOOKEEPER);
-        producer = new KafkaProducer<>(parameters);
-
-        ShutdownAutoCloseable.createShutdownHook(this);
-
-        // Set Properties
-        connector = new FilePropertyConnector(props.getOrDefault(PROP_CONFIG_DIR, DEFAULT_CONFIG_DIR));
-        sessionTimeoutMs = Integer.parseInt(props.getOrDefault(props.get(PROP_SESSION_TIMEOUT), "10000"));
-        connectionTimeoutMs = Integer.parseInt(props.getOrDefault(props.get(PROP_CONN_TIMEOUT), "8000"));
-        partitions = Integer.parseInt(props.getOrDefault(props.get(PROP_PARTITIONS), "20"));
-        replication = Integer.parseInt(props.getOrDefault(props.get(PROP_REPLICATION), "1"));
-        isSecureKafkaCluster = props.containsKey(PROP_IS_SECURE) && Boolean.parseBoolean(props.get(PROP_IS_SECURE));
-
-        createTopic(TOPIC_AUDIT);
-        createTopic(TOPIC_CRUD);
-        createTopic(TOPIC_JOB_COMPLETE);
-        createTopic(TOPIC_LINKAGE);
-        createTopic(TOPIC_METRICS);
-
-        for (String topic : props.getOrDefault(PROP_TOPICS, "").split(","))
+        try
         {
-            if (!StringHelper.isNullOrEmpty(topic))
-            {
-                createTopic(normalize(topic));
-            }
-        }
+            Thread.currentThread().setContextClassLoader(null);
 
-        defaultTopicCondig.putAll(new PropertyLoader(connector, "default.properties").getSettings());
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.putAll(props);
+
+            zookeeper = props.get(PROP_ZOOKEEPER);
+
+            producer = new KafkaProducer<>(parameters);
+
+            ShutdownAutoCloseable.createShutdownHook(this);
+
+            // Set Properties
+            connector = new FilePropertyConnector(props.getOrDefault(PROP_CONFIG_DIR, DEFAULT_CONFIG_DIR));
+            sessionTimeoutMs = Integer.parseInt(props.getOrDefault(PROP_SESSION_TIMEOUT, "10000"));
+            connectionTimeoutMs = Integer.parseInt(props.getOrDefault(PROP_CONN_TIMEOUT, "8000"));
+            partitions = Integer.parseInt(props.getOrDefault(PROP_PARTITIONS, "20"));
+            replication = Integer.parseInt(props.getOrDefault(PROP_REPLICATION, "1"));
+            isSecureKafkaCluster = props.containsKey(PROP_IS_SECURE) && Boolean.parseBoolean(props.get(PROP_IS_SECURE));
+
+            createTopic(TOPIC_AUDIT);
+            createTopic(TOPIC_CRUD);
+            createTopic(TOPIC_JOB_COMPLETE);
+            createTopic(TOPIC_LINKAGE);
+            createTopic(TOPIC_METRICS);
+
+            for (String topic : (props.getOrDefault(PROP_TOPICS, "")).split(","))
+            {
+                if (!StringHelper.isNullOrEmpty(topic))
+                {
+                    createTopic(normalize(topic));
+                }
+            }
+
+            defaultTopicCondig.putAll(new PropertyLoader(connector, "default.properties").getSettings());
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader(cl);
+        }
     }
 
     /*--------------------------------------------------------------------------
