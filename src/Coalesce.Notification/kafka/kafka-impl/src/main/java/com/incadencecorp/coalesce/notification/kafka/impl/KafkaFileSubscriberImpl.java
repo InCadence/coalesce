@@ -28,10 +28,10 @@ import com.incadencecorp.coalesce.framework.PropertyLoader;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang.NotImplementedException;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.Closeable;
 import java.io.File;

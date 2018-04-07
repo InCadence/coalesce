@@ -208,7 +208,14 @@ public class KafkaSubscriberImpl extends CoalesceSchedulerServiceImpl implements
                             kvp.setKey(record.key());
                             kvp.setValue(readValue(record.value(), clazz));
 
-                            LOGGER.debug("Handling Topic {} : {}", record.topic(), record.value());
+                            if (LOGGER.isTraceEnabled())
+                            {
+                                LOGGER.trace("Handling Topic {} : {}", record.topic(), record.value());
+                            }
+                            else
+                            {
+                                LOGGER.debug("Handling Topic {}", record.topic());
+                            }
 
                             handler.handle(kvp);
                         }

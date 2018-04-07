@@ -4,14 +4,12 @@
 	<feature name="coalesce-example" version="${project.version}">
 <!-- 		<feature prerequisite="true" dependency="false">spifly</feature> -->
 		<feature prerequisite="false" dependency="false">notification-adminevent-feature</feature>
+		<feature prerequisite="false" dependency="false">notification-kafka-feature</feature>
 		<feature prerequisite="false" dependency="false">persister-postgres-feature</feature>
 		<feature prerequisite="false" dependency="false">persister-neo4j-feature</feature>
 		<feature prerequisite="false" dependency="false">persister-accumulo-feature</feature>
 		<feature prerequisite="false" dependency="false">persister-derby-feature</feature>
-		<feature prerequisite="false" dependency="false">coalesce-crud-service-feature</feature>
-		<feature prerequisite="false" dependency="false">coalesce-crud-service-data-feature</feature>
-		<feature prerequisite="false" dependency="false">coalesce-search-service-feature</feature>
-		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
+		<feature prerequisite="false" dependency="false">coalesce-services-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-frontend</feature>
 		<feature prerequisite="false" dependency="false">coalesce-javadocs</feature>
 	</feature>

@@ -30,12 +30,13 @@
             <groupId>com.incadencecorp.coalesce.notification.adminevent</groupId>
             <artifactId>notification-adminevent-impl</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.incadencecorp.coalesce</groupId>
-                    <artifactId>coalesce-core</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

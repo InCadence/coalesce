@@ -34,12 +34,8 @@ import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
+import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
-import kafka.admin.AdminUtils;
-import kafka.utils.ZKStringSerializer$;
-import kafka.utils.ZkUtils;
-import org.I0Itec.zkclient.ZkClient;
-import org.I0Itec.zkclient.ZkConnection;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.osgi.framework.BundleContext;
@@ -67,6 +63,10 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
     public static final String TOPIC_JOB_COMPLETE = "com.incadence.job";
 
     // Property Definitions
+    /**
+     * (Path) Directory location containing the topic configurations. Default {@value DEFAULT_CONFIG_DIR}
+     */
+    public static final String PROP_CONFIG_DIR = "kafka.config.dir";
     public static final String PROP_ZOOKEEPER = "zookeepers";
     public static final String PROP_SESSION_TIMEOUT = "kafka.session.timeout";
     public static final String PROP_CONN_TIMEOUT = "kafka.connection.timeout";
@@ -75,6 +75,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
     public static final String PROP_REPLICATION = "kafka.replication";
     public static final String PROP_IS_SECURE = "kafka.isSecure";
 
+    private static final String DEFAULT_CONFIG_DIR = "config";
 
     /*--------------------------------------------------------------------------
     Member Variables
@@ -89,6 +90,9 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
     private final int partitions;
     private final int replication;
     private final boolean isSecureKafkaCluster;
+
+    private final IConfigurationsConnector connector;
+    private final Map<String, String> defaultTopicCondig = new HashMap<>();
 
     /*--------------------------------------------------------------------------
     Public Methods
@@ -118,6 +122,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         ShutdownAutoCloseable.createShutdownHook(this);
 
         // Set Properties
+        connector = new FilePropertyConnector(props.getOrDefault(PROP_CONFIG_DIR, DEFAULT_CONFIG_DIR));
         sessionTimeoutMs = Integer.parseInt(props.getOrDefault(props.get(PROP_SESSION_TIMEOUT), "10000"));
         connectionTimeoutMs = Integer.parseInt(props.getOrDefault(props.get(PROP_CONN_TIMEOUT), "8000"));
         partitions = Integer.parseInt(props.getOrDefault(props.get(PROP_PARTITIONS), "20"));
@@ -137,6 +142,8 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
                 createTopic(normalize(topic));
             }
         }
+
+        defaultTopicCondig.putAll(new PropertyLoader(connector, "default.properties").getSettings());
     }
 
     /*--------------------------------------------------------------------------
@@ -239,13 +246,18 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
     {
         if (topics.add(topic))
         {
+            Properties config = new Properties();
+            config.putAll(defaultTopicCondig);
+            config.putAll(new PropertyLoader(connector, topic + ".properties").getSettings());
+
             KafkaUtil.createTopic(topic,
                                   zookeeper,
                                   sessionTimeoutMs,
                                   connectionTimeoutMs,
                                   isSecureKafkaCluster,
                                   partitions,
-                                  replication);
+                                  replication,
+                                  config);
         }
     }
 

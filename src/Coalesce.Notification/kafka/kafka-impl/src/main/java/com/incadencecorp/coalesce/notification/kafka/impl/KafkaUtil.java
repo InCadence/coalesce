@@ -31,12 +31,19 @@ import java.util.Properties;
  */
 public class KafkaUtil {
 
-        /**
+    /**
      * Creates a topic within Kafka.
      *
      * @param topic to be created.
      */
-    public static void createTopic(String topic, String zookeeper, int sessionTimeout, int connectionTimeout, boolean isSecure, int partitions, int replication)
+    public static void createTopic(String topic,
+                                   String zookeeper,
+                                   int sessionTimeout,
+                                   int connectionTimeout,
+                                   boolean isSecure,
+                                   int partitions,
+                                   int replication,
+                                   Properties config)
     {
         ZkClient zkClient = new ZkClient(zookeeper, sessionTimeout, connectionTimeout, ZKStringSerializer$.MODULE$);
 
@@ -46,13 +53,7 @@ public class KafkaUtil {
 
             if (!AdminUtils.topicExists(zkUtils, topic))
             {
-                Properties topicConfig = new Properties(); // add per-topic configurations settings here
-                AdminUtils.createTopic(zkUtils,
-                                       topic,
-                                       partitions,
-                                       replication,
-                                       topicConfig,
-                                       AdminUtils.createTopic$default$6());
+                AdminUtils.createTopic(zkUtils, topic, partitions, replication, config, AdminUtils.createTopic$default$6());
             }
         }
         finally
