@@ -100,7 +100,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
     private final boolean isSecureKafkaCluster;
 
     private final IConfigurationsConnector connector;
-    private final Map<String, String> defaultTopicCondig = new HashMap<>();
+    private final Map<String, String> defaultTopicConfig = new HashMap<>();
 
     /*--------------------------------------------------------------------------
     Public Methods
@@ -158,7 +158,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
                 }
             }
 
-            defaultTopicCondig.putAll(new PropertyLoader(connector, "default.properties").getSettings());
+            defaultTopicConfig.putAll(new PropertyLoader(connector, "default.properties").getSettings());
         }
         finally
         {
@@ -267,7 +267,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         if (topics.add(topic))
         {
             Properties config = new Properties();
-            config.putAll(defaultTopicCondig);
+            config.putAll(defaultTopicConfig);
             config.putAll(new PropertyLoader(connector, topic + ".properties").getSettings());
 
             KafkaUtil.createTopic(topic,

@@ -23,6 +23,8 @@ import kafka.utils.ZKStringSerializer$;
 import kafka.utils.ZkUtils;
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.ZkConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
@@ -30,6 +32,8 @@ import java.util.Properties;
  * @author Derek Clemenzi
  */
 public class KafkaUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaUtil.class);
 
     /**
      * Creates a topic within Kafka.
@@ -53,6 +57,8 @@ public class KafkaUtil {
 
             if (!AdminUtils.topicExists(zkUtils, topic))
             {
+                LOGGER.info("Creating Topic ({}) w/ {} partitions", topic, partitions);
+
                 AdminUtils.createTopic(zkUtils, topic, partitions, replication, config, AdminUtils.createTopic$default$6());
             }
         }
