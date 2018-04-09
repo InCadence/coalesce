@@ -48,13 +48,13 @@ public class KafkaSubscriberImplIT {
         ICoalesceNotifier notifier = new KafkaNotifierImpl();
         ICoalesceSubscriber subscriber = new KafkaSubscriberImpl();
 
-        subscriber.subscribeTopic("hello", event -> System.out.println(event.getValue()), String.class);
+        subscriber.subscribeTopic("unitTest", event -> System.out.println(event.getValue()), String.class);
         subscriber.subscribeToCRUD(event -> System.out.println(event.getMeta().getKey()));
 
         while (true)
         {
-            notifier.sendMessage("hello", "Test", "Test");
-            notifier.sendCrud("hello", ECrudOperations.UPDATE, new ObjectMetaData("A", "B", "C", "D"));
+            notifier.sendMessage("unitTest", "Test", "Test-Value");
+            notifier.sendCrud("unitTest", ECrudOperations.UPDATE, new ObjectMetaData("A", "B", "C", "D"));
             Thread.sleep(30 * 1000);
         }
 

@@ -23,9 +23,14 @@ import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.subscriber.ICoalesceEventHandler;
 import com.incadencecorp.coalesce.api.subscriber.ICoalesceSubscriber;
 import com.incadencecorp.coalesce.api.subscriber.events.*;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.CoalesceSchedulerServiceImpl;
 import com.incadencecorp.coalesce.framework.PropertyLoader;
+import com.incadencecorp.coalesce.framework.ShutdownAutoCloseable;
+import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
+import com.incadencecorp.unity.common.connectors.MemoryConnector;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -37,10 +42,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -49,154 +55,147 @@ import java.util.concurrent.TimeUnit;
  * @see CoalesceParameters@PARAM_INTERVAL
  * @see CoalesceParameters@PARAM_INTERVAL_UNIT
  */
-public class KafkaSubscriberImpl extends CoalesceSchedulerServiceImpl implements ICoalesceSubscriber {
+public class KafkaSubscriberImpl extends CoalesceComponentImpl implements ICoalesceSubscriber, AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaSubscriberImpl.class);
 
-    private Map<String, Object> params = new HashMap<>();
+    private static final long DEFAULT_TIMEOUT = 100;
+    private static final long DEFAULT_INTERVAL = 100;
+    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.SECONDS;
 
-    private final long timeout;
-    private final long interval;
-    private final TimeUnit intervalUnit;
+    private long timeout = DEFAULT_TIMEOUT;
+    private long interval = DEFAULT_INTERVAL;
+    private TimeUnit intervalUnit = DEFAULT_TIME_UNIT;
+    private IConfigurationsConnector connector = new MemoryConnector();
+
     private final ObjectMapper mapper = new ObjectMapper();
+    private final CoalesceSchedulerServiceImpl service;
 
+    private static final List<KafkaConsumer> CONSUMERS = Collections.synchronizedList(new ArrayList<>());
+
+    /**
+     * Default Constructor
+     */
     public KafkaSubscriberImpl()
     {
-        this(loadProperties());
+        this(null);
     }
 
-    public KafkaSubscriberImpl(Map<String, String> params)
+    /**
+     * @param service override the default service.
+     */
+    public KafkaSubscriberImpl(ScheduledExecutorService service)
     {
-        this.params.putAll(params);
+        this.service = new CoalesceSchedulerServiceImpl(service);
 
-        timeout = Long.parseLong(params.getOrDefault(CoalesceParameters.PARAM_TIMEOUT, "100"));
-        interval = Integer.parseInt(params.getOrDefault(CoalesceParameters.PARAM_INTERVAL, "5"));
+        setProperties(loadProperties());
+
+        ShutdownAutoCloseable.createShutdownHook(this);
+    }
+
+    @Override
+    public void setProperties(Map<String, String> params)
+    {
+        super.setProperties(params);
+
+        timeout = Long.parseLong(params.getOrDefault(CoalesceParameters.PARAM_TIMEOUT, Long.toString(DEFAULT_TIMEOUT)));
+        interval = Long.parseLong(params.getOrDefault(CoalesceParameters.PARAM_INTERVAL, Long.toString(DEFAULT_INTERVAL)));
         intervalUnit = TimeUnit.valueOf(params.getOrDefault(CoalesceParameters.PARAM_INTERVAL_UNIT,
-                                                            TimeUnit.SECONDS.toString()));
+                                                            DEFAULT_TIME_UNIT.toString()));
+        connector = new FilePropertyConnector(params.getOrDefault(KafkaNotifierImpl.PROP_CONFIG_DIR,
+                                                                  KafkaNotifierImpl.DEFAULT_CONFIG_DIR));
 
-        for (Map.Entry<String, String> param : params.entrySet())
+        // Create Topics Specified
+        for (String topic : (params.getOrDefault(KafkaNotifierImpl.PROP_TOPICS, "")).split(","))
         {
-            LOGGER.info("{} = {}", param.getKey(), param.getValue());
+            if (!StringHelper.isNullOrEmpty(topic))
+            {
+                createTopic(topic);
+            }
         }
     }
 
     @Override
     public void setContext(BundleContext context)
     {
-
+        // Do Nothing
     }
 
     @Override
     public void subscribeToMetrics(ICoalesceEventHandler<MetricsEvent> handler)
     {
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(params);
-        consumer.subscribe(Collections.singleton(KafkaNotifierImpl.TOPIC_METRICS));
-
-        this.scheduleAtFixedRate(() -> {
-            ConsumerRecords<String, String> records = consumer.poll(timeout);
-
-            for (ConsumerRecord<String, String> record : records)
-            {
-                handler.handle(readValue(record.value(), MetricsEvent.class));
-            }
-
-        }, interval, interval, intervalUnit);
+        subscribe(KafkaNotifierImpl.TOPIC_METRICS, handler, MetricsEvent.class);
     }
 
     @Override
     public void subscribeToCRUD(ICoalesceEventHandler<CrudEvent> handler)
     {
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(params);
-        consumer.subscribe(Collections.singleton(KafkaNotifierImpl.TOPIC_CRUD));
-
-        this.scheduleAtFixedRate(() -> {
-            ConsumerRecords<String, String> records = consumer.poll(timeout);
-
-            for (ConsumerRecord<String, String> record : records)
-            {
-                handler.handle(readValue(record.value(), CrudEvent.class));
-            }
-
-        }, interval, interval, intervalUnit);
-    }
-
-    private <V> V readValue(String json, Class<V> clazz)
-    {
-        try
-        {
-            return mapper.readValue(json, clazz);
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
+        subscribe(KafkaNotifierImpl.TOPIC_CRUD, handler, CrudEvent.class);
     }
 
     @Override
     public void subscribeLinkages(ICoalesceEventHandler<LinkageEvent> handler)
     {
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(params);
-        consumer.subscribe(Collections.singleton(KafkaNotifierImpl.TOPIC_LINKAGE));
-
-        this.scheduleAtFixedRate(() -> {
-            ConsumerRecords<String, String> records = consumer.poll(timeout);
-
-            for (ConsumerRecord<String, String> record : records)
-            {
-                handler.handle(readValue(record.value(), LinkageEvent.class));
-            }
-
-        }, interval, interval, intervalUnit);
+        subscribe(KafkaNotifierImpl.TOPIC_LINKAGE, handler, LinkageEvent.class);
     }
 
     @Override
     public void subscribeAudit(ICoalesceEventHandler<AuditEvent> handler)
     {
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(params);
-        consumer.subscribe(Collections.singleton(KafkaNotifierImpl.TOPIC_AUDIT));
-
-        this.scheduleAtFixedRate(() -> {
-            ConsumerRecords<String, String> records = consumer.poll(timeout);
-
-            for (ConsumerRecord<String, String> record : records)
-            {
-                handler.handle(readValue(record.value(), AuditEvent.class));
-            }
-
-        }, interval, interval, intervalUnit);
+        subscribe(KafkaNotifierImpl.TOPIC_AUDIT, handler, AuditEvent.class);
     }
 
     @Override
     public void subscribeJobComplete(ICoalesceEventHandler<JobEvent> handler)
     {
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(params);
-        consumer.subscribe(Collections.singleton(KafkaNotifierImpl.TOPIC_JOB_COMPLETE));
-
-        this.scheduleAtFixedRate(() -> {
-            ConsumerRecords<String, String> records = consumer.poll(timeout);
-
-            for (ConsumerRecord<String, String> record : records)
-            {
-                handler.handle(readValue(record.value(), JobEvent.class));
-            }
-
-        }, interval, interval, intervalUnit);
+        subscribe(KafkaNotifierImpl.TOPIC_JOB_COMPLETE, handler, JobEvent.class);
     }
 
     @Override
     public <V> void subscribeTopic(String topic, ICoalesceEventHandler<KeyValuePairEvent<V>> handler, Class<V> clazz)
     {
+        subscribe(topic, event -> {
+
+            KeyValuePairEvent<V> kvp = new KeyValuePairEvent<>();
+            kvp.setValue(event);
+            handler.handle(kvp);
+
+        }, clazz);
+    }
+
+    @Override
+    public void close() throws Exception
+    {
+        for (KafkaConsumer consumer : CONSUMERS)
+        {
+            consumer.close();
+        }
+
+        CONSUMERS.clear();
+    }
+
+    private <V> void subscribe(String topic, ICoalesceEventHandler<V> handler, Class<V> clazz)
+    {
+        if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug("Subscribing to Topic: ({}) Type: {}", topic, clazz.getSimpleName());
+        }
+
+        createTopic(topic);
+
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try
         {
-
             Thread.currentThread().setContextClassLoader(null);//KafkaConsumer.class.getClassLoader());
 
-            KafkaConsumer<String, String> consumer = new KafkaConsumer<>(params);
+            KafkaConsumer<String, String> consumer = new KafkaConsumer<>(Collections.unmodifiableMap(parameters));
+            consumer.subscribe(Collections.singleton(KafkaUtil.normalizeTopic(topic)));
 
-            consumer.subscribe(Collections.singleton(normalize(topic)));
+            CONSUMERS.add(consumer);
 
-            this.scheduleAtFixedRate(() -> {
+            LOGGER.debug("Polling Topic ({}) Every {} {}", topic, interval, intervalUnit);
+
+            service.scheduleAtFixedRate(() -> {
                 ConsumerRecords<String, String> records = consumer.poll(timeout);
 
                 if (records.count() > 0)
@@ -209,22 +208,22 @@ public class KafkaSubscriberImpl extends CoalesceSchedulerServiceImpl implements
                         {
                             try
                             {
-                                LOGGER.debug("Received Topic {}", record.topic());
-
-                                KeyValuePairEvent<V> kvp = new KeyValuePairEvent<>();
-                                kvp.setKey(record.key());
-                                kvp.setValue(readValue(record.value(), clazz));
-
                                 if (LOGGER.isTraceEnabled())
                                 {
-                                    LOGGER.trace("Handling Topic {} : {}", record.topic(), record.value());
+                                    LOGGER.trace("Handling Topic: ({}) Type: {} Data: {}",
+                                                 record.topic(),
+                                                 clazz.getSimpleName(),
+                                                 record.value());
                                 }
                                 else
                                 {
-                                    LOGGER.debug("Handling Topic {}", record.topic());
+                                    LOGGER.debug("Handling Topic: ({}) Type: {}", record.topic(), clazz.getSimpleName());
                                 }
 
-                                handler.handle(kvp);
+                                handler.handle(readValue(record.value(), clazz));
+
+                                LOGGER.trace("Handled Topic ({})", record.topic());
+
                             }
                             catch (Exception e)
                             {
@@ -245,9 +244,21 @@ public class KafkaSubscriberImpl extends CoalesceSchedulerServiceImpl implements
         }
     }
 
-    private String normalize(String value)
+    private void createTopic(String topic)
     {
-        return value.replaceAll("[^\\w._-]", ".");
+        KafkaUtil.createTopic(topic, parameters, connector);
+    }
+
+    private <V> V readValue(String json, Class<V> clazz)
+    {
+        try
+        {
+            return mapper.readValue(json, clazz);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     private static Map<String, String> loadProperties()

@@ -28,6 +28,7 @@ import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.enums.EAuditCategory;
 import com.incadencecorp.coalesce.enums.EAuditLevels;
 import com.incadencecorp.coalesce.enums.ECrudOperations;
+import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.PropertyLoader;
 import com.incadencecorp.coalesce.framework.ShutdownAutoCloseable;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
@@ -36,6 +37,7 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
+import com.incadencecorp.unity.common.connectors.MemoryConnector;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.osgi.framework.BundleContext;
@@ -44,22 +46,23 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * This implementation uses Kafka to push notifications.
  *
  * @author Derek Clemenzi
  * @see #PROP_CONFIG_DIR
- * @see #PROP_ZOOKEEPER
- * @see #PROP_SESSION_TIMEOUT
- * @see #PROP_CONN_TIMEOUT
+ * @see KafkaUtil#PROP_ZOOKEEPER
+ * @see KafkaUtil#PROP_SESSION_TIMEOUT
+ * @see KafkaUtil#PROP_CONN_TIMEOUT
  * @see #PROP_TOPICS
- * @see #PROP_PARTITIONS
- * @see #PROP_REPLICATION
- * @see #PROP_IS_SECURE
+ * @see KafkaUtil#PROP_PARTITIONS
+ * @see KafkaUtil#PROP_REPLICATION
+ * @see KafkaUtil#PROP_IS_SECURE
  */
-public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
+public class KafkaNotifierImpl extends CoalesceComponentImpl implements ICoalesceNotifier, AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaNotifierImpl.class);
 
@@ -70,37 +73,21 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
     public static final String TOPIC_AUDIT = "com.incadence.audit";
     public static final String TOPIC_JOB_COMPLETE = "com.incadence.job";
 
+    public static final String PROP_TOPICS = "kafka.topics";
+
     // Property Definitions
     /**
      * (Path) Directory location containing the topic configurations. Default {@value DEFAULT_CONFIG_DIR}
      */
     public static final String PROP_CONFIG_DIR = "kafka.config.dir";
-    public static final String PROP_ZOOKEEPER = "zookeepers";
-    public static final String PROP_SESSION_TIMEOUT = "kafka.session.timeout";
-    public static final String PROP_CONN_TIMEOUT = "kafka.connection.timeout";
-    public static final String PROP_TOPICS = "kafka.topics";
-    public static final String PROP_PARTITIONS = "kafka.partitions";
-    public static final String PROP_REPLICATION = "kafka.replication";
-    public static final String PROP_IS_SECURE = "kafka.isSecure";
-
-    private static final String DEFAULT_CONFIG_DIR = "config";
+    public static final String DEFAULT_CONFIG_DIR = "config";
 
     /*--------------------------------------------------------------------------
     Member Variables
     --------------------------------------------------------------------------*/
 
-    private final KafkaProducer<String, Object> producer;
-    private final String zookeeper;
-    private final List<String> topics = new ArrayList<>();
-
-    private final int sessionTimeoutMs;
-    private final int connectionTimeoutMs;
-    private final int partitions;
-    private final int replication;
-    private final boolean isSecureKafkaCluster;
-
-    private final IConfigurationsConnector connector;
-    private final Map<String, String> defaultTopicConfig = new HashMap<>();
+    private KafkaProducer<String, Object> producer;
+    private IConfigurationsConnector connector = new MemoryConnector();
 
     /*--------------------------------------------------------------------------
     Public Methods
@@ -111,58 +98,25 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
      */
     public KafkaNotifierImpl()
     {
-        this(loadProperties());
+        setProperties(loadProperties());
+
+        ShutdownAutoCloseable.createShutdownHook(this);
     }
 
-    /**
-     * Default Constructor w/ user properties
-     *
-     * @param props configuration properties
-     */
-    public KafkaNotifierImpl(Map<String, String> props)
+    @Override
+    public void setProperties(Map<String, String> params)
     {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        super.setProperties(params);
 
-        try
+        connector = new FilePropertyConnector(params.getOrDefault(PROP_CONFIG_DIR, DEFAULT_CONFIG_DIR));
+
+        // Create Topics Specified
+        for (String topic : (params.getOrDefault(PROP_TOPICS, "")).split(","))
         {
-            Thread.currentThread().setContextClassLoader(null);
-
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.putAll(props);
-
-            zookeeper = props.get(PROP_ZOOKEEPER);
-
-            producer = new KafkaProducer<>(parameters);
-
-            ShutdownAutoCloseable.createShutdownHook(this);
-
-            // Set Properties
-            connector = new FilePropertyConnector(props.getOrDefault(PROP_CONFIG_DIR, DEFAULT_CONFIG_DIR));
-            sessionTimeoutMs = Integer.parseInt(props.getOrDefault(PROP_SESSION_TIMEOUT, "10000"));
-            connectionTimeoutMs = Integer.parseInt(props.getOrDefault(PROP_CONN_TIMEOUT, "8000"));
-            partitions = Integer.parseInt(props.getOrDefault(PROP_PARTITIONS, "20"));
-            replication = Integer.parseInt(props.getOrDefault(PROP_REPLICATION, "1"));
-            isSecureKafkaCluster = props.containsKey(PROP_IS_SECURE) && Boolean.parseBoolean(props.get(PROP_IS_SECURE));
-
-            createTopic(TOPIC_AUDIT);
-            createTopic(TOPIC_CRUD);
-            createTopic(TOPIC_JOB_COMPLETE);
-            createTopic(TOPIC_LINKAGE);
-            createTopic(TOPIC_METRICS);
-
-            for (String topic : (props.getOrDefault(PROP_TOPICS, "")).split(","))
+            if (!StringHelper.isNullOrEmpty(topic))
             {
-                if (!StringHelper.isNullOrEmpty(topic))
-                {
-                    createTopic(normalize(topic));
-                }
+                createTopic(topic);
             }
-
-            defaultTopicConfig.putAll(new PropertyLoader(connector, "default.properties").getSettings());
-        }
-        finally
-        {
-            Thread.currentThread().setContextClassLoader(cl);
         }
     }
 
@@ -191,7 +145,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
             event.setError(results.getResults().getError());
         }
 
-        sendRecord(new ProducerRecord<>(TOPIC_METRICS, toJSONString(event)));
+        sendRecord(TOPIC_METRICS, event);
     }
 
     @Override
@@ -202,7 +156,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         event.setOperation(operation);
         event.setMeta(new ObjectMetaData(data.getKey(), data.getName(), data.getSource(), data.getVersion()));
 
-        sendRecord(new ProducerRecord<>(TOPIC_CRUD, toJSONString(event)));
+        sendRecord(TOPIC_CRUD, event);
     }
 
     @Override
@@ -220,7 +174,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         event.setEntity1(new ObjectMetaData(entity1.getKey(), entity1.getName(), entity1.getSource(), entity1.getVersion()));
         event.setEntity2(new ObjectMetaData(entity2.getKey(), entity2.getName(), entity2.getSource(), entity2.getVersion()));
 
-        sendRecord(new ProducerRecord<>(TOPIC_LINKAGE, toJSONString(event)));
+        sendRecord(TOPIC_LINKAGE, event);
     }
 
     @Override
@@ -232,7 +186,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         event.setLevel(level);
         event.setMessage(message);
 
-        sendRecord(new ProducerRecord<>(TOPIC_AUDIT, toJSONString(event)));
+        sendRecord(TOPIC_AUDIT, event);
     }
 
     @Override
@@ -243,19 +197,25 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         event.setId(job.getJobId());
         event.setStatus(job.getJobStatus());
 
-        sendRecord(new ProducerRecord<>(TOPIC_JOB_COMPLETE, toJSONString(event)));
+        sendRecord(TOPIC_JOB_COMPLETE, event);
     }
 
+    /**
+     * WARNING: Key is ignored.
+     */
     @Override
     public <V> void sendMessage(String topic, String key, V value)
     {
-        sendRecord(new ProducerRecord<>(normalize(topic), key, toJSONString(value)));
+        sendRecord(topic, value);
     }
 
     @Override
     public void close() throws Exception
     {
-        producer.close();
+        if (producer != null)
+        {
+            producer.close();
+        }
     }
 
     /*--------------------------------------------------------------------------
@@ -264,26 +224,7 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
 
     private void createTopic(String topic)
     {
-        if (topics.add(topic))
-        {
-            Properties config = new Properties();
-            config.putAll(defaultTopicConfig);
-            config.putAll(new PropertyLoader(connector, topic + ".properties").getSettings());
-
-            KafkaUtil.createTopic(topic,
-                                  zookeeper,
-                                  sessionTimeoutMs,
-                                  connectionTimeoutMs,
-                                  isSecureKafkaCluster,
-                                  partitions,
-                                  replication,
-                                  config);
-        }
-    }
-
-    private String normalize(String value)
-    {
-        return value.replaceAll("[^\\w._-]", ".");
+        KafkaUtil.createTopic(topic, parameters, connector);
     }
 
     private String toJSONString(Object value)
@@ -302,11 +243,38 @@ public class KafkaNotifierImpl implements ICoalesceNotifier, AutoCloseable {
         }
     }
 
+    private void sendRecord(String topic, Object value)
+    {
+        LOGGER.debug("Sending Topic: ({}) Type: {}", topic, value.getClass().getSimpleName());
+
+        sendRecord(new ProducerRecord<>(KafkaUtil.normalizeTopic(topic), toJSONString(value)));
+    }
+
     private void sendRecord(ProducerRecord<String, Object> record)
     {
-        if (!topics.contains(record.topic()))
+        createTopic(record.topic());
+
+        if (producer == null)
         {
-            createTopic(record.topic());
+            LOGGER.debug("Creating Producer");
+
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+
+            try
+            {
+                Thread.currentThread().setContextClassLoader(null);
+
+                producer = new KafkaProducer<>(Collections.unmodifiableMap(parameters));
+            }
+            finally
+            {
+                Thread.currentThread().setContextClassLoader(cl);
+            }
+
+            if (LOGGER.isTraceEnabled())
+            {
+                LOGGER.trace("Data: {}", record.value());
+            }
         }
 
         producer.send(record);
