@@ -257,10 +257,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     }
     
     public Properties getProps() throws IOException {
-        InputStream in = ElasticSearchDataConnector.class.getResourceAsStream("/elasticsearch-config.properties");
-        Properties props = new Properties();
-        props.load(in);
-        in.close();
+    	Properties props = new Properties();
+    	props.putAll(ElasticSearchSettings.getParameters());
         
         return props;
     }

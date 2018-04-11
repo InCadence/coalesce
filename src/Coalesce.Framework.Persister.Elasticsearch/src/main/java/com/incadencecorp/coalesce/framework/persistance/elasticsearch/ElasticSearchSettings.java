@@ -17,6 +17,9 @@
 
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
@@ -24,9 +27,8 @@ import com.incadencecorp.unity.common.SettingsBase;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 /**
- * Configuration properties for Postgres persister implementations.
+ * Configuration properties for ElasticSearch persister implementations.
  * 
- * @author n78554
  */
 public class ElasticSearchSettings {
 
@@ -34,7 +36,7 @@ public class ElasticSearchSettings {
     Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private static String config_name = "postgres-config.properties";
+    private static String config_name = "elasticsearch-config.properties";
     private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
 
     /*--------------------------------------------------------------------------
@@ -262,6 +264,16 @@ public class ElasticSearchSettings {
     public static void setUseForeignKeys(boolean value)
     {
         settings.setSetting(config_name, PARAM_USE_FOREIGN_KEYS, value);
+    }
+
+    public static Map<String, String> getParameters()
+    {
+        Map<String, String> params = new HashMap<>();
+        params.put(ElasticSearchDataConnector.INSTANCE_ID, ElasticSearchDataConnector.getInstanceId());
+        params.put(ElasticSearchDataConnector.USER, ElasticSearchSettings.getUserName());
+        params.put(ElasticSearchDataConnector.PASSWORD, ElasticSearchSettings.getUserPassword());
+
+        return params;
     }
 
 }

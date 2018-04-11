@@ -35,9 +35,18 @@ import ironhide.client.IronhideClient.Builder;
 public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchDataConnector.class);
+
+    // Datastore Properties
+    public static final String INSTANCE_ID = "instanceId";
+	public static final String USER = "user";
+    public static final String PASSWORD = "password";
+    public static final String ELASTICHOSTS_PROPERTY = "elastichosts";
     private static final String KEYSTORE_FILE_PROPERTY = "keystore_file";
     private static final String TRUSTSTORE_FILE_PROPERTY = "truststore_file";
-    public static final String ELASTICHOSTS_PROPERTY = "elastichosts";
+
+    public static String getInstanceId() {
+		return INSTANCE_ID;
+	}
 
 	public TransportClient getDBConnector() throws CoalescePersistorException {
 		TransportClient client = null;
