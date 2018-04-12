@@ -40,10 +40,6 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
     public static final String INSTANCE_ID = "instanceId";
 	public static final String USER = "user";
     public static final String PASSWORD = "password";
-    public static final String ELASTICHOSTS_PROPERTY = "elastichosts";
-    private static final String KEYSTORE_FILE_PROPERTY = "keystore_file";
-    private static final String TRUSTSTORE_FILE_PROPERTY = "truststore_file";
-
     public static String getInstanceId() {
 		return INSTANCE_ID;
 	}
@@ -120,17 +116,17 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
         IronhideClient client = null;
         // on startup
-        String keypath = props.getProperty(KEYSTORE_FILE_PROPERTY);
-        String trustpath = props.getProperty(TRUSTSTORE_FILE_PROPERTY);
+        String keypath = props.getProperty(ElasticSearchSettings.getKeystoreFileProperty());
+        String trustpath = props.getProperty(ElasticSearchSettings.getTruststoreFileProperty());
 
         try
         {
 
-            Builder clientBuild = IronhideClient.builder().setClusterName("BDP.oerepodev.incadencecorp.com")
+            Builder clientBuild = IronhideClient.builder().setClusterName(ElasticSearchSettings.getElasticClusterName())
             		.clientSSLSettings(keypath, "changeit",
             				trustpath, "changeit");
 
-            String eshosts = props.getProperty(ELASTICHOSTS_PROPERTY);
+            String eshosts = props.getProperty(ElasticSearchSettings.getElastichostsProperty());
             Stream.of(eshosts.split(",")).map(host -> {
                 HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
 

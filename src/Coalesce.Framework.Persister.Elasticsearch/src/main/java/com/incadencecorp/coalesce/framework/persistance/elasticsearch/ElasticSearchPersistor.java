@@ -2,6 +2,7 @@ package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
@@ -59,6 +61,7 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 import ironhide.client.IronhideClient;
 import mil.nga.giat.data.elasticsearch.FilterToElastic;
@@ -111,9 +114,19 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     /*--------------------------------------------------------------------------
     Overridden Functions
     --------------------------------------------------------------------------*/
-    
-    public void searchAll() {
 
+    /**
+     * Default constructor using {@link ElasticSearchSettings} for configuration
+     */
+    public ElasticSearchPersistor()
+    {
+    	FilePropertyConnector fileConnector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
+    	fileConnector.setReadOnly(true);
+
+    	ElasticSearchSettings.setConnector(fileConnector);
+    }
+
+    public void searchAll() {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
 	    	TransportClient client = conn.getDBConnector();

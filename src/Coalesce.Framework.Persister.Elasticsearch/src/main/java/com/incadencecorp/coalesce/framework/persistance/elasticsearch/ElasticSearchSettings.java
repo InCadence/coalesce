@@ -53,12 +53,16 @@ public class ElasticSearchSettings {
     private static final String PARAM_USER = PARAM_BASE + "dbUser";
     private static final String PARAM_HOST = PARAM_BASE + "dbServerName";
     private static final String PARAM_USE_FOREIGN_KEYS = PARAM_BASE + "usefk";
+	private static final String ELASTICHOSTS_PROPERTY = "elastichosts";
+    private static final String KEYSTORE_FILE_PROPERTY = "keystore_file";
+    private static final String TRUSTSTORE_FILE_PROPERTY = "truststore_file";
+    private static final String ELASTIC_CLUSTER_NAME_PROPERTY = "elasticclustername";
 
     /*--------------------------------------------------------------------------
     Default Values
     --------------------------------------------------------------------------*/
 
-    private static final String DEFAULT_USERNAME = "enterprisedb";
+	private static final String DEFAULT_USERNAME = "enterprisedb";
     private static final String DEFAULT_PASSWORD = DEFAULT_USERNAME;
     private static final boolean DEFAULT_USE_FOREIGN_KEYS = false;
     private static final int DEFAULT_SRID = 4326; // WGS84
@@ -207,6 +211,50 @@ public class ElasticSearchSettings {
     {
         settings.setSetting(config_name, PARAM_PORT, databasePort);
     }
+    
+    public static String getElastichostsProperty() {
+		return ELASTICHOSTS_PROPERTY;
+	}
+    
+    public static String getElastichosts() {
+        return settings.getSetting(config_name, ELASTICHOSTS_PROPERTY, "", false);
+    }
+
+	public static String getKeystoreFileProperty() {
+		return KEYSTORE_FILE_PROPERTY;
+	}
+	
+	public static String getKeystoreFilepath() {
+        return settings.getSetting(config_name, KEYSTORE_FILE_PROPERTY, "", false);
+	}
+	
+	public static void setKeystoreFilepath(String keystoreFilepath) {
+        settings.setSetting(config_name, KEYSTORE_FILE_PROPERTY, keystoreFilepath);
+	}
+
+	public static String getTruststoreFileProperty() {
+		return TRUSTSTORE_FILE_PROPERTY;
+	}
+	
+	public static String getTruststoreFilepath() {
+        return settings.getSetting(config_name, TRUSTSTORE_FILE_PROPERTY, "", false);
+	}
+	
+	public static void setTruststoreFilepath(String truststoreFilepath) {
+		settings.setSetting(config_name, TRUSTSTORE_FILE_PROPERTY, truststoreFilepath);
+	}
+
+    public static String getElasticClusterNameProperty() {
+		return ELASTIC_CLUSTER_NAME_PROPERTY;
+	}
+    
+    public static void setElasticClusterName(String clusterName) {
+    	settings.setSetting(config_name, ELASTIC_CLUSTER_NAME_PROPERTY, clusterName);
+    }
+    
+    public static String getElasticClusterName() {
+    	return settings.getSetting(config_name, ELASTIC_CLUSTER_NAME_PROPERTY, "", false);
+    }
 
     /**
      * @return Returns database parameters.
@@ -272,6 +320,10 @@ public class ElasticSearchSettings {
         params.put(ElasticSearchDataConnector.INSTANCE_ID, ElasticSearchDataConnector.getInstanceId());
         params.put(ElasticSearchDataConnector.USER, ElasticSearchSettings.getUserName());
         params.put(ElasticSearchDataConnector.PASSWORD, ElasticSearchSettings.getUserPassword());
+        params.put(KEYSTORE_FILE_PROPERTY, ElasticSearchSettings.getKeystoreFilepath());
+        params.put(TRUSTSTORE_FILE_PROPERTY, ElasticSearchSettings.getTruststoreFilepath());
+        params.put(ELASTICHOSTS_PROPERTY, ElasticSearchSettings.getElastichosts());
+        params.put(ELASTIC_CLUSTER_NAME_PROPERTY, ElasticSearchSettings.getElasticClusterName());
 
         return params;
     }
