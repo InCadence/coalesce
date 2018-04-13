@@ -111,6 +111,8 @@ public class KafkaNotifierImpl extends CoalesceComponentImpl implements ICoalesc
         Map<String, String> settings = connector.getSettings(KafkaNotifierImpl.class.getName() + ".properties");
         settings.putAll(params);
 
+        super.setProperties(settings);
+
         // Create Topics Specified
         for (String topic : (params.getOrDefault(PROP_TOPICS, "")).split(","))
         {
@@ -119,8 +121,6 @@ public class KafkaNotifierImpl extends CoalesceComponentImpl implements ICoalesc
                 createTopic(topic);
             }
         }
-
-        super.setProperties(settings);
     }
 
     /*--------------------------------------------------------------------------

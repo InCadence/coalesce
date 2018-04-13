@@ -102,6 +102,8 @@ public class KafkaSubscriberImpl extends CoalesceComponentImpl implements ICoale
         Map<String, String> settings = connector.getSettings(KafkaNotifierImpl.class.getName() + ".properties");
         settings.putAll(params);
 
+        super.setProperties(settings);
+
         // Create Topics Specified
         for (String topic : (params.getOrDefault(KafkaNotifierImpl.PROP_TOPICS, "")).split(","))
         {
@@ -110,8 +112,6 @@ public class KafkaSubscriberImpl extends CoalesceComponentImpl implements ICoale
                 createTopic(topic);
             }
         }
-
-        super.setProperties(settings);
     }
 
     @Override
