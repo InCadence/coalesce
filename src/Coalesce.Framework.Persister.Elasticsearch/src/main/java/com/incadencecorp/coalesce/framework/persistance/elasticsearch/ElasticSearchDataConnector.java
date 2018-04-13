@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -26,8 +27,11 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.net.HostAndPort;
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 import ironhide.client.IronhideClient;
 import ironhide.client.IronhideClient.Builder;
@@ -44,7 +48,7 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 		return INSTANCE_ID;
 	}
 
-	public TransportClient getDBConnector() throws CoalescePersistorException {
+	public TransportClient oldGetDBConnector() throws CoalescePersistorException {
 		TransportClient client = null;
 		// on startup
 		//String keypath = props.getProperty(KEYSTORE_FILE_PROPERTY);
@@ -111,9 +115,8 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
         return "";
     }
     
-    public IronhideClient connectElasticSearch(Properties props)
-    {
-
+    public IronhideClient getDBConnector(Properties props)
+    {            	
         IronhideClient client = null;
         // on startup
         String keypath = props.getProperty(ElasticSearchSettings.getKeystoreFileProperty());
@@ -122,6 +125,8 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
         try
         {
 
+            LOGGER.debug("Looking for keystore file: " + keypath);
+            
             Builder clientBuild = IronhideClient.builder().setClusterName(ElasticSearchSettings.getElasticClusterName())
             		.clientSSLSettings(keypath, "changeit",
             				trustpath, "changeit");
@@ -163,50 +168,50 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
     public static void main(String args[]) {
     	ElasticSearchDataConnector connector;
+		connector = new ElasticSearchDataConnector();
+		Properties props = new Properties();
+		props.putAll(ElasticSearchSettings.getParameters());
+		IronhideClient client = connector.getDBConnector(props);
+
+		System.out.println("Client connected");
+
+
+		//TestEntity entity = new TestEntity();
+		//entity.initialize();
+
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.enable(SerializationFeature.INDENT_OUTPUT);
+		mapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+
 		try {
-			connector = new ElasticSearchDataConnector();
-			TransportClient client = connector.getDBConnector();
+			IndexResponse response = client.prepareIndex("twitter4", "tweet", "1")
+			        .setSource(jsonBuilder()
+			                .startObject()
+			                    .field("user", "kimchyDude")
+			                    .field("postDate", new Date())
+			                    .field("message", "trying out Elasticsearch")
+			                .endObject()
+			              )
+			    .get();
 
-			System.out.println("Client connected");
+		    //String result = mapper.writerWithView(Views.Public.class).writeValueAsString(entity);
 
+		    //System.out.println(result);
 
-	        //TestEntity entity = new TestEntity();
-	        //entity.initialize();
-
-	        ObjectMapper mapper = new ObjectMapper();
-	        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-	        mapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
-
-			try {
-				IndexResponse response = client.prepareIndex("twitter4", "tweet", "1")
-				        .setSource(jsonBuilder()
-				                .startObject()
-				                    .field("user", "kimchyDude")
-				                    .field("postDate", new Date())
-				                    .field("message", "trying out Elasticsearch")
-				                .endObject()
-				              )
-				    .get();
-
-		        //String result = mapper.writerWithView(Views.Public.class).writeValueAsString(entity);
-
-		        //System.out.println(result);
-
-				// Index name
-				String _index = response.getIndex();
-				// Type name
-				String _type = response.getType();
-				// Document ID (generated or not)
-				String _id = response.getId();
-				// Version (if it's the first time you index this document, you will get: 1)
-				long _version = response.getVersion();
-				// status has stored current instance statement.
-				//RestStatus status = response.;
-				System.out.println(_index + ", " + _type + ", " + _id + ", " + _version);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (CoalescePersistorException e) {
+			// Index name
+			String _index = response.getIndex();
+			// Type name
+			String _type = response.getType();
+			// Document ID (generated or not)
+			String _id = response.getId();
+			// Version (if it's the first time you index this document, you will get: 1)
+			long _version = response.getVersion();
+			// status has stored current instance statement.
+			//RestStatus status = response.;
+			System.out.println(_index + ", " + _type + ", " + _id + ", " + _version);
+		
+			connector.close();
+		} catch (IOException | CoalescePersistorException e) {
 			e.printStackTrace();
 		}
     }

@@ -58,7 +58,11 @@ public class ElasticSearchDataConnectorTest {
     public void testGetDBConnection() throws Exception
     {
         ElasticSearchDataConnector connector = new ElasticSearchDataConnector();
-        TransportClient client = connector.getDBConnector();
+        
+        Properties props = new Properties();
+		props.putAll(ElasticSearchSettings.getParameters());
+		
+        IronhideClient client = connector.getDBConnector(props);
         connector.close();
         client.close();
     }
@@ -76,7 +80,7 @@ public class ElasticSearchDataConnectorTest {
         Properties props = new Properties();
 		props.putAll(ElasticSearchSettings.getParameters());
         
-    	client = connector.connectElasticSearch(props);
+    	client = connector.getDBConnector(props);
     	assertNotNull(client);
         connector.close();
 	}

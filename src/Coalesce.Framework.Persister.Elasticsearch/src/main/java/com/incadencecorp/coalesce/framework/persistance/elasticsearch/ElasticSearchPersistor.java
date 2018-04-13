@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
@@ -120,7 +121,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      */
     public ElasticSearchPersistor()
     {
-    	FilePropertyConnector fileConnector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
+    	FilePropertyConnector fileConnector = new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION);
     	fileConnector.setReadOnly(true);
 
     	ElasticSearchSettings.setConnector(fileConnector);
@@ -129,7 +130,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     public void searchAll() {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-	    	TransportClient client = conn.getDBConnector();
+	    	IronhideClient client = conn.getDBConnector(getProps());
 	    	SearchResponse response = client.prepareSearch().get();
 	    	System.out.println(response.toString());
         } catch (Exception e) {
@@ -141,7 +142,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     	
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-	    	TransportClient client = conn.getDBConnector();
+	    	IronhideClient client = conn.getDBConnector(getProps());
 	    	SearchResponse response = client.prepareSearch(searchValue)
 	    	        .setTypes(searchType)
 	    	        //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
@@ -164,7 +165,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     	
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-	    	TransportClient client = conn.getDBConnector();
+	    	IronhideClient client = conn.getDBConnector(getProps());
 	    	SearchResponse response = client.prepareSearch("twitter4")
 	    	        .setTypes("tweet")
 	    	        .get();
@@ -220,7 +221,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            return this.getCoalesceObjectLastModified(key, objectType, conn.getDBConnector());
+            return this.getCoalesceObjectLastModified(key, objectType, conn.getDBConnector(getProps()));
         }
         catch (SQLException e)
         {
@@ -270,22 +271,36 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     }
     
     public Properties getProps() throws IOException {
+    	makeSureConnectorIsInitialized();
+    	
     	Properties props = new Properties();
     	props.putAll(ElasticSearchSettings.getParameters());
         
         return props;
     }
+    
+    public void makeSureConnectorIsInitialized() {
+    	if(!ElasticSearchSettings.getConnectorInitialized())
+    	{	    		
+	        FilePropertyConnector connector = new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION);
+	        LOGGER.debug("Connector initialized using config file: " + CoalesceParameters.COALESCE_CONFIG_LOCATION);
+	        connector.setReadOnly(true);
+	
+	        ElasticSearchSettings.setConnector(connector);
+    	}
+    }
 
     @Override
     public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
+    	
         JsonFullEximImpl converter = new JsonFullEximImpl();
         
         for (CoalesceEntityTemplate template : templates)
         {
             try(ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
             {
-    	    	IronhideClient client = conn.connectElasticSearch(getProps());
+    	    	IronhideClient client = conn.getDBConnector(getProps());
     	    	XmlMapper mapper = new XmlMapper();
     	    	JsonNode node = mapper.readTree(template.toXml());
 
@@ -391,7 +406,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-	    	TransportClient client = conn.getDBConnector();
+	    	IronhideClient client = conn.getDBConnector(getProps());
             List<String> xmlList = new ArrayList<String>();
             List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
 
@@ -491,7 +506,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
             // Create a Database Connection
             try
             {
-               IronhideClient client = conn.connectElasticSearch(getProps());
+               IronhideClient client = conn.getDBConnector(getProps());
 
                 for (CoalesceEntity entity : entities)
                 {
@@ -533,7 +548,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
             for (CoalesceEntity entity : entities)
             {
-                if (persistEntityObject(entity, conn.connectElasticSearch(getProps())))
+                if (persistEntityObject(entity, conn.getDBConnector(getProps())))
                 {
                     isSuccessful = true;
                 }
@@ -818,7 +833,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      * @return False = Out of Date
      * @throws SQLException
      */
-    protected boolean checkLastModified(CoalesceObject coalesceObject, TransportClient conn) throws SQLException
+    protected boolean checkLastModified(CoalesceObject coalesceObject, IronhideClient conn) throws SQLException
     {
         boolean isOutOfDate = true;
 
@@ -861,7 +876,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-	    	TransportClient client = conn.getDBConnector();
+	    	IronhideClient client = conn.getDBConnector(getProps());
 	        DeleteResponse response = client.prepareDelete(objectKey, objectType, "1")
 	                .get();
 
@@ -889,7 +904,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-        	TransportClient client = conn.getDBConnector();
+        	IronhideClient client = conn.getDBConnector(getProps());
         	if(checkIfIndexExists(client, entityId)) {
 	        	GetResponse response = client.prepareGet(entityId, entityIdType, entityName).get();
 	        	
@@ -903,7 +918,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
     }
     
-    public boolean checkIfIndexExists(TransportClient client, String index) {
+    public boolean checkIfIndexExists(IronhideClient client, String index) {
 
     	try {
     		boolean hasIndex = client.admin().indices().exists(new IndicesExistsRequest(index.toLowerCase())).actionGet().isExists(); 
@@ -939,7 +954,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         return isSuccessful;
     }
 
-    private DateTime getCoalesceObjectLastModified(String key, String objectType, TransportClient conn)
+    private DateTime getCoalesceObjectLastModified(String key, String objectType, IronhideClient conn)
             throws SQLException
     {
         DateTime lastModified = null;
@@ -1006,15 +1021,16 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
         	rowset = RowSetProvider.newFactory().createCachedRowSet();
-	    	TransportClient client = conn.getDBConnector();
+	    	IronhideClient client = conn.getDBConnector(getProps());
 	    	SearchResponse response = client.prepareSearch("gdelt_data")
     	        .setQuery(QueryBuilders.termQuery("GlobalEventID", "410479387"))                 // Query
     	        //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
     	        //.setFrom(0).setSize(60).setExplain(true)
     	        .get();
 
-	    	System.out.println(response.toString());
+	    	LOGGER.debug(response.toString());
         } catch (Exception e) {
+        	LOGGER.error(e.getMessage());
             throw new CoalescePersistorException(e.getMessage(), e);
         }
         // TODO Not Implemented

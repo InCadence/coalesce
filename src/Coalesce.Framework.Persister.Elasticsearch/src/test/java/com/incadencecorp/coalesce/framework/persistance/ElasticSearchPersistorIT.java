@@ -29,12 +29,14 @@ import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSea
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
 import com.incadencecorp.coalesce.framework.persistance.testobjects.GDELT_Test_Entity;
 
+import ironhide.client.IronhideClient;
+
 public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<ElasticSearchPersistor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistorIT.class);
 
     private static ElasticSearchDataConnector conn;
-    private static TransportClient client;
+    private static IronhideClient client;
     
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
@@ -48,7 +50,7 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
         String user = props.getProperty("userid");
         String password = props.getProperty("password");
         conn = new ElasticSearchDataConnector();
-    	client = conn.getDBConnector();
+    	//client = conn.getDBConnector();
     }
 
     @Override

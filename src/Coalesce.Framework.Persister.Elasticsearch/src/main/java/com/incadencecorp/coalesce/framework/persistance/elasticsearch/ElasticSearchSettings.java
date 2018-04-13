@@ -38,6 +38,7 @@ public class ElasticSearchSettings {
 
     private static String config_name = "elasticsearch-config.properties";
     private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
+    private static Boolean connectorInitialized = false;
 
     /*--------------------------------------------------------------------------
     Property Names
@@ -87,6 +88,8 @@ public class ElasticSearchSettings {
     public static void setConnector(final IConfigurationsConnector connector)
     {
         settings = new SettingsBase(connector);
+        
+        connectorInitialized = true;
     }
 
     /**
@@ -99,6 +102,12 @@ public class ElasticSearchSettings {
     {
         config_name = name;
         settings = new SettingsBase(connector);
+        
+        connectorInitialized = true;
+    }
+    
+    public static Boolean getConnectorInitialized () {
+    	return connectorInitialized;
     }
 
     /*--------------------------------------------------------------------------
