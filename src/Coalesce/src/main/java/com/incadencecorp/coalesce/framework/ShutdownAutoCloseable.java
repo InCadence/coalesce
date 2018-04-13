@@ -34,6 +34,7 @@ public class ShutdownAutoCloseable<T extends AutoCloseable> implements Runnable 
     public ShutdownAutoCloseable(T service)
     {
         this.service = service;
+        LOGGER.info("Shutdown Hook Created for {}", service.getClass().getSimpleName());
     }
 
     public static void createShutdownHook(AutoCloseable object)

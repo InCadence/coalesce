@@ -29,7 +29,6 @@ import com.incadencecorp.coalesce.enums.EAuditCategory;
 import com.incadencecorp.coalesce.enums.EAuditLevels;
 import com.incadencecorp.coalesce.enums.ECrudOperations;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
-import com.incadencecorp.coalesce.framework.PropertyLoader;
 import com.incadencecorp.coalesce.framework.ShutdownAutoCloseable;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
@@ -37,7 +36,6 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
-import com.incadencecorp.unity.common.connectors.MemoryConnector;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.osgi.framework.BundleContext;
@@ -45,7 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
 
@@ -77,17 +74,16 @@ public class KafkaNotifierImpl extends CoalesceComponentImpl implements ICoalesc
 
     // Property Definitions
     /**
-     * (Path) Directory location containing the topic configurations. Default {@value DEFAULT_CONFIG_DIR}
+     * (Path) Directory location containing the topic configurations. Default {@link CoalesceParameters#COALESCE_CONFIG_LOCATION}
      */
     public static final String PROP_CONFIG_DIR = "kafka.config.dir";
-    public static final String DEFAULT_CONFIG_DIR = "config";
 
     /*--------------------------------------------------------------------------
     Member Variables
     --------------------------------------------------------------------------*/
 
     private KafkaProducer<String, Object> producer;
-    private IConfigurationsConnector connector = new MemoryConnector();
+    private IConfigurationsConnector connector = new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION);
 
     /*--------------------------------------------------------------------------
     Public Methods
@@ -98,7 +94,7 @@ public class KafkaNotifierImpl extends CoalesceComponentImpl implements ICoalesc
      */
     public KafkaNotifierImpl()
     {
-        setProperties(loadProperties());
+        setProperties(connector.getSettings(KafkaNotifierImpl.class.getName() + ".properties"));
 
         ShutdownAutoCloseable.createShutdownHook(this);
     }
@@ -106,9 +102,14 @@ public class KafkaNotifierImpl extends CoalesceComponentImpl implements ICoalesc
     @Override
     public void setProperties(Map<String, String> params)
     {
-        super.setProperties(params);
+        if (params.containsKey(PROP_CONFIG_DIR)
+                && !params.get(PROP_CONFIG_DIR).equalsIgnoreCase(CoalesceParameters.COALESCE_CONFIG_LOCATION))
+        {
+            connector = new FilePropertyConnector(params.get(PROP_CONFIG_DIR));
+        }
 
-        connector = new FilePropertyConnector(params.getOrDefault(PROP_CONFIG_DIR, DEFAULT_CONFIG_DIR));
+        Map<String, String> settings = connector.getSettings(KafkaNotifierImpl.class.getName() + ".properties");
+        settings.putAll(params);
 
         // Create Topics Specified
         for (String topic : (params.getOrDefault(PROP_TOPICS, "")).split(","))
@@ -118,6 +119,8 @@ public class KafkaNotifierImpl extends CoalesceComponentImpl implements ICoalesc
                 createTopic(topic);
             }
         }
+
+        super.setProperties(settings);
     }
 
     /*--------------------------------------------------------------------------
@@ -278,13 +281,5 @@ public class KafkaNotifierImpl extends CoalesceComponentImpl implements ICoalesc
         }
 
         producer.send(record);
-    }
-
-    private static Map<String, String> loadProperties()
-    {
-        PropertyLoader loader = new PropertyLoader(new FilePropertyConnector(Paths.get(CoalesceParameters.COALESCE_CONFIG_LOCATION)),
-                                                   KafkaNotifierImpl.class.getName() + ".properties");
-
-        return loader.getSettings();
     }
 }

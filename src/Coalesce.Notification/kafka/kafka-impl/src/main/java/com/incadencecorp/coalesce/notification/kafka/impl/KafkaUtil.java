@@ -18,7 +18,6 @@
 
 package com.incadencecorp.coalesce.notification.kafka.impl;
 
-import com.incadencecorp.coalesce.framework.PropertyLoader;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import kafka.admin.AdminUtils;
 import kafka.utils.ZKStringSerializer$;
@@ -49,8 +48,8 @@ public class KafkaUtil {
     public static Properties loadProperties(IConfigurationsConnector connector, String topic)
     {
         Properties config = new Properties();
-        config.putAll(new PropertyLoader(connector, "default.properties").getSettings());
-        config.putAll(new PropertyLoader(connector, topic + ".properties").getSettings());
+        config.putAll(connector.getSettings("default.properties"));
+        config.putAll(connector.getSettings(topic + ".properties"));
 
         return config;
     }
