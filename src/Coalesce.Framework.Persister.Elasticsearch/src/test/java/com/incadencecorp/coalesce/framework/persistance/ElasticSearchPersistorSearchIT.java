@@ -13,7 +13,7 @@ import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSea
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
 import com.incadencecorp.coalesce.search.AbstractSearchTest;
 
-public class ElasticSearchPersistorSearchTest extends AbstractSearchTest<ElasticSearchPersistor> {
+public class ElasticSearchPersistorSearchIT extends AbstractSearchTest<ElasticSearchPersistor> {
 
 	private static final String NAME = "name";
     private static ServerConn conn;
