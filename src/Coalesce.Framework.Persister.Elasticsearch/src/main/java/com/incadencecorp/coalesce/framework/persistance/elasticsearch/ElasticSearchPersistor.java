@@ -739,7 +739,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 			
 			Map<String, Object> linkageMap = createLinkageMap(entity);
 	        
-	        conn.prepareIndex((entity.getName() + "Linkage").toLowerCase(), (entity.getName() + "Linkage").toLowerCase()).setSource(linkageMap).get();
+	        conn.prepareIndex("oelinkage", "oelinkage").setSource(linkageMap).get();
 			System.out.println("Indexed linkage for entity " + entity.getName());
 			
 			//map = mapper.readValue(converter.exportValues(entity, true).toString(), 
@@ -795,7 +795,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         	linkageMap.put(LINKAGE_ENTITY2_KEY_COLUMN_NAME, link.getEntity2Key());
         	linkageMap.put(LINKAGE_ENTITY2_NAME_COLUMN_NAME, link.getEntity2Name());
         	linkageMap.put(LINKAGE_ENTITY2_SOURCE_COLUMN_NAME, link.getEntity2Source());
-        	linkageMap.put(LINKAGE_LABEL_COLUMN_NAME, link.getLabel());
         	linkageMap.put(LINKAGE_LAST_MODIFIED_COLUMN_NAME, link.getLastModifiedAsString());
         	linkageMap.put(LINKAGE_LINK_TYPE_COLUMN_NAME, link.getLinkType().getLabel());
         }
