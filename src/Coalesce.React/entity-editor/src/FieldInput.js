@@ -128,6 +128,24 @@ export class FieldInput extends React.Component {
             onChange={(event, value) => {this.handleOnChange(attr, value)}}
           />
         );
+      case 'BOOLEAN_LIST_TYPE':
+      case 'GUID_LIST_TYPE':
+      case 'FLOAT_LIST_TYPE':
+      case 'DOUBLE_LIST_TYPE':
+      case 'LONG_LIST_TYPE':
+      case 'INTEGER_LIST_TYPE':
+      case 'STRING_LIST_TYPE':
+        return (
+          <TextField
+              id={field.key}
+              fullWidth={true}
+              floatingLabelText={label + " (CSV)"}
+              underlineShow={this.props.showLabels}
+              style={style.root}
+              value={field[attr]}
+              onChange={(event, value) => {this.handleOnChange(attr, value.split(","))}}
+            />
+          );
       case 'FLOAT_TYPE':
       case 'DOUBLE_TYPE':
       case 'LONG_TYPE':
@@ -364,7 +382,7 @@ export class FieldInput extends React.Component {
           <TextField
             id={field.key}
             fullWidth={true}
-            floatingLabelText={label}
+            floatingLabelText={label + " (UI Not Implemented)"}
             underlineShow={this.props.showLabels}
             style={style.root}
             disabled
