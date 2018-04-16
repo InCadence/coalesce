@@ -165,6 +165,8 @@ export class Section extends React.Component {
             key: uuid.v4(),
             name: "newField",
             dataType: "STRING_TYPE",
+            flatten: true,
+            noIndex: true,
             constraints: []
           })
           break;
