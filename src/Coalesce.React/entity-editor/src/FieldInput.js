@@ -143,7 +143,7 @@ export class FieldInput extends React.Component {
               underlineShow={this.props.showLabels}
               style={style.root}
               value={field[attr]}
-              onChange={(event, value) => {this.handleOnChange(attr, value.split(","))}}
+              onChange={(event, value) => {this.handleOnChange(attr, value)}}
             />
           );
       case 'FLOAT_TYPE':
@@ -245,6 +245,43 @@ export class FieldInput extends React.Component {
             {this.props.showLabel ? <label>Download {label}</label> : null}
           </div>
         );
+
+      case 'LINE_STRING_TYPE':
+          return (
+            <TextField
+              id={field.key}
+              fullWidth={true}
+              floatingLabelText={label + " - LINESTRING (x1 y1 z1, x2 y2 z2, ...)"}
+              underlineShow={this.props.showLabels}
+              style={style.root}
+              value={field[attr]}
+              onChange={(event, value) => {this.handleOnChange(attr, value)}}
+            />
+          );
+      case 'POLYGON_TYPE':
+          return (
+            <TextField
+              id={field.key}
+              fullWidth={true}
+              floatingLabelText={label + " - POLYGON ((x1 y1 z1, x2 y2 z2, ...))"}
+              underlineShow={this.props.showLabels}
+              style={style.root}
+              value={field[attr]}
+              onChange={(event, value) => {this.handleOnChange(attr, value)}}
+            />
+          );
+      case 'GEOCOORDINATE_LIST_TYPE':
+          return (
+            <TextField
+              id={field.key}
+              fullWidth={true}
+              floatingLabelText={label + " - MULTIPOINT (x1 y1 z1, x2 y2 z2, ...)"}
+              underlineShow={this.props.showLabels}
+              style={style.root}
+              value={field[attr]}
+              onChange={(event, value) => {this.handleOnChange(attr, value)}}
+            />
+          );
       case 'GEOCOORDINATE_TYPE':
 
       var geo;

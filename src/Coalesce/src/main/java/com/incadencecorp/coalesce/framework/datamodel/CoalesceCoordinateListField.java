@@ -3,6 +3,7 @@
  */
 package com.incadencecorp.coalesce.framework.datamodel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.MultiPoint;
@@ -48,6 +49,7 @@ public class CoalesceCoordinateListField extends CoalesceField<Coordinate[]> {
      *     {@link MultiPoint }
      * @throws CoalesceDataFormatException
      */
+    @JsonIgnore
     public MultiPoint getValueAsMultiPoint() throws CoalesceDataFormatException
     {
         return getMultiPointValue();
