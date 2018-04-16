@@ -25,7 +25,7 @@ package ${packagename_root}.${packagename_sub};
 #foreach($recordset in $recordsets)
 	#if( $imports.add("${packagename_root}.impl.coalesce.record.$normalizer.normalize($recordset.getName())CoalesceRecord") ) #end
 	#if( $imports.add("${packagename_root}.api.record.I$normalizer.normalize($recordset.getName())Record") ) #end
-	#if($recordset.getMaxRecords() != 1 || $recordset.getMinRecords() != 1)
+	#if(!($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1))
 		#if(!$imports.contains( "java.util.List" ) && $imports.add("java.util.List")) #end
 		#if(!$imports.contains( "java.util.ArrayList" ) && $imports.add("java.util.ArrayList")) #end
 		#if(!$imports.contains( "com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset" ) && $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset")) #end
@@ -52,7 +52,7 @@ public class ${classname} extends CoalesceEntity implements I${name}Entity {
 #end
 
 #foreach($recordset in $recordsets)
-#if($recordset.getMaxRecords() == 1)
+#if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
     private $normalizer.normalize($recordset.getName())CoalesceRecord record_$normalizer.normalize($recordset.getName());
 #else
     private CoalesceRecordset recordset_$normalizer.normalize($recordset.getName());
@@ -97,7 +97,7 @@ public class ${classname} extends CoalesceEntity implements I${name}Entity {
 
 #foreach($recordset in $section.getRecordsets())
 #set($recordtype = "$normalizer.normalize($recordset.getName())CoalesceRecord")
-#if($recordset.getMaxRecords() == 1)
+#if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
             record_$normalizer.normalize($recordset.getName()) = new $normalizer.normalize($recordset.getName())CoalesceRecord(${recordtype}.createCoalesceRecordset(section, RECORDSET_$normalizer.normalize($recordset.getName()).toUpperCase()).addNew());
 #else
             recordset_$normalizer.normalize($recordset.getName()) = ${recordtype}.createCoalesceRecordset(section, RECORDSET_$normalizer.normalize($recordset.getName()).toUpperCase());
@@ -117,7 +117,7 @@ public class ${classname} extends CoalesceEntity implements I${name}Entity {
         {
 #set($check = "")
 #foreach($recordset in $recordsets)
-#if($recordset.getMaxRecords() == 1)
+#if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
 #set($varname = "record_$normalizer.normalize($recordset.getName())")
 #set($vartype = "$normalizer.normalize($recordset.getName())CoalesceRecord")
             if ($varname == null)

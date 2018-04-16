@@ -17,23 +17,6 @@
 
 package com.incadencecorp.coalesce.plugins.template2java;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
@@ -43,12 +26,27 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.mapper.impl.FieldMapperImpl;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * TODO Nested Sections not supported
- * 
- * @author Derek Clemenzi
  *
+ * @author Derek Clemenzi
  */
 public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<CoalesceRecordset>> {
 
@@ -57,12 +55,10 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
     private String packagename;
     private String fileExtention = "java";
 
-    private static final String[] entity_templates = new String[] {
-                                                                    "api-entity.vm", "impl-coalesce-entity.vm",
+    private static final String[] entity_templates = new String[] { "api-entity.vm", "impl-coalesce-entity.vm",
                                                                     "impl-pojo-entity.vm"
     };
-    private static final String[] record_templates = new String[] {
-                                                                    "api-record.vm", "impl-coalesce-factory.vm",
+    private static final String[] record_templates = new String[] { "api-record.vm", "impl-coalesce-factory.vm",
                                                                     "impl-coalesce-record.vm", "impl-pojo-record.vm"
     };
 
@@ -92,6 +88,10 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
         {
             entity.setAttribute(CoalesceEntity.ATTRIBUTE_CLASSNAME,
                                 "com.incadencecorp.coalesce." + new ClassNameNormalizer().normalize(entity.getName()));
+        }
+        else if (!entity.getClassName().contains("."))
+        {
+            entity.setAttribute(CoalesceEntity.ATTRIBUTE_CLASSNAME, "com.incadencecorp.coalesce." + entity.getClassName());
         }
 
         packagename = entity.getClassName().substring(0, entity.getClassName().lastIndexOf("."));
@@ -181,8 +181,8 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
         }
         else
         {
-            result = object_name + normalizer.normalize(parts[parts.length - 2])
-                    + normalizer.normalize(parts[parts.length - 1]);
+            result = object_name + normalizer.normalize(parts[parts.length - 2]) + normalizer.normalize(parts[parts.length
+                    - 1]);
         }
 
         return result;
