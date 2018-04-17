@@ -161,37 +161,38 @@ function renderSection(section, data) {
 function renderRecordset(recordset, data) {
   var recordsetdata = getElement(recordset.name, data.recordsetsAsList);
 
-  if (recordset.minRecords === 1 && recordset.maxRecords === 1)
-  {
-    var record;
+  if (recordsetdata != null) {
+    if (recordset.minRecords === 1 && recordset.maxRecords === 1)
+    {
+      var record;
 
-    // Use First Record
-    if (recordsetdata != null && recordsetdata.allRecords != null && recordsetdata.allRecords.length >= 1) {
-      record = recordsetdata.allRecords[0];
+      // Use First Record
+      if (recordsetdata.allRecords != null && recordsetdata.allRecords.length >= 1) {
+        record = recordsetdata.allRecords[0];
+      }
+
+      return (
+        <Tab key={recordsetdata.key} label={recordset.name}>
+          <RecordView
+            definition={recordset.fieldDefinitions}
+            record={record}
+          />
+        </Tab>
+      );
     }
+    else
+    {
+      return (
+        <Tab key={recordsetdata.key} label={recordset.name}>
+          <RecordsetView
+            recordset={recordset}
+            data={recordsetdata}
+          />
+        </Tab>
+      );
+    }
+  }
 
-    return (
-      <Tab key={recordset.key} label={recordset.name}>
-        <RecordView
-          definition={recordset.fieldDefinitions}
-          record={record}
-          key={record.key}
-        />
-      </Tab>
-    );
-  }
-  else
-  {
-    return (
-      <Tab key={recordset.key} label={recordset.name}>
-        <RecordsetView
-          recordset={recordset}
-          data={recordsetdata}
-          key={recordset.key}
-        />
-      </Tab>
-    );
-  }
 }
 
 String.prototype.toProperCase = function () {
