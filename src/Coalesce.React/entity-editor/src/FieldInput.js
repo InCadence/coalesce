@@ -125,6 +125,7 @@ export class FieldInput extends React.Component {
             underlineShow={this.props.showLabels}
             style={style.root}
             value={field[attr]}
+            defaultValue={field.defaultValue}
             onChange={(event, value) => {this.handleOnChange(attr, value)}}
           />
         );
@@ -143,6 +144,7 @@ export class FieldInput extends React.Component {
               underlineShow={this.props.showLabels}
               style={style.root}
               value={field[attr]}
+              defaultValue={field.defaultValue}
               onChange={(event, value) => {this.handleOnChange(attr, value)}}
             />
           );
@@ -159,6 +161,7 @@ export class FieldInput extends React.Component {
             underlineShow={this.props.showLabels}
             style={style.root}
             value={field[attr]}
+            defaultValue={field.defaultValue}
             onChange={(event, value) => {this.handleOnChange(attr, value)}}
           />
         );
@@ -172,6 +175,7 @@ export class FieldInput extends React.Component {
             underlineShow={this.props.showLabels}
             style={style.root}
             value={field[attr]}
+            defaultValue={field.defaultValue}
             onChange={(event, value) => {this.handleOnChange(attr, value)}}
           />
         );
@@ -182,6 +186,7 @@ export class FieldInput extends React.Component {
             label={label}
             style={style.root}
             checked={field[attr]}
+            defaultChecked={field.defaultValue}
             onCheck={(event, checked) => {this.handleOnChange(attr, checked)}}
           />
         );
@@ -255,6 +260,7 @@ export class FieldInput extends React.Component {
               underlineShow={this.props.showLabels}
               style={style.root}
               value={field[attr]}
+              defaultValue={field.defaultValue}
               onChange={(event, value) => {this.handleOnChange(attr, value)}}
             />
           );
@@ -267,6 +273,7 @@ export class FieldInput extends React.Component {
               underlineShow={this.props.showLabels}
               style={style.root}
               value={field[attr]}
+              defaultValue={field.defaultValue}
               onChange={(event, value) => {this.handleOnChange(attr, value)}}
             />
           );
@@ -279,6 +286,7 @@ export class FieldInput extends React.Component {
               underlineShow={this.props.showLabels}
               style={style.root}
               value={field[attr]}
+              defaultValue={field.defaultValue}
               onChange={(event, value) => {this.handleOnChange(attr, value)}}
             />
           );
@@ -411,6 +419,7 @@ export class FieldInput extends React.Component {
             //inputProps={{ pattern: "[a-z]" }}
             style={style.root}
             value={field[attr]}
+            defaultValue={field.defaultValue}
             onChange={(event, value) => {this.handleOnChange(attr, value)}}
           />
         );
@@ -424,6 +433,7 @@ export class FieldInput extends React.Component {
             style={style.root}
             disabled
             value={field[attr]}
+            defaultValue={field.defaultValue}
             onChange={(event, value) => {this.handleOnChange(attr, value)}}
           />
         );
