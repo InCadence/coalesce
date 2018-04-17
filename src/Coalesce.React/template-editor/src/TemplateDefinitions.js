@@ -1,5 +1,4 @@
 import React from 'react';
-import Icon from 'react-icons-kit';
 import {List, ListItem} from 'material-ui/List';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import EditorModeEdit from 'material-ui/svg-icons/editor/mode-edit';

@@ -6,8 +6,6 @@ import AvPlaylistAdd from 'material-ui/svg-icons/av/playlist-add';
 import IconButton from 'material-ui/IconButton';
 import { Section } from './TemplateSection'
 import uuid from 'uuid';
-import baseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
-import { fade } from 'material-ui/utils/colorManipulator'
 
 class TemplateEditor extends Component {
 

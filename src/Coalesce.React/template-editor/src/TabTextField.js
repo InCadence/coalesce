@@ -3,7 +3,6 @@ import React from 'react'
 import TextField from 'material-ui/TextField';
 import AvPlaylistAdd from 'material-ui/svg-icons/av/playlist-add';
 import ContentDeleteSweep from 'material-ui/svg-icons/content/delete-sweep';
-import {blue500, red500, greenA200} from 'material-ui/styles/colors';
 import { Row } from 'react-bootstrap'
 
 const iconStyles = {
