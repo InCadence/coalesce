@@ -12,7 +12,7 @@ import { loadTemplates, loadTemplate, saveTemplate,registerTemplate } from 'comm
 import { loadJSON } from 'common-components/lib/js/propertyController'
 import {Menu} from 'common-components/lib/index.js'
 
-import {DialogTemplateSelection} from './DialogTemplateSelection'
+import { DialogMessage, DialogLoader, DialogTemplateSelection } from 'common-components/lib/components/dialogs'
 
 var pjson = require('../package.json');
 
@@ -28,6 +28,9 @@ class TemplateWorkspace extends Component {
       rowHeight: 30,
       width: 1200,
       showEditModal: false,
+      promptTemplate: false,
+      loading: null,
+      error: null,
       theme: getDefaultTheme()
     }
 
@@ -61,7 +64,7 @@ class TemplateWorkspace extends Component {
 
   handleTemplateAdd() {
 
-    console.log("adding template to workspace...");
+    //console.log("adding template to workspace...");
 
     this.setState({
       // Add a new item.
@@ -92,6 +95,10 @@ class TemplateWorkspace extends Component {
         promptTemplate: true
       })
 
+    }).catch((err) => {
+      that.setState({
+        error: "Loading Templates: " + err
+      });
     });
   }
 
@@ -118,33 +125,88 @@ class TemplateWorkspace extends Component {
         newCounter: that.state.newCounter + 1,
 
       });
+    }).catch((err) => {
+      that.setState({
+        error: "Loading Template: " + key
+      });
+
     });
   }
 
   handleTemplateSave() {
     const { items } = this.state;
 
-    items.forEach(function (item) {
-      saveTemplate(item.template).then(function (result) {
-        if (!result) {
-          console.log("(FAILED) Saving " + item.template.key);
-        }
-      })
-    });
+    if (items.length > 0)
+    {
+      const that = this;
+      var count = 0;
 
+      this.setState({
+        loading: "Saving ..."
+      })
+
+      items.forEach(function (item) {
+
+        saveTemplate(item.template).then(function (result) {
+          if (!result) {
+            that.setState({
+              loading: null,
+              error: "Saving Template: " + item.template.key
+            });
+          }
+          if (++count >= items.length) {
+            that.setState({
+              loading: null
+            })
+          }
+        }).catch((err) => {
+          that.setState({
+            loading: null,
+            error: "Saving Template: " + item.template.key
+          });
+        })
+
+      });
+    }
   }
 
   handleTemplateRegister() {
     const { items } = this.state;
 
-    items.forEach(function (item) {
-      registerTemplate(item.template.key).then(function (result) {
-        if (!result) {
-          console.log("(FAILED) Registering " + item.template.key);
-        }
-      })
-    });
+    if (items.length > 0)
+    {
+      const that = this;
 
+      var count = 0;
+
+      this.setState({
+        loading: "Registering ..."
+      })
+
+      items.forEach(function (item) {
+
+        registerTemplate(item.template.key).then(function (result) {
+
+          if (!result) {
+            that.setState({
+              loading: null,
+              error: "Registering Template: " + item.template.key
+            });
+          }
+          if (++count >= items.length) {
+            that.setState({
+              loading: null
+            })
+          }
+
+        }).catch((err) => {
+          that.setState({
+            loading: null,
+            error: "Registering Template: " + item.template.key
+          });
+        })
+      });
+    }
   }
 
   handleTemplateRemove(key) {
@@ -185,7 +247,7 @@ class TemplateWorkspace extends Component {
   }
 
   createElement(item) {
-    console.log("New template id: " + item.template.key);
+    //console.log("New template id: " + item.template.key);
 
     var widget = null;
 
@@ -252,15 +314,27 @@ class TemplateWorkspace extends Component {
           }
         ]}/>
         <MuiThemeProvider muiTheme={this.state.theme}>
+          <div>
           <ReactGridLayout className="layout" layout={this.state.items} cols={this.state.cols} rowHeight={this.state.rowHeight} width={this.state.width} draggableCancel="input,textarea">
             {this.state.items.map((item) => this.createElement(item))}
           </ReactGridLayout>
+          <DialogMessage
+            title="Error"
+            opened={this.state.error != null}
+            message={this.state.error}
+            onClose={() => {this.setState({error: null})}}
+          />
+          <DialogLoader
+            title={this.state.loading}
+            opened={this.state.loading != null}
+          />
           <DialogTemplateSelection
             templates={this.state.templates}
-            open={this.state.promptTemplate}
+            opened={this.state.promptTemplate}
             onClose={() => {this.setState({promptTemplate: false});}}
             onClick={this.handleTemplateLoad}
           />
+          </div>
         </MuiThemeProvider>
       </div>
     );

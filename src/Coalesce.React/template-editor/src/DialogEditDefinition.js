@@ -73,7 +73,7 @@ export class DialogEditDefinition extends React.Component {
 
     const actions = [
       <FlatButton
-        label="Close"
+        label="OK"
         primary={true}
         onClick={this.handleClose}
       />

@@ -5,11 +5,17 @@ import {List, ListItem } from 'material-ui/List';
 
 export class DialogTemplateSelection extends React.Component {
 
-  handleClose = () => {
+  constructor(props) {
+    super(props);
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClose() {
     this.props.onClose();
   };
 
-  handleClick = (key) => {
+  handleClick(key) {
     this.props.onClose();
     this.props.onClick(key);
   }
@@ -20,7 +26,7 @@ export class DialogTemplateSelection extends React.Component {
         key={item.key}
         id={item.key}
         primaryText={item.name}
-        onClick={this.handleClick.bind(this, item.key)}
+        onClick={() => this.handleClick(item.key)}
       />
     )
   }
@@ -30,7 +36,7 @@ export class DialogTemplateSelection extends React.Component {
       <FlatButton
         label="Cancel"
         primary={true}
-        onClick={this.handleClose}
+        onClick={() => this.handleClose()}
       />,
     ];
 
@@ -39,8 +45,8 @@ export class DialogTemplateSelection extends React.Component {
         title="Select a Template"
         actions={actions}
         modal={false}
-        open={this.props.open}
-        onRequestClose={this.handleClose}
+        open={this.props.opened}
+        onRequestClose={() => this.handleClose()}
       >
         <List>
           {this.props.templates != null && this.props.templates.map((item) => {return this.renderTemplateItem(item);})}
