@@ -291,7 +291,32 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         return true;
     }
 
-    public boolean coalesceEntityTemplate_InsertOrUpdate(CoalesceEntityTemplate template) throws CoalesceException
+    public boolean coalesceEntityTemplate_Register(CoalesceEntityTemplate template)
+            throws CoalesceException
+    {
+        // create a blank entity to iterate through the recordsets
+        CoalesceEntity entity = template.createNewEntity();
+
+        // get the recordsets
+        ArrayList<CoalesceRecordset> allRecordsets = new ArrayList<>();
+        List<CoalesceSection> sections = entity.getSectionsAsList();
+        for (CoalesceSection section : sections)
+        {
+            List<CoalesceRecordset> recordsets = section.getRecordsetsAsList();
+            allRecordsets.addAll(recordsets);
+        }
+
+        // now create the recordset tables
+        for (CoalesceRecordset recordset : allRecordsets)
+        {
+            visitCoalesceRecordset(recordset, this);
+        }
+
+        return true;
+    }
+
+    public boolean coalesceEntityTemplate_InsertOrUpdate(CoalesceEntityTemplate template)
+            throws CoalesceException
     {
         try
         {
@@ -356,24 +381,6 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                 stmt3.setString(8, template.getSource());
                 stmt3.setString(9, template.getVersion());
                 stmt3.executeUpdate();
-            }
-
-            // create a blank entity to iterate through the recordsets
-            CoalesceEntity entity = template.createNewEntity();
-
-            // get the recordsets
-            ArrayList<CoalesceRecordset> allRecordsets = new ArrayList<CoalesceRecordset>();
-            List<CoalesceSection> sections = entity.getSectionsAsList();
-            for (CoalesceSection section : sections)
-            {
-                List<CoalesceRecordset> recordsets = section.getRecordsetsAsList();
-                allRecordsets.addAll(recordsets);
-            }
-
-            // now create the recordset tables
-            for (CoalesceRecordset recordset : allRecordsets)
-            {
-                visitCoalesceRecordset(recordset, this);
             }
         }
         catch (SQLException e)

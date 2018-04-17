@@ -768,9 +768,27 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
         catch (Exception e)
         {
+            LOGGER.warn(e.getMessage(), e);
             throw new CoalescePersistorException("PersistEntityTemplate", e);
         }
 
+    }
+
+    @Override
+    public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
+    {
+        try (DerbyDataConnector conn = (DerbyDataConnector) getDataConnector())
+        {
+            for (CoalesceEntityTemplate template : templates)
+            {
+                conn.coalesceEntityTemplate_Register(template);
+            }
+        }
+        catch (Exception e)
+        {
+            LOGGER.warn(e.getMessage(), e);
+            throw new CoalescePersistorException(e);
+        }
     }
 
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
