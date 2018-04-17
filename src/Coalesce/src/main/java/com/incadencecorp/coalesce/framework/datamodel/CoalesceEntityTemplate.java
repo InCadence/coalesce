@@ -376,15 +376,17 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
 
                     Node attribute = attributeList.item(ii);
                     if (!attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NAME)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_CLASSNAME)
                             && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_SOURCE)
                             && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_VERSION)
                             && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_STATUS)
                             && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_FLATTEN)
                             && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NOINDEX)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceField.ATTRIBUTE_DATA_TYPE)
                             && !attribute.getNodeName().equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MAX)
                             && !attribute.getNodeName().equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MIN)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_CLASSNAME))
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DATA_TYPE)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DEFAULT_VALUE)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_LABEL))
                     {
                         attribute.setNodeValue("");
                     }

@@ -48,7 +48,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     /**
      * Attribute that specifies the datatype of the field
      */
-    public static final String ATTRIBUTE_DATA_TYPE = "datatype";
+    public static final String ATTRIBUTE_DATA_TYPE = CoalesceFieldDefinition.ATTRIBUTE_DATA_TYPE;
 
     /**
      * Attribute that specifies the raw value of the field

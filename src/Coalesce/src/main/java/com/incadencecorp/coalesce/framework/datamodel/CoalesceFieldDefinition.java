@@ -35,6 +35,12 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
 
     private static final boolean NO_INDEX_DEFAULT = CoalesceObject.ATTRIBUTE_NOINDEX_DEFAULT;
 
+    public static final String ATTRIBUTE_DEFAULT_CLASSIFICATION_MARKING = "defaultclassificationmarking";
+    public static final String ATTRIBUTE_DEFAULT_VALUE = "defaultvalue";
+    public static final String ATTRIBUTE_LABEL = "label";
+    public static final String ATTRIBUTE_DATA_TYPE = "datatype";
+    public static final String ATTRIBUTE_DISABLE_HISTORY = "disablehistory";
+
     // -----------------------------------------------------------------------//
     // Protected Member Variables
     // -----------------------------------------------------------------------//
@@ -741,14 +747,14 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     {
         Map<QName, String> map = super.getAttributes();
 
-        map.put(new QName("defaultclassificationmarking"), _entityFieldDefinition.getDefaultclassificationmarking());
-        map.put(new QName("label"), _entityFieldDefinition.getLabel());
-        map.put(new QName("defaultvalue"), _entityFieldDefinition.getDefaultvalue());
-        map.put(new QName("datatype"), _entityFieldDefinition.getDatatype());
+        map.put(new QName(ATTRIBUTE_DEFAULT_CLASSIFICATION_MARKING), _entityFieldDefinition.getDefaultclassificationmarking());
+        map.put(new QName(ATTRIBUTE_LABEL), _entityFieldDefinition.getLabel());
+        map.put(new QName(ATTRIBUTE_DEFAULT_VALUE), _entityFieldDefinition.getDefaultvalue());
+        map.put(new QName(ATTRIBUTE_DATA_TYPE), _entityFieldDefinition.getDatatype());
 
         if (_entityFieldDefinition.isDisablehistory() != null)
         {
-            map.put(new QName("disablehistory"), Boolean.toString(_entityFieldDefinition.isDisablehistory()));
+            map.put(new QName(ATTRIBUTE_DISABLE_HISTORY), Boolean.toString(_entityFieldDefinition.isDisablehistory()));
         }
 
         return map;
@@ -772,19 +778,19 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     {
 
         switch (name.toLowerCase()) {
-        case "label":
+        case ATTRIBUTE_LABEL:
             setLabel(value);
             return true;
-        case "defaultclassificationmarking":
+        case ATTRIBUTE_DEFAULT_CLASSIFICATION_MARKING:
             setDefaultClassificationMarkingAsString(value);
             return true;
-        case "defaultvalue":
+        case ATTRIBUTE_DEFAULT_VALUE:
             setDefaultValue(value);
             return true;
-        case "datatype":
+        case ATTRIBUTE_DATA_TYPE:
             setDataType(ECoalesceFieldDataTypes.getTypeForCoalesceType(value));
             return true;
-        case "disablehistory":
+        case ATTRIBUTE_DISABLE_HISTORY:
             setDisableHistory(Boolean.valueOf(value));
             return true;
         default:

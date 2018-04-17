@@ -86,18 +86,15 @@ public class TemplateDataController {
                     }
                     else
                     {
-                        LOGGER.warn(String.format(CoalesceErrors.TEMPLATE_LOAD),
-                                    meta.getKey(),
+                        LOGGER.warn(String.format(CoalesceErrors.TEMPLATE_LOAD,
                                     meta.getName(),
                                     meta.getSource(),
-                                    meta.getVersion());
+                                                  meta.getVersion()));
                     }
                 }
                 catch (CoalescePersistorException e)
                 {
-                    String errorMsg = String.format(CoalesceErrors.INVALID_OBJECT,
-                                                    meta.getKey(),
-                                                    e.getMessage());
+                    String errorMsg = String.format(CoalesceErrors.INVALID_OBJECT, meta.getKey(), e.getMessage());
 
                     if (LOGGER.isDebugEnabled())
                     {
@@ -470,7 +467,6 @@ public class TemplateDataController {
 
             for (int j = 0; j < jsonRecordSets.length(); j++)
             {
-
                 JSONObject jsonRecordSet = jsonRecordSets.getJSONObject(j);
                 String recordsetName = jsonRecordSet.getString("name");
                 CoalesceRecordset recordset = section.createRecordset(recordsetName);
@@ -484,14 +480,32 @@ public class TemplateDataController {
                     JSONObject jsonField = jsonFields.getJSONObject(k);
                     String fieldName = jsonField.getString("name");
                     String fieldType = jsonField.getString("dataType");
+                    String label = getString(jsonField, "label");
+                    String defaultValue = getString(jsonField, "defaultValue");
                     ECoalesceFieldDataTypes type = ECoalesceFieldDataTypes.getTypeForCoalesceType(fieldType);
 
-                    recordset.createFieldDefinition(fieldName, type);
+                    CoalesceFieldDefinition fd = recordset.createFieldDefinition(fieldName, type, label, "U", defaultValue);
                 }
             }
         }
 
         return CoalesceEntityTemplate.create(entity);
+    }
+
+    /**
+     * @return the value if its present and a String otherwise null.
+     */
+    private String getString(JSONObject json, String key)
+    {
+        if (json.has(key))
+        {
+            Object object = json.get(key);
+            return object instanceof String ? (String) object : null;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     private FieldData getField(PropertyName property, ECoalesceFieldDataTypes type)
