@@ -284,14 +284,29 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
      */
     public CoalesceEntity createNewEntity()
     {
+        return createNewEntity(true);
+    }
+
+    /**
+     * Creates and initializes a new {@link CoalesceEntity} based off of this {@link CoalesceEntityTemplate} 's XML String.
+     *
+     * @param createSingletons specifies whether or not to create singleton records.
+     * @return {@link CoalesceEntity} of the new entity created from this
+     * {@link CoalesceEntityTemplate}
+     */
+    public CoalesceEntity createNewEntity(boolean createSingletons)
+    {
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize(toXml());
         entity.setKey(UUID.randomUUID().toString());
 
-        // Create Singleton Records
-        for (CoalesceSection section : entity.getSectionsAsList())
+        if (createSingletons)
         {
-            populateMinRecords(section);
+            // Create Singleton Records
+            for (CoalesceSection section : entity.getSectionsAsList())
+            {
+                populateMinRecords(section);
+            }
         }
 
         return entity;
