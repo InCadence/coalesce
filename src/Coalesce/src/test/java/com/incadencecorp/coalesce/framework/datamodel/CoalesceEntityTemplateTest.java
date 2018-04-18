@@ -1,21 +1,15 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
+import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import static org.junit.Assert.*;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -90,16 +84,7 @@ public class CoalesceEntityTemplateTest {
 
                     Node attribute = attributeList.item(ii);
 
-                    if (!attribute.getNodeName().equalsIgnoreCase("name")
-                            && !attribute.getNodeName().equalsIgnoreCase("source")
-                            && !attribute.getNodeName().equalsIgnoreCase("version")
-                            && !attribute.getNodeName().equalsIgnoreCase("noindex")
-                            && !attribute.getNodeName().equalsIgnoreCase("flatten")
-                            && !attribute.getNodeName().equalsIgnoreCase("datatype")
-                            && !attribute.getNodeName().equalsIgnoreCase("maxrecords")
-                            && !attribute.getNodeName().equalsIgnoreCase("minrecords")
-                            && !attribute.getNodeName().equalsIgnoreCase("status")
-                            && !attribute.getNodeName().equalsIgnoreCase("classname"))
+                    if (CoalesceEntityTemplate.excludeAttribute(attribute.getNodeName()))
                     {
                         assertTrue(attribute.getNodeName(), StringHelper.isNullOrEmpty(attribute.getNodeValue()));
                     }
@@ -151,7 +136,7 @@ public class CoalesceEntityTemplateTest {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         CoalesceEntityTemplate template1 = CoalesceEntityTemplate.create(entity1);
-        
+
         CoalesceEntity entity2 = new CoalesceEntity();
         entity2.initialize();
         CoalesceSection.create(entity2, "unit test");

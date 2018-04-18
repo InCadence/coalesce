@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.services.search.service.data.controllers.TemplateDataController;
 import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
@@ -198,6 +199,8 @@ public class TemplateDataControllerTest {
 
         Assert.assertEquals(fd.getLabel(), templateFD.getLabel());
         Assert.assertEquals(fd.getDefaultValue(), templateFD.getDefaultValue());
+
+        controller.deleteTemplate(template.getKey());
     }
 
     private TemplateDataController createController() throws Exception

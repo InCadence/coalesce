@@ -390,18 +390,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
                 {
 
                     Node attribute = attributeList.item(ii);
-                    if (!attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NAME)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_CLASSNAME)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_SOURCE)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_VERSION)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_STATUS)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_FLATTEN)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NOINDEX)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MAX)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MIN)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DATA_TYPE)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DEFAULT_VALUE)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_LABEL))
+                    if (excludeAttribute(attribute.getNodeName()))
                     {
                         attribute.setNodeValue("");
                     }
@@ -409,6 +398,26 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
             }
         }
 
+    }
+
+    /**
+     * @param name of attribute to check
+     * @return whether or not the attribute should be excluded from the template.
+     */
+    public static boolean excludeAttribute(String name)
+    {
+        return !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NAME)
+                && !name.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_CLASSNAME)
+                && !name.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_SOURCE)
+                && !name.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_VERSION)
+                && !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_STATUS)
+                && !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_FLATTEN)
+                && !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NOINDEX)
+                && !name.equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MAX) && !name.equalsIgnoreCase(
+                CoalesceRecordset.ATTRIBUTE_RECORDS_MIN)
+                && !name.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DATA_TYPE) && !name.equalsIgnoreCase(
+                CoalesceFieldDefinition.ATTRIBUTE_DEFAULT_VALUE)
+                && !name.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_LABEL);
     }
 
     @Override
