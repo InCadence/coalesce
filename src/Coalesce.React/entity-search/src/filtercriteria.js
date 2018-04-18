@@ -29,7 +29,6 @@ export class FilterCriteria extends React.Component {
       if (criteria.recordset === this.props.recordsets[ii].name) {
         recordset = this.props.recordsets[ii];
         break;
-
       }
     };
 

@@ -66,28 +66,8 @@ export class FilterCreator extends React.Component {
     this.state = props;
   }
 
-  componentDidMount() {
-
-    const {recordsets, tabledata} = this.state;
-
-    if (tabledata.length == 0 && recordsets.length > 0) {
-
-      tabledata.push({
-        key: 0,
-        recordset: recordsets[0].name,
-        field: recordsets[0].definition[0].name,
-        operator: '=',
-        value: '',
-        matchCase: false});
-
-      this.setState({
-        tabledata: tabledata,
-      });
-    }
-
-    this.setState({
-      currentkey: (tabledata.length - 1)
-    })
+  componentWillReceiveProps(nextProps) {
+    this.state = nextProps;
   }
 
   render() {

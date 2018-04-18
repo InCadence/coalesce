@@ -6,6 +6,7 @@ import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import {FieldInput} from 'common-components/lib/components/FieldInput.js'
+import { Row, Col } from 'react-bootstrap';
 
 import {FilterCriteria} from './filtercriteria'
 var parse = require('wellknown');

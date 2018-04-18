@@ -8,6 +8,7 @@ import {SearchResults} from './results.js'
 import {registerLoader, registerTemplatePrompt, registerErrorPrompt} from 'common-components/lib/register.js'
 import { loadTemplates, loadTemplate } from 'common-components/lib/js/templateController.js';
 import { DialogMessage, DialogLoader, DialogTemplateSelection } from 'common-components/lib/components/dialogs'
+import { App } from './app'
 
 import {Menu} from 'common-components/lib/index.js'
 import 'common-components/bootstrap/css/bootstrap.min.css'
@@ -29,10 +30,11 @@ if (window.location.port == 3000) {
 
 registerErrorPrompt(Popup);
 
-var cache = {};
-var template = 'CoalesceEntity';
+//var cache = {};
+//var template = 'CoalesceEntity';
 
 // Prompt user for template to populate the criteria controls
+/*
 function promptForTemplate() {
 
   Popup.plugins().promptTemplate('load', 'Enumeration', function (value) {
@@ -96,6 +98,7 @@ function promptForTemplate() {
   });
 
 }
+*/
 
 // TODO This is test code for logging the size of an object
 function memorySizeOf(obj) {
@@ -211,6 +214,7 @@ ReactDOM.render(
 
 registerLoader(Popup);
 
+/*
 loadTemplates().then((data) => {
     registerTemplatePrompt(Popup, karafRootAddr, data);
 
@@ -268,7 +272,9 @@ loadTemplates().then((data) => {
 
     Popup.plugins().promptError("Loading Templates: " + error);
 });
+*/
 
+/*
 // Populate w/ Base fields that a common to all templates
 // Because its common fields the GUID can be random (or hard coded)
 fetch(karafRootAddr + '/cxf/data/templates/998b040b-2c39-4c98-9a9d-61d565b46e28/recordsets/CoalesceEntity/fields')
@@ -284,13 +290,18 @@ fetch(karafRootAddr + '/cxf/data/templates/998b040b-2c39-4c98-9a9d-61d565b46e28/
         <FilterCreator
           recordsets={recordsets}
           onSearch={searchComplex}
-          />,
+        />,
         document.getElementById('main')
     );
 
 }).catch(function(error) {
     Popup.plugins().promptError("Loading Common Fields: " + error);
 });
+*/
+ReactDOM.render(
+  <App pjson={pjson} onSearch={searchComplex}/>,
+  document.getElementById('main')
+);
 
 // TODO Remove this code (Its an example of how to submit a OGC filter as XML)
 function searchOGC(data, e) {
