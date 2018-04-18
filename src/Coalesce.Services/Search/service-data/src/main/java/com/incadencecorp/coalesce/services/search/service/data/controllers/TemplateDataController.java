@@ -409,6 +409,7 @@ public class TemplateDataController {
         try
         {
             framework.deleteTemplate(key);
+            templates.remove(key);
             result = true;
         }
         catch (CoalescePersistorException e)
