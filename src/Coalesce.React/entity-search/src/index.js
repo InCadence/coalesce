@@ -6,6 +6,8 @@ import Popup from 'react-popup';
 import {FilterCreator} from './filtercreator.js'
 import {SearchResults} from './results.js'
 import {registerLoader, registerTemplatePrompt, registerErrorPrompt} from 'common-components/lib/register.js'
+import { loadTemplates, loadTemplate } from 'common-components/lib/js/templateController.js';
+import { DialogMessage, DialogLoader, DialogTemplateSelection } from 'common-components/lib/components/dialogs'
 
 import {Menu} from 'common-components/lib/index.js'
 import 'common-components/bootstrap/css/bootstrap.min.css'
@@ -39,9 +41,7 @@ function promptForTemplate() {
 
     if (cache[value] == null)
     {
-      fetch(karafRootAddr + '/cxf/data/templates/' + value)
-          .then(res => res.json())
-          .then(template => {
+      loadTemplate(value).then(template => {
 
             var recordsets = [].concat(cache['CoalesceEntity']);
 
@@ -211,9 +211,7 @@ ReactDOM.render(
 
 registerLoader(Popup);
 
-fetch(karafRootAddr + '/cxf/data/templates')
-  .then(res => res.json())
-  .then(data => {
+loadTemplates().then((data) => {
     registerTemplatePrompt(Popup, karafRootAddr, data);
 
     ReactDOM.render(
