@@ -4,14 +4,53 @@ import { ReactTableDefaults } from 'react-table'
 import {Toggle} from 'common-components/lib/toggle.js'
 import {Collapse} from 'react-collapse';
 import {IconButton} from 'common-components/lib/components/IconButton.js'
-
+import {FilterGroup} from './filtergroup'
 import 'react-table/react-table.css'
+
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { getDefaultTheme } from 'common-components/lib/js/theme'
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 Object.assign(ReactTableDefaults, {
   defaultPageSize: 5,
   minRows: 3,
   // etc...
 })
+
+const example = {
+    "pageSize":200,
+    "pageNumber":1,
+    "propertyNames":["CoalesceEntity.objectkey"],
+    "group":{
+      "operator":"AND",
+      "criteria":[
+          {
+            "key":0,
+            "recordset":"CoalesceEntity",
+            "field":"objectkey",
+            "operator":"PropertyIsNotEqualTo",
+            "value":"aa",
+            "matchCase":false
+          },
+        ],
+        /*
+        "group":[{
+          "operator":"AND",
+          "criteria":[
+              {
+                "key":0,
+                "recordset":"CoalesceEntity",
+                "field":"name",
+                "operator":"!=",
+                "value":"aa",
+                "matchCase":false
+              },
+            ]
+          }
+        ]
+        */
+      }
+    }
 
 export class FilterCreator extends React.Component {
 
@@ -78,6 +117,9 @@ export class FilterCreator extends React.Component {
                 <IconButton icon="/images/svg/search.svg" title="Execute Query" onClick={this.props.onSearch.bind(this, this.state.tabledata)} />
               </div>
             </div>
+            <MuiThemeProvider muiTheme={this.state.theme}>
+              <FilterGroup data={example.group} recordsets={recordsets}/>
+            </MuiThemeProvider>
           </Collapse>
       </div>
     )
@@ -222,15 +264,11 @@ function createColumns(that, recordsets) {
       resizable: false,
       sortable: false,
       Cell: (cell) => {
-
-        var recordsetOptions = [];
-        recordsets.forEach(function (recordset) {
-            recordsetOptions.push(<option key={recordset.name + cell.row.key} value={recordset.name}>{recordset.name}</option>);
-        })
-
         return (
           <select className="form-control" value={cell.row.recordset} onChange={that.onRecordsetChange.bind(that, cell.row.key)}>
-            {recordsetOptions}
+            {recordsets.map((recordset) => {
+              return (<option key={recordset.name + cell.row.key} value={recordset.name}>{recordset.name}</option>);
+            })}
           </select>
         )}
     });
