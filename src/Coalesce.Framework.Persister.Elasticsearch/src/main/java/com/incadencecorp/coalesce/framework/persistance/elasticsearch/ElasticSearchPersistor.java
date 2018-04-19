@@ -714,16 +714,9 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 //        {
 //            return true;
 //        }
-
-        JsonFullEximImpl converter = new JsonFullEximImpl();
  
         IndexResponse response;
 		try {
-			ObjectMapper mapper = new ObjectMapper();
-			//TypeFactory typeFactory = mapper.getTypeFactory();
-			//mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-			//byte[] json = mapper.writeValueAsBytes(converter.exportValues(entity, true));
-			//String json = mapper.writeValueAsString(converter.exportValues(entity, true));
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			
 			for(CoalesceSection section : entity.getSectionsAsList()) {
@@ -731,7 +724,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 					for(CoalesceRecord record : recordset.getAllRecords()) {
 						for(CoalesceField field : record.getFields()) {
 							map.put(field.getName(), field.getValue());
-							System.out.println("Adding field " + field.getName() + " with value: " + field.getValue());
+							LOGGER.debug("Adding field " + field.getName() + " with value: " + field.getValue());
 						}
 					}
 				}
@@ -740,30 +733,17 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 			Map<String, Object> linkageMap = createLinkageMap(entity);
 	        
 	        conn.prepareIndex("oelinkage", "oelinkage").setSource(linkageMap).get();
-			System.out.println("Indexed linkage for entity " + entity.getName());
-			
-			//map = mapper.readValue(converter.exportValues(entity, true).toString(), 
-			//		new TypeReference<Map<String, Object>>() {
-			//});
+			LOGGER.debug("Indexed linkage for entity " + "coalesce-" + entity.getName());
+
 
 			// convert JSON string to Map
-			response = conn.prepareIndex(entity.getName().toLowerCase() + "_estest", entity.getType().toLowerCase()).setSource(map).get();
-			System.out.println("Saved Index called: " + entity.getName() + "_estest");
+			response = conn.prepareIndex("coalesce-" + entity.getName().toLowerCase(), entity.getType().toLowerCase()).setSource(map).get();
+			System.out.println("Saved Index called: " + "coalesce-" + entity.getName());
  
 			System.out.println(response.toString());
 		} catch (CoalesceException e) {
 			e.printStackTrace();
 			return  false;
-		/*} catch (JsonParseException e) {
-			e.printStackTrace();
-			return  false;
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-			return  false;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return  false;
-			*/
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
@@ -1030,7 +1010,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 	    	LOGGER.debug(response.toString());
         } catch (Exception e) {
         	LOGGER.error(e.getMessage());
-            throw new CoalescePersistorException(e.getMessage(), e);
+            //throw new CoalescePersistorException(e.getMessage(), e);
         }
         // TODO Not Implemented
     	//query.getFilter().toString();
