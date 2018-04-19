@@ -65,7 +65,6 @@ import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 import ironhide.client.IronhideClient;
-import mil.nga.giat.data.elasticsearch.FilterToElastic;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -159,9 +158,9 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     
     public void searchElasticGeo() {
     	
-    	FilterToElastic filterElastic = new FilterToElastic();
+    	//FilterToElastic filterElastic = new FilterToElastic();
     	
-    	Map<String, Object> queryBuilder = filterElastic.getNativeQueryBuilder();
+    	//Map<String, Object> queryBuilder = filterElastic.getNativeQueryBuilder();
     	
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
