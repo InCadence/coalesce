@@ -166,9 +166,10 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
 	    	IronhideClient client = conn.getDBConnector(getProps());
-	    	SearchResponse response = client.prepareSearch("twitter4")
-	    	        .setTypes("tweet")
-	    	        .get();
+	    } catch (Exception e) { 
+	        e.printStackTrace(); 
+	    } 
+    } 
 
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
                                                          String entityIdType,
