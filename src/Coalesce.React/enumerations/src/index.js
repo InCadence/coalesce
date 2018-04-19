@@ -6,6 +6,9 @@ import Popup from 'react-popup';
 import {registerLoader, registerErrorPrompt, registerPrompt} from 'common-components/lib/register.js'
 import {SearchResults} from './results.js'
 import ReactTable from 'react-table'
+import { searchComplex } from 'common-components/lib/js/searchController';
+import { getRootKarafUrl } from 'common-components/lib/js/common'
+import {IconButton} from 'common-components/lib/components/IconButton'
 
 import {Menu} from 'common-components/lib/index.js'
 import 'common-components/bootstrap/css/bootstrap.min.css'
@@ -17,17 +20,48 @@ var pjson = require('../package.json');
 document.title = pjson.title;
 
 var enums;
-var enumCols = ["metadata.enumname", "metadata.description", "CoalesceEntity.datecreated", "CoalesceEntity.lastmodified"];
+var enumCols = [
+  {
+    key: "metadata.enumname",
+    Header: 'Name',
+    accessor: 'values[0]'
+  },{
+    key: "metadata.description",
+    Header: 'Description',
+    accessor: 'values[1]'
+  },{
+    key: "CoalesceEntity.datecreated",
+    Header: 'Created',
+    accessor: 'values[2]'
+  },{
+    key: "CoalesceEntity.lastmodified",
+    Header: 'Last Modified',
+    accessor: 'values[3]'
+  }
+]
+//var enumCols = ["metadata.enumname", "metadata.description", "CoalesceEntity.datecreated", "CoalesceEntity.lastmodified"];
 var values = [];
-var valueCols = [/*"values.ordinal",*/ "values.value", "values.description", "values.associatedkeys", "values.associatedvalues"];
+var valueCols = [
+  {
+    key: "values.value",
+    Header: 'Value',
+    accessor: 'values[0]'
+  },{
+    key: "values.description",
+    Header: 'Description',
+    accessor: 'values[1]'
+  },{
+    key: "values.associatedkeys",
+    Header: 'Associated Keys',
+    accessor: 'values[2]'
+  },{
+    key: "values.associatedvalues",
+    Header: 'Associated Values',
+    accessor: 'values[3]'
+  }
+];
 
-var rootUrl;
-
-if (window.location.port == 3000) {
-  rootUrl  = 'http://' + window.location.hostname + ':8181';
-} else {
-  rootUrl  = '';
-}
+var rootUrl = getRootKarafUrl();
 
 registerLoader(Popup);
 registerErrorPrompt(Popup);
@@ -45,13 +79,13 @@ function loadEnumerations() {
     var query = {
       "pageSize": 200,
       "pageNumber": 1,
-      "propertyNames": enumCols,
+      "propertyNames": enumCols.map((item) => item.key),
       "group": {
-        "booleanComparer": "AND",
+        "operator": "AND",
         "criteria": [{
           'recordset': 'CoalesceEntity',
           'field': 'name',
-          'comparer': '=',
+          'operator': '=',
           'value': 'Enumeration'
         }]
       }
@@ -59,27 +93,11 @@ function loadEnumerations() {
 
     Popup.plugins().loader("Loading Enumerations...");
 
-    fetch(rootUrl + '/cxf/data/search/complex', {
-      method: "POST",
-      body: JSON.stringify(query),
-      headers: new Headers({
-        'content-type': 'application/json; charset=utf-8'
-      }),
-    }).then(res => res.json())
-      .then(data => {
+    searchComplex(query).then(response => {
+        enums = response;
 
         Popup.close();
-
-        var results = data.result[0];
-
-        if (results.status === 'SUCCESS') {
-
-          enums = results.result;
-          renderEnumerations(enums);
-        } else {
-          Popup.plugins().promptError("(FAILED) Loading Enumerations: " + results.error);
-        }
-
+        renderEnumerations(response);
       }).catch(function(error) {
         Popup.plugins().promptError("(FAILED) Loading Enumerations: " + error);
     });
@@ -100,8 +118,8 @@ function renderEnumerations(data) {
           properties={enumCols}
           createButtons={(row) => {
             return [
-              <img key={row.entityKey + '_view'} src="/images/svg/view.svg" alt="view" title="View Entity" className="coalesce-img-button small enabled" onClick={() => loadValues(row.entityKey)}/>,
-              <img key={row.entityKey + '_edit'} src="/images/svg/edit.svg" alt="Edit" title="Edit Enumeration" className="coalesce-img-button small enabled" onClick={() => window.open(rootUrl + "/entityeditor/?entitykey=" + row.entityKey)}/>
+              <IconButton icon="/images/svg/view.svg" title="View Values" onClick={() => {loadValues(row._original.entityKey)}} />,
+              <IconButton icon="/images/svg/edit.svg" title="Edit Enumeration" onClick={() => {window.open("/entityeditor/?entitykey=" + row._original.entityKey)}} />
             ];
           }}
         />
@@ -117,13 +135,13 @@ function loadValues(key) {
     var query = {
       "pageSize": 200,
       "pageNumber": 1,
-      "propertyNames": valueCols,
+      "propertyNames": valueCols.map((item) => item.key),
       "group": {
-        "booleanComparer": "AND",
+        "operator": "AND",
         "criteria": [{
           'recordset': 'CoalesceEntity',
           'field': 'objectkey',
-          'comparer': '=',
+          'operator': '=',
           'value': key
         }]
       }
@@ -131,27 +149,11 @@ function loadValues(key) {
 
     Popup.plugins().loader("Loading Enumeration's Values...");
 
-    fetch(rootUrl + '/cxf/data/search/complex', {
-      method: "POST",
-      body: JSON.stringify(query),
-      headers: new Headers({
-        'content-type': 'application/json; charset=utf-8'
-      }),
-    }).then(res => res.json())
-      .then(data => {
+    searchComplex(query).then(response => {
 
         Popup.close();
 
-        var results = data.result[0];
-
-        values[key] = results.result;
-
-        if (results.status === 'SUCCESS') {
-          renderValues(key, results.result);
-
-        } else {
-          Popup.plugins().promptError("(FAILED) Loading Enumeration Values: " + results.error);
-        }
+          renderValues(key, response.hits);
 
     }).catch(function(error) {
       Popup.plugins().promptError("(FAILED) Loading Enumeration Values: " + error);
@@ -178,8 +180,8 @@ function renderValues(key, data) {
           }}
         />
         <div className='form-buttons'>
-          <img src="/images/svg/back.svg" alt="back" title="Back" className="coalesce-img-button enabled" onClick={() => loadEnumerations()}/>
-          <img src="/images/svg/edit.svg" alt="Edit" title="Edit Enumeration" className="coalesce-img-button enabled" onClick={() => window.open(rootUrl + "/entityeditor/?entitykey=" + key)}/>
+          <IconButton icon="/images/svg/back.svg" title="Back" onClick={() => {loadEnumerations()}} />
+          <IconButton icon="/images/svg/edit.svg" title="Edit" onClick={() => {window.open(rootUrl + "/entityeditor/?entitykey=" + key)}} />
         </div>
       </div>
     </div>,
@@ -222,8 +224,8 @@ function loadAssociatedValues(key, keys, values) {
               ]}
           />
           <div className='form-buttons'>
-            <img src="/images/svg/back.svg" alt="back" title="Back" className="coalesce-img-button enabled" onClick={() => loadValues(key)}/>
-            <img src="/images/svg/edit.svg" alt="Edit" title="Edit Enumeration" className="coalesce-img-button enabled" onClick={() => loadValues(key)}/>
+            <IconButton icon="/images/svg/back.svg" title="Back" onClick={() => {() => loadValues(key)}} />,
+            <IconButton icon="/images/svg/edit.svg" title="Edit" onClick={() => {() => loadValues(key)}} />,
           </div>
         </div>
       </div>,
