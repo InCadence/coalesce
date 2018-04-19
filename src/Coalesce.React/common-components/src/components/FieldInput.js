@@ -59,6 +59,11 @@ export class FieldInput extends React.Component {
     field[attr] = value;
 
     this.setState({field: field});
+
+    if (this.props.onChange != null)
+    {
+      this.props.onChange(value);
+    }
   }
 
   render() {
