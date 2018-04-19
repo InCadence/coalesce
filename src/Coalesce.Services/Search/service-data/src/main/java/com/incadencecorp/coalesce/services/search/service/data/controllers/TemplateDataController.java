@@ -86,18 +86,15 @@ public class TemplateDataController {
                     }
                     else
                     {
-                        LOGGER.warn(String.format(CoalesceErrors.TEMPLATE_LOAD),
-                                    meta.getKey(),
-                                    meta.getName(),
-                                    meta.getSource(),
-                                    meta.getVersion());
+                        LOGGER.warn(String.format(CoalesceErrors.TEMPLATE_LOAD,
+                                                  meta.getName(),
+                                                  meta.getSource(),
+                                                  meta.getVersion()));
                     }
                 }
                 catch (CoalescePersistorException e)
                 {
-                    String errorMsg = String.format(CoalesceErrors.INVALID_OBJECT,
-                                                    meta.getKey(),
-                                                    e.getMessage());
+                    String errorMsg = String.format(CoalesceErrors.INVALID_OBJECT, meta.getKey(), e.getMessage());
 
                     if (LOGGER.isDebugEnabled())
                     {
@@ -182,7 +179,7 @@ public class TemplateDataController {
     }
 
     /**
-     * @param key field's key
+     * @param key          field's key
      * @param recordsetKey recordset's key
      * @return a list of fields for the provided record set key.
      * @throws RemoteException on error
@@ -232,8 +229,8 @@ public class TemplateDataController {
     }
 
     /**
-     * @param name template's name
-     * @param source template's source
+     * @param name    template's name
+     * @param source  template's source
      * @param version template's version
      * @return an entity created by the template specified by the provided arguments.
      * @throws RemoteException on error
@@ -317,7 +314,7 @@ public class TemplateDataController {
     /**
      * Saves the specified template.
      *
-     * @param key template's key
+     * @param key    template's key
      * @param entity in which the template should be derived
      * @return whether or not it was successfully saved.
      * @throws RemoteException on error
@@ -412,6 +409,7 @@ public class TemplateDataController {
         try
         {
             framework.deleteTemplate(key);
+            templates.remove(key);
             result = true;
         }
         catch (CoalescePersistorException e)
@@ -470,7 +468,6 @@ public class TemplateDataController {
 
             for (int j = 0; j < jsonRecordSets.length(); j++)
             {
-
                 JSONObject jsonRecordSet = jsonRecordSets.getJSONObject(j);
                 String recordsetName = jsonRecordSet.getString("name");
                 CoalesceRecordset recordset = section.createRecordset(recordsetName);
@@ -484,14 +481,32 @@ public class TemplateDataController {
                     JSONObject jsonField = jsonFields.getJSONObject(k);
                     String fieldName = jsonField.getString("name");
                     String fieldType = jsonField.getString("dataType");
+                    String label = getString(jsonField, "label");
+                    String defaultValue = getString(jsonField, "defaultValue");
                     ECoalesceFieldDataTypes type = ECoalesceFieldDataTypes.getTypeForCoalesceType(fieldType);
 
-                    recordset.createFieldDefinition(fieldName, type);
+                    CoalesceFieldDefinition fd = recordset.createFieldDefinition(fieldName, type, label, "U", defaultValue);
                 }
             }
         }
 
         return CoalesceEntityTemplate.create(entity);
+    }
+
+    /**
+     * @return the value if its present and a String otherwise null.
+     */
+    private String getString(JSONObject json, String key)
+    {
+        if (json.has(key))
+        {
+            Object object = json.get(key);
+            return object instanceof String ? (String) object : null;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     private FieldData getField(PropertyName property, ECoalesceFieldDataTypes type)
@@ -523,7 +538,7 @@ public class TemplateDataController {
 
         private TemplateNode(CoalesceEntityTemplate template)
         {
-            this.entity = template.createNewEntity();
+            this.entity = template.createNewEntity(false);
             this.entity.setKey(template.getKey());
             this.template = template;
         }

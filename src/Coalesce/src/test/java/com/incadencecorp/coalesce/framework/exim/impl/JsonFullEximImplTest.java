@@ -17,25 +17,20 @@
 
 package com.incadencecorp.coalesce.framework.exim.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+import com.incadencecorp.coalesce.api.Views;
+import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.util.GeometricShapeFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.api.Views;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.framework.compareables.CoalesceFieldComparator;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
-import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This unit test covers the {@link JsonFullEximImpl}
@@ -51,9 +46,10 @@ public class JsonFullEximImplTest {
      * This is an example of how to use the ObjectMapper to perform the same
      * function as JsonFullEximImpl
      *
-     * @throws Exception
+     * @throws Exception on error
      */
-    @Test public void eximTest() throws Exception
+    @Test
+    public void eximTest() throws Exception
     {
         JsonFullEximImpl exim = new JsonFullEximImpl();
         exim.setView(Views.Entity.class);
@@ -92,9 +88,10 @@ public class JsonFullEximImplTest {
      * Record Sets, passing them in at any other level will throw a runtime
      * exception.
      *
-     * @throws Exception
+     * @throws Exception on error
      */
-    @Test(expected = RuntimeException.class) public void invalidJSONTest() throws Exception
+    @Test(expected = RuntimeException.class)
+    public void invalidJSONTest() throws Exception
     {
 
         JsonFullEximImpl exim = new JsonFullEximImpl();
@@ -115,9 +112,10 @@ public class JsonFullEximImplTest {
      * This test creates an object, exports to JSON, and imports it into another
      * object with an additional record set.
      *
-     * @throws Exception
+     * @throws Exception on error
      */
-    @Test public void importIntoExpandedEntityTests() throws Exception
+    @Test
+    public void importIntoExpandedEntityTests() throws Exception
     {
 
         JsonFullEximImpl exim = new JsonFullEximImpl();
@@ -163,9 +161,10 @@ public class JsonFullEximImplTest {
     /**
      * This test ensures that you can export and import values.
      *
-     * @throws Exception
+     * @throws Exception on error
      */
-    @Test public void importExportTest() throws Exception
+    @Test
+    public void importExportTest() throws Exception
     {
         TestEntity entity = new TestEntity();
         entity.initialize();
@@ -250,9 +249,10 @@ public class JsonFullEximImplTest {
      * This test creates a {@link TestEntity}, exports its values, and attempts
      * to import into an invalid entity type.
      *
-     * @throws Exception
+     * @throws Exception on error
      */
-    @Test public void invalidObjectTest() throws Exception
+    @Test
+    public void invalidObjectTest() throws Exception
     {
 
         TestEntity entity = new TestEntity();
@@ -280,6 +280,74 @@ public class JsonFullEximImplTest {
 
         // Since we are importing into a CoalesceEntity the section should not be created because it does not exists within the template.
         Assert.assertNull(entity2.getCoalesceRecordsetForNamePath(entity.getRecordset1().getNamePath()));
+    }
+
+    /**
+     * This test ensures that you can export / import DateTime and Geometry fields.
+     *
+     * @throws Exception on error
+     */
+    @Test
+    public void importExportDateTimeTest() throws Exception
+    {
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        TestRecord record;
+
+        GeometricShapeFactory factory = new GeometricShapeFactory();
+        factory.setSize(10);
+        factory.setNumPoints(4);
+        factory.setCentre(new Coordinate(0, 0));
+        Polygon shape = factory.createCircle();
+
+        // Create Record 1
+        record = entity.addRecord1();
+        record.getDateField().setValue(JodaDateTimeHelper.nowInUtc());
+        record.getPolygonField().setValue(shape);
+
+        JsonFullEximImpl exim = new JsonFullEximImpl();
+
+        JSONObject json = exim.exportValues(entity, true);
+
+        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
+
+        TestEntity imported = new TestEntity();
+        imported.initialize(exim.importValues(json, template));
+        TestRecord recordImported = new TestRecord(imported.getRecordset1().getRecords().get(0));
+
+        Assert.assertEquals(record.getDateField().getBaseValue(), recordImported.getDateField().getBaseValue());
+        Assert.assertEquals(record.getPolygonField().getBaseValue(), recordImported.getPolygonField().getBaseValue());
+    }
+
+    /**
+     * This test ensures that you can export / import linkages.
+     *
+     * @throws Exception on error
+     */
+    @Test
+    public void importLinkageTest() throws Exception
+    {
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize();
+
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.IS_PARENT_OF, entity2);
+
+        JsonFullEximImpl exim = new JsonFullEximImpl();
+
+        JSONObject json = exim.exportValues(entity1, true);
+
+        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity1);
+
+        TestEntity imported = new TestEntity();
+        imported.initialize(exim.importValues(json, template));
+
+        Assert.assertEquals(1, imported.getLinkages().size());
+        Assert.assertEquals(1, imported.getLinkageSection().getLinkagesAsList().size());
+        Assert.assertEquals(entity2.getKey(), imported.getLinkageSection().getLinkagesAsList().get(0).getEntity2Key());
     }
 
 }

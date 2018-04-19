@@ -1,10 +1,9 @@
 import React from 'react';
 import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
-import {Toggle} from 'common-components/lib/toggle.js'
-import {Accordion} from 'common-components/lib/accordion.js'
-import {Collapse} from 'react-collapse';
 import {FieldInput} from './FieldInput.js'
+import { IconButton } from 'common-components/lib/components/IconButton.js'
+import uuid from 'uuid';
 
 Object.assign(ReactTableDefaults, {
   defaultPageSize: 5,
@@ -12,17 +11,28 @@ Object.assign(ReactTableDefaults, {
   // etc...
 })
 
+const status_enum = [{enum: 'ACTIVE', label: "Active"}, {enum: 'READONLY', label: 'Read Only'}, {enum: 'DELETED', label: 'Deleted'}];
+
 export class RecordsetView extends React.Component
 {
   constructor(props) {
     super(props);
-    this.state = props;
+    this.state = {
+      data: props.data
+    };
     this.createRow = this.createRow.bind(this);
     this.toggleShowAll = this.toggleShowAll.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      data: nextProps.data
+    })
+  }
+
   render() {
-    const {recordset, data, isOpened, showAll} = this.state;
+    const {data, showAll} = this.state;
+    const { recordset } = this.props;
 
     var that = this;
     var columns = [{Header: 'key', accessor: 'key', show: false}];
@@ -30,25 +40,24 @@ export class RecordsetView extends React.Component
     // Buttons Creation
     var buttons = {};
     buttons['Header'] = 'Status';
-    buttons['accessor'] = 'status';
-    buttons['resizable'] = false;
+    buttons['accessor'] = 'record';
     buttons['sortable'] = false;
-    buttons['Cell'] = (cell) => {
-      // TODO Pull o  ptions from an enumeration
-      return (
-        <select className="form-control" onChange={that.changeStatus.bind(that, cell.row.key)} value={cell.row.status}>
-          <option value='ACTIVE'>Active</option>
-          <option value='READONLY'>Readonly</option>
-          <option value='DELETED'>Deleted</option>
-        </select>
-      )
-    }
+    buttons['Cell'] = (cell) => (
+      // TODO Pull options from an enumeration
+      <FieldInput
+        field={cell.value}
+        dataType="ENUMERATION_TYPE"
+        attr="status"
+        options={status_enum}
+        showLabels={false}
+      />
+    )
 
     columns.push(buttons);
 
     // Create Colunms
     recordset.fieldDefinitions.forEach(function(fd) {
-      columns.push(that.createHeader(fd, that));
+      columns.push(that.createHeader(fd));
     });
 
     var tabledata = [];
@@ -57,63 +66,45 @@ export class RecordsetView extends React.Component
     if (data != null && data.allRecords != null)
     {
       data.allRecords.forEach(function(record) {
-        if (showAll || record.status !== 'DELETED') {
+
+        console.log(record.status);
+
+        //if (showAll || record.status !== 'DELETED') {
           tabledata.push(that.createDataRow(record, recordset.fieldDefinitions));
-        }
+        //}
       });
     }
 
-/*
-<Accordion id={recordset.key} key={recordset.key} label={label}>
-  <ReactTable
-    data={tabledata}
-    columns={columns}
-  />
-  <div className='form-buttons'>
-    <input type='checkbox'  onClick={this.toggleShowAll} />
-    <label>Show All</label>
-    <img src={require('common-components/img/add.ico')} alt="Add" title="Add Row" className="coalesce-img-button enabled" onClick={this.createRow}/>
-  </div>
-</Accordion>
-*/
-
     var label = recordset.name.toProperCase() + " Recordset";
     return (
-      <div id={recordset.key} key={recordset.key} className="ui-widget">
-        <Toggle
-          ontext={label}
-          offtext={label}
-          isToggleOn={isOpened}
-          onToggle={(value) => {
-            this.setState({isOpened: value});
-          }}
-          />
-          <Collapse isOpened={isOpened}>
-            <div className="ui-widget-content">
-              <ReactTable
-                data={tabledata}
-                columns={columns}
-              />
-              <div className='form-buttons'>
-                <input type='checkbox'  onClick={this.toggleShowAll} />
-                <label>Show All</label>
-                <img src='/images/svg/add.svg' alt="Add" title="Add Row" className="coalesce-img-button enabled" onClick={this.createRow}/>
-              </div>
-            </div>
-          </Collapse>
-      </div>
+      <div id={recordset.key} key={recordset.key} className="ui-widget-content section">
+            <ReactTable
+              data={tabledata}
+              columns={columns}
+              className="-striped -highlight"
+            />
+          <div className='form-buttons'>
+            <input type='checkbox'  onClick={this.toggleShowAll} />
+            <label>Show All</label>
+            <IconButton icon="/images/svg/add.svg" title="Add Record" onClick={this.createRow} />
+          </div>
+        </div>
     )
   }
 
-  createHeader(definition, that) {
+  createHeader(definition) {
     var col = {};
 
     col['Header'] = definition.name;
     col['accessor'] = definition.name;
+    col['sortable'] = false;
 
     if (definition.status !== "READONLY") {
       col['Cell'] = (cell) => (
-          <input className="form-control" value={cell.value} onChange={that.handleChange.bind(that, cell.row.key, cell.column.Header)}/>
+        <FieldInput
+          field={cell.value}
+          showLabels={false}
+        />
       );
     }
 
@@ -122,32 +113,29 @@ export class RecordsetView extends React.Component
 
   createDataRow(record, fieldDefinitions) {
     var row = {
-      key: record.key,
-      status: record.status
+      record: record
     };
 
     fieldDefinitions.forEach(function(fd) {
 
       for (var ii=0; ii<record.fields.length; ii++) {
         if (record.fields[ii].name === fd.name) {
-
-          if (record.fields[ii].value == null) {
-            row[fd.name] = '';
-          } else {
-            row[fd.name] = record.fields[ii].value;
-          }
+          row[fd.name] = record.fields[ii];
           break;
         }
       }
 
     });
 
+    console.log(JSON.stringify(row));
+
     return row;
   }
 
   createRow(e) {
 
-    const {recordset, data, newIdx} = this.state;
+    const { data } = this.state;
+    const { recordset } = this.props;
 
     var fields = [];
 
@@ -164,7 +152,7 @@ export class RecordsetView extends React.Component
     });
 
     data.allRecords.push({
-      key: newIdx,
+      key: uuid.v4(),
       status: 'ACTIVE',
       name: recordset.name + ' Record',
       type: 'record',
@@ -175,18 +163,18 @@ export class RecordsetView extends React.Component
 
     this.setState({
       data: data,
-      newIdx: newIdx + 1,
       showAll: false
     });
   }
 
-  changeStatus(recordkey, e) {
+  changeStatus(recordkey, value) {
 
     const {data} = this.state;
 
+console.log(value);
     data.allRecords.forEach(function (record) {
       if (record.key === recordkey) {
-        record.status = e.target.value;
+        record.status = value;
       }
     })
 
@@ -200,130 +188,4 @@ export class RecordsetView extends React.Component
     this.setState({showAll: e.target.checked})
   }
 
-  handleChange (recordkey, fieldname, e){
-    const value = e.target.value;
-    const recordset = this.state.data;
-
-    for (var ii=0; ii<recordset.allRecords.length; ii++) {
-
-      var record = recordset.allRecords[ii];
-
-      if (record.key === recordkey) {
-
-        for (var jj=0; jj<record.fields.length; jj++) {
-
-          var field = record.fields[jj];
-
-          if (field.name === fieldname) {
-            field.value = value;
-            this.setState({data: recordset});
-            break;
-          }
-        }
-        break;
-      }
-    }
-  }
-
 }
-
-RecordsetView.defaultProps = {
-  isOpened: true,
-  newIdx: 0
-}
-
-export class  RecordView extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = props;
-
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  render() {
-    const {record, definition, isOpened} = this.state;
-
-    var label = record.name.toProperCase();
-
-    return (
-      <div id={record.key} key={record.key} className="ui-widget">
-        <Toggle
-          ontext={label}
-          offtext={label}
-          isToggleOn={isOpened}
-          onToggle={(value) => {
-            this.setState({isOpened: value});
-          }}
-          />
-          <Collapse isOpened={isOpened}>
-            <div className="ui-widget-content">
-              {definition.map(this.renderField.bind(this, record))}
-            </div>
-          </Collapse>
-      </div>
-    );
-
-  }
-
-  renderField(record, fd) {
-
-    var field = this.getField(record, fd.name);
-    field.dataType = fd.dataType;
-
-    return (
-      <div key={field.key} className="row">
-        <label className="col-sm-2 col-form-label">{fd.name}</label>
-        <div className="col-sm-6">
-          <FieldInput field={field} onChange={this.handleChange} />
-        </div>
-      </div>
-    )
-
-  }
-
-  getField(record, name) {
-    var result;
-
-    for (var ii=0; ii<record.fields.length; ii++) {
-      if (record.fields[ii].name === name) {
-        result = record.fields[ii];
-        break;
-      }
-    }
-
-    return result;
-  }
-
-  getFieldByKey(record, key) {
-    var result;
-
-    for (var ii=0; ii<record.fields.length; ii++) {
-      if (record.fields[ii].key === key) {
-        result = record.fields[ii];
-        break;
-      }
-    }
-
-    return result;
-  }
-
-  handleChange (e){
-    const value = e.target.value;
-    const record = this.state.record;
-    const field = this.getFieldByKey(record, e.target.id)
-
-    field.value = value;
-    this.setState({
-      record: record
-    });
-  }
-}
-
-RecordView.defaultProps = {
-  isOpened: true
-}
-
-String.prototype.toProperCase = function () {
-    return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-};

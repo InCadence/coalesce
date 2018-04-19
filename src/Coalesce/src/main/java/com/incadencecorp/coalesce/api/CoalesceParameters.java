@@ -49,6 +49,21 @@ public final class CoalesceParameters {
     public static final String PARAM_DIRECTORY = INC + "directory";
 
     /**
+     * ({@link Integer}) Specifies an interval.
+     */
+     public static final String PARAM_INTERVAL = INC + "interval";
+
+    /**
+     * ({@link java.util.concurrent.TimeUnit}) Specifies the time unit of the interval.
+     */
+     public static final String PARAM_INTERVAL_UNIT = INC + "interval.unit";
+
+    /**
+     * ({@link Long}) Specifies the timeout.
+     */
+     public static final String PARAM_TIMEOUT = INC + "timeout";
+
+    /**
      * (Integer) When creating filenames from UUIDs this determines the
      * sub-directory which is based of the first X characters of the UUID.
      */

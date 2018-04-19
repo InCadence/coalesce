@@ -284,14 +284,29 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
      */
     public CoalesceEntity createNewEntity()
     {
+        return createNewEntity(true);
+    }
+
+    /**
+     * Creates and initializes a new {@link CoalesceEntity} based off of this {@link CoalesceEntityTemplate} 's XML String.
+     *
+     * @param createSingletons specifies whether or not to create singleton records.
+     * @return {@link CoalesceEntity} of the new entity created from this
+     * {@link CoalesceEntityTemplate}
+     */
+    public CoalesceEntity createNewEntity(boolean createSingletons)
+    {
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize(toXml());
         entity.setKey(UUID.randomUUID().toString());
 
-        // Create Singleton Records
-        for (CoalesceSection section : entity.getSectionsAsList())
+        if (createSingletons)
         {
-            populateMinRecords(section);
+            // Create Singleton Records
+            for (CoalesceSection section : entity.getSectionsAsList())
+            {
+                populateMinRecords(section);
+            }
         }
 
         return entity;
@@ -375,16 +390,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
                 {
 
                     Node attribute = attributeList.item(ii);
-                    if (!attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NAME)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_SOURCE)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_VERSION)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_STATUS)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_FLATTEN)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NOINDEX)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceField.ATTRIBUTE_DATA_TYPE)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MAX)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MIN)
-                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_CLASSNAME))
+                    if (excludeAttribute(attribute.getNodeName()))
                     {
                         attribute.setNodeValue("");
                     }
@@ -392,6 +398,26 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
             }
         }
 
+    }
+
+    /**
+     * @param name of attribute to check
+     * @return whether or not the attribute should be excluded from the template.
+     */
+    public static boolean excludeAttribute(String name)
+    {
+        return !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NAME)
+                && !name.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_CLASSNAME)
+                && !name.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_SOURCE)
+                && !name.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_VERSION)
+                && !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_STATUS)
+                && !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_FLATTEN)
+                && !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NOINDEX)
+                && !name.equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MAX) && !name.equalsIgnoreCase(
+                CoalesceRecordset.ATTRIBUTE_RECORDS_MIN)
+                && !name.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DATA_TYPE) && !name.equalsIgnoreCase(
+                CoalesceFieldDefinition.ATTRIBUTE_DEFAULT_VALUE)
+                && !name.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_LABEL);
     }
 
     @Override

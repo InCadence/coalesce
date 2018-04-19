@@ -3,6 +3,9 @@ package com.incadencecorp.coalesce.services.common.controllers;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
+import com.incadencecorp.coalesce.services.api.mappers.CoalesceMapper;
+import com.incadencecorp.coalesce.services.common.api.IBlueprintController;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.EGraphNodeType;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphLink;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphNode;
@@ -21,18 +24,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This controller exposes the underlying blueprints of a Karaf container.
  *
  * @author Derek Clemenzi
  */
-public class BlueprintController {
+public class BlueprintController implements IBlueprintController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BlueprintController.class);
+    private static final List<String> IGNORE_LIST = Arrays.asList(CoalesceThreadFactoryImpl.class.getSimpleName(),
+                                                                  CoalesceMapper.class.getSimpleName());
 
     // Default Directory
     private Path root = Paths.get("deploy");
@@ -47,9 +50,7 @@ public class BlueprintController {
         root = Paths.get(path);
     }
 
-    /**
-     * @return a list of xml documents within the configured directory.
-     */
+    @Override
     public List<String> getBlueprints()
     {
         List<String> results = new ArrayList<>();
@@ -72,11 +73,7 @@ public class BlueprintController {
         return results;
     }
 
-    /**
-     * @param name filename to render.
-     * @return nodes and linkages of the bean for the specified xml document.
-     * @throws RemoteException on error
-     */
+    @Override
     public GraphObj getBlueprint(String name) throws RemoteException
     {
         GraphObj result = new GraphObj();
@@ -106,39 +103,61 @@ public class BlueprintController {
 
             LOGGER.debug("Processing Server: ({})", serverNode.getId());
 
-            Element servicesBeans = (Element) server.getElementsByTagNameNS("http://cxf.apache.org/blueprint/jaxrs",
-                                                                            "serviceBeans").item(0);
-            NodeList services = servicesBeans.getChildNodes();
+            result.getLinks().addAll(linkServices(serverNode, server));
+            result.getLinks().addAll(linkProviders(serverNode, server));
+        }
 
-            // Link Server to Services
-            for (int jj = 0; jj < services.getLength(); jj++)
+        return result;
+    }
+
+    private Collection<GraphLink> linkServices(GraphNode parent, Element server)
+    {
+        Element beans = (Element) server.getElementsByTagNameNS("http://cxf.apache.org/blueprint/jaxrs",
+                                                                "serviceBeans").item(0);
+
+        return link(parent, beans.getChildNodes());
+    }
+
+    private Collection<GraphLink> linkProviders(GraphNode parent, Element server)
+    {
+        Element beans = (Element) server.getElementsByTagNameNS("http://cxf.apache.org/blueprint/jaxrs",
+                                                                "providers").item(0);
+
+        return link(parent, beans.getChildNodes());
+    }
+
+    private Collection<GraphLink> link(GraphNode parent, NodeList children)
+    {
+        Collection<GraphLink> results = new ArrayList<>();
+
+        // Link Server to Services
+        for (int jj = 0; jj < children.getLength(); jj++)
+        {
+            if (children.item(jj) instanceof Element)
             {
-                if (services.item(jj) instanceof Element)
+                Element service = (Element) children.item(jj);
+
+                GraphLink link = new GraphLink();
+
+                switch (service.getLocalName())
                 {
-                    Element service = (Element) services.item(jj);
+                case "ref":
+                    link.setSource(parent.getId());
+                    link.setTarget(service.getAttribute("component-id"));
 
-                    GraphLink link = new GraphLink();
+                    results.add(link);
+                    break;
+                case "bean":
+                    link.setSource(parent.getId());
+                    link.setTarget(service.getAttribute("id"));
 
-                    switch (service.getLocalName())
-                    {
-                    case "ref":
-                        link.setSource(serverNode.getId());
-                        link.setTarget(service.getAttribute("component-id"));
-
-                        result.getLinks().add(link);
-                        break;
-                    case "bean":
-                        link.setSource(serverNode.getId());
-                        link.setTarget(service.getAttribute("id"));
-
-                        result.getLinks().add(link);
-                        break;
-                    }
+                    results.add(link);
+                    break;
                 }
             }
         }
 
-        return result;
+        return results;
     }
 
     private void createNodes(GraphObj results, Document doc)
@@ -164,43 +183,50 @@ public class BlueprintController {
                 bean.setAttribute("id", node.getId());
             }
 
-            String simpleName = node.getLabel().toLowerCase();
+            if (!IGNORE_LIST.contains(node.getLabel()))
+            {
+                String simpleName = node.getLabel().toLowerCase();
 
-            // Determine Node Type
-            if (simpleName.contains("persister") || simpleName.contains("persistor"))
-            {
-                node.setNodeType(EGraphNodeType.PERSISTER);
-            }
-            else if (simpleName.contains("impl"))
-            {
-                node.setNodeType(EGraphNodeType.ENDPOINT);
-            }
-            else if (simpleName.contains("controller"))
-            {
-                if (simpleName.contains("jaxrs"))
+                // Determine Node Type
+                if (simpleName.contains("persister") || simpleName.contains("persistor"))
                 {
-                    node.setNodeType(EGraphNodeType.CONTROLLER_ENDPOINT);
+                    node.setNodeType(EGraphNodeType.PERSISTER);
+                }
+                else if (simpleName.contains("impl"))
+                {
+                    node.setNodeType(EGraphNodeType.ENDPOINT);
+                }
+                else if (simpleName.contains("controller"))
+                {
+                    if (simpleName.contains("jaxrs"))
+                    {
+                        node.setNodeType(EGraphNodeType.CONTROLLER_ENDPOINT);
+                    }
+                    else
+                    {
+                        node.setNodeType(EGraphNodeType.CONTROLLER);
+                    }
+                }
+                else if (simpleName.equals("coalesceframework") || simpleName.equals("coalescesearchframework"))
+                {
+                    node.setNodeType(EGraphNodeType.FRAMEWORK);
+                }
+                else if (simpleName.contains("entity"))
+                {
+                    node.setNodeType(EGraphNodeType.ENTITY);
+                }
+                else if (simpleName.equals("serverconn"))
+                {
+                    node.setNodeType(EGraphNodeType.SETTINGS);
+                }
+                else if (simpleName.contains("client"))
+                {
+                    node.setNodeType(EGraphNodeType.CLIENT);
                 }
                 else
                 {
-                    node.setNodeType(EGraphNodeType.CONTROLLER);
+                    node.setNodeType(EGraphNodeType.OTHER);
                 }
-            }
-            else if (simpleName.equals("coalesceframework") || simpleName.equals("coalescesearchframework") )
-            {
-                node.setNodeType(EGraphNodeType.FRAMEWORK);
-            }
-            else if (simpleName.contains("entity"))
-            {
-                node.setNodeType(EGraphNodeType.ENTITY);
-            }
-            else if (simpleName.equals("serverconn"))
-            {
-                node.setNodeType(EGraphNodeType.SETTINGS);
-            }
-            else if(simpleName.contains("client"))
-            {
-                node.setNodeType(EGraphNodeType.CLIENT);
             }
             else
             {

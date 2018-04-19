@@ -24,7 +24,7 @@ package ${packagename_root}.${packagename_sub};
 #foreach($recordset in $recordsets)
 	#if( $imports.add("${packagename_root}.impl.pojo.record.$normalizer.normalize($recordset.getName())PojoRecord") ) #end
 	#if( $imports.add("${packagename_root}.api.record.I$normalizer.normalize($recordset.getName())Record") ) #end
-	#if($recordset.getMaxRecords() != 1 || $recordset.getMinRecords() != 1)
+	#if(!($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1))
 		#if(!$imports.contains( "java.util.List" ) && $imports.add("java.util.List")) #end
 		#if(!$imports.contains( "java.util.Map" ) && $imports.add("java.util.Map")) #end
 		#if(!$imports.contains( "java.util.HashMap" ) && $imports.add("java.util.HashMap")) #end
@@ -48,7 +48,7 @@ public class ${classname} implements I${name}Entity {
     public static final String VERSION = "$entity.getVersion()";
 
 #foreach($recordset in $recordsets)
-#if($recordset.getMaxRecords() == 1)
+#if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
     private $normalizer.normalize($recordset.getName())PojoRecord record_$normalizer.normalize($recordset.getName());
 #else
     private Map<String, $normalizer.normalize($recordset.getName())PojoRecord> recordset_$normalizer.normalize($recordset.getName()) = new HashMap<String, $normalizer.normalize($recordset.getName())PojoRecord>();
@@ -78,7 +78,7 @@ public class ${classname} implements I${name}Entity {
 		setStatus(entity.getStatus());    
 		
 #foreach($recordset in $recordsets)
-#if($recordset.getMaxRecords() == 1)
+#if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
         set$normalizer.normalize($recordset.getName())Record(entity.get$normalizer.normalize($recordset.getName())Record());
 #else
         add$normalizer.normalize($recordset.getName())Record(entity.get$normalizer.normalize($recordset.getName())Records());
@@ -147,7 +147,7 @@ public class ${classname} implements I${name}Entity {
     }
 
 #foreach($recordset in $recordsets)
-#if($recordset.getMaxRecords() == 1)
+#if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
     @Override
     public $normalizer.normalize($recordset.getName())PojoRecord get$normalizer.normalize($recordset.getName())Record()
     {

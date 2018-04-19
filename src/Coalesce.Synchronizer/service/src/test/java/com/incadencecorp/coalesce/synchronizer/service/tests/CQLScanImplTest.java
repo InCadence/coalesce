@@ -57,7 +57,8 @@ public class CQLScanImplTest {
         persistor.registerTemplate(CoalesceEntityTemplate.create(entity));
         persistor.saveEntity(false, entity);
 
-        String cql = "\"" + CoalescePropertyFactory.getFieldProperty(record.getStringField()) + "\" is null";
+        String cql = "\"" + CoalescePropertyFactory.getFieldProperty(record.getStringField()) + "\" is null and " + "\""
+                + CoalescePropertyFactory.getEntityKey().getPropertyName() + "\" = '" + entity.getKey() + "'";
 
         // Create Parameters
         Map<String, String> params = new HashMap<>();

@@ -22,7 +22,7 @@ package ${packagename_root}.${packagename_sub};
 #if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
 #foreach($recordset in $recordsets)
 	#if( $imports.add("${packagename_root}.api.record.I$normalizer.normalize($recordset.getName())Record") ) #end
-	#if($recordset.getMaxRecords() != 1)
+	#if(!($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1))
 		#if(!$imports.contains( "java.util.List" ) && $imports.add("java.util.List")) #end
 	#end
 #end
@@ -89,7 +89,7 @@ public interface ${classname} {
 	void setStatus(ECoalesceObjectStatus value);
 
 #foreach($recordset in $recordsets)
-#if($recordset.getMaxRecords() == 1)
+#if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
 	/**
 	* @return the singleton record belong to $recordset.getName().
 	*/

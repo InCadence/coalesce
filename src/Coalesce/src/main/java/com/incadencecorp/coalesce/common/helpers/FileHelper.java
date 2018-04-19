@@ -1,6 +1,16 @@
 package com.incadencecorp.coalesce.common.helpers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.incadencecorp.coalesce.api.CoalesceParameters;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceEncrypter;
+import com.incadencecorp.coalesce.framework.persistance.ICoalesceEncrypter;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -11,14 +21,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-
-import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceEncrypter;
-import com.incadencecorp.coalesce.framework.persistance.ICoalesceEncrypter;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -39,9 +41,8 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalesceEncrypter;
 
 /**
  * Provides helper methods for accessing and interacting with files.
- * 
- * @author InCadence
  *
+ * @author InCadence
  */
 public final class FileHelper {
 
@@ -57,7 +58,7 @@ public final class FileHelper {
 
     /**
      * Returns the extension for the filename.
-     * 
+     *
      * @param filename the filename
      * @return the extension for the filename
      * @see org.apache.commons.io.FilenameUtils#getExtension(String filename)
@@ -78,7 +79,7 @@ public final class FileHelper {
      *
      * @param filename the filename
      * @return the name of the file without the path, or an empty string if none
-     *         exists
+     * exists
      * @see org.apache.commons.io.FilenameUtils#getName(String filename)
      */
     public static String getShortFilename(String filename)
@@ -98,8 +99,8 @@ public final class FileHelper {
      * Returns all the bytes for the file. If the file is encrypted then it is
      * first decrypted using the pass phrase returned by
      * {@link CoalesceSettings#getPassPhrase()}
-     * 
-     * @param filename the filename
+     *
+     * @param filename  the filename
      * @param encrypted whether the file needs to be decrypted first
      * @return the bytes from the file.
      * @throws IOException
@@ -144,7 +145,7 @@ public final class FileHelper {
     /**
      * Deletes the file if it exists. If the <code>filename</code> is a
      * directory then the deletion will fail.
-     * 
+     *
      * @param filename the full path and name of the file to be deleted.
      * @return <code>true</code> if the file is successfully deleted.
      */
@@ -186,7 +187,7 @@ public final class FileHelper {
      * Deletes the folder if it exists. If the folder path does not point to a
      * folder then it will not be deleted. Folders will be delete even if they
      * are not empty.
-     * 
+     *
      * @param folderPath the full folder path
      * @return <code>true</code> if the folder is successfully deleted.
      */
@@ -199,7 +200,7 @@ public final class FileHelper {
      * Deletes the folder if it exists. If the folder path does not point to a
      * folder then it will not be deleted. Folders that are not empty will only
      * be deleted if <code>forceDelete</code> is <code>true</code>.
-     * 
+     *
      * @param folderPath the full folder path
      * @return <code>true</code> if the folder is successfully deleted.
      */
@@ -247,12 +248,12 @@ public final class FileHelper {
     /**
      * Checks if the folder already exists in the file system and if it does not
      * then attempts to create it including all missing parent directories.
-     * 
+     *
      * @param folderPath the full folder path
      * @return <code>true</code> if the folder already exists or was
-     *         successfully created. <code>false</code> if the
-     *         <code>folderPath</code> points to a non-folder or creation of the
-     *         folder fails.
+     * successfully created. <code>false</code> if the
+     * <code>folderPath</code> points to a non-folder or creation of the
+     * folder fails.
      */
     public static boolean checkFolder(String folderPath)
     {
@@ -293,7 +294,7 @@ public final class FileHelper {
      * provided <code>key</code>. This method using the values from both
      * {@link CoalesceSettings#getBinaryFileStoreBasePath()} and
      * {@link CoalesceSettings#getSubDirectoryLength()} to build the path.
-     * 
+     *
      * @param key the key to use for generating the path.
      * @return the base filename including the full path.
      */
@@ -303,10 +304,9 @@ public final class FileHelper {
     }
 
     /**
-     * 
      * @param value
      * @return If the value provided is relative it will return a URI with an
-     *         absolute path from System.getProperty("user.dir").
+     * absolute path from System.getProperty("user.dir").
      * @throws URISyntaxException
      */
     public static URI getFullPath(String value) throws URISyntaxException
@@ -317,8 +317,33 @@ public final class FileHelper {
         {
             directory = Paths.get(System.getProperty("user.dir"), value).toUri();
         }
-        
+
         return directory;
+    }
+
+    /**
+     * @param name  of JSON file
+     * @param clazz to map the JSON into
+     * @param <T>
+     * @return the JSON serialized into the specified class.
+     * @throws IOException on error
+     */
+    public static <T> T loadJSON(String name, Class<T> clazz) throws IOException
+    {
+        T result;
+
+        Path path = Paths.get(CoalesceParameters.COALESCE_CONFIG_LOCATION).resolve(name + ".json");
+        if (Files.exists(path))
+        {
+            ObjectMapper mapper = new ObjectMapper();
+            result = mapper.readValue(path.toFile(), clazz);
+        }
+        else
+        {
+            throw new FileNotFoundException(path.toString());
+        }
+
+        return result;
     }
 
     /*--------------------------------------------------------------------------

@@ -9,6 +9,7 @@
   "private": true,
   "homepage": "/enumerations",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "common-components": "file:../common-components",
     "react": "^16.0.0",
     "react-bootstrap": "^0.32.1",

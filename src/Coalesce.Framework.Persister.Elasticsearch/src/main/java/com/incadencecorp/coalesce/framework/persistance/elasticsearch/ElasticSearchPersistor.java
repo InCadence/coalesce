@@ -170,12 +170,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 	    	        .setTypes("tweet")
 	    	        .get();
 
-	    	System.out.println(response.toString());
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-    }
-
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
                                                          String entityIdType,
                                                          String entityName,

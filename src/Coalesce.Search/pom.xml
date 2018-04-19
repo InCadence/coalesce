@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce</groupId>
         <artifactId>coalesce-pom</artifactId>
-        <version>0.0.26-SNAPSHOT</version>
+        <version>0.0.27-SNAPSHOT</version>
         <relativePath>../Coalesce.Pom</relativePath>
     </parent>
 

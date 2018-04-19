@@ -1,3 +1,5 @@
+import "babel-polyfill";
+
 import React from 'react';
 import ReactTable from 'react-table'
 import Popup from 'react-popup';

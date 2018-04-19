@@ -22,6 +22,7 @@ import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.synchronizer.api.IPersistorScan;
 import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
 import com.incadencecorp.coalesce.synchronizer.service.scanners.AfterLastModifiedScanImpl;
@@ -56,7 +57,7 @@ public class AfterLastModifiedScanImplTest {
         params.put(SynchronizerParameters.PARAM_SCANNER_DAYS, "3");
         params.put(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS,
                    JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusDays(2)));
-        params.put(SynchronizerParameters.PARAM_SCANNER_CQL, "\"coalesceentity.name\" = 'OEEvent'");
+        params.put(SynchronizerParameters.PARAM_SCANNER_CQL, "\"" + CoalescePropertyFactory.getEntityKey().getPropertyName() + "\" = '" + entity.getKey() + "'");
 
         DerbyPersistor source = new DerbyPersistor();
 

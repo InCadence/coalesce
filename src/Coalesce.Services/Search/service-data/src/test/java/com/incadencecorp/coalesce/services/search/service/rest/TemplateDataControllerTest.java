@@ -17,8 +17,11 @@
 
 package com.incadencecorp.coalesce.services.search.service.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.services.search.service.data.controllers.TemplateDataController;
 import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
@@ -166,6 +169,38 @@ public class TemplateDataControllerTest {
 
         controller.deleteTemplate(template.getKey());
 
+    }
+
+    /**
+     * This test ensures that the label and default value attributes are preserved when saving and loading a template through the controller.
+     */
+    @Test
+    public void testLabelsAndDefaultValues() throws Exception
+    {
+        TemplateDataController controller = createController();
+
+        CoalesceEntity entity = CoalesceEntity.create("template controller test", "unit test", "1");
+        entity.initialize();
+
+        CoalesceSection section = CoalesceSection.create(entity, "section");
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "rs");
+        CoalesceFieldDefinition fd = recordset.createFieldDefinition("myField", ECoalesceFieldDataTypes.STRING_TYPE);
+        fd.setLabel("Hello");
+        fd.setDefaultValue("Hello");
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writerWithView(Views.Template.class).writeValueAsString(entity);
+
+        controller.setTemplateJson(entity.getKey(), json);
+        CoalesceEntity template = controller.getTemplate(entity.getName(), entity.getSource(), entity.getVersion());
+
+        CoalesceRecordset templateRS = template.getCoalesceRecordsetForNamePath(recordset.getNamePath());
+        CoalesceFieldDefinition templateFD = templateRS.getFieldDefinition(fd.getName());
+
+        Assert.assertEquals(fd.getLabel(), templateFD.getLabel());
+        Assert.assertEquals(fd.getDefaultValue(), templateFD.getDefaultValue());
+
+        controller.deleteTemplate(template.getKey());
     }
 
     private TemplateDataController createController() throws Exception

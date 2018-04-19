@@ -1,28 +1,33 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import Popup from 'react-popup';
-import {registerLoader, registerErrorPrompt, registerPrompt} from 'common-components/lib/register.js'
-import ReactJson from 'react-json-view'
-
-import {Menu, IconButton} from 'common-components/lib/index.js'
+import { loadJSON, saveJSON } from 'common-components/lib/js/propertyController.js'
+import {Menu} from 'common-components/lib/index.js'
+import { DialogMessage, DialogOptions } from 'common-components/lib/components/dialogs'
+import JsonView from './JsonView'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
 
-var rootUrl;
-
-if (window.location.port == 3000) {
-  rootUrl  = 'http://' + window.location.hostname + ':8181';
-} else {
-  rootUrl  = '';
-}
-
 var pjson = require('../package.json');
 document.title = pjson.title;
 
-registerLoader(Popup);
-registerErrorPrompt(Popup);
-registerPrompt(Popup);
+// TODO These options should be pulled from a configuration file
+const options=[
+  {
+    key: 'home',
+    name: 'Home Page Configuration',
+  },{
+    key: 'filter',
+    name: 'Spider Configruation',
+  },{
+    key: 'nlpconfig',
+    name: 'NLP Configuration',
+  },{
+    key: 'theme',
+    name: 'Theme Configuration',
+  }
+]
 
 class Main extends React.Component {
 
@@ -31,169 +36,118 @@ class Main extends React.Component {
     this.state = {
       data: props.data
     }
+
+    this.saveConfiguration = this.saveConfiguration.bind(this);
+    this.loadConfiguration = this.loadConfiguration.bind(this);
+    this.onChange = this.onChange.bind(this);
+
   }
 
-  onEdit(update)
-  {
-     this.setState({
-       data: update.updated_src.data
-     })
+  saveConfiguration() {
+
+    const { item, data } = this.state;
+    const that = this;
+
+    this.setState({message: 'Saving...'});
+
+    saveJSON(item.key, data).then((result) => {
+      this.setState({message: 'Saved'});
+    }).catch(function(error) {
+      that.setState({error: `Saving: ${error}`, message: null})
+    });
+
   }
 
-  onAdd(update)
-  {
-    if (!isInteger(update.name))
-    {
-      const data=this.state;
-      update.updated_src.data=data.data;
-      var pointer=data;
+  loadConfiguration(item) {
 
-      for (var ii=0; ii<update.namespace.length; ii++)
-      {
-          pointer = pointer[update.namespace[ii]];
-      }
+    const that = this;
 
-      if (update.existing_value.length > 0)
-      {
-        pointer[update.name].push(this.cloneKeys(update.existing_value[0]));
-      }
-      else
-      {
-        pointer[update.name].push(null);
-      }
-    }
-    else
-    {
-      pointer[update.name].push(null);
-    }
+    this.setState({item: item });
+
+    loadJSON(item.key).then((json) => {
+      that.setState({
+        data: json
+      })
+    }).catch(function(error) {
+      that.setState({
+        item: null,
+        error: `Loading Settings: ${error}`
+      })
+    });
   }
 
-  cloneKeys(obj)
-  {
-    var newObj={};
-
-    switch (typeof(obj)) {
-      case 'object':
-        for (var key in obj)
-        {
-          if (Array.isArray(obj[key]))
-          {
-            newObj[key]=[this.cloneKeys(obj[key][0])];
-          }
-          else
-          {
-            newObj[key]='';
-          }
-        }
-        break;
-      case 'string':
-        newObj='';
-        break;
-    }
-
-    return newObj;
-  }
-
-  onDelete(update)
-  {
-    if (isInteger(update.name))
-    {
-       this.setState({
-         data: update.updated_src.data
-       })
-    }
-    else
-    {
-        return true;
-    }
-  }
-
-  onSave() {
-    saveConfiguration(this.props.name, this.state.data);
+  onChange(json) {
+    this.setState({
+      data: json
+    })
   }
 
   render() {
-    const data=this.state;
+    const {data, item} = this.state;
 
     return (
-      <div className="ui-widget">
-        <div className="ui-widget-header">
-          {this.props.name}
-        </div>
-        <div className="ui-widget-content" >
-          <ReactJson src={data} collapsed='3' onEdit={this.onEdit.bind(this)} onAdd={this.onAdd.bind(this)} onDelete={this.onDelete.bind(this)} iconStyle="square"/>
-          <div className="form-buttons">
-            <IconButton icon="/images/svg/save.svg" title="Save Changes" onClick={this.onSave.bind(this)} />
+      <MuiThemeProvider>
+        <div>
+        <Menu logoSrc={pjson.icon} title={(item == null || item.name === 'NA') ? pjson.title : `${pjson.title} - ${item.name}`} items={[
+          {
+            id: 'load',
+            name: 'Load',
+            img: '/images/svg/load.svg',
+            title: 'Load JSON',
+            onClick: () => {
+              this.setState({item: null, data: null});
+            }
+          },{
+            id: 'Save',
+            name: 'Save',
+            img: '/images/svg/save.svg',
+            title: 'Save JSON',
+            onClick: () => {
+              this.saveConfiguration();
+            }
+          }
+        ]}/>
+        {item != null && item.name !== 'NA'&&
+          <div className="ui-widget">
+            <div className="ui-widget-content" >
+              <JsonView data={data} onChange={this.onChange} />
+            </div>
           </div>
+        }
+        <DialogOptions
+          title="JSON Configurations"
+          open={item == null && this.state.error == null}
+          onClose={() => {this.setState({item: {name: 'NA'}})}}
+          // TODO These options should be pulled from a configuration file
+          options={options.map((item) => {
+            return {
+              key: item.key,
+              name: item.name,
+              onClick: () => {this.loadConfiguration(item)}
+            }
+          })}
+
+        />
+        <DialogMessage
+          title="Error"
+          message={this.state.error}
+          opened={this.state.error != null}
+          onClose={() => {this.setState({error: null})}}
+        />
+        <DialogMessage
+          title=""
+          message={this.state.message}
+          opened={this.state.message != null}
+          onClose={() => {this.setState({message: null})}}
+        />
         </div>
-      </div>
+    </MuiThemeProvider>
+
     )
   }
 };
 
-
-function isInteger(value)
-{
-  var x;
-  return (x = parseInt(value), (0 | x) === x);
-}
-
-function saveConfiguration(name, data) {
-
-  Popup.plugins().loader('Saving...');
-
-  fetch(rootUrl + '/cxf/data/property/' + name, {
-    method: "PUT",
-    body: JSON.stringify(data),
-    headers: new Headers({
-      'content-type': 'application/json; charset=utf-8'
-    }),
-  }).then(res => {
-      Popup.close();
-  }).catch(function(error) {
-      Popup.plugins().promptError("Saving: " + error);
-  });
-}
-
-function loadConfiguration(name) {
-  fetch(rootUrl + '/cxf/data/property/' + name)
-    .then(res => res.json())
-    .then(data => {
-      ReactDOM.unmountComponentAtNode(document.getElementById('main'));
-      ReactDOM.render(
-        <Main name={name} data={data}/>,
-        document.getElementById('main')
-      );
-  }).catch(function(error) {
-    Popup.plugins().promptError("Loading Settings: " + error);
-  });
-}
-
-// Default Component
 ReactDOM.render(
-    <Popup />,
-    document.getElementById('popupContainer')
-);
-
-ReactDOM.render(
-  <Menu logoSrc={pjson.icon} title={pjson.title} items={[
-    {
-      id: 'load',
-      name: 'Load',
-      img: '/images/svg/load.svg',
-      title: 'Load JSON',
-      onClick: () => {
-        loadConfiguration('home.json');
-      }
-    },{
-      id: 'load',
-      name: 'Load',
-      img: '/images/svg/spider.svg',
-      title: 'Load JSON',
-      onClick: () => {
-        loadConfiguration('filter.json');
-      }
-    }
-  ]}/>,
-  document.getElementById('myNavbar')
+  <Main />,
+  document.getElementById('main')
 );

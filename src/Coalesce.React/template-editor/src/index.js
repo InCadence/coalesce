@@ -1,11 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import 'common-components/bootstrap/css/bootstrap.min.css'
+import 'common-components/css/coalesce.css'
+import './index.css';
 
+var pjson = require('../package.json');
+document.title = pjson.title;
 
+ReactDOM.render(<App />, document.getElementById('main'));
 
 registerServiceWorker();

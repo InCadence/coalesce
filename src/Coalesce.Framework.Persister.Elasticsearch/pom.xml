@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.incadencecorp.coalesce</groupId>
 		<artifactId>coalesce-pom</artifactId>
-		<version>0.0.26-SNAPSHOT</version>
+		<version>0.0.27-SNAPSHOT</version>
 		<relativePath>../Coalesce.Pom</relativePath>
 	</parent>
 
@@ -99,11 +99,6 @@
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
 			<version>5.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>mil.nga.giat</groupId>
-			<artifactId>gt-elasticsearch</artifactId>
-			<version>2.12-SNAPSHOT</version>
 		</dependency>
 		<dependency> 
 	        <groupId>org.elasticsearch.client</groupId> 

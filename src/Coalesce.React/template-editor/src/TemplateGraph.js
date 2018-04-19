@@ -55,4 +55,4 @@ class TemplateGraph extends Component {
 		);
 	}
 }
-export default TemplateGraph; 
+export default TemplateGraph;

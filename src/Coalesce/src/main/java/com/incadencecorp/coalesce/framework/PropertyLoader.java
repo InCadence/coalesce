@@ -17,15 +17,15 @@
 
 package com.incadencecorp.coalesce.framework;
 
-import java.util.Map;
-
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingType;
+
+import java.util.Map;
 
 /**
  * Container class used by the synchronizer to combine a configuration name with
  * a connector.
- * 
+ *
  * @author n78554
  */
 public class PropertyLoader {
@@ -35,9 +35,9 @@ public class PropertyLoader {
 
     /**
      * Default Constructor
-     * 
+     *
      * @param connector
-     * @param name of the configuration file.
+     * @param name      of the configuration file.
      */
     public PropertyLoader(IConfigurationsConnector connector, String name)
     {
@@ -47,7 +47,7 @@ public class PropertyLoader {
 
     /**
      * Sets multiple properties by calling {@link #setProperty(String, String)}.
-     * 
+     *
      * @param properties
      */
     public void setProperties(Map<String, String> properties)
@@ -60,7 +60,7 @@ public class PropertyLoader {
 
     /**
      * Sets the property's value.
-     * 
+     *
      * @param name
      * @param value
      */
