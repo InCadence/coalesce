@@ -30,12 +30,15 @@ export class  RecordView extends React.Component {
   renderField(record, fd) {
 
     var field = this.getField(record, fd.name);
-    field.dataType = fd.dataType;
 
-    return (
-      <FieldInput key={field.key} field={field} />
-    )
+    if (field != null)
+    {
+      field.dataType = fd.dataType;
 
+      return (
+        <FieldInput key={field.key} field={field} />
+      )
+    }
   }
 
   getField(record, name) {
