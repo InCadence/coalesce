@@ -97,9 +97,6 @@ export class FilterCreator extends React.Component {
                 <IconButton icon="/images/svg/search.svg" title="Execute Query" onClick={this.props.onSearch.bind(this, this.state.tabledata)} />
               </div>
             </div>
-            <MuiThemeProvider muiTheme={this.state.theme}>
-              <FilterGroup data={example.group} recordsets={recordsets}/>
-            </MuiThemeProvider>
           </Collapse>
       </div>
     )

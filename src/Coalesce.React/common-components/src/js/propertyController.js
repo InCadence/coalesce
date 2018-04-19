@@ -1,10 +1,6 @@
-var karafRootAddr;
+import { getRootKarafUrl } from './common'
 
-if (window.location.port == 3000) {
-  karafRootAddr  = 'http://' + window.location.hostname + ':8181/cxf/data';
-} else {
-  karafRootAddr  = '/cxf/data';
-}
+var karafRootAddr = getRootKarafUrl();
 
 export function loadJSON(name)
 {
