@@ -483,6 +483,9 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
         return CoalesceEntitySyncShell.create(this.getCoalesceEntity(key));
     }
 
+    /**
+     * (WARNING) This returns null if not running as async
+     */
     public <T> Future<T> submit(Callable<T> task) throws CoalescePersistorException
     {
         Future<T> result = null;

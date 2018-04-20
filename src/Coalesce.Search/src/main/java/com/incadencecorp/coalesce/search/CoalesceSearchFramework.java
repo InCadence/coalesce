@@ -33,7 +33,6 @@ import org.geotools.filter.Capabilities;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -83,31 +82,24 @@ public class CoalesceSearchFramework extends CoalesceFramework {
      */
     public List<SearchResults> searchBulk(Query... query) throws CoalescePersistorException
     {
-        List<SearchResults> results = null;
+        List<SearchResults> results;
         ICoalesceSearchPersistor persistor = getSearchPersistor();
 
         if (persistor != null)
         {
-            try
+            CoalesceSearchJob job = new CoalesceSearchJob(Arrays.asList(query));
+            job.setTarget(persistor);
+            job.setExecutor(this);
+
+            ICoalesceResponseType<List<SearchResults>> response = job.call();
+
+            if (response.getStatus() != EResultStatus.SUCCESS)
             {
-                CoalesceSearchJob job = new CoalesceSearchJob(Arrays.asList(query));
-                job.setTarget(persistor);
-                job.setExecutor(this);
-
-                ICoalesceResponseType<List<SearchResults>> response = submit(job).get();
-
-                if (response.getStatus() != EResultStatus.SUCCESS)
-                {
-                    throw new CoalescePersistorException(response.getError());
-                }
-                else
-                {
-                    results = response.getResult();
-                }
+                throw new CoalescePersistorException(response.getError());
             }
-            catch (InterruptedException | ExecutionException e)
+            else
             {
-                throw new CoalescePersistorException(e);
+                results = response.getResult();
             }
         }
         else
