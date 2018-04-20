@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import org.elasticsearch.action.DocWriteResponse.Result;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -290,7 +291,7 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
     @Test
     public void testSearchSpecific() throws Exception {
     	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
-    	persistor.searchSpecific("twitter4", "tweet");
+    	persistor.searchSpecific("coalesce-unit_test","coalesce-unit_test");
     }
 
     @Override

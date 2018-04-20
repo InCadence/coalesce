@@ -39,6 +39,8 @@ import ironhide.client.IronhideClient.Builder;
 public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchDataConnector.class);
+    
+    private IronhideClient client;
 
     // Datastore Properties
     public static final String INSTANCE_ID = "instanceId";
@@ -117,50 +119,44 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
     
     public IronhideClient getDBConnector(Properties props)
     {            	
-        IronhideClient client = null;
-        // on startup
-        String keypath = props.getProperty(ElasticSearchSettings.getKeystoreFileProperty());
-        String trustpath = props.getProperty(ElasticSearchSettings.getTruststoreFileProperty());
-
-        try
-        {
-
-            LOGGER.debug("Looking for keystore file: " + keypath);
-            
-            Builder clientBuild = IronhideClient.builder().setClusterName(ElasticSearchSettings.getElasticClusterName())
-            		.clientSSLSettings(keypath, "changeit",
-            				trustpath, "changeit");
-
-            String eshosts = props.getProperty(ElasticSearchSettings.getElastichostsProperty());
-            Stream.of(eshosts.split(",")).map(host -> {
-                HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
-
-                try
-                {
-                    String chost = hostAndPort.getHostText();
-                    InetAddress addr = InetAddress.getByName(chost);
-                    return new InetSocketTransportAddress(addr, hostAndPort.getPort());
-                }
-                catch (UnknownHostException ex)
-                {
-                    // TODO Auto-generated catch block
-                    LOGGER.error(ex.getMessage(), ex);
-                    return null;
-                }
-
-            }).forEach(clientBuild::addTransportAddress);
-            client = clientBuild.build();
-
-            //			        .addTransportAddress(new InetSocketTransportAddress("bdpnode3", 9300))
-            //			        .addTransportAddress(new InetSocketTransportAddress("bdpnode4", 9300));
-            //			        .addTransportAddress(new InetSocketTransportAddress("bdpnode5", 9300));
-
-        }
-        catch (ElasticsearchException | FileNotFoundException ex)
-        {
-            // TODO Auto-generated catch block
-            LOGGER.error(ex.getMessage(), ex);
-            return null;
+        if(client == null) { 
+	        String keypath = props.getProperty(ElasticSearchSettings.getKeystoreFileProperty());
+	        String trustpath = props.getProperty(ElasticSearchSettings.getTruststoreFileProperty());
+	
+	        try
+	        {
+	
+	            LOGGER.debug("Looking for keystore file: " + keypath);
+	            
+	            Builder clientBuild = IronhideClient.builder().setClusterName(ElasticSearchSettings.getElasticClusterName())
+	            		.clientSSLSettings(keypath, "changeit",
+	            				trustpath, "changeit");
+	
+	            String eshosts = props.getProperty(ElasticSearchSettings.getElastichostsProperty());
+	            Stream.of(eshosts.split(",")).map(host -> {
+	                HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
+	
+	                try
+	                {
+	                    String chost = hostAndPort.getHostText();
+	                    InetAddress addr = InetAddress.getByName(chost);
+	                    return new InetSocketTransportAddress(addr, hostAndPort.getPort());
+	                }
+	                catch (UnknownHostException ex)
+	                {
+	                    LOGGER.error(ex.getMessage(), ex);
+	                    return null;
+	                }
+	
+	            }).forEach(clientBuild::addTransportAddress);
+	            client = clientBuild.build();
+	
+	        }
+	        catch (ElasticsearchException | FileNotFoundException ex)
+	        {
+	            LOGGER.error(ex.getMessage(), ex);
+	            return null;
+	        }
         }
 
         return client;

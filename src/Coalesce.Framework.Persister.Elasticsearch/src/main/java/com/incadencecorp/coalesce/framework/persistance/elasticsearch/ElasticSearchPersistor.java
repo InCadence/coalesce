@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
@@ -124,6 +125,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     	fileConnector.setReadOnly(true);
 
     	ElasticSearchSettings.setConnector(fileConnector);
+    	
+    	LOGGER.debug("Initialized ElasticSearchPersistor using default constructor");
     }
 
     public void searchAll() {
@@ -131,7 +134,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         {
 	    	IronhideClient client = conn.getDBConnector(getProps());
 	    	SearchResponse response = client.prepareSearch().get();
-	    	System.out.println(response.toString());
+	    	LOGGER.debug(response.toString());
         } catch (Exception e) {
         	e.printStackTrace();
         }
@@ -150,7 +153,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 	    	        //.setFrom(0).setSize(60).setExplain(true)
 	    	        .get();
 
-	    	System.out.println(response.toString());
+	    	LOGGER.debug(response.toString());
         } catch (Exception e) {
         	e.printStackTrace();
         }
