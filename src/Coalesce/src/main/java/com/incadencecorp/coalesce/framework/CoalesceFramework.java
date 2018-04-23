@@ -8,6 +8,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceRegisterTemplateJob;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityJob;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityProperties;
@@ -297,6 +298,14 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      */
     public boolean saveCoalesceEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
+        for (CoalesceEntity entity : entities)
+        {
+            if (entity.isNew())
+            {
+                entity.setStatus(ECoalesceObjectStatus.ACTIVE);
+            }
+        }
+
         boolean isSuccessful = getAuthoritativePersistor().saveEntity(allowRemoval, entities);
 
         if (hasSecondaryPersistors())

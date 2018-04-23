@@ -207,6 +207,7 @@
 
 	<xs:simpleType name="ECoalesceObjectStatus">
 		<xs:restriction base="xs:string">
+			<xs:enumeration value="new" />
 			<xs:enumeration value="active" />
 			<xs:enumeration value="deleted" />
 			<xs:enumeration value="readonly" />
