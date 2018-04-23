@@ -133,12 +133,14 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 	            				trustpath, "changeit");
 	
 	            String eshosts = props.getProperty(ElasticSearchSettings.getElastichostsProperty());
+
 	            Stream.of(eshosts.split(",")).map(host -> {
 	                HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
 	
 	                try
 	                {
 	                    String chost = hostAndPort.getHostText();
+	                    LOGGER.debug("Connecting to host: " + chost);
 	                    InetAddress addr = InetAddress.getByName(chost);
 	                    return new InetSocketTransportAddress(addr, hostAndPort.getPort());
 	                }
