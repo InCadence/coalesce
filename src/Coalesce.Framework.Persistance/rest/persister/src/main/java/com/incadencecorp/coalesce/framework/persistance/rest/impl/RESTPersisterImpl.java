@@ -88,8 +88,9 @@ public class RESTPersisterImpl extends RESTTemplatePersisterImpl implements ICoa
                 else
                 {
                     target = client.target(url + "/" + entity.getKey() + ".xml");
-                    LOGGER.debug("URI: POST {}", target.getUri());
-                    response = target.request(MediaType.APPLICATION_XML).post(Entity.xml(entity.toXml()));
+                    LOGGER.debug("URI: PUT {}", target.getUri());
+                    // TODO This should be a POST
+                    response = target.request(MediaType.APPLICATION_XML).put(Entity.xml(entity.toXml()));
                 }
 
                 if (response.getStatus() != 204)

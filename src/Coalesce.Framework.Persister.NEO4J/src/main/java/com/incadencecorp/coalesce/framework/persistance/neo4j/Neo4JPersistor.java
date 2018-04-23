@@ -597,7 +597,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     private void getFieldValues(CoalesceObject coalesceObject, Map<String, CoalesceParameter> results)
     {
         // Is Active?
-        if (coalesceObject.getStatus() == ECoalesceObjectStatus.ACTIVE)
+        if (coalesceObject.isActive())
         {
             // Yes; Is a CoalesceField?
             if (coalesceObject.getType().equalsIgnoreCase("field"))

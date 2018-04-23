@@ -104,9 +104,9 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     /**
      * Returns the Coalesce entity keys that matches the given parameters.
      *
-     * @param entityId of the entity.
+     * @param entityId     of the entity.
      * @param entityIdType of the entity.
-     * @param entityName of the entity.
+     * @param entityName   of the entity.
      * @param entitySource of the entity.
      * @return List$lt;String&gt; of primary keys for the matching Coalesce entity.
      * @throws CoalescePersistorException
@@ -164,10 +164,10 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * Returns the last modified date for the Coalesce object (entity, field,
      * record, linkage, etc.) that matches the given parameters.
      *
-     * @param key the primary key of the Coalesce object.
+     * @param key        the primary key of the Coalesce object.
      * @param objectType is the Coalesce object to retrieve the information for.
      * @return DateTime containing the last modified date for the Coalesce
-     *         object matching the values.
+     * object matching the values.
      * @throws CoalescePersistorException
      */
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
@@ -200,8 +200,9 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
             byte[] binaryArray = null;
 
-            ResultSet results = conn.executeQuery("SELECT BinaryObject FROM " + getSchemaPrefix()
-                    + "CoalesceFieldBinaryData WHERE ObjectKey=?", new CoalesceParameter(key, Types.OTHER));
+            ResultSet results = conn.executeQuery(
+                    "SELECT BinaryObject FROM " + getSchemaPrefix() + "CoalesceFieldBinaryData WHERE ObjectKey=?",
+                    new CoalesceParameter(key, Types.OTHER));
 
             // Get Results
             if (results != null && results.first())
@@ -252,7 +253,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * Returns the ElementMetaData for the Coalesce object that matches the
      * given parameters.
      *
-     * @param key the Coalesce object primary key
+     * @param key        the Coalesce object primary key
      * @param objectType the Coalesce object type specification.
      * @return ElementMetaData
      * @throws CoalescePersistorException
@@ -286,8 +287,9 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         {
             String value = null;
 
-            ResultSet results = conn.executeQuery("SELECT value FROM " + getSchemaPrefix()
-                    + "CoalesceField WHERE ObjectKey =?", new CoalesceParameter(fieldKey, Types.OTHER));
+            ResultSet results = conn.executeQuery(
+                    "SELECT value FROM " + getSchemaPrefix() + "CoalesceField WHERE ObjectKey =?",
+                    new CoalesceParameter(fieldKey, Types.OTHER));
 
             while (results.next())
             {
@@ -353,7 +355,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     /**
      * Returns the Coalesce entity that matches the given parameters.
      *
-     * @param entityId the unique identifier, such as a TCN number for an EFT.
+     * @param entityId     the unique identifier, such as a TCN number for an EFT.
      * @param entityIdType the type of entityId, such as TCN.
      * @return the matching Coalesce entity.
      * @throws CoalescePersistorException
@@ -364,10 +366,10 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         {
             String value = null;
 
-            ResultSet results = conn.executeQuery("SELECT EntityXml FROM " + getSchemaPrefix()
-                                                          + "CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
-                                                  new CoalesceParameter(entityId),
-                                                  new CoalesceParameter(entityIdType));
+            ResultSet results = conn.executeQuery(
+                    "SELECT EntityXml FROM " + getSchemaPrefix() + "CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
+                    new CoalesceParameter(entityId),
+                    new CoalesceParameter(entityIdType));
 
             while (results.next())
             {
@@ -389,8 +391,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     /**
      * Returns the Coalesce entity that matches the given parameters.
      *
-     * @param name the name of the entity.
-     * @param entityId the unique identifier, such as a TCN number for an EFT.
+     * @param name         the name of the entity.
+     * @param entityId     the unique identifier, such as a TCN number for an EFT.
      * @param entityIdType the type of entityId, such as TCN.
      * @return the matching Coalesce entity.
      * @throws CoalescePersistorException
@@ -575,8 +577,9 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         {
             String xml = null;
 
-            ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
-                    + "CoalesceEntityTemplate WHERE TemplateKey=?", new CoalesceParameter(key, Types.OTHER));
+            ResultSet results = conn.executeQuery(
+                    "SELECT TemplateXml FROM " + getSchemaPrefix() + "CoalesceEntityTemplate WHERE TemplateKey=?",
+                    new CoalesceParameter(key, Types.OTHER));
 
             if (results.next())
             {
@@ -598,7 +601,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version)
+            throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
@@ -617,25 +621,32 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
             if (xml == null)
             {
-                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version));
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND,
+                                                                   "Template",
+                                                                   "Name: " + name + " Source: " + source + " Version: "
+                                                                           + version));
             }
 
             return CoalesceEntityTemplate.create(xml);
         }
         catch (SQLException | CoalesceException e)
         {
-            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version), e);
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND,
+                                                               "Template",
+                                                               "Name: " + name + " Source: " + source + " Version: "
+                                                                       + version), e);
         }
     }
 
     /*--------------------------------------------------------------------------
     Protected Functions
     --------------------------------------------------------------------------*/
+
     /**
      * Adds or Updates a Coalesce object that matches the given parameters.
      *
      * @param coalesceObject the Coalesce object to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn           is the PostGresDataConnector database connection
      * @return isSuccessful = True = Successful add/update operation.
      * @throws SQLException
      */
@@ -643,7 +654,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     {
         boolean isSuccessful = true;
 
-        switch (coalesceObject.getType()) {
+        switch (coalesceObject.getType())
+        {
         case "entity":
 
             // isSuccessful = checkLastModified(coalesceObject, conn);
@@ -725,12 +737,11 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * Adds or updates map table entry for a given element.
      *
      * @param coalesceObject the Coalesce object to be added or updated
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn           is the SQLServerDataConnector database connection
      * @return True if successfully added/updated.
      * @throws SQLException
      */
-    protected boolean persistMapTableEntry(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn)
-            throws SQLException
+    protected boolean persistMapTableEntry(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
         return true;
         // String parentKey;
@@ -758,7 +769,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * Adds or Updates a Coalesce entity that matches the given parameters.
      *
      * @param entity the XsdEntity to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn   is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -820,7 +831,6 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     /**
-     * 
      * @param entity
      * @return additional rows that have been registered for your implementaion.
      */
@@ -833,7 +843,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * Adds or Updates a Coalesce section that matches the given parameters.
      *
      * @param section the XsdSection to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn    is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -859,12 +869,11 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * Adds or Updates a Coalesce recordset that matches the given parameters.
      *
      * @param recordset the XsdRecordset to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn      is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
-    protected boolean persistRecordsetObject(CoalesceRecordset recordset, CoalesceDataConnectorBase conn)
-            throws SQLException
+    protected boolean persistRecordsetObject(CoalesceRecordset recordset, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         if (!checkLastModified(recordset, conn))
@@ -887,7 +896,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * parameters.
      *
      * @param fieldDefinition the XsdFieldDefinition to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn            is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -915,7 +924,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * Adds or Updates a Coalesce record that matches the given parameters.
      *
      * @param record the XsdRecord to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn   is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -941,7 +950,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * Adds or Updates a Coalesce field that matches the given parameters.
      *
      * @param field the XsdField to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn  is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -974,7 +983,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * parameters.
      *
      * @param fieldHistory the XsdFieldHistory to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn         is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -1008,7 +1017,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * parameters.
      *
      * @param linkageSection the XsdLinkageSection to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn           is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -1035,7 +1044,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * Adds or Updates a Coalesce linkage that matches the given parameters.
      *
      * @param linkage the XsdLinkage to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn    is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -1075,19 +1084,19 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * Returns the EntityMetaData for the Coalesce entity that matches the given
      * parameters.
      *
-     * @param key primary key of the Coalesce entity
+     * @param key  primary key of the Coalesce entity
      * @param conn is the PostGresDataConnector database connection
      * @return metaData the EntityMetaData for the Coalesce entity.
      * @throws SQLException
      */
-    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String key, CoalesceDataConnectorBase conn)
-            throws SQLException
+    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String key, CoalesceDataConnectorBase conn) throws SQLException
     {
         EntityMetaData metaData = null;
 
         // Execute Query
-        ResultSet results = conn.executeQuery("SELECT EntityId,EntityIdType,ObjectKey FROM " + getSchemaPrefix()
-                + "CoalesceEntity WHERE ObjectKey=?", new CoalesceParameter(key, Types.OTHER));
+        ResultSet results = conn.executeQuery(
+                "SELECT EntityId,EntityIdType,ObjectKey FROM " + getSchemaPrefix() + "CoalesceEntity WHERE ObjectKey=?",
+                new CoalesceParameter(key, Types.OTHER));
         // Get Results
         while (results.next())
         {
@@ -1104,8 +1113,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * the same objects value in the database.
      *
      * @param coalesceObject the Coalesce object to have it's last modified date
-     *            checked.
-     * @param conn is the PostGresDataConnector database connection
+     *                       checked.
+     * @param conn           is the PostGresDataConnector database connection
      * @return False = Out of Date
      * @throws SQLException
      */
@@ -1142,7 +1151,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * parameters.
      *
      * @param coalesceObject the Coalesce object to be deleted
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn           is the PostGresDataConnector database connection
      * @return True = Successful delete
      * @throws SQLException
      */
@@ -1163,9 +1172,9 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     /**
      * Returns the Coalesce entity keys that matches the given parameters.
      *
-     * @param entityId of the entity.
+     * @param entityId     of the entity.
      * @param entityIdType of the entity.
-     * @param entityName of the entity.
+     * @param entityName   of the entity.
      * @return List<String> of primary keys for the matching Coalesce entity.
      * @throws SQLException ,Exception,CoalescePersistorException
      */
@@ -1176,8 +1185,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
-            ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM "
-                                                              + getSchemaPrefix()
+            ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM " + getSchemaPrefix()
                                                               + "CoalesceEntity WHERE (EntityId like ?) AND (EntityIdType like ?) AND (Name=?)",
                                                       2,
                                                       new CoalesceParameter(entityId),
@@ -1197,9 +1205,9 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     /**
      * Returns the Coalesce entity keys that matches the given parameters.
      *
-     * @param entityId of the entity.
+     * @param entityId     of the entity.
      * @param entityIdType of the entity.
-     * @param entityName of the entity.
+     * @param entityName   of the entity.
      * @param entitySource of the entity.
      * @return List<String> of primary keys for the matching Coalesce entity.
      * @throws SQLException ,Exception,CoalescePersistorException
@@ -1214,8 +1222,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         {
             List<String> keyList = new ArrayList<String>();
 
-            ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM "
-                                                              + getSchemaPrefix()
+            ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM " + getSchemaPrefix()
                                                               + "CoalesceEntity WHERE (EntityId like ? ) AND (EntityIdType like  ? ) AND (Name=?) AND (Source=?)",
                                                       2,
                                                       new CoalesceParameter(entityId),
@@ -1236,7 +1243,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * Sets the active Coalesce field objects matching the parameters given.
      *
      * @param coalesceObject the Coalesce field object.
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn           is the PostGresDataConnector database connection
      * @throws SQLException ,Exception,CoalescePersistorException
      */
     protected boolean updateFileContent(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
@@ -1266,11 +1273,13 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
     {
         boolean isSuccessful = false;
-        boolean isDeleted = false; 
-        
+        boolean isDeleted = false;
+
         if (coalesceObject.isFlatten())
         {
-            switch (coalesceObject.getStatus()) {
+            switch (coalesceObject.getStatus())
+            {
+            case NEW:
             case READONLY:
             case ACTIVE:
                 // Persist Object
@@ -1318,8 +1327,9 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
         String dateValue = null;
 
-        ResultSet results = conn.executeQuery("SELECT LastModified FROM " + getSchemaPrefix() + tableName
-                + " WHERE ObjectKey=?", new CoalesceParameter(key.trim(), Types.OTHER));
+        ResultSet results = conn.executeQuery(
+                "SELECT LastModified FROM " + getSchemaPrefix() + tableName + " WHERE ObjectKey=?",
+                new CoalesceParameter(key.trim(), Types.OTHER));
         ResultSetMetaData resultsmd = results.getMetaData();
 
         // JODA Function DateTimeFormat will adjust for the Server timezone when
@@ -1363,7 +1373,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
         else
         {
-            sql = "SELECT name, ParentKey, ParentType FROM ".concat(getSchemaPrefix()).concat(tableName).concat(" WHERE ObjectKey=?");
+            sql = "SELECT name, ParentKey, ParentType FROM ".concat(getSchemaPrefix()).concat(tableName).concat(
+                    " WHERE ObjectKey=?");
         }
 
         ResultSet results = conn.executeQuery(sql, new CoalesceParameter(key.trim(), Types.OTHER));

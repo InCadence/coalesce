@@ -72,7 +72,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * @param parent
      * @param name
      * @return a field definition for a enumeration list type with the
-     *         enumeration mapping to the field name.
+     * enumeration mapping to the field name.
      */
     public static CoalesceFieldDefinition createEnumerationListFieldDefinition(CoalesceRecordset parent, String name)
     {
@@ -80,7 +80,6 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     }
 
     /**
-     * 
      * @param parent
      * @param name
      * @param enumeration
@@ -114,7 +113,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * @param parent
      * @param name
      * @return a field definition for a enumeration type with the enumeration
-     *         mapping to the field name.
+     * mapping to the field name.
      */
     public static CoalesceFieldDefinition createEnumerationFieldDefinition(CoalesceRecordset parent, String name)
     {
@@ -127,7 +126,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * @param enumeration
      * @param defaultValue
      * @return a field definition for a enumeration type that specifies a
-     *         default value.
+     * default value.
      */
     public static <E extends Enum<E>> CoalesceFieldDefinition createEnumerationFieldDefinition(CoalesceRecordset parent,
                                                                                                String name,
@@ -149,7 +148,6 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     }
 
     /**
-     * 
      * @param parent
      * @param name
      * @param enumeration
@@ -163,13 +161,12 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     }
 
     /**
-     * 
      * @param parent
      * @param name
      * @param enumeration
      * @param defaultValue
      * @return a field definition for a enumeration type that specifies a
-     *         default value.
+     * default value.
      */
     public static CoalesceFieldDefinition createEnumerationFieldDefinition(CoalesceRecordset parent,
                                                                            String name,
@@ -196,21 +193,19 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * based for an
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters of name and datatype provided.
-     * 
-     * @param parent
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
-     *            that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            belongs to.
-     * @param name String name of the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            .
+     *
+     * @param parent   {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     *                 that the
+     *                 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                 belongs to.
+     * @param name     String name of the
+     *                 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                 .
      * @param dataType datatype that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            will contain.
-     * 
+     *                 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                 will contain.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *         .
+     * .
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent, String name, ECoalesceFieldDataTypes dataType)
     {
@@ -223,22 +218,20 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * based for an
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters of name, datatype and noindex provided.
-     * 
-     * @param parent
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
-     *            that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            belongs to.
-     * @param name String name of the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            .
+     *
+     * @param parent   {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     *                 that the
+     *                 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                 belongs to.
+     * @param name     String name of the
+     *                 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                 .
      * @param dataType datatype that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            will contain.
-     * @param noIndex boolean.
-     * 
+     *                 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                 will contain.
+     * @param noIndex  boolean.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *         .
+     * .
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                                  String name,
@@ -254,21 +247,19 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * with a boolean default value based for an
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
-     * 
-     * @param parent
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
-     *            that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            belongs to.
-     * @param name String name of the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            .
-     * @param label The label to be displayed with the field.
+     *
+     * @param parent                       {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     *                                     that the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     belongs to.
+     * @param name                         String name of the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     .
+     * @param label                        The label to be displayed with the field.
      * @param defaultClassificationMarking the default classification.
-     * @param defaultValue the default value.
-     * 
+     * @param defaultValue                 the default value.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *         .
+     * .
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                                  String name,
@@ -276,7 +267,12 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
                                                  String defaultClassificationMarking,
                                                  boolean defaultValue)
     {
-        return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, NO_INDEX_DEFAULT);
+        return CoalesceFieldDefinition.create(parent,
+                                              name,
+                                              label,
+                                              defaultClassificationMarking,
+                                              defaultValue,
+                                              NO_INDEX_DEFAULT);
     }
 
     /**
@@ -285,22 +281,20 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * with a boolean default value based for an
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
-     * 
-     * @param parent
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
-     *            that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            belongs to.
-     * @param name String name of the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            .
-     * @param label The label to be displayed with the field.
+     *
+     * @param parent                       {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     *                                     that the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     belongs to.
+     * @param name                         String name of the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     .
+     * @param label                        The label to be displayed with the field.
      * @param defaultClassificationMarking the default classification.
-     * @param defaultValue the default value.
-     * @param noIndex boolean.
-     * 
+     * @param defaultValue                 the default value.
+     * @param noIndex                      boolean.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *         .
+     * .
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                                  String name,
@@ -324,21 +318,19 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * with a int default value based for an
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
-     * 
-     * @param parent
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
-     *            that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            belongs to.
-     * @param name String name of the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            .
-     * @param label The label to be displayed with the field.
+     *
+     * @param parent                       {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     *                                     that the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     belongs to.
+     * @param name                         String name of the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     .
+     * @param label                        The label to be displayed with the field.
      * @param defaultClassificationMarking the default classification.
-     * @param defaultValue the default value.
-     * 
+     * @param defaultValue                 the default value.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *         .
+     * .
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                                  String name,
@@ -346,7 +338,12 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
                                                  String defaultClassificationMarking,
                                                  int defaultValue)
     {
-        return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, NO_INDEX_DEFAULT);
+        return CoalesceFieldDefinition.create(parent,
+                                              name,
+                                              label,
+                                              defaultClassificationMarking,
+                                              defaultValue,
+                                              NO_INDEX_DEFAULT);
     }
 
     /**
@@ -355,22 +352,20 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * with a int default value based for an
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
-     * 
-     * @param parent
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
-     *            that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            belongs to.
-     * @param name String name of the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            .
-     * @param label The label to be displayed with the field.
+     *
+     * @param parent                       {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     *                                     that the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     belongs to.
+     * @param name                         String name of the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     .
+     * @param label                        The label to be displayed with the field.
      * @param defaultClassificationMarking the default classification.
-     * @param defaultValue the default value.
-     * @param noIndex boolean.
-     * 
+     * @param defaultValue                 the default value.
+     * @param noIndex                      boolean.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *         .
+     * .
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                                  String name,
@@ -394,24 +389,22 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * with a string default value based for an
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
-     * 
-     * @param parent
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
-     *            that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            belongs to.
-     * @param name String name of the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            .
-     * @param dataType datatype that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            will contain.
-     * @param label The label to be displayed with the field.
+     *
+     * @param parent                       {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     *                                     that the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     belongs to.
+     * @param name                         String name of the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     .
+     * @param dataType                     datatype that the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     will contain.
+     * @param label                        The label to be displayed with the field.
      * @param defaultClassificationMarking the default classification.
-     * @param defaultValue the default value.
-     * 
+     * @param defaultValue                 the default value.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *         .
+     * .
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                                  String name,
@@ -435,25 +428,23 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * with a string default value based for an
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
-     * 
-     * @param parent
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
-     *            that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            belongs to.
-     * @param name String name of the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            .
-     * @param dataType datatype that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            will contain.
-     * @param label The label to be displayed with the field.
+     *
+     * @param parent                       {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     *                                     that the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     belongs to.
+     * @param name                         String name of the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     .
+     * @param dataType                     datatype that the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     will contain.
+     * @param label                        The label to be displayed with the field.
      * @param defaultClassificationMarking the default classification.
-     * @param defaultValue the default value.
-     * @param noIndex boolean.
-     * 
+     * @param defaultValue                 the default value.
+     * @param noIndex                      boolean.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *         .
+     * .
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                                  String name,
@@ -479,23 +470,21 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
      * with a string default value based for an
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * with the parameters provided.
-     * 
-     * @param parent
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
-     *            that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            belongs to
-     * @param name String name of the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     * @param dataType datatype that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            will contain
-     * @param label The label to be displayed with the field
+     *
+     * @param parent                       {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     *                                     that the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     belongs to
+     * @param name                         String name of the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * @param dataType                     datatype that the
+     *                                     {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                                     will contain
+     * @param label                        The label to be displayed with the field
      * @param defaultClassificationMarking the default classification
-     * @param defaultValue the default value
-     * @param noIndex boolean
-     * @param disableHistory the value defining if a field should track history
-     * 
+     * @param defaultValue                 the default value
+     * @param noIndex                      boolean
+     * @param disableHistory               the value defining if a field should track history
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
@@ -535,14 +524,12 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     /**
      * Initializes a previously new Fielddefinition and ties it to its parent
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
-     * 
-     * @param parent
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
-     *            that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            belongs to.
+     *
+     * @param parent          {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     *                        that the
+     *                        {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *                        belongs to.
      * @param fieldDefinition the Fielddefinition being initialized.
-     * 
      * @return boolean indicator of success/failure.
      */
     protected boolean initialize(CoalesceRecordset parent, Fielddefinition fieldDefinition)
@@ -554,14 +541,10 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
 
         super.initialize(_entityFieldDefinition);
 
-        // Add to Parent Collections
-        switch (getStatus()) {
-        case READONLY:
-        case ACTIVE:
+        if (isActive())
+        {
+            // Add to Parent Collections
             parent.addChildCoalesceObject(this);
-            break;
-        default:
-            // Skip
         }
 
         for (Constraint constraint : _entityFieldDefinition.getConstraint())
@@ -660,7 +643,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     {
         return _entityFieldDefinition.getDefaultclassificationmarking();
     }
-    
+
     @JsonIgnore
     public Marking getDefaultClassificationMarking()
     {
@@ -676,9 +659,9 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     /**
      * Sets the FieldDefinitions's DefaultClassificationMarking attribute based
      * on the Marking class value parameter.
-     * 
+     *
      * @param value Marking class to be the FieldDefinition's default
-     *            classification marking attribute.
+     *              classification marking attribute.
      */
     public void setDefaultClassificationMarking(Marking value)
     {
@@ -747,7 +730,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     {
         Map<QName, String> map = super.getAttributes();
 
-        map.put(new QName(ATTRIBUTE_DEFAULT_CLASSIFICATION_MARKING), _entityFieldDefinition.getDefaultclassificationmarking());
+        map.put(new QName(ATTRIBUTE_DEFAULT_CLASSIFICATION_MARKING),
+                _entityFieldDefinition.getDefaultclassificationmarking());
         map.put(new QName(ATTRIBUTE_LABEL), _entityFieldDefinition.getLabel());
         map.put(new QName(ATTRIBUTE_DEFAULT_VALUE), _entityFieldDefinition.getDefaultvalue());
         map.put(new QName(ATTRIBUTE_DATA_TYPE), _entityFieldDefinition.getDatatype());
@@ -777,7 +761,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     protected boolean setExtendedAttributes(String name, String value)
     {
 
-        switch (name.toLowerCase()) {
+        switch (name.toLowerCase())
+        {
         case ATTRIBUTE_LABEL:
             setLabel(value);
             return true;
