@@ -2,6 +2,9 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
+
+import ironhide.client.IronhideClient;
+
 import org.elasticsearch.client.transport.TransportClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,12 +17,13 @@ public class ElasticSearchDataConnectorIT {
 
     private static final String NAME = "name";
     private static ServerConn conn;
+    private static Properties props;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
         InputStream in = ElasticSearchDataConnector.class.getResourceAsStream("/elasticsearch-config.properties");
-        Properties props = new Properties();
+        props = new Properties();
         props.load(in);
         in.close();
         String dbName = props.getProperty("database");
@@ -33,7 +37,7 @@ public class ElasticSearchDataConnectorIT {
     public void testGetDBConnection() throws Exception
     {
         ElasticSearchDataConnector connector = new ElasticSearchDataConnector();
-        TransportClient client = connector.getDBConnector();
+        IronhideClient client = connector.getDBConnector(props);
         connector.close();
         client.close();
     }

@@ -1,6 +1,8 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +12,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
@@ -34,6 +38,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
@@ -41,6 +46,7 @@ import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
@@ -56,8 +62,9 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
-//import mil.nga.giat.data.elasticsearch.FilterToElastic;
+import ironhide.client.IronhideClient;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -82,6 +89,21 @@ import com.incadencecorp.coalesce.search.api.SearchResults;
  * @author n78554
  */
 public class ElasticSearchPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
+	
+    // Some constants for the linkage records
+	// TODO: Move this to a common area in Coalesce
+    public static final String LINKAGE_ENTITY1_KEY_COLUMN_NAME = "entity1Key";
+    public static final String LINKAGE_ENTITY1_NAME_COLUMN_NAME = "entity1Name";
+    public static final String LINKAGE_ENTITY1_SOURCE_COLUMN_NAME = "entity1Source";
+    public static final String LINKAGE_ENTITY1_VERSION_COLUMN_NAME = "entity1Version";
+    public static final String LINKAGE_ENTITY2_KEY_COLUMN_NAME = "entity2Key";
+    public static final String LINKAGE_ENTITY2_NAME_COLUMN_NAME = "entity2Name";
+    public static final String LINKAGE_ENTITY2_SOURCE_COLUMN_NAME = "entity2Source";
+    public static final String LINKAGE_ENTITY2_VERSION_COLUMN_NAME = "entity2Version";
+    public static final String LINKAGE_KEY_COLUMN_NAME = "objectKey";
+    public static final String LINKAGE_LAST_MODIFIED_COLUMN_NAME = "lastModified";
+    public static final String LINKAGE_LINK_TYPE_COLUMN_NAME = "linkType";
+    public static final String LINKAGE_LABEL_COLUMN_NAME = "label";
 
     /*--------------------------------------------------------------------------
     Private Members
@@ -92,12 +114,22 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     /*--------------------------------------------------------------------------
     Overridden Functions
     --------------------------------------------------------------------------*/
-    
-    public void searchAll() {
 
+    /**
+     * Default constructor using {@link ElasticSearchSettings} for configuration
+     */
+    public ElasticSearchPersistor()
+    {
+    	FilePropertyConnector fileConnector = new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION);
+    	fileConnector.setReadOnly(true);
+
+    	ElasticSearchSettings.setConnector(fileConnector);
+    }
+
+    public void searchAll() {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-	    	TransportClient client = conn.getDBConnector();
+	    	IronhideClient client = conn.getDBConnector(getProps());
 	    	SearchResponse response = client.prepareSearch().get();
 	    	System.out.println(response.toString());
         } catch (Exception e) {
@@ -109,7 +141,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     	
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-	    	TransportClient client = conn.getDBConnector();
+	    	IronhideClient client = conn.getDBConnector(getProps());
 	    	SearchResponse response = client.prepareSearch(searchValue)
 	    	        .setTypes(searchType)
 	    	        //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
@@ -124,24 +156,19 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         }
     }
     
-//    public void searchElasticGeo() {
-//    	
-//    	FilterToElastic filterElastic = new FilterToElastic();
-//    	
-//    	Map<String, Object> queryBuilder = filterElastic.getNativeQueryBuilder();
-//    	
-//        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-//        {
-//	    	TransportClient client = conn.getDBConnector();
-//	    	SearchResponse response = client.prepareSearch("twitter4")
-//	    	        .setTypes("tweet")
-//	    	        .get();
-//
-//	    	System.out.println(response.toString());
-//        } catch (Exception e) {
-//        	e.printStackTrace();
-//        }
-//    }
+    public void searchElasticGeo() {
+    	
+    	//FilterToElastic filterElastic = new FilterToElastic();
+    	
+    	//Map<String, Object> queryBuilder = filterElastic.getNativeQueryBuilder();
+    	
+        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+        {
+	    	IronhideClient client = conn.getDBConnector(getProps());
+	    } catch (Exception e) { 
+	        e.printStackTrace(); 
+	    } 
+    } 
 
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
                                                          String entityIdType,
@@ -188,7 +215,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            return this.getCoalesceObjectLastModified(key, objectType, conn.getDBConnector());
+            return this.getCoalesceObjectLastModified(key, objectType, conn.getDBConnector(getProps()));
         }
         catch (SQLException e)
         {
@@ -236,17 +263,38 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     {
         // Do Nothing
     }
+    
+    public Properties getProps() throws IOException {
+    	makeSureConnectorIsInitialized();
+    	
+    	Properties props = new Properties();
+    	props.putAll(ElasticSearchSettings.getParameters());
+        
+        return props;
+    }
+    
+    public void makeSureConnectorIsInitialized() {
+    	if(!ElasticSearchSettings.getConnectorInitialized())
+    	{	    		
+	        FilePropertyConnector connector = new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION);
+	        LOGGER.debug("Connector initialized using config file: " + CoalesceParameters.COALESCE_CONFIG_LOCATION);
+	        connector.setReadOnly(true);
+	
+	        ElasticSearchSettings.setConnector(connector);
+    	}
+    }
 
     @Override
     public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
+    	
         JsonFullEximImpl converter = new JsonFullEximImpl();
         
         for (CoalesceEntityTemplate template : templates)
         {
             try(ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
             {
-    	    	TransportClient client = conn.getDBConnector();
+    	    	IronhideClient client = conn.getDBConnector(getProps());
     	    	XmlMapper mapper = new XmlMapper();
     	    	JsonNode node = mapper.readTree(template.toXml());
 
@@ -271,7 +319,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         } 
     }
     
-    private Map<String, Object> coalesceTemplateToESTemplate(CoalesceEntityTemplate template, TransportClient client) { 
+    private Map<String, Object> coalesceTemplateToESTemplate(CoalesceEntityTemplate template, IronhideClient client) { 
     	Map<String, Object> esTemplate = new HashMap<>();
     	Map<String, Object> mappingMap = new HashMap<>();
     	Map<String, Object> propertiesMap = new HashMap<>();
@@ -352,7 +400,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-	    	TransportClient client = conn.getDBConnector();
+	    	IronhideClient client = conn.getDBConnector(getProps());
             List<String> xmlList = new ArrayList<String>();
             List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
 
@@ -452,7 +500,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
             // Create a Database Connection
             try
             {
-               TransportClient client = conn.getDBConnector();
+               IronhideClient client = conn.getDBConnector(getProps());
 
                 for (CoalesceEntity entity : entities)
                 {
@@ -494,7 +542,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
             for (CoalesceEntity entity : entities)
             {
-                if (persistEntityObject(entity, conn.getDBConnector()))
+                if (persistEntityObject(entity, conn.getDBConnector(getProps())))
                 {
                     isSuccessful = true;
                 }
@@ -626,7 +674,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      * @return isSuccessful = True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistObject(CoalesceObject coalesceObject, TransportClient conn) throws SQLException
+    protected boolean persistObject(CoalesceObject coalesceObject, IronhideClient conn) throws SQLException
     {
         boolean isSuccessful = true;
 
@@ -652,7 +700,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      * @return True = No Update required.
      * @throws SQLException
      */
-    protected boolean persistEntityObject(CoalesceEntity entity, TransportClient conn) throws SQLException
+    private boolean persistEntityObject(CoalesceEntity entity, IronhideClient conn) throws SQLException
     {
         // Return true if no update is required.
     	//Worry about this later. 
@@ -660,16 +708,9 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 //        {
 //            return true;
 //        }
-
-        JsonFullEximImpl converter = new JsonFullEximImpl();
  
         IndexResponse response;
 		try {
-			ObjectMapper mapper = new ObjectMapper();
-			//TypeFactory typeFactory = mapper.getTypeFactory();
-			//mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-			//byte[] json = mapper.writeValueAsBytes(converter.exportValues(entity, true));
-			//String json = mapper.writeValueAsString(converter.exportValues(entity, true));
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			
 			for(CoalesceSection section : entity.getSectionsAsList()) {
@@ -677,40 +718,63 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 					for(CoalesceRecord record : recordset.getAllRecords()) {
 						for(CoalesceField field : record.getFields()) {
 							map.put(field.getName(), field.getValue());
-							System.out.println("Adding field " + field.getName() + " with value: " + field.getValue());
+							LOGGER.debug("Adding field " + field.getName() + " with value: " + field.getValue());
 						}
 					}
 				}
 			}
 			
-			//map = mapper.readValue(converter.exportValues(entity, true).toString(), 
-			//		new TypeReference<Map<String, Object>>() {
-			//});
+			Map<String, Object> linkageMap = createLinkageMap(entity);
+	        
+	        conn.prepareIndex("oelinkage", "oelinkage").setSource(linkageMap).get();
+			LOGGER.debug("Indexed linkage for entity " + "coalesce-" + entity.getName());
+
 
 			// convert JSON string to Map
-			response = conn.prepareIndex(entity.getName().toLowerCase(), entity.getType().toLowerCase()).setSource(map).get();
-			System.out.println("Saved Index called: " + entity.getName());
+			response = conn.prepareIndex("coalesce-" + entity.getName().toLowerCase(), entity.getType().toLowerCase()).setSource(map).get();
+			System.out.println("Saved Index called: " + "coalesce-" + entity.getName());
  
 			System.out.println(response.toString());
 		} catch (CoalesceException e) {
 			e.printStackTrace();
 			return  false;
-		/*} catch (JsonParseException e) {
-			e.printStackTrace();
-			return  false;
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-			return  false;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return  false;
-			*/
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
 		
 		//If the index response is returned and no exception was thrown, the index operation was successful
         return true;
+    }
+    
+    /**
+     * persist the Linkage for an Entity. This will create a new document of the Linkage index
+     * 
+     * @param entity The entity to persist the linkages for
+     * @return returns true if no exceptions were thrown
+     */
+    private Map<String, Object> createLinkageMap(CoalesceEntity entity) {
+    	//HashMap representation of the linkage for indexing in ElasticSearch
+		HashMap<String, Object> linkageMap = new HashMap<String, Object>();
+		
+		Map<String, CoalesceLinkage> linkages = entity.getLinkages();
+        for (Map.Entry<String, CoalesceLinkage> mlink : linkages.entrySet()) {
+        	CoalesceLinkage link = mlink.getValue();
+        	
+        	linkageMap.put(LINKAGE_KEY_COLUMN_NAME, link.getKey());
+        	linkageMap.put(LINKAGE_LABEL_COLUMN_NAME, link.getName());
+        	linkageMap.put(LINKAGE_ENTITY1_KEY_COLUMN_NAME, link.getEntity1Key());
+        	linkageMap.put(LINKAGE_ENTITY1_NAME_COLUMN_NAME, link.getEntity1Name());
+        	linkageMap.put(LINKAGE_ENTITY1_SOURCE_COLUMN_NAME, link.getEntity1Source());
+        	linkageMap.put(LINKAGE_ENTITY1_VERSION_COLUMN_NAME, link.getEntity1Version());
+        	linkageMap.put(LINKAGE_ENTITY2_KEY_COLUMN_NAME, link.getEntity2Key());
+        	linkageMap.put(LINKAGE_ENTITY2_NAME_COLUMN_NAME, link.getEntity2Name());
+        	linkageMap.put(LINKAGE_ENTITY2_SOURCE_COLUMN_NAME, link.getEntity2Source());
+        	linkageMap.put(LINKAGE_LAST_MODIFIED_COLUMN_NAME, link.getLastModifiedAsString());
+        	linkageMap.put(LINKAGE_LINK_TYPE_COLUMN_NAME, link.getLinkType().getLabel());
+        }
+
+		//If the index response is returned and no exception was thrown, the index operation was successful
+        return linkageMap;
     }
 
     /*--------------------------------------------------------------------------
@@ -742,7 +806,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      * @return False = Out of Date
      * @throws SQLException
      */
-    protected boolean checkLastModified(CoalesceObject coalesceObject, TransportClient conn) throws SQLException
+    protected boolean checkLastModified(CoalesceObject coalesceObject, IronhideClient conn) throws SQLException
     {
         boolean isOutOfDate = true;
 
@@ -785,7 +849,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-	    	TransportClient client = conn.getDBConnector();
+	    	IronhideClient client = conn.getDBConnector(getProps());
 	        DeleteResponse response = client.prepareDelete(objectKey, objectType, "1")
 	                .get();
 
@@ -813,7 +877,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-        	TransportClient client = conn.getDBConnector();
+        	IronhideClient client = conn.getDBConnector(getProps());
         	if(checkIfIndexExists(client, entityId)) {
 	        	GetResponse response = client.prepareGet(entityId, entityIdType, entityName).get();
 	        	
@@ -827,7 +891,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
     }
     
-    public boolean checkIfIndexExists(TransportClient client, String index) {
+    public boolean checkIfIndexExists(IronhideClient client, String index) {
 
     	try {
     		boolean hasIndex = client.admin().indices().exists(new IndicesExistsRequest(index.toLowerCase())).actionGet().isExists(); 
@@ -840,7 +904,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     	return false;
     }
 
-    private boolean updateCoalesceObject(CoalesceObject coalesceObject, TransportClient conn, boolean allowRemoval)
+    private boolean updateCoalesceObject(CoalesceObject coalesceObject, IronhideClient conn, boolean allowRemoval)
             throws SQLException
 
     {
@@ -863,7 +927,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         return isSuccessful;
     }
 
-    private DateTime getCoalesceObjectLastModified(String key, String objectType, TransportClient conn)
+    private DateTime getCoalesceObjectLastModified(String key, String objectType, IronhideClient conn)
             throws SQLException
     {
         DateTime lastModified = null;
@@ -930,16 +994,17 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
         	rowset = RowSetProvider.newFactory().createCachedRowSet();
-	    	TransportClient client = conn.getDBConnector();
+	    	IronhideClient client = conn.getDBConnector(getProps());
 	    	SearchResponse response = client.prepareSearch("gdelt_data")
     	        .setQuery(QueryBuilders.termQuery("GlobalEventID", "410479387"))                 // Query
     	        //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
     	        //.setFrom(0).setSize(60).setExplain(true)
     	        .get();
 
-	    	System.out.println(response.toString());
+	    	LOGGER.debug(response.toString());
         } catch (Exception e) {
-            throw new CoalescePersistorException(e.getMessage(), e);
+        	LOGGER.error(e.getMessage());
+            //throw new CoalescePersistorException(e.getMessage(), e);
         }
         // TODO Not Implemented
     	//query.getFilter().toString();
