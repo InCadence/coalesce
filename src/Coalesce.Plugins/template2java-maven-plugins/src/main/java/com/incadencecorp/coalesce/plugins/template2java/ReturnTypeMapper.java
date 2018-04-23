@@ -42,29 +42,39 @@ public class ReturnTypeMapper implements ICoalesceMapper<String> {
 
         switch (type) {
         case BOOLEAN_TYPE:
-        case BOOLEAN_LIST_TYPE:
             clazz = Boolean.class;
+            break;
+        case BOOLEAN_LIST_TYPE:
+            clazz = boolean.class;
             break;
         case DATE_TIME_TYPE:
             clazz = Date.class;
             break;
         case DOUBLE_TYPE:
-        case DOUBLE_LIST_TYPE:
             clazz = Double.class;
             break;
+        case DOUBLE_LIST_TYPE:
+            clazz = double.class;
+            break;
         case FLOAT_TYPE:
-        case FLOAT_LIST_TYPE:
             clazz = Float.class;
             break;
+        case FLOAT_LIST_TYPE:
+            clazz = float.class;
+            break;
         case ENUMERATION_TYPE:
-        case ENUMERATION_LIST_TYPE:
         case INTEGER_TYPE:
-        case INTEGER_LIST_TYPE:
             clazz = Integer.class;
             break;
+        case ENUMERATION_LIST_TYPE:
+        case INTEGER_LIST_TYPE:
+            clazz = int.class;
+            break;
         case LONG_TYPE:
-        case LONG_LIST_TYPE:
             clazz = Long.class;
+            break;
+        case LONG_LIST_TYPE:
+            clazz = long.class;
             break;
         case GEOCOORDINATE_LIST_TYPE:
             clazz = MultiPoint.class;
