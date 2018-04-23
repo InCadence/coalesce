@@ -25,7 +25,7 @@ public interface ISearchDataControllerJaxRS {
     @Path("/simple")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    QueryResult search(List<SearchCriteria> options);
+    QueryResult search(List<SearchCriteria> options) throws RemoteException;
 
     @POST
     @Path("/complex")
