@@ -4,6 +4,7 @@ import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSea
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchSettings;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import ironhide.client.IronhideClient;
+import org.elasticsearch.client.support.AbstractClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -59,7 +60,7 @@ public class ElasticSearchDataConnectorIT {
         Properties props = new Properties();
         props.putAll(ElasticSearchSettings.getParameters());
 
-        IronhideClient client = connector.getDBConnector(props);
+        AbstractClient client = connector.getDBConnector(props);
         connector.close();
         client.close();
     }
@@ -67,7 +68,7 @@ public class ElasticSearchDataConnectorIT {
     @Test
     public void testIronhideConnection() throws Exception
     {
-        IronhideClient client = null;
+        AbstractClient client = null;
         ElasticSearchDataConnector connector = new ElasticSearchDataConnector();
         FilePropertyConnector fileConnector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
         fileConnector.setReadOnly(true);

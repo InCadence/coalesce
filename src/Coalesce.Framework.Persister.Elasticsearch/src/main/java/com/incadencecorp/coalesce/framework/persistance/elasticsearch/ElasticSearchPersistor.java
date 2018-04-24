@@ -16,12 +16,12 @@ import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
-import ironhide.client.IronhideClient;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.support.AbstractClient;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.geotools.data.Query;
 import org.geotools.filter.Capabilities;
@@ -102,7 +102,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            IronhideClient client = conn.getDBConnector(getProps());
+            AbstractClient client = conn.getDBConnector(getProps());
             SearchResponse response = client.prepareSearch().get();
             System.out.println(response.toString());
         }
@@ -117,7 +117,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            IronhideClient client = conn.getDBConnector(getProps());
+            AbstractClient client = conn.getDBConnector(getProps());
             SearchResponse response = client.prepareSearch(searchValue).setTypes(searchType)
                     //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
                     //.setQuery(QueryBuilders.termQuery("multi", "test"))                 // Query
@@ -142,7 +142,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            IronhideClient client = conn.getDBConnector(getProps());
+            AbstractClient client = conn.getDBConnector(getProps());
         }
         catch (Exception e)
         {
@@ -275,7 +275,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         {
             try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
             {
-                IronhideClient client = conn.getDBConnector(getProps());
+                AbstractClient client = conn.getDBConnector(getProps());
                 XmlMapper mapper = new XmlMapper();
                 JsonNode node = mapper.readTree(template.toXml());
 
@@ -302,7 +302,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         }
     }
 
-    private Map<String, Object> coalesceTemplateToESTemplate(CoalesceEntityTemplate template, IronhideClient client)
+    private Map<String, Object> coalesceTemplateToESTemplate(CoalesceEntityTemplate template, AbstractClient client)
     {
         Map<String, Object> esTemplate = new HashMap<>();
         Map<String, Object> mappingMap = new HashMap<>();
@@ -386,7 +386,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            IronhideClient client = conn.getDBConnector(getProps());
+            AbstractClient client = conn.getDBConnector(getProps());
             List<String> xmlList = new ArrayList<String>();
             List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
 
@@ -485,7 +485,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
             // Create a Database Connection
             try
             {
-                IronhideClient client = conn.getDBConnector(getProps());
+                AbstractClient client = conn.getDBConnector(getProps());
 
                 for (CoalesceEntity entity : entities)
                 {
@@ -662,7 +662,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      * @return isSuccessful = True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistObject(CoalesceObject coalesceObject, IronhideClient conn) throws SQLException
+    protected boolean persistObject(CoalesceObject coalesceObject, AbstractClient conn) throws SQLException
     {
         boolean isSuccessful = true;
 
@@ -689,7 +689,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      * @return True = No Update required.
      * @throws SQLException
      */
-    private boolean persistEntityObject(CoalesceEntity entity, IronhideClient conn) throws SQLException
+    private boolean persistEntityObject(CoalesceEntity entity, AbstractClient conn) throws SQLException
     {
         // Return true if no update is required.
         //Worry about this later.
@@ -806,7 +806,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
      * @return False = Out of Date
      * @throws SQLException
      */
-    protected boolean checkLastModified(CoalesceObject coalesceObject, IronhideClient conn) throws SQLException
+    protected boolean checkLastModified(CoalesceObject coalesceObject, AbstractClient conn) throws SQLException
     {
         boolean isOutOfDate = true;
 
@@ -849,7 +849,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            IronhideClient client = conn.getDBConnector(getProps());
+            AbstractClient client = conn.getDBConnector(getProps());
             DeleteResponse response = client.prepareDelete(objectKey, objectType, "1").get();
 
             return response;
@@ -878,7 +878,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            IronhideClient client = conn.getDBConnector(getProps());
+            AbstractClient client = conn.getDBConnector(getProps());
             if (checkIfIndexExists(client, entityId))
             {
                 GetResponse response = client.prepareGet(entityId, entityIdType, entityName).get();
@@ -895,7 +895,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
     }
 
-    public boolean checkIfIndexExists(IronhideClient client, String index)
+    public boolean checkIfIndexExists(AbstractClient client, String index)
     {
 
         try
@@ -912,7 +912,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         return false;
     }
 
-    private boolean updateCoalesceObject(CoalesceObject coalesceObject, IronhideClient conn, boolean allowRemoval)
+    private boolean updateCoalesceObject(CoalesceObject coalesceObject, AbstractClient conn, boolean allowRemoval)
             throws SQLException
 
     {
@@ -935,7 +935,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         return isSuccessful;
     }
 
-    private DateTime getCoalesceObjectLastModified(String key, String objectType, IronhideClient conn) throws SQLException
+    private DateTime getCoalesceObjectLastModified(String key, String objectType, AbstractClient conn) throws SQLException
     {
         DateTime lastModified = null;
 
@@ -1001,7 +1001,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
             rowset = RowSetProvider.newFactory().createCachedRowSet();
-            IronhideClient client = conn.getDBConnector(getProps());
+            AbstractClient client = conn.getDBConnector(getProps());
             SearchResponse response = client.prepareSearch("gdelt_data").setQuery(QueryBuilders.termQuery("GlobalEventID",
                                                                                                           "410479387"))                 // Query
                     //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter

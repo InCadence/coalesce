@@ -2,10 +2,12 @@ package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import com.google.common.net.HostAndPort;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import ironhide.client.IronhideClient;
 import ironhide.client.IronhideClient.Builder;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.client.support.AbstractClient;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -29,42 +31,41 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
     public static final String INSTANCE_ID = "instanceId";
     public static final String USER = "user";
     public static final String PASSWORD = "password";
-
-    public static String getInstanceId()
+    public Connection getDBConnection() throws SQLException
     {
-        return INSTANCE_ID;
+        LOGGER.error("ElasticSearchDataConnector:getDBConnection: Procedure not implemented");
+        throw new UnsupportedOperationException("ElasticSearchDataConnector:getDBConnection: Procedure not implemented");
     }
 
-    public TransportClient oldGetDBConnector() throws CoalescePersistorException
+    @Override
+    protected String getProcedurePrefix()
     {
-        TransportClient client = null;
-        // on startup
-        //String keypath = props.getProperty(KEYSTORE_FILE_PROPERTY);
-        //String trustpath = props.getProperty(TRUSTSTORE_FILE_PROPERTY);
+        return "";
+    }
+
+    public AbstractClient getDBConnector(Properties props)
+    {
+        try
+        {
+            return ElasticSearchSettings.isSSLEnabled() ? createSSLClient(props) : createClient(props);
+        }
+        catch (CoalescePersistorException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private AbstractClient createClient(Properties props) throws CoalescePersistorException
+    {
+        TransportClient client;
 
         try
         {
-            Settings settings = Settings.builder().put("cluster.name", "elasticsearch").build();
+            Settings.builder().put("cluster.name", ElasticSearchSettings.getElasticClusterName());
 
-            client = new PreBuiltTransportClient(settings);
+            client = new PreBuiltTransportClient(Settings.builder().build());
 
-			/*Settings settings = ImmutableSettings.settingsBuilder()
-            .put("cluster.name", "RDK.bdpdev.incadencecorp.com")
-	        .put("plugins." + PluginsService.LOAD_PLUGIN_FROM_CLASSPATH, false)
-	        .put("plugin.types", IronhideClientPlugin.class)
-	        .put(ironhide.transport.ConfigConstants.sslSettings(
-	        		keypath,
-	                "changeit",
-	                trustpath,
-	                "changeit"
-	                ))
-            .build();	
-			
-			client = new TransportClient(
-					settings);
-					*/
-
-            String eshosts = "localhost:9300";
+            String eshosts = ElasticSearchSettings.getElastichosts();
             Stream.of(eshosts.split(",")).map(host -> {
                 HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
 
@@ -79,11 +80,6 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
                     return null;
                 }
             }).forEach(client::addTransportAddress);
-
-            //			        .addTransportAddress(new InetSocketTransportAddress("bdpnode3", 9300))
-            //			        .addTransportAddress(new InetSocketTransportAddress("bdpnode4", 9300));
-            //			        .addTransportAddress(new InetSocketTransportAddress("bdpnode5", 9300));
-
         }
         catch (ElasticsearchException ex)
         {
@@ -93,19 +89,7 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
         return client;
     }
 
-    public Connection getDBConnection() throws SQLException
-    {
-        LOGGER.error("ElasticSearchDataConnector:getDBConnection: Procedure not implemented");
-        throw new UnsupportedOperationException("ElasticSearchDataConnector:getDBConnection: Procedure not implemented");
-    }
-
-    @Override
-    protected String getProcedurePrefix()
-    {
-        return "";
-    }
-
-    public IronhideClient getDBConnector(Properties props)
+    private AbstractClient createSSLClient(Properties props) throws CoalescePersistorException
     {
         IronhideClient client = null;
         // on startup
@@ -150,11 +134,10 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
         }
         catch (ElasticsearchException | FileNotFoundException ex)
         {
-            // TODO Auto-generated catch block
-            LOGGER.error(ex.getMessage(), ex);
-            return null;
+            throw new CoalescePersistorException(ex);
         }
 
         return client;
     }
+
 }
