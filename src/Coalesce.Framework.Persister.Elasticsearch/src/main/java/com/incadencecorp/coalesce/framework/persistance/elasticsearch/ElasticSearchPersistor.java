@@ -16,6 +16,7 @@ import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
+import org.apache.commons.lang.NotImplementedException;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
@@ -271,7 +272,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     public void saveTemplate(CoalesceDataConnectorBase conn, CoalesceEntityTemplate... templates)
             throws CoalescePersistorException
     {
-        // Do Nothing
+        throw new NotImplementedException();
     }
 
     public Properties getProps() throws IOException
