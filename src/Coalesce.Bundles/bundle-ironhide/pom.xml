@@ -1,0 +1,87 @@
+<!--
+  ~  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+  ~
+  ~  Notwithstanding any contractor copyright notice, the Government has Unlimited
+  ~  Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+  ~  of this work other than as specifically authorized by these DFARS Clauses may
+  ~  violate Government rights in this work.
+  ~
+  ~  DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+  ~  Unlimited Rights. The Government has the right to use, modify, reproduce,
+  ~  perform, display, release or disclose this computer software and to have or
+  ~  authorize others to do so.
+  ~
+  ~  Distribution Statement D. Distribution authorized to the Department of
+  ~  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+  ~
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>bundle-ironhide</artifactId>
+	<packaging>bundle</packaging>
+	<name>Coalesce IronHide OSGi Bundle</name>
+	<description>This OSGi bundle simply wraps the IronHide artifacts.</description>
+
+	<parent>
+		<groupId>com.incadencecorp.coalesce.bundles</groupId>
+		<artifactId>coalesce-bundle-parent</artifactId>
+		<version>0.0.27-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<properties>
+		<ironhide.version>2.0.4</ironhide.version>
+		<elasticsearch.version>5.4.0</elasticsearch.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-Name>${project.name}</Bundle-Name>
+						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Version>${project.version}</Bundle-Version>
+						<Export-Package>
+							ironhide.client.*;version=${ironhide.version};-split-package:=merge-last,
+							org.elasticsearch.*;version=${elasticsearch.version};-split-package:=merge-last,
+						</Export-Package>
+						<Import-Package>
+							*;resolution:=optional
+						</Import-Package>
+						<Embed-Dependency>
+							*;artifactId=!org.osgi.compendium;scope=compile|runtime;type=!pom;inline=false
+						</Embed-Dependency>
+						<Embed-Transitive>true</Embed-Transitive>
+					</instructions>
+				</configuration>
+
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>ironhide</groupId>
+			<artifactId>ironhide-client</artifactId>
+			<version>${ironhide.version}</version>
+		</dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${elasticsearch.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>transport</artifactId>
+            <version>${elasticsearch.version}</version>
+        </dependency>
+
+	</dependencies>
+</project>
