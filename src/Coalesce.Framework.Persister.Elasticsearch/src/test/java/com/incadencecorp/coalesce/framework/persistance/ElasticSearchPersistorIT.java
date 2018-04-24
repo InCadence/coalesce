@@ -50,6 +50,7 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
         String user = props.getProperty("userid");
         String password = props.getProperty("password");
         conn = new ElasticSearchDataConnector();
+        client = conn.getDBConnector(props);
     	//client = conn.getDBConnector();
     }
 
