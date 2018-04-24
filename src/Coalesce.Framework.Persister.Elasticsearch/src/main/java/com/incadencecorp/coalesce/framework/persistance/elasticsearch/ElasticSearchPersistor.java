@@ -22,6 +22,7 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.support.AbstractClient;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.geotools.data.Query;
 import org.geotools.filter.Capabilities;
@@ -96,20 +97,26 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         fileConnector.setReadOnly(true);
 
         ElasticSearchSettings.setConnector(fileConnector);
+
+        LOGGER.debug("Initialized ElasticSearchPersistor using default constructor");
     }
 
-    public void searchAll()
+    public SearchResponse searchAll()
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
             AbstractClient client = conn.getDBConnector(getProps());
-            SearchResponse response = client.prepareSearch().get();
-            System.out.println(response.toString());
+            QueryBuilder qb = QueryBuilders.matchAllQuery();
+            SearchResponse response = client.prepareSearch().setQuery(qb).get();
+            //.execute()
+            //.actionGet();
+            LOGGER.debug(response.toString());
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+        return null;
     }
 
     public void searchSpecific(String searchValue, String searchType)
@@ -118,14 +125,38 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
             AbstractClient client = conn.getDBConnector(getProps());
-            SearchResponse response = client.prepareSearch(searchValue).setTypes(searchType)
+            QueryBuilder qb = QueryBuilders.matchAllQuery();
+            //QueryBuilder qb = QueryBuilders.matchPhraseQuery("PMESIIPTMilitary", "1");
+            SearchResponse response = client.prepareSearch(searchValue)
                     //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                    //.setQuery(QueryBuilders.termQuery("multi", "test"))                 // Query
+                    .setQuery(qb)                 // Query
                     //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
                     //.setFrom(0).setSize(60).setExplain(true)
                     .get();
 
-            System.out.println(response.toString());
+            LOGGER.debug(response.toString());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void searchSpecificWithFilter(String searchValue, String searchType, String filterName, String filterValue)
+    {
+
+        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+        {
+            AbstractClient client = conn.getDBConnector(getProps());
+            QueryBuilder qb = QueryBuilders.matchPhraseQuery(filterName, filterValue);
+            SearchResponse response = client.prepareSearch(searchValue)
+                    //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+                    .setQuery(qb)                 // Query
+                    //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
+                    //.setFrom(0).setSize(60).setExplain(true)
+                    .get();
+
+            LOGGER.debug(response.toString());
         }
         catch (Exception e)
         {

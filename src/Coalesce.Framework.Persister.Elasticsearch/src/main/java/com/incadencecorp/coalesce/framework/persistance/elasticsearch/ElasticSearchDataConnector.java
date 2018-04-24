@@ -2,7 +2,6 @@ package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import com.google.common.net.HostAndPort;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import ironhide.client.IronhideClient;
 import ironhide.client.IronhideClient.Builder;
@@ -27,10 +26,13 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchDataConnector.class);
 
+    private AbstractClient client;
+
     // Datastore Properties
-    public static final String INSTANCE_ID = "instanceId";
+    //public static final String INSTANCE_ID = "instanceId";
     public static final String USER = "user";
     public static final String PASSWORD = "password";
+
     public Connection getDBConnection() throws SQLException
     {
         LOGGER.error("ElasticSearchDataConnector:getDBConnection: Procedure not implemented");
@@ -45,14 +47,20 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
     public AbstractClient getDBConnector(Properties props)
     {
-        try
+        if (client == null)
         {
-            return ElasticSearchSettings.isSSLEnabled() ? createSSLClient(props) : createClient(props);
+
+            try
+            {
+                client = ElasticSearchSettings.isSSLEnabled() ? createSSLClient(props) : createClient(props);
+            }
+            catch (CoalescePersistorException e)
+            {
+                throw new RuntimeException(e);
+            }
         }
-        catch (CoalescePersistorException e)
-        {
-            throw new RuntimeException(e);
-        }
+
+        return client;
     }
 
     private AbstractClient createClient(Properties props) throws CoalescePersistorException
@@ -71,7 +79,7 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
                 try
                 {
-                    return new InetSocketTransportAddress(InetAddress.getByName(hostAndPort.getHostText()),
+                    return new InetSocketTransportAddress(InetAddress.getByName(hostAndPort.getHost()),
                                                           hostAndPort.getPort());
                 }
                 catch (UnknownHostException e)
@@ -91,7 +99,8 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
     private AbstractClient createSSLClient(Properties props) throws CoalescePersistorException
     {
-        IronhideClient client = null;
+        IronhideClient client;
+
         // on startup
         String keypath = props.getProperty(ElasticSearchSettings.getKeystoreFileProperty());
         String trustpath = props.getProperty(ElasticSearchSettings.getTruststoreFileProperty());
@@ -113,7 +122,7 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
                 try
                 {
-                    String chost = hostAndPort.getHostText();
+                    String chost = hostAndPort.getHost();
                     InetAddress addr = InetAddress.getByName(chost);
                     return new InetSocketTransportAddress(addr, hostAndPort.getPort());
                 }
@@ -135,6 +144,7 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
         catch (ElasticsearchException | FileNotFoundException ex)
         {
             throw new CoalescePersistorException(ex);
+
         }
 
         return client;

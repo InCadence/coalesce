@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import org.elasticsearch.action.DocWriteResponse.Result;
 import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.action.search.SearchResponse;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -280,7 +280,8 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
     @Test
     public void testSearchAll() throws Exception {
     	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
-    	persistor.searchAll();
+    	SearchResponse response = persistor.searchAll();
+    	//assertNoFailures(response);
     }
     
     /**
@@ -290,7 +291,10 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
     @Test
     public void testSearchSpecific() throws Exception {
     	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
-    	persistor.searchSpecific("twitter4", "tweet");
+    	//Just entity name
+    	persistor.searchSpecific("coalesce-oeevent","coalesce-oeevent");
+    	//Entity name and one filter value
+    	persistor.searchSpecificWithFilter("coalesce-oeevent","coalesce-oeevent","PMESIIPTMilitary", "1");
     }
 
     @Override
