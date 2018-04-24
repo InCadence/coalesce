@@ -22,6 +22,7 @@
         <module>feature</module>
         <module>elasticsearch</module>
         <module>soap</module>
+        <module>rest</module>
     </modules>
 
 </project>

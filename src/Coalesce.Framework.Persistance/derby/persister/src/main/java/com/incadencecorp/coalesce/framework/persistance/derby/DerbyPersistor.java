@@ -188,6 +188,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         {
             switch (coalesceObject.getStatus())
             {
+            case NEW:
             case READONLY:
             case ACTIVE:
                 // Persist Object

@@ -95,12 +95,12 @@ public class SearchDataController {
     }
 
     /**
-     * This simple interface AND all the provided criteria together and calls {@link #searchComplex(SearchQuery)}.
+     * This simple interface ANDs all the provided criteria together and calls {@link #searchComplex(SearchQuery)}.
      *
      * @param options list of criteria
      * @return search results for the provided list of criteria.
      */
-    public QueryResult search(List<SearchCriteria> options)
+    public QueryResult search(List<SearchCriteria> options) throws RemoteException
     {
         List<String> properties = new ArrayList<>();
         properties.add(CoalescePropertyFactory.getName().getPropertyName());
@@ -127,7 +127,7 @@ public class SearchDataController {
      * @param searchQuery list of criteria
      * @return search results for the provided list of criteria.
      */
-    public QueryResult searchComplex(SearchQuery searchQuery)
+    public QueryResult searchComplex(SearchQuery searchQuery) throws RemoteException
     {
         FilterFactory2 ff = CoalescePropertyFactory.getFilterFactory();
 
@@ -139,7 +139,7 @@ public class SearchDataController {
             List<PropertyName> properties = new ArrayList<>();
             for (int ii = 0; ii < searchQuery.getPropertyNames().size(); ii++)
             {
-                properties.add(CoalescePropertyFactory.getFilterFactory().property(searchQuery.getPropertyNames().get(ii)));
+                properties.add(ff.property(searchQuery.getPropertyNames().get(ii)));
             }
 
             // Convert Sort
@@ -148,8 +148,7 @@ public class SearchDataController {
             {
                 SortByType sort = searchQuery.getSortBy().get(ii);
 
-                sortBy[ii] = CoalescePropertyFactory.getFilterFactory().sort(sort.getPropertyName(),
-                                                                             SortOrder.valueOf(sort.getSortOrder().toString()));
+                sortBy[ii] = ff.sort(sort.getPropertyName(), SortOrder.valueOf(sort.getSortOrder().toString()));
             }
 
             Query query = new Query();
@@ -163,12 +162,17 @@ public class SearchDataController {
         }
         catch (CoalesceException e)
         {
-            throw new RuntimeException(e);
+            throw new RemoteException(e.getMessage(), e);
         }
     }
 
-    private QueryResult createResponse(SearchResults searchResults, List<PropertyName> properties) throws CoalesceException
+    private QueryResult createResponse(SearchResults searchResults, List<PropertyName> properties) throws RemoteException
     {
+        if (!searchResults.isSuccessful())
+        {
+            throw new RemoteException(searchResults.getError());
+        }
+
         try (CachedRowSet rowset = searchResults.getResults())
         {
             QueryResult results = new QueryResult();
@@ -200,7 +204,7 @@ public class SearchDataController {
         }
         catch (SQLException e)
         {
-            throw new CoalesceException(e);
+            throw new RemoteException(e.getMessage(), e);
         }
     }
 

@@ -229,9 +229,17 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
         {
             JSONObject jsonField = jsonFields.getJSONObject(ii);
 
-            CoalesceField<?> field = record.getFieldByName(jsonField.getString("name"));
+            String name = jsonField.getString("name");
+            CoalesceField<?> field = record.getFieldByName(name);
 
-            copyAttributes(jsonField, field);
+            if (field != null)
+            {
+                copyAttributes(jsonField, field);
+            }
+            else
+            {
+                LOGGER.warn("Field {} Does not Exists", name);
+            }
         }
     }
 

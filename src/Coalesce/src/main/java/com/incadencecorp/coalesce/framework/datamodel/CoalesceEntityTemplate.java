@@ -413,10 +413,10 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
                 && !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_STATUS)
                 && !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_FLATTEN)
                 && !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NOINDEX)
-                && !name.equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MAX) && !name.equalsIgnoreCase(
-                CoalesceRecordset.ATTRIBUTE_RECORDS_MIN)
-                && !name.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DATA_TYPE) && !name.equalsIgnoreCase(
-                CoalesceFieldDefinition.ATTRIBUTE_DEFAULT_VALUE)
+                && !name.equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MAX)
+                && !name.equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MIN)
+                && !name.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DATA_TYPE)
+                && !name.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DEFAULT_VALUE)
                 && !name.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_LABEL);
     }
 

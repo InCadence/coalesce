@@ -1175,6 +1175,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             {
                 switch (entity.getStatus())
                 {
+                case NEW:
                 case READONLY:
                 case ACTIVE:
                     // Persist Object

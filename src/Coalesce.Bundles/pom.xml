@@ -17,6 +17,7 @@
 	<modules>
 		<module>bundle-geotools</module>
 		<module>bundle-geomesa</module>
+		<module>bundle-ironhide</module>
 	</modules>
 
 </project>

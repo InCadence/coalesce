@@ -4,14 +4,53 @@ import { ReactTableDefaults } from 'react-table'
 import {Toggle} from 'common-components/lib/toggle.js'
 import {Collapse} from 'react-collapse';
 import {IconButton} from 'common-components/lib/components/IconButton.js'
-
+import {FilterGroup} from './filtergroup'
 import 'react-table/react-table.css'
+
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { getDefaultTheme } from 'common-components/lib/js/theme'
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 Object.assign(ReactTableDefaults, {
   defaultPageSize: 5,
   minRows: 3,
   // etc...
 })
+
+const example = {
+    "pageSize":200,
+    "pageNumber":1,
+    "propertyNames":["CoalesceEntity.objectkey"],
+    "group":{
+      "operator":"AND",
+      "criteria":[
+          {
+            "key":0,
+            "recordset":"CoalesceEntity",
+            "field":"objectkey",
+            "operator":"PropertyIsNotEqualTo",
+            "value":"aa",
+            "matchCase":false
+          },
+        ],
+        /*
+        "group":[{
+          "operator":"AND",
+          "criteria":[
+              {
+                "key":0,
+                "recordset":"CoalesceEntity",
+                "field":"name",
+                "operator":"!=",
+                "value":"aa",
+                "matchCase":false
+              },
+            ]
+          }
+        ]
+        */
+      }
+    }
 
 export class FilterCreator extends React.Component {
 
@@ -27,28 +66,8 @@ export class FilterCreator extends React.Component {
     this.state = props;
   }
 
-  componentDidMount() {
-
-    const {recordsets, tabledata} = this.state;
-
-    if (tabledata.length == 0 && recordsets.length > 0) {
-
-      tabledata.push({
-        key: 0,
-        recordset: recordsets[0].name,
-        field: recordsets[0].definition[0].name,
-        operator: '=',
-        value: '',
-        matchCase: false});
-
-      this.setState({
-        tabledata: tabledata,
-      });
-    }
-
-    this.setState({
-      currentkey: (tabledata.length - 1)
-    })
+  componentWillReceiveProps(nextProps) {
+    this.state = nextProps;
   }
 
   render() {
@@ -222,15 +241,11 @@ function createColumns(that, recordsets) {
       resizable: false,
       sortable: false,
       Cell: (cell) => {
-
-        var recordsetOptions = [];
-        recordsets.forEach(function (recordset) {
-            recordsetOptions.push(<option key={recordset.name + cell.row.key} value={recordset.name}>{recordset.name}</option>);
-        })
-
         return (
           <select className="form-control" value={cell.row.recordset} onChange={that.onRecordsetChange.bind(that, cell.row.key)}>
-            {recordsetOptions}
+            {recordsets.map((recordset) => {
+              return (<option key={recordset.name + cell.row.key} value={recordset.name}>{recordset.name}</option>);
+            })}
           </select>
         )}
     });

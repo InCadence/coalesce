@@ -331,7 +331,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
         _entityRecord.setStatus(status);
 
         switch (status) {
-
+        case NEW:
         case READONLY:
         case ACTIVE:
             if (!getCastParent().contains(this))

@@ -1,21 +1,26 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>persister-elasticsearch-parent</artifactId>
-	<name>Coalesce Elastic Search Persister Parent</name>
-	<description>Parent POM for Coalesce Elastic Search Persisters</description>
-	<packaging>pom</packaging>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>persister-elasticsearch-parent</artifactId>
+    <name>Coalesce Elastic Search Persister Parent</name>
+    <description>Parent POM for Coalesce Elastic Search Persisters</description>
+    <packaging>pom</packaging>
 
-	<parent>
-		<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-		<artifactId>persister-parent</artifactId>
-		<version>0.0.27-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
+    <parent>
+        <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+        <artifactId>persister-parent</artifactId>
+        <version>0.0.27-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
 
-	<modules>
-		<module>../../Coalesce.Framework.Persister.Elasticsearch</module>
-		<module>feature</module>
-	</modules>
+    <properties>
+        <ironhide.version>2.0.4</ironhide.version>
+        <elasticsearch.version>5.4.0</elasticsearch.version>
+    </properties>
+
+    <modules>
+        <module>../../Coalesce.Framework.Persister.Elasticsearch</module>
+        <module>feature</module>
+    </modules>
 
 </project>

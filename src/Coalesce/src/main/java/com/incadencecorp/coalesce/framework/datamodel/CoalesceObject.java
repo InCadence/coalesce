@@ -32,10 +32,11 @@ import com.incadencecorp.coalesce.common.helpers.XmlHelper;
  Distribution Statement D. Distribution authorized to the Department of
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
+
 /**
  * Every element within Coalesce extends this base class which defines common
  * properties.
- * 
+ *
  * @author Derek C.
  */
 public abstract class CoalesceObject implements ICoalesceObject {
@@ -93,6 +94,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     /*--------------------------------------------------------------------------
     Constructors
     --------------------------------------------------------------------------*/
+
     /**
      * Class constructor. Creates a CoalesceObject class.
      */
@@ -103,7 +105,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
     /**
      * Class constructor. Creates a CoalesceObject class.
-     * 
+     *
      * @param coalesceObject allowed object is {@link CoalesceObject }
      */
     CoalesceObject(CoalesceObject coalesceObject)
@@ -217,7 +219,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
     /**
      * Sets the status of the version of this element.
-     * 
+     *
      * @param value
      */
     protected final void setObjectVersionStatus(ECoalesceObjectStatus value)
@@ -279,7 +281,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     }
 
     @Override
-    public final ECoalesceObjectStatus getStatus()
+    public ECoalesceObjectStatus getStatus()
     {
 
         ECoalesceObjectStatus status = _object.getStatus();
@@ -321,12 +323,23 @@ public abstract class CoalesceObject implements ICoalesceObject {
     }
 
     /**
+     * @return whether this element is new
+     */
+    @JsonIgnore
+    public final boolean isNew()
+    {
+        return getStatus() == ECoalesceObjectStatus.NEW;
+    }
+
+    /**
      * @return whether this element is active or read only.
      */
     @JsonIgnore
     public final boolean isActive()
     {
-        switch (getStatus()) {
+        switch (getStatus())
+        {
+        case NEW:
         case READONLY:
         case ACTIVE:
             return true;
@@ -341,7 +354,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
     @JsonIgnore
     public final boolean isReadOnly()
     {
-        switch (getStatus()) {
+        switch (getStatus())
+        {
         case READONLY:
             return true;
         default:
@@ -354,9 +368,9 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject} of
      * the current
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}.
-     * 
+     *
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         the Coalesce object's parent.
+     * the Coalesce object's parent.
      */
     @JsonIgnore
     public final CoalesceObject getParent()
@@ -392,10 +406,9 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject} of
      * the current
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}.
-     * 
-     * @param parent
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *            of the object.
+     *
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     *               of the object.
      */
     public final void setParent(CoalesceObject parent)
     {
@@ -523,10 +536,10 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * Returns the String
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
      * type. E.g. field, linkage, section, etc.
-     * 
+     *
      * @return String of the
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         's type attribute.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     * 's type attribute.
      */
     public final String getType()
     {
@@ -536,7 +549,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     /**
      * Returns the (XML) String of the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}.
-     * 
+     *
      * @return (XML) String of the Coalesce object
      */
     public final String toXml()
@@ -550,7 +563,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
     /**
      * Sets attributes that are unique to each Coalesce element.
-     * 
+     *
      * @param name
      * @param value
      * @return <code>true</code> if successful.
@@ -565,14 +578,15 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * Sets the value of the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
      * attribute corresponding to the name argument.
-     * 
-     * @param name String, name of attribute to be set
+     *
+     * @param name  String, name of attribute to be set
      * @param value String, value to be assigned to the attribute
      * @return boolean indicating success/failure
      */
     public final boolean setAttribute(String name, String value)
     {
-        switch (name.toLowerCase()) {
+        switch (name.toLowerCase())
+        {
         case ATTRIBUTE_KEY:
             setKey(value);
             return true;
@@ -623,12 +637,12 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * and
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}
      * children.
-     * 
+     *
      * @return hashmap of this
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         's child
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         s.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     * 's child
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     * s.
      */
     @JsonIgnore
     public final HashMap<String, CoalesceObject> getChildCoalesceObjects()
@@ -639,7 +653,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     /**
      * Returns the child CoalesceObject, for this CoalesceObject based on the
      * String key parameter.
-     * 
+     *
      * @param key allowed object is {@link String }
      * @return possible object is {@link CoalesceObject }
      */
@@ -669,7 +683,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * Returns the value of the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
      * attribute that corresponds to the name.
-     * 
+     *
      * @param name Attribute's name
      * @return String, Attribute's value
      */
@@ -692,7 +706,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * that fall into the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
      * 's @XmlAnyAttribute HashMap.
-     * 
+     *
      * @param name Attribute's name
      * @return String, Attribute's value
      */
@@ -708,7 +722,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * that fall into the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
      * 's @XmlAnyAttribute HashMap.
-     * 
+     *
      * @return String, Attribute's value
      */
     public final Map<QName, String> getOtherAttributes()
@@ -723,7 +737,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * that fall into the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
      * 's @XmlAnyAttribute HashMap.
-     * 
+     *
      * @param name Attribute's name
      * @return DateTime, Attribute's value
      */
@@ -740,8 +754,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * that fall into the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject} 's
      * XmlAnyAttribute HashMap.
-     * 
-     * @param name String XmlAnyAttribute attribute name
+     *
+     * @param name  String XmlAnyAttribute attribute name
      * @param value XmlAnyAttribute attribute value
      * @return boolean indicating success/failure
      */
@@ -759,8 +773,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * that fall into the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
      * 's @XmlAnyAttribute HashMap.
-     * 
-     * @param name String, XmlAnyAttribute attribute name
+     *
+     * @param name  String, XmlAnyAttribute attribute name
      * @param value XmlAnyAttribute attribute DateTime value
      */
     public final void setOtherAttributeAsDate(String name, DateTime value)
@@ -773,10 +787,10 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * 's that corresponds to the provided name path. If not found or not a
      * field <code>null</code> is returned.
-     * 
+     *
      * @param names
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         of the child or null if one is not found
+     * of the child or null if one is not found
      */
     public final CoalesceRecordset getCoalesceRecordsetForNamePath(String... names)
     {
@@ -797,10 +811,10 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}'s
      * that corresponds to the provided name path. If not found or not a field
      * <code>null</code> is returned.
-     * 
+     *
      * @param names
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         of the child or null if one is not found
+     * of the child or null if one is not found
      */
     public final CoalesceSection getCoalesceSectionForNamePath(String... names)
     {
@@ -821,10 +835,10 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s
      * that corresponds to the provided name path. If not found or not a field
      * <code>null</code> is returned.
-     * 
+     *
      * @param names
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         of the child or null if one is not found
+     * of the child or null if one is not found
      */
     public final CoalesceField<?> getCoalesceFieldForNamePath(String... names)
     {
@@ -842,11 +856,11 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
     /**
      * You can either specify an xpath or pass in an array of names.
-     * 
+     *
      * @param params String corresponding to the desired child.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         of the child or <code>null</code> if one is not found or its not
-     *         a field.
+     * of the child or <code>null</code> if one is not found or its not
+     * a field.
      */
     public final CoalesceObject getCoalesceObjectForNamePath(String... params)
     {
@@ -864,7 +878,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
             names = params;
         }
 
-        switch (names.length) {
+        switch (names.length)
+        {
         case 0:
 
             // No path. Object not found.
@@ -918,10 +933,10 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * Returns the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
      * child that corresponds to the provided key.
-     * 
+     *
      * @param key String corresponding to the desired child key.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         for the child or <code>null</code> if one is not found
+     * for the child or <code>null</code> if one is not found
      */
     public final CoalesceObject getCoalesceObjectForKey(String key)
     {
@@ -985,11 +1000,11 @@ public abstract class CoalesceObject implements ICoalesceObject {
     }
 
     /**
-     * @deprecated
-     * @see #getObjectsAsList(List, ECoalesceObjectStatus...)
      * @param items
      * @param exclusions status to exclude from the return set.
      * @return a list of CoalesceObjects for the given list of XSD objects
+     * @see #getObjectsAsList(List, ECoalesceObjectStatus...)
+     * @deprecated
      */
     protected <T extends CoalesceObject, Y extends CoalesceObjectType> Map<String, T> getObjectsAsMap(List<Y> items,
                                                                                                       ECoalesceObjectStatus... exclusions)
@@ -1078,7 +1093,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
     /**
      * Prune an element from the entity.
-     * 
+     *
      * @param child
      * @return whether is was successful or not.
      */
@@ -1089,7 +1104,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
     /**
      * Prune an element from the entity.
-     * 
+     *
      * @param key
      * @return whether is was successful or not.
      */
@@ -1104,8 +1119,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
     /**
      * @return Map&lt;QName, String&gt; of the
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         's attributes
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     * 's attributes
      */
     protected Map<QName, String> getAttributes()
     {
