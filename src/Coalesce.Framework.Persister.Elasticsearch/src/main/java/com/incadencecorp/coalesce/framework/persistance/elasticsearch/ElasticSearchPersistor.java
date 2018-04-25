@@ -62,7 +62,7 @@ import java.util.*;
  *
  * @author n78554
  */
-public class ElasticSearchPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
+public class ElasticSearchPersistor implements ICoalescePersistor {
 
     // Some constants for the linkage records
     // TODO: Move this to a common area in Coalesce
@@ -268,13 +268,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         }
     }
 
-    @Override
-    public void saveTemplate(CoalesceDataConnectorBase conn, CoalesceEntityTemplate... templates)
-            throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
     public Properties getProps() throws IOException
     {
         makeSureConnectorIsInitialized();
@@ -297,10 +290,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         }
     }
 
-    @Override
     public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
-
         JsonFullEximImpl converter = new JsonFullEximImpl();
 
         for (CoalesceEntityTemplate template : templates)
@@ -413,36 +404,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         }
     }
 
-    @Override
-    public String[] getEntityXml(String... keys) throws CoalescePersistorException
-    {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(getProps());
-            List<String> xmlList = new ArrayList<String>();
-            List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
-
-            StringBuilder sb = new StringBuilder("");
-            GetResponse response;
-
-            for (String key : keys)
-            {
-                if (checkIfIndexExists(client, key))
-                {
-                    response = client.prepareGet(key, key, key).get();
-
-                    xmlList.add(response.getSourceAsString());
-                }
-            }
-
-            return xmlList.toArray(new String[xmlList.size()]);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityXml", e);
-        }
-    }
-
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
@@ -497,131 +458,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         catch (Exception e)
         {
             throw new CoalescePersistorException("GetEntityXml", e);
-        }
-    }
-
-    @Override
-    protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
-    {
-        return new ElasticSearchDataConnector();
-    }
-
-    @Override
-    protected boolean flattenObject(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
-    {
-        boolean isSuccessful = true;
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-
-            // Create a Database Connection
-            try
-            {
-                AbstractClient client = conn.getDBConnector(getProps());
-
-                for (CoalesceEntity entity : entities)
-                {
-                    // Persist (Recursively)
-                    isSuccessful &= updateCoalesceObject(entity, client, allowRemoval);
-                }
-
-                conn.commit();
-            }
-            catch (SQLException e)
-            {
-                conn.rollback();
-
-                throw new CoalescePersistorException("FlattenObject: " + e.getMessage(), e);
-            }
-            catch (Exception e)
-            {
-                conn.rollback();
-                e.printStackTrace();
-            }
-
-        }
-
-        return isSuccessful;
-    }
-
-    @Override
-    protected boolean flattenCore(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
-    {
-        boolean isSuccessful = false;
-
-        ElasticSearchDataConnector conn = null;
-
-        // Create a Database Connection
-        try
-        {
-            conn = new ElasticSearchDataConnector();
-            conn.openConnection(false);
-
-            for (CoalesceEntity entity : entities)
-            {
-                if (persistEntityObject(entity, conn.getDBConnector(getProps())))
-                {
-                    isSuccessful = true;
-                }
-            }
-
-            conn.getConnection().commit();
-        }
-        catch (Exception e)
-        {
-            conn.rollback();
-
-            throw new CoalescePersistorException("FlattenObject: " + e.getMessage(), e);
-        }
-        finally
-        {
-            conn.close();
-        }
-
-        return isSuccessful;
-    }
-
-    @Override
-    public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
-    {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
-        {
-            String value = null;
-
-            ResultSet results = conn.executeQuery("SELECT TemplateKey FROM " //schema prefix?
-                                                          + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
-                                                  new CoalesceParameter(name),
-                                                  new CoalesceParameter(source),
-                                                  new CoalesceParameter(version));
-
-            while (results.next())
-            {
-                value = results.getString("TemplateKey");
-            }
-
-            return value;
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateKey", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateKey", e);
-        }
-    }
-
-    @Override
-    public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
-    {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
-        {
-            //Don't do this because it's still sql in the parent
-            return new ArrayList<>();
-        }
-        catch (Exception ex)
-        {
-            throw new CoalescePersistorException("getEntityTemplateMetadata", ex);
         }
     }
 
@@ -999,33 +835,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
     }
 
-    /**
-     * @return EnumSet of EPersistorCapabilities
-     */
-    @Override
-    public EnumSet<EPersistorCapabilities> getCapabilities()
-    {
-        EnumSet<EPersistorCapabilities> enumSet = super.getCapabilities();
-        EnumSet<EPersistorCapabilities> newCapabilities = EnumSet.of(EPersistorCapabilities.GET_FIELD_VALUE,
-                                                                     EPersistorCapabilities.READ_TEMPLATES,
-                                                                     EPersistorCapabilities.UPDATE,
-                                                                     EPersistorCapabilities.DELETE,
-                                                                     EPersistorCapabilities.SEARCH,
-                                                                     EPersistorCapabilities.SUPPORTS_BLOB,
-                                                                     EPersistorCapabilities.GEOSPATIAL_SEARCH,
-                                                                     EPersistorCapabilities.INDEX_FIELDS);
-        if (enumSet != null)
-        {
-            enumSet.addAll(newCapabilities);
-        }
-        else
-        {
-            enumSet = newCapabilities;
-        }
-        return enumSet;
-    }
-
-    @Override
     public SearchResults search(Query query) throws CoalescePersistorException
     {
         CachedRowSet rowset = null;
@@ -1060,7 +869,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         return queryResults;
     }
 
-    @Override
     public Capabilities getSearchCapabilities()
     {
         Capabilities capability = new Capabilities();
@@ -1069,4 +877,90 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         return capability;
     }
+
+	@Override
+	public void saveTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException {
+        JsonFullEximImpl converter = new JsonFullEximImpl();
+
+        for (CoalesceEntityTemplate template : templates)
+        {
+            try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+            {
+                AbstractClient client = conn.getDBConnector(getProps());
+                XmlMapper mapper = new XmlMapper();
+                JsonNode node = mapper.readTree(template.toXml());
+
+                ObjectMapper jsonMapper = new ObjectMapper();
+                String json = jsonMapper.writeValueAsString(node);
+
+                // persist entity template to ElasticSearch
+                //String fakeJson = "{\"template\": \"te*\",\"classname\":\"com.incadencecorp.coalesce.framework.datamodel.TestEntity\",\"datecreated\":\"\",\"entityid\":\"\",\"entityidtype\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"UNIT_TEST\",\"source\":\"DSS\",\"title\":\"\",\"version\":1,\"linkagesection\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"Linkages\"},\"section\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"test section\",\"noindex\":\"false\",\"recordset\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"maxrecords\":\"0\",\"minrecords\":\"0\",\"name\":\"test1\",\"fielddefinition\":{\"datatype\":\"booleanlist\",\"datecreated\":\"\",\"defaultclassificationmarking\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"booleanlist\"}}}}";
+
+                coalesceTemplateToESTemplate(template, client);
+                //client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(coalesceTemplateToESTemplate(template, client)).get();
+            }
+            catch (CoalesceException e)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_SAVED,
+                                                                   "Template",
+                                                                   template.getKey(),
+                                                                   e.getMessage()), e);
+            }
+            catch (Exception e)
+            {
+                LOGGER.warn("Failed to register templates: " + e.getMessage());
+            }
+        }
+	}
+
+	@Override
+	public void deleteTemplate(String... keys) throws CoalescePersistorException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unregisterTemplate(String... keys) throws CoalescePersistorException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException {
+		int numEntities = entities.length;
+		for(int i=0;i<numEntities;i++) {
+			//persistEntityObject(entities[i]);
+		}
+		return true;
+	}
+
+	@Override
+	public CoalesceEntity[] getEntity(String... keys) throws CoalescePersistorException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] getEntityXml(String... keys) throws CoalescePersistorException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public EnumSet<EPersistorCapabilities> getCapabilities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

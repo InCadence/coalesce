@@ -14,6 +14,7 @@ import java.util.UUID;
 import org.elasticsearch.action.DocWriteResponse.Result;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.support.AbstractClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -28,19 +29,19 @@ import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
 import com.incadencecorp.coalesce.framework.persistance.testobjects.GDELT_Test_Entity;
-
-import ironhide.client.IronhideClient;
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 
 public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<ElasticSearchPersistor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistorIT.class);
 
     private static ElasticSearchDataConnector conn;
-    private static IronhideClient client;
+    private static AbstractClient client;
     
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
+        System.setProperty(CoalesceParameters.COALESCE_CONFIG_LOCATION_PROPERTY, "src/test/resources");
         InputStream in = ElasticSearchDataConnector.class.getResourceAsStream("/elasticsearch-config.properties");
         Properties props = new Properties();
         props.load(in);
