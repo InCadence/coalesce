@@ -139,6 +139,10 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
             }
         }
 
+        Map<String, Object> entityXMLMap = new HashMap<>();
+        entityXMLMap.put("enabled", "false");
+        propertiesMap.put("entityXML", entityXMLMap);
+
         PutIndexTemplateRequest request = new PutIndexTemplateRequest();
         request.name(template.getName().toLowerCase());
         request.source(esTemplate);

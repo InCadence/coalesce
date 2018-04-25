@@ -353,8 +353,18 @@ public class ElasticSearchPersistor implements ICoalescePersistor {
                 propertiesMap.put(typeName.replace(template.getName(), ""), innerMap);
             }
         }
+        
+        /*
+        if(ElasticSearchSettings.getStoreXML())
+        {
+            innerMap = new HashMap<String, Object>();
 
-        client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(esTemplate).addMapping(
+            innerMap.put("enabled", false);
+            propertiesMap.put("entityXML", innerMap);
+        }
+        */
+
+        client.admin().indices().preparePutTemplate("coalesce-" + template.getName().toLowerCase()).setSource(esTemplate).addMapping(
                 "mapping",
                 mappingMap).get();
 
@@ -958,9 +968,9 @@ public class ElasticSearchPersistor implements ICoalescePersistor {
 		return null;
 	}
 
-	@Override
-	public EnumSet<EPersistorCapabilities> getCapabilities() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public EnumSet<EPersistorCapabilities> getCapabilities()
+    {
+        return EnumSet.of(EPersistorCapabilities.CREATE, EPersistorCapabilities.UPDATE, EPersistorCapabilities.DELETE);
+    }
 }

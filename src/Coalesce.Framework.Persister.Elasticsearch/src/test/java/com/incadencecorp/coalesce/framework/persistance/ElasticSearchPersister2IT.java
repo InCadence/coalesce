@@ -21,7 +21,6 @@ package com.incadencecorp.coalesce.framework.persistance;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersister2;
-import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
 import org.junit.BeforeClass;
 
 /**

@@ -18,6 +18,24 @@
 
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.client.support.AbstractClient;
+import org.elasticsearch.rest.RestStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
@@ -26,23 +44,13 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.client.support.AbstractClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 
 public class ElasticSearchPersister2 extends ElasticSearchTemplatePersister implements ICoalescePersistor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersister2.class);
+    private static final String COALESCE_ENTITY_INDEX = "coalesceentityindex";
+    private static final String XML = CoalescePropertyFactory.getEntityXml().getPropertyName();
 
     @Override
     public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
@@ -57,6 +65,7 @@ public class ElasticSearchPersister2 extends ElasticSearchTemplatePersister impl
                 {
                     deleteLinkages(entity, client);
                     deleteEntity(entity, client);
+                    deleteEntityIndex(entity, client);
                 }
                 else
                 {
@@ -71,45 +80,86 @@ public class ElasticSearchPersister2 extends ElasticSearchTemplatePersister impl
 
     @Override
     public CoalesceEntity[] getEntity(String... keys) throws CoalescePersistorException
-    {
-        return new CoalesceEntity[0];
+    { 
+    	List<CoalesceEntity> results = new ArrayList<>();
+
+    	for(String entityXML : getEntityXml(keys)) 
+    	{
+    		results.add(CoalesceEntity.create(entityXML));
+    	}
+    	
+        return results.toArray(new CoalesceEntity[results.size()]);
     }
 
     @Override
     public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
-        return new String[0];
+    	List<String> results = new ArrayList<>();
+    	try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+        {
+	        AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
+	        
+	    	for(String key : keys) 
+	    	{
+	    		GetRequest request = new GetRequest();
+	    		request.index(COALESCE_ENTITY_INDEX);
+	    		request.type(COALESCE_ENTITY_INDEX);
+	    		request.id(key);
+	    		
+	    		GetResponse getResponse = client.get(request).actionGet();
+	    		
+	    		//LOGGER.debug("Returned index: " + getResponse.getSource().get(XML));
+	    		
+	    		if(getResponse != null && getResponse.getSource() != null ) 
+	    		{
+	    			results.add((String)getResponse.getSource().getOrDefault(XML,""));
+	    		}
+	    	}
+        }	catch (ElasticsearchException e) {
+    	    if (e.status() == RestStatus.NOT_FOUND) {
+    	        LOGGER.error(e.getDetailedMessage());
+    	    }
+    	}
+    	
+        return results.toArray(new String[results.size()]);
     }
 
     @Override
     public EnumSet<EPersistorCapabilities> getCapabilities()
     {
-        return EnumSet.of(EPersistorCapabilities.CREATE, EPersistorCapabilities.UPDATE, EPersistorCapabilities.DELETE);
-    }
-
-    private void deleteLinkages(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
-    {
-        DeleteRequest request = new DeleteRequest();
-        request.index("oelinkage");
-        request.type("oelinkage");
-        request.id(entity.getKey());
-
-        DeleteResponse response = conn.delete(request).actionGet();
-
-        LOGGER.debug("Delete linkage for entity coalesce-{} : {}", entity.getName(), response);
-
+        return EnumSet.of(EPersistorCapabilities.CREATE, EPersistorCapabilities.READ, EPersistorCapabilities.UPDATE, EPersistorCapabilities.DELETE);
     }
 
     private void deleteEntity(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
     {
-        DeleteRequest request = new DeleteRequest();
-        request.index("coalesce-" + entity.getName().toLowerCase());
-        request.type(entity.getType().toLowerCase());
-        request.id(entity.getKey());
+        deleteFromElasticSearch(conn, "coalesce-" + entity.getName().toLowerCase(), 
+        		entity.getType().toLowerCase(), 
+        		entity.getKey());
+    }
 
-        DeleteResponse response = conn.delete(request).actionGet();
+    private void deleteLinkages(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
+    {
+        deleteFromElasticSearch(conn, "oelinkage", 
+        		"oelinkage", 
+        		entity.getKey());
+    }
 
-        LOGGER.debug("Delete entity for entity coalesce-{} : {}", entity.getName(), response);
+    private void deleteEntityIndex(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
+    {
+        deleteFromElasticSearch(conn, COALESCE_ENTITY_INDEX, 
+        		COALESCE_ENTITY_INDEX, 
+        		entity.getKey());
+    }
+
+    private void deleteFromElasticSearch(AbstractClient conn, String index, String type, String id) {
+        DeleteRequest entityRequest = new DeleteRequest();
+        entityRequest.index(index);
+        entityRequest.type(type);
+        entityRequest.id(id);
+
+        DeleteResponse entityResponse = conn.delete(entityRequest).actionGet();
+
+        LOGGER.debug("Delete entity for entity {} : {}", index, entityResponse);
     }
 
     private void persistLinkages(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
@@ -154,6 +204,8 @@ public class ElasticSearchPersister2 extends ElasticSearchTemplatePersister impl
         GetResponse getResponse = conn.get(getRequest).actionGet();
 
         LOGGER.debug(getResponse.toString());
+        
+        persistEntityIndex(entity, conn);
     }
 
     private Map<String, Object> createValueMap(CoalesceEntity entity)
@@ -161,6 +213,11 @@ public class ElasticSearchPersister2 extends ElasticSearchTemplatePersister impl
         HashMap<String, Object> map = new HashMap<>();
 
         getFieldValues(entity, map);
+        
+        if(ElasticSearchSettings.getStoreXML()) {
+	        //Add entity XML to the end of the map.
+	        map.put("entityXML", entity.toXml());
+        }
 
         return map;
     }
@@ -209,6 +266,47 @@ public class ElasticSearchPersister2 extends ElasticSearchTemplatePersister impl
                 getFieldValues(child, results);
             }
         }
+    }
+    
+    private void persistEntityIndex(CoalesceEntity entity, AbstractClient conn) {
+    	IndexResponse response;
+	    IndexRequest request = new IndexRequest();
+	    request.index(COALESCE_ENTITY_INDEX);
+	    request.type(COALESCE_ENTITY_INDEX);
+	    request.id(entity.getKey());
+	    
+	    Map<String, Object> entityMap = new HashMap<>();
+	    entityMap.put("id", entity.getAttribute(CoalesceEntity.ATTRIBUTE_ENTITYID));
+	    entityMap.put("name", entity.getAttribute(CoalesceEntity.ATTRIBUTE_NAME));
+	    entityMap.put("source", entity.getAttribute(CoalesceEntity.ATTRIBUTE_SOURCE));
+	    entityMap.put("version", entity.getAttribute(CoalesceEntity.ATTRIBUTE_VERSION));
+	    entityMap.put("dateCreated", entity.getAttribute(CoalesceEntity.ATTRIBUTE_DATECREATED));
+	    entityMap.put("lastModified", entity.getAttribute(CoalesceEntity.ATTRIBUTE_LASTMODIFIED));
+	    
+	    if(ElasticSearchSettings.getStoreXML()) {
+		    entityMap.put(XML, entity.toXml());
+		    
+		    //Nested tabs on purpose to show map structure
+		    
+						    Map<String, Object> enabledMap = new HashMap<>();
+						    enabledMap.put("enabled", false);
+						    
+					    Map<String, Object> xmlFieldMap = new HashMap<>();
+					    xmlFieldMap.put(XML, enabledMap);
+					    
+				    Map<String, Object> propertiesMap = new HashMap<>();
+				    propertiesMap.put("properties", xmlFieldMap);
+				    
+			    Map<String, Object> typeMap = new HashMap<>();
+			    typeMap.put(entity.getType().toLowerCase(), propertiesMap);
+			    
+		    entityMap.put("mappings", typeMap);
+	    }
+	    request.source(entityMap);
+	
+	    response = conn.index(request).actionGet();
+	
+	    LOGGER.debug("Saved XML Index called: coalesceentityindex : {}", response);
     }
 
     private String normalizeName(String name)

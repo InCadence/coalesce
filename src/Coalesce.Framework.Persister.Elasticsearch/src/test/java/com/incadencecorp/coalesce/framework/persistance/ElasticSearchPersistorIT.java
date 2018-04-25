@@ -27,6 +27,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
+import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersister2;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
 import com.incadencecorp.coalesce.framework.persistance.testobjects.GDELT_Test_Entity;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
@@ -91,7 +92,7 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
         //ElasticSearch requires names be lowercase
         entity1.setName(entity1.getName().toLowerCase());
 
-        ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+        ElasticSearchPersister2 persistor = new ElasticSearchPersister2();
 
         //As long as there are no problems with saving the new entity, should return true
         assertTrue(persistor.saveEntity(true, entity1));
@@ -185,7 +186,7 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
         
         CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity1);
         
-        //persistor.registerTemplate(template);
+        persistor.registerTemplate(template);
 	}
 
 	@Override
@@ -269,10 +270,16 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
      */
     @Test
     public void testGet() throws Exception {
-    	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
-    	List<String> keys = persistor.getCoalesceEntityKeysForEntityId("twitter4", "tweet", "1", null);
+    	ElasticSearchPersister2 persistor = new ElasticSearchPersister2();
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+        
+        //ElasticSearch requires names be lowercase
+        entity1.setName(entity1.getName().toLowerCase());
+        
+        persistor.saveEntity(true, entity1);
     	
-    	System.out.println(keys.toString());
+    	System.out.println(persistor.getEntity(entity1.getKey()).toString());
     }
     
     /**
