@@ -53,7 +53,7 @@
 						</Export-Package>
                         <Import-Package>
                             org.joda.time*;version="[1.6.2, 3)",
-							org.joda.time.format;version="[1.6.2, 3)"
+							org.joda.time.format;version="[1.6.2, 3)",
                             *;resolution:=optional
                         </Import-Package>
 						<Embed-Dependency>
