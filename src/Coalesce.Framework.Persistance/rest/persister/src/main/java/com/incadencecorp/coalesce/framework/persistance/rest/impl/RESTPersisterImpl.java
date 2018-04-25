@@ -32,10 +32,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Derek Clemenzi
@@ -45,6 +42,14 @@ public class RESTPersisterImpl extends RESTTemplatePersisterImpl implements ICoa
     private static final Logger LOGGER = LoggerFactory.getLogger(RESTPersisterImpl.class);
 
     private final String url;
+
+    /**
+     * Default Constructor
+     */
+    public RESTPersisterImpl()
+    {
+        this(Collections.emptyMap());
+    }
 
     /**
      * Default constructor with user defined configuration.
@@ -95,8 +100,7 @@ public class RESTPersisterImpl extends RESTTemplatePersisterImpl implements ICoa
 
                 if (response.getStatus() != 204)
                 {
-                    throw new CoalescePersistorException(
-                            "(FAILED) Code: " + response.getStatus() + " " + target.getUri());
+                    throw new CoalescePersistorException("(FAILED) Code: " + response.getStatus() + " " + target.getUri());
                 }
             }
         }
@@ -162,11 +166,9 @@ public class RESTPersisterImpl extends RESTTemplatePersisterImpl implements ICoa
     @Override
     public EnumSet<EPersistorCapabilities> getCapabilities()
     {
-        EnumSet<EPersistorCapabilities> enumSet = EnumSet.of(EPersistorCapabilities.CREATE,
-                                                             EPersistorCapabilities.READ,
-                                                             EPersistorCapabilities.UPDATE,
-                                                             EPersistorCapabilities.READ_TEMPLATES);
-
-        return enumSet;
+        return EnumSet.of(EPersistorCapabilities.CREATE,
+                          EPersistorCapabilities.READ,
+                          EPersistorCapabilities.UPDATE,
+                          EPersistorCapabilities.READ_TEMPLATES);
     }
 }
