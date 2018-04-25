@@ -14,6 +14,7 @@ import java.util.UUID;
 import org.elasticsearch.action.DocWriteResponse.Result;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.support.AbstractClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistorIT.class);
 
     private static ElasticSearchDataConnector conn;
-    private static IronhideClient client;
+    private static AbstractClient client;
     
     @BeforeClass
     public static void setUpBeforeClass() throws Exception

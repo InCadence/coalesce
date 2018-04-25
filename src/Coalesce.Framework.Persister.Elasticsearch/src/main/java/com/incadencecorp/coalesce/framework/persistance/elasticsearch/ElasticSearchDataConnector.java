@@ -19,6 +19,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -43,6 +44,14 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
     protected String getProcedurePrefix()
     {
         return "";
+    }
+
+    public AbstractClient getDBConnector(Map<String, String> props)
+    {
+        Properties properties = new Properties();
+        properties.putAll(props);
+
+        return getDBConnector(properties);
     }
 
     public AbstractClient getDBConnector(Properties props)
