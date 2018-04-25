@@ -51,9 +51,11 @@
 							ironhide.client.*;version=${ironhide.version};-split-package:=merge-last,
 							org.elasticsearch.*;version=${elasticsearch.version};-split-package:=merge-last,
 						</Export-Package>
-						<Import-Package>
-							*;resolution:=optional
-						</Import-Package>
+                        <Import-Package>
+                            org.joda.time*;version="[1.6.2, 3)",
+							org.joda.time.format;version="[1.6.2, 3)"
+                            *;resolution:=optional
+                        </Import-Package>
 						<Embed-Dependency>
 							*;artifactId=!org.osgi.compendium;scope=compile|runtime;type=!pom;inline=false
 						</Embed-Dependency>
