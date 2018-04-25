@@ -8,6 +8,7 @@
 		<feature prerequisite="false" dependency="false">persister-postgres-feature</feature>
 		<feature prerequisite="false" dependency="false">persister-neo4j-feature</feature>
 		<feature prerequisite="false" dependency="false">persister-accumulo-feature</feature>
+		<feature prerequisite="false" dependency="false">persister-elasticsearch-feature</feature>
 		<feature prerequisite="false" dependency="false">persister-derby-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-services-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-frontend</feature>

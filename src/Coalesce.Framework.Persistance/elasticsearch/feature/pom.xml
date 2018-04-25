@@ -23,13 +23,19 @@
     </build>
 
     <dependencies>
-<!--
+        <!--
+                <dependency>
+                    <groupId>org.apache.servicemix.bundles</groupId>
+                    <artifactId>org.apache.servicemix.bundles.lucene</artifactId>
+                    <version>6.5.1_1</version>
+                </dependency>
+        -->
+
         <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.lucene</artifactId>
-            <version>6.5.1_1</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
         </dependency>
--->
 
         <dependency>
             <groupId>com.incadencecorp.coalesce</groupId>
@@ -80,12 +86,12 @@
             <artifactId>coalesce-search</artifactId>
             <scope>provided</scope>
         </dependency>
-		<dependency>
-			<groupId>ironhide</groupId>
-			<artifactId>ironhide-client</artifactId>
+        <dependency>
+            <groupId>ironhide</groupId>
+            <artifactId>ironhide-client</artifactId>
             <version>${ironhide.version}</version>
             <scope>provided</scope>
-		</dependency>
+        </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
