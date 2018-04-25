@@ -33,78 +33,65 @@ import java.util.Date;
  */
 public class ElasticSearchMapperImpl implements ICoalesceMapper<Class<?>> {
 
-	/**
-	 * Gets the ElasticSearch String name for compatible types to put
-	 * in ElasticSearch type maps
-	 * 
-	 * @param type Coalesce type 
-	 * @return String of type 
-	 */
+    /**
+     * Gets the ElasticSearch String name for compatible types to put
+     * in ElasticSearch type maps
+     *
+     * @param type Coalesce type
+     * @return String of type
+     */
     public String mapToString(ECoalesceFieldDataTypes type)
     {
         switch (type)
         {
-
+        case BOOLEAN_LIST_TYPE:
         case BOOLEAN_TYPE:
             return "boolean";
 
+        case DOUBLE_LIST_TYPE:
         case DOUBLE_TYPE:
             return "double";
 
+        case FLOAT_LIST_TYPE:
         case FLOAT_TYPE:
             return "float";
 
         case GEOCOORDINATE_LIST_TYPE:
-        //    return MultiPoint.class;
-
         case GEOCOORDINATE_TYPE:
             return "geo_point";
 
         case LINE_STRING_TYPE:
-        //    return LineString.class;
-
         case POLYGON_TYPE:
-            return "geo_shape";
-
         case CIRCLE_TYPE:
             return "geo_shape";
 
+        case ENUMERATION_LIST_TYPE:
+        case ENUMERATION_TYPE:
+        case INTEGER_LIST_TYPE:
         case INTEGER_TYPE:
             return "integer";
 
-        case STRING_TYPE:
-        	return "string";
-        case URI_TYPE:
-        case STRING_LIST_TYPE:
-        case DOUBLE_LIST_TYPE:
-        case INTEGER_LIST_TYPE:
-        case LONG_LIST_TYPE:
-        case FLOAT_LIST_TYPE:
         case GUID_LIST_TYPE:
-        case BOOLEAN_LIST_TYPE:
-        case ENUMERATION_LIST_TYPE:
-        //    return String.class;
-
         case GUID_TYPE:
-        //    return String.class;
+        case STRING_LIST_TYPE:
+        case STRING_TYPE:
+        case URI_TYPE:
+            return "string";
 
         case DATE_TIME_TYPE:
             return "date";
 
+        case LONG_LIST_TYPE:
         case LONG_TYPE:
             return "long";
 
-        case ENUMERATION_TYPE:
-            //return Integer.class;
-
         case FILE_TYPE:
         case BINARY_TYPE:
-        	return "binary";
         default:
             return null;
         }
     }
-	
+
     @Override
     public Class<?> map(ECoalesceFieldDataTypes type)
     {
