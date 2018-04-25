@@ -20,14 +20,14 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersister2;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
+
 import org.junit.BeforeClass;
 
 /**
  * @author Derek Clemenzi
  */
-public class ElasticSearchPersister2IT extends AbstractCoalescePersistorTest<ElasticSearchPersister2> {
+public class ElasticSearchPersistor2IT extends AbstractCoalescePersistorTest<ElasticSearchPersistor> {
 
     @BeforeClass
     public static void initialize()
@@ -36,8 +36,8 @@ public class ElasticSearchPersister2IT extends AbstractCoalescePersistorTest<Ela
     }
 
     @Override
-    protected ElasticSearchPersister2 createPersister() throws CoalescePersistorException
+    protected ElasticSearchPersistor createPersister() throws CoalescePersistorException
     {
-        return new ElasticSearchPersister2();
+        return new ElasticSearchPersistor();
     }
 }

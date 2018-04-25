@@ -15,6 +15,7 @@ import com.incadencecorp.coalesce.framework.persistance.*;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.apache.commons.lang.NotImplementedException;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
@@ -40,6 +41,15 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
 
+import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.rest.RestStatus;
+
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+
 /*-----------------------------------------------------------------------------'
  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
 
@@ -62,7 +72,7 @@ import java.util.*;
  *
  * @author n78554
  */
-public class ElasticSearchPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
+public class ElasticSearchPersistor implements ICoalescePersistor {
 
     // Some constants for the linkage records
     // TODO: Move this to a common area in Coalesce
@@ -84,6 +94,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     --------------------------------------------------------------------------*/
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistor.class);
+    private static final String COALESCE_ENTITY_INDEX = "coalesceentityindex";
+    private static final String XML = CoalescePropertyFactory.getEntityXml().getPropertyName();
 
     /*--------------------------------------------------------------------------
     Overridden Functions
@@ -106,7 +118,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(getProps());
+            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
             QueryBuilder qb = QueryBuilders.matchAllQuery();
             SearchResponse response = client.prepareSearch().setQuery(qb).get();
             //.execute()
@@ -125,7 +137,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(getProps());
+            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
             QueryBuilder qb = QueryBuilders.matchAllQuery();
             //QueryBuilder qb = QueryBuilders.matchPhraseQuery("PMESIIPTMilitary", "1");
             SearchResponse response = client.prepareSearch(searchValue)
@@ -148,7 +160,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(getProps());
+            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
             QueryBuilder qb = QueryBuilders.matchPhraseQuery(filterName, filterValue);
             SearchResponse response = client.prepareSearch(searchValue)
                     //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
@@ -174,115 +186,12 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(getProps());
+            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-    }
-
-    public List<String> getCoalesceEntityKeysForEntityId(String entityId,
-                                                         String entityIdType,
-                                                         String entityName,
-                                                         String entitySource) throws CoalescePersistorException
-    {
-        try
-        {
-            if (entitySource != null && entitySource != "")
-            {
-                //TODO: Add source to this if needed
-                return getCoalesceEntityKeysForEntityId(entityId, entityIdType, entityName);
-            }
-            else
-            {
-                return this.getCoalesceEntityKeysForEntityId(entityId, entityIdType, entityName);
-            }
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetCoalesceEntityKeysForEntityId", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetCoalesceEntityKeysForEntityId", e);
-        }
-    }
-
-    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
-    {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
-        {
-            //return this.getCoalesceEntityIdAndTypeForKey(key, conn);
-            return null; //TODO: implement this search in Elasticsearch
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetCoalesceEntityIdAndTypeForKey", e);
-        }
-    }
-
-    public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
-    {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            return this.getCoalesceObjectLastModified(key, objectType, conn.getDBConnector(getProps()));
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetCoalesceObjectLastModified", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetCoalesceObjectLastModified", e);
-        }
-    }
-
-    public byte[] getBinaryArray(String key) throws CoalescePersistorException
-    {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
-        {
-
-            byte[] binaryArray = null;
-
-            ResultSet results = conn.executeQuery("SELECT BinaryObject FROM " //schema prefix?
-                                                          + "CoalesceFieldBinaryData WHERE ObjectKey=?",
-                                                  new CoalesceParameter(key, Types.OTHER));
-
-            // Get Results
-            if (results != null && results.first())
-            {
-                Blob dataVal = results.getBlob("BinaryObject");
-                binaryArray = dataVal.getBytes(1, (int) dataVal.length());
-            }
-
-            return binaryArray;
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetBinaryArray", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetBinaryArray", e);
-        }
-    }
-
-    @Override
-    public void saveTemplate(CoalesceDataConnectorBase conn, CoalesceEntityTemplate... templates)
-            throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    public Properties getProps() throws IOException
-    {
-        makeSureConnectorIsInitialized();
-
-        Properties props = new Properties();
-        props.putAll(ElasticSearchSettings.getParameters());
-
-        return props;
     }
 
     public void makeSureConnectorIsInitialized()
@@ -297,17 +206,15 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         }
     }
 
-    @Override
     public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
-
         JsonFullEximImpl converter = new JsonFullEximImpl();
 
         for (CoalesceEntityTemplate template : templates)
         {
             try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
             {
-                AbstractClient client = conn.getDBConnector(getProps());
+                AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
                 XmlMapper mapper = new XmlMapper();
                 JsonNode node = mapper.readTree(template.toXml());
 
@@ -362,8 +269,18 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
                 propertiesMap.put(typeName.replace(template.getName(), ""), innerMap);
             }
         }
+        
+        /*
+        if(ElasticSearchSettings.getStoreXML())
+        {
+            innerMap = new HashMap<String, Object>();
 
-        client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(esTemplate).addMapping(
+            innerMap.put("enabled", false);
+            propertiesMap.put("entityXML", innerMap);
+        }
+        */
+
+        client.admin().indices().preparePutTemplate("coalesce-" + template.getName().toLowerCase()).setSource(esTemplate).addMapping(
                 "mapping",
                 mappingMap).get();
 
@@ -372,560 +289,9 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         return esTemplate;
     }
 
-    public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
-    {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
-        {
-            //return getXPathRecursive(key, objectType, "", conn);
-
-            return null; //TODO implement getXPathRecursive
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetXPath", e);
-        }
-    }
-
-    public String getFieldValue(String fieldKey) throws CoalescePersistorException
-    {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
-        {
-            String value = null;
-
-            ResultSet results = conn.executeQuery("SELECT value FROM " //schema prefix?
-                                                          + "CoalesceField WHERE ObjectKey =?",
-                                                  new CoalesceParameter(fieldKey, Types.OTHER));
-
-            while (results.next())
-            {
-                value = results.getString("value");
-            }
-
-            return value;
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetFieldValue", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetFieldValue", e);
-        }
-    }
-
-    @Override
-    public String[] getEntityXml(String... keys) throws CoalescePersistorException
-    {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(getProps());
-            List<String> xmlList = new ArrayList<String>();
-            List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
-
-            StringBuilder sb = new StringBuilder("");
-            GetResponse response;
-
-            for (String key : keys)
-            {
-                if (checkIfIndexExists(client, key))
-                {
-                    response = client.prepareGet(key, key, key).get();
-
-                    xmlList.add(response.getSourceAsString());
-                }
-            }
-
-            return xmlList.toArray(new String[xmlList.size()]);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityXml", e);
-        }
-    }
-
-    public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
-        {
-            String value = null;
-
-            ResultSet results = conn.executeQuery("SELECT EntityXml FROM " //schema prefix?
-                                                          + "CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
-                                                  new CoalesceParameter(entityId),
-                                                  new CoalesceParameter(entityIdType));
-
-            while (results.next())
-            {
-                value = results.getString("EntityXml");
-            }
-
-            return value;
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetEntityXml", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityXml", e);
-        }
-    }
-
-    public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
-        {
-            String value = null;
-
-            ResultSet results = conn.executeQuery("SELECT EntityXml FROM " //schema prefix?
-                                                          + "CoalesceEntity WHERE Name=? AND EntityId=? AND EntityIdType=?",
-                                                  new CoalesceParameter(name),
-                                                  new CoalesceParameter(entityId),
-                                                  new CoalesceParameter(entityIdType));
-
-            while (results.next())
-            {
-                value = results.getString("EntityXml");
-            }
-
-            return value;
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetEntityXml", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityXml", e);
-        }
-    }
-
-    @Override
-    protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
-    {
-        return new ElasticSearchDataConnector();
-    }
-
-    @Override
-    protected boolean flattenObject(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
-    {
-        boolean isSuccessful = true;
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-
-            // Create a Database Connection
-            try
-            {
-                AbstractClient client = conn.getDBConnector(getProps());
-
-                for (CoalesceEntity entity : entities)
-                {
-                    // Persist (Recursively)
-                    isSuccessful &= updateCoalesceObject(entity, client, allowRemoval);
-                }
-
-                conn.commit();
-            }
-            catch (SQLException e)
-            {
-                conn.rollback();
-
-                throw new CoalescePersistorException("FlattenObject: " + e.getMessage(), e);
-            }
-            catch (Exception e)
-            {
-                conn.rollback();
-                e.printStackTrace();
-            }
-
-        }
-
-        return isSuccessful;
-    }
-
-    @Override
-    protected boolean flattenCore(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
-    {
-        boolean isSuccessful = false;
-
-        ElasticSearchDataConnector conn = null;
-
-        // Create a Database Connection
-        try
-        {
-            conn = new ElasticSearchDataConnector();
-            conn.openConnection(false);
-
-            for (CoalesceEntity entity : entities)
-            {
-                if (persistEntityObject(entity, conn.getDBConnector(getProps())))
-                {
-                    isSuccessful = true;
-                }
-            }
-
-            conn.getConnection().commit();
-        }
-        catch (Exception e)
-        {
-            conn.rollback();
-
-            throw new CoalescePersistorException("FlattenObject: " + e.getMessage(), e);
-        }
-        finally
-        {
-            conn.close();
-        }
-
-        return isSuccessful;
-    }
-
-    @Override
-    public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
-    {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
-        {
-            String value = null;
-
-            ResultSet results = conn.executeQuery("SELECT TemplateKey FROM " //schema prefix?
-                                                          + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
-                                                  new CoalesceParameter(name),
-                                                  new CoalesceParameter(source),
-                                                  new CoalesceParameter(version));
-
-            while (results.next())
-            {
-                value = results.getString("TemplateKey");
-            }
-
-            return value;
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateKey", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateKey", e);
-        }
-    }
-
-    @Override
-    public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
-    {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
-        {
-            //Don't do this because it's still sql in the parent
-            return new ArrayList<>();
-        }
-        catch (Exception ex)
-        {
-            throw new CoalescePersistorException("getEntityTemplateMetadata", ex);
-        }
-    }
-
-    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
-    {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
-        {
-            String value = null;
-
-            ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " //schema prefix?
-                                                          + "CoalesceEntityTemplate WHERE TemplateKey=?",
-                                                  new CoalesceParameter(key, Types.OTHER));
-
-            while (results.next())
-            {
-                value = results.getString("TemplateXml");
-            }
-
-            return CoalesceEntityTemplate.create(value);
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
-        }
-    }
-
-    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version)
-            throws CoalescePersistorException
-    {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector())
-        {
-            String value = null;
-
-            ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " //Schema prefix?
-                                                          + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
-                                                  new CoalesceParameter(name),
-                                                  new CoalesceParameter(source),
-                                                  new CoalesceParameter(version));
-
-            while (results.next())
-            {
-                value = results.getString("TemplateXml");
-            }
-
-            return CoalesceEntityTemplate.create(value);
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
-        }
-    }
-
-    /*--------------------------------------------------------------------------
-    Protected Functions
-    --------------------------------------------------------------------------*/
-
-    /**
-     * Adds or Updates a Coalesce object that matches the given parameters.
-     *
-     * @param coalesceObject the Coalesce object to be added or updated
-     * @param conn           is the PostGresDataConnector database connection
-     * @return isSuccessful = True = Successful add/update operation.
-     * @throws SQLException
-     */
-    protected boolean persistObject(CoalesceObject coalesceObject, AbstractClient conn) throws SQLException
-    {
-        boolean isSuccessful = true;
-
-        switch (coalesceObject.getType())
-        {
-        case "entity":
-
-            // isSuccessful = checkLastModified(coalesceObject, conn);
-            isSuccessful = persistEntityObject((CoalesceEntity) coalesceObject, conn);
-            break;
-
-        default:
-            isSuccessful = false;
-        }
-
-        return isSuccessful;
-    }
-
-    /**
-     * Adds or Updates a Coalesce entity that matches the given parameters.
-     *
-     * @param entity the XsdEntity to be added or updated
-     * @param conn   is the PostGresDataConnector database connection
-     * @return True = No Update required.
-     * @throws SQLException
-     */
-    private boolean persistEntityObject(CoalesceEntity entity, AbstractClient conn) throws SQLException
-    {
-        // Return true if no update is required.
-        //Worry about this later.
-        //        if (!checkLastModified(entity, conn))
-        //        {
-        //            return true;
-        //        }
-
-        IndexResponse response;
-        try
-        {
-            HashMap<String, Object> map = new HashMap<String, Object>();
-
-            for (CoalesceSection section : entity.getSectionsAsList())
-            {
-                for (CoalesceRecordset recordset : section.getRecordsetsAsList())
-                {
-                    for (CoalesceRecord record : recordset.getAllRecords())
-                    {
-                        for (CoalesceField field : record.getFields())
-                        {
-                            map.put(field.getName(), field.getValue());
-                            LOGGER.debug("Adding field " + field.getName() + " with value: " + field.getValue());
-                        }
-                    }
-                }
-            }
-
-            Map<String, Object> linkageMap = createLinkageMap(entity);
-
-            conn.prepareIndex("oelinkage", "oelinkage").setSource(linkageMap).get();
-            LOGGER.debug("Indexed linkage for entity " + "coalesce-" + entity.getName());
-
-            // convert JSON string to Map
-            response = conn.prepareIndex("coalesce-" + entity.getName().toLowerCase(),
-                                         entity.getType().toLowerCase()).setSource(map).get();
-            System.out.println("Saved Index called: " + "coalesce-" + entity.getName());
-
-            System.out.println(response.toString());
-        }
-        catch (CoalesceException e)
-        {
-            e.printStackTrace();
-            return false;
-        }
-        catch (IllegalArgumentException e)
-        {
-            e.printStackTrace();
-        }
-
-        //If the index response is returned and no exception was thrown, the index operation was successful
-        return true;
-    }
-
-    /**
-     * persist the Linkage for an Entity. This will create a new document of the Linkage index
-     *
-     * @param entity The entity to persist the linkages for
-     * @return returns true if no exceptions were thrown
-     */
-    private Map<String, Object> createLinkageMap(CoalesceEntity entity)
-    {
-        //HashMap representation of the linkage for indexing in ElasticSearch
-        HashMap<String, Object> linkageMap = new HashMap<String, Object>();
-
-        Map<String, CoalesceLinkage> linkages = entity.getLinkages();
-        for (Map.Entry<String, CoalesceLinkage> mlink : linkages.entrySet())
-        {
-            CoalesceLinkage link = mlink.getValue();
-
-            linkageMap.put(LINKAGE_KEY_COLUMN_NAME, link.getKey());
-            linkageMap.put(LINKAGE_LABEL_COLUMN_NAME, link.getName());
-            linkageMap.put(LINKAGE_ENTITY1_KEY_COLUMN_NAME, link.getEntity1Key());
-            linkageMap.put(LINKAGE_ENTITY1_NAME_COLUMN_NAME, link.getEntity1Name());
-            linkageMap.put(LINKAGE_ENTITY1_SOURCE_COLUMN_NAME, link.getEntity1Source());
-            linkageMap.put(LINKAGE_ENTITY1_VERSION_COLUMN_NAME, link.getEntity1Version());
-            linkageMap.put(LINKAGE_ENTITY2_KEY_COLUMN_NAME, link.getEntity2Key());
-            linkageMap.put(LINKAGE_ENTITY2_NAME_COLUMN_NAME, link.getEntity2Name());
-            linkageMap.put(LINKAGE_ENTITY2_SOURCE_COLUMN_NAME, link.getEntity2Source());
-            linkageMap.put(LINKAGE_LAST_MODIFIED_COLUMN_NAME, link.getLastModifiedAsString());
-            linkageMap.put(LINKAGE_LINK_TYPE_COLUMN_NAME, link.getLinkType().getLabel());
-        }
-
-        //If the index response is returned and no exception was thrown, the index operation was successful
-        return linkageMap;
-    }
-
     /*--------------------------------------------------------------------------
     Protected Methods
     --------------------------------------------------------------------------*/
-
-    protected String getCreator(CoalesceEntity entity)
-    {
-        return null;
-    }
-
-    protected String getType(CoalesceEntity entity)
-    {
-        return null;
-    }
-
-    protected String getScope(CoalesceEntity entity)
-    {
-        return null;
-    }
-
-    /**
-     * Returns the comparison for the Coalesce object last modified date versus
-     * the same objects value in the database.
-     *
-     * @param coalesceObject the Coalesce object to have it's last modified date
-     *                       checked.
-     * @param conn           is the PostGresDataConnector database connection
-     * @return False = Out of Date
-     * @throws SQLException
-     */
-    protected boolean checkLastModified(CoalesceObject coalesceObject, AbstractClient conn) throws SQLException
-    {
-        boolean isOutOfDate = true;
-
-        // Get LastModified from the Database
-        DateTime lastModified = this.getCoalesceObjectLastModified(coalesceObject.getKey(), coalesceObject.getType(), conn);
-
-        // DB Has Valid Time?
-        if (lastModified != null)
-        {
-            // Remove NanoSeconds (100 ns / Tick and 1,000,000 ns / ms = 10,000
-            // Ticks / ms)
-            long objectTicks = coalesceObject.getLastModified().getMillis();
-            long SQLRecordTicks = lastModified.getMillis();
-
-            // TODO: Round Ticks for SQL (Not sure if this is required for .NET)
-            // ObjectTicks = this.RoundTicksForSQL(ObjectTicks);
-
-            if (objectTicks == SQLRecordTicks)
-            {
-                // They're equal; No Update Required
-                isOutOfDate = false;
-            }
-        }
-
-        return isOutOfDate;
-    }
-
-    /**
-     * Deletes the Coalesce object and CoalesceObjectMap that matches the given
-     * parameters.
-     *
-     * @param coalesceObject the Coalesce object to be deleted
-     * @return DeleteResponse
-     * @throws SQLException
-     */
-    public DeleteResponse deleteObject(CoalesceObject coalesceObject) throws SQLException
-    {
-        String objectType = coalesceObject.getType().toLowerCase();
-        String objectKey = coalesceObject.getName().toLowerCase();
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(getProps());
-            DeleteResponse response = client.prepareDelete(objectKey, objectType, "1").get();
-
-            return response;
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns the Coalesce entity keys that matches the given parameters.
-     *
-     * @param entityId     of the entity.
-     * @param entityIdType of the entity.
-     * @param entityName   of the entity.
-     * @return List<String> of primary keys for the matching Coalesce entity, or null if not found
-     * @throws SQLException ,Exception,CoalescePersistorException
-     */
-    private List<String> getCoalesceEntityKeysForEntityId(String entityId, String entityIdType, String entityName)
-            throws Exception
-    {
-        List<String> keyList = new ArrayList<String>();
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(getProps());
-            if (checkIfIndexExists(client, entityId))
-            {
-                GetResponse response = client.prepareGet(entityId, entityIdType, entityName).get();
-
-                keyList.add(response.getId());
-
-                return keyList;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-    }
 
     public boolean checkIfIndexExists(AbstractClient client, String index)
     {
@@ -944,88 +310,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         return false;
     }
 
-    private boolean updateCoalesceObject(CoalesceObject coalesceObject, AbstractClient conn, boolean allowRemoval)
-            throws SQLException
-
-    {
-        boolean isSuccessful = false;
-
-        if (coalesceObject.isFlatten())
-        {
-            isSuccessful = persistObject(coalesceObject, conn);
-
-            // Successful?
-            if (isSuccessful)
-            {
-                // Yes; Iterate Through Children
-                for (CoalesceObject childObject : coalesceObject.getChildCoalesceObjects().values())
-                {
-                    updateCoalesceObject(childObject, conn, allowRemoval);
-                }
-            }
-        }
-        return isSuccessful;
-    }
-
-    private DateTime getCoalesceObjectLastModified(String key, String objectType, AbstractClient conn) throws SQLException
-    {
-        DateTime lastModified = null;
-
-        //TODO: Figure out how to do this query in ElasticSearch
-        /*
-        // Determine the Table Name
-        String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
-        String dateValue = null;
-
-        ResultSet results = conn.executeQuery("SELECT LastModified FROM " +  + tableName
-                + " WHERE ObjectKey=?", new CoalesceParameter(key.trim(), Types.OTHER));
-        ResultSetMetaData resultsmd = results.getMetaData();
-
-        // JODA Function DateTimeFormat will adjust for the Server timezone when
-        // converting the time.
-        if (resultsmd.getColumnCount() <= 1)
-        {
-            while (results.next())
-            {
-                dateValue = results.getString("LastModified");
-                if (dateValue != null)
-                {
-                    lastModified = JodaDateTimeHelper.getPostGresDateTim(dateValue);
-                }
-            }
-        }
-        */
-        return JodaDateTimeHelper.nowInUtc();
-
-    }
-
-    /**
-     * @return EnumSet of EPersistorCapabilities
-     */
-    @Override
-    public EnumSet<EPersistorCapabilities> getCapabilities()
-    {
-        EnumSet<EPersistorCapabilities> enumSet = super.getCapabilities();
-        EnumSet<EPersistorCapabilities> newCapabilities = EnumSet.of(EPersistorCapabilities.GET_FIELD_VALUE,
-                                                                     EPersistorCapabilities.READ_TEMPLATES,
-                                                                     EPersistorCapabilities.UPDATE,
-                                                                     EPersistorCapabilities.DELETE,
-                                                                     EPersistorCapabilities.SEARCH,
-                                                                     EPersistorCapabilities.SUPPORTS_BLOB,
-                                                                     EPersistorCapabilities.GEOSPATIAL_SEARCH,
-                                                                     EPersistorCapabilities.INDEX_FIELDS);
-        if (enumSet != null)
-        {
-            enumSet.addAll(newCapabilities);
-        }
-        else
-        {
-            enumSet = newCapabilities;
-        }
-        return enumSet;
-    }
-
-    @Override
     public SearchResults search(Query query) throws CoalescePersistorException
     {
         CachedRowSet rowset = null;
@@ -1033,7 +317,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
             rowset = RowSetProvider.newFactory().createCachedRowSet();
-            AbstractClient client = conn.getDBConnector(getProps());
+            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
             SearchResponse response = client.prepareSearch("gdelt_data").setQuery(QueryBuilders.termQuery("GlobalEventID",
                                                                                                           "410479387"))                 // Query
                     //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
@@ -1060,7 +344,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
         return queryResults;
     }
 
-    @Override
     public Capabilities getSearchCapabilities()
     {
         Capabilities capability = new Capabilities();
@@ -1069,4 +352,372 @@ public class ElasticSearchPersistor extends CoalescePersistorBase implements ICo
 
         return capability;
     }
+
+	@Override
+	public void saveTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException {
+        JsonFullEximImpl converter = new JsonFullEximImpl();
+
+        for (CoalesceEntityTemplate template : templates)
+        {
+            try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+            {
+                AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
+                XmlMapper mapper = new XmlMapper();
+                JsonNode node = mapper.readTree(template.toXml());
+
+                ObjectMapper jsonMapper = new ObjectMapper();
+                String json = jsonMapper.writeValueAsString(node);
+
+                // persist entity template to ElasticSearch
+                //String fakeJson = "{\"template\": \"te*\",\"classname\":\"com.incadencecorp.coalesce.framework.datamodel.TestEntity\",\"datecreated\":\"\",\"entityid\":\"\",\"entityidtype\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"UNIT_TEST\",\"source\":\"DSS\",\"title\":\"\",\"version\":1,\"linkagesection\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"Linkages\"},\"section\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"test section\",\"noindex\":\"false\",\"recordset\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"maxrecords\":\"0\",\"minrecords\":\"0\",\"name\":\"test1\",\"fielddefinition\":{\"datatype\":\"booleanlist\",\"datecreated\":\"\",\"defaultclassificationmarking\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"booleanlist\"}}}}";
+
+                coalesceTemplateToESTemplate(template, client);
+                //client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(coalesceTemplateToESTemplate(template, client)).get();
+            }
+            catch (CoalesceException e)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_SAVED,
+                                                                   "Template",
+                                                                   template.getKey(),
+                                                                   e.getMessage()), e);
+            }
+            catch (Exception e)
+            {
+                LOGGER.warn("Failed to register templates: " + e.getMessage());
+            }
+        }
+	}
+
+    @Override
+    public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
+    {
+        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+        {
+            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
+
+            for (CoalesceEntity entity : entities)
+            {
+                if (entity.isMarkedDeleted() && allowRemoval)
+                {
+                    deleteLinkages(entity, client);
+                    deleteEntity(entity, client);
+                    deleteEntityIndex(entity, client);
+                }
+                else
+                {
+                    persistLinkages(entity, client);
+                    persistEntityObject(entity, client);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public CoalesceEntity[] getEntity(String... keys) throws CoalescePersistorException
+    { 
+    	List<CoalesceEntity> results = new ArrayList<>();
+
+    	for(String entityXML : getEntityXml(keys)) 
+    	{
+    		results.add(CoalesceEntity.create(entityXML));
+    	}
+    	
+        return results.toArray(new CoalesceEntity[results.size()]);
+    }
+
+    @Override
+    public String[] getEntityXml(String... keys) throws CoalescePersistorException
+    {
+    	List<String> results = new ArrayList<>();
+    	try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+        {
+	        AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
+	        
+	    	for(String key : keys) 
+	    	{
+	    		GetRequest request = new GetRequest();
+	    		request.index(COALESCE_ENTITY_INDEX);
+	    		request.type(COALESCE_ENTITY_INDEX);
+	    		request.id(key);
+	    		
+	    		GetResponse getResponse = client.get(request).actionGet();
+	    		
+	    		//LOGGER.debug("Returned index: " + getResponse.getSource().get(XML));
+	    		
+	    		if(getResponse != null && getResponse.getSource() != null ) 
+	    		{
+	    			results.add((String)getResponse.getSource().getOrDefault(XML,""));
+	    		}
+	    	}
+        }	catch (ElasticsearchException e) {
+    	    if (e.status() == RestStatus.NOT_FOUND) {
+    	        LOGGER.error(e.getDetailedMessage());
+    	    }
+    	}
+    	
+        return results.toArray(new String[results.size()]);
+    }
+
+    @Override
+    public EnumSet<EPersistorCapabilities> getCapabilities()
+    {
+        return EnumSet.of(EPersistorCapabilities.CREATE, EPersistorCapabilities.READ, EPersistorCapabilities.UPDATE, EPersistorCapabilities.DELETE);
+    }
+
+    private void deleteEntity(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
+    {
+        deleteFromElasticSearch(conn, "coalesce-" + entity.getName().toLowerCase(), 
+        		entity.getType().toLowerCase(), 
+        		entity.getKey());
+    }
+
+    private void deleteLinkages(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
+    {
+        deleteFromElasticSearch(conn, "oelinkage", 
+        		"oelinkage", 
+        		entity.getKey());
+    }
+
+    private void deleteEntityIndex(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
+    {
+        deleteFromElasticSearch(conn, COALESCE_ENTITY_INDEX, 
+        		COALESCE_ENTITY_INDEX, 
+        		entity.getKey());
+    }
+
+    private void deleteFromElasticSearch(AbstractClient conn, String index, String type, String id) {
+        DeleteRequest entityRequest = new DeleteRequest();
+        entityRequest.index(index);
+        entityRequest.type(type);
+        entityRequest.id(id);
+
+        DeleteResponse entityResponse = conn.delete(entityRequest).actionGet();
+
+        LOGGER.debug("Delete entity for entity {} : {}", index, entityResponse);
+    }
+
+    private void persistLinkages(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
+    {
+        IndexRequest request = new IndexRequest();
+        request.index("oelinkage");
+        request.type("oelinkage");
+        request.id(entity.getKey());
+        request.source(createLinkageMap(entity));
+
+        IndexResponse response = conn.index(request).actionGet();
+
+        LOGGER.debug("Indexed linkage for entity coalesce-{} : {}", entity.getName(), response);
+    }
+
+    private void persistEntityObject(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
+    {
+        // Return true if no update is required.
+        //Worry about this later.
+        //        if (!checkLastModified(entity, conn))
+        //        {
+        //            return true;
+        //        }
+
+        IndexResponse response;
+        IndexRequest request = new IndexRequest();
+        request.index("coalesce-" + entity.getName().toLowerCase());
+        request.type(entity.getType().toLowerCase());
+        request.id(entity.getKey());
+        request.source(createValueMap(entity));
+
+        response = conn.index(request).actionGet();
+
+        LOGGER.debug("Saved Index called: coalesce-{} : {}", entity.getName(), response);
+
+        // TODO Remove this test code
+        GetRequest getRequest = new GetRequest();
+        getRequest.index("coalesce-" + entity.getName().toLowerCase());
+        getRequest.type(entity.getType().toLowerCase());
+        getRequest.id(entity.getKey());
+
+        GetResponse getResponse = conn.get(getRequest).actionGet();
+
+        LOGGER.debug(getResponse.toString());
+        
+        persistEntityIndex(entity, conn);
+    }
+
+    private Map<String, Object> createValueMap(CoalesceEntity entity)
+    {
+        HashMap<String, Object> map = new HashMap<>();
+
+        getFieldValues(entity, map);
+        
+        if(ElasticSearchSettings.getStoreXML()) {
+	        //Add entity XML to the end of the map.
+	        map.put("entityXML", entity.toXml());
+        }
+
+        return map;
+    }
+
+    private void getFieldValues(CoalesceObject coalesceObject, Map<String, Object> results)
+    {
+        // Is Active?
+        if (coalesceObject.isActive())
+        {
+            // Yes; Is a CoalesceField?
+            if (coalesceObject.getType().equalsIgnoreCase("field"))
+            {
+                // Yes; Check Data Type
+                CoalesceField<?> field = (CoalesceField<?>) coalesceObject;
+
+                if (field.getBaseValue() != null)
+                {
+                    String name = normalizeName(field.getName());
+
+                    switch (field.getDataType())
+                    {
+                    case BINARY_TYPE:
+                    case FILE_TYPE:
+                        // Ignore these types.
+                        break;
+                    default:
+                        // Add field value to results
+                        try
+                        {
+                            results.put(name, field.getValue());
+                            LOGGER.trace("Adding field {} = {}", field.getName(), field.getBaseValue());
+                        }
+                        catch (CoalesceDataFormatException e)
+                        {
+                            LOGGER.warn("(FAILED) Adding field {} = {}", field.getName(), field.getBaseValue());
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            // Recurse Through Children
+            for (CoalesceObject child : coalesceObject.getChildCoalesceObjects().values())
+            {
+                getFieldValues(child, results);
+            }
+        }
+    }
+    
+    private void persistEntityIndex(CoalesceEntity entity, AbstractClient conn) {
+    	IndexResponse response;
+	    IndexRequest request = new IndexRequest();
+	    request.index(COALESCE_ENTITY_INDEX);
+	    request.type(COALESCE_ENTITY_INDEX);
+	    request.id(entity.getKey());
+	    
+	    Map<String, Object> entityMap = new HashMap<>();
+	    entityMap.put("id", entity.getAttribute(CoalesceEntity.ATTRIBUTE_ENTITYID));
+	    entityMap.put("name", entity.getAttribute(CoalesceEntity.ATTRIBUTE_NAME));
+	    entityMap.put("source", entity.getAttribute(CoalesceEntity.ATTRIBUTE_SOURCE));
+	    entityMap.put("version", entity.getAttribute(CoalesceEntity.ATTRIBUTE_VERSION));
+	    entityMap.put("dateCreated", entity.getAttribute(CoalesceEntity.ATTRIBUTE_DATECREATED));
+	    entityMap.put("lastModified", entity.getAttribute(CoalesceEntity.ATTRIBUTE_LASTMODIFIED));
+	    
+	    if(ElasticSearchSettings.getStoreXML()) {
+		    entityMap.put(XML, entity.toXml());
+		    
+		    //Nested tabs on purpose to show map structure
+		    
+						    Map<String, Object> enabledMap = new HashMap<>();
+						    enabledMap.put("enabled", false);
+						    
+					    Map<String, Object> xmlFieldMap = new HashMap<>();
+					    xmlFieldMap.put(XML, enabledMap);
+					    
+				    Map<String, Object> propertiesMap = new HashMap<>();
+				    propertiesMap.put("properties", xmlFieldMap);
+				    
+			    Map<String, Object> typeMap = new HashMap<>();
+			    typeMap.put(entity.getType().toLowerCase(), propertiesMap);
+			    
+		    entityMap.put("mappings", typeMap);
+	    }
+	    request.source(entityMap);
+	
+	    response = conn.index(request).actionGet();
+	
+	    LOGGER.debug("Saved XML Index called: coalesceentityindex : {}", response);
+    }
+
+    private String normalizeName(String name)
+    {
+        // TODO
+        return name;
+    }
+
+    /**
+     * persist the Linkage for an Entity. This will create a new document of the Linkage index
+     *
+     * @param entity The entity to persist the linkages for
+     * @return returns true if no exceptions were thrown
+     */
+    private Map<String, Object> createLinkageMap(CoalesceEntity entity)
+    {
+        //HashMap representation of the linkage for indexing in ElasticSearch
+        HashMap<String, Object> linkageMap = new HashMap<>();
+
+        Map<String, CoalesceLinkage> linkages = entity.getLinkages();
+        for (Map.Entry<String, CoalesceLinkage> mlink : linkages.entrySet())
+        {
+            CoalesceLinkage link = mlink.getValue();
+
+            linkageMap.put(ElasticSearchPersistor.LINKAGE_KEY_COLUMN_NAME, link.getKey());
+            linkageMap.put(ElasticSearchPersistor.LINKAGE_LABEL_COLUMN_NAME, link.getName());
+            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY1_KEY_COLUMN_NAME, link.getEntity1Key());
+            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY1_NAME_COLUMN_NAME, link.getEntity1Name());
+            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY1_SOURCE_COLUMN_NAME, link.getEntity1Source());
+            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY1_VERSION_COLUMN_NAME, link.getEntity1Version());
+            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY2_KEY_COLUMN_NAME, link.getEntity2Key());
+            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY2_NAME_COLUMN_NAME, link.getEntity2Name());
+            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY2_SOURCE_COLUMN_NAME, link.getEntity2Source());
+            linkageMap.put(ElasticSearchPersistor.LINKAGE_LAST_MODIFIED_COLUMN_NAME, link.getLastModifiedAsString());
+            linkageMap.put(ElasticSearchPersistor.LINKAGE_LINK_TYPE_COLUMN_NAME, link.getLinkType().getLabel());
+        }
+
+        //If the index response is returned and no exception was thrown, the index operation was successful
+        return linkageMap;
+    }
+
+	@Override
+	public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version)
+			throws CoalescePersistorException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteTemplate(String... keys) throws CoalescePersistorException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unregisterTemplate(String... keys) throws CoalescePersistorException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

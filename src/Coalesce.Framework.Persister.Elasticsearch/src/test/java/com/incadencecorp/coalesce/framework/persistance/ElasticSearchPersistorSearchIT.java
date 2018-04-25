@@ -11,9 +11,10 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
+import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch;
 import com.incadencecorp.coalesce.search.AbstractSearchTest;
 
-public class ElasticSearchPersistorSearchIT extends AbstractSearchTest<ElasticSearchPersistor> {
+public class ElasticSearchPersistorSearchIT extends AbstractSearchTest<ElasticSearchPersistorSearch> {
 
 	private static final String NAME = "name";
     private static ServerConn conn;
@@ -33,9 +34,9 @@ public class ElasticSearchPersistorSearchIT extends AbstractSearchTest<ElasticSe
     }
 
 	@Override
-	protected ElasticSearchPersistor createPersister() throws CoalescePersistorException {
+	protected ElasticSearchPersistorSearch createPersister() throws CoalescePersistorException {
 		
-		return new ElasticSearchPersistor();
+		return new ElasticSearchPersistorSearch();
 	}
 
 	@Override

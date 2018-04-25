@@ -38,12 +38,13 @@ public class ElasticSearchSettings {
     private static String config_name = "elasticsearch-config.properties";
     private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
     private static Boolean connectorInitialized = false;
+    private static Boolean storeXML = true;
 
     /*--------------------------------------------------------------------------
     Property Names
     --------------------------------------------------------------------------*/
 
-    // TODO Update base parameter to be coalesce within the InCadence repo
+	// TODO Update base parameter to be coalesce within the InCadence repo
     private static final String PARAM_BASE = "omega.dss.";
     private static final String PARAM_SRID = PARAM_BASE + "srid";
     private static final String PARAM_PORT = PARAM_BASE + "dbServerPort";
@@ -287,6 +288,14 @@ public class ElasticSearchSettings {
     {
         return settings.getSetting(config_name, PARAM_SSL_ENABLED, false, false);
     }
+
+    public static Boolean getStoreXML() {
+		return storeXML;
+	}
+
+	public static void setStoreXML(Boolean storeXML) {
+		ElasticSearchSettings.storeXML = storeXML;
+	}
 
     /**
      * @return Returns database parameters.
