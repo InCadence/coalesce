@@ -28,6 +28,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
+import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchSettings;
 import com.incadencecorp.coalesce.framework.persistance.testobjects.GDELT_Test_Entity;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
@@ -277,7 +278,7 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
      */
     @Test
     public void testSearchAll() throws Exception {
-    	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+    	ElasticSearchPersistorSearch persistor = new ElasticSearchPersistorSearch();
     	SearchResponse response = persistor.searchAll();
     	//assertNoFailures(response);
     }
@@ -288,7 +289,7 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
      */
     @Test
     public void testSearchSpecific() throws Exception {
-    	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+    	ElasticSearchPersistorSearch persistor = new ElasticSearchPersistorSearch();
     	//Just entity name
     	persistor.searchSpecific("coalesce-oeevent","coalesce-oeevent");
     	//Entity name and one filter value
