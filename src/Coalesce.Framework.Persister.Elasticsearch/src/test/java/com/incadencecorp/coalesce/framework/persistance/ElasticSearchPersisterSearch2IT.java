@@ -20,7 +20,6 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersister2;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch;
 import com.incadencecorp.coalesce.search.AbstractSearchTest;

@@ -7,7 +7,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 
-public class ElasticSearchPersistorSearch extends ElasticSearchPersister2 implements ICoalesceSearchPersistor {
+public class ElasticSearchPersistorSearch extends ElasticSearchPersistor implements ICoalesceSearchPersistor {
 
 	@Override
 	public SearchResults search(Query query) throws CoalescePersistorException {
