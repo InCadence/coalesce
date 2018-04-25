@@ -18,11 +18,15 @@
 
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.exim.impl.JsonFullEximImpl;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceTemplatePersister;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
@@ -49,35 +53,6 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     public void deleteTemplate(String... keys) throws CoalescePersistorException
     {
 
-    }
-
-    @Override
-    public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
-    {
-        for (CoalesceEntityTemplate template : templates)
-        {
-            try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-            {
-                AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
-
-                // persist entity template to ElasticSearch
-                //String fakeJson = "{\"template\": \"te*\",\"classname\":\"com.incadencecorp.coalesce.framework.datamodel.TestEntity\",\"datecreated\":\"\",\"entityid\":\"\",\"entityidtype\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"UNIT_TEST\",\"source\":\"DSS\",\"title\":\"\",\"version\":1,\"linkagesection\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"Linkages\"},\"section\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"test section\",\"noindex\":\"false\",\"recordset\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"maxrecords\":\"0\",\"minrecords\":\"0\",\"name\":\"test1\",\"fielddefinition\":{\"datatype\":\"booleanlist\",\"datecreated\":\"\",\"defaultclassificationmarking\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"booleanlist\"}}}}";
-
-                coalesceTemplateToESTemplate(template, client);
-                //client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(coalesceTemplateToESTemplate(template, client)).get();
-            }
-            catch (CoalesceException e)
-            {
-                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_SAVED,
-                                                                   "Template",
-                                                                   template.getKey(),
-                                                                   e.getMessage()), e);
-            }
-            catch (Exception e)
-            {
-                LOGGER.warn("Failed to register templates: " + e.getMessage());
-            }
-        }
     }
 
     @Override
@@ -111,11 +86,47 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         return null;
     }
 
-    private Map<String, Object> coalesceTemplateToESTemplate(CoalesceEntityTemplate template, AbstractClient client)
+    public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
+    {
+        JsonFullEximImpl converter = new JsonFullEximImpl();
+
+        for (CoalesceEntityTemplate template : templates)
+        {
+            try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+            {
+                AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
+                XmlMapper mapper = new XmlMapper();
+                JsonNode node = mapper.readTree(template.toXml());
+
+                ObjectMapper jsonMapper = new ObjectMapper();
+                String json = jsonMapper.writeValueAsString(node);
+
+                // persist entity template to ElasticSearch
+                //String fakeJson = "{\"template\": \"te*\",\"classname\":\"com.incadencecorp.coalesce.framework.datamodel.TestEntity\",\"datecreated\":\"\",\"entityid\":\"\",\"entityidtype\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"UNIT_TEST\",\"source\":\"DSS\",\"title\":\"\",\"version\":1,\"linkagesection\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"Linkages\"},\"section\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"test section\",\"noindex\":\"false\",\"recordset\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"maxrecords\":\"0\",\"minrecords\":\"0\",\"name\":\"test1\",\"fielddefinition\":{\"datatype\":\"booleanlist\",\"datecreated\":\"\",\"defaultclassificationmarking\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"booleanlist\"}}}}";
+
+                coalesceTemplateToESTemplate(template, client);
+                //client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(coalesceTemplateToESTemplate(template, client)).get();
+            }
+            catch (CoalesceException e)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_SAVED,
+                                                                   "Template",
+                                                                   template.getKey(),
+                                                                   e.getMessage()), e);
+            }
+            catch (Exception e)
+            {
+                LOGGER.warn("Failed to register templates: " + e.getMessage());
+            }
+        }
+    }
+
+    protected Map<String, Object> coalesceTemplateToESTemplate(CoalesceEntityTemplate template, AbstractClient client)
     {
         Map<String, Object> esTemplate = new HashMap<>();
         Map<String, Object> mappingMap = new HashMap<>();
         Map<String, Object> propertiesMap = new HashMap<>();
+        Map<String, Object> innerMap = new HashMap<>();
         ElasticSearchMapperImpl mapper = new ElasticSearchMapperImpl();
 
         CoalesceTemplateUtil.addTemplates(template);
@@ -132,29 +143,27 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         {
             if (mapper.mapToString(typeMap.get(typeName)) != null)
             {
-                Map<String, Object> innerMap = new HashMap<>();
+                innerMap = new HashMap<String, Object>();
 
                 innerMap.put("type", mapper.mapToString(typeMap.get(typeName)));
                 propertiesMap.put(typeName.replace(template.getName(), ""), innerMap);
             }
         }
-
-        Map<String, Object> entityXMLMap = new HashMap<>();
-        entityXMLMap.put("enabled", "false");
-        propertiesMap.put("entityXML", entityXMLMap);
-
-        PutIndexTemplateRequest request = new PutIndexTemplateRequest();
-        request.name(template.getName().toLowerCase());
-        request.source(esTemplate);
-        request.mapping("mapping", mappingMap);
-
-        client.admin().indices().putTemplate(request).actionGet();
-
+        
         /*
-        client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(esTemplate).addMapping(
+        if(ElasticSearchSettings.getStoreXML())
+        {
+            innerMap = new HashMap<String, Object>();
+
+            innerMap.put("enabled", false);
+            propertiesMap.put("entityXML", innerMap);
+        }
+        */
+
+        client.admin().indices().preparePutTemplate("coalesce-" + template.getName().toLowerCase()).setSource(esTemplate).addMapping(
                 "mapping",
                 mappingMap).get();
-*/
+
         LOGGER.debug("Saved template named: " + template.getName());
 
         return esTemplate;

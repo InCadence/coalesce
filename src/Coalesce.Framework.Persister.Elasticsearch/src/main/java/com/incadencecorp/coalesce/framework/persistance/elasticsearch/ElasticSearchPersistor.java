@@ -1,54 +1,54 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
+
+import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.support.AbstractClient;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.rest.RestStatus;
+import org.geotools.data.Query;
+import org.geotools.filter.Capabilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.exim.impl.JsonFullEximImpl;
-import com.incadencecorp.coalesce.framework.persistance.*;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
-import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
-import org.apache.commons.lang.NotImplementedException;
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.support.AbstractClient;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.geotools.data.Query;
-import org.geotools.filter.Capabilities;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.RowSetProvider;
-import java.io.IOException;
-import java.sql.Blob;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.*;
-
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.rest.RestStatus;
-
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -72,7 +72,7 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
  *
  * @author n78554
  */
-public class ElasticSearchPersistor implements ICoalescePersistor {
+public class ElasticSearchPersistor extends ElasticSearchTemplatePersister implements ICoalescePersistor {
 
     // Some constants for the linkage records
     // TODO: Move this to a common area in Coalesce
@@ -114,85 +114,7 @@ public class ElasticSearchPersistor implements ICoalescePersistor {
         LOGGER.debug("Initialized ElasticSearchPersistor using default constructor");
     }
 
-    public SearchResponse searchAll()
-    {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
-            QueryBuilder qb = QueryBuilders.matchAllQuery();
-            SearchResponse response = client.prepareSearch().setQuery(qb).get();
-            //.execute()
-            //.actionGet();
-            LOGGER.debug(response.toString());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void searchSpecific(String searchValue, String searchType)
-    {
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
-            QueryBuilder qb = QueryBuilders.matchAllQuery();
-            //QueryBuilder qb = QueryBuilders.matchPhraseQuery("PMESIIPTMilitary", "1");
-            SearchResponse response = client.prepareSearch(searchValue)
-                    //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                    .setQuery(qb)                 // Query
-                    //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
-                    //.setFrom(0).setSize(60).setExplain(true)
-                    .get();
-
-            LOGGER.debug(response.toString());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void searchSpecificWithFilter(String searchValue, String searchType, String filterName, String filterValue)
-    {
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
-            QueryBuilder qb = QueryBuilders.matchPhraseQuery(filterName, filterValue);
-            SearchResponse response = client.prepareSearch(searchValue)
-                    //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                    .setQuery(qb)                 // Query
-                    //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
-                    //.setFrom(0).setSize(60).setExplain(true)
-                    .get();
-
-            LOGGER.debug(response.toString());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void searchElasticGeo()
-    {
-
-        //FilterToElastic filterElastic = new FilterToElastic();
-
-        //Map<String, Object> queryBuilder = filterElastic.getNativeQueryBuilder();
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
+    
 
     public void makeSureConnectorIsInitialized()
     {
@@ -204,89 +126,6 @@ public class ElasticSearchPersistor implements ICoalescePersistor {
 
             ElasticSearchSettings.setConnector(connector);
         }
-    }
-
-    public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
-    {
-        JsonFullEximImpl converter = new JsonFullEximImpl();
-
-        for (CoalesceEntityTemplate template : templates)
-        {
-            try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-            {
-                AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
-                XmlMapper mapper = new XmlMapper();
-                JsonNode node = mapper.readTree(template.toXml());
-
-                ObjectMapper jsonMapper = new ObjectMapper();
-                String json = jsonMapper.writeValueAsString(node);
-
-                // persist entity template to ElasticSearch
-                //String fakeJson = "{\"template\": \"te*\",\"classname\":\"com.incadencecorp.coalesce.framework.datamodel.TestEntity\",\"datecreated\":\"\",\"entityid\":\"\",\"entityidtype\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"UNIT_TEST\",\"source\":\"DSS\",\"title\":\"\",\"version\":1,\"linkagesection\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"Linkages\"},\"section\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"test section\",\"noindex\":\"false\",\"recordset\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"maxrecords\":\"0\",\"minrecords\":\"0\",\"name\":\"test1\",\"fielddefinition\":{\"datatype\":\"booleanlist\",\"datecreated\":\"\",\"defaultclassificationmarking\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"booleanlist\"}}}}";
-
-                coalesceTemplateToESTemplate(template, client);
-                //client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(coalesceTemplateToESTemplate(template, client)).get();
-            }
-            catch (CoalesceException e)
-            {
-                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_SAVED,
-                                                                   "Template",
-                                                                   template.getKey(),
-                                                                   e.getMessage()), e);
-            }
-            catch (Exception e)
-            {
-                LOGGER.warn("Failed to register templates: " + e.getMessage());
-            }
-        }
-    }
-
-    private Map<String, Object> coalesceTemplateToESTemplate(CoalesceEntityTemplate template, AbstractClient client)
-    {
-        Map<String, Object> esTemplate = new HashMap<>();
-        Map<String, Object> mappingMap = new HashMap<>();
-        Map<String, Object> propertiesMap = new HashMap<>();
-        Map<String, Object> innerMap = new HashMap<>();
-        ElasticSearchMapperImpl mapper = new ElasticSearchMapperImpl();
-
-        CoalesceTemplateUtil.addTemplates(template);
-
-        CoalesceTemplateUtil.getRecordsets(template.getKey());
-
-        Map<String, ECoalesceFieldDataTypes> typeMap = CoalesceTemplateUtil.getTemplateDataTypes(template.getKey());
-
-        esTemplate.put("template", "*");
-
-        mappingMap.put("properties", propertiesMap);
-
-        for (String typeName : typeMap.keySet())
-        {
-            if (mapper.mapToString(typeMap.get(typeName)) != null)
-            {
-                innerMap = new HashMap<String, Object>();
-
-                innerMap.put("type", mapper.mapToString(typeMap.get(typeName)));
-                propertiesMap.put(typeName.replace(template.getName(), ""), innerMap);
-            }
-        }
-        
-        /*
-        if(ElasticSearchSettings.getStoreXML())
-        {
-            innerMap = new HashMap<String, Object>();
-
-            innerMap.put("enabled", false);
-            propertiesMap.put("entityXML", innerMap);
-        }
-        */
-
-        client.admin().indices().preparePutTemplate("coalesce-" + template.getName().toLowerCase()).setSource(esTemplate).addMapping(
-                "mapping",
-                mappingMap).get();
-
-        LOGGER.debug("Saved template named: " + template.getName());
-
-        return esTemplate;
     }
 
     /*--------------------------------------------------------------------------
@@ -309,84 +148,6 @@ public class ElasticSearchPersistor implements ICoalescePersistor {
 
         return false;
     }
-
-    public SearchResults search(Query query) throws CoalescePersistorException
-    {
-        CachedRowSet rowset = null;
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            rowset = RowSetProvider.newFactory().createCachedRowSet();
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
-            SearchResponse response = client.prepareSearch("gdelt_data").setQuery(QueryBuilders.termQuery("GlobalEventID",
-                                                                                                          "410479387"))                 // Query
-                    //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
-                    //.setFrom(0).setSize(60).setExplain(true)
-                    .get();
-
-            LOGGER.debug(response.toString());
-        }
-        catch (Exception e)
-        {
-            LOGGER.error(e.getMessage());
-            //throw new CoalescePersistorException(e.getMessage(), e);
-        }
-        // TODO Not Implemented
-        //query.getFilter().toString();
-        //query.getAlias();
-
-        //QueryBuilder qb = QueryBuilders.matchQuery(
-        //		"GlobalEventID",
-        //		"410479387");
-
-        SearchResults queryResults = new SearchResults();
-        queryResults.setResults(rowset);
-        return queryResults;
-    }
-
-    public Capabilities getSearchCapabilities()
-    {
-        Capabilities capability = new Capabilities();
-        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
-        capability.addAll(Capabilities.LOGICAL);
-
-        return capability;
-    }
-
-	@Override
-	public void saveTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException {
-        JsonFullEximImpl converter = new JsonFullEximImpl();
-
-        for (CoalesceEntityTemplate template : templates)
-        {
-            try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-            {
-                AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
-                XmlMapper mapper = new XmlMapper();
-                JsonNode node = mapper.readTree(template.toXml());
-
-                ObjectMapper jsonMapper = new ObjectMapper();
-                String json = jsonMapper.writeValueAsString(node);
-
-                // persist entity template to ElasticSearch
-                //String fakeJson = "{\"template\": \"te*\",\"classname\":\"com.incadencecorp.coalesce.framework.datamodel.TestEntity\",\"datecreated\":\"\",\"entityid\":\"\",\"entityidtype\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"UNIT_TEST\",\"source\":\"DSS\",\"title\":\"\",\"version\":1,\"linkagesection\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"Linkages\"},\"section\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"test section\",\"noindex\":\"false\",\"recordset\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"maxrecords\":\"0\",\"minrecords\":\"0\",\"name\":\"test1\",\"fielddefinition\":{\"datatype\":\"booleanlist\",\"datecreated\":\"\",\"defaultclassificationmarking\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"booleanlist\"}}}}";
-
-                coalesceTemplateToESTemplate(template, client);
-                //client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(coalesceTemplateToESTemplate(template, client)).get();
-            }
-            catch (CoalesceException e)
-            {
-                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_SAVED,
-                                                                   "Template",
-                                                                   template.getKey(),
-                                                                   e.getMessage()), e);
-            }
-            catch (Exception e)
-            {
-                LOGGER.warn("Failed to register templates: " + e.getMessage());
-            }
-        }
-	}
 
     @Override
     public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
@@ -683,41 +444,4 @@ public class ElasticSearchPersistor implements ICoalescePersistor {
         //If the index response is returned and no exception was thrown, the index operation was successful
         return linkageMap;
     }
-
-	@Override
-	public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version)
-			throws CoalescePersistorException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void deleteTemplate(String... keys) throws CoalescePersistorException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unregisterTemplate(String... keys) throws CoalescePersistorException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
