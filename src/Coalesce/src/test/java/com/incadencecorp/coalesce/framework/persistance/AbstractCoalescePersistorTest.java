@@ -113,6 +113,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         // Cleanup
         entity.markAsDeleted();
+        entity2.markAsDeleted();
 
         persister.saveEntity(true, entity);
 
