@@ -4,13 +4,12 @@ import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
+import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -20,7 +19,9 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.support.AbstractClient;
+import org.elasticsearch.common.geo.builders.ShapeBuilder;
 import org.elasticsearch.rest.RestStatus;
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,7 +205,8 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
                           EPersistorCapabilities.READ,
                           EPersistorCapabilities.UPDATE,
                           EPersistorCapabilities.DELETE,
-                          EPersistorCapabilities.READ_TEMPLATES);
+                          EPersistorCapabilities.READ_TEMPLATES,
+                          EPersistorCapabilities.GET_FIELD_VALUE);
     }
 
     private void deleteEntity(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
@@ -276,25 +278,41 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
                 {
                     String name = normalize(field);
 
-                    switch (field.getDataType())
+                    try
                     {
-                    case BINARY_TYPE:
-                    case FILE_TYPE:
-                        // Ignore these types.
-                        break;
-                    default:
-                        // Add field value to results
-                        try
-                        {
-                            results.put(name, field.getValue());
-                            LOGGER.trace("Adding field {} = {}", name, field.getBaseValue());
-                        }
-                        catch (CoalesceDataFormatException e)
-                        {
-                            LOGGER.warn("(FAILED) Adding field {} = {}", name, field.getBaseValue());
-                        }
+                        LOGGER.trace("Adding field {} = {}", name, field.getBaseValue());
 
-                        break;
+                        switch (field.getDataType())
+                        {
+                        case BINARY_TYPE:
+                        case FILE_TYPE:
+                            // Ignore these types.
+                            break;
+                        case LINE_STRING_TYPE:
+                            results.put(name, createLineString((CoalesceLineStringField) field));
+                            break;
+                        case POLYGON_TYPE:
+                            results.put(name, createPolygon((CoalescePolygonField) field));
+                            break;
+                        case CIRCLE_TYPE:
+                            results.put(name, createCircle((CoalesceCircleField) field));
+                            break;
+                        case GEOCOORDINATE_TYPE:
+                            Point point = ((CoalesceCoordinateField) field).getValueAsPoint();
+                            results.put(name, point.getX() + ", " + point.getY());
+                            break;
+                        case GEOCOORDINATE_LIST_TYPE:
+                            results.put(name, createMultiPoint((CoalesceCoordinateListField) field));
+                            break;
+                        default:
+                            // Add field value to results
+                            results.put(name, field.getValue());
+                            break;
+                        }
+                    }
+                    catch (CoalesceDataFormatException e)
+                    {
+                        LOGGER.warn("(FAILED) Adding field {} = {}", name, field.getBaseValue());
                     }
                 }
             }
@@ -305,6 +323,84 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
                 getFieldValues(child, results);
             }
         }
+    }
+
+    private Map<String, Object> createPolygon(CoalescePolygonField field) throws CoalesceDataFormatException
+    {
+        Map<String, Object> results = null;
+
+        if (field.getValue().getCoordinates().length > 0)
+        {
+            JSONArray polygon = new JSONArray();
+            polygon.put(getCoordinates(field.getValue().getCoordinates()));
+
+            results = new HashMap<>();
+            results.put("type", ShapeBuilder.GeoShapeType.POLYGON);
+            results.put("coordinates", polygon);
+        }
+
+        return results;
+    }
+
+    private Map<String, Object> createLineString(CoalesceLineStringField field) throws CoalesceDataFormatException
+    {
+        Map<String, Object> results = new HashMap<>();
+        results.put("type", ShapeBuilder.GeoShapeType.LINESTRING);
+        results.put("coordinates", getCoordinates(field.getValue().getCoordinates()));
+
+        return results;
+    }
+
+    private Map<String, Object> createCircle(CoalesceCircleField field) throws CoalesceDataFormatException
+    {
+        CoalesceCircle circle = field.getValue();
+
+        JSONArray point = new JSONArray();
+        point.put(circle.getCenter().x);
+        point.put(circle.getCenter().y);
+
+        Map<String, Object> results = new HashMap<>();
+        results.put("type", ShapeBuilder.GeoShapeType.CIRCLE);
+        results.put("coordinates", point);
+        results.put("radius", circle.getRadius());
+
+        return results;
+    }
+
+    private Map<String, Object> createMultiPoint(CoalesceCoordinateListField field) throws CoalesceDataFormatException
+    {
+        Map<String, Object> results = new HashMap<>();
+        results.put("type", ShapeBuilder.GeoShapeType.MULTIPOINT);
+        results.put("coordinates", getCoordinates(field.getValue()));
+
+        return results;
+    }
+
+    private JSONArray getCoordinates(Coordinate[] coords)
+    {
+        JSONArray results = null;
+
+        if (coords.length > 0)
+        {
+            results = new JSONArray();
+
+            for (Coordinate coord : coords)
+            {
+                JSONArray coord2 = new JSONArray();
+                coord2.put(coord.x);
+                coord2.put(coord.y);
+
+                results.put(coord2);
+            }
+        }
+
+        return results;
+    }
+
+    private class GeoJSONPoint {
+
+        private String type;
+        private Coordinate[] coordinates;
     }
 
     private void persistEntityIndex(CoalesceEntity entity, AbstractClient conn)
