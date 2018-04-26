@@ -101,12 +101,6 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         TestEntity entity = new TestEntity();
         entity.initialize();
-        entity.addRecord1().getIntegerField().setValue(5);
-
-        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
-
-        persister.saveTemplate(template);
-        persister.registerTemplate(template);
 
         Assert.assertTrue(persister.saveEntity(false, entity));
 
@@ -119,9 +113,8 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         // Cleanup
         entity.markAsDeleted();
-        entity2.markAsDeleted();
 
-        //persister.saveEntity(true, entity);
+        persister.saveEntity(true, entity);
 
     }
 

@@ -18,32 +18,23 @@
 
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.framework.DefaultNormalizer;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.exim.impl.JsonFullEximImpl;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceTemplatePersister;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import org.elasticsearch.ResourceAlreadyExistsException;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.admin.indices.template.put.PutIndexTemplateRequest;
 import org.elasticsearch.client.support.AbstractClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,64 +42,16 @@ import java.util.Map;
 public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersister {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchTemplatePersister.class);
-    private static final ElasticSearchMapperImpl MAPPER = new ElasticSearchMapperImpl();
-
-    public static final String COALESCE_ENTITY_INDEX = "coalesce";
-    public static final String COALESCE_LINKAGE_INDEX = "linkages";
-    public static final String FIELD_XML = CoalescePropertyFactory.getEntityXml().getPropertyName();
-
-    private ICoalesceNormalizer normalizer = new DefaultNormalizer();
-
-    /**
-     * Override the default normalizer.
-     *
-     * @param value normalizer used to ensure field names don't conflict with Elastic Search syntax.
-     */
-    public void setNormalizer(ICoalesceNormalizer value)
-    {
-        normalizer = value;
-    }
 
     @Override
     public void saveTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
-
-            for (CoalesceEntityTemplate template : templates)
-            {
-                Map<String, Object> properties = new HashMap<>();
-                properties.put(CoalescePropertyFactory.getEntityKey().getPropertyName(), template.getKey());
-                properties.put(CoalescePropertyFactory.getName().getPropertyName(), template.getName());
-                properties.put(CoalescePropertyFactory.getSource().getPropertyName(), template.getSource());
-                properties.put(CoalescePropertyFactory.getVersion().getPropertyName(), template.getVersion());
-                properties.put(CoalescePropertyFactory.getDateCreated().getPropertyName(), template.getDateCreated());
-                properties.put(CoalescePropertyFactory.getLastModified().getPropertyName(), template.getLastModified());
-
-                if (ElasticSearchSettings.getStoreXML())
-                {
-                    properties.put(FIELD_XML, template.toXml());
-                }
-
-                IndexRequest request = new IndexRequest();
-                request.index(ElasticSearchTemplatePersister.COALESCE_ENTITY_INDEX);
-                request.type("template");
-                request.id(template.getKey());
-                request.source(properties);
-
-                IndexResponse response = client.index(request).actionGet();
-
-                LOGGER.debug("Saved XML Index called: coalesceentityindex : {}", response);
-            }
-        }
 
     }
 
     @Override
     public void deleteTemplate(String... keys) throws CoalescePersistorException
     {
-        DeleteIndexRequest reuqest = new DeleteIndexRequest();
 
     }
 
@@ -121,38 +64,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     @Override
     public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-        CoalesceEntityTemplate template;
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
-
-            GetRequest request = new GetRequest();
-            request.index(COALESCE_ENTITY_INDEX);
-            request.type("template");
-            request.id(key);
-
-            GetResponse response = client.get(request).actionGet();
-
-            if (response != null && response.getSource() != null)
-            {
-                try
-                {
-                    template = CoalesceEntityTemplate.create((String) response.getSource().get(FIELD_XML));
-                }
-                catch (CoalesceException e)
-                {
-                    throw new CoalescePersistorException(e);
-                }
-            }
-            else
-            {
-                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
-            }
-
-        }
-
-        return template;
+        return null;
     }
 
     @Override
@@ -174,152 +86,86 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         return null;
     }
 
-    @Override
     public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+        JsonFullEximImpl converter = new JsonFullEximImpl();
+
+        for (CoalesceEntityTemplate template : templates)
         {
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
-
-            for (CoalesceEntityTemplate template : templates)
+            try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
             {
-                try
-                {
-                    CreateIndexRequest request = new CreateIndexRequest();
-                    request.index("coalesce-" + normalize(template.getName()));
-                    request.mapping("entity", Collections.singletonMap("properties", createMapping(template)));
+                AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
+                XmlMapper mapper = new XmlMapper();
+                JsonNode node = mapper.readTree(template.toXml());
 
-                    CreateIndexResponse response = client.admin().indices().create(request).actionGet();
+                ObjectMapper jsonMapper = new ObjectMapper();
+                String json = jsonMapper.writeValueAsString(node);
 
-                    LOGGER.debug("Registered Template ({}) : {}", template.getName(), response);
-                }
-                catch (ResourceAlreadyExistsException e)
-                {
-                    LOGGER.warn("Template Already Registered");
-                }
+                // persist entity template to ElasticSearch
+                //String fakeJson = "{\"template\": \"te*\",\"classname\":\"com.incadencecorp.coalesce.framework.datamodel.TestEntity\",\"datecreated\":\"\",\"entityid\":\"\",\"entityidtype\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"UNIT_TEST\",\"source\":\"DSS\",\"title\":\"\",\"version\":1,\"linkagesection\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"Linkages\"},\"section\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"test section\",\"noindex\":\"false\",\"recordset\":{\"datecreated\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"maxrecords\":\"0\",\"minrecords\":\"0\",\"name\":\"test1\",\"fielddefinition\":{\"datatype\":\"booleanlist\",\"datecreated\":\"\",\"defaultclassificationmarking\":\"\",\"key\":\"\",\"lastmodified\":\"\",\"name\":\"booleanlist\"}}}}";
 
-                try
-                {
-                    client.admin().indices().create(createCoalesceEntityIndexRequest()).actionGet();
-                    client.admin().indices().create(createCoalesceLinkageIndexRequest()).actionGet();
-                }
-                catch (ResourceAlreadyExistsException e)
-                {
-                    // Do Nothing indexes already exists
-                }
-
+                coalesceTemplateToESTemplate(template, client);
+                //client.admin().indices().preparePutTemplate(template.getName().toLowerCase()).setSource(coalesceTemplateToESTemplate(template, client)).get();
+            }
+            catch (CoalesceException e)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_SAVED,
+                                                                   "Template",
+                                                                   template.getKey(),
+                                                                   e.getMessage()), e);
+            }
+            catch (Exception e)
+            {
+                LOGGER.warn("Failed to register templates: " + e.getMessage());
             }
         }
     }
 
-    private CreateIndexRequest createCoalesceEntityIndexRequest()
+    protected Map<String, Object> coalesceTemplateToESTemplate(CoalesceEntityTemplate template, AbstractClient client)
     {
-        CreateIndexRequest request = new CreateIndexRequest();
-        request.index(COALESCE_ENTITY_INDEX);
-        request.mapping("entity", Collections.singletonMap("properties", createEntityMapping()));
-        request.mapping("template", Collections.singletonMap("properties", createEntityMapping()));
-
-        return request;
-    }
-
-    private Map<String, Object> createEntityMapping()
-    {
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(CoalescePropertyFactory.getEntityKey().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(CoalescePropertyFactory.getName().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(CoalescePropertyFactory.getSource().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(CoalescePropertyFactory.getVersion().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(CoalescePropertyFactory.getDateCreated().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.DATE_TIME_TYPE)));
-        properties.put(CoalescePropertyFactory.getLastModified().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.DATE_TIME_TYPE)));
-
-        if (ElasticSearchSettings.getStoreXML())
-        {
-            properties.put(FIELD_XML, Collections.singletonMap("enabled", "false"));
-        }
-
-        return properties;
-    }
-
-    private CreateIndexRequest createCoalesceLinkageIndexRequest()
-    {
-        CreateIndexRequest request = new CreateIndexRequest();
-        request.index(COALESCE_LINKAGE_INDEX);
-        request.mapping("linkages", Collections.singletonMap("properties", createLinkageMapping()));
-
-        return request;
-    }
-
-    private Map<String, Object> createLinkageMapping()
-    {
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(CoalescePropertyFactory.getEntityKey().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(CoalescePropertyFactory.getName().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(CoalescePropertyFactory.getSource().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(CoalescePropertyFactory.getVersion().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-
-        properties.put(CoalescePropertyFactory.getLinkageEntityKey().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(CoalescePropertyFactory.getLinkageName().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(CoalescePropertyFactory.getLinkageSource().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(CoalescePropertyFactory.getLinkageVersion().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-
-        properties.put(CoalescePropertyFactory.getDateCreated().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.DATE_TIME_TYPE)));
-        properties.put(CoalescePropertyFactory.getLastModified().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.DATE_TIME_TYPE)));
-        properties.put(CoalescePropertyFactory.getLinkageLabel().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(CoalescePropertyFactory.getLinkageStatus().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(CoalescePropertyFactory.getLinkageType().getPropertyName(),
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-
-        return properties;
-    }
-
-    private Map<String, Object> createMapping(CoalesceEntityTemplate template)
-    {
+        Map<String, Object> esTemplate = new HashMap<>();
+        Map<String, Object> mappingMap = new HashMap<>();
         Map<String, Object> propertiesMap = new HashMap<>();
+        Map<String, Object> innerMap = new HashMap<>();
+        ElasticSearchMapperImpl mapper = new ElasticSearchMapperImpl();
 
         CoalesceTemplateUtil.addTemplates(template);
 
-        for (Map.Entry<String, ECoalesceFieldDataTypes> entry : CoalesceTemplateUtil.getTemplateDataTypes(template.getKey()).entrySet())
-        {
-            String type = MAPPER.map(entry.getValue());
+        CoalesceTemplateUtil.getRecordsets(template.getKey());
 
-            if (!StringHelper.isNullOrEmpty(type))
+        Map<String, ECoalesceFieldDataTypes> typeMap = CoalesceTemplateUtil.getTemplateDataTypes(template.getKey());
+
+        esTemplate.put("template", "*");
+
+        mappingMap.put("properties", propertiesMap);
+
+        for (String typeName : typeMap.keySet())
+        {
+            if (mapper.mapToString(typeMap.get(typeName)) != null)
             {
-                propertiesMap.put(entry.getKey(), Collections.singletonMap("type", type));
+                innerMap = new HashMap<String, Object>();
+
+                innerMap.put("type", mapper.mapToString(typeMap.get(typeName)));
+                propertiesMap.put(typeName.replace(template.getName(), ""), innerMap);
             }
         }
+        
+        /*
+        if(ElasticSearchSettings.getStoreXML())
+        {
+            innerMap = new HashMap<String, Object>();
 
-        return propertiesMap;
+            innerMap.put("enabled", false);
+            propertiesMap.put("entityXML", innerMap);
+        }
+        */
+
+        client.admin().indices().preparePutTemplate("coalesce-" + template.getName().toLowerCase()).setSource(esTemplate).addMapping(
+                "mapping",
+                mappingMap).get();
+
+        LOGGER.debug("Saved template named: " + template.getName());
+
+        return esTemplate;
     }
-
-    protected String normalize(String value)
-    {
-        return normalizer != null ? normalizer.normalize(value) : value;
-    }
-
-    protected String normalize(CoalesceField<?> field)
-    {
-        return normalizer != null ? normalizer.normalize(field.getParent().getParent().getName(),
-                                                         field.getName()) : field.getName();
-    }
-
 }

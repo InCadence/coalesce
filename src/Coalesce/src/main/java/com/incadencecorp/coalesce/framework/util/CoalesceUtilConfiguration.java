@@ -135,13 +135,12 @@ public final class CoalesceUtilConfiguration {
                 List<ICoalescePersistor> secondaryPersisters = new ArrayList<>();
                 while (iterator.hasNext())
                 {
-                    String persisterClassName = iterator.nextLine();
+                    String perissterClassName = iterator.nextLine();
                     try
                     {
-                        if (!persisterClassName.startsWith("#"))
+                        if (!perissterClassName.startsWith("#"))
                         {
-                            Object persister = Thread.currentThread().getContextClassLoader().loadClass(persisterClassName).newInstance();
-                            //Object persister = ClassLoader.getSystemClassLoader().loadClass(persisterClassName).newInstance();
+                            Object persister = ClassLoader.getSystemClassLoader().loadClass(perissterClassName).newInstance();
 
                             if (persister instanceof ICoalescePersistor)
                             {
@@ -156,13 +155,13 @@ public final class CoalesceUtilConfiguration {
                             }
                             else
                             {
-                                LOGGER.debug("(FAILED) Loading Persister {} Invalid Implementation", persisterClassName);
+                                LOGGER.debug("(FAILED) Loading Persister " + perissterClassName + "Invalid Implementation");
                             }
                         }
                     }
                     catch (ClassNotFoundException | InstantiationException | IllegalAccessException e)
                     {
-                        LOGGER.error("(FAILED) Loading Persister ({}) : {}", persisterClassName, e);
+                        LOGGER.error("(FAILED) Loading Persister ({})" + perissterClassName, e);
                     }
                 }
 
