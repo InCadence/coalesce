@@ -205,8 +205,7 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
                           EPersistorCapabilities.READ,
                           EPersistorCapabilities.UPDATE,
                           EPersistorCapabilities.DELETE,
-                          EPersistorCapabilities.READ_TEMPLATES,
-                          EPersistorCapabilities.GET_FIELD_VALUE);
+                          EPersistorCapabilities.READ_TEMPLATES);
     }
 
     private void deleteEntity(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
