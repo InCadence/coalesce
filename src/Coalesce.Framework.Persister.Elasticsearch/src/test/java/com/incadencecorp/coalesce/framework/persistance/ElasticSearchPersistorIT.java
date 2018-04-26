@@ -301,4 +301,17 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
     {
         return new ElasticSearchPersistor();
     }
+    
+    @Test
+    public void testGetEntityTemplateKey() throws Exception {
+    	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+    	String key = persistor.getEntityTemplateKey("UNIT_TEST", "DSS", "1.0");
+    	LOGGER.debug("Template key: " + key);
+    }
+    
+    @Test
+    public void testGetEntityTemplateMetadata() throws Exception {
+    	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+    	persistor.getEntityTemplateMetadata();
+    }
 }

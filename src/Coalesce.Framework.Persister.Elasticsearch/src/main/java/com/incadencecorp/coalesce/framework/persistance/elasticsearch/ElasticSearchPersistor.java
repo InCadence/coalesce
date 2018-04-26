@@ -225,18 +225,6 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
         deleteFromElasticSearch(conn, COALESCE_ENTITY_INDEX, "entity", entity.getKey());
     }
 
-    private void deleteFromElasticSearch(AbstractClient conn, String index, String type, String id)
-    {
-        DeleteRequest entityRequest = new DeleteRequest();
-        entityRequest.index(index);
-        entityRequest.type(type);
-        entityRequest.id(id);
-
-        DeleteResponse entityResponse = conn.delete(entityRequest).actionGet();
-
-        LOGGER.debug("Delete entity for entity {} : {}", index, entityResponse);
-    }
-
     private void persistLinkages(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
     {
         IndexRequest request = new IndexRequest();
