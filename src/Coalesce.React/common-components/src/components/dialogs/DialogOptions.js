@@ -32,6 +32,7 @@ export class DialogOptions extends React.Component {
         modal={false}
         open={this.props.open}
         onRequestClose={this.props.onClose}
+        autoScrollBodyContent={true}
       >
         <List>
           {this.props.options.map((item) => {return this.renderItem(item);})}

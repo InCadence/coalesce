@@ -1,13 +1,13 @@
 ----------------------------------------------------------------
-Thu Jan 11 09:15:54 EST 2018:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.13.1.1 - (1765088): instance a816c00e-0160-e593-c1ea-0000165fe788 
+Fri Apr 27 12:03:08 EDT 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.13.1.1 - (1765088): instance a816c00e-0163-07d8-0700-0000165fca90 
 on database directory memory:/sdk/src/06-jcoalesce/src/Coalesce.Services/CRUD/service/OMEGA with class loader sun.misc.Launcher$AppClassLoader@7f31245a 
 Loaded from file:/home/ckrentz/.m2/repository/org/apache/derby/derby/10.13.1.1/derby-10.13.1.1.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.8.0_151-8u151-b12-0ubuntu0.16.04.2-b12
+java.runtime.version=1.8.0_162-8u162-b12-0ubuntu0.16.04.2-b12
 user.dir=/sdk/src/06-jcoalesce/src/Coalesce.Services/CRUD/service
 os.name=Linux
 os.arch=amd64
-os.version=4.10.0-42-generic
+os.version=4.13.0-37-generic
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
