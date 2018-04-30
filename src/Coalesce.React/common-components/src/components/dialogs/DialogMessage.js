@@ -23,6 +23,7 @@ export class DialogMessage extends React.PureComponent {
           modal={false}
           open={this.props.opened}
           onRequestClose={this.props.onClose}
+          autoScrollBodyContent={true}
         >
           {this.props.message}
         </Dialog>

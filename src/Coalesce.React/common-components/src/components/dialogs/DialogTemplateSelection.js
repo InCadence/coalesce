@@ -47,6 +47,7 @@ export class DialogTemplateSelection extends React.Component {
         modal={false}
         open={this.props.opened}
         onRequestClose={() => this.handleClose()}
+        autoScrollBodyContent={true}
       >
         <List>
           {this.props.templates != null && this.props.templates.map((item) => {return this.renderTemplateItem(item);})}

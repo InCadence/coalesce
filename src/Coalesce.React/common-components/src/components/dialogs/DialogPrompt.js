@@ -35,6 +35,7 @@ export class DialogPrompt extends React.Component {
           modal={false}
           open={this.props.opened}
           onRequestClose={this.props.onClose}
+          autoScrollBodyContent={true}
         >
           <TextField
             autoFocus
