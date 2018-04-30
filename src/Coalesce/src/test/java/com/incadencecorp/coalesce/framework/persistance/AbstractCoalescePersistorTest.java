@@ -6,6 +6,7 @@ import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
+import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.MimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
@@ -22,9 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -102,12 +101,17 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         TestEntity entity = new TestEntity();
         entity.initialize();
 
+        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
+
+        persister.saveTemplate(template);
+        persister.registerTemplate(template);
+
         Assert.assertTrue(persister.saveEntity(false, entity));
 
         TestEntity entity2 = new TestEntity();
         entity2.initialize();
 
-        //EntityLinkHelper.linkEntities(entity, ELinkTypes.IS_PARENT_OF, entity2);
+        EntityLinkHelper.linkEntities(entity, ELinkTypes.IS_PARENT_OF, entity2);
 
         Assert.assertTrue(persister.saveEntity(true, entity, entity2));
 
@@ -115,7 +119,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         entity.markAsDeleted();
         entity2.markAsDeleted();
 
-        persister.saveEntity(true, entity);
+        persister.saveEntity(true, entity, entity2);
 
     }
 
@@ -294,6 +298,8 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         Assume.assumeTrue(persistor.getCapabilities().contains(EPersistorCapabilities.GET_FIELD_VALUE));
 
+        boolean supportsBinary = persistor.getCapabilities().contains(EPersistorCapabilities.BINARY);
+
         double CIRCLERADIUS = 5.25;
 
         // Create Entity
@@ -380,18 +386,20 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         // File
         String fileName = CoalesceUnitTestSettings.getResourceAbsolutePath(filename);
-
-        try
+        if (supportsBinary)
         {
-            DocumentProperties properties = new DocumentProperties();
-            if (properties.initialize(fileName, CoalesceSettings.getUseEncryption()))
+            try
             {
-                record.getFileField().setValue(properties);
+                DocumentProperties properties = new DocumentProperties();
+                if (properties.initialize(fileName, CoalesceSettings.getUseEncryption()))
+                {
+                    record.getFileField().setValue(properties);
+                }
             }
-        }
-        catch (CoalesceException e)
-        {
-            fail("Error processing image file: " + e.getMessage());
+            catch (CoalesceException e)
+            {
+                fail("Error processing image file: " + e.getMessage());
+            }
         }
 
         // Register a template for this entity so that search data is persisted
@@ -413,7 +421,12 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         DateTime datevalue = JodaDateTimeHelper.fromXmlDateTimeUTC(mydate);
         CoalesceEntity filefieldentity = persistor.getEntity(entity.getKey())[0];
         CoalesceFileField filefieldvalue = (CoalesceFileField) filefieldentity.getCoalesceObjectForKey(record.getFileField().getKey());
-        byte[] filefieldbytesvalue = Base64.decode(filefieldvalue.getBaseValue());
+
+        byte[] filefieldbytesvalue = null;
+        if (supportsBinary)
+        {
+            filefieldbytesvalue = Base64.decode(filefieldvalue.getBaseValue());
+        }
 
         // Create test values
         String ctest = new WKTWriter(3).write(center);
@@ -425,7 +438,12 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         double dlisttest[] = record.getDoubleListField().getValue();
         boolean btest = record.getBooleanField().getValue();
         DateTime datetest = record.getDateField().getValue();
-        byte[] fileFieldBytestest = Base64.decode(record.getFileField().getBaseValue());
+
+        byte[] fileFieldBytestest = null;
+        if (supportsBinary)
+        {
+            fileFieldBytestest = Base64.decode(record.getFileField().getBaseValue());
+        }
 
         // Verify Circle
         Assert.assertEquals(ctest, cvalue);
@@ -464,14 +482,17 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         Assert.assertEquals(datetest, datevalue);
 
         // Verify File Field
-        Assert.assertTrue((filefieldvalue.getValue() instanceof DocumentProperties));
-        Assert.assertArrayEquals(filefieldbytesvalue, fileFieldBytestest);
+        if (supportsBinary)
+        {
+            Assert.assertNotNull(filefieldvalue.getValue());
+            Assert.assertArrayEquals(filefieldbytesvalue, fileFieldBytestest);
 
-        Assert.assertEquals(filename, filefieldvalue.getFilename());
-        Assert.assertEquals(FilenameUtils.getExtension(filename), filefieldvalue.getExtension());
-        Assert.assertEquals(MimeHelper.getMimeTypeForExtension(FilenameUtils.getExtension(filename)),
-                            filefieldvalue.getMimeType());
-        Assert.assertEquals(filefieldbytesvalue.length, record.getFileField().getSize());
+            Assert.assertEquals(filename, filefieldvalue.getFilename());
+            Assert.assertEquals(FilenameUtils.getExtension(filename), filefieldvalue.getExtension());
+            Assert.assertEquals(MimeHelper.getMimeTypeForExtension(FilenameUtils.getExtension(filename)),
+                                filefieldvalue.getMimeType());
+            Assert.assertEquals(filefieldbytesvalue.length, record.getFileField().getSize());
+        }
 
     }
 

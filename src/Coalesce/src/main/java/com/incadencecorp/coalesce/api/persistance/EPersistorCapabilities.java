@@ -75,5 +75,9 @@ public enum EPersistorCapabilities
     /**
      * Whether or not this persistor can index fields.
      */
-    INDEX_FIELDS
+    INDEX_FIELDS,
+    /**
+     * Whether ot not this persistor supports binary data.
+     */
+    BINARY
 }

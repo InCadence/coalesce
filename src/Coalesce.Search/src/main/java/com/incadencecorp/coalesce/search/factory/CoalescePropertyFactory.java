@@ -201,6 +201,30 @@ public class CoalescePropertyFactory {
     --------------------------------------------------------------------------*/
 
     /**
+     * @return the property used for filtering on the linkage key.
+     */
+    public static PropertyName getLinkageKey()
+    {
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + CoalesceLinkage.ATTRIBUTE_KEY);
+    }
+
+    /**
+     * @return the property used for filtering on linkage's date created.
+     */
+    public static PropertyName getLinkageDateCreated()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_DATECREATED);
+    }
+
+    /**
+     * @return the property used for filtering on linkages's last modified.
+     */
+    public static PropertyName getLinkageLastModified()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_LASTMODIFIED);
+    }
+
+    /**
      * @return the property used for filtering on the entity key of linked
      * entities.
      */

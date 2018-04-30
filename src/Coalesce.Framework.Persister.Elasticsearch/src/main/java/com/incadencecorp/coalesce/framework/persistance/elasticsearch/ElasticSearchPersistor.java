@@ -12,8 +12,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -51,27 +49,11 @@ import java.util.*;
  */
 public class ElasticSearchPersistor extends ElasticSearchTemplatePersister implements ICoalescePersistor {
 
-    // Some constants for the linkage records
-    // TODO: Move this to a common area in Coalesce
-    public static final String LINKAGE_ENTITY1_KEY_COLUMN_NAME = "entity1Key";
-    public static final String LINKAGE_ENTITY1_NAME_COLUMN_NAME = "entity1Name";
-    public static final String LINKAGE_ENTITY1_SOURCE_COLUMN_NAME = "entity1Source";
-    public static final String LINKAGE_ENTITY1_VERSION_COLUMN_NAME = "entity1Version";
-    public static final String LINKAGE_ENTITY2_KEY_COLUMN_NAME = "entity2Key";
-    public static final String LINKAGE_ENTITY2_NAME_COLUMN_NAME = "entity2Name";
-    public static final String LINKAGE_ENTITY2_SOURCE_COLUMN_NAME = "entity2Source";
-    public static final String LINKAGE_ENTITY2_VERSION_COLUMN_NAME = "entity2Version";
-    public static final String LINKAGE_KEY_COLUMN_NAME = "objectKey";
-    public static final String LINKAGE_LAST_MODIFIED_COLUMN_NAME = "lastModified";
-    public static final String LINKAGE_LINK_TYPE_COLUMN_NAME = "linkType";
-    public static final String LINKAGE_LABEL_COLUMN_NAME = "label";
-
     /*--------------------------------------------------------------------------
     Private Members
     --------------------------------------------------------------------------*/
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistor.class);
-
 
     /*--------------------------------------------------------------------------
     Overridden Functions
@@ -228,27 +210,41 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
     private void persistLinkages(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
     {
-        IndexRequest request = new IndexRequest();
-        request.index(COALESCE_LINKAGE_INDEX);
-        request.type("linkages");
-        request.id(entity.getKey());
-        request.source(createLinkageMap(entity));
+        Map<String, Object> common = createEntityMapping(entity);
 
-        IndexResponse response = conn.index(request).actionGet();
+        // TODO Perform Task in Parallel.
+        for (CoalesceLinkage linkage : entity.getLinkages().values())
+        {
+            Map<String, Object> source = createLinkageMap(linkage);
+            source.putAll(common);
 
-        LOGGER.debug("Indexed linkage for entity coalesce-{} : {}", entity.getName(), response);
+            IndexRequest request = new IndexRequest();
+            request.index(COALESCE_LINKAGE_INDEX);
+            request.type(COALESCE_LINKAGE);
+            request.id(linkage.getKey());
+            request.source(source);
+
+            IndexResponse response = conn.index(request).actionGet();
+
+            // TODO Verify Response
+        }
+
+        LOGGER.debug("Indexed linkage for entity {}", entity.getKey());
     }
 
     private void persistEntityObject(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
     {
-        IndexResponse response;
-        IndexRequest request = new IndexRequest();
-        request.index("coalesce-" + normalize(entity.getName()));
-        request.type(entity.getType().toLowerCase());
-        request.id(entity.getKey());
-        request.source(createValueMap(entity));
+        Map<String, Object> source = createValueMap(entity);
 
-        response = conn.index(request).actionGet();
+        source.putAll(createEntityMapping(entity));
+
+        IndexRequest request = new IndexRequest();
+        request.index(COALESCE_ENTITY_INDEX + "-" + normalize(entity.getName()));
+        request.type(COALESCE_ENTITY);
+        request.id(entity.getKey());
+        request.source(source);
+
+        IndexResponse response = conn.index(request).actionGet();
 
         LOGGER.debug("Saved Index called: coalesce-{} : {}", entity.getName(), response);
     }
@@ -404,13 +400,7 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
     private void persistEntityIndex(CoalesceEntity entity, AbstractClient conn)
     {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(CoalescePropertyFactory.getEntityKey().getPropertyName(), entity.getKey());
-        properties.put(CoalescePropertyFactory.getName().getPropertyName(), entity.getName());
-        properties.put(CoalescePropertyFactory.getSource().getPropertyName(), entity.getSource());
-        properties.put(CoalescePropertyFactory.getVersion().getPropertyName(), entity.getVersion());
-        properties.put(CoalescePropertyFactory.getDateCreated().getPropertyName(), entity.getDateCreated());
-        properties.put(CoalescePropertyFactory.getLastModified().getPropertyName(), entity.getLastModified());
+        Map<String, Object> properties = createEntityMapping(entity);
 
         if (ElasticSearchSettings.getStoreXML())
         {
@@ -419,7 +409,7 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
         IndexRequest request = new IndexRequest();
         request.index(COALESCE_ENTITY_INDEX);
-        request.type("entity");
+        request.type(COALESCE_ENTITY);
         request.id(entity.getKey());
         request.source(properties);
 
@@ -428,36 +418,52 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
         LOGGER.debug("Saved XML Index called: coalesceentityindex : {}", response);
     }
 
+    private Map<String, Object> createEntityMapping(CoalesceEntity entity)
+    {
+        Map<String, Object> properties = new HashMap<>();
+
+        properties.put(ENTITY_KEY_COLUMN_NAME, entity.getKey());
+        properties.put(ENTITY_NAME_COLUMN_NAME, entity.getName());
+        properties.put(ENTITY_SOURCE_COLUMN_NAME, entity.getSource());
+        properties.put(ENTITY_VERSION_COLUMN_NAME, entity.getVersion());
+        properties.put(ENTITY_DATE_CREATED_COLUMN_NAME, entity.getDateCreated());
+        properties.put(ENTITY_LAST_MODIFIED_COLUMN_NAME, entity.getLastModified());
+
+        return properties;
+    }
+
     /**
      * persist the Linkage for an Entity. This will create a new document of the Linkage index
      *
-     * @param entity The entity to persist the linkages for
+     * @param linkage The entity's linkage to persist
      * @return returns true if no exceptions were thrown
      */
-    private Map<String, Object> createLinkageMap(CoalesceEntity entity)
+    private Map<String, Object> createLinkageMap(CoalesceLinkage linkage)
     {
         //HashMap representation of the linkage for indexing in ElasticSearch
-        HashMap<String, Object> linkageMap = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
 
-        Map<String, CoalesceLinkage> linkages = entity.getLinkages();
-        for (Map.Entry<String, CoalesceLinkage> mlink : linkages.entrySet())
-        {
-            CoalesceLinkage link = mlink.getValue();
+        properties.put(LINKAGE_KEY_COLUMN_NAME, linkage.getKey());
 
-            linkageMap.put(ElasticSearchPersistor.LINKAGE_KEY_COLUMN_NAME, link.getKey());
-            linkageMap.put(ElasticSearchPersistor.LINKAGE_LABEL_COLUMN_NAME, link.getName());
-            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY1_KEY_COLUMN_NAME, link.getEntity1Key());
-            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY1_NAME_COLUMN_NAME, link.getEntity1Name());
-            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY1_SOURCE_COLUMN_NAME, link.getEntity1Source());
-            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY1_VERSION_COLUMN_NAME, link.getEntity1Version());
-            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY2_KEY_COLUMN_NAME, link.getEntity2Key());
-            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY2_NAME_COLUMN_NAME, link.getEntity2Name());
-            linkageMap.put(ElasticSearchPersistor.LINKAGE_ENTITY2_SOURCE_COLUMN_NAME, link.getEntity2Source());
-            linkageMap.put(ElasticSearchPersistor.LINKAGE_LAST_MODIFIED_COLUMN_NAME, link.getLastModifiedAsString());
-            linkageMap.put(ElasticSearchPersistor.LINKAGE_LINK_TYPE_COLUMN_NAME, link.getLinkType().getLabel());
-        }
+        /*
+        properties.put(ENTITY_KEY_COLUMN_NAME, linkage.getEntity1Key());
+        properties.put(ENTITY_NAME_COLUMN_NAME, linkage.getEntity1Name());
+        properties.put(ENTITY_SOURCE_COLUMN_NAME, linkage.getEntity1Source());
+        properties.put(ENTITY_VERSION_COLUMN_NAME, linkage.getEntity1Version());
+        */
+
+        properties.put(LINKAGE_ENTITY2_KEY_COLUMN_NAME, linkage.getEntity2Key());
+        properties.put(LINKAGE_ENTITY2_NAME_COLUMN_NAME, linkage.getEntity2Name());
+        properties.put(LINKAGE_ENTITY2_SOURCE_COLUMN_NAME, linkage.getEntity2Source());
+        properties.put(LINKAGE_ENTITY2_VERSION_COLUMN_NAME, linkage.getEntity2Version());
+
+        properties.put(LINKAGE_DATE_CREATED_COLUMN_NAME, linkage.getDateCreated());
+        properties.put(LINKAGE_LAST_MODIFIED_COLUMN_NAME, linkage.getLastModifiedAsString());
+        properties.put(LINKAGE_LABEL_COLUMN_NAME, linkage.getName());
+        properties.put(LINKAGE_STATUS_COLUMN_NAME, linkage.getStatus().value());
+        properties.put(LINKAGE_LINK_TYPE_COLUMN_NAME, linkage.getLinkType().getLabel());
 
         //If the index response is returned and no exception was thrown, the index operation was successful
-        return linkageMap;
+        return properties;
     }
 }
