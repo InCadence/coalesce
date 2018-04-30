@@ -1,0 +1,19 @@
+java.util.concurrent.ExecutionException: com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException: Entity 1b968046-0c86-47d3-b445-c4302062c194 was not found
+	at java.util.concurrent.FutureTask.report(FutureTask.java:122)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:192)
+	at com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperation.call(AbstractOperation.java:156)
+	at com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperation.execute(AbstractOperation.java:190)
+	at com.incadencecorp.coalesce.synchronizer.api.common.AbstractDriver.run(AbstractDriver.java:119)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException: Entity 1b968046-0c86-47d3-b445-c4302062c194 was not found
+	at com.incadencecorp.coalesce.synchronizer.service.operations.CopyOperationImpl$1.doWork(CopyOperationImpl.java:67)
+	at com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperationTask.call(AbstractOperationTask.java:47)
+	at com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperationTask.call(AbstractOperationTask.java:36)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	... 7 more
