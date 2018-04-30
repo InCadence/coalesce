@@ -67,10 +67,6 @@
                     <artifactId>log4j-core</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.incadencecorp.coalesce</groupId>
-                    <artifactId>coalesce-core</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.apache.lucene</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
@@ -79,11 +75,6 @@
         <dependency>
             <groupId>com.incadencecorp.coalesce</groupId>
             <artifactId>coalesce-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.incadencecorp.coalesce</groupId>
-            <artifactId>coalesce-search</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
