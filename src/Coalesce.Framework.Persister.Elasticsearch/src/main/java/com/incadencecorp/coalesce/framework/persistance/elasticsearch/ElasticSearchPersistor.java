@@ -1,13 +1,11 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
-import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.ElasticsearchException;
@@ -49,6 +47,8 @@ import java.util.*;
  */
 public class ElasticSearchPersistor extends ElasticSearchTemplatePersister implements ICoalescePersistor {
 
+    private final boolean isAuthoritative;
+
     /*--------------------------------------------------------------------------
     Private Members
     --------------------------------------------------------------------------*/
@@ -64,24 +64,19 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
      */
     public ElasticSearchPersistor()
     {
-        FilePropertyConnector fileConnector = new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION);
-        fileConnector.setReadOnly(true);
-
-        ElasticSearchSettings.setConnector(fileConnector);
-
-        LOGGER.debug("Initialized ElasticSearchPersistor using default constructor");
+        this(Collections.emptyMap());
     }
 
-    public void makeSureConnectorIsInitialized()
+    /**
+     * @param params configuration.
+     */
+    public ElasticSearchPersistor(Map<String, String> params)
     {
-        if (!ElasticSearchSettings.getConnectorInitialized())
-        {
-            FilePropertyConnector connector = new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION);
-            LOGGER.debug("Connector initialized using config file: " + CoalesceParameters.COALESCE_CONFIG_LOCATION);
-            connector.setReadOnly(true);
+        super(params);
 
-            ElasticSearchSettings.setConnector(connector);
-        }
+        isAuthoritative =
+                this.params.containsKey(ElasticSearchSettings.PARAM_IS_AUTHORITATIVE) && Boolean.parseBoolean(this.params.get(
+                        ElasticSearchSettings.PARAM_IS_AUTHORITATIVE));
     }
 
     /*--------------------------------------------------------------------------
@@ -110,7 +105,7 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
+            AbstractClient client = conn.getDBConnector(params);
 
             for (CoalesceEntity entity : entities)
             {
@@ -152,7 +147,7 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
         List<String> results = new ArrayList<>();
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
+            AbstractClient client = conn.getDBConnector(params);
 
             for (String key : keys)
             {
@@ -183,18 +178,24 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
     @Override
     public EnumSet<EPersistorCapabilities> getCapabilities()
     {
-        return EnumSet.of(EPersistorCapabilities.CREATE,
-                          EPersistorCapabilities.READ,
-                          EPersistorCapabilities.UPDATE,
-                          EPersistorCapabilities.DELETE,
-                          EPersistorCapabilities.READ_TEMPLATES);
+        EnumSet<EPersistorCapabilities> capabilities = EnumSet.of(EPersistorCapabilities.CREATE,
+                                                                  EPersistorCapabilities.UPDATE,
+                                                                  EPersistorCapabilities.DELETE,
+                                                                  EPersistorCapabilities.READ_TEMPLATES);
+
+        if (isAuthoritative)
+        {
+            capabilities.add(EPersistorCapabilities.READ);
+        }
+
+        return capabilities;
     }
 
     private void deleteEntity(CoalesceEntity entity, AbstractClient conn) throws CoalescePersistorException
     {
         deleteFromElasticSearch(conn,
-                                "coalesce-" + entity.getName().toLowerCase(),
-                                entity.getType().toLowerCase(),
+                                COALESCE_ENTITY_INDEX + "-" + normalize(entity.getName()),
+                                COALESCE_ENTITY,
                                 entity.getKey());
     }
 
@@ -294,7 +295,10 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
                             break;
                         case GEOCOORDINATE_TYPE:
                             Point point = ((CoalesceCoordinateField) field).getValueAsPoint();
-                            results.put(name, point.getX() + ", " + point.getY());
+                            if (point != null)
+                            {
+                                results.put(name, point.getX() + ", " + point.getY());
+                            }
                             break;
                         case GEOCOORDINATE_LIST_TYPE:
                             results.put(name, createMultiPoint((CoalesceCoordinateListField) field));
@@ -402,7 +406,7 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
     {
         Map<String, Object> properties = createEntityMapping(entity);
 
-        if (ElasticSearchSettings.getStoreXML())
+        if (isAuthoritative)
         {
             properties.put(CoalescePropertyFactory.getEntityXml().getPropertyName(), entity.toXml());
         }

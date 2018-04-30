@@ -46,10 +46,6 @@ public class ElasticSearchDataConnectorIT {
         connector.setReadOnly(true);
 
         ElasticSearchSettings.setConnector(connector);
-
-        String databaseName = ElasticSearchSettings.getDatabaseName();
-        String keystoreFile = ElasticSearchSettings.getKeystoreFilepath();
-
     }
 
     @Test

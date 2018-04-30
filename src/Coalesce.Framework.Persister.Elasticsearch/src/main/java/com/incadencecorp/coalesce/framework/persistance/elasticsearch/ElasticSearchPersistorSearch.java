@@ -34,7 +34,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
+            AbstractClient client = conn.getDBConnector(params);
             QueryBuilder qb = QueryBuilders.matchAllQuery();
             SearchResponse response = client.prepareSearch().setQuery(qb).get();
             //.execute()
@@ -53,7 +53,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
+            AbstractClient client = conn.getDBConnector(params);
             QueryBuilder qb = QueryBuilders.matchAllQuery();
             //QueryBuilder qb = QueryBuilders.matchPhraseQuery("PMESIIPTMilitary", "1");
             SearchResponse response = client.prepareSearch(searchValue)
@@ -76,7 +76,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
+            AbstractClient client = conn.getDBConnector(params);
             QueryBuilder qb = QueryBuilders.matchPhraseQuery(filterName, filterValue);
             SearchResponse response = client.prepareSearch(searchValue)
                     //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
@@ -102,7 +102,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
+            AbstractClient client = conn.getDBConnector(params);
         }
         catch (Exception e)
         {
@@ -118,7 +118,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
             rowset = RowSetProvider.newFactory().createCachedRowSet();
-            AbstractClient client = conn.getDBConnector(ElasticSearchSettings.getParameters());
+            AbstractClient client = conn.getDBConnector(params);
             SearchResponse response = client.prepareSearch("gdelt_data").setQuery(QueryBuilders.termQuery("GlobalEventID",
                                                                                                           "410479387"))                 // Query
                     //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
