@@ -115,6 +115,12 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
         try
         {
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Keystore = {}", props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_FILE));
+                LOGGER.debug("Truststore = {}", props.getProperty(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE));
+            }
+
             Builder clientBuild = IronhideClient.builder().setClusterName(props.getProperty(ElasticSearchSettings.PARAM_CLUSTER_NAME)).clientSSLSettings(
                     props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_FILE),
                     props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD),
