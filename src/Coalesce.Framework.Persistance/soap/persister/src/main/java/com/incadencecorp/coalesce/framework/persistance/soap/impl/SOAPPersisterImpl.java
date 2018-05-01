@@ -265,7 +265,7 @@ public class SOAPPersisterImpl implements ICoalescePersistor, ICoalesceSearchPer
     @Override
     public void saveTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     @Override

@@ -58,10 +58,13 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
     {
         if (client == null)
         {
+            boolean isSSLEnabled =
+                    props.containsKey(ElasticSearchSettings.PARAM_SSL_ENABLED) && Boolean.parseBoolean((String) props.get(
+                            ElasticSearchSettings.PARAM_SSL_ENABLED));
 
             try
             {
-                client = ElasticSearchSettings.isSSLEnabled() ? createSSLClient(props) : createClient(props);
+                client = isSSLEnabled ? createSSLClient(props) : createClient(props);
             }
             catch (CoalescePersistorException e)
             {
@@ -78,12 +81,12 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
         try
         {
-            Settings.builder().put("cluster.name", ElasticSearchSettings.getElasticClusterName());
+            Settings.builder().put("cluster.name", props.getProperty(ElasticSearchSettings.PARAM_CLUSTER_NAME));
 
             client = new PreBuiltTransportClient(Settings.builder().build());
 
-            String eshosts = ElasticSearchSettings.getElastichosts();
-            Stream.of(eshosts.split(",")).map(host -> {
+            String hosts = props.getProperty(ElasticSearchSettings.PARAM_HOSTS);
+            Stream.of(hosts.split(",")).map(host -> {
                 HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
 
                 try
@@ -110,23 +113,22 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
     {
         IronhideClient client;
 
-        // on startup
-        String keypath = props.getProperty(ElasticSearchSettings.getKeystoreFileProperty());
-        String trustpath = props.getProperty(ElasticSearchSettings.getTruststoreFileProperty());
-
         try
         {
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Keystore = {}", props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_FILE));
+                LOGGER.debug("Truststore = {}", props.getProperty(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE));
+            }
 
-            LOGGER.debug("Looking for keystore file: " + keypath);
+            Builder clientBuild = IronhideClient.builder().setClusterName(props.getProperty(ElasticSearchSettings.PARAM_CLUSTER_NAME)).clientSSLSettings(
+                    props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_FILE),
+                    props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD),
+                    props.getProperty(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE),
+                    props.getProperty(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));
 
-            Builder clientBuild = IronhideClient.builder().setClusterName(ElasticSearchSettings.getElasticClusterName()).clientSSLSettings(
-                    keypath,
-                    "changeit",
-                    trustpath,
-                    "changeit");
-
-            String eshosts = props.getProperty(ElasticSearchSettings.getElastichostsProperty());
-            Stream.of(eshosts.split(",")).map(host -> {
+            String hosts = props.getProperty(ElasticSearchSettings.PARAM_HOSTS);
+            Stream.of(hosts.split(",")).map(host -> {
                 HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
 
                 try
