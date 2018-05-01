@@ -175,7 +175,7 @@ public class ElasticSearchSettings {
         return settings.getSetting(config_name, PARAM_SSL_ENABLED, false, false);
     }
 
-    public static Boolean isAuthoritative()
+    public static boolean isAuthoritative()
     {
         return settings.getSetting(config_name, PARAM_IS_AUTHORITATIVE, true, false);
     }
@@ -189,11 +189,11 @@ public class ElasticSearchSettings {
     {
         Map<String, String> params = new HashMap<>();
 
-        params.put(PARAM_IS_AUTHORITATIVE, isAuthoritative().toString());
-        params.put(PARAM_SSL_ENABLED, getKeystoreFilepath());
+        params.put(PARAM_IS_AUTHORITATIVE, Boolean.toString(isAuthoritative()));
+        params.put(PARAM_SSL_ENABLED, Boolean.toString(isSSLEnabled()));
         params.put(PARAM_KEYSTORE_FILE, getKeystoreFilepath());
-        params.put(PARAM_KEYSTORE_PASSWORD, getKeystoreFilepath());
-        params.put(PARAM_TRUSTSTORE_FILE, "changeit");
+        params.put(PARAM_KEYSTORE_PASSWORD, "changeit");
+        params.put(PARAM_TRUSTSTORE_FILE, getTruststoreFilepath());
         params.put(PARAM_TRUSTSTORE_PASSWORD, "changeit");
         params.put(PARAM_HOSTS, getElastichosts());
         params.put(PARAM_CLUSTER_NAME, getElasticClusterName());
