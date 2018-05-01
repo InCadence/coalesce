@@ -18,7 +18,6 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import com.incadencecorp.coalesce.api.CoalesceParameters;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
@@ -38,36 +37,51 @@ public class ElasticSearchSettings {
     private static String config_name = "elasticsearch-config.properties";
     private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
     private static Boolean connectorInitialized = false;
-    private static Boolean storeXML = true;
 
     /*--------------------------------------------------------------------------
     Property Names
     --------------------------------------------------------------------------*/
 
-	// TODO Update base parameter to be coalesce within the InCadence repo
-    private static final String PARAM_BASE = "omega.dss.";
-    private static final String PARAM_SRID = PARAM_BASE + "srid";
-    private static final String PARAM_PORT = PARAM_BASE + "dbServerPort";
-    private static final String PARAM_DATABASE = PARAM_BASE + "database";
-    private static final String PARAM_SCHEMA = PARAM_BASE + "schema";
-    private static final String PARAM_PASSWORD = PARAM_BASE + "dbPassword";
-    private static final String PARAM_USER = PARAM_BASE + "dbUser";
-    private static final String PARAM_HOST = PARAM_BASE + "dbServerName";
-    private static final String PARAM_USE_FOREIGN_KEYS = PARAM_BASE + "usefk";
-    private static final String PARAM_SSL_ENABLED = "ssl.enabled";
-    private static final String KEYSTORE_FILE_PROPERTY = "ssl.keystore";
-    private static final String TRUSTSTORE_FILE_PROPERTY = "ssl.truststore";
-    private static final String ELASTIC_CLUSTER_NAME_PROPERTY = "elastic.clustername";
-    private static final String ELASTICHOSTS_PROPERTY = "elastic.hosts";
+    private static final String PARAM_ELASTIC_BASE = "elastic.";
+    private static final String PARAM_SSL_BASE = "ssl.";
 
-    /*--------------------------------------------------------------------------
-    Default Values
-    --------------------------------------------------------------------------*/
+    /**
+     * (Boolean) Specifies whether or not this persister is authoritative meaning it can be used to READ entities.
+     */
+    public static final String PARAM_IS_AUTHORITATIVE = PARAM_ELASTIC_BASE + "isAuthoritative";
+    /**
+     * (Boolean) Specifies whether or not to use SSL.
+     */
+    public static final String PARAM_SSL_ENABLED = PARAM_SSL_BASE + "enabled";
 
-    private static final String DEFAULT_USERNAME = "enterprisedb";
-    private static final String DEFAULT_PASSWORD = DEFAULT_USERNAME;
-    private static final boolean DEFAULT_USE_FOREIGN_KEYS = false;
-    private static final int DEFAULT_SRID = 4326; // WGS84
+    /**
+     * (String) Defines the location the the key store.
+     */
+    public static final String PARAM_KEYSTORE_FILE = PARAM_SSL_BASE + "keystore";
+
+    /**
+     * (String) Keystore Password
+     */
+    public static final String PARAM_KEYSTORE_PASSWORD = PARAM_KEYSTORE_FILE + ".password";
+
+    /**
+     * (String) Defines the location the the trust store.
+     */
+    public static final String PARAM_TRUSTSTORE_FILE = PARAM_SSL_BASE + "truststore";
+
+    /**
+     * (String) Truststore Password
+     */
+    public static final String PARAM_TRUSTSTORE_PASSWORD = PARAM_TRUSTSTORE_FILE + ".password";
+
+    /**
+     * (String) Defines the ElasticSearch cluster name
+     */
+    public static final String PARAM_CLUSTER_NAME = PARAM_ELASTIC_BASE + "clustername";
+    /**
+     * (CSV) Defines the ElasticSearch host
+     */
+    public static final String PARAM_HOSTS = PARAM_ELASTIC_BASE + "hosts";
 
     /*--------------------------------------------------------------------------
     Initialization
@@ -116,167 +130,39 @@ public class ElasticSearchSettings {
     Settings
     --------------------------------------------------------------------------*/
 
-    /**
-     * @return Returns the address of the database.
-     */
-    public static String getDatabaseAddress()
-    {
-        return settings.getSetting(config_name, PARAM_HOST, "10.0.51.90", true);
-    }
-
-    /**
-     * Sets the address of the database.
-     *
-     * @param databaseAddress
-     */
-    public static void setDatabaseAddress(String databaseAddress)
-    {
-        settings.setSetting(config_name, PARAM_HOST, databaseAddress);
-    }
-
-    /**
-     * @return Returns the username used for accessing the database.
-     */
-    public static String getUserName()
-    {
-        return settings.getSetting(config_name, PARAM_USER, DEFAULT_USERNAME, false);
-    }
-
-    /**
-     * Sets the username used for accessing the database.
-     *
-     * @param userName
-     */
-    public static void setUserName(String userName)
-    {
-        settings.setSetting(config_name, PARAM_USER, userName);
-    }
-
-    /**
-     * @return Returns the password used for accessing the database.
-     */
-    public static String getUserPassword()
-    {
-        return settings.getSetting(config_name, PARAM_PASSWORD, DEFAULT_PASSWORD, false);
-    }
-
-    /**
-     * Sets the password used for accessing the database.
-     *
-     * @param userPassword
-     */
-    public static void setUserPassword(String userPassword)
-    {
-        settings.setSetting(config_name, PARAM_PASSWORD, userPassword);
-    }
-
-    /**
-     * @return Returns the schema used for the database.
-     */
-    public static String getDatabaseSchema()
-    {
-        return settings.getSetting(config_name, PARAM_SCHEMA, "coalesce", true);
-    }
-
-    /**
-     * Sets the schema used for the database.
-     *
-     * @param databaseSchema
-     */
-    public static void setDatabaseSchema(String databaseSchema)
-    {
-        settings.setSetting(config_name, PARAM_SCHEMA, databaseSchema);
-    }
-
-    /**
-     * @return Returns the database name.
-     */
-    public static String getDatabaseName()
-    {
-        return settings.getSetting(config_name, PARAM_DATABASE, "OMEGA", true);
-    }
-
-    /**
-     * Sets the database name.
-     *
-     * @param databaseName
-     */
-    public static void setDatabaseName(String databaseName)
-    {
-        settings.setSetting(config_name, PARAM_DATABASE, databaseName);
-    }
-
-    /**
-     * @return Returns the port used for accessing the database.
-     */
-    public static int getDatabasePort()
-    {
-        return settings.getSetting(config_name, PARAM_PORT, 5444, true);
-    }
-
-    /**
-     * Sets the port to be used for accessing the database.
-     *
-     * @param databasePort
-     */
-    public static void setDatabasePort(int databasePort)
-    {
-        settings.setSetting(config_name, PARAM_PORT, databasePort);
-    }
-
-    public static String getElastichostsProperty()
-    {
-        return ELASTICHOSTS_PROPERTY;
-    }
-
     public static String getElastichosts()
     {
-        return settings.getSetting(config_name, ELASTICHOSTS_PROPERTY, "", false);
-    }
-
-    public static String getKeystoreFileProperty()
-    {
-        return KEYSTORE_FILE_PROPERTY;
+        return settings.getSetting(config_name, PARAM_HOSTS, "", false);
     }
 
     public static String getKeystoreFilepath()
     {
-        return settings.getSetting(config_name, KEYSTORE_FILE_PROPERTY, "", false);
+        return settings.getSetting(config_name, PARAM_KEYSTORE_FILE, "", false);
     }
 
     public static void setKeystoreFilepath(String keystoreFilepath)
     {
-        settings.setSetting(config_name, KEYSTORE_FILE_PROPERTY, keystoreFilepath);
-    }
-
-    public static String getTruststoreFileProperty()
-    {
-        return TRUSTSTORE_FILE_PROPERTY;
+        settings.setSetting(config_name, PARAM_KEYSTORE_FILE, keystoreFilepath);
     }
 
     public static String getTruststoreFilepath()
     {
-        return settings.getSetting(config_name, TRUSTSTORE_FILE_PROPERTY, "", false);
+        return settings.getSetting(config_name, PARAM_TRUSTSTORE_FILE, "", false);
     }
 
     public static void setTruststoreFilepath(String truststoreFilepath)
     {
-        settings.setSetting(config_name, TRUSTSTORE_FILE_PROPERTY, truststoreFilepath);
-    }
-
-    public static String getElasticClusterNameProperty()
-    {
-        return ELASTIC_CLUSTER_NAME_PROPERTY;
+        settings.setSetting(config_name, PARAM_TRUSTSTORE_FILE, truststoreFilepath);
     }
 
     public static void setElasticClusterName(String clusterName)
     {
-        settings.setSetting(config_name, ELASTIC_CLUSTER_NAME_PROPERTY, clusterName);
+        settings.setSetting(config_name, PARAM_CLUSTER_NAME, clusterName);
     }
 
     public static String getElasticClusterName()
     {
-        return settings.getSetting(config_name, ELASTIC_CLUSTER_NAME_PROPERTY, "", false);
+        return settings.getSetting(config_name, PARAM_CLUSTER_NAME, "", false);
     }
 
     public static void setSSLEnabled(boolean value)
@@ -289,81 +175,28 @@ public class ElasticSearchSettings {
         return settings.getSetting(config_name, PARAM_SSL_ENABLED, false, false);
     }
 
-    public static Boolean getStoreXML() {
-		return storeXML;
-	}
-
-	public static void setStoreXML(Boolean storeXML) {
-		ElasticSearchSettings.storeXML = storeXML;
-	}
-
-    /**
-     * @return Returns database parameters.
-     */
-    public static ServerConn getServerConn()
+    public static boolean isAuthoritative()
     {
-
-        ServerConn serCon = new ServerConn();
-
-        serCon.setServerName(getDatabaseAddress());
-        serCon.setPortNumber(getDatabasePort());
-        serCon.setDatabase(getDatabaseName());
-        serCon.setUser(getUserName());
-        serCon.setPassword(getUserPassword());
-
-        return serCon;
+        return settings.getSetting(config_name, PARAM_IS_AUTHORITATIVE, true, false);
     }
 
-    /**
-     * @return the Spatial Reference Identifier (SRID). Default:
-     * {@value #DEFAULT_SRID}.
-     */
-    public static int getSRID()
+    public static void setIsAuthoritative(Boolean value)
     {
-        return settings.getSetting(config_name, PARAM_SRID, DEFAULT_SRID, true);
-    }
-
-    /**
-     * Sets the Spatial Reference Identifier (SRID) - required for geospatial
-     * fields.
-     *
-     * @param srid
-     */
-    public static void setSRID(int srid)
-    {
-        settings.setSetting(config_name, PARAM_SRID, srid);
-    }
-
-    /**
-     * @return whether or not foreign keys should be created when generating
-     * tables while registering an entity. Default:
-     * {@value #DEFAULT_USE_FOREIGN_KEYS}.
-     */
-    public static boolean isUseForeignKeys()
-    {
-        return settings.getSetting(config_name, PARAM_USE_FOREIGN_KEYS, DEFAULT_USE_FOREIGN_KEYS, true);
-    }
-
-    /**
-     * Sets whether or not foreign keys should be created when generating tables
-     * while registering an entity.
-     *
-     * @param value
-     */
-    public static void setUseForeignKeys(boolean value)
-    {
-        settings.setSetting(config_name, PARAM_USE_FOREIGN_KEYS, value);
+        settings.setSetting(config_name, PARAM_IS_AUTHORITATIVE, value);
     }
 
     public static Map<String, String> getParameters()
     {
         Map<String, String> params = new HashMap<>();
-        params.put(ElasticSearchDataConnector.USER, ElasticSearchSettings.getUserName());
-        params.put(ElasticSearchDataConnector.PASSWORD, ElasticSearchSettings.getUserPassword());
-        params.put(KEYSTORE_FILE_PROPERTY, ElasticSearchSettings.getKeystoreFilepath());
-        params.put(TRUSTSTORE_FILE_PROPERTY, ElasticSearchSettings.getTruststoreFilepath());
-        params.put(ELASTICHOSTS_PROPERTY, ElasticSearchSettings.getElastichosts());
-        params.put(ELASTIC_CLUSTER_NAME_PROPERTY, ElasticSearchSettings.getElasticClusterName());
+
+        params.put(PARAM_IS_AUTHORITATIVE, Boolean.toString(isAuthoritative()));
+        params.put(PARAM_SSL_ENABLED, Boolean.toString(isSSLEnabled()));
+        params.put(PARAM_KEYSTORE_FILE, getKeystoreFilepath());
+        params.put(PARAM_KEYSTORE_PASSWORD, "changeit");
+        params.put(PARAM_TRUSTSTORE_FILE, getTruststoreFilepath());
+        params.put(PARAM_TRUSTSTORE_PASSWORD, "changeit");
+        params.put(PARAM_HOSTS, getElastichosts());
+        params.put(PARAM_CLUSTER_NAME, getElasticClusterName());
 
         return params;
     }
