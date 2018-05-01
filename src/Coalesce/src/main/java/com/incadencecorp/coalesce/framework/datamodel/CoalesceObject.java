@@ -397,7 +397,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
         }
         else
         {
-            return null;
+            throw new IllegalArgumentException("Entity Not Specified");
         }
     }
 
