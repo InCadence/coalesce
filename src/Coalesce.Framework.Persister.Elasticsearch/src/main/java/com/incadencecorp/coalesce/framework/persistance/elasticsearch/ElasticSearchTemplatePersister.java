@@ -90,8 +90,10 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     public static final String LINKAGE_ENTITY2_VERSION_COLUMN_NAME = CoalescePropertyFactory.getLinkageVersion().getPropertyName();
 
     private ICoalesceNormalizer normalizer = new DefaultNormalizer();
+
     protected final Map<String, String> params;
-    protected ElasticSearchIterator iterator = new ElasticSearchIterator(normalizer, true);
+    protected ElasticSearchIterator iterator;
+    protected final boolean isAuthoritative;
 
     /**
      * Default Constructor
@@ -105,6 +107,10 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     {
         this.params = ElasticSearchSettings.getParameters();
         this.params.putAll(params);
+
+        isAuthoritative = this.params.containsKey(ElasticSearchSettings.PARAM_IS_AUTHORITATIVE)
+                && Boolean.parseBoolean(this.params.get(ElasticSearchSettings.PARAM_IS_AUTHORITATIVE));
+        iterator = new ElasticSearchIterator(normalizer, isAuthoritative);
 
         if (LOGGER.isDebugEnabled())
         {
@@ -125,7 +131,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     public void setNormalizer(ICoalesceNormalizer value)
     {
         normalizer = value;
-        iterator = new ElasticSearchIterator(normalizer, true);
+        iterator = new ElasticSearchIterator(normalizer, isAuthoritative);
     }
 
     @Override
@@ -138,12 +144,12 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
             for (CoalesceEntityTemplate template : templates)
             {
                 Map<String, Object> properties = new HashMap<>();
-                properties.put(CoalescePropertyFactory.getEntityKey().getPropertyName(), template.getKey());
-                properties.put(CoalescePropertyFactory.getName().getPropertyName(), template.getName());
-                properties.put(CoalescePropertyFactory.getSource().getPropertyName(), template.getSource());
-                properties.put(CoalescePropertyFactory.getVersion().getPropertyName(), template.getVersion());
-                properties.put(CoalescePropertyFactory.getDateCreated().getPropertyName(), template.getDateCreated());
-                properties.put(CoalescePropertyFactory.getLastModified().getPropertyName(), template.getLastModified());
+                properties.put(ENTITY_KEY_COLUMN_NAME, template.getKey());
+                properties.put(ENTITY_NAME_COLUMN_NAME, template.getName());
+                properties.put(ENTITY_SOURCE_COLUMN_NAME, template.getSource());
+                properties.put(ENTITY_VERSION_COLUMN_NAME, template.getVersion());
+                properties.put(ENTITY_DATE_CREATED_COLUMN_NAME, template.getDateCreated());
+                properties.put(ENTITY_LAST_MODIFIED_COLUMN_NAME, template.getLastModified());
                 properties.put(FIELD_XML, template.toXml());
 
                 IndexRequest request = new IndexRequest();

@@ -9,6 +9,7 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.support.AbstractClient;
@@ -48,8 +49,6 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistor.class);
 
-    private final boolean isAuthoritative;
-
     /*--------------------------------------------------------------------------
     Overridden Functions
     --------------------------------------------------------------------------*/
@@ -68,9 +67,6 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
     public ElasticSearchPersistor(Map<String, String> params)
     {
         super(params);
-
-        isAuthoritative = this.params.containsKey(ElasticSearchSettings.PARAM_IS_AUTHORITATIVE)
-                && Boolean.parseBoolean(this.params.get(ElasticSearchSettings.PARAM_IS_AUTHORITATIVE));
     }
 
     /*--------------------------------------------------------------------------
@@ -79,19 +75,11 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
     public boolean checkIfIndexExists(AbstractClient client, String index)
     {
+        IndicesExistsRequest request = new IndicesExistsRequest();
+        request.indices(index.toLowerCase());
 
-        try
-        {
-            boolean hasIndex = client.admin().indices().exists(new IndicesExistsRequest(index.toLowerCase())).actionGet().isExists();
-
-            return hasIndex;
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        return false;
+        IndicesExistsResponse response = client.admin().indices().exists(request).actionGet();
+        return response.isExists();
     }
 
     @Override
@@ -146,7 +134,7 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
             {
                 GetRequest request = new GetRequest();
                 request.index(COALESCE_ENTITY_INDEX);
-                request.type("entity");
+                request.type(COALESCE_ENTITY);
                 request.id(key);
 
                 GetResponse getResponse = client.get(request).actionGet();
@@ -161,7 +149,11 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
         {
             if (e.status() == RestStatus.NOT_FOUND)
             {
-                LOGGER.error(e.getDetailedMessage());
+                LOGGER.info(e.getDetailedMessage());
+            }
+            else
+            {
+                throw new CoalescePersistorException(e);
             }
         }
 
