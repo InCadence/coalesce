@@ -72,7 +72,7 @@ public class EnumerationDataController {
      */
     public List<MetadataPojoRecord> getEnumerations() throws RemoteException
     {
-        List<MetadataPojoRecord> enumerations = new ArrayList<MetadataPojoRecord>();
+        List<MetadataPojoRecord> enumerations = new ArrayList<>();
 
         FilterFactory ff = CoalescePropertyFactory.getFilterFactory();
 
@@ -250,7 +250,7 @@ public class EnumerationDataController {
 //    }
     public List<ValuesPojoRecord> getEnumerationValues(String key) throws RemoteException
     {
-        List<ValuesPojoRecord> values = new ArrayList<ValuesPojoRecord>();
+        List<ValuesPojoRecord> values = new ArrayList<>();
 
         try
         {
