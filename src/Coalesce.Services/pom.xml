@@ -23,7 +23,7 @@
 		<module>CRUD</module>
 		<module>Search</module>
 		<module>Manager</module>
-		<module>Designer</module>
+		<module>network</module>
 		<module>feature</module>
 	</modules>
 

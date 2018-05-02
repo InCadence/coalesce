@@ -1,0 +1,112 @@
+accumulo_master_aio:
+- node05
+accumulo_tablets:
+- node05
+- node04
+- node01
+- node03
+- node02
+activemq_server:
+- node03
+analytic_registry_server:
+- node03
+bdp_analytics_server:
+- node05
+bdp_nodemanagers:
+- node05
+- node04
+- node01
+- node03
+- node02
+central_logging_server:
+- node04
+citadel:
+- node01
+consul_server:
+- node05
+- node04
+- node01
+datanodes:
+- node05
+- node04
+- node01
+- node03
+- node02
+elastic_masters:
+- node01
+- node03
+- node02
+elastic_workers:
+- node01
+- node03
+- node02
+failover_namenode:
+- node02
+failover_resourcemgr:
+- node02
+grafana_server:
+- node05
+history_server:
+- node01
+internal_proxy_server:
+- node04
+journalnodes:
+- node05
+- node04
+- node01
+kafka_servers:
+- node01
+- node03
+- node02
+kibana_servers:
+- node01
+- node03
+- node02
+kronos_server:
+- node04
+logstash_server:
+- node04
+nagios_server:
+- node04
+namenode:
+- node03
+navigator_server:
+- node05
+nfs_home_server:
+- node05
+owf_postgres:
+- node02
+postgres_server:
+- node02
+property_loader_server:
+- node02
+proxy_server:
+- node03
+r:
+- node05
+- node04
+- node01
+- node03
+- node02
+r_shinyserver:
+- node01
+rda_deployer_server:
+- node01
+resourcemgr:
+- node03
+spark_history_server:
+- node02
+storm_master:
+- node04
+storm_workers:
+- node05
+- node04
+- node01
+- node03
+- node02
+yarn_proxyserver:
+- node03
+zookeepers:
+- node05
+- node04
+- node01
