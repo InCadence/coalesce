@@ -40,10 +40,10 @@ import java.util.Map;
 /**
  * @author Derek Clemenzi
  */
-public class MyUnitTests {
+public class NetworkControllerTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MyUnitTests.class);
-    private static final Path ROOT = Paths.get("..", "Coalesce.Puppet", "src", "test", "resources");
+    private static final Logger LOGGER = LoggerFactory.getLogger(NetworkControllerTest.class);
+    private static final Path ROOT = Paths.get("src", "test", "resources");
 
     @Test
     public void testRoles() throws Exception
