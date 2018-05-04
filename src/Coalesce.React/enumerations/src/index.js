@@ -7,6 +7,7 @@ import {registerLoader, registerErrorPrompt, registerPrompt} from 'common-compon
 import {SearchResults} from './results.js'
 import ReactTable from 'react-table'
 import { searchComplex } from 'common-components/lib/js/searchController';
+import { getEnumerationValues } from 'common-components/lib/js/enumerationController';
 import { getRootKarafUrl } from 'common-components/lib/js/common'
 import {IconButton} from 'common-components/lib/components/IconButton'
 
@@ -43,21 +44,17 @@ var enumCols = [
 var values = [];
 var valueCols = [
   {
+    key: "values.ordinal",
+    Header: 'Ordinal',
+    accessor: 'ordinal'
+  },{
     key: "values.value",
     Header: 'Value',
-    accessor: 'values[0]'
+    accessor: 'value'
   },{
     key: "values.description",
     Header: 'Description',
-    accessor: 'values[1]'
-  },{
-    key: "values.associatedkeys",
-    Header: 'Associated Keys',
-    accessor: 'values[2]'
-  },{
-    key: "values.associatedvalues",
-    Header: 'Associated Values',
-    accessor: 'values[3]'
+    accessor: 'description'
   }
 ];
 
@@ -85,10 +82,16 @@ function loadEnumerations() {
         "criteria": [{
           'recordset': 'CoalesceEntity',
           'field': 'name',
-          'operator': '=',
+          'operator': 'EqualTo',
           'value': 'Enumeration'
         }]
-      }
+      },
+      "sortBy": [
+          {
+            "propertyName": enumCols[0].key,
+            "sortOrder": "ASC"
+          }
+        ],
     };
 
     Popup.plugins().loader("Loading Enumerations...");
@@ -132,38 +135,26 @@ function loadValues(key) {
 
   if (values[key] == null) {
 
-    var query = {
-      "pageSize": 200,
-      "pageNumber": 1,
-      "propertyNames": valueCols.map((item) => item.key),
-      "group": {
-        "operator": "AND",
-        "criteria": [{
-          'recordset': 'CoalesceEntity',
-          'field': 'objectkey',
-          'operator': '=',
-          'value': key
-        }]
-      }
-    };
-
     Popup.plugins().loader("Loading Enumeration's Values...");
 
-    searchComplex(query).then(response => {
+    getEnumerationValues(key).then((values) => {
+      Popup.close();
 
-        Popup.close();
+      values[key] = {hits: values};
 
-          renderValues(key, response.hits);
+      renderValues(key, values[key]);
 
-    }).catch(function(error) {
-      Popup.plugins().promptError("(FAILED) Loading Enumeration Values: " + error);
-    });
+    }).catch((err) => {
+      Popup.plugins().promptError("(FAILED) Loading Enumeration Values: " + err);
+    })
+
   } else {
     renderValues(key, values[key]);
   }
 }
 
 function renderValues(key, data) {
+
   ReactDOM.render(
     <div className="ui-widget">
       <div className="ui-widget-header">
@@ -173,37 +164,32 @@ function renderValues(key, data) {
         <SearchResults
           data={data}
           properties={valueCols}
+
           createButtons={(row) => {
             return [
-              <img src="/images/svg/view.svg" alt="view" title="View Entity" className="coalesce-img-button small enabled" onClick={() => loadAssociatedValues(key, row.associatedkeys, row.associatedvalues)}/>,
+              <IconButton icon="/images/svg/view.svg" title="View Associated Values" onClick={() => loadAssociatedValues(key, row._original.associatedValues)}/>,
             ];
           }}
         />
         <div className='form-buttons'>
           <IconButton icon="/images/svg/back.svg" title="Back" onClick={() => {loadEnumerations()}} />
-          <IconButton icon="/images/svg/edit.svg" title="Edit" onClick={() => {window.open(rootUrl + "/entityeditor/?entitykey=" + key)}} />
+          <IconButton icon="/images/svg/edit.svg" title="Edit Enumeration" onClick={() => {window.open("/entityeditor/?entitykey=" + key)}} />
         </div>
       </div>
     </div>,
     document.getElementById('main'));
 }
 
-function loadAssociatedValues(key, keys, values) {
+function loadAssociatedValues(key, values) {
 
   var data = [];
 
-  if (keys != null && values != null)
-  {
-    var keyList = keys.split(',');
-    var valueList = values.split(',');
-
-    for (var ii=0; ii<keyList.length && ii<valueList.length; ii++) {
-      data.push({
-        'name': keyList[ii],
-        'value': valueList[ii]
-      });
-    }
-  }
+  Object.keys(values).forEach(function (key) {
+    data.push({
+      'name': key,
+      'value': values[key]
+    });
+  });
 
   ReactDOM.render(
       <div className="ui-widget">
@@ -224,8 +210,8 @@ function loadAssociatedValues(key, keys, values) {
               ]}
           />
           <div className='form-buttons'>
-            <IconButton icon="/images/svg/back.svg" title="Back" onClick={() => {() => loadValues(key)}} />,
-            <IconButton icon="/images/svg/edit.svg" title="Edit" onClick={() => {() => loadValues(key)}} />,
+            <IconButton icon="/images/svg/back.svg" title="Back" onClick={() => {loadValues(key)}} />
+            <IconButton icon="/images/svg/edit.svg" title="Edit" onClick={() => {loadValues(key)}} />
           </div>
         </div>
       </div>,

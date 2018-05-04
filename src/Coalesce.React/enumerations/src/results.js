@@ -10,21 +10,19 @@ export class SearchResults extends React.PureComponent {
     const {data, properties} = this.props;
 
     return (
-      <div className="ui-widget-content">
-        <ReactTable
-          data={data.hits}
-          columns={properties.concat({
-            Header: '',
-            width: 100,
-            resizable: false,
-            Cell: (cell) => (
-              <div className="form-buttons">
-                {this.props.createButtons(cell.row)}
-              </div>
-            )
-          })}
-        />
-      </div>
+      <ReactTable
+        data={data.hits}
+        columns={properties.concat({
+          Header: '',
+          width: 100,
+          resizable: false,
+          Cell: (cell) => (
+            <div className="form-buttons">
+              {this.props.createButtons(cell.row)}
+            </div>
+          )
+        })}
+      />
     )
 
   }

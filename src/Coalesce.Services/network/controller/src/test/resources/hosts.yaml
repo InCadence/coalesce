@@ -1,0 +1,43 @@
+---
+puppet_server: 10.1.30.10
+next_server: 10.1.30.10
+default_route: 10.1.30.1
+dns_server: 10.1.30.10
+ks_network: 10.1.30.0
+dns_forwarders:
+- 8.8.8.8
+- 8.8.4.4
+cnames:
+- www:node01
+- hadoop:node01
+- activemq_server:node04
+- citadel:node03
+- consul_server:node02,node03,node04
+- bdp_config_server:node05
+ip_blacklist:
+- 192.168.95.254
+- 192.168.95.253
+ks_interface: eth0
+interfaces:
+  eth0: 10.1.30.0/24
+hosts:
+  node01:
+    eth0:
+      mac: "02:d2:1e:6f:98:76"
+      ip: 10.1.30.121
+  node02:
+    eth0:
+      mac: "02:35:4f:df:e8:c6"
+      ip: 10.1.30.34
+  node03:
+    eth0:
+      mac: "02:dd:b8:7e:4f:d6"
+      ip: 10.1.30.6
+  node04:
+    eth0:
+      mac: "02:35:4f:df:e8:c8"
+      ip: 10.1.30.44
+  node05:
+    eth0:
+      mac: "02:cd:02:c1:60:6c"
+      ip: 10.1.30.45
