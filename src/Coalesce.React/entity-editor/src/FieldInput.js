@@ -76,7 +76,7 @@ export class FieldInput extends React.Component {
             floatingLabelText={label}
             underlineShow={this.props.showLabels}
             multiple={true}
-            value={field[attr]}
+            value={field[attr].toUpperCase()}
             style={style.root}
             labelStyle={style.root}
             iconStyle={style.none}
@@ -105,7 +105,7 @@ export class FieldInput extends React.Component {
             hintStyle={style.none}
             floatingLabelStyle={style.none}
             errorStyle={style.none}
-            value={field[attr]}
+            value={field[attr].toUpperCase()}
             onChange={(event, value) => {this.handleOnChange(attr, this.props.options[value].enum)}}
           >
             {this.props.options && this.props.options.map((item) => {
@@ -140,7 +140,7 @@ export class FieldInput extends React.Component {
           <TextField
               id={field.key}
               fullWidth={true}
-              floatingLabelText={label + " (CSV)"}
+              floatingLabelText={this.props.showLabels ? label + " (CSV)" : label}
               underlineShow={this.props.showLabels}
               style={style.root}
               value={field[attr]}

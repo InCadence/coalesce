@@ -600,7 +600,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
             setName(value);
             return true;
         case ATTRIBUTE_STATUS:
-            setStatus(ECoalesceObjectStatus.valueOf(value));
+            setStatus(ECoalesceObjectStatus.valueOf(value.toUpperCase()));
             return true;
         case ATTRIBUTE_MODIFIEDBY:
             setModifiedBy(value);
@@ -612,7 +612,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
             setObjectVersion(Integer.parseInt(value));
             return true;
         case "objectversionstatus":
-            setObjectVersionStatus(ECoalesceObjectStatus.valueOf(value));
+            setObjectVersionStatus(ECoalesceObjectStatus.valueOf(value.toUpperCase()));
             return true;
         case "previoushistorykey":
             setPreviousHistoryKey(value);

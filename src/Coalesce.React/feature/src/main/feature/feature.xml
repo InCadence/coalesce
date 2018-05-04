@@ -37,11 +37,17 @@
 	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/${project.version}</bundle>
 	</feature>
 	<feature name="coalesce-react-manager-feature" description="" version="${project.version}">
-    <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-manager/${project.version}/war</bundle>
+      <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-manager/${project.version}/war</bundle>
 	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/${project.version}</bundle>
 	</feature>
 	<feature name="coalesce-react-json-editor-feature" description="" version="${project.version}">
-    <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-json-editor/${project.version}/war</bundle>
+      <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-json-editor/${project.version}/war</bundle>
 	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/${project.version}</bundle>
 	</feature>
+	<feature name="coalesce-react-json-editor-feature" description="" version="${project.version}">
+      <feature prerequisite="false" dependency="false">coalesce-network-feature</feature>
+      <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-json-editor/${project.version}/war</bundle>
+	</feature>
+
+
 </features>
