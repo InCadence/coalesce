@@ -270,7 +270,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
                     throw new CoalescePersistorException("Geomesa Accumulo Datastore not found in Factory.  Check classpath");
                 }
 
-                LOGGER.debug("Using Data Store: ", dataStore.getClass().getName());
+                LOGGER.debug("Using Data Store: {}", dataStore.getClass().getName());
 
                 watch.finish();
                 LOGGER.debug("Got Datastore {}", watch.getTotalLife());
