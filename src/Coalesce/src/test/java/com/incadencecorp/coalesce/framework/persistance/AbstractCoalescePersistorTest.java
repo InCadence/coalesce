@@ -144,7 +144,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         entity.addRecord1();
         TestRecord record1 = entity.addRecord1();
         record1.getBooleanField().setValue(false);
-        record1.getGeoField().setValue(new Coordinate(1, 1));
+        record1.getGeoField().setValue(new Coordinate(-100, 85));
         record1.getGeoListField().setValue(new Coordinate[] { new Coordinate(1, 1) });
 
         Assert.assertTrue(persister.saveEntity(false, entity));
