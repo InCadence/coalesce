@@ -120,4 +120,9 @@ public final class SynchronizerParameters {
      */
     public static final int DEFAULT_SCANNER_MAX = 200;
 
+    /**
+     * (String) Date / Time Pattern.
+     */
+    public static final String PARAM_SCANNER_DATETIME_PATTERN = SCANNERS + "pattern";
+
 }

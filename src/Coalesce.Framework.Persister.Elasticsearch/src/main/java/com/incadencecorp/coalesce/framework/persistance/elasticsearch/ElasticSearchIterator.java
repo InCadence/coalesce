@@ -216,7 +216,7 @@ public class ElasticSearchIterator extends CoalesceIterator<List<ActionFuture<? 
                     Point point = ((CoalesceCoordinateField) field).getValueAsPoint();
                     if (point != null)
                     {
-                        source.put(name, point.getX() + ", " + point.getY());
+                        source.put(name, point.getY() + ", " + point.getX());
                     }
                     break;
                 case GEOCOORDINATE_LIST_TYPE:

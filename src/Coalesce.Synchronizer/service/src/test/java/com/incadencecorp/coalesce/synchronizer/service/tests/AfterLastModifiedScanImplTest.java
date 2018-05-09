@@ -74,7 +74,7 @@ public class AfterLastModifiedScanImplTest {
 
         scan.finished(true, results);
 
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         // Verify No Hits
         results = scan.scan();
@@ -86,23 +86,21 @@ public class AfterLastModifiedScanImplTest {
     }
 
     /**
-     * TODO Due to the format Derby returns the time this test fails and needs to be resolved.
+     * This test ensures that running the scanner twice will not return results the second time due to the last scan
+     * parameter being updated.
      */
     @Test
     public void testAfterLastModifiedScanImpl2() throws Exception
     {
-        // Skip This test
-        Assume.assumeFalse(true);
-
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
         entity.setName("OEEvent");
 
         Map<String, String> params = new HashMap<>();
-        params.put(SynchronizerParameters.PARAM_SCANNER_DAYS, "3");
         params.put(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS,
                    JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusDays(2)));
-        params.put(SynchronizerParameters.PARAM_SCANNER_CQL, "\"coalesceentity.name\" = 'OEEvent'");
+        params.put(SynchronizerParameters.PARAM_SCANNER_CQL, "\"" + CoalescePropertyFactory.getEntityKey().getPropertyName() + "\" = '" + entity.getKey() + "'");
+        params.put(SynchronizerParameters.PARAM_SCANNER_DATETIME_PATTERN, "yyyy-MM-dd HH:mm:ss.S");
 
         DerbyPersistor source = new DerbyPersistor();
 
@@ -119,7 +117,7 @@ public class AfterLastModifiedScanImplTest {
 
         scan.finished(true, results);
 
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         // Verify No Hits
         results = scan.scan();

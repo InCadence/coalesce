@@ -28,8 +28,11 @@ import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters
 import org.geotools.data.Query;
 import org.geotools.filter.SortByImpl;
 import org.geotools.temporal.object.DefaultInstant;
+import org.geotools.temporal.object.DefaultPeriod;
 import org.geotools.temporal.object.DefaultPosition;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
@@ -57,6 +60,8 @@ import java.util.Map;
  * @author n78554
  * @see SynchronizerParameters#PARAM_SCANNER_LAST_SUCCESS
  * @see SynchronizerParameters#PARAM_SCANNER_CQL
+ * @see SynchronizerParameters#PARAM_SCANNER_DAYS
+ * @see SynchronizerParameters#PARAM_SCANNER_DATETIME_PATTERN
  */
 public class AfterLastModifiedScanImpl2 extends AbstractScan {
 
@@ -66,6 +71,8 @@ public class AfterLastModifiedScanImpl2 extends AbstractScan {
     private String lastScanned = null;
     private String pendingLastScan = null;
     private int max = SynchronizerParameters.DEFAULT_SCANNER_MAX;
+    private Integer days = null;
+    private DateTimeFormatter formatter = null;
 
     @Override
     public CachedRowSet doScan(Query query) throws CoalesceException
@@ -85,18 +92,34 @@ public class AfterLastModifiedScanImpl2 extends AbstractScan {
         }
 
         Instant startInstant = new DefaultInstant(new DefaultPosition(start.toDate()));
-        Filter requiredFilter = FF.after(CoalescePropertyFactory.getLastModified(), FF.literal(startInstant));
+        Filter temporal;
+
+        if (days == null || days == 0)
+        {
+            temporal = FF.after(CoalescePropertyFactory.getLastModified(), FF.literal(startInstant));
+        }
+        else
+        {
+            DateTime end = start.plusDays(days);
+
+            pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(end);
+
+            Instant endInstant = new DefaultInstant(new DefaultPosition(end.toDate()));
+
+            temporal = FF.during(CoalescePropertyFactory.getLastModified(),
+                                 FF.literal(new DefaultPeriod(startInstant, endInstant)));
+        }
 
         // Filter Specified?
         if (query.getFilter() == null || query.getFilter() == Filter.INCLUDE)
         {
             // No; Set
-            query.setFilter(requiredFilter);
+            query.setFilter(temporal);
         }
         else
         {
-            // Yes; Append Required Filter
-            query.setFilter(FF.and(query.getFilter(), requiredFilter));
+            // Yes; Append Temporal Filter
+            query.setFilter(FF.and(query.getFilter(), temporal));
         }
 
         if (LOGGER.isTraceEnabled())
@@ -117,8 +140,15 @@ public class AfterLastModifiedScanImpl2 extends AbstractScan {
         CachedRowSet result = getSource().search(query).getResults();
         try
         {
-            result.last();
-            pendingLastScan = result.getString(properties.size() + 1);
+            if (result.last())
+            {
+                pendingLastScan = result.getString(properties.size() + 1);
+
+                if (formatter != null)
+                {
+                    pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(formatter.parseDateTime(pendingLastScan));
+                }
+            }
             result.beforeFirst();
         }
         catch (SQLException e)
@@ -159,6 +189,31 @@ public class AfterLastModifiedScanImpl2 extends AbstractScan {
             }
         }
 
+        // Days Configured?
+        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_DAYS))
+        {
+            days = Integer.parseInt(parameters.get(SynchronizerParameters.PARAM_SCANNER_DAYS));
+        }
+        else if (loader != null)
+        {
+            String value = loader.getProperty(SynchronizerParameters.PARAM_SCANNER_DAYS);
+
+            if (!StringHelper.isNullOrEmpty(value))
+            {
+                days = Integer.parseInt(value);
+            }
+        }
+
+        // Date / Time Pattern Configured?
+        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_DATETIME_PATTERN))
+        {
+            formatter = DateTimeFormat.forPattern(parameters.get(SynchronizerParameters.PARAM_SCANNER_DATETIME_PATTERN));
+        }
+        else if (loader != null)
+        {
+            formatter = DateTimeFormat.forPattern(loader.getProperty(SynchronizerParameters.PARAM_SCANNER_DATETIME_PATTERN));
+        }
+
         if (LOGGER.isInfoEnabled())
         {
             LOGGER.info("Last Successful Scan: {}", lastScanned);
@@ -172,7 +227,7 @@ public class AfterLastModifiedScanImpl2 extends AbstractScan {
         {
             lastScanned = pendingLastScan;
 
-            if (loader != null)
+            if (loader != null && pendingLastScan != null)
             {
                 loader.setProperty(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS, lastScanned);
                 LOGGER.info("Last Successful Scan: {}", lastScanned);
