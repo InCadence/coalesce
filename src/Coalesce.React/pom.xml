@@ -23,6 +23,7 @@
         <module>settings</module>
         <module>enumerations</module>
         <module>manager</module>
+        <module>network</module>
         <module>home</module>
         <module>feature</module>
         <module>template-editor</module>
