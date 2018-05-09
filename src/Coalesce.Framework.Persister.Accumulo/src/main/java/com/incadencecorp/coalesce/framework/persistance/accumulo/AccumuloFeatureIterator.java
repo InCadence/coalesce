@@ -22,7 +22,6 @@ import com.incadencecorp.coalesce.api.ICoalesceFilter;
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.filter.CoalesceVersionFilter;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
@@ -540,7 +539,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                     break;
 
                 case DATE_TIME_TYPE:
-                    feature.setAttribute(fieldName, JodaDateTimeHelper.toXmlDateTimeUTC((DateTime) fieldValue));
+                    feature.setAttribute(fieldName, ((DateTime) fieldValue).toDate());
                     break;
                 case FILE_TYPE:
                 case BINARY_TYPE:

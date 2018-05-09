@@ -46,7 +46,6 @@ import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
@@ -130,23 +129,22 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
             {
                 ECoalesceFieldDataTypes type = types.get(entry.getPropertyName());
 
-                // TODO - Why always String and VARCHAR.  Should these not be the real types
-                if (type != null)
+                if (type == null)
                 {
+                    type = ECoalesceFieldDataTypes.STRING_TYPE;
+
+                }
+
+                LOGGER.debug("Property: {} Type: {}", entry.getPropertyName(), type);
+
                     columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(entry.getPropertyName()),
                                                               MAPPER_JAVA.map(type).getTypeName(),
                                                               MAPPER_TYPE.map(type)));
                 }
-                else
-                {
-                    columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(entry.getPropertyName()),
-                                                              String.class.getTypeName(),
-                                                              Types.VARCHAR));
-                }
-            }
 
             if (LOGGER.isDebugEnabled())
             {
+                LOGGER.debug("Max Features: {}", localquery.getMaxFeatures());
                 LOGGER.debug(localquery.toString());
             }
 
