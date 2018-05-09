@@ -307,7 +307,7 @@ export class FieldInput extends React.Component {
                   id={field.key + 'x'}
                   type='number'
                   step='0.01'
-                  floatingLabelText={this.props.showLabels ? label + " Latitude" : null}
+                  floatingLabelText={this.props.showLabels ? label + " Longitude" : null}
                   underlineShow={this.props.showLabels}
                   style={style.root}
                   fullWidth={true}
@@ -320,7 +320,7 @@ export class FieldInput extends React.Component {
                   id={field.key + 'y'}
                   type='number'
                   step='0.01'
-                  floatingLabelText={this.props.showLabels ? "Longitude" : null}
+                  floatingLabelText={this.props.showLabels ? "Latitude" : null}
                   underlineShow={this.props.showLabels}
                   style={style.root}
                   fullWidth={true}
@@ -360,7 +360,7 @@ export class FieldInput extends React.Component {
                 id={field.key + 'x'}
                 type='number'
                 step='0.01'
-                floatingLabelText={this.props.showLabels ? label + " Latitude" : null}
+                floatingLabelText={this.props.showLabels ? label + " Longitude" : null}
                 underlineShow={this.props.showLabels}
                 style={style.root}
                 fullWidth={true}
@@ -373,7 +373,7 @@ export class FieldInput extends React.Component {
                 id={field.key + 'y'}
                 type='number'
                 step='0.01'
-                floatingLabelText={this.props.showLabels ? "Longitude" : null}
+                floatingLabelText={this.props.showLabels ? "Latitude" : null}
                 underlineShow={this.props.showLabels}
                 style={style.root}
                 fullWidth={true}
