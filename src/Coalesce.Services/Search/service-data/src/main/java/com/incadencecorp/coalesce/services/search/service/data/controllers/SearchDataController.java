@@ -47,6 +47,8 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 import org.opengis.filter.spatial.BBOX;
+import org.opengis.filter.temporal.After;
+import org.opengis.filter.temporal.Before;
 import org.opengis.filter.temporal.During;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -426,6 +428,18 @@ public class SearchDataController {
                 Instant end = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(times[1]).toDate()));
 
                 filters.add(ff.during(property, ff.literal(new DefaultPeriod(start, end))));
+                break;
+            case After.NAME:
+                DefaultInstant after = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(
+                        criteria.getValue()).toDate()));
+
+                filters.add(ff.after(CoalescePropertyFactory.getLastModified(), ff.literal(after)));
+                break;
+            case Before.NAME:
+                DefaultInstant before = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(
+                        criteria.getValue()).toDate()));
+
+                filters.add(ff.before(CoalescePropertyFactory.getLastModified(), ff.literal(before)));
                 break;
             case BBOX.NAME:
                 try
