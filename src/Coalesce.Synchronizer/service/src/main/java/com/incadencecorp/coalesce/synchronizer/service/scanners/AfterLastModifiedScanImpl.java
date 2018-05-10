@@ -50,7 +50,7 @@ import java.util.Map;
  *
  * @author n78554
  * @see SynchronizerParameters#PARAM_SCANNER_LAST_SUCCESS
- * @see SynchronizerParameters#PARAM_SCANNER_DAYS
+ * @see SynchronizerParameters#PARAM_SCANNER_WINDOW
  * @see SynchronizerParameters#PARAM_SCANNER_CQL
  */
 public class AfterLastModifiedScanImpl extends AbstractScan {
@@ -60,7 +60,7 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
 
     private String lastScanned = null;
     private String pendingLastScan = null;
-    private int days = SynchronizerParameters.DEFAULT_SCANNER_DAYS;
+    private int days = SynchronizerParameters.DEFAULT_SCANNER_WINDOW;
 
     @Override
     protected void doSetup()
@@ -147,13 +147,13 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
         }
 
         // Days Configured?
-        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_DAYS))
+        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_WINDOW))
         {
-            days = Integer.parseInt(parameters.get(SynchronizerParameters.PARAM_SCANNER_DAYS));
+            days = Integer.parseInt(parameters.get(SynchronizerParameters.PARAM_SCANNER_WINDOW));
         }
         else if (loader != null)
         {
-            String value = loader.getProperty(SynchronizerParameters.PARAM_SCANNER_DAYS);
+            String value = loader.getProperty(SynchronizerParameters.PARAM_SCANNER_WINDOW);
 
             if (!StringHelper.isNullOrEmpty(value))
             {

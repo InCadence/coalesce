@@ -64,7 +64,7 @@ public class UpdateVersionOperationImplTest {
         params.put(SynchronizerParameters.PARAM_DRIVER_INTERVAL_UNITS, TimeUnit.MINUTES.toString());
         params.put(SynchronizerParameters.PARAM_OP_WINDOW_SIZE, "10");
         params.put(SynchronizerParameters.PARAM_OP_DRYRUN, "true");
-        params.put(SynchronizerParameters.PARAM_SCANNER_DAYS, "3");
+        params.put(SynchronizerParameters.PARAM_SCANNER_WINDOW, "3");
         params.put(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS,
                    JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusDays(2)));
         params.put(SynchronizerParameters.PARAM_SCANNER_CQL, "\"coalesceentity.name\" = 'OEEvent'");

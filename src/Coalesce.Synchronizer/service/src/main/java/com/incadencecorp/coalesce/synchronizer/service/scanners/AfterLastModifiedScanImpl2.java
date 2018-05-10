@@ -47,6 +47,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This implementation looks for changes after a given DateTime which is either
@@ -60,7 +61,8 @@ import java.util.Map;
  * @author n78554
  * @see SynchronizerParameters#PARAM_SCANNER_LAST_SUCCESS
  * @see SynchronizerParameters#PARAM_SCANNER_CQL
- * @see SynchronizerParameters#PARAM_SCANNER_DAYS
+ * @see SynchronizerParameters#PARAM_SCANNER_WINDOW
+ * @see SynchronizerParameters#PARAM_SCANNER_WINDOW_UNITS
  * @see SynchronizerParameters#PARAM_SCANNER_DATETIME_PATTERN
  */
 public class AfterLastModifiedScanImpl2 extends AbstractScan {
@@ -71,7 +73,8 @@ public class AfterLastModifiedScanImpl2 extends AbstractScan {
     private String lastScanned = null;
     private String pendingLastScan = null;
     private int max = SynchronizerParameters.DEFAULT_SCANNER_MAX;
-    private Integer days = null;
+    private Integer window = null;
+    private TimeUnit windowUnit = TimeUnit.DAYS;
     private DateTimeFormatter formatter = null;
 
     @Override
@@ -94,14 +97,13 @@ public class AfterLastModifiedScanImpl2 extends AbstractScan {
         Instant startInstant = new DefaultInstant(new DefaultPosition(start.toDate()));
         Filter temporal;
 
-        if (days == null || days == 0)
+        if (window == null || window == 0)
         {
             temporal = FF.after(CoalescePropertyFactory.getLastModified(), FF.literal(startInstant));
         }
         else
         {
-            DateTime end = start.plusDays(days);
-
+            DateTime end = JodaDateTimeHelper.plus(start, window, windowUnit);
             pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(end);
 
             Instant endInstant = new DefaultInstant(new DefaultPosition(end.toDate()));
@@ -189,18 +191,32 @@ public class AfterLastModifiedScanImpl2 extends AbstractScan {
             }
         }
 
-        // Days Configured?
-        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_DAYS))
+        // Window Configured?
+        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_WINDOW))
         {
-            days = Integer.parseInt(parameters.get(SynchronizerParameters.PARAM_SCANNER_DAYS));
+            window = Integer.parseInt(parameters.get(SynchronizerParameters.PARAM_SCANNER_WINDOW));
         }
         else if (loader != null)
         {
-            String value = loader.getProperty(SynchronizerParameters.PARAM_SCANNER_DAYS);
+            String value = loader.getProperty(SynchronizerParameters.PARAM_SCANNER_WINDOW);
 
             if (!StringHelper.isNullOrEmpty(value))
             {
-                days = Integer.parseInt(value);
+                window = Integer.parseInt(value);
+            }
+        }
+
+        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_WINDOW_UNITS))
+        {
+            windowUnit = TimeUnit.valueOf(parameters.get(SynchronizerParameters.PARAM_SCANNER_WINDOW_UNITS));
+        }
+        else if (loader != null)
+        {
+            String value = loader.getProperty(SynchronizerParameters.PARAM_SCANNER_WINDOW_UNITS);
+
+            if (!StringHelper.isNullOrEmpty(value))
+            {
+                windowUnit = TimeUnit.valueOf(value);
             }
         }
 
