@@ -479,7 +479,11 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
                 if (entry.getValue() == ECoalesceFieldDataTypes.STRING_TYPE)
                 {
-                    mapping.put("fields", Collections.singletonMap("raw", Collections.singletonMap("type", "keyword")));
+                    Map<String, Object> keywordField = new HashMap<>();
+                    keywordField.put("type", "keyword");
+                    keywordField.put("ignore_above", 256);
+
+                    mapping.put("fields", Collections.singletonMap("keyword", keywordField));
                 }
 
                 propertiesMap.put(entry.getKey(), mapping);
