@@ -25,28 +25,24 @@ import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
-import org.elasticsearch.action.ActionFuture;
-import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.DocWriteRequest;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.support.AbstractClient;
 import org.elasticsearch.common.geo.builders.ShapeBuilder;
 import org.json.JSONArray;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author Derek Clemenzi
  */
-public class ElasticSearchIterator extends CoalesceIterator<List<ActionFuture<? extends DocWriteResponse>>> {
+public class ElasticSearchIterator extends CoalesceIterator<BulkRequest> {
 
     private final ICoalesceNormalizer normalizer;
     private final boolean isAuthoritative;
 
-    private AbstractClient client;
     private Map<String, Object> common;
     private String recordIndex;
 
@@ -56,26 +52,22 @@ public class ElasticSearchIterator extends CoalesceIterator<List<ActionFuture<? 
         this.isAuthoritative = isAuthoritative;
     }
 
-    public List<ActionFuture<? extends DocWriteResponse>> iterate(AbstractClient client, CoalesceEntity... entities)
-            throws CoalesceException
+    public BulkRequest iterate(CoalesceEntity... entities) throws CoalesceException
     {
-        this.client = client;
-
-        List<ActionFuture<? extends DocWriteResponse>> actions = new ArrayList<>();
+        BulkRequest result = new BulkRequest();
 
         for (CoalesceEntity entity : entities)
         {
             common = createMapping(entity);
             recordIndex = ElasticSearchPersistor.COALESCE_ENTITY_INDEX + "-" + normalize(entity.getName());
-            processAllElements(entity, actions);
+            processAllElements(entity, result);
         }
 
-        return actions;
+        return result;
     }
 
     @Override
-    protected boolean visitCoalesceEntity(CoalesceEntity entity, List<ActionFuture<? extends DocWriteResponse>> param)
-            throws CoalesceException
+    protected boolean visitCoalesceEntity(CoalesceEntity entity, BulkRequest param) throws CoalesceException
     {
         Map<String, Object> source = createMapping(entity);
 
@@ -93,9 +85,7 @@ public class ElasticSearchIterator extends CoalesceIterator<List<ActionFuture<? 
     }
 
     @Override
-    protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section,
-                                                  List<ActionFuture<? extends DocWriteResponse>> param)
-            throws CoalesceException
+    protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section, BulkRequest param) throws CoalesceException
     {
         for (CoalesceLinkage linkage : section.getLinkages().values())
         {
@@ -109,8 +99,7 @@ public class ElasticSearchIterator extends CoalesceIterator<List<ActionFuture<? 
     }
 
     @Override
-    protected boolean visitCoalesceRecordset(CoalesceRecordset recordset,
-                                             List<ActionFuture<? extends DocWriteResponse>> param) throws CoalesceException
+    protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, BulkRequest param) throws CoalesceException
     {
         String type = normalize(recordset.getName());
 
@@ -123,10 +112,7 @@ public class ElasticSearchIterator extends CoalesceIterator<List<ActionFuture<? 
         return false;
     }
 
-    private ActionFuture<? extends DocWriteResponse> visitObject(CoalesceObject object,
-                                                                 String index,
-                                                                 String type,
-                                                                 Map<String, Object> source)
+    private DocWriteRequest visitObject(CoalesceObject object, String index, String type, Map<String, Object> source)
     {
         if (!object.isMarkedDeleted() && !object.getEntity().isMarkedDeleted())
         {
@@ -136,7 +122,7 @@ public class ElasticSearchIterator extends CoalesceIterator<List<ActionFuture<? 
             request.id(object.getKey());
             request.source(source);
 
-            return client.index(request);
+            return request;
         }
         else
         {
@@ -145,7 +131,7 @@ public class ElasticSearchIterator extends CoalesceIterator<List<ActionFuture<? 
             request.type(type);
             request.id(object.getKey());
 
-            return client.delete(request);
+            return request;
         }
     }
 
