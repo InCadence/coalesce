@@ -97,9 +97,11 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
             if (LOGGER.isDebugEnabled())
             {
+                LOGGER.debug("{} Entities Created {} Request", entities.length, request.requests().size());
+
                 for (BulkItemResponse item : response.getItems())
                 {
-                    LOGGER.debug("({}) ID = {}, Index = {}, Type = {} : {}",
+                    LOGGER.trace("({}) ID = {}, Index = {}, Type = {} : {}",
                                  item.status().toString(),
                                  item.getId(),
                                  item.getIndex(),

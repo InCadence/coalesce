@@ -347,12 +347,15 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
                 CreateIndexRequest request = new CreateIndexRequest();
                 request.index(index);
+                request.mapping("recordset", Collections.singletonMap("properties", source));
 
                 // Add a type / recordset
+                /*
                 for (String type : CoalesceTemplateUtil.getRecordsets(template.getKey()))
                 {
                     request.mapping(type, Collections.singletonMap("properties", source));
                 }
+                */
 
                 try
                 {
