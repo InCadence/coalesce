@@ -19,7 +19,7 @@
 package com.incadencecorp.coalesce.services.network.controller.jaxrs.impl;
 
 import com.incadencecorp.coalesce.services.network.api.INetworkController;
-import com.incadencecorp.coalesce.services.network.api.datamodel.graphson.Graph;
+import com.incadencecorp.coalesce.services.api.datamodel.graphson.Graph;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

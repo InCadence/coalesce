@@ -21,7 +21,7 @@ package com.incadencecorp.coalesce.services.network.controller.tests;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
-import com.incadencecorp.coalesce.services.network.api.datamodel.graphson.Graph;
+import com.incadencecorp.coalesce.services.api.datamodel.graphson.Graph;
 import com.incadencecorp.coalesce.services.network.api.datamodel.yaml.Hosts;
 import com.incadencecorp.coalesce.services.network.api.datamodel.yaml.Node;
 import com.incadencecorp.coalesce.services.network.api.datamodel.yaml.Roles;

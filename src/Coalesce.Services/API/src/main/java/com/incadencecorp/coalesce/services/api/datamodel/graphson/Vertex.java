@@ -16,7 +16,7 @@
  *
  */
 
-package com.incadencecorp.coalesce.services.network.api.datamodel.graphson;
+package com.incadencecorp.coalesce.services.api.datamodel.graphson;
 
 import java.util.HashMap;
 
