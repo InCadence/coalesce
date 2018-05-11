@@ -95,8 +95,8 @@ public class BlueprintController implements IBlueprintController {
             // Create Server Node
             Vertex serverNode = new Vertex();
             serverNode.setId(server.getAttribute("id"));
-            serverNode.put("label", server.getAttribute("address"));
             serverNode.setType(EGraphNodeType.SERVER.toString());
+            serverNode.put("label", server.getAttribute("address"));
 
             // Add Server Node
             result.getVertices().add(serverNode);
