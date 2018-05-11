@@ -17,8 +17,8 @@
 
 package com.incadencecorp.coalesce.services.common.jaxrs;
 
+import com.incadencecorp.coalesce.services.api.datamodel.graphson.Graph;
 import com.incadencecorp.coalesce.services.common.api.IBlueprintController;
-import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphObj;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -44,5 +44,5 @@ interface IBlueprintControllerJaxRS extends IBlueprintController {
     @GET
     @Path("/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    GraphObj getBlueprint(@PathParam("name") String name) throws RemoteException;
+    Graph getBlueprint(@PathParam("name") String name) throws RemoteException;
 }

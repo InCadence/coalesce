@@ -20,6 +20,9 @@ package com.incadencecorp.coalesce.services.common.controllers.datamodel;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 
+/**
+ * @deprecated
+ */
 public class GraphLink {
 
     private String source;

@@ -46,10 +46,10 @@ function loadBlueprint(filename) {
 
 
       data.nodes.forEach(function(node) {
-        if (totals[node.nodeType] == null) {
-          totals[node.nodeType] = 1;
+        if (totals[node.type] == null) {
+          totals[node.type] = 1;
         } else {
-          totals[node.nodeType]++;
+          totals[node.type]++;
         }
       });
 
@@ -80,17 +80,17 @@ function loadBlueprint(filename) {
       data.nodes.forEach(function(node) {
 
         // Consolidate Node Types
-        if (node.nodeType === 'CONTROLLER') {
-            node.nodeType = "ENDPOINT";
-        } else if (node.nodeType === 'CLIENT') {
-          node.nodeType = "PERSISTER";
+        if (node.type === 'CONTROLLER') {
+            node.type = "ENDPOINT";
+        } else if (node.type === 'CLIENT') {
+          node.type = "PERSISTER";
         }
 
-        node.x=counts[node.nodeType].x;
-        node.y=counts[node.nodeType].y++ * rowWidth;
+        node.x=counts[node.type].x;
+        node.y=counts[node.type].y++ * rowWidth;
 
         //http://colorbrewer2.org/#type=sequential&scheme=Oranges&n=6
-        switch (node.nodeType) {
+        switch (node.type) {
           case "SERVER":
             node.symbolType = 'square';
             node.color = '#084081';
