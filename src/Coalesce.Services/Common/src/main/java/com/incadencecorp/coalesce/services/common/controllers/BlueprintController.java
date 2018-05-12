@@ -230,6 +230,14 @@ public class BlueprintController implements IBlueprintController {
                 {
                     node.setType(EGraphNodeType.OTHER.toString());
                 }
+
+                // Look for properties
+                NodeList maps = bean.getElementsByTagName("map");
+
+                for (int jj = 0; jj < maps.getLength(); jj++)
+                {
+                    addProperties(node, (Element) maps.item(jj));
+                }
             }
             else
             {
@@ -243,6 +251,27 @@ public class BlueprintController implements IBlueprintController {
         for (int ii = 0; ii < beans.getLength(); ii++)
         {
             linkBeanRecursive(results, (Element) beans.item(ii), (Element) beans.item(ii));
+        }
+    }
+
+    private void addProperties(Vertex node, Element properties)
+    {
+        NodeList entries = properties.getElementsByTagName("entry");
+
+        for (int ii = 0; ii < entries.getLength(); ii++)
+        {
+            Element entry = (Element) entries.item(ii);
+
+            String key = entry.getAttribute("key");
+
+            if (!key.toLowerCase().contains("pass"))
+            {
+                node.put(key, entry.getAttribute("value"));
+            }
+            else
+            {
+                node.put(key, "****");
+            }
         }
     }
 
