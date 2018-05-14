@@ -379,6 +379,8 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
         // Get Parent's information
         CoalesceIndexInfo info = new CoalesceIndexInfo(recordset);
+        String tablename = NORMALIZER.normalize(info.getTableName());
+
         DerbyDataConnector derbyConn = null;
         if (conn instanceof DerbyDataConnector)
         {
@@ -468,15 +470,15 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
                         try
                         {
-                            if (!derbyConn.insertRecord(getSchema(), info.getTableName(), parameters))
+                            if (!derbyConn.insertRecord(getSchema(), tablename, parameters))
                             {
-                                LOGGER.error("FAILED to insert Record for " + getSchema() + "." + info.getTableName());
+                                LOGGER.error("FAILED to insert Record for " + getSchema() + "." + tablename);
                             }
                         }
                         catch (CoalesceException ce)
                         {
                             throw new SQLException(
-                                    "FAILED to insert Record for " + getSchema() + "." + info.getTableName() + ", REASON: "
+                                    "FAILED to insert Record for " + getSchema() + "." + tablename + ", REASON: "
                                             + ce.getCause().getLocalizedMessage(), ce);
                         }
 

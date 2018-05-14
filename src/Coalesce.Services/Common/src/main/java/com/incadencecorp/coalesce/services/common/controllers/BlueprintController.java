@@ -4,12 +4,12 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
+import com.incadencecorp.coalesce.services.api.datamodel.graphson.Edge;
+import com.incadencecorp.coalesce.services.api.datamodel.graphson.Graph;
+import com.incadencecorp.coalesce.services.api.datamodel.graphson.Vertex;
 import com.incadencecorp.coalesce.services.api.mappers.CoalesceMapper;
 import com.incadencecorp.coalesce.services.common.api.IBlueprintController;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.EGraphNodeType;
-import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphLink;
-import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphNode;
-import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphObj;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -74,9 +74,9 @@ public class BlueprintController implements IBlueprintController {
     }
 
     @Override
-    public GraphObj getBlueprint(String name) throws RemoteException
+    public Graph getBlueprint(String name) throws RemoteException
     {
-        GraphObj result = new GraphObj();
+        Graph result = new Graph();
 
         Document doc = loadBlueprint(name);
 
@@ -93,24 +93,24 @@ public class BlueprintController implements IBlueprintController {
             Element server = (Element) servers.item(ii);
 
             // Create Server Node
-            GraphNode serverNode = new GraphNode();
+            Vertex serverNode = new Vertex();
             serverNode.setId(server.getAttribute("id"));
-            serverNode.setLabel(server.getAttribute("address"));
-            serverNode.setNodeType(EGraphNodeType.SERVER);
+            serverNode.setType(EGraphNodeType.SERVER.toString());
+            serverNode.put("label", server.getAttribute("address"));
 
             // Add Server Node
-            result.getNodes().add(serverNode);
+            result.getVertices().add(serverNode);
 
             LOGGER.debug("Processing Server: ({})", serverNode.getId());
 
-            result.getLinks().addAll(linkServices(serverNode, server));
-            result.getLinks().addAll(linkProviders(serverNode, server));
+            result.getEdges().addAll(linkServices(serverNode, server));
+            result.getEdges().addAll(linkProviders(serverNode, server));
         }
 
         return result;
     }
 
-    private Collection<GraphLink> linkServices(GraphNode parent, Element server)
+    private Collection<Edge> linkServices(Vertex parent, Element server)
     {
         Element beans = (Element) server.getElementsByTagNameNS("http://cxf.apache.org/blueprint/jaxrs",
                                                                 "serviceBeans").item(0);
@@ -118,7 +118,7 @@ public class BlueprintController implements IBlueprintController {
         return link(parent, beans.getChildNodes());
     }
 
-    private Collection<GraphLink> linkProviders(GraphNode parent, Element server)
+    private Collection<Edge> linkProviders(Vertex parent, Element server)
     {
         Element beans = (Element) server.getElementsByTagNameNS("http://cxf.apache.org/blueprint/jaxrs",
                                                                 "providers").item(0);
@@ -126,9 +126,9 @@ public class BlueprintController implements IBlueprintController {
         return link(parent, beans.getChildNodes());
     }
 
-    private Collection<GraphLink> link(GraphNode parent, NodeList children)
+    private Collection<Edge> link(Vertex parent, NodeList children)
     {
-        Collection<GraphLink> results = new ArrayList<>();
+        Collection<Edge> results = new ArrayList<>();
 
         // Link Server to Services
         for (int jj = 0; jj < children.getLength(); jj++)
@@ -137,19 +137,19 @@ public class BlueprintController implements IBlueprintController {
             {
                 Element service = (Element) children.item(jj);
 
-                GraphLink link = new GraphLink();
+                Edge link = new Edge();
 
                 switch (service.getLocalName())
                 {
                 case "ref":
-                    link.setSource(parent.getId());
-                    link.setTarget(service.getAttribute("component-id"));
+                    link.setOutV(parent.getId());
+                    link.setInV(service.getAttribute("component-id"));
 
                     results.add(link);
                     break;
                 case "bean":
-                    link.setSource(parent.getId());
-                    link.setTarget(service.getAttribute("id"));
+                    link.setOutV(parent.getId());
+                    link.setInV(service.getAttribute("id"));
 
                     results.add(link);
                     break;
@@ -160,7 +160,7 @@ public class BlueprintController implements IBlueprintController {
         return results;
     }
 
-    private void createNodes(GraphObj results, Document doc)
+    private void createNodes(Graph results, Document doc)
     {
         // Get All Beans
         NodeList beans = doc.getDocumentElement().getElementsByTagName("bean");
@@ -170,10 +170,13 @@ public class BlueprintController implements IBlueprintController {
         {
             Element bean = (Element) beans.item(ii);
 
-            GraphNode node = new GraphNode();
+            String classname = bean.getAttribute("class");
+            String label = classname.substring(classname.lastIndexOf(".") + 1);
+
+            Vertex node = new Vertex();
             node.setId(bean.getAttribute("id"));
-            node.setClassname(bean.getAttribute("class"));
-            node.setLabel(node.getClassname().substring(node.getClassname().lastIndexOf(".") + 1));
+            node.put("classname", classname);
+            node.put("label", label);
 
             // Is Bean a standalone bean?
             if (StringHelper.isNullOrEmpty(node.getId()))
@@ -183,57 +186,65 @@ public class BlueprintController implements IBlueprintController {
                 bean.setAttribute("id", node.getId());
             }
 
-            if (!IGNORE_LIST.contains(node.getLabel()))
+            if (!IGNORE_LIST.contains(label))
             {
-                String simpleName = node.getLabel().toLowerCase();
+                String simpleName = label.toLowerCase();
 
                 // Determine Node Type
                 if (simpleName.contains("persister") || simpleName.contains("persistor"))
                 {
-                    node.setNodeType(EGraphNodeType.PERSISTER);
+                    node.setType(EGraphNodeType.PERSISTER.toString());
                 }
                 else if (simpleName.contains("impl"))
                 {
-                    node.setNodeType(EGraphNodeType.ENDPOINT);
+                    node.setType(EGraphNodeType.ENDPOINT.toString());
                 }
                 else if (simpleName.contains("controller"))
                 {
                     if (simpleName.contains("jaxrs"))
                     {
-                        node.setNodeType(EGraphNodeType.CONTROLLER_ENDPOINT);
+                        node.setType(EGraphNodeType.CONTROLLER_ENDPOINT.toString());
                     }
                     else
                     {
-                        node.setNodeType(EGraphNodeType.CONTROLLER);
+                        node.setType(EGraphNodeType.CONTROLLER.toString());
                     }
                 }
                 else if (simpleName.equals("coalesceframework") || simpleName.equals("coalescesearchframework"))
                 {
-                    node.setNodeType(EGraphNodeType.FRAMEWORK);
+                    node.setType(EGraphNodeType.FRAMEWORK.toString());
                 }
                 else if (simpleName.contains("entity"))
                 {
-                    node.setNodeType(EGraphNodeType.ENTITY);
+                    node.setType(EGraphNodeType.ENTITY.toString());
                 }
                 else if (simpleName.equals("serverconn"))
                 {
-                    node.setNodeType(EGraphNodeType.SETTINGS);
+                    node.setType(EGraphNodeType.SETTINGS.toString());
                 }
                 else if (simpleName.contains("client"))
                 {
-                    node.setNodeType(EGraphNodeType.CLIENT);
+                    node.setType(EGraphNodeType.CLIENT.toString());
                 }
                 else
                 {
-                    node.setNodeType(EGraphNodeType.OTHER);
+                    node.setType(EGraphNodeType.OTHER.toString());
+                }
+
+                // Look for properties
+                NodeList maps = bean.getElementsByTagName("map");
+
+                for (int jj = 0; jj < maps.getLength(); jj++)
+                {
+                    addProperties(node, (Element) maps.item(jj));
                 }
             }
             else
             {
-                node.setNodeType(EGraphNodeType.OTHER);
+                node.setType(EGraphNodeType.OTHER.toString());
             }
 
-            results.getNodes().add(node);
+            results.getVertices().add(node);
         }
 
         // Link Nodes
@@ -243,7 +254,28 @@ public class BlueprintController implements IBlueprintController {
         }
     }
 
-    private void linkBeanRecursive(GraphObj results, Element bean, Element currentnode)
+    private void addProperties(Vertex node, Element properties)
+    {
+        NodeList entries = properties.getElementsByTagName("entry");
+
+        for (int ii = 0; ii < entries.getLength(); ii++)
+        {
+            Element entry = (Element) entries.item(ii);
+
+            String key = entry.getAttribute("key");
+
+            if (!key.toLowerCase().contains("pass"))
+            {
+                node.put(key, entry.getAttribute("value"));
+            }
+            else
+            {
+                node.put(key, "****");
+            }
+        }
+    }
+
+    private void linkBeanRecursive(Graph results, Element bean, Element currentnode)
     {
         NodeList children = currentnode.getChildNodes();
 
@@ -257,21 +289,21 @@ public class BlueprintController implements IBlueprintController {
                 {
                     LOGGER.debug("(REF) " + bean.getAttribute("id") + " -> " + node.getAttribute("component-id"));
 
-                    GraphLink link = new GraphLink();
-                    link.setSource(bean.getAttribute("id"));
-                    link.setTarget(node.getAttribute("component-id"));
+                    Edge link = new Edge();
+                    link.setOutV(bean.getAttribute("id"));
+                    link.setInV(node.getAttribute("component-id"));
 
-                    results.getLinks().add(link);
+                    results.getEdges().add(link);
                 }
                 else if (node.getNodeName().equalsIgnoreCase("bean"))
                 {
                     LOGGER.debug("(BEAN) " + bean.getAttribute("id") + " -> " + node.getAttribute("id"));
 
-                    GraphLink link = new GraphLink();
-                    link.setSource(bean.getAttribute("id"));
-                    link.setTarget(node.getAttribute("id"));
+                    Edge link = new Edge();
+                    link.setOutV(bean.getAttribute("id"));
+                    link.setInV(node.getAttribute("id"));
 
-                    results.getLinks().add(link);
+                    results.getEdges().add(link);
 
                     linkBeanRecursive(results, node, node);
                 }
@@ -279,11 +311,11 @@ public class BlueprintController implements IBlueprintController {
                 {
                     LOGGER.debug("(REF Attr) " + bean.getAttribute("id") + " -> " + node.getAttribute("ref"));
 
-                    GraphLink link = new GraphLink();
-                    link.setSource(bean.getAttribute("id"));
-                    link.setTarget(node.getAttribute("ref"));
+                    Edge link = new Edge();
+                    link.setOutV(bean.getAttribute("id"));
+                    link.setInV(node.getAttribute("ref"));
 
-                    results.getLinks().add(link);
+                    results.getEdges().add(link);
                 }
                 else
                 {

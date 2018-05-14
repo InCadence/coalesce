@@ -101,14 +101,16 @@ public final class SynchronizerParameters {
     /**
      * (Integer) Number of days since last scanned to confine the scanner to a
      * time period. If not specified it defaults to
-     * {@value #DEFAULT_SCANNER_DAYS}.
+     * {@value #DEFAULT_SCANNER_WINDOW}.
      */
-    public static final String PARAM_SCANNER_DAYS = SCANNERS + "days";
+    public static final String PARAM_SCANNER_WINDOW = SCANNERS + "window";
+
+    public static final String PARAM_SCANNER_WINDOW_UNITS = SCANNERS + "window.units";
 
     /**
-     * {@link #PARAM_SCANNER_DAYS} default value.
+     * {@link #PARAM_SCANNER_WINDOW} default value.
      */
-    public static final int DEFAULT_SCANNER_DAYS = 0;
+    public static final int DEFAULT_SCANNER_WINDOW = 0;
 
     /**
      * (Integer) Number of results returned per scan. If not specified; defaults to {@value DEFAULT_SCANNER_MAX}.

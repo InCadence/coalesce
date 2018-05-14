@@ -18,7 +18,6 @@ package com.incadencecorp.coalesce.framework.persistance.derby;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
@@ -291,8 +290,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         return true;
     }
 
-    public boolean coalesceEntityTemplate_Register(CoalesceEntityTemplate template)
-            throws CoalesceException
+    public boolean coalesceEntityTemplate_Register(CoalesceEntityTemplate template) throws CoalesceException
     {
         // create a blank entity to iterate through the recordsets
         CoalesceEntity entity = template.createNewEntity();
@@ -315,8 +313,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         return true;
     }
 
-    public boolean coalesceEntityTemplate_InsertOrUpdate(CoalesceEntityTemplate template)
-            throws CoalesceException
+    public boolean coalesceEntityTemplate_InsertOrUpdate(CoalesceEntityTemplate template) throws CoalesceException
     {
         try
         {
@@ -396,6 +393,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
     {
         boolean success = false;
         boolean first = true;
+
         try
         {
 
@@ -495,7 +493,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
     protected String quote(String value)
     {
-        return "'" + value + "'";
+        return "'" + value.replaceAll("'","''") + "'";
     }
 
     protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, CoalesceDataConnectorBase conn)
@@ -553,20 +551,14 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                 sb.append("\tCONSTRAINT " + info.getTableName() + "_fkey FOREIGN KEY (entitykey) REFERENCES " + schema
                                   + ".coalesceentity (" + COLUMNS.getKey() + ") ON DELETE CASCADE\r\n");
 
-                if (schema == null || (schema != null && schema.length() == 0))
+                if (schema == null || schema.length() == 0)
                 {
                     throw new CoalesceException("Schema is null or empty... aborting.");
                 }
 
-                String sql = String.format(CREATE_TABLE_FORMAT,
-                                           schema,
-                                           tablename,
-                                           sb.toString(),
-                                           schema,
-                                           tablename,
-                                           JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc()));
+                String sql = String.format(CREATE_TABLE_FORMAT, schema, tablename.toUpperCase(), sb.toString());
 
-                LOGGER.debug("Register Template for " + info.getTableName());
+                LOGGER.debug("Register Template for " + tablename);
                 LOGGER.debug(sql);
 
                 // Create Table
@@ -940,6 +932,34 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             {
                 throw e;
             }
+        }
+    }
+
+    /**
+     * Logs all tables and their associated values.
+     *
+     * @throws SQLException
+     */
+    public void printTableDetails() throws SQLException
+    {
+
+        Connection conn = this.getConnection();
+        // get data base metadata
+        DatabaseMetaData metaData = conn.getMetaData();
+
+        ResultSet tables = metaData.getTables(null, schema.toUpperCase(), null, null);
+
+        while (tables.next())
+        {
+            LOGGER.info(tables.getString(3));
+
+            ResultSet test = metaData.getColumns(null, schema.toUpperCase(), tables.getString(3), null);
+
+            while (test.next())
+            {
+                LOGGER.info("\t{}", test.getString(4));
+            }
+
         }
     }
 

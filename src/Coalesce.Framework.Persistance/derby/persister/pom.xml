@@ -68,8 +68,8 @@
 		<!-- Unit Test Dependencies -->
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
-			<version>${project.version}</version>
 			<artifactId>coalesce-core</artifactId>
+			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
