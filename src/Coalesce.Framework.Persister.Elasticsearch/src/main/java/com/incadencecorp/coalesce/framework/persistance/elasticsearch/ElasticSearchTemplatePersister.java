@@ -347,12 +347,15 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
                 CreateIndexRequest request = new CreateIndexRequest();
                 request.index(index);
+                request.mapping("recordset", Collections.singletonMap("properties", source));
 
                 // Add a type / recordset
+                /*
                 for (String type : CoalesceTemplateUtil.getRecordsets(template.getKey()))
                 {
                     request.mapping(type, Collections.singletonMap("properties", source));
                 }
+                */
 
                 try
                 {
@@ -420,14 +423,10 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     {
         Map<String, Object> properties = new HashMap<>();
 
-        properties.put(ENTITY_KEY_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(ENTITY_NAME_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(ENTITY_SOURCE_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(ENTITY_VERSION_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
+        properties.put(ENTITY_KEY_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
+        properties.put(ENTITY_NAME_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
+        properties.put(ENTITY_SOURCE_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
+        properties.put(ENTITY_VERSION_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
         properties.put(ENTITY_DATE_CREATED_COLUMN_NAME,
                        Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.DATE_TIME_TYPE)));
         properties.put(ENTITY_LAST_MODIFIED_COLUMN_NAME,
@@ -450,37 +449,20 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
         Map<String, Object> properties = createEntityMapping();
 
-        properties.put(LINKAGE_KEY_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-/*
-        properties.put(ENTITY_KEY_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(ENTITY_NAME_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(ENTITY_SOURCE_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(ENTITY_VERSION_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-*/
-        properties.put(LINKAGE_ENTITY2_KEY_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(LINKAGE_ENTITY2_NAME_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(LINKAGE_ENTITY2_SOURCE_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(LINKAGE_ENTITY2_VERSION_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
+        properties.put(LINKAGE_KEY_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
+
+        properties.put(LINKAGE_ENTITY2_KEY_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
+        properties.put(LINKAGE_ENTITY2_NAME_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
+        properties.put(LINKAGE_ENTITY2_SOURCE_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
+        properties.put(LINKAGE_ENTITY2_VERSION_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
 
         properties.put(LINKAGE_DATE_CREATED_COLUMN_NAME,
                        Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.DATE_TIME_TYPE)));
         properties.put(LINKAGE_LAST_MODIFIED_COLUMN_NAME,
                        Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.DATE_TIME_TYPE)));
-        properties.put(LINKAGE_LABEL_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(LINKAGE_STATUS_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
-        properties.put(LINKAGE_LINK_TYPE_COLUMN_NAME,
-                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
+        properties.put(LINKAGE_LABEL_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
+        properties.put(LINKAGE_STATUS_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
+        properties.put(LINKAGE_LINK_TYPE_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
 
         return properties;
     }
@@ -495,7 +477,20 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
             if (!StringHelper.isNullOrEmpty(type))
             {
-                propertiesMap.put(entry.getKey(), Collections.singletonMap("type", type));
+                Map<String, Object> mapping = new HashMap<>();
+                mapping.put("type", type);
+
+                if (entry.getValue() == ECoalesceFieldDataTypes.STRING_TYPE)
+                {
+                    Map<String, Object> keywordField = new HashMap<>();
+                    keywordField.put("type", "keyword");
+                    keywordField.put("ignore_above", 256);
+
+                    mapping.put("fields", Collections.singletonMap("keyword", keywordField));
+                }
+
+                propertiesMap.put(entry.getKey(), mapping);
+
             }
         }
 

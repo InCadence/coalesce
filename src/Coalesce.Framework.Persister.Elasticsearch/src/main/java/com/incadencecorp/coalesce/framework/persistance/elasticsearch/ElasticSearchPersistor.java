@@ -10,6 +10,9 @@ import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
+import org.elasticsearch.action.bulk.BulkItemResponse;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.support.AbstractClient;
@@ -89,16 +92,22 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
         {
             AbstractClient client = conn.getDBConnector(params);
 
-            for (ActionFuture<? extends DocWriteResponse> future : iterator.iterate(client, entities))
-            {
+            BulkRequest request = iterator.iterate(entities);
+            BulkResponse response = client.bulk(request).actionGet();
 
-                DocWriteResponse response = future.actionGet();
-                LOGGER.debug("({}) ID = {}, Index = {}, Type = {} : {}",
-                             response.status().toString(),
-                             response.getId(),
-                             response.getIndex(),
-                             response.getType(),
-                             LOGGER.isTraceEnabled() ? response : response.getClass().getSimpleName());
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("{} Entities Created {} Request", entities.length, request.requests().size());
+
+                for (BulkItemResponse item : response.getItems())
+                {
+                    LOGGER.trace("({}) ID = {}, Index = {}, Type = {} : {}",
+                                 item.status().toString(),
+                                 item.getId(),
+                                 item.getIndex(),
+                                 item.getType(),
+                                 LOGGER.isTraceEnabled() ? response : response.getClass().getSimpleName());
+                }
             }
         }
         catch (CoalesceException e)

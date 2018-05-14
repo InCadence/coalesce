@@ -2,7 +2,6 @@ package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import com.google.common.net.HostAndPort;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import ironhide.client.IronhideClient;
 import ironhide.client.IronhideClient.Builder;
 import org.elasticsearch.ElasticsearchException;
@@ -17,34 +16,15 @@ import org.slf4j.LoggerFactory;
 import java.io.FileNotFoundException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Stream;
 
-public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
+public class ElasticSearchDataConnector implements AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchDataConnector.class);
 
     private AbstractClient client;
-
-    // Datastore Properties
-    //public static final String INSTANCE_ID = "instanceId";
-    public static final String USER = "user";
-    public static final String PASSWORD = "password";
-
-    public Connection getDBConnection() throws SQLException
-    {
-        LOGGER.error("ElasticSearchDataConnector:getDBConnection: Procedure not implemented");
-        throw new UnsupportedOperationException("ElasticSearchDataConnector:getDBConnection: Procedure not implemented");
-    }
-
-    @Override
-    protected String getProcedurePrefix()
-    {
-        return "";
-    }
 
     public AbstractClient getDBConnector(Map<String, String> props)
     {
@@ -73,6 +53,15 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
         }
 
         return client;
+    }
+
+    @Override
+    public void close()
+    {
+        if (client != null)
+        {
+            client.close();
+        }
     }
 
     private AbstractClient createClient(Properties props) throws CoalescePersistorException

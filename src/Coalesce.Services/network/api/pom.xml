@@ -36,6 +36,11 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.jaxb.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.services</groupId>
+            <artifactId>coalesce-services-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
     </dependencies>
 </project>

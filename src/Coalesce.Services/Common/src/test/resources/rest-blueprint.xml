@@ -147,4 +147,23 @@
 		</property>
 	</bean>
 
+	<bean id="elasticsearch" class="com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor">
+        <argument>
+            <map>
+                <entry key="ssl.enabled" value="false"/>
+                <entry key="ssl.keystore" value="etc/pki/keystore.jks"/>
+                <entry key="ssl.keystore.password" value="changeit"/>
+                <entry key="ssl.truststore" value="etc/pki/truststore.jks"/>
+                <entry key="ssl.truststore.password" value="changeit"/>
+                <entry key="elastic.isAuthoritative" value="true"/>
+                <!--
+                <entry key="elastic.clustername" value="BDP.oerepodev.incadencecorp.com"/>
+                <entry key="elastic.hosts" value="52.222.29.127:9300"/>
+                -->
+                <entry key="elastic.clustername" value="elasticsearch"/>
+                <entry key="elastic.hosts" value="localhost:9300"/>
+            </map>
+        </argument>
+    </bean>
+
 </blueprint>

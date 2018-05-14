@@ -18,7 +18,7 @@
 
 package com.incadencecorp.coalesce.services.common.api;
 
-import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphObj;
+import com.incadencecorp.coalesce.services.api.datamodel.graphson.Graph;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -38,6 +38,6 @@ public interface IBlueprintController {
      * @return nodes and linkages of the bean for the specified xml document.
      * @throws RemoteException on error
      */
-    GraphObj getBlueprint(String name) throws RemoteException;
+    Graph getBlueprint(String name) throws RemoteException;
 
 }

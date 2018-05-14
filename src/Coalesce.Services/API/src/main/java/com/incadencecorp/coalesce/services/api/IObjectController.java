@@ -16,25 +16,41 @@
  *
  */
 
-package com.incadencecorp.coalesce.services.network.controller.jaxrs.impl;
+package com.incadencecorp.coalesce.services.api;
 
-import com.incadencecorp.coalesce.services.network.api.INetworkController;
-import com.incadencecorp.coalesce.services.api.datamodel.graphson.Graph;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import java.rmi.RemoteException;
 
 /**
  * @author Derek Clemenzi
  */
-@Path("network")
-public interface INetworkControllerJaxRS extends INetworkController {
+public interface IObjectController<T> {
 
-    @GET
-    @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
-    Graph getNetworkDiagram() throws RemoteException;
+    /**
+     * Saves the Object.
+     *
+     * @param object to save
+     */
+    String save(final T object) throws RemoteException;
+
+    /**
+     * Updates the Object
+     *
+     * @param object to update
+     * @param key    of Object
+     */
+    void update(final String key, final T object) throws RemoteException;
+
+    /**
+     * @param key of Object
+     * @return specified Object
+     */
+    T load(final String key) throws RemoteException;
+
+    /**
+     * Deletes the specified Object.
+     *
+     * @param key of Object
+     */
+    void delete(final String key) throws RemoteException;
+
 }

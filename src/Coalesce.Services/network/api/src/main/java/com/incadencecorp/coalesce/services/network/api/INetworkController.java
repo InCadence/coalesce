@@ -18,7 +18,7 @@
 
 package com.incadencecorp.coalesce.services.network.api;
 
-import com.incadencecorp.coalesce.services.network.api.datamodel.graphson.Graph;
+import com.incadencecorp.coalesce.services.api.datamodel.graphson.Graph;
 
 import java.rmi.RemoteException;
 

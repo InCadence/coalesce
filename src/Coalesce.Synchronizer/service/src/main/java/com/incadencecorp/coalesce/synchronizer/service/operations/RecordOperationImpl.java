@@ -17,31 +17,29 @@
 
 package com.incadencecorp.coalesce.synchronizer.service.operations;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
-
-import javax.sql.rowset.CachedRowSet;
-
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.FileHelper;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperation;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperationTask;
 
+import javax.sql.rowset.CachedRowSet;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+
 /**
  * This implementation writes the keys of entities that need to be updated to a
  * file system.
- * 
+ *
  * @author n78554
  */
 public class RecordOperationImpl extends AbstractOperation<AbstractOperationTask> {
 
-    private URI directory;
+    private Path directory;
     private int subDirLen = 0;
 
     @Override
@@ -54,7 +52,7 @@ public class RecordOperationImpl extends AbstractOperation<AbstractOperationTask
             {
                 for (String key : keys)
                 {
-                    Path dir = Paths.get(directory.getPath(), getName(), key.substring(0, subDirLen));
+                    Path dir = directory.resolve(getName()).resolve(key.substring(0, subDirLen));
                     Path file = dir.resolve(key);
 
                     try
@@ -91,9 +89,9 @@ public class RecordOperationImpl extends AbstractOperation<AbstractOperationTask
         {
             try
             {
-                directory = FileHelper.getFullPath(parameters.get(CoalesceParameters.PARAM_DIRECTORY));
+                directory = Paths.get(FileHelper.getFullPath(parameters.get(CoalesceParameters.PARAM_DIRECTORY)));
 
-                if (!Files.exists(Paths.get(directory)))
+                if (!Files.exists(directory))
                 {
                     throw new IllegalArgumentException("Invalid Directory: " + directory);
                 }

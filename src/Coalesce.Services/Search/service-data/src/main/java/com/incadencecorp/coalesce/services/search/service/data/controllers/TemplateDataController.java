@@ -538,8 +538,8 @@ public class TemplateDataController {
 
         private TemplateNode(CoalesceEntityTemplate template)
         {
-            this.entity = template.createNewEntity(false);
-            this.entity.setKey(template.getKey());
+            this.entity = new CoalesceEntity();
+            this.entity.initialize(template.toXml());
             this.template = template;
         }
 

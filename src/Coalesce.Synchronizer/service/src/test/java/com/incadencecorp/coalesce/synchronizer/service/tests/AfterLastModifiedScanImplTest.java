@@ -28,7 +28,6 @@ import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters
 import com.incadencecorp.coalesce.synchronizer.service.scanners.AfterLastModifiedScanImpl;
 import com.incadencecorp.coalesce.synchronizer.service.scanners.AfterLastModifiedScanImpl2;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Test;
 
 import javax.sql.rowset.CachedRowSet;
@@ -54,10 +53,11 @@ public class AfterLastModifiedScanImplTest {
         entity.setName("OEEvent");
 
         Map<String, String> params = new HashMap<>();
-        params.put(SynchronizerParameters.PARAM_SCANNER_DAYS, "3");
+        params.put(SynchronizerParameters.PARAM_SCANNER_WINDOW, "3");
         params.put(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS,
                    JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusDays(2)));
-        params.put(SynchronizerParameters.PARAM_SCANNER_CQL, "\"" + CoalescePropertyFactory.getEntityKey().getPropertyName() + "\" = '" + entity.getKey() + "'");
+        params.put(SynchronizerParameters.PARAM_SCANNER_CQL,
+                   "\"" + CoalescePropertyFactory.getEntityKey().getPropertyName() + "\" = '" + entity.getKey() + "'");
 
         DerbyPersistor source = new DerbyPersistor();
 
@@ -99,7 +99,8 @@ public class AfterLastModifiedScanImplTest {
         Map<String, String> params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS,
                    JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusDays(2)));
-        params.put(SynchronizerParameters.PARAM_SCANNER_CQL, "\"" + CoalescePropertyFactory.getEntityKey().getPropertyName() + "\" = '" + entity.getKey() + "'");
+        params.put(SynchronizerParameters.PARAM_SCANNER_CQL,
+                   "\"" + CoalescePropertyFactory.getEntityKey().getPropertyName() + "\" = '" + entity.getKey() + "'");
         params.put(SynchronizerParameters.PARAM_SCANNER_DATETIME_PATTERN, "yyyy-MM-dd HH:mm:ss.S");
 
         DerbyPersistor source = new DerbyPersistor();
