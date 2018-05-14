@@ -57,7 +57,8 @@ public class DerbyNormalizer implements ICoalesceNormalizer {
     @Override
     public String normalize(String name)
     {
-        return keywords.contains(name.toUpperCase()) ? "\"" + name + "\"" : name;
+        name = name.toUpperCase();
+        return keywords.contains(name) ? "\"" + name + "\"" : name;
     }
 
 }
