@@ -40,16 +40,6 @@ public class ElasticSearchPersistorSearchIT extends AbstractSearchTest<ElasticSe
 	}
 
 	@Override
-	public void registerEntities() {
-		// TODO Auto-generated method stub
-		try {
-			super.registerEntities();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
 	public void searchAllDataTypes() throws Exception {
 		// TODO Auto-generated method stub
 		super.searchAllDataTypes();
