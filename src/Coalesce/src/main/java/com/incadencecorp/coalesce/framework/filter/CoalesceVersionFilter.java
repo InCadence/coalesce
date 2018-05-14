@@ -18,6 +18,7 @@
 package com.incadencecorp.coalesce.framework.filter;
 
 import com.incadencecorp.coalesce.api.ICoalesceFilter;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 
 /**
@@ -30,6 +31,8 @@ public class CoalesceVersionFilter implements ICoalesceFilter {
     @Override
     public boolean filter(CoalesceObject object)
     {
-        return object.getObjectVersion() >= object.getEntity().getObjectVersion();
+        CoalesceEntity entity = object.getEntity();
+
+        return (object.getObjectVersion() >= entity.getObjectVersion()) || entity.isMarkedDeleted();
     }
 }
