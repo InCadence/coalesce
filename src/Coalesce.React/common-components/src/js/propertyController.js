@@ -52,7 +52,7 @@ export function loadProperty(name)
       {
         throw Error(res.statusText);
       }
-      return res.json();
+      return res.text();
     }).catch(function(error) {
       throw Error(error);
     });
