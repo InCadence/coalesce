@@ -3,18 +3,12 @@ import * as ReactDOM from "react-dom";
 import Popup from 'react-popup';
 import {MapView} from './map.js'
 import {registerErrorPrompt} from 'common-components/lib/register.js'
+import { searchComplex } from 'common-components/lib/js/searchController'
+import { loadProperty } from 'common-components/lib/js/propertyController'
 
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
 import './index.css'
-
-var rootUrl;
-
-if (window.location.port == 3000) {
-  rootUrl  = 'http://' + window.location.hostname + ':8181';
-} else {
-  rootUrl  = '';
-}
 
 registerErrorPrompt(Popup);
 
@@ -110,7 +104,7 @@ fetchCapabilities(url) {
       })
   }
 
-  fetchStyles(url) {
+  fetchStyles() {
 
     var that = this;
 
@@ -130,24 +124,24 @@ fetchCapabilities(url) {
         "Text Style.fontStrokeWidth",
       ],
       "group": {
-        "booleanComparer": "AND",
+        "operator": "AND",
         "criteria": [{
           "recordset": "coalesceentity",
           "field": "name",
-          "comparer": "=",
+          "operator": "EqualTo",
           "value": "Style",
           "matchCase": "true"
         }]
-      }
+      },
+      "sortBy": [
+          {
+            "propertyName": "CoalesceEntity.lastModified",
+            "sortOrder": "ASC"
+          }
+        ],
     };
 
-    fetch(url + '/cxf/data/search/complex', {
-      method: "POST",
-      body: JSON.stringify(query),
-      headers: new Headers({
-        'content-type': 'application/json; charset=utf-8'
-      }),
-    }).then(res => res.json())
+    searchComplex(query)
       .then(data => {
 
         const {styles} = that.state;
@@ -188,13 +182,13 @@ fetchCapabilities(url) {
           styles: styles
         });
       }).catch(function(error) {
-        Popup.plugins().promptError('(FAILED) Loading Styles: ' + JSON.stringify(error));
+        console.log('(FAILED) Loading Styles: ' + error);
       });
   }
 
   componentDidMount() {
     this.fetchLayers(this.state.geoserver);
-    this.fetchStyles(this.state.karafserver);
+    this.fetchStyles();
     //this.fetchCapabilities(this.state.geoserver);
   }
 
@@ -215,7 +209,6 @@ fetchCapabilities(url) {
 App.defaultProps = {
   geoserver: 'http://bdpgeoserver.bdpdev.incadencecorp.com:8181/geoserver',
   workspace: 'OE_Repository',
-  karafserver: rootUrl,
   availableLayers: [],
   styles: [],
   // TODO Default layers should be removed for production or load from a saved state.
@@ -270,8 +263,7 @@ App.defaultProps = {
   ]
 }
 
-fetch(rootUrl + '/cxf/data/property/geoserver.url')
-  .then(res => res.text())
+loadProperty('geoserver.url')
   .then(data => {
     ReactDOM.render(
       <App geoserver={data}/>,

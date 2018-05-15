@@ -179,8 +179,6 @@ export class FeatureSelection extends React.Component {
 
     var features = [];
 
-    console.log("Render Feature Selection");
-
     if (this.state.selectedLayers != null) {
 
       for (var ii=0; ii<this.state.selectedLayers.length; ii++) {

@@ -201,8 +201,6 @@ export class MapView extends React.Component {
 
   render(){
 
-    console.log("Render Map");
-
     return (
       <div className="row">
         <SlidingPane
