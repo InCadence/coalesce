@@ -29,7 +29,10 @@ fetchCapabilities(url) {
     .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
     .then(doc => {
 
-      //const {availableLayers} = this.state;
+      const {availableLayers} = this.state;
+
+      // Clear Values
+      availableLayers.slice(0, availableLayers.length);
 
       console.log(doc);
       var featureTypes = doc.getElementsByTagName("FeatureTypeList")[0].getElementsByTagName("FeatureType");
@@ -43,8 +46,7 @@ fetchCapabilities(url) {
         var title = featureTypes[ii].getElementsByTagName("Title")[0].innerHTML;
         var name = featureTypes[ii].getElementsByTagName("Name")[0].innerHTML;
 
-        layers.push({name: title, key: title});
-
+        layers.push({name: title, key: name});
       }
 
       layers.sort(function(a, b) {
@@ -59,9 +61,14 @@ fetchCapabilities(url) {
 
                 return 0;
               }).forEach(function(layer) {
-                // TODO Populate availableLayers
-                //console.log(layer.name);
+                console.log(layer.name);
+                availableLayers.push(layer);
               })
+
+              this.setState({
+                availableLayers: availableLayers
+              });
+
     }).catch(function(error) {
       Popup.plugins().promptError("(FAILED) Loading Capabilities: " + error);
     })
@@ -69,6 +76,9 @@ fetchCapabilities(url) {
   }
 
   fetchLayers(url) {
+
+    var that = this;
+
     fetch(url + '/rest/layers.json')
       .then(res => res.json())
       .then(data => {
@@ -92,6 +102,7 @@ fetchCapabilities(url) {
 
                   return 0;
                 }).forEach(function(layer) {
+                  layer.key = that.props.workspace + ":" + layer.name;
                   availableLayers.push(layer);
                 })
 
@@ -187,9 +198,9 @@ fetchCapabilities(url) {
   }
 
   componentDidMount() {
-    this.fetchLayers(this.state.geoserver);
+    //this.fetchLayers(this.state.geoserver);
     this.fetchStyles();
-    //this.fetchCapabilities(this.state.geoserver);
+    this.fetchCapabilities(this.state.geoserver);
   }
 
   render() {

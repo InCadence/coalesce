@@ -33,14 +33,14 @@ export class FeatureSelection extends React.Component {
         var found = false;
 
         for (var ii=0; ii<selectedLayers.length; ii++) {
-          if (selectedLayers[ii].name === feature.name) {
+          if (selectedLayers[ii].key === feature.key) {
             found = true;
             break;
           }
         }
 
         if (!found) {
-          filteredLayers.push({key: feature.name, name: feature.name});
+          filteredLayers.push({key: feature.key, name: feature.name});
         }
       });
 

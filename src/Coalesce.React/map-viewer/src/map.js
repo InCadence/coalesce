@@ -112,24 +112,24 @@ export class MapView extends React.Component {
             singleWMSLayer.layers.push(feature.name);
 
             // Create New Combined WMS Layer
-            singleWMSLayer.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, singleWMSLayer.layers, singleWMSLayer.tiled);
+            singleWMSLayer.layer = createBDPWMSLayer(this.props.geoserver, singleWMSLayer.layers, singleWMSLayer.tiled);
             layer = singleWMSLayer.layer;
 
             console.log(feature.name + " added to WMS layer");
           } else {
-            feature.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, [feature.name], feature.tiled);
+            feature.layer = createBDPWMSLayer(this.props.geoserver, [feature.name], feature.tiled);
             layer = feature.layer;
             layer.setVisible(feature.checked);
           }
           break;
         case 'HEATMAP':
-          feature.layer = createBDPHeatmapLayer(this.props.geoserver, this.props.workspace, feature.name);
+          feature.layer = createBDPHeatmapLayer(this.props.geoserver, feature.name);
           layer = feature.layer;
           layer.setVisible(feature.checked);
           break;
         case 'WFS':
         default:
-          feature.layer = createBDPWFSLayer(this.props.geoserver, this.props.workspace, feature.name, feature.style);
+          feature.layer = createBDPWFSLayer(this.props.geoserver, feature.name, feature.style);
           layer = feature.layer;
           layer.setVisible(feature.checked);
           break;
@@ -175,7 +175,7 @@ export class MapView extends React.Component {
           // Additional Layers?
           if (singleWMSLayer.layers.length >= 1) {
             // Yes; Create WMS Layer
-            singleWMSLayer.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, singleWMSLayer.layers, singleWMSLayer.tiled);
+            singleWMSLayer.layer = createBDPWMSLayer(this.props.geoserver, singleWMSLayer.layers, singleWMSLayer.tiled);
             map.addLayer(singleWMSLayer.layer);
           }
         }
@@ -265,7 +265,7 @@ var createOptionControl = function(view, opt_options) {
 };
 
 // Creates a client side heatmap layer
-function createBDPHeatmapLayer(url, workspace, layer) {
+function createBDPHeatmapLayer(url, layer) {
   return new ol.layer.Heatmap({
     source: new ol.source.Vector({
       format: new ol.format.GeoJSON({
@@ -276,7 +276,7 @@ function createBDPHeatmapLayer(url, workspace, layer) {
       }),
       url: function(extent) {
         return url + '/wfs?service=WFS&' +
-            'version=2.0.0&request=GetFeature&typename=' + workspace + ':' + layer + '&' +
+            'version=2.0.0&request=GetFeature&typename=' + layer + '&' +
             'outputFormat=application/json&srsname=EPSG:4326';// +
             //'&bbox=' + extent.join(',');
       },
@@ -286,12 +286,12 @@ function createBDPHeatmapLayer(url, workspace, layer) {
   });
 }
 
-function createBDPWMSLayer(url, workspace, layers, tiled) {
+function createBDPWMSLayer(url, layers, tiled) {
 
   var workingLayers = layers.slice();
 
   for (var ii=0; ii<layers.length; ii++) {
-      workingLayers[ii] = workspace + ":" + layers[ii];
+      workingLayers[ii] = layers[ii];
   }
 
   var layer;
@@ -323,7 +323,7 @@ function createBDPWMSLayer(url, workspace, layers, tiled) {
   return layer;
 }
 
-function createBDPWFSLayer(url, workspace, feature, style) {
+function createBDPWFSLayer(url, feature, style) {
   return new ol.layer.Vector({
     source: new ol.source.Vector({
       format: new ol.format.GeoJSON({
@@ -336,7 +336,7 @@ function createBDPWFSLayer(url, workspace, feature, style) {
         //var coords = ol.proj.transform(extent, 'EPSG:3857', 'EPSG:4326');
         //alert(JSON.stringify(coords));
         return url + '/wfs?service=WFS&' +
-            'version=2.0.0&request=GetFeature&typename=' + workspace + ':' + feature + '&' +
+            'version=2.0.0&request=GetFeature&typename=' + feature + '&' +
             'outputFormat=application/json&srsname=EPSG:4326';// + '&bbox=' + extent.join(',');
       },
       strategy: ol.loadingstrategy.bbox
