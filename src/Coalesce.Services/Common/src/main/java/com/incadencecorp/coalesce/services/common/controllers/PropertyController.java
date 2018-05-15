@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,6 +31,8 @@ import java.util.Map;
  * @author Derek Clemenzi
  */
 public class PropertyController implements IPropertyController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyController.class);
 
     private IConfigurationsConnector connector = new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION);
     private SettingsBase settings = new SettingsBase(connector);
@@ -129,7 +133,7 @@ public class PropertyController implements IPropertyController {
         {
             settings.setSetting(key, entry.getKey(), entry.getValue());
 
-            notifier.sendMessage("property/" + key, entry.getKey(), entry.getValue());
+            sendMessage(key, entry.getKey(), entry.getValue());
         }
     }
 
@@ -173,7 +177,7 @@ public class PropertyController implements IPropertyController {
                 writer.write(json);
             }
 
-            notifier.sendMessage("property/" + name, name, json);
+            sendMessage(name, name, json);
         }
         catch (IOException e)
         {
@@ -181,6 +185,21 @@ public class PropertyController implements IPropertyController {
                                                     name,
                                                     JSONObject.class.getSimpleName(),
                                                     e.getMessage()), e);
+        }
+    }
+
+    private void sendMessage(String topic, String key, String value)
+    {
+        if (notifier != null)
+        {
+            try
+            {
+                notifier.sendMessage("property/" + topic, key, value);
+            }
+            catch (Throwable e)
+            {
+                LOGGER.warn("(FAILED) Update Notification for Topic: {}", topic, e);
+            }
         }
     }
 }
