@@ -64,7 +64,7 @@ public class CreateDataObjectTask extends AbstractFrameworkTask<String[], Result
                 {
                     result.setStatus(EResultStatus.FAILED);
                     // TODO Create a more meaningful error message
-                    result.setResult("Validation Failed");
+                    result.setError("Validation Failed");
                     break;
                 }
 
@@ -73,7 +73,7 @@ public class CreateDataObjectTask extends AbstractFrameworkTask<String[], Result
             else
             {
                 result.setStatus(EResultStatus.FAILED);
-                result.setResult(String.format(CoalesceErrors.NOT_INITIALIZED, "Entity"));
+                result.setError(String.format(CoalesceErrors.NOT_INITIALIZED, "Entity"));
                 break;
             }
         }
