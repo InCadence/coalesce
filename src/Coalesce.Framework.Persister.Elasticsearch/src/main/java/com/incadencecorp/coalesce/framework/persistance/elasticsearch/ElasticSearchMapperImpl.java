@@ -45,7 +45,7 @@ public class ElasticSearchMapperImpl implements ICoalesceMapper<String> {
             return "float";
 
         case GEOCOORDINATE_TYPE:
-            return "geo_point";
+            return "geo_shape";
 
         case GEOCOORDINATE_LIST_TYPE:
         case LINE_STRING_TYPE:

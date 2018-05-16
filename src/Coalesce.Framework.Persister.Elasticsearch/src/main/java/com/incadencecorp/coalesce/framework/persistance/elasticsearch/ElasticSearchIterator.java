@@ -217,11 +217,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
                     source.put(name, createCircle((CoalesceCircleField) field));
                     break;
                 case GEOCOORDINATE_TYPE:
-                    Point point = ((CoalesceCoordinateField) field).getValueAsPoint();
-                    if (point != null)
-                    {
-                        source.put(name, point.getY() + ", " + point.getX());
-                    }
+                	source.put(name, createGeoShape((CoalesceCoordinateField) field));
                     break;
                 case GEOCOORDINATE_LIST_TYPE:
                     source.put(name, createMultiPoint((CoalesceCoordinateListField) field));
@@ -236,6 +232,23 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
 
         return source;
     }
+    
+    private Map<String, Object> createGeoShape(CoalesceCoordinateField field) throws CoalesceDataFormatException
+	{
+        Map<String, Object> results = new HashMap<>();
+        Point point = ((CoalesceCoordinateField) field).getValueAsPoint(); 
+
+        if (point != null) 
+        { 
+            JSONArray pointArray = new JSONArray();
+            pointArray.put(point.getY());
+            pointArray.put(point.getX());
+            results.put("type", ShapeBuilder.GeoShapeType.POINT);
+            results.put("coordinates", pointArray);
+        } 
+
+        return results;
+	}
 
     private Map<String, Object> createPolygon(CoalescePolygonField field) throws CoalesceDataFormatException
     {
