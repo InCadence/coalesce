@@ -24,7 +24,6 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -217,7 +216,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
                     source.put(name, createCircle((CoalesceCircleField) field));
                     break;
                 case GEOCOORDINATE_TYPE:
-                	source.put(name, createGeoShape((CoalesceCoordinateField) field));
+                    source.put(name, createPoint((CoalesceCoordinateField) field));
                     break;
                 case GEOCOORDINATE_LIST_TYPE:
                     source.put(name, createMultiPoint((CoalesceCoordinateListField) field));
@@ -232,23 +231,24 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
 
         return source;
     }
-    
-    private Map<String, Object> createGeoShape(CoalesceCoordinateField field) throws CoalesceDataFormatException
-	{
-        Map<String, Object> results = new HashMap<>();
-        Point point = ((CoalesceCoordinateField) field).getValueAsPoint(); 
 
-        if (point != null) 
-        { 
-            JSONArray pointArray = new JSONArray();
-            pointArray.put(point.getY());
-            pointArray.put(point.getX());
+    private Map<String, Object> createPoint(CoalesceCoordinateField field) throws CoalesceDataFormatException
+    {
+        Map<String, Object> results = null;
+
+        if (field.getValue() != null)
+        {
+            JSONArray coord = new JSONArray();
+            coord.put(field.getValue().x);
+            coord.put(field.getValue().y);
+
+            results = new HashMap<>();
             results.put("type", ShapeBuilder.GeoShapeType.POINT);
-            results.put("coordinates", pointArray);
-        } 
+            results.put("coordinates", coord);
+        }
 
         return results;
-	}
+    }
 
     private Map<String, Object> createPolygon(CoalescePolygonField field) throws CoalesceDataFormatException
     {
