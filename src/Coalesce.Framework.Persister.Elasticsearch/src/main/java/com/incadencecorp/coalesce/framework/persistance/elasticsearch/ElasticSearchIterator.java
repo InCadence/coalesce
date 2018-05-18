@@ -49,6 +49,11 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
 
     public ElasticSearchIterator(ICoalesceNormalizer normalizer, boolean isAuthoritative)
     {
+        if (normalizer == null)
+        {
+            throw new IllegalArgumentException("Normalizer cannot be null");
+        }
+
         this.normalizer = normalizer;
         this.isAuthoritative = isAuthoritative;
     }
@@ -323,15 +328,9 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         return results;
     }
 
-    private String normalize(String value)
-    {
-        return normalizer != null ? normalizer.normalize(value) : value;
-    }
-
     private String normalize(CoalesceField<?> field)
     {
-        return normalizer != null ? normalizer.normalize(field.getParent().getParent().getName(),
-                                                         field.getName()) : field.getName();
+        return normalizer.normalize(field.getParent().getParent().getName(), field.getName());
     }
 
     /**
@@ -342,7 +341,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         private Parameters(CoalesceEntity entity)
         {
             common = createMapping(entity);
-            recordIndex = ElasticSearchPersistor.COALESCE_ENTITY_INDEX + "-" + normalize(entity.getName());
+            recordIndex = ElasticSearchPersistor.COALESCE_ENTITY_INDEX + "-" + normalizer.normalize(entity.getName());
         }
 
         private Map<String, Object> common;

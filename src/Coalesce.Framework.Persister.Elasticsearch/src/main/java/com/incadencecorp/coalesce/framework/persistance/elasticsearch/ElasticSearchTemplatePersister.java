@@ -23,9 +23,7 @@ import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.framework.DefaultNormalizer;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceTemplatePersister;
@@ -50,6 +48,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,41 +57,41 @@ import java.util.*;
 public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersister {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchTemplatePersister.class);
+
     private static final ElasticSearchMapperImpl MAPPER = new ElasticSearchMapperImpl();
+    private static final ICoalesceNormalizer NORMALIZER = new ElasticSearchNormalizer();
 
     public static final String COALESCE_ENTITY_INDEX = "coalesce";
     public static final String COALESCE_LINKAGE_INDEX = COALESCE_ENTITY_INDEX + "-linkages";
     public static final String COALESCE_ENTITY = "entity";
     public static final String COALESCE_TEMPLATE = "template";
     public static final String COALESCE_LINKAGE = CoalesceLinkage.NAME;
-    public static final String FIELD_XML = CoalescePropertyFactory.getEntityXml().getPropertyName();
+    public static final String FIELD_XML = normalize(CoalescePropertyFactory.getEntityXml());
 
     // Linkage Column Names
-    public static final String LINKAGE_KEY_COLUMN_NAME = CoalescePropertyFactory.getLinkageKey().getPropertyName();
-    public static final String LINKAGE_DATE_CREATED_COLUMN_NAME = CoalescePropertyFactory.getLinkageDateCreated().getPropertyName();
-    public static final String LINKAGE_LAST_MODIFIED_COLUMN_NAME = CoalescePropertyFactory.getLinkageLastModified().getPropertyName();
-    public static final String LINKAGE_LINK_TYPE_COLUMN_NAME = CoalescePropertyFactory.getLinkageType().getPropertyName();
-    public static final String LINKAGE_LABEL_COLUMN_NAME = CoalescePropertyFactory.getLinkageLabel().getPropertyName();
-    public static final String LINKAGE_STATUS_COLUMN_NAME = CoalescePropertyFactory.getLinkageStatus().getPropertyName();
+    public static final String LINKAGE_KEY_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageKey());
+    public static final String LINKAGE_DATE_CREATED_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageDateCreated());
+    public static final String LINKAGE_LAST_MODIFIED_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageLastModified());
+    public static final String LINKAGE_LINK_TYPE_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageType());
+    public static final String LINKAGE_LABEL_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageLabel());
+    public static final String LINKAGE_STATUS_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageStatus());
 
     // Linkage Entity 1 Column Names
-    public static final String ENTITY_KEY_COLUMN_NAME = CoalescePropertyFactory.getEntityKey().getPropertyName();
-    public static final String ENTITY_NAME_COLUMN_NAME = CoalescePropertyFactory.getName().getPropertyName();
-    public static final String ENTITY_SOURCE_COLUMN_NAME = CoalescePropertyFactory.getSource().getPropertyName();
-    public static final String ENTITY_VERSION_COLUMN_NAME = CoalescePropertyFactory.getVersion().getPropertyName();
-    public static final String ENTITY_DATE_CREATED_COLUMN_NAME = CoalescePropertyFactory.getDateCreated().getPropertyName();
-    public static final String ENTITY_LAST_MODIFIED_COLUMN_NAME = CoalescePropertyFactory.getLastModified().getPropertyName();
+    public static final String ENTITY_KEY_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityKey());
+    public static final String ENTITY_NAME_COLUMN_NAME = normalize(CoalescePropertyFactory.getName());
+    public static final String ENTITY_SOURCE_COLUMN_NAME = normalize(CoalescePropertyFactory.getSource());
+    public static final String ENTITY_VERSION_COLUMN_NAME = normalize(CoalescePropertyFactory.getVersion());
+    public static final String ENTITY_DATE_CREATED_COLUMN_NAME = normalize(CoalescePropertyFactory.getDateCreated());
+    public static final String ENTITY_LAST_MODIFIED_COLUMN_NAME = normalize(CoalescePropertyFactory.getLastModified());
 
     // Linkage Entity 2 Column Names
-    public static final String LINKAGE_ENTITY2_KEY_COLUMN_NAME = CoalescePropertyFactory.getLinkageEntityKey().getPropertyName();
-    public static final String LINKAGE_ENTITY2_NAME_COLUMN_NAME = CoalescePropertyFactory.getLinkageName().getPropertyName();
-    public static final String LINKAGE_ENTITY2_SOURCE_COLUMN_NAME = CoalescePropertyFactory.getLinkageSource().getPropertyName();
-    public static final String LINKAGE_ENTITY2_VERSION_COLUMN_NAME = CoalescePropertyFactory.getLinkageVersion().getPropertyName();
-
-    private ICoalesceNormalizer normalizer = new DefaultNormalizer();
+    public static final String LINKAGE_ENTITY2_KEY_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageEntityKey());
+    public static final String LINKAGE_ENTITY2_NAME_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageName());
+    public static final String LINKAGE_ENTITY2_SOURCE_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageSource());
+    public static final String LINKAGE_ENTITY2_VERSION_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageVersion());
 
     protected final Map<String, String> params;
-    protected ElasticSearchIterator iterator;
+    protected final ElasticSearchIterator iterator;
     protected final boolean isAuthoritative;
 
     /**
@@ -110,7 +109,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
         isAuthoritative = this.params.containsKey(ElasticSearchSettings.PARAM_IS_AUTHORITATIVE)
                 && Boolean.parseBoolean(this.params.get(ElasticSearchSettings.PARAM_IS_AUTHORITATIVE));
-        iterator = new ElasticSearchIterator(normalizer, isAuthoritative);
+        iterator = new ElasticSearchIterator(NORMALIZER, isAuthoritative);
 
         if (LOGGER.isDebugEnabled())
         {
@@ -121,17 +120,6 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
             }
         }
 
-    }
-
-    /**
-     * Override the default normalizer.
-     *
-     * @param value normalizer used to ensure field names don't conflict with Elastic Search syntax.
-     */
-    public void setNormalizer(ICoalesceNormalizer value)
-    {
-        normalizer = value;
-        iterator = new ElasticSearchIterator(normalizer, isAuthoritative);
     }
 
     @Override
@@ -343,7 +331,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
             for (CoalesceEntityTemplate template : templates)
             {
                 Map<String, Object> source = createMapping(template);
-                String index = COALESCE_ENTITY_INDEX + "-" + normalize(template.getName());
+                String index = COALESCE_ENTITY_INDEX + "-" + NORMALIZER.normalize(template.getName());
 
                 CreateIndexRequest request = new CreateIndexRequest();
                 request.index(index);
@@ -393,7 +381,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         }
     }
 
-    protected void deleteFromElasticSearch(AbstractClient conn, String index, String type, String id)
+    private void deleteFromElasticSearch(AbstractClient conn, String index, String type, String id)
     {
         DeleteRequest entityRequest = new DeleteRequest();
         entityRequest.index(index);
@@ -489,7 +477,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                     mapping.put("fields", Collections.singletonMap("keyword", keywordField));
                 }
 
-                propertiesMap.put(entry.getKey(), mapping);
+                propertiesMap.put(normalize(entry.getKey()), mapping);
 
             }
         }
@@ -497,15 +485,15 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         return propertiesMap;
     }
 
-    protected String normalize(String value)
+    private static String normalize(PropertyName property)
     {
-        return normalizer != null ? normalizer.normalize(value) : value;
+        return normalize(property.getPropertyName());
     }
 
-    protected String normalize(CoalesceField<?> field)
+    private static String normalize(String value)
     {
-        return normalizer != null ? normalizer.normalize(field.getParent().getParent().getName(),
-                                                         field.getName()) : field.getName();
+        String[] parts = value.split("[.]");
+        return NORMALIZER.normalize(parts[0], parts[1]);
     }
 
 }
