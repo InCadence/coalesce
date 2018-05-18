@@ -76,7 +76,7 @@ export class FieldInput extends React.Component {
             floatingLabelText={label}
             underlineShow={this.props.showLabels}
             multiple={true}
-            value={field[attr].toUpperCase()}
+            value={field[attr] ? field[attr].toUpperCase() : null}
             style={style.root}
             labelStyle={style.root}
             iconStyle={style.none}
@@ -105,7 +105,7 @@ export class FieldInput extends React.Component {
             hintStyle={style.none}
             floatingLabelStyle={style.none}
             errorStyle={style.none}
-            value={field[attr].toUpperCase()}
+            value={field[attr] ? field[attr].toUpperCase() : null}
             onChange={(event, value) => {this.handleOnChange(attr, this.props.options[value].enum)}}
           >
             {this.props.options && this.props.options.map((item) => {
@@ -298,6 +298,10 @@ export class FieldInput extends React.Component {
           geo = {coordinates: [0, 0, 0]};
         } else {
           geo = parse(field.value);
+
+          if (geo == null) {
+              geo = {coordinates: [0, 0, 0]};
+          }
         }
 
         return (
