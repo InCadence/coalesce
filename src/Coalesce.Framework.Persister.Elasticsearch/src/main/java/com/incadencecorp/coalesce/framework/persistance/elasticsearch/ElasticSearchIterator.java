@@ -241,7 +241,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
     {
         Map<String, Object> results = null;
 
-        if (field.getValue().getCoordinates().length > 0)
+        if (field.getValue() != null)
         {
             JSONArray polygon = new JSONArray();
             polygon.put(getCoordinates(field.getValue().getCoordinates()));
@@ -256,34 +256,48 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
 
     private Map<String, Object> createLineString(CoalesceLineStringField field) throws CoalesceDataFormatException
     {
-        Map<String, Object> results = new HashMap<>();
+        Map<String, Object> results = null;
+
+        if (field.getValue() != null)
+        {
+            results = new HashMap<>();
         results.put("type", ShapeBuilder.GeoShapeType.LINESTRING);
         results.put("coordinates", getCoordinates(field.getValue().getCoordinates()));
+        }
 
         return results;
     }
 
     private Map<String, Object> createCircle(CoalesceCircleField field) throws CoalesceDataFormatException
     {
+        Map<String, Object> results = null;
         CoalesceCircle circle = field.getValue();
 
+        if (circle != null)
+        {
         JSONArray point = new JSONArray();
         point.put(circle.getCenter().x);
         point.put(circle.getCenter().y);
 
-        Map<String, Object> results = new HashMap<>();
+            results = new HashMap<>();
         results.put("type", ShapeBuilder.GeoShapeType.CIRCLE);
         results.put("coordinates", point);
         results.put("radius", circle.getRadius());
+        }
 
         return results;
     }
 
     private Map<String, Object> createMultiPoint(CoalesceCoordinateListField field) throws CoalesceDataFormatException
     {
-        Map<String, Object> results = new HashMap<>();
+        Map<String, Object> results = null;
+
+        if (field.getValue() != null)
+        {
+            results = new HashMap<>();
         results.put("type", ShapeBuilder.GeoShapeType.MULTIPOINT);
         results.put("coordinates", getCoordinates(field.getValue()));
+        }
 
         return results;
     }
@@ -292,7 +306,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
     {
         JSONArray results = null;
 
-        if (coords.length > 0)
+        if (coords != null && coords.length > 0)
         {
             results = new JSONArray();
 
