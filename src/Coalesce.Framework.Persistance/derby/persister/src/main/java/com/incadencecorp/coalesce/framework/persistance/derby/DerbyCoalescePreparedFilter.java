@@ -686,7 +686,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     private Class<?> getPropertyContext(PropertyName name)
     {
 
-        AttributeDescriptor attType = (AttributeDescriptor) filterFactory.property(NORMALIZER.normalize(name.getPropertyName())).evaluate(
+        AttributeDescriptor attType = (AttributeDescriptor) filterFactory.property(name.getPropertyName()).evaluate(
                 featureType);
         Class<?> context = null;
 
