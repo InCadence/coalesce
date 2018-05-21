@@ -117,21 +117,30 @@ public class ElasticSearchDataConnector implements AutoCloseable {
                     props.getProperty(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));
 
             String hosts = props.getProperty(ElasticSearchSettings.PARAM_HOSTS);
-            Stream.of(hosts.split(",")).map(host -> {
-                HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
 
-                try
-                {
-                    String chost = hostAndPort.getHost();
-                    InetAddress addr = InetAddress.getByName(chost);
-                    return new InetSocketTransportAddress(addr, hostAndPort.getPort());
-                }
-                catch (UnknownHostException ex)
-                {
-                    return new CoalescePersistorException(ex);
-                }
+            try
+            {
+                Stream.of(hosts.split(",")).map(host -> {
+                    HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
 
-            }).forEach(clientBuild::addTransportAddress);
+                    try
+                    {
+                        String chost = hostAndPort.getHost();
+                        InetAddress addr = InetAddress.getByName(chost);
+                        return new InetSocketTransportAddress(addr, hostAndPort.getPort());
+                    }
+                    catch (UnknownHostException ex)
+                    {
+                        throw new RuntimeException(ex);
+                    }
+
+                }).forEach(clientBuild::addTransportAddress);
+            }
+            catch (RuntimeException e)
+            {
+                throw new CoalescePersistorException(e);
+            }
+
             client = clientBuild.build();
 
             //			        .addTransportAddress(new InetSocketTransportAddress("bdpnode3", 9300))
