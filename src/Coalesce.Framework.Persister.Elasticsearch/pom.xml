@@ -59,7 +59,17 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-
+		<repository>
+			<id>devforce-releases</id>
+			<name>DevForce repository</name>
+			<url>https://nexus.devforce.io/content/groups/public</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 
     <dependencies>
