@@ -128,9 +128,7 @@ public class ElasticSearchDataConnector implements AutoCloseable {
                 }
                 catch (UnknownHostException ex)
                 {
-                    // TODO Auto-generated catch block
-                    LOGGER.error(ex.getMessage(), ex);
-                    return null;
+                    return new CoalescePersistorException(ex);
                 }
 
             }).forEach(clientBuild::addTransportAddress);
