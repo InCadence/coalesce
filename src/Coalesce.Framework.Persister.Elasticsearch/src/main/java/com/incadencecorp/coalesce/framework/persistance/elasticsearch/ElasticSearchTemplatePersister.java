@@ -248,10 +248,10 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         {
             AbstractClient client = conn.getDBConnector(params);
 
-            BoolQueryBuilder boolQuery = new BoolQueryBuilder().must(QueryBuilders.matchQuery("coalesceentity.name",
+            BoolQueryBuilder boolQuery = new BoolQueryBuilder().must(QueryBuilders.matchQuery(ENTITY_NAME_COLUMN_NAME,
                                                                                               name)).must(QueryBuilders.matchQuery(
-                    "coalesceentity.source",
-                    source)).must(QueryBuilders.matchQuery("coalesceentity.version", version));
+                    ENTITY_SOURCE_COLUMN_NAME,
+                    source)).must(QueryBuilders.matchQuery(ENTITY_VERSION_COLUMN_NAME, version));
 
             SearchRequestBuilder searchRequest = client.prepareSearch(COALESCE_ENTITY_INDEX).setTypes(COALESCE_TEMPLATE).setQuery(
                     boolQuery);
