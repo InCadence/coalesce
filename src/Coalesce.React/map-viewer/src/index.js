@@ -22,57 +22,93 @@ class App extends React.Component {
 
 fetchCapabilities(url) {
 
-  fetch(url + '/wfs?service=wfs&version=1.1.0&request=GetCapabilities', {
+  var that = this;
 
-  })
+  fetch(url + '/wfs?service=wfs&version=1.1.0&request=GetCapabilities')
     .then(res => res.text())
     .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-    .then(doc => {
+    .then(wfsdoc => {
 
-      const {availableLayers} = this.state;
+      fetch(url + '/ows?service=wms&version=1.1.1&request=GetCapabilities')
+        .then(wmsres => wmsres.text())
+        .then(wmsstr => (new window.DOMParser()).parseFromString(wmsstr, "text/xml"))
+        .then(wmsdoc => {
 
-      // Clear Values
-      availableLayers.slice(0, availableLayers.length);
+          const {availableLayers} = this.state;
 
-      console.log(doc);
-      var featureTypes = doc.getElementsByTagName("FeatureTypeList")[0].getElementsByTagName("FeatureType");
+          // Clear Values
+          availableLayers.slice(0, availableLayers.length);
 
-      console.log('(' + featureTypes.length  + ') Layers Loaded');
+          console.log(wmsdoc);
+          var wmsLayers = wmsdoc.getElementsByTagName("Layer")[0].getElementsByTagName("Layer");
+          console.log('Loading (' + wmsLayers.length  + ') WMS Layers');
 
-      var layers = [];
+          console.log(wfsdoc);
+          var wfsLayers = wfsdoc.getElementsByTagName("FeatureTypeList")[0].getElementsByTagName("FeatureType");
+          console.log('Loading (' + wfsdoc.length  + ') WFS Layers');
 
-      for (var ii=0; ii<featureTypes.length; ii++) {
+          var layers = [];
 
-        var title = featureTypes[ii].getElementsByTagName("Title")[0].innerHTML;
-        var name = featureTypes[ii].getElementsByTagName("Name")[0].innerHTML;
+          for (var ii=0; ii<wmsLayers.length; ii++) {
 
-        layers.push({name: title, key: name});
-      }
+            var title = wmsLayers[ii].getElementsByTagName("Title")[0].innerHTML;
+            var name = wmsLayers[ii].getElementsByTagName("Name")[0].innerHTML;
 
-      layers.sort(function(a, b) {
-                var nameA = a.name.toUpperCase();
-                var nameB = b.name.toUpperCase();
-                if (nameA < nameB) {
-                  return -1;
-                }
-                if (nameA > nameB) {
-                  return 1;
-                }
+            layers.push({name: title, key: name, type: ['WFS']});
+          }
 
-                return 0;
-              }).forEach(function(layer) {
-                console.log(layer.name);
-                availableLayers.push(layer);
-              })
+          for (var ii=0; ii<wfsLayers.length; ii++) {
 
-              this.setState({
-                availableLayers: availableLayers
-              });
+            var title = wfsLayers[ii].getElementsByTagName("Title")[0].innerHTML;
+            var name = wfsLayers[ii].getElementsByTagName("Name")[0].innerHTML;
 
+            var layer = that.getLayer(layers, name);
+
+            if (layer == null) {
+              layers.push({name: title, key: name, type: ['WMS']});
+            } else {
+              layer.type.push('WMS');
+            }
+          }
+
+          layers.sort(function(a, b) {
+                    var nameA = a.name.toUpperCase();
+                    var nameB = b.name.toUpperCase();
+
+                    if (nameA < nameB) {
+                      return -1;
+                    }
+                    if (nameA > nameB) {
+                      return 1;
+                    }
+
+                    return 0;
+                  }).forEach(function(layer) {
+                      console.log(layer.name + " : " + JSON.stringify(layer.type));
+                      availableLayers.push(layer);
+                  })
+
+                  this.setState({
+                    availableLayers: availableLayers
+                  });
+
+        }).catch(function(error) {
+          Popup.plugins().promptError("(FAILED) Loading WMS Capabilities: " + error);
+        })
     }).catch(function(error) {
-      Popup.plugins().promptError("(FAILED) Loading Capabilities: " + error);
+      Popup.plugins().promptError("(FAILED) Loading WFS Capabilities: " + error);
     })
 
+  }
+
+  getLayer(layers, name) {
+    for (var ii=0; ii<layers.length; ii++) {
+      if (layers[ii].key === name) {
+        return layers[ii];
+      }
+    }
+
+    return null;
   }
 
   fetchLayers(url) {
@@ -219,7 +255,6 @@ fetchCapabilities(url) {
 
 App.defaultProps = {
   geoserver: 'http://bdpgeoserver.bdpdev.incadencecorp.com:8181/geoserver',
-  workspace: 'OE_Repository',
   availableLayers: [],
   styles: [],
   // TODO Default layers should be removed for production or load from a saved state.
@@ -229,7 +264,9 @@ App.defaultProps = {
       name: 'OSM',
       type: 'WMS',
       checked: false
-    },
+    }
+    /*
+    ,
     {
       key: 'NaturalEarth',
       name: 'NaturalEarth',
@@ -271,6 +308,7 @@ App.defaultProps = {
       type: 'WMS',
       checked: true
     }
+    */
   ]
 }
 
