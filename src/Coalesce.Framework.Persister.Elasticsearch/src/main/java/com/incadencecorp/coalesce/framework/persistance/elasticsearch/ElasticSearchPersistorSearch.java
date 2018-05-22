@@ -1,45 +1,36 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.RowSetProvider;
-
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.SearchResults;
+import mil.nga.giat.data.elasticsearch.ElasticDataStoreFactory;
+import mil.nga.giat.data.elasticsearch.ElasticFeatureSource;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.support.AbstractClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFactorySpi;
+import org.geotools.data.DataStoreFinder;
 import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.Capabilities;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloQueryRewriter2;
-import com.incadencecorp.coalesce.framework.persistance.accumulo.FeatureColumnIterator;
-import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
-import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
-import com.incadencecorp.coalesce.search.api.SearchResults;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.incadencecorp.coalesce.search.resultset.CoalesceColumnMetadata;
-import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
+import javax.sql.rowset.CachedRowSet;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class ElasticSearchPersistorSearch extends ElasticSearchPersistor implements ICoalesceSearchPersistor {
-	
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistorSearch.class);
 
-	@Override
+    @Override
     public Capabilities getSearchCapabilities()
     {
         Capabilities capability = new Capabilities();
@@ -48,8 +39,8 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
         return capability;
     }
-	
-	public SearchResponse searchAll()
+
+    public SearchResponse searchAll()
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
@@ -72,6 +63,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
+
             AbstractClient client = conn.getDBConnector(params);
             QueryBuilder qb = QueryBuilders.matchAllQuery();
             //QueryBuilder qb = QueryBuilders.matchPhraseQuery("PMESIIPTMilitary", "1");
@@ -132,114 +124,55 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
     @Override
     public SearchResults search(Query query) throws CoalescePersistorException
     {
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+        try
         {
-            AbstractClient client = conn.getDBConnector(params);
-    	
-	        // Ensure Entity Key is the first parameter
-	        List<PropertyName> properties = new ArrayList<>();
-	
-	        if (query.getProperties() != null)
-	        {
-	            properties.addAll(query.getProperties());
-	        }
-	
-	        if (properties.size() == 0
-	                || !properties.get(0).getPropertyName().equalsIgnoreCase(CoalescePropertyFactory.getEntityKey().getPropertyName()))
-	        {
-	            properties.add(0, CoalescePropertyFactory.getEntityKey());
-	        }
-	
-	        query.setProperties(properties);
-	
-	        CachedRowSet rowset;
-	        int total;
-	
-	        LOGGER.debug("Executing search against schema: {}", query.getTypeName());
-	
-            // Get Feature Store
-            SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(localquery.getTypeName());
-
-            Map<String, ECoalesceFieldDataTypes> types = CoalesceTemplateUtil.getDataTypes();
-
-            // Normalize Column Headers
-            List<CoalesceColumnMetadata> columnList = new ArrayList<>();
-            for (PropertyName entry : properties)
-            {
-                ECoalesceFieldDataTypes type = types.get(entry.getPropertyName());
-
-                if (type == null)
-                {
-                    type = ECoalesceFieldDataTypes.STRING_TYPE;
-
-                }
-
-                LOGGER.debug("Property: {} Type: {}", entry.getPropertyName(), type);
-
-                    columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(entry.getPropertyName()),
-                                                              MAPPER_JAVA.map(type).getTypeName(),
-                                                              MAPPER_TYPE.map(type)));
-                }
-
             if (LOGGER.isDebugEnabled())
             {
-                LOGGER.debug("Max Features: {}", localquery.getMaxFeatures());
-                LOGGER.debug(localquery.toString());
-            }
+                Iterator<DataStoreFactorySpi> availableStores = DataStoreFinder.getAvailableDataStores();
 
-            // Execute Query
-            try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localquery).features())
-            {
-                Iterator<Object[]> columnIterator = new FeatureColumnIterator(featureItr, properties);
-                CoalesceResultSet resultSet = new CoalesceResultSet(columnIterator, columnList);
-                rowset = RowSetProvider.newFactory().createCachedRowSet();
-                rowset.populate(resultSet);
-
-                total = rowset.size();
-            }
-            catch (SQLException e)
-            {
-                throw new CoalescePersistorException(e.getMessage(), e);
-            }
-
-            LOGGER.debug("Search Hits: {}", rowset.size());
-
-            // Results > Page Size; Determine total size
-            if (total >= query.getMaxFeatures() && isReturnTotalsEnabled())
-            {
-                localquery.setMaxFeatures(Query.DEFAULT_MAX);
-                localquery.setProperties(Query.NO_PROPERTIES);
-
-                try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localquery).features())
+                LOGGER.debug("List Available Stores:");
+                while (availableStores.hasNext())
                 {
-                    total = 0;
-
-                    while (featureItr.hasNext())
-                    {
-                        total++;
-                        featureItr.next();
-                    }
+                    LOGGER.debug("\t{}", availableStores.next().toString());
                 }
-	            catch (IOException e)
-	            {
-	                throw new CoalescePersistorException(e.getMessage(), e);
-	            }
 
-                LOGGER.debug("Search Total: {}", total);
+            }
+
+            Map<String, String> props = new HashMap<>();
+            // TODO Pull host ane port from params. Params stores them as host:port so this will need to be separated in the properties or parsed out.
+            props.put(ElasticDataStoreFactory.HOSTNAME.key, "localhost");
+            props.put(ElasticDataStoreFactory.HOSTPORT.key, "9200");
+            // TODO Use the index name specified within the query. If multiple are specified this would require a join.
+            props.put(ElasticDataStoreFactory.INDEX_NAME.key, "coalesce-oedocument");
+
+            // TODO This should only be done once when the properties are set.
+            DataStore datastore = DataStoreFinder.getDataStore(props);
+
+            // TODO Remove this
+            LOGGER.info(datastore.getClass().getSimpleName());
+
+            // TODO If INDEX_NAME is 'coalesce' then the typeName = 'entity' otherwise 'recordset'
+            ElasticFeatureSource featureSource = (ElasticFeatureSource) datastore.getFeatureSource("recordset");
+
+            CachedRowSet rowset;
+
+            // TODO Populate the rowset
+            try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(query).features())
+            {
+                SimpleFeature feature = featureItr.next();
+
+                while (feature != null)
+                {
+                    LOGGER.info(feature.getID());
+                }
             }
         }
-	    catch (Exception e)
-	    {
-	        e.printStackTrace();
-	    }
+        catch (IOException e)
+        {
+            throw new CoalescePersistorException(e.getMessage(), e);
+        }
 
-        // Create Results
-        SearchResults results = new SearchResults();
-        results.setResults(rowset);
-        results.setTotal(total);
-
-        return results;
+        return null;
     }
 
 }

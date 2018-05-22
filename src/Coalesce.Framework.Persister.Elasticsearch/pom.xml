@@ -110,6 +110,11 @@
 			<artifactId>ironhide-client</artifactId>
 			<version>2.0.4</version>
 		</dependency>
+            <dependency>
+                <groupId>mil.nga.giat</groupId>
+                <artifactId>gt-elasticsearch</artifactId>
+                <version>2.13.0</version>
+            </dependency>
 
 
 		<dependency>
