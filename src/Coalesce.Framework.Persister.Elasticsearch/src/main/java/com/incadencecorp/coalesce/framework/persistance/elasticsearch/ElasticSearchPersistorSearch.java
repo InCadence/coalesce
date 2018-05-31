@@ -3,6 +3,8 @@ package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
+
 import mil.nga.giat.data.elasticsearch.ElasticDataStoreFactory;
 import mil.nga.giat.data.elasticsearch.ElasticFeatureSource;
 import org.elasticsearch.action.search.SearchResponse;
@@ -21,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -143,7 +147,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             props.put(ElasticDataStoreFactory.HOSTNAME.key, "localhost");
             props.put(ElasticDataStoreFactory.HOSTPORT.key, "9200");
             // TODO Use the index name specified within the query. If multiple are specified this would require a join.
-            props.put(ElasticDataStoreFactory.INDEX_NAME.key, "coalesce-oedocument");
+            props.put(ElasticDataStoreFactory.INDEX_NAME.key, "coalesce-unit_test");
 
             // TODO This should only be done once when the properties are set.
             DataStore datastore = DataStoreFinder.getDataStore(props);
@@ -152,27 +156,43 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             LOGGER.info(datastore.getClass().getSimpleName());
 
             // TODO If INDEX_NAME is 'coalesce' then the typeName = 'entity' otherwise 'recordset'
+            query.setTypeName("recordset"); 
             ElasticFeatureSource featureSource = (ElasticFeatureSource) datastore.getFeatureSource("recordset");
 
-            CachedRowSet rowset;
+            LOGGER.debug("Doing this search: " + query.toString()); 
+
+            SearchResults results = new SearchResults();
+            int total = 0;
 
             // TODO Populate the rowset
-            try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(query).features())
+            try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(query.getFilter()).features())
             {
-                SimpleFeature feature = featureItr.next();
-
-                while (feature != null)
-                {
-                    LOGGER.info(feature.getID());
-                }
+            	if(featureItr.hasNext()){
+	                SimpleFeature feature = featureItr.next();
+	
+	                if(feature != null)
+	                {
+	                    LOGGER.info("*** MATCH FOUND *** " + feature.getID());
+	                    
+	                    //Put the Feature in the SearchResults
+	                    results.setResult(feature);
+	                    
+	                    total++;
+	                }
+	                
+            	} else {
+            		LOGGER.info("No match found");
+            	}
             }
+            
+            results.setTotal(total);
+            
+            return results;
         }
         catch (IOException e)
         {
             throw new CoalescePersistorException(e.getMessage(), e);
         }
-
-        return null;
     }
 
 }
