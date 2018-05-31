@@ -6,8 +6,6 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.ActionFuture;
-import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.bulk.BulkItemResponse;

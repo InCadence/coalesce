@@ -28,7 +28,7 @@ import com.incadencecorp.coalesce.framework.DefaultNormalizer;
  */
 public class ElasticSearchNormalizer extends DefaultNormalizer implements ICoalesceNormalizer {
 
-    private static final String SEPERATOR = "_";
+    private static final String SEPERATOR = ".";
 
     @Override
     public String normalize(final String recordsetname, final String fieldname)
