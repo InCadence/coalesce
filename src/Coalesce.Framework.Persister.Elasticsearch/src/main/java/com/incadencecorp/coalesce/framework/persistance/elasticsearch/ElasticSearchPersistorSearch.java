@@ -1,8 +1,13 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
+import com.incadencecorp.coalesce.mapper.impl.JavaMapperImpl;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import com.incadencecorp.coalesce.search.resultset.CoalesceColumnMetadata;
 import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
 
 import mil.nga.giat.data.elasticsearch.ElasticDataStoreFactory;
@@ -19,6 +24,7 @@ import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.Capabilities;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,13 +32,18 @@ import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class ElasticSearchPersistorSearch extends ElasticSearchPersistor implements ICoalesceSearchPersistor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistorSearch.class);
+    private static final ElasticSearchMapperImpl MAPPER_TYPE = new ElasticSearchMapperImpl();
+    private static final JavaMapperImpl MAPPER_JAVA = new JavaMapperImpl();
 
     @Override
     public Capabilities getSearchCapabilities()
@@ -160,36 +171,82 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             ElasticFeatureSource featureSource = (ElasticFeatureSource) datastore.getFeatureSource("recordset");
 
             LOGGER.debug("Doing this search: " + query.toString()); 
+            
+         	// Ensure Entity Key is the first parameter
+            List<PropertyName> properties = new ArrayList<>();
+
+            if (query.getProperties() != null)
+            {
+                properties.addAll(query.getProperties());
+            }
+
+            if (properties.size() == 0
+                    || !properties.get(0).getPropertyName().equalsIgnoreCase(CoalescePropertyFactory.getEntityKey().getPropertyName()))
+            {
+                properties.add(0, CoalescePropertyFactory.getEntityKey());
+            }
+
+            query.setProperties(properties);
+            
+            Map<String, ECoalesceFieldDataTypes> types = CoalesceTemplateUtil.getDataTypes();
+            
+            // Normalize Column Headers
+            String[] columnList = new String[properties.size()];
+            for (int i = 0; i < properties.size(); i++) 
+            {
+                ECoalesceFieldDataTypes type = types.get(properties.get(i).getPropertyName());
+
+                if (type == null)
+                {
+                    type = ECoalesceFieldDataTypes.STRING_TYPE;
+
+                }
+
+                LOGGER.debug("Property: {} Type: {}", properties.get(i).getPropertyName(), type);
+
+                columnList[i] = properties.get(i).getPropertyName();
+            }
 
             SearchResults results = new SearchResults();
+            CachedRowSet rowset;
             int total = 0;
 
             // TODO Populate the rowset
             try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(query.getFilter()).features())
             {
-            	if(featureItr.hasNext()){
+            	if(featureItr.hasNext())
+            	{
 	                SimpleFeature feature = featureItr.next();
 	
-	                if(feature != null)
+	                while(featureItr.hasNext())
 	                {
 	                    LOGGER.info("*** MATCH FOUND *** " + feature.getID());
 	                    
 	                    //Put the Feature in the SearchResults
-	                    results.setResult(feature);
+                        Iterator<Object[]> columnIterator = new FeatureColumnIterator(featureItr, properties);
+                        CoalesceResultSet resultSet = new CoalesceResultSet(columnIterator, columnList);
+                        rowset = RowSetProvider.newFactory().createCachedRowSet();
+                        rowset.populate(resultSet);
+	                        
+	                    results.setResult(rowset);
 	                    
 	                    total++;
+                        featureItr.next();
 	                }
 	                
             	} else {
             		LOGGER.info("No match found");
             	}
             }
-            
             results.setTotal(total);
             
             return results;
         }
         catch (IOException e)
+        {
+            throw new CoalescePersistorException(e.getMessage(), e);
+        }
+        catch (SQLException e)
         {
             throw new CoalescePersistorException(e.getMessage(), e);
         }
