@@ -16,38 +16,26 @@
  -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.services.crud.service.data.controllers;
 
-import java.io.IOException;
-import java.rmi.RemoteException;
-import java.util.Map;
-
-import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.exim.impl.JsonFullEximImpl;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.services.api.Results;
 import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.rmi.RemoteException;
+import java.util.Map;
 
 /**
  * Responsible for storing and retrieving Coalesce entities.
- * 
+ *
  * @author Derek Clemenzi
  */
 public class EntityDataController {
@@ -60,7 +48,7 @@ public class EntityDataController {
     private Class<?> clazz = Views.Entity.class;
 
     /**
-     * @param crud used for storing and retrieving Coalesce entities.
+     * @param crud      used for storing and retrieving Coalesce entities.
      * @param persister used for retrieving templates.
      */
     public EntityDataController(ICrudClient crud, ICoalescePersistor persister)
@@ -71,7 +59,7 @@ public class EntityDataController {
 
     /**
      * Sets the view to use when converting entities to JSON.
-     * 
+     *
      * @param clazz
      */
     public void setView(Class<?> clazz)
@@ -128,8 +116,7 @@ public class EntityDataController {
         {
             error(String.format(CoalesceErrors.NOT_FOUND,
                                 "Template",
-                                "name=" + name + ", source=" + source + ", version=" + version),
-                  e);
+                                "name=" + name + ", source=" + source + ", version=" + version), e);
         }
 
         try
@@ -140,7 +127,7 @@ public class EntityDataController {
         {
             error(String.format(CoalesceErrors.NOT_SAVED, "Entity", name, e.getMessage()), e);
         }
-        
+
         return entity;
     }
 
@@ -156,6 +143,11 @@ public class EntityDataController {
 
     private void setEntity(String entityKey, boolean isNew, CoalesceEntity entity) throws RemoteException
     {
+        if (entity == null)
+        {
+            error("(FAILED) Initializing Entity");
+        }
+
         if (isNew)
         {
             if (!crud.createDataObject(entity))
@@ -232,7 +224,7 @@ public class EntityDataController {
     /**
      * Retrieves the entity from the data store and throws an exception if not
      * found or multiple entries are found.
-     * 
+     *
      * @param key
      * @return
      * @throws RemoteException

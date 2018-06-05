@@ -35,6 +35,19 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.jvnet.jaxb2_commons</groupId>
+            <artifactId>jaxb2-basics</artifactId>
+            <version>1.11.1</version>
+            <scope>provided</scope>
+        </dependency>
+		<dependency>
+			<groupId>org.apache.cxf.xjc-utils</groupId>
+			<artifactId>cxf-xjc-runtime</artifactId>
+			<version>${cxf.xjc.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
         <!-- YAML Dependencies -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>

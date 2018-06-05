@@ -1,21 +1,5 @@
 package com.incadencecorp.coalesce.common.helpers;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.nio.charset.Charset;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -28,6 +12,17 @@ import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -48,9 +43,8 @@ import org.xml.sax.SAXException;
 
 /**
  * Provides helper methods for serializing and deserializing objects to XML.
- * 
- * @author InCadence
  *
+ * @author InCadence
  */
 public final class XmlHelper {
 
@@ -66,10 +60,10 @@ public final class XmlHelper {
     /**
      * Return the {@link String} that contains the serialized representation of
      * the provided object using the 'UTF-8' encoding format.
-     * 
+     *
      * @param obj the object to be serialized.
      * @return the {@link String} that contains the serialized representation of
-     *         the object.
+     * the object.
      */
     public static String serialize(Object obj)
     {
@@ -80,11 +74,11 @@ public final class XmlHelper {
     /**
      * Return the {@link String} that contains the serialized representation of
      * the provided object using the specified encoding format.
-     * 
-     * @param obj the object to be serialized.
+     *
+     * @param obj      the object to be serialized.
      * @param encoding the desired encoding.
      * @return the {@link String} that contains the serialized representation of
-     *         the object.
+     * the object.
      */
     public static String serialize(Object obj, String encoding)
     {
@@ -94,11 +88,11 @@ public final class XmlHelper {
     /**
      * Return the {@link String} that contains the serialized representation of
      * the provided object using the specified encoding format.
-     * 
-     * @param obj the object to be serialized.
+     *
+     * @param obj     the object to be serialized.
      * @param charset character set to use for encoding.
      * @return the {@link String} that contains the serialized representation of
-     *         the object.
+     * the object.
      */
     public static String serialize(Object obj, Charset charset)
     {
@@ -129,23 +123,68 @@ public final class XmlHelper {
      * the serialized XML string provided using the <code>xml</code>. If there
      * is any problem deserializing the object then <code>null</code> will be
      * returned.
-     * 
-     * @param xml the XML string to be deserialized.
+     *
+     * @param xml       the XML string to be deserialized.
+     * @param charset   specified the character set.
+     * @param classType the type of the object to be deserialized.
+     * @return the object instance of the provided XML.
+     */
+    public static Object deserialize(String xml, Charset charset, Class<?> classType) throws UnsupportedEncodingException
+    {
+        return deserialize(xml, charset.name(), classType);
+    }
+
+    /**
+     * Create the object instance of the <code>classType</code> that represents
+     * the serialized XML string provided using the <code>xml</code>. If there
+     * is any problem deserializing the object then <code>null</code> will be
+     * returned.
+     *
+     * @param xml       the XML string to be deserialized.
+     * @param charset   specified the character set.
+     * @param classType the type of the object to be deserialized.
+     * @return the object instance of the provided XML.
+     */
+    public static Object deserialize(String xml, String charset, Class<?> classType) throws UnsupportedEncodingException
+    {
+        InputStream in = new ByteArrayInputStream(xml.getBytes());
+        Reader reader = new InputStreamReader(in, charset);
+
+        InputSource source = new InputSource(reader);
+        source.setEncoding(charset);
+
+        return deserialize(source, classType);
+    }
+
+    /**
+     * Create the object instance of the <code>classType</code> that represents
+     * the serialized XML string provided using the <code>xml</code>. If there
+     * is any problem deserializing the object then <code>null</code> will be
+     * returned.
+     *
+     * @param xml       the XML string to be deserialized.
      * @param classType the type of the object to be deserialized.
      * @return the object instance of the provided XML.
      */
     public static Object deserialize(String xml, Class<?> classType)
     {
+        InputStream in = new ByteArrayInputStream(xml.getBytes());
+        Reader reader = new InputStreamReader(in);
+
+        return deserialize(new InputSource(reader), classType);
+    }
+
+    private static Object deserialize(InputSource source, Class<?> classType)
+    {
         try
         {
-            InputStream in = new ByteArrayInputStream(xml.getBytes());
-
             // Get JAXB Context and Create the Unmarshaller
             JAXBContext context = getJAXBContextForClass(classType);
+
             Unmarshaller unmarshaller = context.createUnmarshaller();
 
             // Unmarshal
-            return unmarshaller.unmarshal(in);
+            return unmarshaller.unmarshal(source);
         }
         catch (JAXBException ex)
         {
@@ -196,9 +235,9 @@ public final class XmlHelper {
     /**
      * Returns the attribute with the specified name in the provided node. If
      * the attribute name cannot be found then an empty string is returned.
-     * 
+     *
      * @param xmlNode the node containing the attribute.
-     * @param name the name of the attribute.
+     * @param name    the name of the attribute.
      * @return the value of the attribute requested.
      */
     public static String getAttribute(Node xmlNode, String name)
@@ -227,9 +266,9 @@ public final class XmlHelper {
      * Returns the attribute with the specified name in the provided node as a
      * {@link org.joda.time.DateTime}. If the attribute name cannot be found
      * then <code>null</code> is returned.
-     * 
+     *
      * @param xmlNode the node containing the attribute.
-     * @param name the name of the attribute.
+     * @param name    the name of the attribute.
      * @return the date representation of the attribute requested.
      */
     public static DateTime getAttributeAsDate(Node xmlNode, String name)
@@ -253,11 +292,11 @@ public final class XmlHelper {
      * Sets the value of the specified attribute using the provided value. If
      * the attribute does not exist yet then a new attribute is created for the
      * node and the value is set.
-     * 
-     * @param doc the parent XML document for the XML node.
+     *
+     * @param doc     the parent XML document for the XML node.
      * @param xmlNode the XML node that contains the attribute to change.
-     * @param name the attribute name.
-     * @param value the value to set the attribute with.
+     * @param name    the attribute name.
+     * @param value   the value to set the attribute with.
      */
     public static void setAttribute(Document doc, Node xmlNode, String name, String value)
     {
@@ -286,11 +325,11 @@ public final class XmlHelper {
      * Sets the value of the specified attribute using the provided
      * {@link DateTime}. If the attribute does not exist yet then a new
      * attribute is created for the node and the value is set.
-     * 
-     * @param doc the parent XML document for the XML node.
+     *
+     * @param doc     the parent XML document for the XML node.
      * @param xmlNode the XML node that contains the attribute to change.
-     * @param name the attribute name.
-     * @param value the value to set the attribute with.
+     * @param name    the attribute name.
+     * @param value   the value to set the attribute with.
      */
     public static void setAttribute(Document doc, Node xmlNode, String name, DateTime value)
     {
@@ -311,7 +350,7 @@ public final class XmlHelper {
     /**
      * Returns the XML representation of the {@link org.w3c.dom.Document}
      * provided in UTF-8.
-     * 
+     *
      * @param doc the document to be converted.
      * @return the XML representation of the {@link org.w3c.dom.Document}.
      */
@@ -323,11 +362,11 @@ public final class XmlHelper {
     /**
      * Returns the XML representation of the {@link org.w3c.dom.Document}
      * provided.
-     * 
-     * @param doc the document to be converted.
+     *
+     * @param doc      the document to be converted.
      * @param encoding the desired encoding
      * @return the XML representation of the {@link org.w3c.dom.Document} in the
-     *         specified encoding.
+     * specified encoding.
      */
     public static String formatXml(Document doc, String encoding)
     {
@@ -337,11 +376,11 @@ public final class XmlHelper {
     /**
      * Returns the XML representation of the {@link org.w3c.dom.Document}
      * provided.
-     * 
-     * @param doc the document to be converted.
+     *
+     * @param doc     the document to be converted.
      * @param charset character set to use for encoding.
      * @return the XML representation of the {@link org.w3c.dom.Document} in the
-     *         specified encoding.
+     * specified encoding.
      */
     public static String formatXml(Document doc, Charset charset)
     {
@@ -354,7 +393,7 @@ public final class XmlHelper {
     /**
      * Returns the XML representation of the {@link org.w3c.dom.Node} provided
      * in UTF-8.
-     * 
+     *
      * @param node the node to be converted.
      * @return the XML representation of the {@link org.w3c.dom.Node}.
      */
@@ -365,11 +404,11 @@ public final class XmlHelper {
 
     /**
      * Returns the XML representation of the {@link org.w3c.dom.Node} provided.
-     * 
-     * @param node the node to be converted.
+     *
+     * @param node     the node to be converted.
      * @param encoding the desired encoding.
      * @return the XML representation of the {@link org.w3c.dom.Node} in the
-     *         specified encoding.
+     * specified encoding.
      */
     public static String formatXml(Node node, String encoding)
     {
@@ -400,11 +439,11 @@ public final class XmlHelper {
 
     /**
      * Returns the XML representation of the {@link org.w3c.dom.Node} provided.
-     * 
-     * @param node the node to be converted.
+     *
+     * @param node    the node to be converted.
      * @param charset character set to use for encoding.
      * @return the XML representation of the {@link org.w3c.dom.Node} in the
-     *         specified encoding.
+     * specified encoding.
      */
     public static String formatXml(Node node, Charset charset)
     {
@@ -417,7 +456,8 @@ public final class XmlHelper {
             final DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
             final LSSerializer writer = impl.createLSSerializer();
 
-            writer.getDomConfig().setParameter("format-pretty-print", LOGGER.isDebugEnabled() ? Boolean.TRUE : Boolean.FALSE);
+            writer.getDomConfig().setParameter("format-pretty-print",
+                                               LOGGER.isDebugEnabled() ? Boolean.TRUE : Boolean.FALSE);
             writer.getDomConfig().setParameter("xml-declaration", Boolean.FALSE);
 
             return writer.writeToString(node);
@@ -455,10 +495,9 @@ public final class XmlHelper {
 
     /**
      * Returns the {@link org.w3c.dom.Document} representing the XML provided.
-     * 
+     *
      * @param xml the XML value to convert.
      * @return the {@link org.w3c.dom.Document} representing the XML provided.
-     * 
      * @throws SAXException
      * @throws IOException
      */
@@ -473,11 +512,10 @@ public final class XmlHelper {
     /**
      * Returns the {@link org.w3c.dom.Document} representing the
      * {@link InputStream} provided.
-     * 
+     *
      * @param is the InputStream containing the XML to convert.
      * @return the {@link org.w3c.dom.Document} representing the
-     *         {@link InputStream} provided.
-     * 
+     * {@link InputStream} provided.
      * @throws SAXException
      * @throws IOException
      */
