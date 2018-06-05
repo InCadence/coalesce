@@ -497,6 +497,35 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
     }
 
     /**
+     * This test passes an entity containing UTF-8 characters within the field's value and verifies there are no exceptions when saving / reading
+     */
+    @Test
+    public void testUTF8Chars() throws Exception
+    {
+        T persistor = createPersister();
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        TestRecord record = entity.addRecord1();
+        record.getStringField().setValue("Peace’s ... data — quantitative");
+
+        persistor.saveEntity(false, entity);
+
+        if (persistor.getCapabilities().contains(EPersistorCapabilities.READ))
+        {
+            CoalesceEntity returned = persistor.getEntity(entity.getKey())[0];
+            Assert.assertEquals(entity.getKey(), returned.getKey());
+        }
+
+        if (persistor.getCapabilities().contains(EPersistorCapabilities.DELETE))
+        {
+            entity.markAsDeleted();
+            persistor.saveEntity(true, entity);
+        }
+    }
+
+    /**
      * Should be overriden by any persister that supports gettting field values.
      *
      * @param key
