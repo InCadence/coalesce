@@ -34,6 +34,7 @@
 	<properties>
 		<ironhide.version>2.0.4</ironhide.version>
 		<elasticsearch.version>5.4.0</elasticsearch.version>
+		<gt.elasticsearch.version>2.13.0</gt.elasticsearch.version>
 	</properties>
 
 	<build>
@@ -50,6 +51,7 @@
 						<Export-Package>
 							ironhide.client.*;version=${ironhide.version};-split-package:=merge-last,
 							org.elasticsearch.*;version=${elasticsearch.version};-split-package:=merge-last,
+							mil.nga.giat.data.elasticsearch*;version=${gt.elasticsearch.version}
 						</Export-Package>
                         <Import-Package>
                             org.joda.time*;version="[1.6.2, 3)",
@@ -83,6 +85,11 @@
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>transport</artifactId>
             <version>${elasticsearch.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mil.nga.giat</groupId>
+            <artifactId>gt-elasticsearch</artifactId>
+            <version>${gt.elasticsearch.version}</version>
         </dependency>
 
 	</dependencies>
