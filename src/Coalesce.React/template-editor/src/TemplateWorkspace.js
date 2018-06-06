@@ -24,9 +24,9 @@ class TemplateWorkspace extends Component {
     this.state = {
       items: [],
       newCounter: 0,
-      cols: 12,
+      cols: 50,
       rowHeight: 30,
-      width: 1200,
+      width: window.screen.width,
       showEditModal: false,
       promptTemplate: false,
       loading: null,
