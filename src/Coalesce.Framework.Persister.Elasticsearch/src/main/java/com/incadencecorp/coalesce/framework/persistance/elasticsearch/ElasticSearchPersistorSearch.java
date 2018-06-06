@@ -147,6 +147,22 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
     @Override
     public SearchResults search(Query query) throws CoalescePersistorException
     {
+        // Ensure Entity Key is the first parameter
+        List<PropertyName> properties = new ArrayList<>();
+
+        if (query.getProperties() != null)
+        {
+            properties.addAll(query.getProperties());
+        }
+
+        if (properties.size() == 0
+                || !properties.get(0).getPropertyName().equalsIgnoreCase(CoalescePropertyFactory.getEntityKey().getPropertyName()))
+        {
+            properties.add(0, CoalescePropertyFactory.getEntityKey());
+        }
+
+        query.setProperties(properties);
+
         try
         {
             if (LOGGER.isDebugEnabled())
@@ -161,12 +177,17 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
             }
 
+            // TODO If INDEX_NAME is 'coalesce' then the typeName = 'entity' otherwise 'recordset'
+            ElasticSearchQueryRewriter rewriter = new ElasticSearchQueryRewriter();
+            Query localQuery = rewriter.rewrite(query);
+
             Map<String, String> props = new HashMap<>();
             // TODO Pull host ane port from params. Params stores them as host:port so this will need to be separated in the properties or parsed out.
             props.put(ElasticDataStoreFactory.HOSTNAME.key, "localhost");
             props.put(ElasticDataStoreFactory.HOSTPORT.key, "9200");
             // TODO Use the index name specified within the query. If multiple are specified this would require a join.
-            props.put(ElasticDataStoreFactory.INDEX_NAME.key, "coalesce-unit_test");
+
+            props.put(ElasticDataStoreFactory.INDEX_NAME.key, localQuery.getTypeName());
 
             // TODO This should only be done once when the properties are set.
             DataStore datastore = DataStoreFinder.getDataStore(props);
@@ -174,27 +195,10 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             // TODO Remove this
             LOGGER.info(datastore.getClass().getSimpleName());
 
-            // TODO If INDEX_NAME is 'coalesce' then the typeName = 'entity' otherwise 'recordset'
-            query.setTypeName("recordset");
-            SimpleFeatureSource featureSource = datastore.getFeatureSource("recordset");
+            SimpleFeatureSource featureSource = datastore.getFeatureSource(localQuery.getTypeName().equalsIgnoreCase(
+                    "coalesce") ? "entity" : "recordset");
 
-            // Ensure Entity Key is the first parameter
-            List<PropertyName> properties = new ArrayList<>();
-
-            if (query.getProperties() != null)
-            {
-                properties.addAll(query.getProperties());
-            }
-
-            if (properties.size() == 0
-                    || !properties.get(0).getPropertyName().equalsIgnoreCase(CoalescePropertyFactory.getEntityKey().getPropertyName()))
-            {
-                properties.add(0, CoalescePropertyFactory.getEntityKey());
-            }
-
-            query.setProperties(properties);
-
-            LOGGER.debug("Doing this search: " + query.toString());
+            LOGGER.debug("Doing this search: " + localQuery.toString());
 
             Map<String, ECoalesceFieldDataTypes> types = CoalesceTemplateUtil.getDataTypes();
 
@@ -220,7 +224,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             int total = 0;
 
             // TODO Populate the rowset
-            try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(query.getFilter()).features())
+            try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localQuery).features())
             {
                 if (featureItr.hasNext())
                 {
