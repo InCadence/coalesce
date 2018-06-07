@@ -306,7 +306,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
             results = new HashMap<>();
         results.put("type", ShapeBuilder.GeoShapeType.CIRCLE);
         results.put("coordinates", point);
-        results.put("radius", circle.getRadius());
+        results.put("radius", circle.getRadius() + "m");
         }
 
         return results;
