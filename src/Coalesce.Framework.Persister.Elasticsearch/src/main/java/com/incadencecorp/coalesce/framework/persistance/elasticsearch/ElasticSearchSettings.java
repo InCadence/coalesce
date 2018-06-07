@@ -83,6 +83,16 @@ public class ElasticSearchSettings {
      */
     public static final String PARAM_HOSTS = PARAM_ELASTIC_BASE + "hosts";
 
+    /**
+     * (String) Defines the host used for HTTP requests
+     */
+    public static final String PARAM_HTTP_HOST = PARAM_ELASTIC_BASE + "http.host";
+
+    /**
+     * (String) Defines the port used for HTTP requests
+     */
+    public static final String PARAM_HTTP_PORT = PARAM_ELASTIC_BASE + "http.hosts";
+
     /*--------------------------------------------------------------------------
     Initialization
     --------------------------------------------------------------------------*/
@@ -133,6 +143,16 @@ public class ElasticSearchSettings {
     public static String getElastichosts()
     {
         return settings.getSetting(config_name, PARAM_HOSTS, "", false);
+    }
+
+    public static String getHTTPHost()
+    {
+        return settings.getSetting(config_name, PARAM_HTTP_HOST, "localhost", false);
+    }
+
+    public static String getHTTPPort()
+    {
+        return settings.getSetting(config_name, PARAM_HTTP_PORT, "9200", false);
     }
 
     public static String getKeystoreFilepath()
@@ -197,6 +217,8 @@ public class ElasticSearchSettings {
         params.put(PARAM_TRUSTSTORE_PASSWORD, "changeit");
         params.put(PARAM_HOSTS, getElastichosts());
         params.put(PARAM_CLUSTER_NAME, getElasticClusterName());
+        params.put(PARAM_HTTP_HOST, getHTTPHost());
+        params.put(PARAM_HTTP_PORT, getHTTPPort());
 
         return params;
     }
