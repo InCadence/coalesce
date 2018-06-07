@@ -3,7 +3,6 @@ package com.incadencecorp.coalesce.framework.persistance;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchSettings;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
-import ironhide.client.IronhideClient;
 import org.elasticsearch.client.support.AbstractClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,7 +17,6 @@ import static org.junit.Assert.assertNotNull;
 public class ElasticSearchDataConnectorIT {
 
     private static final String NAME = "name";
-    private static ServerConn conn;
     private Map<String, String> parameters = new HashMap<>();
 
     @BeforeClass
@@ -36,7 +34,7 @@ public class ElasticSearchDataConnectorIT {
         String zookeepers = props.getProperty("zookeepers");
         String user = props.getProperty("userid");
         String password = props.getProperty("password");
-        conn = new ServerConn.Builder().db(dbName).serverName(zookeepers).user(user).password(password).build();
+        new ServerConn.Builder().db(dbName).serverName(zookeepers).user(user).password(password).build();
     }
 
     @Test
@@ -64,7 +62,7 @@ public class ElasticSearchDataConnectorIT {
     @Test
     public void testIronhideConnection() throws Exception
     {
-        AbstractClient client = null;
+        AbstractClient client;
         ElasticSearchDataConnector connector = new ElasticSearchDataConnector();
         FilePropertyConnector fileConnector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
         fileConnector.setReadOnly(true);
