@@ -95,6 +95,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         {
             source.put(ElasticSearchPersistor.FIELD_XML, entity.toXml());
         }
+        source.put(ElasticSearchPersistor.ENTITY_TITLE_COLUMN_NAME, entity.getTitle());
 
         param.request.add(visitObject(entity,
                                       ElasticSearchPersistor.COALESCE_ENTITY_INDEX,
