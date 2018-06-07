@@ -1,18 +1,15 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
-import com.incadencecorp.coalesce.mapper.impl.JavaMapperImpl;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
 import mil.nga.giat.data.elasticsearch.ElasticDataStoreFactory;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.support.AbstractClient;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.DataStoreFinder;
@@ -34,8 +31,6 @@ import java.util.*;
 public class ElasticSearchPersistorSearch extends ElasticSearchPersistor implements ICoalesceSearchPersistor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistorSearch.class);
-    private static final ElasticSearchMapperImpl MAPPER_TYPE = new ElasticSearchMapperImpl();
-    private static final JavaMapperImpl MAPPER_JAVA = new JavaMapperImpl();
 
     /**
      * Default constructor using {@link ElasticSearchSettings} for configuration
@@ -51,97 +46,6 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
     public ElasticSearchPersistorSearch(Map<String, String> params)
     {
         super(params);
-    }
-
-    @Override
-    public Capabilities getSearchCapabilities()
-    {
-        Capabilities capability = new Capabilities();
-        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
-        capability.addAll(Capabilities.LOGICAL);
-
-        return capability;
-    }
-
-    public SearchResponse searchAll()
-    {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(params);
-            QueryBuilder qb = QueryBuilders.matchAllQuery();
-            SearchResponse response = client.prepareSearch().setQuery(qb).get();
-            //.execute()
-            //.actionGet();
-            LOGGER.debug(response.toString());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void searchSpecific(String searchValue, String searchType)
-    {
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-
-            AbstractClient client = conn.getDBConnector(params);
-            QueryBuilder qb = QueryBuilders.matchAllQuery();
-            //QueryBuilder qb = QueryBuilders.matchPhraseQuery("PMESIIPTMilitary", "1");
-            SearchResponse response = client.prepareSearch(searchValue)
-                    //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                    .setQuery(qb)                 // Query
-                    //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
-                    //.setFrom(0).setSize(60).setExplain(true)
-                    .get();
-
-            LOGGER.debug(response.toString());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void searchSpecificWithFilter(String searchValue, String searchType, String filterName, String filterValue)
-    {
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(params);
-            QueryBuilder qb = QueryBuilders.matchPhraseQuery(filterName, filterValue);
-            SearchResponse response = client.prepareSearch(searchValue)
-                    //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                    .setQuery(qb)                 // Query
-                    //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
-                    //.setFrom(0).setSize(60).setExplain(true)
-                    .get();
-
-            LOGGER.debug(response.toString());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void searchElasticGeo()
-    {
-
-        //FilterToElastic filterElastic = new FilterToElastic();
-
-        //Map<String, Object> queryBuilder = filterElastic.getNativeQueryBuilder();
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(params);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -165,6 +69,27 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
         try
         {
+            ElasticSearchQueryRewriter rewriter = new ElasticSearchQueryRewriter();
+            Query localQuery = rewriter.rewrite(query);
+
+            Map<String, String> props = new HashMap<>();
+            props.put(ElasticDataStoreFactory.HOSTNAME.key, params.get(ElasticSearchSettings.PARAM_HTTP_HOST));
+            props.put(ElasticDataStoreFactory.HOSTPORT.key, params.get(ElasticSearchSettings.PARAM_HTTP_PORT));
+            props.put(ElasticDataStoreFactory.SSL_ENABLED.key, params.get(ElasticSearchSettings.PARAM_SSL_ENABLED));
+
+            if (Boolean.parseBoolean(params.get(ElasticSearchSettings.PARAM_SSL_ENABLED)))
+            {
+                // TODO Add support for ketstore
+                System.setProperty("javax.net.ssl.trustStore", params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE));
+                System.setProperty("javax.net.ssl.trustStorePassword",
+                                   params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));
+            }
+
+            // TODO Add support for JOINS.
+            props.put(ElasticDataStoreFactory.INDEX_NAME.key, localQuery.getTypeName());
+
+            DataStore datastore = DataStoreFinder.getDataStore(props);
+
             if (LOGGER.isDebugEnabled())
             {
                 Iterator<DataStoreFactorySpi> availableStores = DataStoreFinder.getAvailableDataStores();
@@ -172,31 +97,28 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
                 LOGGER.debug("List Available Stores:");
                 while (availableStores.hasNext())
                 {
-                    LOGGER.debug("\t{}", availableStores.next().toString());
+                    LOGGER.debug("\t{}", availableStores.next().getClass().getName());
                 }
 
+                LOGGER.info("Selected Store: {}", datastore.getClass().getSimpleName());
             }
 
-            // TODO If INDEX_NAME is 'coalesce' then the typeName = 'entity' otherwise 'recordset'
-            ElasticSearchQueryRewriter rewriter = new ElasticSearchQueryRewriter();
-            Query localQuery = rewriter.rewrite(query);
+            String typeName;
 
-            Map<String, String> props = new HashMap<>();
-            // TODO Pull host ane port from params. Params stores them as host:port so this will need to be separated in the properties or parsed out.
-            props.put(ElasticDataStoreFactory.HOSTNAME.key, "localhost");
-            props.put(ElasticDataStoreFactory.HOSTPORT.key, "9200");
-            // TODO Use the index name specified within the query. If multiple are specified this would require a join.
+            switch (localQuery.getTypeName())
+            {
+            case ElasticSearchPersistor.COALESCE_ENTITY_INDEX:
+                typeName = ElasticSearchPersistor.COALESCE_ENTITY;
+                break;
+            case ElasticSearchPersistor.COALESCE_LINKAGE_INDEX:
+                typeName = CoalesceLinkage.NAME;
+                break;
+            default:
+                typeName = "recordset";
+                break;
+            }
 
-            props.put(ElasticDataStoreFactory.INDEX_NAME.key, localQuery.getTypeName());
-
-            // TODO This should only be done once when the properties are set.
-            DataStore datastore = DataStoreFinder.getDataStore(props);
-
-            // TODO Remove this
-            LOGGER.info(datastore.getClass().getSimpleName());
-
-            SimpleFeatureSource featureSource = datastore.getFeatureSource(localQuery.getTypeName().equalsIgnoreCase(
-                    "coalesce") ? "entity" : "recordset");
+            SimpleFeatureSource featureSource = datastore.getFeatureSource(typeName);
 
             LOGGER.debug("Doing this search: " + localQuery.toString());
 
@@ -216,54 +138,55 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
                 LOGGER.debug("Property: {} Type: {}", properties.get(i).getPropertyName(), type);
 
-                columnList[i] = properties.get(i).getPropertyName();
+                columnList[i] = properties.get(i).getPropertyName().replace(".", "");
             }
 
             SearchResults results = new SearchResults();
             CachedRowSet rowset;
-            int total = 0;
+            int total;
 
-            // TODO Populate the rowset
             try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localQuery).features())
             {
-                if (featureItr.hasNext())
-                {
-                    SimpleFeature feature = featureItr.next();
+                Iterator<Object[]> columnIterator = new FeatureColumnIterator(featureItr, properties);
+                CoalesceResultSet resultSet = new CoalesceResultSet(columnIterator, columnList);
+                rowset = RowSetProvider.newFactory().createCachedRowSet();
+                rowset.populate(resultSet);
 
-                    while (featureItr.hasNext())
-                    {
-                        LOGGER.info("*** MATCH FOUND *** " + feature.getID());
-
-                        //Put the Feature in the SearchResults
-                        Iterator<Object[]> columnIterator = new FeatureColumnIterator(featureItr, properties);
-                        CoalesceResultSet resultSet = new CoalesceResultSet(columnIterator, columnList);
-                        rowset = RowSetProvider.newFactory().createCachedRowSet();
-                        rowset.populate(resultSet);
-
-                        results.setResult(rowset);
-
-                        total++;
-                        featureItr.next();
-                    }
-
-                }
-                else
-                {
-                    LOGGER.info("No match found");
-                }
+                total = rowset.size();
             }
+
+            // TODO If page size is reach we need to determine the total.
+
             results.setTotal(total);
+            results.setResults(rowset);
 
             return results;
         }
-        catch (IOException e)
+        catch (IOException | SQLException e)
         {
             throw new CoalescePersistorException(e.getMessage(), e);
         }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException(e.getMessage(), e);
-        }
+    }
+
+    @Override
+    public EnumSet<EPersistorCapabilities> getCapabilities()
+    {
+        EnumSet<EPersistorCapabilities> capabilities = super.getCapabilities();
+
+        capabilities.add(EPersistorCapabilities.GEOSPATIAL_SEARCH);
+        capabilities.add(EPersistorCapabilities.TEMPORAL_SEARCH);
+
+        return capabilities;
+    }
+
+    @Override
+    public Capabilities getSearchCapabilities()
+    {
+        Capabilities capability = new Capabilities();
+        capability.addAll(Capabilities.SIMPLE_COMPARISONS);
+        capability.addAll(Capabilities.LOGICAL);
+
+        return capability;
     }
 
 }

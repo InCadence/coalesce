@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -45,7 +45,9 @@ import java.util.function.Predicate;
  */
 class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
-    private final ArrayList<String> features = new ArrayList<>();
+    private static final ElasticSearchMapperImpl MAPPER = new ElasticSearchMapperImpl();
+
+    private final Set<String> features = new HashSet<>();
     private final ICoalesceNormalizer normalizer;
 
     /**
@@ -74,7 +76,10 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         {
             ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataTypes().get(expression.getPropertyName());
 
-            if (type == ECoalesceFieldDataTypes.STRING_TYPE)
+            LOGGER.info("({}): ({})", expression.getPropertyName(), type);
+
+            if (MAPPER.map(type).equalsIgnoreCase("text") && !(expression.getPropertyName().contains("coalesceentity")
+                    || expression.getPropertyName().contains("coalescelinkage")))
             {
                 name = ff.property(getNormalizedPropertyName(expression.getPropertyName()) + ".keyword");
 
@@ -113,7 +118,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         Query newQuery = new Query(original);
 
         // Convert to 0 Indexed Paging
-        if (original.getStartIndex() > 0)
+        if (original.getStartIndex() != null && original.getStartIndex() > 0)
         {
             newQuery.setStartIndex(original.getStartIndex() - 1);
         }
@@ -122,7 +127,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         // so make sure it is the first in the list
         if ((newQuery.getTypeName() != null) && (!newQuery.getTypeName().equalsIgnoreCase("coalesce")))
         {
-            features.add(normalizer.normalize(newQuery.getTypeName()));
+            addFeature(normalizer.normalize(newQuery.getTypeName()));
         }
 
         // Clear the type name from the query
@@ -154,8 +159,14 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         {
             for (int i = 0; i < sorts.length; i++)
             {
-                sorts[i] = ff.sort(getNormalizedPropertyName(sorts[i].getPropertyName().getPropertyName()),
-                                   sorts[i].getSortOrder());
+                String name = getNormalizedPropertyName(sorts[i].getPropertyName().getPropertyName());
+                if (MAPPER.map(CoalesceTemplateUtil.getDataTypes().get(sorts[i].getPropertyName().getPropertyName())).equalsIgnoreCase(
+                        "text"))
+                {
+                    name = name + ".keyword";
+                }
+
+                sorts[i] = ff.sort(name, sorts[i].getSortOrder());
             }
 
             newQuery.setSortBy(sorts);
@@ -171,7 +182,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         }
         else if (features.size() == 1)
         {
-            newQuery.setTypeName(getTypeName(features.get(0)));
+            newQuery.setTypeName(getTypeName(features.iterator().next()));
         }
         else
         {
@@ -190,7 +201,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
                 throw new CoalescePersistorException("Multiple featuretypes in query is not supported");
             }
 
-            newQuery.setTypeName(getTypeName(features.get(0)));
+            newQuery.setTypeName(getTypeName(features.iterator().next()));
         }
 
         features.clear();
@@ -203,6 +214,10 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         if (feature.equalsIgnoreCase("coalesceentity"))
         {
             return ElasticSearchPersistor.COALESCE_ENTITY_INDEX;
+        }
+        else if (feature.equalsIgnoreCase("coalescelinkage"))
+        {
+            return ElasticSearchPersistor.COALESCE_LINKAGE_INDEX;
         }
         else
         {
@@ -225,19 +240,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
             if (!features.contains(feature))
             {
-                Set<ObjectMetaData> templates = CoalesceTemplateUtil.getTemplatesContainingRecordset(feature);
-
-
-                if (templates.size() == 1)
-                {
-                    features.add(templates.iterator().next().getName());
-                }
-                else
-                {
-                    LOGGER.error(
-                            "(ERROR) Multiple templates contain the following recordset ({}), unable to determine which index",
-                            feature);
-                }
+                addFeature(feature);
             }
 
             normalized = normalizer.normalize(parts[0], parts[1]);
@@ -248,6 +251,29 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         }
 
         return normalized;
+    }
+
+    private void addFeature(String feature)
+    {
+        if (feature.equalsIgnoreCase("coalesceentity") || feature.equalsIgnoreCase("coalescelinkage"))
+        {
+            features.add(feature);
+        }
+        else
+        {
+            Set<ObjectMetaData> templates = CoalesceTemplateUtil.getTemplatesContainingRecordset(feature);
+
+            if (templates.size() == 1)
+            {
+                features.add(templates.iterator().next().getName());
+            }
+            else
+            {
+                LOGGER.error(
+                        "(ERROR) Multiple templates contain the following recordset ({}), unable to determine which index",
+                        feature);
+            }
+        }
     }
 
 }
