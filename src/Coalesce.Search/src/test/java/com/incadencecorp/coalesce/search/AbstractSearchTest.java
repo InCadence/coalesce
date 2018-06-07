@@ -534,7 +534,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     }
 
     /**
-     * Verifies that the perisster can handle the property name being specified on the right instead of the left.
+     * Verifies that the persister can handle the property name being specified on the right instead of the left.
      *
      * @throws Exception on error
      */
@@ -678,7 +678,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         }
 
         // Create bound box filter that excludes the field
-        bbox = new ReferencedEnvelope(createSquare(new Coordinate(60, -5), point2).getEnvelopeInternal(), crs);
+        bbox = new ReferencedEnvelope(createSquare(new Coordinate(59, -5), point2).getEnvelopeInternal(), crs);
         query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()),
                                FF.bbox(CoalescePropertyFactory.getFieldProperty(record.getGeoField()), bbox)));
 
