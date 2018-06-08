@@ -276,9 +276,8 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
             }
             else
             {
-                LOGGER.error(
-                        "(ERROR) Multiple templates contain the following recordset ({}), unable to determine which index",
-                        feature);
+                LOGGER.error("(ERROR) Could not determine index; recordset ({}) exists in multiple templates", feature);
+                templates.iterator().forEachRemaining(meta -> LOGGER.error("\t{} : {}", meta.getKey(), meta.getName()));
             }
         }
     }
