@@ -121,13 +121,11 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
             DataStore geoDataStore = getDataConnector().getGeoDataStore();
             SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(localquery.getTypeName());
 
-            Map<String, ECoalesceFieldDataTypes> types = CoalesceTemplateUtil.getDataTypes();
-
             // Normalize Column Headers
             List<CoalesceColumnMetadata> columnList = new ArrayList<>();
             for (PropertyName entry : properties)
             {
-                ECoalesceFieldDataTypes type = types.get(entry.getPropertyName());
+                ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(entry.getPropertyName());
 
                 if (type == null)
                 {

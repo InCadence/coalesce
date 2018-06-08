@@ -74,12 +74,19 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
         if (extraData instanceof Boolean)
         {
-            ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataTypes().get(expression.getPropertyName());
+            ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(expression.getPropertyName());
+
+            if (type == null)
+            {
+                throw new RuntimeException("Unknown Parameter Specified: " + expression.getPropertyName());
+            }
 
             LOGGER.info("({}): ({})", expression.getPropertyName(), type);
 
-            if (MAPPER.map(type).equalsIgnoreCase("text") && !(expression.getPropertyName().contains("coalesceentity")
-                    || expression.getPropertyName().contains("coalescelinkage")))
+            String property = expression.getPropertyName().toLowerCase();
+
+            if (MAPPER.map(type).equalsIgnoreCase("text") && !(property.startsWith("coalesceentity") || property.startsWith(
+                    "coalescelinkage")))
             {
                 name = ff.property(getNormalizedPropertyName(expression.getPropertyName()) + ".keyword");
 

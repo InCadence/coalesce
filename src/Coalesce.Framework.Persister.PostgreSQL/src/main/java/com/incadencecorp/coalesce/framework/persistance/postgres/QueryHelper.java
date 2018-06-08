@@ -19,6 +19,7 @@ package com.incadencecorp.coalesce.framework.persistance.postgres;
 
 import java.util.List;
 
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import org.opengis.filter.sort.SortBy;
 
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
@@ -112,9 +113,11 @@ public final class QueryHelper {
 
         boolean isEnumerationType = false;
 
-        if (CoalesceTemplateUtil.getDataTypes().containsKey(name))
+        ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(name);
+
+        if (type != null)
         {
-            switch (CoalesceTemplateUtil.getDataTypes().get(name)) {
+            switch (type) {
             case ENUMERATION_TYPE:
                 isEnumerationType = true;
                 break;

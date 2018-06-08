@@ -122,13 +122,11 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
             LOGGER.debug("Doing this search: " + localQuery.toString());
 
-            Map<String, ECoalesceFieldDataTypes> types = CoalesceTemplateUtil.getDataTypes();
-
             // Normalize Column Headers
             String[] columnList = new String[properties.size()];
             for (int i = 0; i < properties.size(); i++)
             {
-                ECoalesceFieldDataTypes type = types.get(properties.get(i).getPropertyName());
+                ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(properties.get(i).getPropertyName());
 
                 if (type == null)
                 {
@@ -162,7 +160,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
             return results;
         }
-        catch (IOException | SQLException e)
+        catch (IOException | SQLException | RuntimeException e)
         {
             throw new CoalescePersistorException(e.getMessage(), e);
         }

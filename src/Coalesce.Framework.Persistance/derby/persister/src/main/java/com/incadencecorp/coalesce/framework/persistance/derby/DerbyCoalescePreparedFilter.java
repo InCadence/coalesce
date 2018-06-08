@@ -35,12 +35,10 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.Capabilities;
 import org.geotools.filter.FunctionImpl;
 import org.geotools.filter.capability.FunctionNameImpl;
-import org.geotools.filter.capability.TemporalCapabilitiesImpl;
 import org.geotools.jdbc.JDBCDataStore;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.*;
-import org.opengis.filter.capability.TemporalCapabilities;
 import org.opengis.filter.expression.*;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.spatial.*;
@@ -1182,9 +1180,11 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
         boolean isEnumerationType = false;
 
-        if (CoalesceTemplateUtil.getDataTypes().containsKey(name))
+        ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(name);
+
+        if (type != null)
         {
-            switch (CoalesceTemplateUtil.getDataTypes().get(name))
+            switch (type)
             {
             case ENUMERATION_TYPE:
                 isEnumerationType = true;
@@ -1257,7 +1257,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     @Override
     public ECoalesceFieldDataTypes getDataType(PropertyName name)
     {
-        return CoalesceTemplateUtil.getDataTypes().get(normalize(name.getPropertyName(), true));
+        return CoalesceTemplateUtil.getDataType(name.getPropertyName());
     }
 
     @Override

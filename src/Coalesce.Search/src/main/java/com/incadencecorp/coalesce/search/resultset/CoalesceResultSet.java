@@ -105,13 +105,11 @@ public class CoalesceResultSet extends CoalesceResultSetAbstract {
      */
     public static List<CoalesceColumnMetadata> getColumns(List<PropertyName> props, ICoalesceMapper<Integer> mapper)
     {
-        Map<String, ECoalesceFieldDataTypes> types = CoalesceTemplateUtil.getDataTypes();
-
         List<CoalesceColumnMetadata> columnList = new ArrayList<>();
 
         for (PropertyName entry : props)
         {
-            ECoalesceFieldDataTypes type = types.get(entry.getPropertyName());
+            ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(entry.getPropertyName());
 
             if (type != null)
             {
