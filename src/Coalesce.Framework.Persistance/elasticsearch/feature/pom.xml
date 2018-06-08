@@ -91,8 +91,8 @@
         </dependency>
         <dependency>
             <groupId>mil.nga.giat</groupId>
-            <artifactId>gt-elasticsearch</artifactId>
-            <version>2.13.0</version>
+            <artifactId>gs-web-elasticsearch</artifactId>
+            <version>${elasticgeo.version}</version>
             <scope>provided</scope>
         </dependency>
 

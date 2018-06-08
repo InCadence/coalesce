@@ -68,7 +68,7 @@
         <dependency>
             <groupId>mil.nga.giat</groupId>
             <artifactId>gs-web-elasticsearch</artifactId>
-            <version>2.13-INC</version>
+            <version>${elasticgeo.version}</version>
         </dependency>
 
         <dependency>
