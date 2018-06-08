@@ -193,9 +193,19 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      */
     public void refreshCoalesceTemplateUtil()
     {
+        setCoalesceTemplateUtil(getAuthoritativePersistor());
+    }
+
+    /**
+     * Initializes the {@link CoalesceTemplateUtil} with specified persister
+     *
+     * @param persistor to use
+     */
+    public void setCoalesceTemplateUtil(ICoalescePersistor persistor)
+    {
         try
         {
-            CoalesceTemplateUtil.addTemplates(getAuthoritativePersistor());
+            CoalesceTemplateUtil.addTemplates(persistor);
         }
         catch (CoalescePersistorException e)
         {
