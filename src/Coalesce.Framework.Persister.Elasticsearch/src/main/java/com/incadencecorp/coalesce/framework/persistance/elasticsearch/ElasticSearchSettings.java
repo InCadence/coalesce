@@ -91,7 +91,7 @@ public class ElasticSearchSettings {
     /**
      * (String) Defines the port used for HTTP requests
      */
-    public static final String PARAM_HTTP_PORT = PARAM_ELASTIC_BASE + "http.hosts";
+    public static final String PARAM_HTTP_PORT = PARAM_ELASTIC_BASE + "http.port";
 
     /*--------------------------------------------------------------------------
     Initialization
