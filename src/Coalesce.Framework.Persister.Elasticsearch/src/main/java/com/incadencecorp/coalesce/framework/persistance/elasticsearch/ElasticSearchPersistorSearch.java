@@ -76,10 +76,14 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             props.put(ElasticDataStoreFactory.HOSTNAME.key, params.get(ElasticSearchSettings.PARAM_HTTP_HOST));
             props.put(ElasticDataStoreFactory.HOSTPORT.key, params.get(ElasticSearchSettings.PARAM_HTTP_PORT));
             props.put(ElasticDataStoreFactory.SSL_ENABLED.key, params.get(ElasticSearchSettings.PARAM_SSL_ENABLED));
+            props.put(ElasticDataStoreFactory.SSL_REJECT_UNAUTHORIZED.key, params.get(ElasticSearchSettings.PARAM_SSL_REJECT_UNAUTHORIZED));
 
             if (Boolean.parseBoolean(params.get(ElasticSearchSettings.PARAM_SSL_ENABLED)))
             {
-                // TODO Add support for ketstore
+                System.setProperty("javax.net.ssl.keyStore", params.get(ElasticSearchSettings.PARAM_KEYSTORE_FILE));
+                System.setProperty("javax.net.ssl.keyStorePassword",
+                                   params.get(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD));
+
                 System.setProperty("javax.net.ssl.trustStore", params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE));
                 System.setProperty("javax.net.ssl.trustStorePassword",
                                    params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));

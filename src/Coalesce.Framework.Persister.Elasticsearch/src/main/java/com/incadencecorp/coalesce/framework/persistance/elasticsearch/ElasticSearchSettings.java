@@ -55,6 +55,11 @@ public class ElasticSearchSettings {
     public static final String PARAM_SSL_ENABLED = PARAM_SSL_BASE + "enabled";
 
     /**
+     * (Boolean) Specifies whether to validate server certificate (ignored if ssl_enabled=false)
+     */
+    public static final String PARAM_SSL_REJECT_UNAUTHORIZED = PARAM_SSL_BASE + "reject_unauthorized";
+
+    /**
      * (String) Defines the location the the key store.
      */
     public static final String PARAM_KEYSTORE_FILE = PARAM_SSL_BASE + "keystore";
@@ -195,6 +200,16 @@ public class ElasticSearchSettings {
         return settings.getSetting(config_name, PARAM_SSL_ENABLED, false, false);
     }
 
+    public static void setRejectUnauthorized(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_SSL_REJECT_UNAUTHORIZED, value);
+    }
+
+    public static boolean isRejectUnauthorized()
+    {
+        return settings.getSetting(config_name, PARAM_SSL_REJECT_UNAUTHORIZED, true, false);
+    }
+
     public static boolean isAuthoritative()
     {
         return settings.getSetting(config_name, PARAM_IS_AUTHORITATIVE, true, false);
@@ -211,6 +226,7 @@ public class ElasticSearchSettings {
 
         params.put(PARAM_IS_AUTHORITATIVE, Boolean.toString(isAuthoritative()));
         params.put(PARAM_SSL_ENABLED, Boolean.toString(isSSLEnabled()));
+        params.put(PARAM_SSL_REJECT_UNAUTHORIZED, Boolean.toString(isRejectUnauthorized()));
         params.put(PARAM_KEYSTORE_FILE, getKeystoreFilepath());
         params.put(PARAM_KEYSTORE_PASSWORD, "changeit");
         params.put(PARAM_TRUSTSTORE_FILE, getTruststoreFilepath());
