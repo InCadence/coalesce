@@ -2,9 +2,10 @@ package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import org.apache.commons.lang.StringUtils;
 import org.geotools.feature.FeatureIterator;
+import org.json.JSONArray;
 import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
 import org.opengis.filter.expression.PropertyName;
 
 import java.util.ArrayList;
@@ -45,9 +46,20 @@ public class FeatureColumnIterator implements Iterator<Object[]> {
 
         Object[] row = new Object[properties.size()];
 
-        for (int i=0; i<properties.size(); i++)
+        for (int i = 0; i < properties.size(); i++)
         {
-            row[i] = feature.getProperty(properties.get(i)).getValue();
+            Object value = feature.getProperty(properties.get(i)).getValue();
+
+            if (value instanceof ArrayList)
+            {
+                value = StringUtils.join((ArrayList) value, ",");
+            }
+            else if (value instanceof String && ((String) value).startsWith("[") && ((String) value).endsWith("]"))
+            {
+                value = StringUtils.join(new JSONArray((String) value).iterator(), ",");
+            }
+
+            row[i] = value;
         }
 
         return row;
