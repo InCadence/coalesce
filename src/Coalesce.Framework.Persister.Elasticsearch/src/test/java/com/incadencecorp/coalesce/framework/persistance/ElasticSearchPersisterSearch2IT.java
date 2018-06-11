@@ -29,6 +29,8 @@ import org.junit.BeforeClass;
  */
 public class ElasticSearchPersisterSearch2IT extends AbstractSearchTest<ElasticSearchPersistorSearch> {
 
+    private ElasticSearchPersistorSearch persister = new ElasticSearchPersistorSearch();
+
     @BeforeClass
     public static void initialize()
     {
@@ -38,6 +40,6 @@ public class ElasticSearchPersisterSearch2IT extends AbstractSearchTest<ElasticS
     @Override
     protected ElasticSearchPersistorSearch createPersister() throws CoalescePersistorException
     {
-        return new ElasticSearchPersistorSearch();
+        return persister;
     }
 }
