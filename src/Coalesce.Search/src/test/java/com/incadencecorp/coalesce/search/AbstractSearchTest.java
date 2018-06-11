@@ -242,15 +242,18 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     private void assertField(CachedRowSet rowset, CoalesceField field) throws Exception
     {
         String column = CoalescePropertyFactory.getColumnName(field);
+        String value = rowset.getString(column);
+
+        Assert.assertNotNull(value);
 
         switch (field.getDataType())
         {
         case GUID_TYPE:
-            Assert.assertEquals(UUID.fromString(field.getBaseValue()), UUID.fromString(rowset.getString(column)));
+            Assert.assertEquals(UUID.fromString(field.getBaseValue()), UUID.fromString(value));
             break;
         case URI_TYPE:
         case STRING_TYPE:
-            Assert.assertEquals(field.getBaseValue(), rowset.getString(column));
+            Assert.assertEquals(field.getBaseValue(), value);
             break;
         case DATE_TIME_TYPE:
             //Assert.assertEquals(((CoalesceDateTimeField) field).getValue().toLocalDate().toString(),
@@ -277,24 +280,24 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
             Assert.assertEquals((long) field.getValue(), rowset.getLong(column));
             break;
         case GEOCOORDINATE_TYPE:
-            Point point = (Point) WKT_READER.read(rowset.getString(column).replaceAll("[Z]", ""));
+            Point point = (Point) WKT_READER.read(value.replaceAll("[Z]", ""));
             Assert.assertEquals(((CoalesceCoordinateField) field).getValue(), point.getCoordinate());
             break;
         case GEOCOORDINATE_LIST_TYPE:
-            MultiPoint multipoint = (MultiPoint) WKT_READER.read(rowset.getString(column).replaceAll("[Z]", ""));
+            MultiPoint multipoint = (MultiPoint) WKT_READER.read(value.replaceAll("[Z]", ""));
             Assert.assertArrayEquals(((CoalesceCoordinateListField) field).getValue(), multipoint.getCoordinates());
             break;
         case LINE_STRING_TYPE:
-            LineString line = (LineString) WKT_READER.read(rowset.getString(column).replaceAll("[Z]", ""));
+            LineString line = (LineString) WKT_READER.read(value.replaceAll("[Z]", ""));
             Assert.assertEquals(((CoalesceLineStringField) field).getValue(), line);
             break;
         case POLYGON_TYPE:
-            Polygon polygon = (Polygon) WKT_READER.read(rowset.getString(column).replaceAll("[Z]", ""));
+            Polygon polygon = (Polygon) WKT_READER.read(value.replaceAll("[Z]", ""));
             Assert.assertEquals(((CoalescePolygonField) field).getValue(), polygon);
             break;
         case CIRCLE_TYPE:
             /* TODO Postgres converts a circle into a polygon so there wont be a direct comparison.
-            Point center = (Point) WKT_READER.read(rowset.getString(column).replaceAll("[Z]", ""));
+            Point center = (Point) WKT_READER.read(value.replaceAll("[Z]", ""));
             Assert.assertEquals(((CoalesceCircleField) field).getValue(), center.getCoordinate());
             */
             break;
@@ -306,7 +309,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         case LONG_LIST_TYPE:
         case ENUMERATION_LIST_TYPE:
         case STRING_LIST_TYPE:
-            Assert.assertEquals(field.getBaseValue(), rowset.getString(column));
+            Assert.assertEquals(field.getBaseValue(), value);
             break;
         case BINARY_TYPE:
         case FILE_TYPE:
