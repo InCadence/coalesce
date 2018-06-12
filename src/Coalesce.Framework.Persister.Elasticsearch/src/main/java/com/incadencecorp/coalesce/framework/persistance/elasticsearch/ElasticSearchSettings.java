@@ -60,22 +60,22 @@ public class ElasticSearchSettings {
     public static final String PARAM_SSL_REJECT_UNAUTHORIZED = PARAM_SSL_BASE + "reject_unauthorized";
 
     /**
-     * (String) Defines the location the the key store.
+     * (String) Defines the location the the key store. Defaults to System Property javax.net.ssl.keyStore.
      */
     public static final String PARAM_KEYSTORE_FILE = PARAM_SSL_BASE + "keystore";
 
     /**
-     * (String) Keystore Password
+     * (String) Key store's Password. Defaults to System Property javax.net.ssl.keyStorePassword.
      */
     public static final String PARAM_KEYSTORE_PASSWORD = PARAM_KEYSTORE_FILE + ".password";
 
     /**
-     * (String) Defines the location the the trust store.
+     * (String) Defines the location the the trust store. Defaults to System Property javax.net.ssl.trustStore.
      */
     public static final String PARAM_TRUSTSTORE_FILE = PARAM_SSL_BASE + "truststore";
 
     /**
-     * (String) Truststore Password
+     * (String) Trust store's Password. Defaults to System Property javax.net.ssl.trustStorePassword.
      */
     public static final String PARAM_TRUSTSTORE_PASSWORD = PARAM_TRUSTSTORE_FILE + ".password";
 
@@ -162,7 +162,7 @@ public class ElasticSearchSettings {
 
     public static String getKeystoreFilepath()
     {
-        return settings.getSetting(config_name, PARAM_KEYSTORE_FILE, "", false);
+        return settings.getSetting(config_name, PARAM_KEYSTORE_FILE, System.getProperty("javax.net.ssl.keyStore"), false);
     }
 
     public static void setKeystoreFilepath(String keystoreFilepath)
@@ -170,14 +170,43 @@ public class ElasticSearchSettings {
         settings.setSetting(config_name, PARAM_KEYSTORE_FILE, keystoreFilepath);
     }
 
+    public static String getKeystorePassword()
+    {
+        return settings.getSetting(config_name,
+                                   PARAM_KEYSTORE_PASSWORD,
+                                   System.getProperty("javax.net.ssl.keyStorePassword"),
+                                   false);
+    }
+
+    public static void setKeystorePassword(String value)
+    {
+        settings.setSetting(config_name, PARAM_KEYSTORE_PASSWORD, value);
+    }
+
     public static String getTruststoreFilepath()
     {
-        return settings.getSetting(config_name, PARAM_TRUSTSTORE_FILE, "", false);
+        return settings.getSetting(config_name,
+                                   PARAM_TRUSTSTORE_FILE,
+                                   System.getProperty("javax.net.ssl.trustStore"),
+                                   false);
     }
 
     public static void setTruststoreFilepath(String truststoreFilepath)
     {
         settings.setSetting(config_name, PARAM_TRUSTSTORE_FILE, truststoreFilepath);
+    }
+
+    public static String getTruststorePassword()
+    {
+        return settings.getSetting(config_name,
+                                   PARAM_TRUSTSTORE_PASSWORD,
+                                   System.getProperty("javax.net.ssl.trustStorePassword"),
+                                   false);
+    }
+
+    public static void setTruststorePassword(String value)
+    {
+        settings.setSetting(config_name, PARAM_TRUSTSTORE_PASSWORD, value);
     }
 
     public static void setElasticClusterName(String clusterName)
@@ -228,9 +257,9 @@ public class ElasticSearchSettings {
         params.put(PARAM_SSL_ENABLED, Boolean.toString(isSSLEnabled()));
         params.put(PARAM_SSL_REJECT_UNAUTHORIZED, Boolean.toString(isRejectUnauthorized()));
         params.put(PARAM_KEYSTORE_FILE, getKeystoreFilepath());
-        params.put(PARAM_KEYSTORE_PASSWORD, "changeit");
+        params.put(PARAM_KEYSTORE_PASSWORD, getKeystorePassword());
         params.put(PARAM_TRUSTSTORE_FILE, getTruststoreFilepath());
-        params.put(PARAM_TRUSTSTORE_PASSWORD, "changeit");
+        params.put(PARAM_TRUSTSTORE_PASSWORD, getTruststorePassword());
         params.put(PARAM_HOSTS, getElastichosts());
         params.put(PARAM_CLUSTER_NAME, getElasticClusterName());
         params.put(PARAM_HTTP_HOST, getHTTPHost());
