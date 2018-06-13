@@ -98,7 +98,12 @@ public class ElasticSearchSettings {
      */
     public static final String PARAM_HTTP_PORT = PARAM_ELASTIC_BASE + "http.port";
 
-    /*--------------------------------------------------------------------------
+    private static final String DEFAULT_KEYSTORE_FILE = getSystemProperty("javax.net.ssl.keyStore");
+    private static final String DEFAULT_KEYSTORE_PASSWORD = getSystemProperty("javax.net.ssl.keyStorePassword");
+    private static final String DEFAULT_TRUSTSTORE_FILE = getSystemProperty("javax.net.ssl.trustStore");
+    private static final String DEFAULT_TRUSTSTORE_PASSWORD = getSystemProperty("javax.net.ssl.trustStorePassword");
+
+    /*--------------------------------------------------------------------------    
     Initialization
     --------------------------------------------------------------------------*/
 
@@ -162,7 +167,7 @@ public class ElasticSearchSettings {
 
     public static String getKeystoreFilepath()
     {
-        return settings.getSetting(config_name, PARAM_KEYSTORE_FILE, System.getProperty("javax.net.ssl.keyStore"), false);
+        return settings.getSetting(config_name, PARAM_KEYSTORE_FILE, DEFAULT_KEYSTORE_FILE, false);
     }
 
     public static void setKeystoreFilepath(String keystoreFilepath)
@@ -172,10 +177,7 @@ public class ElasticSearchSettings {
 
     public static String getKeystorePassword()
     {
-        return settings.getSetting(config_name,
-                                   PARAM_KEYSTORE_PASSWORD,
-                                   System.getProperty("javax.net.ssl.keyStorePassword"),
-                                   false);
+        return settings.getSetting(config_name, PARAM_KEYSTORE_PASSWORD, DEFAULT_KEYSTORE_PASSWORD, false);
     }
 
     public static void setKeystorePassword(String value)
@@ -185,10 +187,7 @@ public class ElasticSearchSettings {
 
     public static String getTruststoreFilepath()
     {
-        return settings.getSetting(config_name,
-                                   PARAM_TRUSTSTORE_FILE,
-                                   System.getProperty("javax.net.ssl.trustStore"),
-                                   false);
+        return settings.getSetting(config_name, PARAM_TRUSTSTORE_FILE, DEFAULT_TRUSTSTORE_FILE, false);
     }
 
     public static void setTruststoreFilepath(String truststoreFilepath)
@@ -198,10 +197,7 @@ public class ElasticSearchSettings {
 
     public static String getTruststorePassword()
     {
-        return settings.getSetting(config_name,
-                                   PARAM_TRUSTSTORE_PASSWORD,
-                                   System.getProperty("javax.net.ssl.trustStorePassword"),
-                                   false);
+        return settings.getSetting(config_name, PARAM_TRUSTSTORE_PASSWORD, DEFAULT_TRUSTSTORE_PASSWORD, false);
     }
 
     public static void setTruststorePassword(String value)
@@ -268,4 +264,15 @@ public class ElasticSearchSettings {
         return params;
     }
 
+    private static String getSystemProperty(String property)
+    {
+        String value = System.getProperty("javax.net.ssl.trustStorePassword");
+
+        if (value == null)
+        {
+            value = "";
+        }
+
+        return value;
+    }
 }
