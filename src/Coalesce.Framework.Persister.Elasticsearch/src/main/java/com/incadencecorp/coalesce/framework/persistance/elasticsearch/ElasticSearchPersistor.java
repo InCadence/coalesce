@@ -91,9 +91,10 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
             AbstractClient client = conn.getDBConnector(params);
 
             BulkRequest request = iterator.iterate(entities);
-            BulkResponse response = client.bulk(request).actionGet();
 
             LOGGER.debug("{} Entities Created {} Request", entities.length, request.requests().size());
+
+            BulkResponse response = client.bulk(request).actionGet();
 
             for (BulkItemResponse item : response.getItems())
             {
