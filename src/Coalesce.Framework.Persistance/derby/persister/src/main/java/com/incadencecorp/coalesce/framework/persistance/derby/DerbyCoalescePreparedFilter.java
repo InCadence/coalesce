@@ -975,32 +975,21 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
      */
     public void setSortBy(SortBy... sort)
     {
-
-        sortByList = new ArrayList<SortBy>();
+        sortByList = new ArrayList<>();
 
         if (sort != null)
         {
             for (SortBy sortBy : sort)
             {
-
                 String name = sortBy.getPropertyName().getPropertyName();
 
                 // Column properly formatted with a table name?
                 if (name.contains(DOT))
                 {
-
-                    name = normalize(name, true).replaceAll("coalesce\\.|[.]", "");
-
-                    // if (isEnumeration(name)) {
-                    // // Drop the record set
-                    // name = name.split("[.]")[1];
-                    // }
-
                     sortByList.add(factory.sort(name, sortBy.getSortOrder()));
                 }
             }
         }
-
     }
 
     /**
@@ -1179,8 +1168,8 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     {
 
         boolean isEnumerationType = false;
-
-        ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(name);
+        /*
+        ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(name.substring(name.indexOf(".") + 1));
 
         if (type != null)
         {
@@ -1201,6 +1190,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
             }
         }
+        */
 
         return isEnumerationType;
 

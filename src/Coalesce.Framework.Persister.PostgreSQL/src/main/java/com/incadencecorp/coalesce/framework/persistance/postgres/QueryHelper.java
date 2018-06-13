@@ -110,9 +110,8 @@ public final class QueryHelper {
 
     private static boolean isEnumeration(String name)
     {
-
         boolean isEnumerationType = false;
-
+/*
         ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(name);
 
         if (type != null)
@@ -127,9 +126,8 @@ public final class QueryHelper {
 
             }
         }
-
+*/
         return isEnumerationType;
-
     }
 
 }
