@@ -154,6 +154,17 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     // -----------------------------------------------------------------------//
 
     @Override
+    public void setStatus(ECoalesceObjectStatus value)
+    {
+        if (!isSuspendHistory() && !value.equals(getStatus()))
+        {
+            createHistory("", "", null);
+        }
+
+        super.setStatus(value);
+    }
+
+    @Override
     public String getClassificationMarkingAsString()
     {
         return _entityLinkage.getClassificationmarking();
@@ -168,8 +179,12 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public void setClassificationMarkingAsString(String value)
     {
+        if (!isSuspendHistory() && !value.equals(getClassificationMarkingAsString()))
+        {
+            createHistory("", "", null);
+        }
+
         _entityLinkage.setClassificationmarking(value);
-        updateLastModified();
     }
 
     @JsonIgnore
@@ -188,8 +203,12 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public void setEntity1Key(String value)
     {
+        if (!isSuspendHistory() && !value.equals(getEntity1Key()))
+        {
+            createHistory("", "", null);
+        }
+
         _entityLinkage.setEntity1Key(value);
-        updateLastModified();
     }
 
     @JsonIgnore
@@ -202,8 +221,12 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public void setEntity1Name(String value)
     {
+        if (!isSuspendHistory() && !value.equals(getEntity1Name()))
+        {
+            createHistory("", "", null);
+        }
+
         _entityLinkage.setEntity1Name(value);
-        updateLastModified();
     }
 
     @JsonIgnore
@@ -216,8 +239,12 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public void setEntity1Source(String value)
     {
+        if (!isSuspendHistory() && !value.equals(getEntity1Source()))
+        {
+            createHistory("", "", null);
+        }
+
         _entityLinkage.setEntity1Source(value);
-        updateLastModified();
     }
 
     @Override
@@ -229,8 +256,12 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public void setEntity1Version(String value)
     {
+        if (!isSuspendHistory() && !value.equals(getEntity1Version()))
+        {
+            createHistory("", "", null);
+        }
+
         _entityLinkage.setEntity1Version(value);
-        updateLastModified();
     }
 
     @Override
@@ -242,8 +273,12 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public void setEntity2Key(String value)
     {
+        if (!isSuspendHistory() && !value.equals(getEntity2Key()))
+        {
+            createHistory("", "", null);
+        }
+
         _entityLinkage.setEntity2Key(value);
-        updateLastModified();
     }
 
     @Override
@@ -255,8 +290,12 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public void setEntity2Name(String value)
     {
+        if (!isSuspendHistory() && !value.equals(getEntity2Name()))
+        {
+            createHistory("", "", null);
+        }
+
         _entityLinkage.setEntity2Name(value);
-        updateLastModified();
     }
 
     @Override
@@ -268,8 +307,12 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public void setEntity2Source(String value)
     {
+        if (!isSuspendHistory() && !value.equals(getEntity2Source()))
+        {
+            createHistory("", "", null);
+        }
+
         _entityLinkage.setEntity2Source(value);
-        updateLastModified();
     }
 
     @Override
@@ -281,8 +324,12 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public void setEntity2Version(String value)
     {
+        if (!isSuspendHistory() && !value.equals(getEntity2Version()))
+        {
+            createHistory("", "", null);
+        }
+
         _entityLinkage.setEntity2Version(value);
-        updateLastModified();
     }
 
     @Override
@@ -294,6 +341,11 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public void setEntity2ObjectVersion(int value)
     {
+        if (!isSuspendHistory() && value != getEntity2ObjectVersion())
+        {
+            createHistory("", "", null);
+        }
+
         _entityLinkage.setEntity2Objectversion(value);
     }
 
@@ -306,8 +358,12 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public void setInputLang(Locale value)
     {
+        if (!isSuspendHistory() && !value.equals(getInputLang()))
+        {
+            createHistory("", "", null);
+        }
+
         _entityLinkage.setInputlang(value);
-        updateLastModified();
     }
 
     @Override
@@ -319,8 +375,12 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public void setLinkType(ELinkTypes value)
     {
+        if (!isSuspendHistory() && !value.equals(getLinkType()))
+        {
+            createHistory("", "", null);
+        }
+
         _entityLinkage.setLinktype(value.getLabel());
-        updateLastModified();
     }
 
     @Override
@@ -332,6 +392,11 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     public void setLabel(String value)
     {
+        if (!isSuspendHistory() && !value.equals(getLabel()))
+        {
+            createHistory("", "", null);
+        }
+
         _entityLinkage.setLabel(value);
     }
 
@@ -412,8 +477,6 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     {
         CoalesceEntity entity1 = getEntity();
 
-        createHistory(modifiedBy, modifiedByIP, null);
-
         // Set Values
         setObjectVersion(entity1.getObjectVersion());
         setLabel(label);
@@ -436,8 +499,6 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
         setModifiedBy(modifiedBy);
         setModifiedByIP(modifiedByIP);
         setInputLang(inputLang);
-
-        updateLastModified();
     }
 
     // -----------------------------------------------------------------------//

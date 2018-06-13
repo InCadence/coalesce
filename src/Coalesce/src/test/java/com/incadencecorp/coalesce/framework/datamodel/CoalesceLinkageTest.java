@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -293,18 +294,24 @@ public class CoalesceLinkageTest {
 
         // Create History
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek1", "127.0.0.1", "", true, ECoalesceObjectStatus.ACTIVE, true);
+
+        CoalesceLinkage link = entity1.getLinkageSection().getLinkagesAsList().get(0);
+        link.setSuspendHistory(false);
+
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek2", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, true);
+        link.setSuspendHistory(false);
         EntityLinkHelper.unLinkEntities(entity1, entity2, ELinkTypes.CREATED, "Derek3", "127.0.0.1", true);
+        link.setSuspendHistory(false);
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek4", "127.0.0.1", "", true, ECoalesceObjectStatus.ACTIVE, true);
 
         // Get Linkages
-        Map<String, CoalesceLinkage> linkages = entity1.getLinkageSection().getLinkages();
+        List<CoalesceLinkage> linkages = entity1.getLinkageSection().getLinkagesAsList();
 
         // Verify
         assertEquals(1, linkages.size());
 
         // Get linkage
-        CoalesceLinkage linkage = linkages.values().iterator().next();
+        CoalesceLinkage linkage = linkages.get(0);
 
         assertEquals(ECoalesceObjectStatus.ACTIVE, linkage.getStatus());
         assertEquals("Derek4", linkage.getModifiedBy());

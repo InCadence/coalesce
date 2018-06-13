@@ -17,13 +17,15 @@
 
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import static org.junit.Assert.*;
-
+import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
+import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * These unit test ensures that each element retains history.
- * 
+ *
  * @author n78554
  */
 public class CoalesceHistoryTest {
@@ -35,15 +37,15 @@ public class CoalesceHistoryTest {
         entity.initialize();
 
         assertCreateHistory(entity);
-        
+
         assertCreateHistory(entity.getSection("/" + TestEntity.TESTSECTION));
-        
+
         assertCreateHistory(entity.getRecordset1());
 
         assertCreateHistory(entity.getRecordset1().addNew());
 
         assertCreateHistory(entity.getLinkageSection());
-        
+
         System.out.println(entity.toXml());
 
     }
@@ -56,6 +58,7 @@ public class CoalesceHistoryTest {
         object.setStatus(ECoalesceObjectStatus.DELETED);
         object.setAttribute("derek", "hello world");
 
+        object.setSuspendHistory(false);
         object.createHistory("Derek1", "127.0.0.1", null);
 
         object.setStatus(ECoalesceObjectStatus.READONLY);
@@ -81,6 +84,37 @@ public class CoalesceHistoryTest {
         assertEquals("00000000-0000-0000-0000-000000000000", history.getPreviousHistoryKey());
         assertEquals(null, history.getAttribute("derek"));
 
+    }
+
+    /**
+     * This test ensures that history is not created when calling the same link method unless something changes.
+     */
+    @Test
+    public void testLinkageHistory() throws Exception
+    {
+        CoalesceEntity entity1 = new CoalesceEntity();
+        entity1.initialize();
+
+        CoalesceEntity entity2 = new CoalesceEntity();
+        entity2.initialize();
+
+        EntityLinkHelper.linkEntitiesUniDirectional(entity1, ELinkTypes.IS_PARENT_OF, entity2);
+
+        Assert.assertEquals(0, entity1.getLinkageSection().getLinkagesAsList().get(0).getHistory().length);
+
+        EntityLinkHelper.linkEntitiesUniDirectional(entity1, ELinkTypes.IS_PARENT_OF, entity2);
+
+        Assert.assertEquals(0, entity1.getLinkageSection().getLinkagesAsList().get(0).getHistory().length);
+
+        EntityLinkHelper.linkEntitiesUniDirectional(entity1, ELinkTypes.IS_PARENT_OF, entity2, "my label", true);
+
+        Assert.assertEquals(1, entity1.getLinkageSection().getLinkagesAsList().get(0).getHistory().length);
+
+        CoalesceEntity entity3 = CoalesceEntity.create(entity1.toXml());
+
+        entity3.getLinkageSection().getLinkagesAsList().get(0).setLinkType(ELinkTypes.CREATED);
+
+        Assert.assertEquals(2, entity3.getLinkageSection().getLinkagesAsList().get(0).getHistory().length);
     }
 
 }
