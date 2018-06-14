@@ -86,9 +86,11 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
     @Override
     public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+    	AbstractClient client = null;
+        try 
         {
-            AbstractClient client = conn.getDBConnector(params);
+        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
+            client = conn.getDBConnector(params);
 
             BulkRequest request = iterator.iterate(entities);
 
@@ -115,6 +117,9 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
         }
         catch (CoalesceException e)
         {
+        	if(client != null) {
+        		client.close();
+        	}
             throw new CoalescePersistorException(e);
         }
 
@@ -138,9 +143,11 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
     public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
         List<String> results = new ArrayList<>();
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+        AbstractClient client = null;
+        try
         {
-            AbstractClient client = conn.getDBConnector(params);
+        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
+            client = conn.getDBConnector(params);
 
             for (String key : keys)
             {
@@ -167,6 +174,10 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
             {
                 throw new CoalescePersistorException(e);
             }
+        } finally {
+         	if(client != null) {
+         		client.close();
+         	}
         }
 
         return results.toArray(new String[results.size()]);

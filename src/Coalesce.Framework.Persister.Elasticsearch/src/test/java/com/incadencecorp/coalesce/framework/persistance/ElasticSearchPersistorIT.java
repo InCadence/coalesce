@@ -12,6 +12,7 @@ import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSea
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchSettings;
 import com.incadencecorp.coalesce.framework.persistance.testobjects.GDELT_Test_Entity;
 import org.elasticsearch.client.support.AbstractClient;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -46,6 +47,12 @@ public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<Elas
         conn = new ElasticSearchDataConnector();
         client = conn.getDBConnector(props);
         //client = conn.getDBConnector();
+    }
+    
+    @AfterClass
+    public static void closeAfterClass() throws Exception
+    {
+    	client.close();
     }
 
     @Override

@@ -126,9 +126,11 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     @Override
     public void saveTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+    	AbstractClient client = null;
+        try
         {
-            AbstractClient client = conn.getDBConnector(params);
+        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
+            client = conn.getDBConnector(params);
 
             for (CoalesceEntityTemplate template : templates)
             {
@@ -151,6 +153,10 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
                 LOGGER.debug("Saved XML Index called: coalesceentityindex : {}", response);
             }
+        } catch (Exception e) {
+        	if(client != null) {
+        		client.close();
+        	}
         }
 
     }
@@ -158,40 +164,54 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     @Override
     public void deleteTemplate(String... keys) throws CoalescePersistorException
     {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+    	AbstractClient client = null;
+        try
         {
-            AbstractClient client = conn.getDBConnector(params);
+        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
+            client = conn.getDBConnector(params);
             for (String key : keys)
             {
                 deleteFromElasticSearch(client, COALESCE_ENTITY_INDEX, COALESCE_TEMPLATE, key);
             }
+        } catch (Exception e) {
+        	if(client != null) {
+        		client.close();
+        	}
         }
     }
 
     @Override
     public void unregisterTemplate(String... keys) throws CoalescePersistorException
     {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+    	AbstractClient client = null;
+        try
         {
-            AbstractClient client = conn.getDBConnector(params);
+        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
+            client = conn.getDBConnector(params);
             for (String key : keys)
             {
                 deleteFromElasticSearch(client, COALESCE_ENTITY_INDEX, COALESCE_TEMPLATE, key);
                 deleteFromElasticSearch(client, COALESCE_ENTITY_INDEX, COALESCE_ENTITY, key);
             }
+        } catch (Exception e) {
+        	if(client != null) {
+        		client.close();
+        	}
         }
     }
 
     @Override
     public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-        CoalesceEntityTemplate template;
+        CoalesceEntityTemplate template = null;
+        AbstractClient client = null;
 
         if (!StringHelper.isNullOrEmpty(key))
         {
-            try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+            try
             {
-                AbstractClient client = conn.getDBConnector(params);
+            	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
+                client = conn.getDBConnector(params);
 
                 GetRequest request = new GetRequest();
                 request.index(COALESCE_ENTITY_INDEX);
@@ -216,6 +236,10 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                     throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
                 }
 
+            } catch (Exception e) {
+            	if(client != null) {
+            		client.close();
+            	}
             }
         }
         else
@@ -245,9 +269,11 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     @Override
     public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
     {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+    	AbstractClient client = null;
+        try
         {
-            AbstractClient client = conn.getDBConnector(params);
+        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
+            client = conn.getDBConnector(params);
 
             BoolQueryBuilder boolQuery = new BoolQueryBuilder().must(QueryBuilders.matchQuery(ENTITY_NAME_COLUMN_NAME,
                                                                                               name)).must(QueryBuilders.matchQuery(
@@ -279,6 +305,13 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                                                                    "Name: " + name + " Source: " + source + " Version: "
                                                                            + version), e);
             }
+        	if(client != null) {
+        		client.close();
+        	}
+        } catch (Exception e) {
+        	if(client != null) {
+        		client.close();
+        	}
         }
 
         return null;
@@ -288,10 +321,12 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
         List<ObjectMetaData> metaDatas = new ArrayList<>();
+        AbstractClient client = null;
 
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+        try
         {
-            AbstractClient client = conn.getDBConnector(params);
+        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
+            client = conn.getDBConnector(params);
 
             SearchRequestBuilder searchRequest = client.prepareSearch(COALESCE_ENTITY_INDEX).setTypes(COALESCE_TEMPLATE).setQuery(
                     QueryBuilders.matchAllQuery());
@@ -313,7 +348,14 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         }
         catch (ElasticsearchException e)
         {
-            LOGGER.error(e.getDetailedMessage());
+            LOGGER.error(e.getDetailedMessage()); 
+        	if(client != null) {
+        		client.close();
+        	}
+        } catch (Exception e) {
+        	if(client != null) {
+        		client.close();
+        	}
         }
         return metaDatas;
     }
@@ -322,10 +364,12 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
         CoalesceTemplateUtil.addTemplates(templates);
+        AbstractClient client = null;
 
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+        try
         {
-            AbstractClient client = conn.getDBConnector(params);
+        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
+            client = conn.getDBConnector(params);
 
             CreateIndexResponse response;
 
@@ -376,10 +420,14 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 catch (ResourceAlreadyExistsException e)
                 {
                     // Do Nothing indexes already exists
-                }
+                } 
 
-            }
-        }
+            } 
+        } catch (Exception e) {
+	    	if(client != null) {
+	    		client.close();
+	    	}
+	    }
     }
 
     private void deleteFromElasticSearch(AbstractClient conn, String index, String type, String id)
