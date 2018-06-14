@@ -13,10 +13,10 @@ import { loadJSON } from 'common-components/lib/js/propertyController';
 import {Menu} from 'common-components/lib/index.js';
 
 import { DialogMessage, DialogLoader, DialogTemplateSelection } from 'common-components/lib/components/dialogs';
-import {Responsive, WidthProvider} from 'react-grid-layout';
+import RGL,{WidthProvider} from 'react-grid-layout';
 
 var pjson = require('../package.json');
-const ResponsiveReactGridLayout = WidthProvider(Responsive);
+const ReactGridLayout = WidthProvider(RGL);
 class TemplateWorkspace extends Component {
 
   constructor(props) {
@@ -25,9 +25,8 @@ class TemplateWorkspace extends Component {
     this.state = {
       items: [],
       newCounter: 0,
-      //cols: {lg: 20, md: 15, sm: 10, xs: 5},
-      //breakpoints: {lg: 1600, md: 996, sm: 768, xs: 480},
-      rowHeight: 600,
+      cols: 20,
+      rowHeight: 30,
       showEditModal: false,
       promptTemplate: false,
       loading: null,
@@ -49,8 +48,6 @@ class TemplateWorkspace extends Component {
     this.handleTemplateRegister = this.handleTemplateRegister.bind(this);
     this.handleGraphAdd = this.handleGraphAdd.bind(this);
     this.handleEditModalToggle = this.handleEditModalToggle.bind(this);
-    this.onLayoutChange = this.onLayoutChange.bind(this);
-    this.onBreakpointChange = this.onBreakpointChange.bind(this);
   }
 
   componentDidMount() {
@@ -407,17 +404,6 @@ class TemplateWorkspace extends Component {
     );
   }
 
-  onBreakpointChange(breakpoint, cols){
-    this.setState({breakpoint: breakpoint, cols: cols});
-    console.log("Breakpoint has changed", breakpoint, cols);
-  }
-
-  onLayoutChange(layout){
-    this.setState({layout: this.reCalculateLayout()});
-    console.log("Layout has changed", layout);
-    this.debugItemPrint();
-  }
-
   reCalculateLayout(){
     var newLayout = this.state.items;
     for(var ii = 0; ii < newLayout.length; ii++){
@@ -465,9 +451,9 @@ class TemplateWorkspace extends Component {
         ]}/>
         <MuiThemeProvider muiTheme={this.state.theme}>
           <div>
-          <ResponsiveReactGridLayout className="layout" layout={this.state.items} rowHeight={this.state.rowHeight} onLayoutChange={this.onLayoutChange} onBreakpointChange={this.onBreakpointChange} cols= {{lg: 20, md: 15, sm: 10, xs: 5}} breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480}} draggableCancel="input,textarea">
+          <ReactGridLayout className="layout" layout={this.state.items} rowHeight={this.state.rowHeight} cols= {this.state.cols} draggableCancel="input,textarea">
             {this.state.items.map((item) => this.createElement(item))}
-          </ResponsiveReactGridLayout>
+          </ReactGridLayout>
           <DialogMessage
             title="Error"
             opened={this.state.error != null}
