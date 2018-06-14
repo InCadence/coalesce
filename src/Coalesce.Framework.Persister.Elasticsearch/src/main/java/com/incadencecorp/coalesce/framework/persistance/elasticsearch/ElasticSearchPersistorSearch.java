@@ -135,8 +135,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
                 if (type == null)
                 {
-                    type = ECoalesceFieldDataTypes.STRING_TYPE;
-
+                    throw new IllegalArgumentException("Unknown Property: " + properties.get(i).getPropertyName());
                 }
 
                 LOGGER.debug("Property: {} Type: {}", properties.get(i).getPropertyName(), type);
