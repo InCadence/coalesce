@@ -5,6 +5,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
+import Geoinput from './Geo.js';
 import { IconButton } from 'common-components/lib/components/IconButton.js'
 
 import { Row, Col } from 'react-bootstrap';
@@ -57,6 +58,7 @@ export class FieldInput extends React.Component {
 
     console.log(`${attr}=${value}`);
     this.setState(field);
+
   }
 
   render() {
@@ -68,53 +70,7 @@ export class FieldInput extends React.Component {
     var label = this.props.showLabels ? (field.label != null && field.label.length > 0 ? field.label : field.name) : null;
 
     switch (type) {
-      case 'ENUMERATION_LIST_TYPE':
-        return (
-          <SelectField
-            id={field.key}
-            fullWidth={true}
-            floatingLabelText={label}
-            underlineShow={this.props.showLabels}
-            multiple={true}
-            value={field[attr] ? field[attr].toUpperCase() : null}
-            style={style.root}
-            labelStyle={style.root}
-            iconStyle={style.none}
-            hintStyle={style.none}
-            floatingLabelStyle={style.none}
-            errorStyle={style.none}
-            onChange={(event, index, values) => {this.handleOnChange(attr, values)}}
-          >
-            {this.props.options && this.props.options.map((item) => {
-              return (
-                <MenuItem key={item.enum} value={item.enum} primaryText={item.label} />
-              )
-            })}
-          </SelectField>
-        )
-      case 'ENUMERATION_TYPE':
-        return (
-          <SelectField
-            id={field.key}
-            fullWidth={true}
-            floatingLabelText={label}
-            underlineShow={this.props.showLabels}
-            style={style.root}
-            labelStyle={style.root}
-            iconStyle={style.none}
-            hintStyle={style.none}
-            floatingLabelStyle={style.none}
-            errorStyle={style.none}
-            value={field[attr] ? field[attr].toUpperCase() : null}
-            onChange={(event, value) => {this.handleOnChange(attr, this.props.options[value].enum)}}
-          >
-            {this.props.options && this.props.options.map((item) => {
-              return (
-                <MenuItem key={item.enum} value={item.enum} primaryText={item.label} />
-              )
-            })}
-          </SelectField>
-        )
+
       case 'URI_TYPE':
       case 'STRING_TYPE':
         return (
@@ -278,74 +234,12 @@ export class FieldInput extends React.Component {
             />
           );
       case 'GEOCOORDINATE_LIST_TYPE':
-          return (
-            <TextField
-              id={field.key}
-              fullWidth={true}
-              floatingLabelText={label + " - MULTIPOINT (x1 y1 z1, x2 y2 z2, ...)"}
-              underlineShow={this.props.showLabels}
-              style={style.root}
-              value={field[attr]}
-              defaultValue={field.defaultValue}
-              onChange={(event, value) => {this.handleOnChange(attr, value)}}
-            />
-          );
-      case 'GEOCOORDINATE_TYPE':
-
-      var geo;
-
-        if (field.value == null || field.value === "") {
-          geo = {coordinates: [0, 0, 0]};
-        } else {
-          geo = parse(field.value);
-
-          if (geo == null) {
-              geo = {coordinates: [0, 0, 0]};
-          }
-        }
-
         return (
-            <Row>
-              <Col xs={4}>
-                <TextField
-                  id={field.key + 'x'}
-                  type='number'
-                  step='0.01'
-                  floatingLabelText={this.props.showLabels ? label + " Longitude" : null}
-                  underlineShow={this.props.showLabels}
-                  style={style.root}
-                  fullWidth={true}
-                  value={geo.coordinates[0]}
-                  onChange={(event, value) => {this.handleOnChange(attr, `POINT(${value} ${geo.coordinates[1]} ${geo.coordinates[2]})`)}}
-                />
-              </Col>
-              <Col xs={4}>
-                <TextField
-                  id={field.key + 'y'}
-                  type='number'
-                  step='0.01'
-                  floatingLabelText={this.props.showLabels ? "Latitude" : null}
-                  underlineShow={this.props.showLabels}
-                  style={style.root}
-                  fullWidth={true}
-                  value={geo.coordinates[1]}
-                  onChange={(event, value) => {this.handleOnChange(attr, `POINT(${geo.coordinates[0]} ${value} ${geo.coordinates[2]})`)}}
-                />
-              </Col>
-              <Col xs={4}>
-                <TextField
-                  id={field.key + 'z'}
-                  type='number'
-                  step='0.01'
-                  floatingLabelText={this.props.showLabels ? "Attitude" : null}
-                  underlineShow={this.props.showLabels}
-                  style={style.root}
-                  fullWidth={true}
-                  value={geo.coordinates[2]}
-                  onChange={(event, value) => {this.handleOnChange(attr, `POINT(${geo.coordinates[0]} ${geo.coordinates[1]} ${value})`)}}
-                />
-              </Col>
-          </Row>
+          <Geoinput list="true" value={field[attr]} handleOnChange={(event, value) => this.handleOnChange(attr, value)}/>
+        );
+      case 'GEOCOORDINATE_TYPE':
+        return (
+          <Geoinput list="false" value={field[attr]} handleOnChange={(event, value) => this.handleOnChange(attr, value)}/>
         );
       case 'CIRCLE_TYPE':
 
