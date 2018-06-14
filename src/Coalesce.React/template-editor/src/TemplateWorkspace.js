@@ -53,7 +53,7 @@ class TemplateWorkspace extends Component {
   componentDidMount() {
 
     var that = this;
-    //window.addEventListener("resize", this.updateScaling.bind(this));
+    window.addEventListener("resize", this.updateScaling.bind(this));
     loadJSON('theme').then((value) => {
       that.setState({
         theme: getMuiTheme(value)
@@ -149,6 +149,7 @@ class TemplateWorkspace extends Component {
       });
 
     });
+    this.debugItemPrint();
   }
 
   handleTemplateSave() {
@@ -316,7 +317,7 @@ class TemplateWorkspace extends Component {
   }
 
   updateScaling(){
-    const {items} = this.state;
+    var newItems = this.state.items;
     var curSize = window.innerWidth/300;
     var scale = 0;
     var toUse = 0;
@@ -333,18 +334,20 @@ class TemplateWorkspace extends Component {
       toUse = 0;
     }
     scale = this.state.scaling[toUse];
-    for(var ii = 0; ii < items.length; ii++){
-      if(items[ii].x > 5*scale){
-        items[ii].x = 5*scale;
-        items[ii].y = 15+items[ii].y;
-        console.log("Item", ii, "is", items[ii]);
+  /*  console.log("Scale is", scale, "CurSize", curSize, "Window is", window.innerWidth);
+    for(var ii = 0; ii < newItems.length; ii++){
+      console.log("Item", ii, "X is", newItems[ii].x, "Y is", newItems[ii].y,"5*",scale, "is", 5*scale);
+      if(newItems[ii].x >= 5*scale){
+        newItems[ii].x = (newItems[ii].x)%(5*scale);
+        //newItems[ii].y = 15+newItems[ii].y;
+        console.log("Scale is", scale, "Item", ii, "is", newItems[ii]);
       }
-    }
-    console.log("Finished with updating scaling and position");
-    this.setState(items);
+    }*/
+    console.log("Finished with updating scaling and position", "New cols should be",5*scale);
+    //this.setState({items: newItems});
     this.setState({cols: 5*scale});
-    this.debugItemPrint();
-    this.render();
+    //this.debugItemPrint();
+    //this.render();
   }
 
   handleGraphAdd() {
