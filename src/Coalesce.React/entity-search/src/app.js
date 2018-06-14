@@ -71,7 +71,7 @@ export class App extends React.Component {
             key: 0,
             recordset: 'CoalesceEntity',
             field: 'name',
-            operator: '=',
+            operator: 'EqualTo',
             value: '',
             matchCase: false
           }]

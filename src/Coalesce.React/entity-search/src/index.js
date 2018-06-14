@@ -3,14 +3,11 @@ import "babel-polyfill";
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Popup from 'react-popup';
-import {FilterCreator} from './filtercreator.js'
 import {SearchResults} from './results.js'
-import {registerLoader, registerTemplatePrompt, registerErrorPrompt} from 'common-components/lib/register.js'
-import { loadTemplates, loadTemplate } from 'common-components/lib/js/templateController.js';
-import { DialogMessage, DialogLoader, DialogTemplateSelection } from 'common-components/lib/components/dialogs'
+import {registerLoader, registerErrorPrompt} from 'common-components/lib/register.js'
+import { searchComplex } from 'common-components/lib/js/searchController.js';
 import { App } from './app'
 
-import {Menu} from 'common-components/lib/index.js'
 import 'common-components/bootstrap/css/bootstrap.min.css'
 
 import 'common-components/css/coalesce.css'
@@ -160,7 +157,7 @@ function getRecordsets(section) {
 }
 
 // Submits the user's selected criteria.
-function searchComplex(data, e) {
+function search(data, e) {
 
   // Create Query
   var query = {
@@ -181,15 +178,9 @@ function searchComplex(data, e) {
   // Display Spinner
   Popup.plugins().loader('Searching...');
 
+
   // Submit Query
-  fetch(karafRootAddr + '/cxf/data/search/complex', {
-    method: "POST",
-    body: JSON.stringify(query),
-    headers: new Headers({
-      'content-type': 'application/json; charset=utf-8'
-    }),
-  }).then(res => res.json())
-    .then(response => {
+  searchComplex(query).then(response => {
       renderResults(response, query.propertyNames);
   }).catch(function(error) {
       Popup.plugins().promptError("Executing Search: " + error);
@@ -299,7 +290,7 @@ fetch(karafRootAddr + '/cxf/data/templates/998b040b-2c39-4c98-9a9d-61d565b46e28/
 });
 */
 ReactDOM.render(
-  <App pjson={pjson} onSearch={searchComplex}/>,
+  <App pjson={pjson} onSearch={search}/>,
   document.getElementById('main')
 );
 
