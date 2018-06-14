@@ -137,7 +137,11 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
                 setModifiedBy(user);
                 setModifiedByIP(ip);
                 setObjectVersion(version);
-                
+
+                // History Created; Suspend to prevent additional entries.
+                this.setSuspendHistory(true);
+
+                updateLastModified();
             }
 
         }

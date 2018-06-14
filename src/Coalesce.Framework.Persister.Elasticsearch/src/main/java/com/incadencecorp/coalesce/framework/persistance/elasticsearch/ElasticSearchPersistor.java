@@ -91,21 +91,26 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
             AbstractClient client = conn.getDBConnector(params);
 
             BulkRequest request = iterator.iterate(entities);
+
+            LOGGER.debug("{} Entities Created {} Request", entities.length, request.requests().size());
+
             BulkResponse response = client.bulk(request).actionGet();
 
-            if (LOGGER.isDebugEnabled())
+            for (BulkItemResponse item : response.getItems())
             {
-                LOGGER.debug("{} Entities Created {} Request", entities.length, request.requests().size());
+                LOGGER.trace("({}) ID = {}, Index = {}, Type = {} : {}",
+                             item.status().toString(),
+                             item.getId(),
+                             item.getIndex(),
+                             item.getType(),
+                             LOGGER.isTraceEnabled() ? response : response.getClass().getSimpleName());
 
-                for (BulkItemResponse item : response.getItems())
+                if (item.isFailed())
                 {
-                    LOGGER.trace("({}) ID = {}, Index = {}, Type = {} : {}",
-                                 item.status().toString(),
-                                 item.getId(),
-                                 item.getIndex(),
-                                 item.getType(),
-                                 LOGGER.isTraceEnabled() ? response : response.getClass().getSimpleName());
+                    // TODO Roll back other changes.
+                    throw new ElasticsearchException("(FAILED) Request Failed: {}" + item.getFailureMessage());
                 }
+
             }
         }
         catch (CoalesceException e)

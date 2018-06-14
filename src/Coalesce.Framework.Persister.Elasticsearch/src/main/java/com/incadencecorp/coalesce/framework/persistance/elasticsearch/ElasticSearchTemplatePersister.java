@@ -83,6 +83,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     public static final String ENTITY_VERSION_COLUMN_NAME = normalize(CoalescePropertyFactory.getVersion());
     public static final String ENTITY_DATE_CREATED_COLUMN_NAME = normalize(CoalescePropertyFactory.getDateCreated());
     public static final String ENTITY_LAST_MODIFIED_COLUMN_NAME = normalize(CoalescePropertyFactory.getLastModified());
+    public static final String ENTITY_TITLE_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityTitle());
 
     // Linkage Entity 2 Column Names
     public static final String LINKAGE_ENTITY2_KEY_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageEntityKey());
@@ -419,6 +420,8 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                        Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.DATE_TIME_TYPE)));
         properties.put(ENTITY_LAST_MODIFIED_COLUMN_NAME,
                        Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.DATE_TIME_TYPE)));
+        properties.put(ENTITY_TITLE_COLUMN_NAME,
+                       Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
 
         return properties;
     }

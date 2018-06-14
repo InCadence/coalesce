@@ -46,10 +46,20 @@ public final class CoalesceTemplateUtil {
      * Contains the fields for every record set specified by the templates.
      */
     private static final Map<String, Map<String, ECoalesceFieldDataTypes>> TYPES = new HashMap<>();
+
+    /**
+     * Contains the mast list of fields for every record set specified by the templates.
+     */
+    private static final Map<String, ECoalesceFieldDataTypes> MASTER_TYPES = new HashMap<>();
+
     /**
      * Contains the record sets specified within the templates
      */
     private static final Map<String, Set<String>> RECORDSETS = new HashMap<>();
+    /**
+     * Contains metadata
+     */
+    private static final Map<String, ObjectMetaData> META = new HashMap<>();
 
     private static ICoalesceNormalizer normalizer = new DefaultNormalizer();
     private static CoalesceIteratorDataTypes iterator = new CoalesceIteratorDataTypes(normalizer);
@@ -86,6 +96,11 @@ public final class CoalesceTemplateUtil {
                 Map<String, Map<String, ECoalesceFieldDataTypes>> values = iterator.getDataTypes(template);
 
                 RECORDSETS.put(template.getKey(), values.keySet());
+                META.put(template.getKey(),
+                         new ObjectMetaData(template.getKey(),
+                                            template.getName(),
+                                            template.getSource(),
+                                            template.getVersion()));
 
                 // Iterate Over Record Sets
                 for (Map.Entry<String, Map<String, ECoalesceFieldDataTypes>> recordset : values.entrySet())
@@ -114,6 +129,7 @@ public final class CoalesceTemplateUtil {
                     }
 
                     TYPES.put(recordset.getKey(), recordset.getValue());
+                    MASTER_TYPES.putAll(recordset.getValue());
                 }
             }
             catch (CoalesceException e)
@@ -191,15 +207,25 @@ public final class CoalesceTemplateUtil {
     {
         initializeDefaults();
 
-        Map<String, ECoalesceFieldDataTypes> results = new HashMap<>();
+        return Collections.unmodifiableMap(MASTER_TYPES);
+    }
 
-        for (Map<String, ECoalesceFieldDataTypes> types : TYPES.values())
-        	
+    /**
+     * @param name property of interest
+     * @return the data type
+     */
+    public static ECoalesceFieldDataTypes getDataType(String name)
+    {
+        initializeDefaults();
+
+        String parts[] = name.split("[.]");
+
+        if (parts.length != 2)
         {
-            results.putAll(types);
+            throw new IllegalArgumentException("Invalid Property Name (<recordset>.<field>): " + name);
         }
 
-        return results;
+        return MASTER_TYPES.get(normalizer.normalize(parts[0], parts[1]));
     }
 
     /**
@@ -245,6 +271,25 @@ public final class CoalesceTemplateUtil {
         if (recordsets != null)
         {
             results.addAll(recordsets);
+        }
+
+        return results;
+    }
+
+    /**
+     * @param recordset of interest
+     * @return a set of templates metadata that contains the specified recordset.
+     */
+    public static Set<ObjectMetaData> getTemplatesContainingRecordset(String recordset)
+    {
+        Set<ObjectMetaData> results = new HashSet<>();
+
+        for (Map.Entry<String, Set<String>> entry : RECORDSETS.entrySet())
+        {
+            if (entry.getValue().contains(recordset))
+            {
+                results.add(META.get(entry.getKey()));
+            }
         }
 
         return results;
@@ -336,6 +381,10 @@ public final class CoalesceTemplateUtil {
 
             TYPES.put("coalescelinkage", coalescelinkage);
             TYPES.put("coalesceentity", coalesceentity);
+
+            MASTER_TYPES.putAll(coalescelinkage);
+            MASTER_TYPES.putAll(coalesceentity);
+
         }
     }
 

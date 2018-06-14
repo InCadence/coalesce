@@ -35,12 +35,10 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.Capabilities;
 import org.geotools.filter.FunctionImpl;
 import org.geotools.filter.capability.FunctionNameImpl;
-import org.geotools.filter.capability.TemporalCapabilitiesImpl;
 import org.geotools.jdbc.JDBCDataStore;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.*;
-import org.opengis.filter.capability.TemporalCapabilities;
 import org.opengis.filter.expression.*;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.spatial.*;
@@ -977,32 +975,21 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
      */
     public void setSortBy(SortBy... sort)
     {
-
-        sortByList = new ArrayList<SortBy>();
+        sortByList = new ArrayList<>();
 
         if (sort != null)
         {
             for (SortBy sortBy : sort)
             {
-
                 String name = sortBy.getPropertyName().getPropertyName();
 
                 // Column properly formatted with a table name?
                 if (name.contains(DOT))
                 {
-
-                    name = normalize(name, true).replaceAll("coalesce\\.|[.]", "");
-
-                    // if (isEnumeration(name)) {
-                    // // Drop the record set
-                    // name = name.split("[.]")[1];
-                    // }
-
                     sortByList.add(factory.sort(name, sortBy.getSortOrder()));
                 }
             }
         }
-
     }
 
     /**
@@ -1181,10 +1168,12 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     {
 
         boolean isEnumerationType = false;
+        /*
+        ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(name.substring(name.indexOf(".") + 1));
 
-        if (CoalesceTemplateUtil.getDataTypes().containsKey(name))
+        if (type != null)
         {
-            switch (CoalesceTemplateUtil.getDataTypes().get(name))
+            switch (type)
             {
             case ENUMERATION_TYPE:
                 isEnumerationType = true;
@@ -1201,6 +1190,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
             }
         }
+        */
 
         return isEnumerationType;
 
@@ -1257,7 +1247,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     @Override
     public ECoalesceFieldDataTypes getDataType(PropertyName name)
     {
-        return CoalesceTemplateUtil.getDataTypes().get(normalize(name.getPropertyName(), true));
+        return CoalesceTemplateUtil.getDataType(name.getPropertyName());
     }
 
     @Override

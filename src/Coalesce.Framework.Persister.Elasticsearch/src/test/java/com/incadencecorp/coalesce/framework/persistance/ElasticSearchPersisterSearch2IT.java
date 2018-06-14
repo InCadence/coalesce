@@ -20,7 +20,6 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch;
 import com.incadencecorp.coalesce.search.AbstractSearchTest;
 import org.junit.BeforeClass;
@@ -29,6 +28,8 @@ import org.junit.BeforeClass;
  * @author Derek Clemenzi
  */
 public class ElasticSearchPersisterSearch2IT extends AbstractSearchTest<ElasticSearchPersistorSearch> {
+
+    private ElasticSearchPersistorSearch persister = new ElasticSearchPersistorSearch();
 
     @BeforeClass
     public static void initialize()
@@ -39,6 +40,6 @@ public class ElasticSearchPersisterSearch2IT extends AbstractSearchTest<ElasticS
     @Override
     protected ElasticSearchPersistorSearch createPersister() throws CoalescePersistorException
     {
-        return new ElasticSearchPersistorSearch();
+        return persister;
     }
 }

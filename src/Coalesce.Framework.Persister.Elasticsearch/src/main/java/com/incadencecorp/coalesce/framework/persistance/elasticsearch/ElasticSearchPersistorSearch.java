@@ -1,26 +1,188 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
-import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.RowSetProvider;
-
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.support.AbstractClient;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
+import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
+import mil.nga.giat.data.elasticsearch.ElasticDataStoreFactory;
+import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFactorySpi;
+import org.geotools.data.DataStoreFinder;
 import org.geotools.data.Query;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.Capabilities;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
-import com.incadencecorp.coalesce.search.api.SearchResults;
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.*;
 
 public class ElasticSearchPersistorSearch extends ElasticSearchPersistor implements ICoalesceSearchPersistor {
-	
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistorSearch.class);
 
-	@Override
+    /**
+     * Default constructor using {@link ElasticSearchSettings} for configuration
+     */
+    public ElasticSearchPersistorSearch()
+    {
+        super();
+    }
+
+    /**
+     * @param params configuration.
+     */
+    public ElasticSearchPersistorSearch(Map<String, String> params)
+    {
+        super(params);
+    }
+
+    @Override
+    public SearchResults search(Query query) throws CoalescePersistorException
+    {
+        // Ensure Entity Key is the first parameter
+        List<PropertyName> properties = new ArrayList<>();
+
+        if (query.getProperties() != null)
+        {
+            properties.addAll(query.getProperties());
+        }
+
+        if (properties.size() == 0
+                || !properties.get(0).getPropertyName().equalsIgnoreCase(CoalescePropertyFactory.getEntityKey().getPropertyName()))
+        {
+            properties.add(0, CoalescePropertyFactory.getEntityKey());
+        }
+
+        query.setProperties(properties);
+
+        try
+        {
+            ElasticSearchQueryRewriter rewriter = new ElasticSearchQueryRewriter();
+            Query localQuery = rewriter.rewrite(query);
+
+            Map<String, String> props = new HashMap<>();
+            props.put(ElasticDataStoreFactory.HOSTNAME.key, params.get(ElasticSearchSettings.PARAM_HTTP_HOST));
+            props.put(ElasticDataStoreFactory.HOSTPORT.key, params.get(ElasticSearchSettings.PARAM_HTTP_PORT));
+            props.put(ElasticDataStoreFactory.SSL_ENABLED.key, params.get(ElasticSearchSettings.PARAM_SSL_ENABLED));
+            props.put(ElasticDataStoreFactory.SSL_REJECT_UNAUTHORIZED.key, params.get(ElasticSearchSettings.PARAM_SSL_REJECT_UNAUTHORIZED));
+            props.put(ElasticDataStoreFactory.SOURCE_FILTERING_ENABLED.key, Boolean.TRUE.toString());
+
+            if (Boolean.parseBoolean(params.get(ElasticSearchSettings.PARAM_SSL_ENABLED)))
+            {
+                System.setProperty("javax.net.ssl.keyStore", params.get(ElasticSearchSettings.PARAM_KEYSTORE_FILE));
+                System.setProperty("javax.net.ssl.keyStorePassword",
+                                   params.get(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD));
+
+                System.setProperty("javax.net.ssl.trustStore", params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE));
+                System.setProperty("javax.net.ssl.trustStorePassword",
+                                   params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));
+            }
+
+            // TODO Add support for JOINS.
+            props.put(ElasticDataStoreFactory.INDEX_NAME.key, localQuery.getTypeName());
+
+            DataStore datastore = DataStoreFinder.getDataStore(props);
+
+            if (LOGGER.isDebugEnabled())
+            {
+                Iterator<DataStoreFactorySpi> availableStores = DataStoreFinder.getAvailableDataStores();
+
+                LOGGER.debug("List Available Stores:");
+                while (availableStores.hasNext())
+                {
+                    LOGGER.debug("\t{}", availableStores.next().getClass().getName());
+                }
+
+                LOGGER.info("Selected Store: {}", datastore.getClass().getSimpleName());
+            }
+
+            String typeName;
+
+            switch (localQuery.getTypeName())
+            {
+            case ElasticSearchPersistor.COALESCE_ENTITY_INDEX:
+                typeName = ElasticSearchPersistor.COALESCE_ENTITY;
+                break;
+            case ElasticSearchPersistor.COALESCE_LINKAGE_INDEX:
+                typeName = CoalesceLinkage.NAME;
+                break;
+            default:
+                typeName = "recordset";
+                break;
+            }
+
+            SimpleFeatureSource featureSource = datastore.getFeatureSource(typeName);
+
+            LOGGER.debug("Doing this search: " + localQuery.toString());
+
+            // Normalize Column Headers
+            String[] columnList = new String[properties.size()];
+            for (int i = 0; i < properties.size(); i++)
+            {
+                ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(properties.get(i).getPropertyName());
+
+                if (type == null)
+                {
+                    type = ECoalesceFieldDataTypes.STRING_TYPE;
+
+                }
+
+                LOGGER.debug("Property: {} Type: {}", properties.get(i).getPropertyName(), type);
+
+                columnList[i] = properties.get(i).getPropertyName().replace(".", "");
+            }
+
+            SearchResults results = new SearchResults();
+            CachedRowSet rowset;
+            int total;
+
+            try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localQuery).features())
+            {
+                Iterator<Object[]> columnIterator = new FeatureColumnIterator(featureItr, properties);
+                CoalesceResultSet resultSet = new CoalesceResultSet(columnIterator, columnList);
+                rowset = RowSetProvider.newFactory().createCachedRowSet();
+                rowset.populate(resultSet);
+
+                total = rowset.size();
+            }
+
+            // TODO If page size is reach we need to determine the total.
+
+            results.setTotal(total);
+            results.setResults(rowset);
+
+            return results;
+        }
+        catch (IOException | SQLException | RuntimeException e)
+        {
+            throw new CoalescePersistorException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public EnumSet<EPersistorCapabilities> getCapabilities()
+    {
+        EnumSet<EPersistorCapabilities> capabilities = super.getCapabilities();
+
+        capabilities.add(EPersistorCapabilities.GEOSPATIAL_SEARCH);
+        capabilities.add(EPersistorCapabilities.TEMPORAL_SEARCH);
+
+        return capabilities;
+    }
+
+    @Override
     public Capabilities getSearchCapabilities()
     {
         Capabilities capability = new Capabilities();
@@ -28,121 +190,6 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
         capability.addAll(Capabilities.LOGICAL);
 
         return capability;
-    }
-	
-	public SearchResponse searchAll()
-    {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(params);
-            QueryBuilder qb = QueryBuilders.matchAllQuery();
-            SearchResponse response = client.prepareSearch().setQuery(qb).get();
-            //.execute()
-            //.actionGet();
-            LOGGER.debug(response.toString());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void searchSpecific(String searchValue, String searchType)
-    {
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(params);
-            QueryBuilder qb = QueryBuilders.matchAllQuery();
-            //QueryBuilder qb = QueryBuilders.matchPhraseQuery("PMESIIPTMilitary", "1");
-            SearchResponse response = client.prepareSearch(searchValue)
-                    //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                    .setQuery(qb)                 // Query
-                    //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
-                    //.setFrom(0).setSize(60).setExplain(true)
-                    .get();
-
-            LOGGER.debug(response.toString());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void searchSpecificWithFilter(String searchValue, String searchType, String filterName, String filterValue)
-    {
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(params);
-            QueryBuilder qb = QueryBuilders.matchPhraseQuery(filterName, filterValue);
-            SearchResponse response = client.prepareSearch(searchValue)
-                    //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                    .setQuery(qb)                 // Query
-                    //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
-                    //.setFrom(0).setSize(60).setExplain(true)
-                    .get();
-
-            LOGGER.debug(response.toString());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void searchElasticGeo()
-    {
-
-        //FilterToElastic filterElastic = new FilterToElastic();
-
-        //Map<String, Object> queryBuilder = filterElastic.getNativeQueryBuilder();
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            AbstractClient client = conn.getDBConnector(params);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public SearchResults search(Query query) throws CoalescePersistorException
-    {
-        CachedRowSet rowset = null;
-
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
-        {
-            rowset = RowSetProvider.newFactory().createCachedRowSet();
-            AbstractClient client = conn.getDBConnector(params);
-            SearchResponse response = client.prepareSearch("gdelt_data").setQuery(QueryBuilders.termQuery("GlobalEventID",
-                                                                                                          "410479387"))                 // Query
-                    //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
-                    //.setFrom(0).setSize(60).setExplain(true)
-                    .get();
-
-            LOGGER.debug(response.toString());
-        }
-        catch (Exception e)
-        {
-            LOGGER.error(e.getMessage());
-            //throw new CoalescePersistorException(e.getMessage(), e);
-        }
-        // TODO Not Implemented
-        //query.getFilter().toString();
-        //query.getAlias();
-
-        //QueryBuilder qb = QueryBuilders.matchQuery(
-        //		"GlobalEventID",
-        //		"410479387");
-
-        SearchResults queryResults = new SearchResults();
-        queryResults.setResults(rowset);
-        return queryResults;
     }
 
 }

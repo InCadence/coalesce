@@ -55,22 +55,27 @@ public class ElasticSearchSettings {
     public static final String PARAM_SSL_ENABLED = PARAM_SSL_BASE + "enabled";
 
     /**
-     * (String) Defines the location the the key store.
+     * (Boolean) Specifies whether to validate server certificate (ignored if ssl_enabled=false)
+     */
+    public static final String PARAM_SSL_REJECT_UNAUTHORIZED = PARAM_SSL_BASE + "reject_unauthorized";
+
+    /**
+     * (String) Defines the location the the key store. Defaults to System Property javax.net.ssl.keyStore.
      */
     public static final String PARAM_KEYSTORE_FILE = PARAM_SSL_BASE + "keystore";
 
     /**
-     * (String) Keystore Password
+     * (String) Key store's Password. Defaults to System Property javax.net.ssl.keyStorePassword.
      */
     public static final String PARAM_KEYSTORE_PASSWORD = PARAM_KEYSTORE_FILE + ".password";
 
     /**
-     * (String) Defines the location the the trust store.
+     * (String) Defines the location the the trust store. Defaults to System Property javax.net.ssl.trustStore.
      */
     public static final String PARAM_TRUSTSTORE_FILE = PARAM_SSL_BASE + "truststore";
 
     /**
-     * (String) Truststore Password
+     * (String) Trust store's Password. Defaults to System Property javax.net.ssl.trustStorePassword.
      */
     public static final String PARAM_TRUSTSTORE_PASSWORD = PARAM_TRUSTSTORE_FILE + ".password";
 
@@ -83,7 +88,22 @@ public class ElasticSearchSettings {
      */
     public static final String PARAM_HOSTS = PARAM_ELASTIC_BASE + "hosts";
 
-    /*--------------------------------------------------------------------------
+    /**
+     * (String) Defines the host used for HTTP requests
+     */
+    public static final String PARAM_HTTP_HOST = PARAM_ELASTIC_BASE + "http.host";
+
+    /**
+     * (String) Defines the port used for HTTP requests
+     */
+    public static final String PARAM_HTTP_PORT = PARAM_ELASTIC_BASE + "http.port";
+
+    private static final String DEFAULT_KEYSTORE_FILE = getSystemProperty("javax.net.ssl.keyStore");
+    private static final String DEFAULT_KEYSTORE_PASSWORD = getSystemProperty("javax.net.ssl.keyStorePassword");
+    private static final String DEFAULT_TRUSTSTORE_FILE = getSystemProperty("javax.net.ssl.trustStore");
+    private static final String DEFAULT_TRUSTSTORE_PASSWORD = getSystemProperty("javax.net.ssl.trustStorePassword");
+
+    /*--------------------------------------------------------------------------    
     Initialization
     --------------------------------------------------------------------------*/
 
@@ -135,9 +155,19 @@ public class ElasticSearchSettings {
         return settings.getSetting(config_name, PARAM_HOSTS, "", false);
     }
 
+    public static String getHTTPHost()
+    {
+        return settings.getSetting(config_name, PARAM_HTTP_HOST, "localhost", false);
+    }
+
+    public static String getHTTPPort()
+    {
+        return settings.getSetting(config_name, PARAM_HTTP_PORT, "9200", false);
+    }
+
     public static String getKeystoreFilepath()
     {
-        return settings.getSetting(config_name, PARAM_KEYSTORE_FILE, "", false);
+        return settings.getSetting(config_name, PARAM_KEYSTORE_FILE, DEFAULT_KEYSTORE_FILE, false);
     }
 
     public static void setKeystoreFilepath(String keystoreFilepath)
@@ -145,14 +175,34 @@ public class ElasticSearchSettings {
         settings.setSetting(config_name, PARAM_KEYSTORE_FILE, keystoreFilepath);
     }
 
+    public static String getKeystorePassword()
+    {
+        return settings.getSetting(config_name, PARAM_KEYSTORE_PASSWORD, DEFAULT_KEYSTORE_PASSWORD, false);
+    }
+
+    public static void setKeystorePassword(String value)
+    {
+        settings.setSetting(config_name, PARAM_KEYSTORE_PASSWORD, value);
+    }
+
     public static String getTruststoreFilepath()
     {
-        return settings.getSetting(config_name, PARAM_TRUSTSTORE_FILE, "", false);
+        return settings.getSetting(config_name, PARAM_TRUSTSTORE_FILE, DEFAULT_TRUSTSTORE_FILE, false);
     }
 
     public static void setTruststoreFilepath(String truststoreFilepath)
     {
         settings.setSetting(config_name, PARAM_TRUSTSTORE_FILE, truststoreFilepath);
+    }
+
+    public static String getTruststorePassword()
+    {
+        return settings.getSetting(config_name, PARAM_TRUSTSTORE_PASSWORD, DEFAULT_TRUSTSTORE_PASSWORD, false);
+    }
+
+    public static void setTruststorePassword(String value)
+    {
+        settings.setSetting(config_name, PARAM_TRUSTSTORE_PASSWORD, value);
     }
 
     public static void setElasticClusterName(String clusterName)
@@ -175,6 +225,16 @@ public class ElasticSearchSettings {
         return settings.getSetting(config_name, PARAM_SSL_ENABLED, false, false);
     }
 
+    public static void setRejectUnauthorized(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_SSL_REJECT_UNAUTHORIZED, value);
+    }
+
+    public static boolean isRejectUnauthorized()
+    {
+        return settings.getSetting(config_name, PARAM_SSL_REJECT_UNAUTHORIZED, true, false);
+    }
+
     public static boolean isAuthoritative()
     {
         return settings.getSetting(config_name, PARAM_IS_AUTHORITATIVE, true, false);
@@ -191,14 +251,28 @@ public class ElasticSearchSettings {
 
         params.put(PARAM_IS_AUTHORITATIVE, Boolean.toString(isAuthoritative()));
         params.put(PARAM_SSL_ENABLED, Boolean.toString(isSSLEnabled()));
+        params.put(PARAM_SSL_REJECT_UNAUTHORIZED, Boolean.toString(isRejectUnauthorized()));
         params.put(PARAM_KEYSTORE_FILE, getKeystoreFilepath());
-        params.put(PARAM_KEYSTORE_PASSWORD, "changeit");
+        params.put(PARAM_KEYSTORE_PASSWORD, getKeystorePassword());
         params.put(PARAM_TRUSTSTORE_FILE, getTruststoreFilepath());
-        params.put(PARAM_TRUSTSTORE_PASSWORD, "changeit");
+        params.put(PARAM_TRUSTSTORE_PASSWORD, getTruststorePassword());
         params.put(PARAM_HOSTS, getElastichosts());
         params.put(PARAM_CLUSTER_NAME, getElasticClusterName());
+        params.put(PARAM_HTTP_HOST, getHTTPHost());
+        params.put(PARAM_HTTP_PORT, getHTTPPort());
 
         return params;
     }
 
+    private static String getSystemProperty(String property)
+    {
+        String value = System.getProperty("javax.net.ssl.trustStorePassword");
+
+        if (value == null)
+        {
+            value = "";
+        }
+
+        return value;
+    }
 }

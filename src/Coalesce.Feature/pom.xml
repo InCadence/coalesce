@@ -63,7 +63,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.notification</groupId>
-			<artifactId>coalece-notification-feature</artifactId>
+			<artifactId>coalesce-notification-feature</artifactId>
 			<version>${project.version}</version>
 			<type>xml</type>
 			<classifier>features</classifier>

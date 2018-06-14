@@ -1,56 +1,65 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>persister-accumulo-feature</artifactId>
-	<packaging>feature</packaging>
-	<name>Coalesce Accumulo Persister Feature</name>
-	<description>Karaf feature for the Memory persister</description>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>persister-accumulo-feature</artifactId>
+    <packaging>feature</packaging>
+    <name>Coalesce Accumulo Persister Feature</name>
+    <description>Karaf feature for the Memory persister</description>
 
-	<parent>
-		<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-		<artifactId>persister-accumulo-parent</artifactId>
-		<version>0.0.27-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
+    <parent>
+        <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+        <artifactId>persister-accumulo-parent</artifactId>
+        <version>0.0.27-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.karaf.tooling</groupId>
-				<artifactId>karaf-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
-	<dependencies>
+    <dependencies>
 
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-framework-persister-accumulo</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.geotools</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.geotools.xsd</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.incadencecorp.coalesce</groupId>
-					<artifactId>coalesce-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.accumulo</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.locationtech.geomesa</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-framework-persister-accumulo</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.geotools</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.geotools.xsd</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-	</dependencies>
+        <!-- Provided by coalesce-core-feature -->
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Provided by bundle-geomesa -->
+        <dependency>
+            <groupId>org.apache.accumulo</groupId>
+            <artifactId>accumulo-core</artifactId>
+            <version>${accumulo.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.locationtech.geomesa</groupId>
+            <artifactId>geomesa-accumulo-datastore_2.11</artifactId>
+            <version>${accumulo.geomesa.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
 
 </project>

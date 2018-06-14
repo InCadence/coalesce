@@ -23,19 +23,6 @@
     </build>
 
     <dependencies>
-        <!--
-                <dependency>
-                    <groupId>org.apache.servicemix.bundles</groupId>
-                    <artifactId>org.apache.servicemix.bundles.lucene</artifactId>
-                    <version>6.5.1_1</version>
-                </dependency>
-        -->
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>21.0</version>
-        </dependency>
 
         <dependency>
             <groupId>com.incadencecorp.coalesce</groupId>
@@ -50,33 +37,17 @@
                     <groupId>org.geotools.xsd</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>org.geotools.jdbc</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.opengis</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.lucene</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- Provided by coalesce-core-feature -->
         <dependency>
             <groupId>com.incadencecorp.coalesce</groupId>
             <artifactId>coalesce-core</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Provided by bundle-ironhide -->
         <dependency>
             <groupId>ironhide</groupId>
             <artifactId>ironhide-client</artifactId>
@@ -90,11 +61,18 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>mil.nga.giat</groupId>
+            <artifactId>gs-web-elasticsearch</artifactId>
+            <version>${elasticgeo.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>transport</artifactId>
             <version>${elasticsearch.version}</version>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
 </project>
