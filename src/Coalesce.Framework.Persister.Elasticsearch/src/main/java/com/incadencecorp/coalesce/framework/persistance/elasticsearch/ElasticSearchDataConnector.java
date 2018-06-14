@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Stream;
 
-public class ElasticSearchDataConnector {
+public class ElasticSearchDataConnector implements AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchDataConnector.class);
 
@@ -55,7 +55,7 @@ public class ElasticSearchDataConnector {
         return client;
     }
 
-    //@Override
+    @Override
     public void close()
     {
         if (client != null)
@@ -70,8 +70,6 @@ public class ElasticSearchDataConnector {
 
         try
         {
-            LOGGER.debug("Creating the Client");
-            
             Settings.builder().put("cluster.name", props.getProperty(ElasticSearchSettings.PARAM_CLUSTER_NAME));
 
             client = new PreBuiltTransportClient(Settings.builder().build());
@@ -106,7 +104,6 @@ public class ElasticSearchDataConnector {
 
         try
         {
-            LOGGER.debug("Creating the SSL Client");
             if (LOGGER.isDebugEnabled())
             {
                 LOGGER.debug("Keystore = {}", props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_FILE));
