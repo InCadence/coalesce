@@ -46,6 +46,7 @@ class TemplateWorkspace extends Component {
     this.handleTemplateSave = this.handleTemplateSave.bind(this);
     this.handleTemplateRemove = this.handleTemplateRemove.bind(this);
     this.handleTemplateRegister = this.handleTemplateRegister.bind(this);
+    this.handleTemplateClear = this.handleTemplateClear.bind(this);
     this.handleGraphAdd = this.handleGraphAdd.bind(this);
     this.handleEditModalToggle = this.handleEditModalToggle.bind(this);
   }
@@ -53,7 +54,6 @@ class TemplateWorkspace extends Component {
   componentDidMount() {
 
     var that = this;
-    window.addEventListener("resize", this.updateScaling.bind(this));
     loadJSON('theme').then((value) => {
       that.setState({
         theme: getMuiTheme(value)
@@ -61,6 +61,12 @@ class TemplateWorkspace extends Component {
     }).catch((err) => {
       console.log("Loading Theme: " + err);
     })
+  }
+
+  handleTemplateClear(){
+    if(this.state.items.length !== 0){
+      this.setState({items: [], removedItems: [], newCounter: 0, removedCount: 0, emptySpace: false});
+    }
   }
 
   handleEditModalToggle() {
@@ -71,6 +77,7 @@ class TemplateWorkspace extends Component {
 
     //console.log("adding template to workspace...");
     //Check to see if there was a previously occupied space
+    //Set different template type between adding and loading
     var templateType = 0;
     if(!this.state.emptySpace){
       this.setState({
@@ -93,7 +100,8 @@ class TemplateWorkspace extends Component {
     else{
       this.addInEmptySpace(templateType);
     }
-    console.log(this.state.items.length*5, this.state.cols||20, window.screen.availWidth);
+    console.log("Adding Template");
+    this.debugItemPrint();
   }
 
   handlePromptTemplate() {
@@ -118,17 +126,32 @@ class TemplateWorkspace extends Component {
     //Without it, this does not exist(?) in this scope after
     var templateType = 1;
     var that = this;
+    var oldI, oldX, oldY;
+    var index = -1;
     // Load Template
     loadTemplate(key).then (function(template) {
-      //Check to see if there is a space that was previously occupied
-      //If not, add per usual
-      if(!that.state.emptySpace){
+      //Check to see if template with desired key already exists
+      for(var ii = 0; ii < that.state.items.length; ii++){
+        if(that.state.items[ii].template.key === key){
+          //If key exists, store location, i value, and index
+          oldI = that.state.items[ii].i;
+          oldX = that.state.items[ii].x;
+          oldY = that.state.items[ii].y;
+          index = ii;
+          //console.log("Key matches, index is", index);
+        }
+      }
+      //If index is not default value, key exists
+      if(index !== -1){
+        //Release existing template with matching key
+        that.state.items.splice(index,1);
+        //Place new template in old location
         that.setState({
           // Add a new item.
           items: that.state.items.concat({
-            i: "n" + that.state.newCounter,
-            x: ((that.state.items.length * 5) % (that.state.cols || 20)),
-            y: 0,
+            i: oldI,
+            x: oldX,
+            y: oldY,
             w: 5,
             h: 15,
             static: false,
@@ -139,9 +162,31 @@ class TemplateWorkspace extends Component {
           newCounter: that.state.newCounter + 1,
         });
       }
-      //If there was a previously occupied space, insert there first
+      //Key does not already exist
       else{
-        that.addInEmptySpace(templateType, template);
+        //Check to see if there is a previously vacated space to insert
+        if(!that.state.emptySpace){
+          //If no, insert as normal
+          that.setState({
+            // Add a new item.
+            items: that.state.items.concat({
+              i: "n" + that.state.newCounter,
+              x: ((that.state.items.length * 5) % (that.state.cols || 20)),
+              y: 0,
+              w: 5,
+              h: 15,
+              static: false,
+              widgetType: "template",
+              template: template,
+            }),
+            // Increment the counter to ensure key is always unique.
+            newCounter: that.state.newCounter + 1,
+          });
+        }
+        //If there was a previously occupied space, insert there first
+        else{
+          that.addInEmptySpace(templateType, template);
+        }
       }
     }).catch((err) => {
       that.setState({
@@ -149,6 +194,7 @@ class TemplateWorkspace extends Component {
       });
 
     });
+    console.log("Loading Template");
     this.debugItemPrint();
   }
 
@@ -316,58 +362,6 @@ class TemplateWorkspace extends Component {
 
   }
 
-  updateScaling(){
-    var newItems = this.state.items;
-    var curSize = window.innerWidth/300;
-    var scale = 0;
-    var toUse = 0;
-    if((Math.ceil(curSize)) > 3){
-      toUse = 3;
-    }
-    else if((Math.ceil(curSize)) <= 3 && (Math.ceil(curSize)) > 2){
-      toUse = 2;
-    }
-    else if((Math.ceil(curSize)) <= 2 && (Math.ceil(curSize)) > 1){
-      toUse = 1;
-    }
-    else{
-      toUse = 0;
-    }
-    scale = this.state.scaling[toUse];
-  /*  console.log("Scale is", scale, "CurSize", curSize, "Window is", window.innerWidth);
-    for(var ii = 0; ii < newItems.length; ii++){
-      console.log("Item", ii, "X is", newItems[ii].x, "Y is", newItems[ii].y,"5*",scale, "is", 5*scale);
-      if(newItems[ii].x >= 5*scale){
-        newItems[ii].x = (newItems[ii].x)%(5*scale);
-        //newItems[ii].y = 15+newItems[ii].y;
-        console.log("Scale is", scale, "Item", ii, "is", newItems[ii]);
-      }
-    }*/
-    console.log("Finished with updating scaling and position", "New cols should be",5*scale);
-    for(var ii = newItems.length-1; ii >= 0; ii--){
-      if(newItems[ii].x >= 5*scale){
-        this.setState({
-        // Add a new item.
-          items: this.state.items.concat({
-            i: newItems[ii].i,
-            x: ((this.state.items.length * 5) % (5*scale)),
-            y: newItems[ii].y+15, // puts it at the bottom
-            w: 5,
-            h: 15,
-            static: false,
-            widgetType: "template",
-            template: newItems[ii].template,
-          }),
-        });
-        this.state.items.splice(ii,1);
-      }
-  }
-    //this.setState({items: newItems});
-    this.setState({cols: 5*scale});
-    //this.debugItemPrint();
-    //this.render();
-  }
-
   handleGraphAdd() {
 
     this.setState({
@@ -425,14 +419,6 @@ class TemplateWorkspace extends Component {
     );
   }
 
-  reCalculateLayout(){
-    var newLayout = this.state.items;
-    for(var ii = 0; ii < newLayout.length; ii++){
-      newLayout[ii] = {x: ((newLayout.length * 5) % (this.state.cols || 20)), y: 0, w: 5, h: 15}
-    }
-    console.log("reCalculateLayout", newLayout);
-    return newLayout;
-  }
   render() {
 
     return (
@@ -468,6 +454,12 @@ class TemplateWorkspace extends Component {
             img: "/images/svg/template.svg",
             title: 'Register Template',
             onClick: () => {this.handleTemplateRegister()}
+          },{
+            id: 'clear',
+            name: 'clear',
+            img: "/images/svg/save.svg",
+            title: 'Clear Workspace',
+            onClick: () => {this.handleTemplateClear()}
           }
         ]}/>
         <MuiThemeProvider muiTheme={this.state.theme}>
