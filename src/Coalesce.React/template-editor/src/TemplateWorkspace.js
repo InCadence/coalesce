@@ -457,7 +457,7 @@ class TemplateWorkspace extends Component {
           },{
             id: 'clear',
             name: 'clear',
-            img: "/images/svg/save.svg",
+            img: "/images/svg/remove.svg",
             title: 'Clear Workspace',
             onClick: () => {this.handleTemplateClear()}
           }
