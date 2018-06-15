@@ -344,6 +344,24 @@ class TemplateWorkspace extends Component {
       }
     }*/
     console.log("Finished with updating scaling and position", "New cols should be",5*scale);
+    for(var ii = newItems.length-1; ii >= 0; ii--){
+      if(newItems[ii].x >= 5*scale){
+        this.setState({
+        // Add a new item.
+          items: this.state.items.concat({
+            i: newItems[ii].i,
+            x: ((this.state.items.length * 5) % (5*scale)),
+            y: newItems[ii].y+15, // puts it at the bottom
+            w: 5,
+            h: 15,
+            static: false,
+            widgetType: "template",
+            template: newItems[ii].template,
+          }),
+        });
+        this.state.items.splice(ii,1);
+      }
+  }
     //this.setState({items: newItems});
     this.setState({cols: 5*scale});
     //this.debugItemPrint();
