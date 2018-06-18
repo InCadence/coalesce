@@ -15,6 +15,8 @@ import {Menu} from 'common-components/lib/index.js';
 import { DialogMessage, DialogLoader, DialogTemplateSelection } from 'common-components/lib/components/dialogs';
 import RGL,{WidthProvider} from 'react-grid-layout';
 
+import { getRootKarafUrl } from 'common-components/src/js/common';
+
 var pjson = require('../package.json');
 const ReactGridLayout = WidthProvider(RGL);
 class TemplateWorkspace extends Component {
@@ -362,6 +364,14 @@ class TemplateWorkspace extends Component {
 
   }
 
+  handleTemplateDownload(){
+      var karafRootAddr = getRootKarafUrl();
+      console.log("Download", this.state.items.length, '${karafRootAddr}');
+      for(var ii = 0; ii < this.state.items.length; ii++){
+        window.open(`${karafRootAddr}` + '/templates/' + this.state.items[ii].template.key + '.xml', '_blank');
+      }
+  }
+
   handleGraphAdd() {
 
     this.setState({
@@ -460,6 +470,12 @@ class TemplateWorkspace extends Component {
             img: "/images/svg/remove.svg",
             title: 'Clear Workspace',
             onClick: () => {this.handleTemplateClear()}
+          },{
+            id: 'download',
+            name: 'download',
+            img: "/images/svg/down.svg",
+            title: 'Download Templates',
+            onClick: () => {this.handleTemplateDownload()}
           }
         ]}/>
         <MuiThemeProvider muiTheme={this.state.theme}>
