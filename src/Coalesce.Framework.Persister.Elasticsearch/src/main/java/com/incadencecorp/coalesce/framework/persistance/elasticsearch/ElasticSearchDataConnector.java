@@ -22,17 +22,9 @@ import java.util.stream.Stream;
 
 public class ElasticSearchDataConnector {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchDataConnector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchDataConnector.class);
 
     private AbstractClient client;
-
-    public ElasticSearchDataConnector(Properties props) {
-		client = getDBConnector(props);
-	}
-
-    public ElasticSearchDataConnector(Map<String, String> props) {
-		client = getDBConnector(props);
-	}
 
     public AbstractClient getDBConnector(Map<String, String> props)
     {

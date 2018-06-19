@@ -18,12 +18,10 @@ public class ElasticSearchDataConnectorIT {
 
     private static final String NAME = "name";
     private Map<String, String> parameters = new HashMap<>();
-    private ElasticSearchDataConnector conn;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
-    	/*
         FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
         connector.setReadOnly(true);
 
@@ -37,39 +35,33 @@ public class ElasticSearchDataConnectorIT {
         String user = props.getProperty("userid");
         String password = props.getProperty("password");
         new ServerConn.Builder().db(dbName).serverName(zookeepers).user(user).password(password).build();
-        
-        conn = new ElasticSearchDataConnector(params);
-        */
     }
 
     @Test
     public void testConnector()
     {
-    	/*
         FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
         connector.setReadOnly(true);
 
         ElasticSearchSettings.setConnector(connector);
-        */
     }
 
     @Test
     public void testGetDBConnection() throws Exception
     {
-    	/*
+        ElasticSearchDataConnector connector = new ElasticSearchDataConnector();
+
         Properties props = new Properties();
         props.putAll(ElasticSearchSettings.getParameters());
 
         AbstractClient client = connector.getDBConnector(props);
         connector.close();
         client.close();
-        */
     }
 
     @Test
     public void testIronhideConnection() throws Exception
     {
-    	/*
         AbstractClient client;
         ElasticSearchDataConnector connector = new ElasticSearchDataConnector();
         FilePropertyConnector fileConnector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
@@ -83,6 +75,5 @@ public class ElasticSearchDataConnectorIT {
         client = connector.getDBConnector(props);
         assertNotNull(client);
         connector.close();
-        */
     }
 }
