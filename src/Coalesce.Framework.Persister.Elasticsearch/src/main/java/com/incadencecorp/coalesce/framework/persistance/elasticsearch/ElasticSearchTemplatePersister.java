@@ -57,6 +57,7 @@ import java.util.*;
 public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersister {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchTemplatePersister.class);
+	protected ElasticSearchDataConnector conn;
 
     private static final ElasticSearchMapperImpl MAPPER = new ElasticSearchMapperImpl();
     private static final ICoalesceNormalizer NORMALIZER = new ElasticSearchNormalizer();
@@ -112,6 +113,8 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 && Boolean.parseBoolean(this.params.get(ElasticSearchSettings.PARAM_IS_AUTHORITATIVE));
         iterator = new ElasticSearchIterator(NORMALIZER, isAuthoritative);
 
+        conn = new ElasticSearchDataConnector(this.params);
+
         if (LOGGER.isDebugEnabled())
         {
             LOGGER.debug("Parameters: ");
@@ -129,7 +132,6 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     	AbstractClient client = null;
         try
         {
-        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
             client = conn.getDBConnector(params);
 
             for (CoalesceEntityTemplate template : templates)
@@ -167,7 +169,6 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     	AbstractClient client = null;
         try
         {
-        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
             client = conn.getDBConnector(params);
             for (String key : keys)
             {
@@ -186,7 +187,6 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     	AbstractClient client = null;
         try
         {
-        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
             client = conn.getDBConnector(params);
             for (String key : keys)
             {
@@ -210,7 +210,6 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         {
             try
             {
-            	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
                 client = conn.getDBConnector(params);
 
                 GetRequest request = new GetRequest();
@@ -272,7 +271,6 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     	AbstractClient client = null;
         try
         {
-        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
             client = conn.getDBConnector(params);
 
             BoolQueryBuilder boolQuery = new BoolQueryBuilder().must(QueryBuilders.matchQuery(ENTITY_NAME_COLUMN_NAME,
@@ -325,7 +323,6 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
         try
         {
-        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
             client = conn.getDBConnector(params);
 
             SearchRequestBuilder searchRequest = client.prepareSearch(COALESCE_ENTITY_INDEX).setTypes(COALESCE_TEMPLATE).setQuery(
@@ -368,7 +365,6 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
         try
         {
-        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
             client = conn.getDBConnector(params);
 
             CreateIndexResponse response;

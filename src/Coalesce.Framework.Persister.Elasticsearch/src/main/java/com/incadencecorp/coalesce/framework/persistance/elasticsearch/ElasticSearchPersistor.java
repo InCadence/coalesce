@@ -68,6 +68,9 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
     public ElasticSearchPersistor(Map<String, String> params)
     {
         super(params);
+        if(!params.isEmpty()) {
+        	conn = new ElasticSearchDataConnector(params);
+        }
     }
 
     /*--------------------------------------------------------------------------
@@ -89,7 +92,6 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
     	AbstractClient client = null;
         try 
         {
-        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
             client = conn.getDBConnector(params);
 
             BulkRequest request = iterator.iterate(entities);
@@ -146,7 +148,6 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
         AbstractClient client = null;
         try
         {
-        	ElasticSearchDataConnector conn = new ElasticSearchDataConnector();
             client = conn.getDBConnector(params);
 
             for (String key : keys)
