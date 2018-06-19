@@ -6,9 +6,12 @@ import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /*-----------------------------------------------------------------------------'
@@ -52,9 +55,16 @@ public class CoalesceSettings {
     --------------------------------------------------------------------------*/
 
     private static final String COALESCE = "Coalesce.";
+    private static final String HELPER = COALESCE + "Helper.";
     private static final String FILE_STORE = COALESCE + "FileStore.";
     private static final String SECURITY = COALESCE + "Security.";
     private static final String COORDINATES = COALESCE + "Coordinate.";
+
+    /*--------------------------------------------------------------------------
+    Helper Parameters
+    --------------------------------------------------------------------------*/
+
+    private static final String PARAM_TIME_PATTERNS = HELPER + "Time.Formats";
 
     /*--------------------------------------------------------------------------
     File Store Parameters
@@ -456,6 +466,24 @@ public class CoalesceSettings {
     public static void setThreadTimeout(int value)
     {
         settings.setSetting(getConfigurationFileName(), PARAM_THREAD_TIMOUT, value);
+    }
+
+    /**
+     * @return additional patterns for parsing DateTime values.
+     */
+    public static List<String> getTimePatterns()
+    {
+        return Arrays.asList(settings.getSetting(getConfigurationFileName(), PARAM_TIME_PATTERNS, "", true).split(","));
+    }
+
+    /**
+     * Sets additional patterns for parsing DateTime values.
+     *
+     * @param value
+     */
+    public static void setTimePatterns(List<String> value)
+    {
+        settings.setSetting(getConfigurationFileName(), PARAM_TIME_PATTERNS, StringUtils.join(value, ","));
     }
 
     /*--------------------------------------------------------------------------
