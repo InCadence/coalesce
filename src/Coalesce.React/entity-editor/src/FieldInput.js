@@ -1,11 +1,10 @@
 import React from 'react';
 import Checkbox from 'material-ui/Checkbox';
 import TextField from 'material-ui/TextField';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
-import Geoinput from './Geo.js';
+import MapPoint from './Geo/MapPoint.js';
+import Enumeration from './FieldInputs/Enumeration.js'
 import { IconButton } from 'common-components/lib/components/IconButton.js'
 
 import { Row, Col } from 'react-bootstrap';
@@ -56,7 +55,7 @@ export class FieldInput extends React.Component {
     const {field} = this.state;
     field[attr] = value;
 
-    console.log(`${attr}=${value}`);
+    //console.log(`${attr}=${value}`);
     this.setState(field);
 
   }
@@ -69,8 +68,36 @@ export class FieldInput extends React.Component {
     var attr = (this.props.attr != null) ? this.props.attr : 'value';
     var label = this.props.showLabels ? (field.label != null && field.label.length > 0 ? field.label : field.name) : null;
 
+    var opts = {
+      label: label,
+      attr: attr,
+      field: field,
+      style: style,
+    }
     switch (type) {
-
+      case 'ENUMERATION_LIST_TYPE':
+        return (
+          <Enumeration
+            list={true}
+            field={field}
+            style={style}
+            label={label}
+            showLabels={this.props.showLabels}
+            attr={attr}
+            options={this.props.options}
+            handleOnChange={this.handleOnChange}/>
+        )
+      case 'ENUMERATION_TYPE':
+        return (
+          <Enumeration
+            list={false}
+            field={field}
+            style={style}
+            label={label}
+            showLabels={this.props.showLabels}
+            attr={attr}
+            handleOnChange={this.handleOnChange}/>
+        );
       case 'URI_TYPE':
       case 'STRING_TYPE':
         return (
@@ -108,6 +135,7 @@ export class FieldInput extends React.Component {
       case 'DOUBLE_TYPE':
       case 'LONG_TYPE':
         return (
+          //pass these a "step" prop (.01 or 1)
           <TextField
             id={field.key}
             type='number'
@@ -126,6 +154,7 @@ export class FieldInput extends React.Component {
           <TextField
             id={field.key}
             type='number'
+            step='1'
             fullWidth={true}
             floatingLabelText={label}
             underlineShow={this.props.showLabels}
@@ -235,11 +264,17 @@ export class FieldInput extends React.Component {
           );
       case 'GEOCOORDINATE_LIST_TYPE':
         return (
-          <Geoinput list="true" value={field[attr]} handleOnChange={(event, value) => this.handleOnChange(attr, value)}/>
+          <MapPoint
+            opts={opts}
+            showLabels={this.props.showLabels}
+            list='Multipoint'/>
         );
       case 'GEOCOORDINATE_TYPE':
         return (
-          <Geoinput list="false" value={field[attr]} handleOnChange={(event, value) => this.handleOnChange(attr, value)}/>
+          <MapPoint
+            opts={opts}
+            showLabels={this.props.showLabels}
+            list='Point'/>
         );
       case 'CIRCLE_TYPE':
 

@@ -1,24 +1,35 @@
 import React from 'react';
-import FieldInput from '../FieldInput.js'
+import MenuItem from 'material-ui/MenuItem';
+import SelectField from 'material-ui/SelectField';
 
-export class Enumeration extends FieldInput {
+
+export default class Enumeration extends React.PureComponent {
   constructor(props) {
-    this.state = super(props);
+    super(props);
+    this.state = {
+      list: this.props.list,
+      field: this.props.field,
+      style: this.props.style,
+      label: this.props.label,
+      showLabels: this.props.showLabels,
+      attr: this.props.attr,
+    };
   }
 
-  handleOnChange(attr, value) {
-    this.state = super.handleOnChange(attr, values);
+  handleOnChange(attr, values) {
+    this.props.handleOnChange(attr, values);
   }
 
   render () {
-    const {field, style} = this.state;
+    const {field, style, attr} = this.state;
 
+    return(
     <SelectField
       id={field.key}
       fullWidth={true}
-      floatingLabelText={label}
+      floatingLabelText={this.state.label}
       underlineShow={this.props.showLabels}
-      multiple={this.state.list == 'true'}
+      multiple={this.state.list}
       value={field[attr] ? field[attr].toUpperCase() : null}
       style={style.root}
       labelStyle={style.root}
@@ -33,7 +44,7 @@ export class Enumeration extends FieldInput {
           <MenuItem key={item.enum} value={item.enum} primaryText={item.label} />
         )
       })}
-    </SelectField>
+    </SelectField>);
   }
 
 }
