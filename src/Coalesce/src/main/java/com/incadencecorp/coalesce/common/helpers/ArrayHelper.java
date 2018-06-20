@@ -17,10 +17,10 @@
 
 package com.incadencecorp.coalesce.common.helpers;
 
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
+
 import java.util.*;
 import java.util.stream.Collectors;
-
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 
 /**
  * Factory class for manipulating arrays.
@@ -290,4 +290,11 @@ public final class ArrayHelper {
         return strings.stream().map(String::toLowerCase).collect(Collectors.toList());
     }
 
+    /**
+     * @return an array of string all lowercased.
+     */
+    public static String[] tolowerCase(String[] strings)
+    {
+        return Arrays.stream(strings).map(String::toLowerCase).collect(Collectors.toList()).toArray(new String[strings.length]);
+    }
 }
