@@ -841,35 +841,34 @@ public class CoalesceRecordSetTest {
     @Test
     public void changeRecordStatusTest()
     {
-        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        TestEntity entity = new TestEntity();
+        entity.initialize();
 
-        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getCoalesceObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
+        TestRecord record1 = entity.addRecord1();
+        TestRecord record2 = entity.addRecord1();
 
-        CoalesceRecord newRecord = recordset.addNew();
+        assertTrue(entity.getRecordset1().getHasActiveRecords());
+        assertTrue(entity.getRecordset1().getHasRecords());
+        assertEquals(2, entity.getRecordset1().getRecords().size());
 
-        assertTrue(recordset.getHasActiveRecords());
-        assertTrue(recordset.getHasRecords());
-        assertEquals(2, recordset.getRecords().size());
+        record1.setStatus(ECoalesceObjectStatus.DELETED);
 
-        existingRecord.setStatus(ECoalesceObjectStatus.DELETED);
+        assertTrue(entity.getRecordset1().getHasActiveRecords());
+        assertTrue(entity.getRecordset1().getHasRecords());
+        assertEquals(1, entity.getRecordset1().getRecords().size());
 
-        assertTrue(recordset.getHasActiveRecords());
-        assertTrue(recordset.getHasRecords());
-        assertEquals(1, recordset.getRecords().size()); 
+        record2.setStatus(ECoalesceObjectStatus.UNKNOWN);
 
-        newRecord.setStatus(ECoalesceObjectStatus.UNKNOWN);
+        assertFalse(entity.getRecordset1().getHasActiveRecords());
+        assertTrue(entity.getRecordset1().getHasRecords());
+        assertEquals(0, entity.getRecordset1().getRecords().size());
+        assertEquals(2, entity.getRecordset1().getAllRecords().size());
 
-        assertFalse(recordset.getHasActiveRecords());
-        assertTrue(recordset.getHasRecords());
-        assertEquals(0, recordset.getRecords().size());
+        record1.setStatus(ECoalesceObjectStatus.ACTIVE);
 
-        existingRecord.setStatus(ECoalesceObjectStatus.ACTIVE);
-
-        assertTrue(recordset.getHasActiveRecords());
-        assertTrue(recordset.getHasRecords());
-        assertEquals(1, recordset.getRecords().size());
-
+        assertTrue(entity.getRecordset1().getHasActiveRecords());
+        assertTrue(entity.getRecordset1().getHasRecords());
+        assertEquals(1, entity.getRecordset1().getRecords().size());
     }
 
     @Test

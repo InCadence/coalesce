@@ -230,7 +230,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     @JsonIgnore
     public List<CoalesceRecord> getRecords()
     {
-        return getObjectsAsList(_entityRecordset.getRecord(), ECoalesceObjectStatus.DELETED);
+        return getObjectsAsList(_entityRecordset.getRecord(), ECoalesceObjectStatus.DELETED, ECoalesceObjectStatus.UNKNOWN);
     }
 
     @Override
