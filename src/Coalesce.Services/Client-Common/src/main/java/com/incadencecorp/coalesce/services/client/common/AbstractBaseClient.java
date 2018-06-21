@@ -26,6 +26,7 @@ import java.util.Map;
 
 import com.incadencecorp.coalesce.api.EJobStatus;
 import com.incadencecorp.coalesce.api.EResultStatus;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.services.api.IBaseClient;
 import com.incadencecorp.coalesce.services.api.ICoalesceEvents;
 import com.incadencecorp.coalesce.services.api.common.BaseRequest;
@@ -50,7 +51,7 @@ public abstract class AbstractBaseClient<T extends ICoalesceEvents> extends Base
      */
     public AbstractBaseClient()
     {
-        asyncJobMap = new HashMap<String, AsyncRequest<?>>();
+        asyncJobMap = new HashMap<>();
     }
 
     /*--------------------------------------------------------------------------
@@ -308,12 +309,12 @@ public abstract class AbstractBaseClient<T extends ICoalesceEvents> extends Base
         return jobId;
     }
 
-    protected boolean verifyResults(StringResponse response, BaseRequest request)
+    protected boolean verifyResults(StringResponse response, BaseRequest request) throws RemoteException
     {
         return verifyResults(response, request, "");
     }
 
-    protected boolean verifyResults(StringResponse response, BaseRequest request, String reason)
+    protected boolean verifyResults(StringResponse response, BaseRequest request, String reason) throws RemoteException
     {
         boolean isSuccessful = false;
 
@@ -348,7 +349,7 @@ public abstract class AbstractBaseClient<T extends ICoalesceEvents> extends Base
 
     }
 
-    private boolean verifyResults(List<ResultsType> results)
+    private boolean verifyResults(List<ResultsType> results) throws RemoteException
     {
         boolean isSuccessful = false;
 
@@ -363,6 +364,11 @@ public abstract class AbstractBaseClient<T extends ICoalesceEvents> extends Base
                 if (result == null || result.getStatus() != EResultStatus.SUCCESS)
                 {
                     isSuccessful = false;
+
+                    if (result != null && !StringHelper.isNullOrEmpty(result.getError()))
+                    {
+                        throw new RemoteException(result.getError());
+                    }
                     break;
                 }
             }
