@@ -126,13 +126,18 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
     protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, Parameters param) throws CoalesceException
     {
         //String type = normalize(recordset.getName());
-
-        for (CoalesceRecord record : recordset.getRecords())
+        if (recordset.isFlatten())
         {
-            Map<String, Object> mapping = createMapping(record);
-            mapping.putAll(param.common);
+            for (CoalesceRecord record : recordset.getRecords())
+            {
+                if (record.isFlatten())
+                {
+                    Map<String, Object> mapping = createMapping(record);
+                    mapping.putAll(param.common);
 
-            param.request.add(visitObject(record, param.recordIndex, "recordset", mapping));
+                    param.request.add(visitObject(record, param.recordIndex, "recordset", mapping));
+                }
+            }
         }
 
         // Stop Recursion
@@ -207,7 +212,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
 
         for (CoalesceField field : record.getFields())
         {
-            if (field.getBaseValue() != null)
+            if (field.isFlatten() && field.getBaseValue() != null)
             {
                 String name = normalize(field);
 
