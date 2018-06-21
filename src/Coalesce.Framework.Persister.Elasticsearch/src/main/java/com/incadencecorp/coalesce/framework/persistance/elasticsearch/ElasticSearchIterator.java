@@ -172,6 +172,9 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         properties.put(ElasticSearchPersistor.ENTITY_VERSION_COLUMN_NAME, entity.getVersion());
         properties.put(ElasticSearchPersistor.ENTITY_DATE_CREATED_COLUMN_NAME, entity.getDateCreated());
         properties.put(ElasticSearchPersistor.ENTITY_LAST_MODIFIED_COLUMN_NAME, entity.getLastModified());
+        properties.put(ElasticSearchPersistor.ENTITY_STATUS_COLUMN_NAME, entity.getStatus().value());
+        properties.put(ElasticSearchPersistor.ENTITY_ID_COLUMN_NAME, entity.getEntityId());
+        properties.put(ElasticSearchPersistor.ENTITY_TITLE_COLUMN_NAME, entity.getTitle());
 
         return properties;
     }
