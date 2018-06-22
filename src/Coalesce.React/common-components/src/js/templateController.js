@@ -88,7 +88,7 @@ export function saveTemplate(template)
       {
         throw Error(res.statusText);
       }
-      return res;
+      return res.text();
     }).catch(function(error) {
       throw Error(error);
     });

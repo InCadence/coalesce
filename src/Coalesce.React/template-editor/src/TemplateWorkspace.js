@@ -15,7 +15,7 @@ import {Menu} from 'common-components/lib/index.js';
 import { DialogMessage, DialogLoader, DialogTemplateSelection } from 'common-components/lib/components/dialogs';
 import RGL,{WidthProvider} from 'react-grid-layout';
 
-import { getRootKarafUrl } from 'common-components/src/js/common';
+import { getRootKarafUrl } from 'common-components/lib/js/common';
 
 var pjson = require('../package.json');
 const ReactGridLayout = WidthProvider(RGL);
@@ -66,6 +66,7 @@ class TemplateWorkspace extends Component {
   }
 
   handleTemplateClear(){
+    //If the state's list of items isn't 0, reset to blank array
     if(this.state.items.length !== 0){
       this.setState({items: [], removedItems: [], newCounter: 0, removedCount: 0, emptySpace: false});
     }
@@ -102,8 +103,8 @@ class TemplateWorkspace extends Component {
     else{
       this.addInEmptySpace(templateType);
     }
-    console.log("Adding Template");
-    this.debugItemPrint();
+    console.log("Adding Template", this.state.items);
+    //this.debugItemPrint();
   }
 
   handlePromptTemplate() {
@@ -140,30 +141,36 @@ class TemplateWorkspace extends Component {
           oldX = that.state.items[ii].x;
           oldY = that.state.items[ii].y;
           index = ii;
-          //console.log("Key matches, index is", index);
         }
       }
       //If index is not default value, key exists
       if(index !== -1){
-        //Release existing template with matching key
-        that.state.items.splice(index,1);
-        //Place new template in old location
-        that.setState({
-          // Add a new item.
-          items: that.state.items.concat({
-            i: oldI,
-            x: oldX,
-            y: oldY,
-            w: 5,
-            h: 15,
-            static: false,
-            widgetType: "template",
-            template: template,
-          }),
-          // Increment the counter to ensure key is always unique.
-          newCounter: that.state.newCounter + 1,
-        });
+        //Dialog box alerting user that this will overwrite existing changes
+        if(window.confirm("Template with matching key exists.  Continuing(OK) will overwrite any existing changes")){
+          //Release existing template with matching key
+          that.state.items.splice(index,1);
+          //Place new template in old location
+          that.setState({
+            // Add a new item.
+            items: that.state.items.concat({
+              i: oldI+1, //Need to increment identifier otherwise widget doesn't update
+              x: oldX,
+              y: oldY,
+              w: 5,
+              h: 15,
+              static: false,
+              widgetType: "template",
+              template: template,
+            }),
+            // Increment the counter to ensure key is always unique.
+            newCounter: that.state.newCounter + 1,
+          });
       }
+      else{
+        console.log("Do not overwrite changes");
+        return;
+      }
+    }
       //Key does not already exist
       else{
         //Check to see if there is a previously vacated space to insert
@@ -196,35 +203,58 @@ class TemplateWorkspace extends Component {
       });
 
     });
-    console.log("Loading Template");
-    this.debugItemPrint();
+    //this.debugItemPrint();
   }
 
   handleTemplateSave() {
+    //Function to save templates
     const { items } = this.state;
-
+    //this.debugItemPrint();
+    var newItem = null;
+    var newItems = [];
     if (items.length > 0)
     {
       const that = this;
       var count = 0;
-
       this.setState({
         loading: "Saving ..."
       })
 
       items.forEach(function (item) {
-
+        //For each item in the array of items
         saveTemplate(item.template).then(function (result) {
-          if (!result) {
+          //If the result was null then save failed
+          if (result === null) {
+            console.log("Result was null");
             that.setState({
               loading: null,
               error: "Saving Template: " + item.template.key
             });
           }
+          //Assuming save was successful
+          else{
+            //Make shallow copy of first item in array
+            //We always grab first item because we are splicing and then concatenating so the end of the array updates
+            //with new templates
+            newItem = that.state.items.slice(0,1);
+            //Update template key with the returned result which is a string of the server side key
+            newItem[0].template.key = result;
+            //Update i or else widget won't update
+            newItem[0].i = newItem[0].i +1;
+            //Remove first item in array, this is our current item being worked on
+            that.state.items.splice(0,1);
+            //Update state with item with new key
+            that.setState({
+              // Add a new item.
+              items: that.state.items.concat(newItem[0])
+            });
+          }
+          //If the count is greater than or equal to the number of items, we are done
           if (++count >= items.length) {
+            console.log("Finished saving");
             that.setState({
               loading: null
-            })
+            });
           }
         }).catch((err) => {
           that.setState({
@@ -235,10 +265,13 @@ class TemplateWorkspace extends Component {
 
       });
     }
+    //this.debugItemPrint();
   }
 
   handleTemplateRegister() {
     const { items } = this.state;
+    console.log("Registering Templates");
+    this.debugItemPrint()
 
     if (items.length > 0)
     {
@@ -253,8 +286,9 @@ class TemplateWorkspace extends Component {
       items.forEach(function (item) {
 
         registerTemplate(item.template.key).then(function (result) {
-
+          console.log(item.template.key);
           if (!result) {
+            console.log("Fail 1");
             that.setState({
               loading: null,
               error: "Registering Template: " + item.template.key
@@ -366,7 +400,7 @@ class TemplateWorkspace extends Component {
 
   handleTemplateDownload(){
       var karafRootAddr = getRootKarafUrl();
-      console.log("Download", this.state.items.length, '${karafRootAddr}');
+      console.log("Download", this.state.items.length, this.state.items);
       for(var ii = 0; ii < this.state.items.length; ii++){
         window.open(`${karafRootAddr}` + '/templates/' + this.state.items[ii].template.key + '.xml', '_blank');
       }
@@ -395,7 +429,7 @@ class TemplateWorkspace extends Component {
 
   debugItemPrint(){
     for(var ii =0 ; ii < this.state.items.length; ii++){
-      console.log("Item", ii, "X is", this.state.items[ii].x, "Y is", this.state.items[ii].y, "W is", this.state.items[ii].w, "H is", this.state.items[ii].h);
+      console.log("Item", ii, "X is", this.state.items[ii].x, "Y is", this.state.items[ii].y, "W is", this.state.items[ii].w, "H is", this.state.items[ii].h, "Key is", this.state.items[ii].template.key);
     }
 }
 

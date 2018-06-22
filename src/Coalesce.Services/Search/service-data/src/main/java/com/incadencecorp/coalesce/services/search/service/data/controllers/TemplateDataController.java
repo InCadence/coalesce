@@ -319,9 +319,9 @@ public class TemplateDataController {
      * @return whether or not it was successfully saved.
      * @throws RemoteException on error
      */
-    public boolean setTemplate(String key, CoalesceEntity entity) throws RemoteException
+    public String setTemplate(String key, CoalesceEntity entity) throws RemoteException
     {
-        boolean result = false;
+        String result = null;
 
         CoalesceEntityTemplate template = null;
 
@@ -341,7 +341,7 @@ public class TemplateDataController {
 
             setTemplate(template);
 
-            result = true;
+            result = template.getKey();
         }
 
         return result;
@@ -355,13 +355,14 @@ public class TemplateDataController {
      * @return whether or not it was successfully saved.
      * @throws RemoteException on error
      */
-    public boolean setTemplateJson(String key, String json) throws RemoteException
+    public String setTemplateJson(String key, String json) throws RemoteException
     {
-        boolean result = false;
+        String result = null;
 
         try
         {
-            result = json != null && setTemplate(createTemplate(json));
+            //result = json != null && setTemplate(createTemplate(json));
+            result = setTemplate(createTemplate(json));
         }
         catch (CoalesceException e)
         {
@@ -372,9 +373,9 @@ public class TemplateDataController {
         return result;
     }
 
-    public boolean setTemplateXml(String key, String xml) throws RemoteException
+    public String setTemplateXml(String key, String xml) throws RemoteException
     {
-        boolean results = false;
+        String results = null;
         try
         {
             results = setTemplate(CoalesceEntityTemplate.create(xml));
@@ -420,9 +421,9 @@ public class TemplateDataController {
         return result;
     }
 
-    private boolean setTemplate(CoalesceEntityTemplate template) throws RemoteException
+    private String setTemplate(CoalesceEntityTemplate template) throws RemoteException
     {
-        boolean result = false;
+        String result = null;
 
         try
         {
@@ -430,7 +431,7 @@ public class TemplateDataController {
             framework.saveCoalesceEntityTemplate(template);
             templates.put(template.getKey(), new TemplateNode(template));
 
-            result = true;
+            result = template.getKey();
         }
         catch (CoalescePersistorException e)
         {
