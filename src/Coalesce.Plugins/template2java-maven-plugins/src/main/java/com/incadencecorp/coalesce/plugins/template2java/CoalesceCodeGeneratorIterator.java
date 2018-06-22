@@ -50,10 +50,11 @@ import java.util.Properties;
  */
 public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<CoalesceRecordset>> {
 
+    private static final String FILE_EXT = "java";
+
     private VelocityEngine ve;
     private Path directory;
     private String packagename;
-    private String fileExtention = "java";
 
     private static final String[] entity_templates = new String[] { "api-entity.vm", "impl-coalesce-entity.vm",
                                                                     "impl-pojo-entity.vm"
@@ -96,7 +97,7 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
 
         packagename = entity.getClassName().substring(0, entity.getClassName().lastIndexOf("."));
 
-        List<CoalesceRecordset> recordsets = new ArrayList<CoalesceRecordset>();
+        List<CoalesceRecordset> recordsets = new ArrayList<>();
 
         processAllElements(entity, recordsets);
 
@@ -154,7 +155,7 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
 
     private void createFile(Template t, VelocityContext context) throws CoalesceException
     {
-        String filename = context.get("classname").toString() + "." + fileExtention;
+        String filename = context.get("classname").toString() + "." + FILE_EXT;
         String packagename = context.get("packagename_root").toString() + "." + context.get("packagename_sub").toString();
 
         Path file = directory.resolve(Paths.get(".", packagename.split("[.]"))).resolve(filename);
