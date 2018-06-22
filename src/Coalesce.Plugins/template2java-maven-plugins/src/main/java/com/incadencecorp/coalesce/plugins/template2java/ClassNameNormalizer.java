@@ -24,7 +24,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 
 /**
  * Default normalizer for creating keys.
- * 
+ *
  * @author n78554
  */
 public class ClassNameNormalizer implements ICoalesceNormalizer {
@@ -57,12 +57,19 @@ public class ClassNameNormalizer implements ICoalesceNormalizer {
     @Override
     public String normalize(final String value)
     {
-        String camelCased = "";
+        StringBuilder camelCased = new StringBuilder();
         String[] tokens = value.replaceAll("[- ]", "_").split("_");
-        for (int i = 0; i < tokens.length; i++) {
-            String token = tokens[i];
-            camelCased = camelCased + token.substring(0, 1).toUpperCase() + token.substring(1, token.length()).toLowerCase();
+        for (String token : tokens)
+        {
+            camelCased.append(token.substring(0, 1).toUpperCase()).append(token.substring(1));
         }
-        return camelCased.replaceAll("[^a-zA-Z0-9_\\s]", "");
+        return camelCased.toString().replaceAll("[^a-zA-Z0-9_\\s]", "");
+    }
+
+    public String normalizeVariable(final String value)
+    {
+        String normalized = normalize(value);
+
+        return normalized.substring(0, 1).toLowerCase() + normalized.substring(1);
     }
 }
