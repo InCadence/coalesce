@@ -1,11 +1,6 @@
 import React from 'react';
 //import Modal from 'material-ui/Modal';
-import styles from './popup.css';
 import MapMaker from './Map.js';
-import Map from 'ol/map';
-import Multipoint from './Multipoint.js';
-import Point from './Point.js';
-import coordinate from 'ol/coordinate';
 import {default as VectorLayer} from 'ol/layer/vector';
 import {default as VectorSource} from 'ol/source/vector';
 import Feature from 'ol/feature';
@@ -17,27 +12,50 @@ import Overlay from 'ol/overlay';
 import WKT from 'ol/format/wkt';
 import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
+import styles from './popup.css'
+import Point from 'ol/geom/point';
+import coordinate from 'ol/coordinate';
+import Collection from 'ol/collection';
+import 'common-components/css/ol.css'
+import Modal from 'react-responsive-modal';
+
 
 var mgrs = require('mgrs');
 
-export default class MarkerMap extends React.Component {
+export default class MapPoint extends React.Component {
 
   constructor(props) {
     super(props);
+
     const uniqueID = Date.now();
+
     this.state = {
-      list: (this.props.list), //can be either 'Multipoint' or 'Point'
-      features: this.props.value || [],
-      uniqueID: uniqueID,
+      features: [],
       vectorSource: new VectorSource({
-        features: this.props.features
+        features: new Collection(),
       }),
+      clickEvt: this.props.clickEvt,
+      open: false,
+      coords: ['', '', ''],
+      visibility: 'hidden',
+      wkt: this.props.wkt,
     };
 
     this.handleOpen = this.handleOpen.bind(this)
     this.handleClose = this.handleClose.bind(this)
+    this.deleteFeature = this.deleteFeature.bind(this)
+    this.handleInputFocus = this.handleInputFocus.bind(this)
+    this.handleInputBlur = this.handleInputBlur.bind(this)
+    this.handleInputChange = this.handleInputChange.bind(this)
+    this.reset = this.reset.bind(this)
 
+    this.field = this.props.opts['field'];
 
+  }
+
+  componentDidMount() {
+    this.configureMap()
+    this.map.updateSize()
   }
 
   createFeature(coords) {
@@ -45,6 +63,12 @@ export default class MarkerMap extends React.Component {
     var iconFeature = new Feature({
       geometry: point
     });
+
+    this.stylizeFeature(iconFeature)
+    return this.addFeature(iconFeature)
+  }
+
+  stylizeFeature(feature) {
     var iconStyle = new Style({
        image: new Icon({
          anchor: [.5, 33],
@@ -54,38 +78,98 @@ export default class MarkerMap extends React.Component {
          src: 'https://i.imgur.com/mDsYhky.png'
        })
      })
-    iconFeature.setStyle(iconStyle);
-
-    this.state.vectorSource.addFeature(iconFeature);
-    return iconFeature;
+    feature.setStyle(iconStyle);
   }
 
+  addFeature(feature) {
+    this.state.vectorSource.addFeature(feature);
+    return feature
+  }
+
+
   deleteFeature() {
+    this.map.getOverlays().item(0).setPosition(undefined);
+    var vecSource = this.state.vectorSource;
+    var clicked = vecSource.getFeatureById('clicked')
+    if (clicked) {
+      vecSource.removeFeature(clicked);
+      this.setState({visibility: 'hidden'});
+      this.props.parent.handleDelete(this.props.parent, this);
+    }
 
   }
 
   deleteFeatures() {
+    this.map.getOverlays()[0].setPosition(undefined)
     this.state.vectorSource.clear()
   }
 
 
   convertCoordinates(coords) {
     //coords are lonlat
-    var uniqueID = this.state.uniqueID;
+    //var lonLatElem = document.getElementById('lonlat');
+    //lonLatElem.textContent ='LonLat: ' + coords[0].toFixed(4) + ", " + coords[1].toFixed(4);
 
-    var lonLatElem = document.getElementById('lonLat' + uniqueID);
-    lonLatElem.innerHTML ='LonLat: ' + coords[0].toFixed(4) + ", " + coords[1].toFixed(4);
-
-    var hdms = coords.toStringHDMS(coords)
-    var hdmsElem = document.getElementById('hdms' + uniqueID);
-    hdmsElem.innerHTML = 'HDMS: ' + hdms;
+    var hdms = coordinate.toStringHDMS(coords)
+    //var hdmsElem = document.getElementById('hdms' );
+    //hdmsElem.textContent = 'HDMS: ' + hdms;
 
     var _mgrs = mgrs.forward(coords);
-    var mgrsElem = document.getElementById('mgrs' + uniqueID)
-    mgrsElem.innerHTML = 'MGRS: ' + _mgrs;
+    //var mgrsElem = document.getElementById('mgrs' )
+    //mgrsElem.textContent = 'MGRS: ' + _mgrs;
+    this.setState({coords: [
+      'LonLat: ' + coords[0].toFixed(4) + ", " + coords[1].toFixed(4),
+      'HDMS: ' + hdms,
+      'MGRS: ' + _mgrs,
+
+    ]})
   }
 
-  componentDidMount() {
+  handleInputFocus(event) {
+    this.wktSafe = event.target.value;
+  }
+
+  handleInputChange(event) {
+    this.props.parent.setState({wkt: event.target.value})
+  }
+
+  handleInputBlur() {
+    try {
+
+      var clicked = this.state.vectorSource.getFeatureById('clicked')
+      if (clicked) {
+        clicked.setId('')
+        this.map.getOverlays().item(0).setPosition(undefined);
+      }
+      this.props.parent.handleInput(this);
+    }
+    catch (error) {
+      console.log(error);
+      this.props.parent.setState({wkt: this.wktSafe})
+    }
+  }
+
+  handleOpen() {
+    this.setState({
+      open: true
+    });
+    this.map.render()
+  }
+
+  reset() {
+    this.map.setTarget('map' + this.props.uniqueID)
+    this.map.render()
+    this.map.updateSize()
+  }
+
+  handleClose() {
+    this.setState({
+      open: false
+    });
+    // this.setState({multipoint: this.getWKT(this.state.value)});
+  }
+
+  configureMap() {
     var vectorLayer = new VectorLayer({
       name: 'markers',
       source: this.state.vectorSource
@@ -98,51 +182,35 @@ export default class MarkerMap extends React.Component {
       vectorLayer
     ];
 
-    var overlays = [new Overlay({
-      element: document.getElementById('popup')
-    })];
+    var pop = new Overlay({
+      element: document.getElementById('popup' + this.props.uniqueID),
+      insertFirst: false,
+  })
 
-    var map = new MapMaker(layers, overlays, 'map');
+    var overlays = [pop];
+    this.map = new MapMaker(layers, overlays, 'map' + this.props.uniqueID).getMap();
 
-  }
-
-  handleInput() {
-
-  }
-
-  handleOpen() {
-    this.setState({
-      open: true
+    var self = this;
+    this.map.on('click',
+    function(evt) {
+      var point = self.props.clickEvt(evt, self);
+      if(point) {
+        self.props.parent.handlePoint(point, self.props.parent, self);
+      }
     });
+    return this.map;
   }
 
-  handleClose() {
-    this.setState({
-      open: false
-    });
-    this.setState({multipoint: this.getWKT(this.state.value)});
-  }
 
-  getWKT(value) {
-    if (value.length > 0) {
-      var multi =  new WKT().writeFeatures(value, {
-        decimals: 4
-      });
-      return multi;
-    }
-    return "MULTIPOINT ()";
-  }
 
   render() {
-    var uniqueID = this.state.uniqueID;
-
     var opts = this.props.opts;
     var field = opts['field'];
     var style = opts['style'];
     var label = opts['label'];
     var attr = opts['attr'];
 
-    const PointTag =  `${this.state.list}`
+    var self = this;
 
     return (
       <div>
@@ -152,45 +220,45 @@ export default class MarkerMap extends React.Component {
         floatingLabelText={label + " - MULTIPOINT (x1 y1 z1, x2 y2 z2, ...)"}
         underlineShow={this.props.showLabels}
         style={style.root}
-        value={this.state.multipoint}
-        defaultValue={field.defaultValue}
-        onBlur={this.handleInput}
-      />
-      <button type="button" onClick={this.handleOpen}>{PointTag}</button>
-      <div id='map' tabIndex="0" className="map" ref="olmap"></div>
+        value={this.props.wkt}
+        onFocus={this.handleInputFocus}
+        onChange={this.handleInputChange}
+        onBlur={this.handleInputBlur}
+        defaultValue={field.defaultValue}></TextField>
 
-      <Dialog
-        open={this.state.open}
-        onRequestClose={() => this.handleClose()}
-        title='Choose Points'
-      >
+        <button type="button" onClick={this.handleOpen}>{this.props.tag}</button>
 
-        <PointTag
-          id='pointing'
-          uniqueID={uniqueID}
-          setCoordinates={(coords) => this.setCoordinates(coords)}
-          createFeature={(coords) => this.createFeature(coords)}
-          tabIndex="0" className="map" ref="olmap"
-          deleteFeatures={() => this.deleteFeatures}
+
+        <div id={"popup" + this.props.uniqueID} className="ol-popup">
+          <p onClick="this.select();"  id={'lonlat' + this.props.uniqueID}>{this.state.coords[0]}</p>
+          <p onClick="this.select();"  readonly id={'hdms' + this.props.uniqueID}>{this.state.coords[1]}</p>
+          <p onClick="this.select();" readonly id={'mgrs' + this.props.uniqueID}>{this.state.coords[2]}</p>
+
+        </div>
+        <button id={'button' + this.props.uniqueID} type="button" onClick={self.deleteFeature} style={{visibility: this.state.visibility}}>
+          Delete
+        </button>
+        <div id={'map' + this.props.uniqueID} className="map" ></div>
+
+        <Modal
+        center
+          open={this.state.open}
+          onClose={() => this.handleClose()}
+          onEntered={this.reset}
         >
 
-        </PointTag>
-        <div id={"popup" + uniqueID} className="ol-popup">
-          <div id="popup-content">
-            <p id={'lonlat' + uniqueID}></p>
-            <p id={'hdms' + uniqueID}></p>
-            <p id={'mgrs' + uniqueID}></p>
-            <p id={'delete' + uniqueID}>
 
-            </p>
-          </div>
-        </div>
-      </Dialog>
+        </Modal>
+
+
+
       </div>
     );
   }
 
 }
-///<button onClick={this.deleteFeature('clicked' + uniqueID)}>
-  ///Delete
-///</button>
+// <link
+//   rel="stylesheet"
+//   href="http://openlayers.org/en/v3.2.1/css/ol.css"
+//   type="text/css"
+// />

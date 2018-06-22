@@ -3,10 +3,10 @@ import Checkbox from 'material-ui/Checkbox';
 import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
-import MapPoint from './Geo/MapPoint.js';
+import Multipoint from './Geo/Multipoint.js';
 import Enumeration from './FieldInputs/Enumeration.js'
 import { IconButton } from 'common-components/lib/components/IconButton.js'
-
+import Point from './Geo/Point.js'
 import { Row, Col } from 'react-bootstrap';
 
 var parse = require('wellknown');
@@ -264,18 +264,18 @@ export class FieldInput extends React.Component {
           );
       case 'GEOCOORDINATE_LIST_TYPE':
         return (
-          <MapPoint
+          <Multipoint
             opts={opts}
             showLabels={this.props.showLabels}
-            list='Multipoint'/>
+            />
         );
       case 'GEOCOORDINATE_TYPE':
         return (
-          <MapPoint
+          <Point
             opts={opts}
-            showLabels={this.props.showLabels}
-            list='Point'/>
+            showLabels={this.props.showLabels}/>
         );
+
       case 'CIRCLE_TYPE':
 
         var center;

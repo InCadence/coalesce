@@ -1,23 +1,7 @@
-
 import React from 'react';
-import Dialog from 'material-ui/Dialog';
-import Map from 'ol/map';
-import Tile from 'ol/layer/tile';
-import View from 'ol/view';
-import OSM from 'ol/source/osm';
+import MapPoint from './MapPoint.js'
+import WKT from 'ol/format/wkt';
 import Feature from 'ol/feature';
-import Point from 'ol/geom/point';
-import Style from 'ol/style/style';
-import Icon from 'ol/style/icon';
-import {default as VectorLayer} from 'ol/layer/vector';
-import {default as VectorSource} from 'ol/source/vector';
-import FullScreen from 'ol/control/fullscreen';
-import coordinate from 'ol/coordinate';
-import proj from 'ol/proj';
-import Overlay from 'ol/overlay';
-import styles from './popup.css';
-
-var mgrs = require('mgrs');
 
 export default class Multipoint extends React.Component {
 
@@ -27,41 +11,95 @@ export default class Multipoint extends React.Component {
     this.state = {
       map: this.props.map,
       createFeature: this.props.createFeature,
-      deleteFeature: this.props.deleteFeature
+      deleteFeature: this.props.deleteFeature,
+      wkt: 'POINT EMPTY',
     }
   }
 
-  componentDidMount() {
-    var map = this.state.map;
+  handlePoint(feature, self, that) {
+    var formatted =  new WKT().writeFeature(new Feature({geometry: feature.getGeometry()}), {
+      decimals: 5
+    });
+    self.setState({wkt: formatted})
+  }
 
-    map.on('click', function(evt) {
-    //if overlay is not open, place a marker if not clicked on a marker
-    //if a marker WAS clicked, open overlay and don't place a marker
+  handleDelete(self, that) {
+    var formatted = 'POINT EMPTY'
+    self.setState({wkt: formatted});
 
-      var features = [];
-      map.forEachFeatureAtPixel(evt.pixel,
-        function(feature, layer) {
-          features.push(feature);
-        }
-      );
+  }
 
-      if (features.length === 1)
-      {
-        var lonLat = features[0].getGeometry().getCoordinates()
-        var coordinates = this.props.convertCoordinates(lonLat)
-        features[0].setId('clicked' + this.props.uniqueID)
-        map.getOverlays().item(0).setPosition(lonLat);
+  handleInput(that) {
+    var opts = this.props.opts;
+    var field = opts['field'];
+
+    var input = document.getElementById(field.key).getAttribute('value')
+    var feature = new WKT().readFeature(input)
+
+    var point = feature.getGeometry()
+
+    var coord = point.getCoordinates()
+    this.moveFeature(coord, that);
+  }
+
+  moveFeature(coord, that) {
+    var feature = that.state.vectorSource.getFeaturesCollection().item(0)
+    if (feature) {
+      feature.getGeometry().setCoordinates(coord)
+      return feature
+    }
+    else {
+      that.createFeature(coord)
+    }
+  }
+
+  clickEvt(evt, that) {
+    var features = [];
+    that.map.forEachFeatureAtPixel(evt.pixel,
+      function(feature, layer) {
+        features.push(feature);
       }
-      else if (features.length === 0)
-      {
-        if (map.getOverlays().item(0).getPosition() === undefined) {
-          this.state.deleteFeatures();
-          this.state.createFeature(evt.coordinate);
+    );
+
+    if (features.length === 1)
+    {
+      var lonLat = features[0].getGeometry().getCoordinates()
+      var coordinates = that.convertCoordinates(lonLat)
+      features[0].setId('clicked')
+      that.setState({visibility: "visible"})
+      that.map.getOverlays().item(0).setPosition(lonLat);
+    }
+    else if (features.length === 0)
+    {
+      if (that.map.getOverlays().item(0).getPosition() === undefined) {
+        var feature = that.state.vectorSource.getFeaturesCollection().item(0)
+        if (feature) {
+          feature.getGeometry().setCoordinates(evt.coordinate)
+          return feature
         }
         else {
-          map.getOverlays().item(0).setPosition(undefined);
+          return that.createFeature(evt.coordinate);
         }
       }
-    });
+      else {
+        that.map.getOverlays().item(0).setPosition(undefined);
+        that.state.vectorSource.getFeatureById('clicked').setId('')
+        that.setState({visibility: "hidden"})
+      }
+    }
+
   }
+
+
+
+  render() {
+    const uniqueID = Date.now()
+
+    var clickEvt = this.clickEvt
+    var parent = this
+    return(
+      <MapPoint clickEvt={clickEvt} opts={this.props.opts} uniqueID={uniqueID} showLabels={this.props.showLabels} wkt={this.state.wkt} parent={parent} tag='Point'></MapPoint>
+    )
+  }
+
 }
