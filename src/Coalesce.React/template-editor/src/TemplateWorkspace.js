@@ -39,7 +39,6 @@ class TemplateWorkspace extends Component {
       scaling: [1,2,3,4],
       theme: getDefaultTheme()
     }
-    console.log(window.screen.availWidth, window.screen.availHeight, this.state.cols);
 
     this.handlePromptTemplate = this.handlePromptTemplate.bind(this);
 
@@ -103,7 +102,6 @@ class TemplateWorkspace extends Component {
     else{
       this.addInEmptySpace(templateType);
     }
-    console.log("Adding Template", this.state.items);
     //this.debugItemPrint();
   }
 
@@ -167,7 +165,6 @@ class TemplateWorkspace extends Component {
           });
       }
       else{
-        console.log("Do not overwrite changes");
         return;
       }
     }
@@ -225,7 +222,6 @@ class TemplateWorkspace extends Component {
         saveTemplate(item.template).then(function (result) {
           //If the result was null then save failed
           if (result === null) {
-            console.log("Result was null");
             that.setState({
               loading: null,
               error: "Saving Template: " + item.template.key
@@ -251,7 +247,6 @@ class TemplateWorkspace extends Component {
           }
           //If the count is greater than or equal to the number of items, we are done
           if (++count >= items.length) {
-            console.log("Finished saving");
             that.setState({
               loading: null
             });
@@ -270,7 +265,6 @@ class TemplateWorkspace extends Component {
 
   handleTemplateRegister() {
     const { items } = this.state;
-    console.log("Registering Templates");
     this.debugItemPrint()
 
     if (items.length > 0)
@@ -286,9 +280,7 @@ class TemplateWorkspace extends Component {
       items.forEach(function (item) {
 
         registerTemplate(item.template.key).then(function (result) {
-          console.log(item.template.key);
           if (!result) {
-            console.log("Fail 1");
             that.setState({
               loading: null,
               error: "Registering Template: " + item.template.key
@@ -312,7 +304,6 @@ class TemplateWorkspace extends Component {
 
   handleTemplateRemove(key) {
 
-    console.log("Removing Template: " + key);
     var removedX = null;
     var removedY = null;
     const { items } = this.state;
@@ -400,7 +391,6 @@ class TemplateWorkspace extends Component {
 
   handleTemplateDownload(){
       var karafRootAddr = getRootKarafUrl();
-      console.log("Download", this.state.items.length, this.state.items);
       for(var ii = 0; ii < this.state.items.length; ii++){
         window.open(`${karafRootAddr}` + '/templates/' + this.state.items[ii].template.key + '.xml', '_blank');
       }
