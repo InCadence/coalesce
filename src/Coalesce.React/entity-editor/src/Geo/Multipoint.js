@@ -52,6 +52,7 @@ export default class Multipoint extends React.Component {
   }
 
   handlePoint(feature, self, that) {
+    that.setState({visibility: 'hidden'});
     self.multipoint.appendPoint(feature.getGeometry());
     //that.getWKT(self.multipoint)
     var formatted =  new WKT().writeFeature(new Feature({geometry: self.multipoint}), {

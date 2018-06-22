@@ -93,13 +93,13 @@ export default class MapPoint extends React.Component {
     var clicked = vecSource.getFeatureById('clicked')
     if (clicked) {
       vecSource.removeFeature(clicked);
-      this.setState({visibility: 'hidden'});
       this.props.parent.handleDelete(this.props.parent, this);
     }
 
   }
 
   deleteFeatures() {
+    //unused
     this.map.getOverlays()[0].setPosition(undefined)
     this.state.vectorSource.clear()
   }
@@ -140,6 +140,7 @@ export default class MapPoint extends React.Component {
       if (clicked) {
         clicked.setId('')
         this.map.getOverlays().item(0).setPosition(undefined);
+
       }
       this.props.parent.handleInput(this);
     }

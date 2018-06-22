@@ -3,7 +3,7 @@ import MapPoint from './MapPoint.js'
 import WKT from 'ol/format/wkt';
 import Feature from 'ol/feature';
 
-export default class Multipoint extends React.Component {
+export default class Point extends React.Component {
 
   constructor(props) {
     super(props);
@@ -32,7 +32,7 @@ export default class Multipoint extends React.Component {
   handleInput(that) {
     var opts = this.props.opts;
     var field = opts['field'];
-
+    that.setState({visibility: 'hidden'});
     var input = document.getElementById(field.key).getAttribute('value')
     var feature = new WKT().readFeature(input)
 
@@ -85,6 +85,7 @@ export default class Multipoint extends React.Component {
         that.map.getOverlays().item(0).setPosition(undefined);
         that.state.vectorSource.getFeatureById('clicked').setId('')
         that.setState({visibility: "hidden"})
+        console.log('hidden');
       }
     }
 
