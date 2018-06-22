@@ -886,8 +886,8 @@ public class CoalesceRecordSetTest {
         assertEquals(recordset.getName(), desRecordset.getName());
         assertEquals(recordset.getDateCreated(), desRecordset.getDatecreated());
         assertEquals(recordset.getLastModified(), desRecordset.getLastmodified());
-        assertEquals(recordset.getMinRecords(), desRecordset.getMinrecords().intValue());
-        assertEquals(recordset.getMaxRecords(), desRecordset.getMaxrecords().intValue());
+        assertEquals(recordset.getMinRecords(), desRecordset.getMinrecords());
+        assertEquals(recordset.getMaxRecords(), desRecordset.getMaxrecords());
         assertEquals(recordset.getStatus(), desRecordset.getStatus());
         assertEquals(recordset.getFieldDefinitions().size(), desRecordset.getFielddefinition().size());
 
