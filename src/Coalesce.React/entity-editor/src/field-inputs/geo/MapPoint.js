@@ -1,6 +1,6 @@
 import React from 'react';
 //import Modal from 'material-ui/Modal';
-import MapMaker from './Map.js';
+import MapMaker from '../../Map.js';
 import {default as VectorLayer} from 'ol/layer/vector';
 import {default as VectorSource} from 'ol/source/vector';
 import Feature from 'ol/feature';
@@ -12,12 +12,13 @@ import Overlay from 'ol/overlay';
 import WKT from 'ol/format/wkt';
 import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
-import styles from './popup.css'
 import Point from 'ol/geom/point';
 import coordinate from 'ol/coordinate';
 import Collection from 'ol/collection';
-import 'common-components/css/ol.css'
 import Modal from 'react-responsive-modal';
+import 'common-components/css/ol.css'
+import 'common-components/css/map_popup.css'
+import 'common-components/css/mapping.css'
 
 
 var mgrs = require('mgrs');
@@ -27,11 +28,11 @@ export default class MapPoint extends React.Component {
   constructor(props) {
     super(props);
 
-    const uniqueID = Date.now();
 
     this.state = {
       features: [],
       vectorSource: new VectorSource({
+        wrapX: false,
         features: new Collection(),
       }),
       clickEvt: this.props.clickEvt,
@@ -59,7 +60,8 @@ export default class MapPoint extends React.Component {
   }
 
   createFeature(coords) {
-    var point = new Point(coords);
+    var coordsZ = coords.push(0)
+    var point = new Point(coords, 'xyz');
     var iconFeature = new Feature({
       geometry: point
     });
@@ -140,7 +142,6 @@ export default class MapPoint extends React.Component {
       if (clicked) {
         clicked.setId('')
         this.map.getOverlays().item(0).setPosition(undefined);
-
       }
       this.props.parent.handleInput(this);
     }
@@ -178,7 +179,9 @@ export default class MapPoint extends React.Component {
 
     var layers = [
       new Tile({
-        source: new OSM()
+        source: new OSM({
+          wrapX: false
+        }),
       }),
       vectorLayer
     ];
@@ -189,7 +192,10 @@ export default class MapPoint extends React.Component {
   })
 
     var overlays = [pop];
-    this.map = new MapMaker(layers, overlays, 'map' + this.props.uniqueID).getMap();
+
+    var interactions = null;
+
+    this.map = new MapMaker(layers, overlays, interactions, 'map' + this.props.uniqueID).getMap();
 
     var self = this;
     this.map.on('click',
@@ -218,7 +224,7 @@ export default class MapPoint extends React.Component {
       <TextField
         id={field.key}
         fullWidth={true}
-        floatingLabelText={label + " - MULTIPOINT (x1 y1 z1, x2 y2 z2, ...)"}
+        floatingLabelText={label + " - " + this.props.tag + " (x1 y1 z1, x2 y2 z2, ...)"}
         underlineShow={this.props.showLabels}
         style={style.root}
         value={this.props.wkt}

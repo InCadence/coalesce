@@ -103,7 +103,7 @@ export default class Multipoint extends React.Component {
     var parent = this
     var clickEvt = this.clickEvt
     return(
-      <MapPoint clickEvt={clickEvt} opts={this.props.opts} uniqueID={uniqueID} showLabels={this.props.showLabels} wkt={parent.state.wkt} parent={parent} tag='Multipoint'></MapPoint>
+      <MapPoint clickEvt={clickEvt} opts={this.props.opts} uniqueID={uniqueID} showLabels={this.props.showLabels} wkt={parent.state.wkt} parent={parent} tag='MULTIPOINT'></MapPoint>
     )
   }
 }

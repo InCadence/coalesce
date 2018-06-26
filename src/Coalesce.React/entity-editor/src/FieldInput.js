@@ -3,11 +3,12 @@ import Checkbox from 'material-ui/Checkbox';
 import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
-import Multipoint from './Geo/Multipoint.js';
-import Enumeration from './FieldInputs/Enumeration.js'
-import { IconButton } from 'common-components/lib/components/IconButton.js'
-import Point from './Geo/Point.js'
 import { Row, Col } from 'react-bootstrap';
+import { IconButton } from 'common-components/lib/components/IconButton.js'
+import Enumeration from './field-inputs/Enumeration.js'
+import Point from './field-inputs/geo/Point.js'
+import Multipoint from './field-inputs/geo/Multipoint.js';
+import Shape from './field-inputs/shape/Shape.js'
 
 var parse = require('wellknown');
 
@@ -238,29 +239,17 @@ export class FieldInput extends React.Component {
 
       case 'LINE_STRING_TYPE':
           return (
-            <TextField
-              id={field.key}
-              fullWidth={true}
-              floatingLabelText={label + " - LINESTRING (x1 y1 z1, x2 y2 z2, ...)"}
-              underlineShow={this.props.showLabels}
-              style={style.root}
-              value={field[attr]}
-              defaultValue={field.defaultValue}
-              onChange={(event, value) => {this.handleOnChange(attr, value)}}
-            />
+            <Shape
+              shape='LineString'
+              opts={opts}
+              showLabels={this.props.showLabels}/>
           );
       case 'POLYGON_TYPE':
           return (
-            <TextField
-              id={field.key}
-              fullWidth={true}
-              floatingLabelText={label + " - POLYGON ((x1 y1 z1, x2 y2 z2, ...))"}
-              underlineShow={this.props.showLabels}
-              style={style.root}
-              value={field[attr]}
-              defaultValue={field.defaultValue}
-              onChange={(event, value) => {this.handleOnChange(attr, value)}}
-            />
+            <Shape
+              shape='Polygon'
+              opts={opts}
+              showLabels={this.props.showLabels}/>
           );
       case 'GEOCOORDINATE_LIST_TYPE':
         return (
@@ -278,69 +267,11 @@ export class FieldInput extends React.Component {
 
       case 'CIRCLE_TYPE':
 
-        var center;
-
-        if (field.value == null || field.value === "") {
-          center = {coordinates: [0, 0, 0]};
-        } else {
-          center = parse(field.value);
-        }
-
         return (
-          <Row>
-            <Col xs={3}>
-              <TextField
-                id={field.key + 'x'}
-                type='number'
-                step='0.01'
-                floatingLabelText={this.props.showLabels ? label + " Longitude" : null}
-                underlineShow={this.props.showLabels}
-                style={style.root}
-                fullWidth={true}
-                value={center.coordinates[0]}
-                onChange={(event, value) => {this.handleOnChange(attr, `POINT(${value} ${center.coordinates[1]} ${center.coordinates[2]})`)}}
-              />
-            </Col>
-            <Col xs={3}>
-              <TextField
-                id={field.key + 'y'}
-                type='number'
-                step='0.01'
-                floatingLabelText={this.props.showLabels ? "Latitude" : null}
-                underlineShow={this.props.showLabels}
-                style={style.root}
-                fullWidth={true}
-                value={center.coordinates[1]}
-                onChange={(event, value) => {this.handleOnChange(attr, `POINT(${center.coordinates[0]} ${value} ${center.coordinates[2]})`)}}
-              />
-            </Col>
-            <Col xs={3}>
-              <TextField
-                id={field.key + 'z'}
-                type='number'
-                step='0.01'
-                floatingLabelText={this.props.showLabels ? "Attitude" : null}
-                underlineShow={this.props.showLabels}
-                style={style.root}
-                fullWidth={true}
-                value={center.coordinates[2]}
-                onChange={(event, value) => {this.handleOnChange(attr, `POINT(${center.coordinates[0]} ${center.coordinates[1]} ${value})`)}}
-              />
-            </Col>
-            <Col xs={3}>
-              <TextField
-                id={field.key + 'radius'}
-                type='number'
-                step='0.01'
-                value={field.radius}
-                floatingLabelText={this.props.showLabels ? "Radius" : null}
-                underlineShow={this.props.showLabels}
-                style={style.root}
-                fullWidth={true}
-                onChange={(event, value) => {this.handleOnChange('radius', value)}}
-              />
-            </Col>
-          </Row>
+          <Shape
+            shape="Circle"
+            opts={opts}
+            showLabels={this.props.showLabels}/>
       );
       case 'GUID_TYPE':
         return (

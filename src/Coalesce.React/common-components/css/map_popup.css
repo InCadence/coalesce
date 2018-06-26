@@ -1,20 +1,4 @@
-.map {
-  height: 300px;
-  width: 100px;
-}
 
-div[id*='map'] {
-  height: 300px;
-  width: 100%;
-}
-textarea {
-  resize: none;
-}
-
-Dialog {
-  height: 400px;
-  width: 400px;
-}
 .ol-popup {
   position: absolute;
   background-color: white;
