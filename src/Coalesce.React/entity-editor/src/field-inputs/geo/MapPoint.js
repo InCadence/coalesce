@@ -1,13 +1,14 @@
 import React from 'react';
 //import Modal from 'material-ui/Modal';
-import MapMaker from '../../Map.js';
 import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
 import Modal from 'react-responsive-modal';
 import 'common-components/css/map_popup.css'
 import 'openlayers/css/ol.css';
 import * as ol from 'openlayers'
-import { MapView } from './map'
+import { DialogMap } from '../../map/dialogmap.js'
+import MapMaker from '../../map/mapmaker.js';
+
 
 
 var mgrs = require('mgrs');
@@ -31,20 +32,18 @@ export default class MapPoint extends React.Component {
       wkt: this.props.wkt,
     };
 
-    this.handleOpen = this.handleOpen.bind(this)
-    this.handleClose = this.handleClose.bind(this)
+
     this.deleteFeature = this.deleteFeature.bind(this)
     this.handleInputFocus = this.handleInputFocus.bind(this)
     this.handleInputBlur = this.handleInputBlur.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
-    this.reset = this.reset.bind(this)
+    this.configureMap = this.configureMap.bind(this)
 
     this.field = this.props.opts['field'];
 
   }
 
   componentDidMount() {
-    this.configureMap()
     //this.map.updateSize()
   }
 
@@ -139,25 +138,6 @@ export default class MapPoint extends React.Component {
     }
   }
 
-  handleOpen() {
-    this.setState({
-      open: true
-    });
-    //this.map.render()
-  }
-
-  reset() {
-    this.map.setTarget('map' + this.props.uniqueID)
-    this.map.render()
-    this.map.updateSize()
-  }
-
-  handleClose() {
-    this.setState({
-      open: false
-    });
-    // this.setState({multipoint: this.getWKT(this.state.value)});
-  }
 
   configureMap() {
     var vectorLayer = new ol.layer.Vector({
@@ -226,7 +206,6 @@ export default class MapPoint extends React.Component {
         onBlur={this.handleInputBlur}
         defaultValue={field.defaultValue}></TextField>
 
-        <button type="button" onClick={this.handleOpen}>{this.props.tag}</button>
 
 
         <div id={"popup" + this.props.uniqueID} className="ol-popup">
@@ -239,14 +218,7 @@ export default class MapPoint extends React.Component {
           Delete
         </button>
 
-        <Dialog
-          open={this.state.open}
-          onRequestClose={() => this.handleClose()}
-          title='Choose Points'
-          fullScreen>
-            <MapView configureMap={this.configureMap.bind(this)} uniqueID={this.props.uniqueID}/>
-        </Dialog>
-
+        <DialogMap configureMap={this.configureMap} uniqueID={this.props.uniqueID} shape={this.props.shape}/>
 
 
       </div>
@@ -254,8 +226,3 @@ export default class MapPoint extends React.Component {
   }
 
 }
-// <link
-//   rel="stylesheet"
-//   href="http://openlayers.org/en/v3.2.1/css/ol.css"
-//   type="text/css"
-// />

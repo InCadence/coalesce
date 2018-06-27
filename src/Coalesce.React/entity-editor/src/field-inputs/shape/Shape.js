@@ -1,10 +1,9 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
-import MapMaker from '../../Map.js';
 import * as ol from 'openlayers'
-import Dialog from 'material-ui/Dialog';
 import 'openlayers/css/ol.css';
-import { MapView } from '../geo/map'
+import { DialogMap } from '../../map/dialogmap.js'
+import MapMaker from '../../map/mapmaker.js';
 
 var mgrs = require('mgrs');
 
@@ -26,11 +25,11 @@ export default class Shape extends React.Component {
     this.handleInputFocus = this.handleInputFocus.bind(this)
     this.handleInputBlur = this.handleInputBlur.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
+    this.configureMap = this.configureMap.bind(this)
 
   }
 
   componentDidMount() {
-    this.configureMap()
   }
 
   configureMap() {
@@ -38,7 +37,7 @@ export default class Shape extends React.Component {
 
     var vectorLayer = new ol.layer.Vector({
       name: 'markers',
-      source: this.state.vectorSource
+      source: self.state.vectorSource
     });
     //null for defaults
     var layers = [
@@ -307,17 +306,7 @@ export default class Shape extends React.Component {
           />
         }
 
-        <button type="button" onClick={() => {this.setState({open: true})}}>{this.props.shape}</button>
-
-
-        <Dialog
-          open={this.state.open}
-          onRequestClose={() => this.handleClose()}
-//          title='Choose Points'
-bodyStyle={{padding: "0 px"}}
-          fullScreen>
-            <MapView configureMap={this.configureMap.bind(this)} uniqueID={this.props.uniqueID}/>
-        </Dialog>
+        <DialogMap configureMap={this.configureMap} uniqueID={this.props.uniqueID} shape={this.props.shape}/>
 
 
       </div>

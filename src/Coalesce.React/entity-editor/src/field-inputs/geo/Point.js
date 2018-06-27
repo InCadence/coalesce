@@ -99,7 +99,7 @@ export default class Point extends React.Component {
     var clickEvt = this.clickEvt
     var parent = this
     return(
-      <MapPoint clickEvt={clickEvt} opts={this.props.opts} uniqueID={uniqueID} showLabels={this.props.showLabels} wkt={this.state.wkt} parent={parent} tag='POINT'></MapPoint>
+      <MapPoint clickEvt={clickEvt} opts={this.props.opts} uniqueID={uniqueID} showLabels={this.props.showLabels} wkt={this.state.wkt} parent={parent} shape='POINT'></MapPoint>
     )
   }
 
