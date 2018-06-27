@@ -1,7 +1,7 @@
 import React from 'react';
 import MapPoint from './MapPoint.js'
-import WKT from 'ol/format/wkt';
-import Feature from 'ol/feature';
+import * as ol from 'openlayers'
+
 
 export default class Point extends React.Component {
 
@@ -17,7 +17,7 @@ export default class Point extends React.Component {
   }
 
   handlePoint(feature, self, that) {
-    var formatted =  new WKT().writeFeature(new Feature({geometry: feature.getGeometry()}), {
+    var formatted =  new ol.format.WKT().writeFeature(new ol.Feature({geometry: feature.getGeometry()}), {
       decimals: 5
     });
     self.setState({wkt: formatted})
@@ -34,7 +34,7 @@ export default class Point extends React.Component {
     var field = opts['field'];
     that.setState({visibility: 'hidden'});
     var input = document.getElementById(field.key).getAttribute('value')
-    var feature = new WKT().readFeature(input)
+    var feature = new ol.format.WKT().readFeature(input)
 
     var point = feature.getGeometry()
 

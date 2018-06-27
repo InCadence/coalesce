@@ -1,8 +1,6 @@
 import React from 'react';
 import MapPoint from './MapPoint.js'
-import MultiPoint from 'ol/geom/multipoint';
-import WKT from 'ol/format/wkt';
-import Feature from 'ol/feature';
+import * as ol from 'openlayers'
 
 export default class Multipoint extends React.Component {
 
@@ -13,7 +11,7 @@ export default class Multipoint extends React.Component {
       wkt: "MULTIPOINT EMPTY"
     };
 
-    this.multipoint = new MultiPoint();
+    this.multipoint = new ol.geom.MultiPoint();
 
   }
 
@@ -55,14 +53,14 @@ export default class Multipoint extends React.Component {
     that.setState({visibility: 'hidden'});
     self.multipoint.appendPoint(feature.getGeometry());
     //that.getWKT(self.multipoint)
-    var formatted =  new WKT().writeFeature(new Feature({geometry: self.multipoint}), {
+    var formatted =  new ol.format.WKT().writeFeature(new ol.Feature({geometry: self.multipoint}), {
       decimals: 5
     });
     self.setState({wkt: formatted})
   }
 
   handleDelete(self, that) {
-    self.multipoint = new MultiPoint();
+    self.multipoint = new ol.geom.MultiPoint();
     var features = that.state.vectorSource.getFeaturesCollection();
     var formatted = 'MULTIPOINT EMPTY'
     if (features.getLength() > 0) {
@@ -71,7 +69,7 @@ export default class Multipoint extends React.Component {
         self.multipoint.appendPoint(elem.getGeometry());
       })
 
-      formatted =  new WKT().writeFeature(new Feature({geometry: self.multipoint}), {
+      formatted =  new ol.format.WKT().writeFeature(new ol.Feature({geometry: self.multipoint}), {
         decimals: 5
       });
 
@@ -85,7 +83,7 @@ export default class Multipoint extends React.Component {
     var field = opts['field'];
 
     var input = document.getElementById(field.key).getAttribute('value')
-    var feature = new WKT().readFeature(input)
+    var feature = new ol.format.WKT().readFeature(input)
     this.multipoint = feature.getGeometry();
 
     var vecSource = that.state.vectorSource

@@ -14,7 +14,7 @@
     "common-components": "file:../common-components",
     "material-ui": "^0.20.0",
     "mgrs": "^1.0.0",
-    "ol": "^4.6.5",
+    "openlayers": "^4.6.5",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
     "react-bootstrap": "^0.32.1",

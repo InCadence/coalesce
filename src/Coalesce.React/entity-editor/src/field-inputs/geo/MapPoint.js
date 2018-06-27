@@ -1,24 +1,12 @@
 import React from 'react';
 //import Modal from 'material-ui/Modal';
 import MapMaker from '../../Map.js';
-import {default as VectorLayer} from 'ol/layer/vector';
-import {default as VectorSource} from 'ol/source/vector';
-import Feature from 'ol/feature';
-import Style from 'ol/style/style';
-import Icon from 'ol/style/icon';
-import Tile from 'ol/layer/tile';
-import OSM from 'ol/source/osm';
-import Overlay from 'ol/overlay';
-import WKT from 'ol/format/wkt';
 import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
-import Point from 'ol/geom/point';
-import coordinate from 'ol/coordinate';
-import Collection from 'ol/collection';
 import Modal from 'react-responsive-modal';
-import 'common-components/css/ol.css'
 import 'common-components/css/map_popup.css'
-import 'common-components/css/mapping.css'
+import 'openlayers/css/ol.css';
+import * as ol from 'openlayers'
 
 
 var mgrs = require('mgrs');
@@ -31,9 +19,9 @@ export default class MapPoint extends React.Component {
 
     this.state = {
       features: [],
-      vectorSource: new VectorSource({
+      vectorSource: new ol.source.Vector({
         wrapX: false,
-        features: new Collection(),
+        features: new ol.Collection(),
       }),
       clickEvt: this.props.clickEvt,
       open: false,
@@ -60,9 +48,8 @@ export default class MapPoint extends React.Component {
   }
 
   createFeature(coords) {
-    var coordsZ = coords.push(0)
-    var point = new Point(coords, 'xyz');
-    var iconFeature = new Feature({
+    var point = new ol.geom.Point(coords);
+    var iconFeature = new ol.Feature({
       geometry: point
     });
 
@@ -71,8 +58,8 @@ export default class MapPoint extends React.Component {
   }
 
   stylizeFeature(feature) {
-    var iconStyle = new Style({
-       image: new Icon({
+    var iconStyle = new ol.style.Style({
+       image: new ol.style.Icon({
          anchor: [.5, 33],
          anchorXUnits: 'fraction',
          anchorYUnits: 'pixels',
@@ -81,6 +68,7 @@ export default class MapPoint extends React.Component {
        })
      })
     feature.setStyle(iconStyle);
+
   }
 
   addFeature(feature) {
@@ -112,7 +100,7 @@ export default class MapPoint extends React.Component {
     //var lonLatElem = document.getElementById('lonlat');
     //lonLatElem.textContent ='LonLat: ' + coords[0].toFixed(4) + ", " + coords[1].toFixed(4);
 
-    var hdms = coordinate.toStringHDMS(coords)
+    var hdms = ol.coordinate.toStringHDMS(coords)
     //var hdmsElem = document.getElementById('hdms' );
     //hdmsElem.textContent = 'HDMS: ' + hdms;
 
@@ -146,7 +134,6 @@ export default class MapPoint extends React.Component {
       this.props.parent.handleInput(this);
     }
     catch (error) {
-      console.log(error);
       this.props.parent.setState({wkt: this.wktSafe})
     }
   }
@@ -172,21 +159,21 @@ export default class MapPoint extends React.Component {
   }
 
   configureMap() {
-    var vectorLayer = new VectorLayer({
+    var vectorLayer = new ol.layer.Vector({
       name: 'markers',
       source: this.state.vectorSource
     });
 
     var layers = [
-      new Tile({
-        source: new OSM({
+      new ol.layer.Tile({
+        source: new ol.source.OSM({
           wrapX: false
         }),
       }),
       vectorLayer
     ];
 
-    var pop = new Overlay({
+    var pop = new ol.Overlay({
       element: document.getElementById('popup' + this.props.uniqueID),
       insertFirst: false,
   })
@@ -208,7 +195,12 @@ export default class MapPoint extends React.Component {
     return this.map;
   }
 
-
+  shapeLabeler(format) {
+    if(this.props.tag == 'MULTIPOINT') {
+      return " ((x1 y1 z1), (x2 y2 z2), ...)"
+    }
+    return format;
+  }
 
   render() {
     var opts = this.props.opts;
@@ -224,7 +216,7 @@ export default class MapPoint extends React.Component {
       <TextField
         id={field.key}
         fullWidth={true}
-        floatingLabelText={label + " - " + this.props.tag + " (x1 y1 z1, x2 y2 z2, ...)"}
+        floatingLabelText={label + " - " + this.props.tag + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
         underlineShow={this.props.showLabels}
         style={style.root}
         value={this.props.wkt}
@@ -245,17 +237,16 @@ export default class MapPoint extends React.Component {
         <button id={'button' + this.props.uniqueID} type="button" onClick={self.deleteFeature} style={{visibility: this.state.visibility}}>
           Delete
         </button>
+
         <div id={'map' + this.props.uniqueID} className="map" ></div>
 
-        <Modal
-        center
+        <Dialog
           open={this.state.open}
-          onClose={() => this.handleClose()}
-          onEntered={this.reset}
-        >
+          onRequestClose={() => this.handleClose()}
+          title='Choose Points'
+          fullScreen>
 
-
-        </Modal>
+        </Dialog>
 
 
 

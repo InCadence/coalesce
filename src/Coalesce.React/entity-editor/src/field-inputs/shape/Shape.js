@@ -1,18 +1,9 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
-  import MapMaker from '../../Map.js';
-import {default as VectorLayer} from 'ol/layer/vector';
-import {default as VectorSource} from 'ol/source/vector';
-import Feature from 'ol/feature';
-import coordinate from 'ol/coordinate';
-import Draw from 'ol/interaction/draw';
-import OSM from 'ol/source/osm';
-import Tile from 'ol/layer/tile';
-import Collection from 'ol/collection';
-import WKT from 'ol/format/wkt';
+import MapMaker from '../../Map.js';
+import * as ol from 'openlayers'
 import Modal from 'react-responsive-modal';
-import 'common-components/css/ol.css'
-import 'common-components/css/mapping.css'
+import 'openlayers/css/ol.css';
 var mgrs = require('mgrs');
 
 
@@ -20,13 +11,14 @@ export default class Shape extends React.Component {
 
   constructor(props) {
     super(props);
-    this.wktEmpty = this.props.shape.toUpperCase() + ' EMPTY';
+    this.wktEmpty = (this.props.shape == 'Circle' ? 'POINT' : this.props.shape.toUpperCase())  + ' EMPTY';
     this.state = {
-      vectorSource: new VectorSource({
+      vectorSource: new ol.source.Vector({
         wrapX: false,
-        features: new Collection(),
+        features: new ol.Collection(),
       }),
-      wkt: this.wktEmpty
+      wkt: this.wktEmpty,
+      radius: '0',
     };
 
     this.handleInputFocus = this.handleInputFocus.bind(this)
@@ -42,44 +34,55 @@ export default class Shape extends React.Component {
   configureMap() {
     var self = this;
 
-    var vectorLayer = new VectorLayer({
+    var vectorLayer = new ol.layer.Vector({
       name: 'markers',
       source: this.state.vectorSource
     });
     //null for defaults
     var layers = [
-      new Tile({
-        source: new OSM({
+      new ol.layer.Tile({
+        source: new ol.source.OSM({
           wrapX: false,
         })
       }),
       vectorLayer
     ];
     var overlays = null;
-    var interaction = null;
-    var maker = new MapMaker(layers, overlays, interaction,  'map' + this.props.uniqueID)
+    var maker = new MapMaker(layers, overlays, null,  'map' + this.props.uniqueID)
     this.map = maker.getMap();
-    interaction = new Draw({
+
+    var drawInteraction = new ol.interaction.Draw({
       source: this.state.vectorSource,
       type: this.props.shape
     })
 
-    interaction.on('drawstart', function(evt) {
+    drawInteraction.on('drawstart', function(evt) {
       self.handleDrawstart(self);
     })
+    this.map.addInteraction(drawInteraction)
+
+    //uncomment below for modifying. initializing the below variable
+    //  stops you from doing a this.state.vectorSource.clear()
+    // this.modifyInteraction = new ol.interaction.Modify({
+    //   source: this.state.vectorSource
+    // })
+    // this.modifyInteraction.setActive(true)
+    // this.map.addInteraction(this.modifyInteraction)
+
 
     this.state.vectorSource.on('addfeature', function(evt) {
       self.handleAddfeature(self, evt.feature)
     });
 
 
-    this.map.addInteraction(interaction)
 
     return this.map;
   }
 
+
+
   handleDrawstart(self) {
-    self.state.vectorSource.clear();
+    self.state.vectorSource.clear()
     self.setState( {wkt: self.wktEmpty})
     if (this.props.shape == 'Circle') {
       self.setState( {radius: 'None'} )
@@ -97,7 +100,7 @@ export default class Shape extends React.Component {
       })
     }
     else {
-      var wkt = new WKT().writeFeature(feature);
+      var wkt = new ol.format.WKT().writeFeature(feature);
       self.setState( {wkt: wkt} );
 
     }
@@ -127,54 +130,95 @@ export default class Shape extends React.Component {
 
   handleInputBlur() {
     try {
-      if (this.props.shape == 'Circle') {
-        const ZERO = '0';
-        const NOTHING = '';
-        var vecSource = this.state.vectorSource
-        var circle = vecSource.getFeaturesCollection().item(0).getGeometry()
-        var centerCoords = new WKT().readFeature(this.state.wkt).getGeometry().getCoordinates();
+      const NOTHING = '';
+      if (this.state.wkt == NOTHING) {
+        this.setState({
+          wkt: this.wktEmpty,
+          radius: '0'
+        })
+        this.state.vectorSource.clear()
+      }
+      else {
+        if (this.props.shape == 'Circle') {
+          const ZERO = '0';
+          var vecSource = this.state.vectorSource
+          var circleExisted = true;
 
-        //if the radius from text field is '', set it to '0'
-        var radiusAsString = this.state.radius || ZERO;
+          //read the center point input as a Feature (wkt -> Feature)
+          //  get its geometry (Point)
+          //  get coordinates from geometry ( [x, y] format )
+          var centerCoords = new ol.format.WKT().readFeature(this.state.wkt).getGeometry().getCoordinates();
 
-        if(!isNaN(radiusAsString)) {
-          var radiusAsInt = parseInt(radiusAsString);
-          circle.setCenterAndRadius(centerCoords, radiusAsInt);
-          if (this.state.radius == NOTHING && radiusAsString == ZERO) {
-            //if the radius was '' and is now '0',
-            //    update the text field to be '0' instead of '' (for aesthetics)
-            //this won't set the text field to '0' if it was already a number
-            this.setState({radius: radiusAsString})
+          //if the radius from text field is '', set it to '0'
+          var radiusAsString = this.state.radius || ZERO;
+          var radiusAsNum = 0;
+          console.log(radiusAsString);
+          if(!isNaN(radiusAsString)) {
+            //if the radius IS a string/number
+            //turn string to number
+            radiusAsNum = parseFloat(radiusAsString);
+            console.log(radiusAsString);
+            console.log(radiusAsNum);
+
+            if (this.state.radius == NOTHING && radiusAsString == ZERO) {
+              //if the radius was '' and is therefore turned into '0',
+              //    update the text field to be '0' instead of '' (for aesthetics)
+              //this won't set the text field to '0' if it was already a number
+              console.log('set');
+              this.setState({radius: radiusAsString})
+            }
+          }
+          else {
+            throw new TypeError("Radius must be a number!")
+          }
+
+          //get ol.Collection of features
+          var featuresCollection = vecSource.getFeaturesCollection()
+
+          //if there are no features/circles, make a new one at [0, 0] with radiusAsNum
+          if (featuresCollection.getLength() == 0) {
+            circleExisted = false;
+            var feat = new ol.Feature({
+              geometry: new ol.geom.Circle([0, 0], radiusAsNum)
+            });
+            vecSource.addFeature(feat)
+          }
+          else{ //if circle already exists update it
+            //get the Feature from the collection
+            var circle = vecSource.getFeaturesCollection().item(0)
+            //get the Geometry form the collection (ol.geom.Circle)
+            circle = circle.getGeometry()
+            //set circle's center and radius
+            circle.setCenterAndRadius(centerCoords, radiusAsNum);
           }
         }
         else {
-          throw new TypeError("Radius must be a number!")
+          var opts = this.props.opts;
+          var field = opts['field'];
+
+          var inputElem = document.getElementById(field.key)
+          var feature = new ol.format.WKT().readFeature(inputElem.value)
+
+          this.state.vectorSource.clear()
+          this.state.vectorSource.addFeature(feature)
         }
-      }
-      else {
-        var opts = this.props.opts;
-        var field = opts['field'];
 
-        var inputElem = document.getElementById(field.key)
-        var feature = new WKT().readFeature(inputElem.value)
-
-        this.state.vectorSource.clear()
-        this.state.vectorSource.addFeature(feature)
       }
 
     }
     catch (error) {
-      console.log(error);
-      if (this.props.shape == 'Circle') {
-        this.setState({
-          wkt: this.wktSafe[0],
-          radius: this.wktSafe[1]
-        })
-      }
-      else {
-        this.setState({wkt: this.wktSafe})
-      }
-    }
+     console.log(error);
+     if (this.props.shape == 'Circle') {
+       this.setState({
+         wkt: this.wktSafe[0],
+         radius: this.wktSafe[1]
+       })
+     }
+     else {
+       this.setState({wkt: this.wktSafe})
+     }
+   }
+
   }
 
   convertCoordinates(coords) {
@@ -182,7 +226,7 @@ export default class Shape extends React.Component {
     //var lonLatElem = document.getElementById('lonlat');
     //lonLatElem.textContent ='LonLat: ' + coords[0].toFixed(4) + ", " + coords[1].toFixed(4);
 
-    var hdms = coordinate.toStringHDMS(coords)
+    var hdms = ol.coordinate.toStringHDMS(coords)
     //var hdmsElem = document.getElementById('hdms' );
     //hdmsElem.textContent = 'HDMS: ' + hdms;
 
@@ -197,6 +241,12 @@ export default class Shape extends React.Component {
     ]})
   }
 
+  shapeLabeler(format) {
+    if(this.props.shape == 'Polygon') {
+      return `(${format})`
+    }
+    return format;
+  }
   render() {
     var opts = this.props.opts;
     var field = opts['field'];
@@ -205,8 +255,9 @@ export default class Shape extends React.Component {
     var attr = opts['attr'];
 
     var self = this;
-    console.log(field.key);
+    if(this.props.shape == 'Polygon') {
 
+    }
     return (
       <div>
 
@@ -215,7 +266,7 @@ export default class Shape extends React.Component {
             <TextField
               id={'center' + this.props.uniqueID}
               fullWidth={true}
-              floatingLabelText={label + " - CENTER POINT"}
+              floatingLabelText={"Circle - POINT (x1 y1 z1)"}
               underlineShow={this.props.showLabels}
               style={style.root}
               value={this.state.wkt}
@@ -227,7 +278,7 @@ export default class Shape extends React.Component {
             <TextField
               id={'radius' + this.props.uniqueID}
               fullWidth={true}
-              floatingLabelText={label + " - RADIUS"}
+              floatingLabelText={"Circle - RADIUS"}
               underlineShow={this.props.showLabels}
               style={style.root}
               value={this.state.radius}
@@ -243,7 +294,7 @@ export default class Shape extends React.Component {
           <TextField
             id={field.key}
             fullWidth={true}
-            floatingLabelText={label + " - " + self.props.shape.toUpperCase() + " (x1 y1 z1, x2 y2 z2, ...)"}
+            floatingLabelText={label + " - " + self.props.shape.toUpperCase() + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
             underlineShow={this.props.showLabels}
             style={style.root}
             value={this.state.wkt}
