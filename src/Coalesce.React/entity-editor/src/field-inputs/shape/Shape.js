@@ -2,8 +2,10 @@ import React from 'react';
 import TextField from 'material-ui/TextField';
 import MapMaker from '../../Map.js';
 import * as ol from 'openlayers'
-import Modal from 'react-responsive-modal';
+import Dialog from 'material-ui/Dialog';
 import 'openlayers/css/ol.css';
+import { MapView } from '../geo/map'
+
 var mgrs = require('mgrs');
 
 
@@ -305,19 +307,18 @@ export default class Shape extends React.Component {
           />
         }
 
-        <button type="button" onClick={this.handleOpen}>{this.props.shape}</button>
+        <button type="button" onClick={() => {this.setState({open: true})}}>{this.props.shape}</button>
 
-        <div id={'map' + this.props.uniqueID} className="map"></div>
 
-        <Modal
-        center
+        <Dialog
           open={this.state.open}
-          onClose={() => this.handleClose()}
-          onEntered={this.reset}
-        >
+          onRequestClose={() => this.handleClose()}
+//          title='Choose Points'
+bodyStyle={{padding: "0 px"}}
+          fullScreen>
+            <MapView configureMap={this.configureMap.bind(this)} uniqueID={this.props.uniqueID}/>
+        </Dialog>
 
-
-        </Modal>
 
       </div>
     );

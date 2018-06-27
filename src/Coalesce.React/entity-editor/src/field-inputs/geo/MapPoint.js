@@ -7,6 +7,7 @@ import Modal from 'react-responsive-modal';
 import 'common-components/css/map_popup.css'
 import 'openlayers/css/ol.css';
 import * as ol from 'openlayers'
+import { MapView } from './map'
 
 
 var mgrs = require('mgrs');
@@ -44,7 +45,7 @@ export default class MapPoint extends React.Component {
 
   componentDidMount() {
     this.configureMap()
-    this.map.updateSize()
+    //this.map.updateSize()
   }
 
   createFeature(coords) {
@@ -142,7 +143,7 @@ export default class MapPoint extends React.Component {
     this.setState({
       open: true
     });
-    this.map.render()
+    //this.map.render()
   }
 
   reset() {
@@ -238,14 +239,12 @@ export default class MapPoint extends React.Component {
           Delete
         </button>
 
-        <div id={'map' + this.props.uniqueID} className="map" ></div>
-
         <Dialog
           open={this.state.open}
           onRequestClose={() => this.handleClose()}
           title='Choose Points'
           fullScreen>
-
+            <MapView configureMap={this.configureMap.bind(this)} uniqueID={this.props.uniqueID}/>
         </Dialog>
 
 
