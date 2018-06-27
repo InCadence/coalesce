@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: sorr
+@author: venkat
 """
 
 from urlparse import urlsplit
@@ -119,9 +119,10 @@ FORMATS = (u"XML", u"JSON", u"python_dict")
 
 def search(params = None, operation = u"search",
            SUB_OPERATIONS = u"simple", OPERATOR = ["AND"], OPERATORS = ["!=", "!="], 
-           VALUES = ["hello", "max"], FIELDS = ["name", "objectkey"]):
+           VALUES = ["hello", "max"], FIELDS = ["name", "objectkey"], query = {"test": "test"}):
                               
     """
+    Arguments:
     :param parameters: search parameters included in the search
     :param operation: the operation to be preformed on the database
     :param method: the operation used to recieve data(GET, POST, etc)
@@ -130,8 +131,10 @@ def search(params = None, operation = u"search",
         multiple searches in the type of results desired back
     :param FIELDS: the type of value that is passed through
     :param VALUES: the search value
+    :param query: for complex search only, input custom data for querty, 
+    if multiple values are desired, follow data format from simple
     """
-    
+        
     if not OPERATIONS.has_key(operation):
         raise ValueError('The parameter "operation" must take one of the ' +
                          'following values:\n' + u", ".join(OPERATIONS.keys()))
@@ -169,10 +172,7 @@ def search(params = None, operation = u"search",
                             "pageSize":200,"pageNumber":1,
                             "propertyNames": PROPERTYNAMES,
                             "group": 
-                                {
-                                        "operator": OPERATOR[0], 
-                                        "criteria": CRITERIA
-                                                     }}
+                                {}}
                 data = json.dumps(data)
                 print(data)
                 response = get_response(URL = server + OPERATIONS[operation][0],
@@ -192,6 +192,7 @@ def search(params = None, operation = u"search",
         
     if SUB_OPERATIONS == u"complex":
         #Add a check on the searh fuction to see what the user passes through
+             #WRITE YOUR QUERY HERE
             """
             Type of search involving multiple fields
             Has multiple type of operators as well
@@ -206,11 +207,18 @@ def search(params = None, operation = u"search",
             data = {
                             "pageSize":200,"pageNumber":1,
                             "propertyNames": PROPERTYNAMES, #PASS THROUGH YOUR PROPERTIES HERE
-                            "group": 
-                                {
-                                        "operator": OPERATOR, #PASS THROUGH YOUR OPERATORS HERE
-                                        "criteria": CRITERIA #PASS THROUGH CRITERIA HERE
-                                                     }}
+                            "group":[
+                                    query
+                                 ]}
+            
+# =============================================================================
+#             for key, value in query.iteritems:
+#                 if key in data:
+#                     data[key] = query[key]
+#                 else: 
+#                     data["group"][key] = value
+# =============================================================================
+            
             response = get_response(URL = server + OPERATIONS[operation][0],
                                     method = method,
                                     params = params,
@@ -220,7 +228,13 @@ def search(params = None, operation = u"search",
                                     max_attempts = 2)
                 
             
-def read(ARTIFACT = ['GDELTArtifact'], KEY = '700014b5-0d8b-44f1-9139-e58113bfc537'):
+def read(ARTIFACT = ['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9'):
+        
+        """
+        Arguments:
+        :ARTIFACT: The type of entity being requested
+        :KEY: The UUID assigned to the entity
+        """
         
         serverobj = CoalesceServer()
         server = serverobj.URL
@@ -280,6 +294,11 @@ def read(ARTIFACT = ['GDELTArtifact'], KEY = '700014b5-0d8b-44f1-9139-e58113bfc5
             ValueError("You have entered an invalid parameter. Check again.")
 
 def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f'): 
+    
+    """
+    :TYPE: The type of entity being deleted
+    :KEY: The UUID of the entity being deleted
+    """
     
     serverobj = CoalesceServer()
     server = serverobj.URL
@@ -354,7 +373,8 @@ def create():
     if response.status == 204:
         print("You're request has been succsessful. A new entity has been created.")
         
-def update():
+def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9'):
+    
         serverobj = CoalesceServer()
         server = serverobj.URL
         headers = {
@@ -362,7 +382,7 @@ def update():
                 "content-type" : u"application/json; charset=utf-8"
                 }
         read_payload = {
-            'values': ['GDELTArtifact'], 'entityKey': 'e32ceba6-fbd1-4067-8803-fa17b2ffed39'} #Please enter your specific entity key
+            'values': VALUE, 'entityKey': KEY} #Please enter your specific entity key
         params = None
         operation = u"update"
         method = OPERATIONS[operation][1]
@@ -395,12 +415,8 @@ def update():
                                 delay = 1,
                                 max_attempts = 2)
         return response
-#else: 
-#    print("\nI don't know what you entered, you've broken the system")
-#    print("Please enter a valid option")
 
-
-print(search())
+search()
 
         
         
