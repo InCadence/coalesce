@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.framework;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
@@ -9,10 +10,8 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
-import com.incadencecorp.coalesce.framework.jobs.CoalesceRegisterTemplateJob;
-import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityJob;
-import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityProperties;
-import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveTemplateJob;
+import com.incadencecorp.coalesce.framework.jobs.*;
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
@@ -56,7 +55,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
         Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private ICoalescePersistor _persistors[];
+    private ICoalescePersistor _persistors[] = new ICoalescePersistor[0];
     private ICoalescePersistor _authoritativePersistor;
     private IExceptionHandler _handler;
     private boolean _isAsyncUpdates = true;
@@ -288,9 +287,9 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      * Calls {@link #saveCoalesceEntity(boolean, CoalesceEntity...)} passing
      * <code>false</code> for allowRemoval.
      *
-     * @param entities
+     * @param entities to save
      * @return whether the authoritative was updated successfully.
-     * @throws CoalescePersistorException
+     * @throws CoalescePersistorException on error
      */
     public boolean saveCoalesceEntity(CoalesceEntity... entities) throws CoalescePersistorException
     {
@@ -298,13 +297,25 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     }
 
     /**
+     * Calls {@link #saveCoalesceEntityAsync(boolean, CoalesceEntity...)} passing
+     * <code>false</code> for allowRemoval.
+     *
+     * @param entities to save
+     * @throws CoalescePersistorException on error
+     */
+    public void saveCoalesceEntityAsync(CoalesceEntity... entities) throws CoalescePersistorException
+    {
+        this.saveCoalesceEntityAsync(false, entities);
+    }
+
+    /**
      * Updates the persistors with the provided entities blocking on the
      * authoritative persistor.
      *
-     * @param allowRemoval
-     * @param entities
+     * @param allowRemoval whether or not DELETE status should mark or remove the entity from data store.
+     * @param entities to save
      * @return whether the authoritative was updated successfully.
-     * @throws CoalescePersistorException
+     * @throws CoalescePersistorException on error
      */
     public boolean saveCoalesceEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
@@ -342,6 +353,56 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
 
         // Update Authoritative Persistor
         return isSuccessful;
+    }
+
+    /**
+     * Updates the persistors with the provided entities not blocking on the
+     * authoritative persistor.
+     *
+     * @param allowRemoval whether or not DELETE status should mark or remove the entity from data store.
+     * @param entities to save
+     * @throws CoalescePersistorException on error
+     */
+    public void saveCoalesceEntityAsync(boolean allowRemoval, CoalesceEntity... entities)
+            throws CoalescePersistorException
+    {
+        for (CoalesceEntity entity : entities)
+        {
+            if (entity.isNew())
+            {
+                entity.setStatus(ECoalesceObjectStatus.ACTIVE);
+            }
+        }
+
+        int ii = 0;
+
+        // Set Target
+        ICoalescePersistor persisters[] = new ICoalescePersistor[getSecondaryPersistors().length + 1];
+        persisters[ii++] = getAuthoritativePersistor();
+
+        for (ICoalescePersistor persister : getSecondaryPersistors())
+        {
+            persisters[ii++] = persister;
+        }
+
+        if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug("Creating Job {}", CoalesceSaveEntityJob.class.getName());
+        }
+
+        // Create Parameters
+        CoalesceSaveEntityProperties params = new CoalesceSaveEntityProperties();
+        params.setAllowRemoval(allowRemoval);
+        params.setEntities(entities);
+
+        // Create Job
+        CoalesceSaveEntityJob job = new CoalesceSaveEntityJob(params);
+        job.setHandler(_handler);
+        job.setExecutor(this);
+        job.setTarget(persisters);
+
+        // Update Secondary Persistors
+        submit(job);
     }
 
     /*--------------------------------------------------------------------------
