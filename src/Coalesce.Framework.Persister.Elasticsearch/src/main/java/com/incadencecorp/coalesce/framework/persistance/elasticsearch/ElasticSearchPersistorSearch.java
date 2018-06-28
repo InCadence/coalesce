@@ -76,7 +76,8 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             props.put(ElasticDataStoreFactory.HOSTNAME.key, params.get(ElasticSearchSettings.PARAM_HTTP_HOST));
             props.put(ElasticDataStoreFactory.HOSTPORT.key, params.get(ElasticSearchSettings.PARAM_HTTP_PORT));
             props.put(ElasticDataStoreFactory.SSL_ENABLED.key, params.get(ElasticSearchSettings.PARAM_SSL_ENABLED));
-            props.put(ElasticDataStoreFactory.SSL_REJECT_UNAUTHORIZED.key, params.get(ElasticSearchSettings.PARAM_SSL_REJECT_UNAUTHORIZED));
+            props.put(ElasticDataStoreFactory.SSL_REJECT_UNAUTHORIZED.key,
+                      params.get(ElasticSearchSettings.PARAM_SSL_REJECT_UNAUTHORIZED));
             props.put(ElasticDataStoreFactory.SOURCE_FILTERING_ENABLED.key, Boolean.TRUE.toString());
 
             if (Boolean.parseBoolean(params.get(ElasticSearchSettings.PARAM_SSL_ENABLED)))
@@ -131,16 +132,21 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             String[] columnList = new String[properties.size()];
             for (int i = 0; i < properties.size(); i++)
             {
-                ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(properties.get(i).getPropertyName());
+                String property = properties.get(i).getPropertyName();
 
-                if (type == null)
+                if (!CoalescePropertyFactory.isRecordPropertyName(property))
                 {
-                    throw new IllegalArgumentException("Unknown Property: " + properties.get(i).getPropertyName());
+                    ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(property);
+
+                    if (type == null)
+                    {
+                        throw new IllegalArgumentException("Unknown Property: " + property);
+                    }
+
+                    LOGGER.debug("Property: {} Type: {}", property, type);
                 }
 
-                LOGGER.debug("Property: {} Type: {}", properties.get(i).getPropertyName(), type);
-
-                columnList[i] = properties.get(i).getPropertyName().replace(".", "");
+                columnList[i] = CoalescePropertyFactory.getColumnName(property);
             }
 
             SearchResults results = new SearchResults();

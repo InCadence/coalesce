@@ -23,6 +23,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.geotools.data.Query;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.visitor.DuplicatingFilterVisitor;
@@ -155,9 +156,12 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         {
             String normalized = getNormalizedPropertyName(property);
 
-            if (!properties.contains(normalized))
+            if (!CoalescePropertyFactory.isRecordPropertyName(property))
             {
-                properties.add(normalized);
+                if (!properties.contains(normalized))
+                {
+                    properties.add(normalized);
+                }
             }
         }
 
