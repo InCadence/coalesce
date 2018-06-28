@@ -365,10 +365,12 @@ public abstract class AbstractBaseClient<T extends ICoalesceEvents> extends Base
                 {
                     isSuccessful = false;
 
+                    /*
                     if (result != null && !StringHelper.isNullOrEmpty(result.getError()))
                     {
                         throw new RemoteException(result.getError());
                     }
+                    */
                     break;
                 }
             }
