@@ -1,9 +1,5 @@
 package com.incadencecorp.coalesce.common.helpers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -12,6 +8,10 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.util.Locale;
+
+import static org.junit.Assert.*;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -689,11 +689,8 @@ public class JodaDateTimeHelperTest {
     @Test
     public void toXmlDateTimeUTCNullDateTest()
     {
-        _thrown.expect(NullArgumentException.class);
-        _thrown.expectMessage("forDate");
-
-        @SuppressWarnings("unused")
-        String utcTime = JodaDateTimeHelper.toXmlDateTimeUTC(null);
+        String result = JodaDateTimeHelper.toXmlDateTimeUTC(null);
+        Assert.assertNull(result);
     }
 
     @Test
@@ -821,4 +818,52 @@ public class JodaDateTimeHelperTest {
         assertTrue(Math.abs(dateDiff.getStandardSeconds()) < 2);
 
     }
+
+    @Test
+    public void TimeFormatTest() throws Exception
+    {
+        String datetie = "2018-06-12T22:59:48+00:00";
+    }
+
+    @Test
+    public void testFormats() throws Exception
+    {
+        DateTime results;
+
+        results = JodaDateTimeHelper.parseDateTime("20180617");
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(2018, results.getYear());
+        Assert.assertEquals(6, results.getMonthOfYear());
+        Assert.assertEquals(17, results.getDayOfMonth());
+
+        results = JodaDateTimeHelper.parseDateTime("2018-06-17 05:00:00");
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(2018, results.getYear());
+        Assert.assertEquals(6, results.getMonthOfYear());
+        Assert.assertEquals(17, results.getDayOfMonth());
+
+        Assert.assertEquals(5, results.getHourOfDay());
+        Assert.assertEquals(0, results.getMinuteOfHour());
+        Assert.assertEquals(0, results.getSecondOfMinute());
+
+        Assert.assertEquals("America/New_York", results.getZone().getID());
+
+        results = JodaDateTimeHelper.parseDateTime("2018-06-17T17:47:28+0000");
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(2018, results.getYear());
+        Assert.assertEquals(6, results.getMonthOfYear());
+        Assert.assertEquals(17, results.getDayOfMonth());
+
+        results = JodaDateTimeHelper.parseDateTime("2018-06-17T17:47:28+00:00");
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(2018, results.getYear());
+        Assert.assertEquals(6, results.getMonthOfYear());
+        Assert.assertEquals(17, results.getDayOfMonth());
+
+    }
+
 }

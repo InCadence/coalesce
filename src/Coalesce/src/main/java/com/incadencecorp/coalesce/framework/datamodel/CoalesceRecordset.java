@@ -1,17 +1,15 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
-import org.apache.commons.lang.NullArgumentException;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import org.apache.commons.lang.NullArgumentException;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -29,9 +27,10 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
  Distribution Statement D. Distribution authorized to the Department of
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
+
 /**
  * This is a container for records.
- * 
+ *
  * @author n78554
  */
 public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesceRecordset {
@@ -53,10 +52,10 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Creates an {@link CoalesceRecordset}, by name, and ties it to its parent
      * {@link CoalesceSection} with default max and min records of 0.
-     * 
+     *
      * @param parent {@link CoalesceSection} the {@link CoalesceSection} that
-     *            this new {@link CoalesceRecordset} will belong to.
-     * @param name String the name of this {@link CoalesceRecordset} .
+     *               this new {@link CoalesceRecordset} will belong to.
+     * @param name   String the name of this {@link CoalesceRecordset} .
      * @return {@link CoalesceRecordset} , the new {@link CoalesceRecordset} .
      */
     public static CoalesceRecordset create(CoalesceSection parent, String name)
@@ -67,14 +66,14 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Creates an {@link CoalesceRecordset}, by name, and ties it to its parent
      * {@link CoalesceSection} with max and min records assignments.
-     * 
-     * @param parent {@link CoalesceSection} the {@link CoalesceSection} that
-     *            this new {@link CoalesceRecordset} will belong to.
-     * @param name String the name of this {@link CoalesceRecordset} .
+     *
+     * @param parent     {@link CoalesceSection} the {@link CoalesceSection} that
+     *                   this new {@link CoalesceRecordset} will belong to.
+     * @param name       String the name of this {@link CoalesceRecordset} .
      * @param minRecords integer, the minimum number of records this
-     *            {@link CoalesceRecordset} can contain.
+     *                   {@link CoalesceRecordset} can contain.
      * @param maxRecords integer, the maximum number of records this
-     *            {@link CoalesceRecordset} can contain.
+     *                   {@link CoalesceRecordset} can contain.
      * @return {@link CoalesceRecordset} , the new {@link CoalesceRecordset} .
      */
     public static CoalesceRecordset create(CoalesceSection parent, String name, int minRecords, int maxRecords)
@@ -122,7 +121,6 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
 
     /**
      * Class constructor. Creates a CoalesceRecordset class.
-     * 
      */
     public CoalesceRecordset()
     {
@@ -132,9 +130,8 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Class constructor. Creates a CoalesceRecordset class off of an existing
      * CoalesceRecordset.
-     * 
+     *
      * @param recordset
-     * 
      */
     public CoalesceRecordset(CoalesceRecordset recordset)
     {
@@ -147,11 +144,11 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Initializes a this {@link CoalesceRecordset} based on a Recordset and
      * ties it to its parent {@link CoalesceSection}.
-     * 
-     * @param parent {@link CoalesceSection} the {@link CoalesceSection} that
-     *            this new {@link CoalesceRecordset} will belong to.
+     *
+     * @param parent    {@link CoalesceSection} the {@link CoalesceSection} that
+     *                  this new {@link CoalesceRecordset} will belong to.
      * @param recordset Recordset that this {@link CoalesceRecordset} will be
-     *            based on.
+     *                  based on.
      * @return boolean indicator of success/failure.
      */
     protected boolean initialize(CoalesceSection parent, Recordset recordset)
@@ -201,7 +198,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
 
     /**
      * @return a complete list of all the records within this recordset whether
-     *         they are marked as deleted or not.
+     * they are marked as deleted or not.
      */
     @JsonView(Views.Entity.class)
     public List<CoalesceRecord> getAllRecords()
@@ -230,7 +227,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     @JsonIgnore
     public List<CoalesceRecord> getRecords()
     {
-        return getObjectsAsList(_entityRecordset.getRecord(), ECoalesceObjectStatus.DELETED);
+        return getObjectsAsList(_entityRecordset.getRecord(), ECoalesceObjectStatus.DELETED, ECoalesceObjectStatus.UNKNOWN);
     }
 
     @Override
@@ -260,9 +257,9 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Returns boolean indicator of the existence of this
      * {@link CoalesceRecordset} 's active {@link CoalesceRecord}s.
-     * 
+     *
      * @return boolean indication that the {@link CoalesceRecordset} has active
-     *         {@link CoalesceRecord} s.
+     * {@link CoalesceRecord} s.
      */
     @JsonView(Views.Entity.class)
     public boolean getHasActiveRecords()
@@ -284,9 +281,9 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Returns boolean indicator of the existence of this
      * {@link CoalesceRecordset} 's {@link CoalesceRecord} s.
-     * 
+     *
      * @return boolean indication that the {@link CoalesceRecordset} has
-     *         {@link CoalesceRecord} s, active or not.
+     * {@link CoalesceRecord} s, active or not.
      */
     @JsonView(Views.Entity.class)
     public boolean getHasRecords()
@@ -302,18 +299,17 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
      * Creates an {@link CoalesceFieldDefinition} for this
      * {@link CoalesceRecordset}, with the name, datatype, label, default
      * classification and default value specified.
-     * 
-     * @param name String name of the new {@link CoalesceFieldDefinition} .
-     * @param dataType {@link ECoalesceFieldDataTypes} that a Field based on the
-     *            new {@link CoalesceFieldDefinition} is to contain.
-     * @param label String label to present to the user for this
-     *            field/fielddefinition.
+     *
+     * @param name                         String name of the new {@link CoalesceFieldDefinition} .
+     * @param dataType                     {@link ECoalesceFieldDataTypes} that a Field based on the
+     *                                     new {@link CoalesceFieldDefinition} is to contain.
+     * @param label                        String label to present to the user for this
+     *                                     field/fielddefinition.
      * @param defaultClassificationMarking the default classification for this
-     *            field/fielddefinition.
-     * @param defaultValue the default value for this field/fielddefinition.
-     * 
+     *                                     field/fielddefinition.
+     * @param defaultValue                 the default value for this field/fielddefinition.
      * @return {@link CoalesceFieldDefinition} the new
-     *         {@link CoalesceFieldDefinition} .
+     * {@link CoalesceFieldDefinition} .
      */
     public CoalesceFieldDefinition createFieldDefinition(String name,
                                                          ECoalesceFieldDataTypes dataType,
@@ -328,19 +324,18 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
      * Creates an {@link CoalesceFieldDefinition} for this
      * {@link CoalesceRecordset}, with the name, datatype, label, default
      * classification and default value specified.
-     * 
-     * @param name String name of the new {@link CoalesceFieldDefinition}
-     * @param dataType {@link ECoalesceFieldDataTypes} that a Field based on the
-     *            new {@link CoalesceFieldDefinition} is to contain
-     * @param label String label to present to the user for this field/field
-     *            definition
+     *
+     * @param name                         String name of the new {@link CoalesceFieldDefinition}
+     * @param dataType                     {@link ECoalesceFieldDataTypes} that a Field based on the
+     *                                     new {@link CoalesceFieldDefinition} is to contain
+     * @param label                        String label to present to the user for this field/field
+     *                                     definition
      * @param defaultClassificationMarking the default classification for this
-     *            field/field definition
-     * @param defaultValue the default value for this field/field definition
-     * @param disableHistory the value defining if a field should track history
-     * 
+     *                                     field/field definition
+     * @param defaultValue                 the default value for this field/field definition
+     * @param disableHistory               the value defining if a field should track history
      * @return {@link CoalesceFieldDefinition} the new
-     *         {@link CoalesceFieldDefinition}
+     * {@link CoalesceFieldDefinition}
      */
     public CoalesceFieldDefinition createFieldDefinition(String name,
                                                          ECoalesceFieldDataTypes dataType,
@@ -362,12 +357,12 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Creates an {@link CoalesceFieldDefinition} for this
      * {@link CoalesceRecordset}, with the name and datatype specified.
-     * 
-     * @param name String name of the new {@link CoalesceFieldDefinition} .
+     *
+     * @param name     String name of the new {@link CoalesceFieldDefinition} .
      * @param dataType {@link ECoalesceFieldDataTypes} that a Field based on the
-     *            new {@link CoalesceFieldDefinition} is to contain.
+     *                 new {@link CoalesceFieldDefinition} is to contain.
      * @return {@link CoalesceFieldDefinition} the new
-     *         {@link CoalesceFieldDefinition} .
+     * {@link CoalesceFieldDefinition} .
      */
     public CoalesceFieldDefinition createFieldDefinition(String name, ECoalesceFieldDataTypes dataType)
     {
@@ -377,7 +372,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Returns the {@link CoalesceRecordset} 's {@link CoalesceFieldDefinition}
      * that matches the String fieldName parameter.
-     * 
+     *
      * @param fieldName String name of the new {@link CoalesceFieldDefinition} .
      * @return {@link CoalesceFieldDefinition} with the matching field name.
      */
@@ -400,9 +395,9 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Returns boolean indicator of {@link CoalesceRecordset} 's ability to be
      * edited.
-     * 
+     *
      * @return boolean indication of if the {@link CoalesceRecordset} is
-     *         editable.
+     * editable.
      */
     public boolean getAllowEdit()
     {
@@ -412,9 +407,9 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Returns boolean indicator of {@link CoalesceRecordset} 's ability to add
      * new records.
-     * 
+     *
      * @return boolean indication of if the {@link CoalesceRecordset} can have
-     *         new records added to it.
+     * new records added to it.
      */
     public boolean getAllowNew()
     {
@@ -424,9 +419,9 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Returns boolean indicator of {@link CoalesceRecordset} 's ability to add
      * delete records.
-     * 
+     *
      * @return boolean indication of if the {@link CoalesceRecordset} records
-     *         can be removed.
+     * can be removed.
      */
     public boolean getAllowRemove()
     {
@@ -436,9 +431,9 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Returns the number of {@link CoalesceRecord}s contained within this
      * {@link CoalesceRecordset}.
-     * 
+     *
      * @return integer of how many {@link CoalesceRecord} s are contained by
-     *         this {@link CoalesceRecordset} .
+     * this {@link CoalesceRecordset} .
      */
     @JsonView(Views.Entity.class)
     public int getCount()
@@ -447,12 +442,10 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     }
 
     /**
-     * 
-     * 
      * @param value
      * @return a boolean indicator of the existence of the
-     *         {@link CoalesceRecord} parameter within this
-     *         {@link CoalesceRecordset} .
+     * {@link CoalesceRecord} parameter within this
+     * {@link CoalesceRecordset} .
      */
     public boolean contains(Object value)
     {
@@ -462,10 +455,10 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Returns Index of the Object parameter within this
      * {@link CoalesceRecordset}.
-     * 
+     *
      * @param value Object of {@link CoalesceRecord} .
      * @return integer position index of the {@link CoalesceRecord} Object
-     *         parameter within this {@link CoalesceRecordset} .
+     * parameter within this {@link CoalesceRecordset} .
      */
     public int indexOf(Object value)
     {
@@ -475,7 +468,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Adds a new {@link CoalesceRecord} to this {@link CoalesceRecordset} and
      * returns the {@link CoalesceRecord}.
-     * 
+     *
      * @return {@link CoalesceRecord} , the new {@link CoalesceRecord} .
      */
     public CoalesceRecord addNew()
@@ -488,14 +481,13 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Returns the {@link CoalesceRecord} at the specified index within this
      * {@link CoalesceRecordset}.
-     * 
+     *
      * @param index integer position of the {@link CoalesceRecordset} 's desired
-     *            {@link CoalesceRecord} .
+     *              {@link CoalesceRecord} .
      * @return {@link CoalesceRecord} at the {@link CoalesceRecordset} 's index
-     *         position.
-     * 
+     * position.
      * @throws IndexOutOfBoundsException if the <code>index</code> is not within
-     *             the bounds of available records
+     *                                   the bounds of available records
      */
     public CoalesceRecord getItem(int index)
     {
@@ -516,9 +508,9 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Removes the {@link CoalesceRecord} at the specified index within this
      * {@link CoalesceRecordset}.
-     * 
+     *
      * @param index index position of the {@link CoalesceRecordset} 's
-     *            {@link CoalesceRecord} to remove.
+     *              {@link CoalesceRecord} to remove.
      */
     public void removeAt(int index)
     {
@@ -536,7 +528,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Removes the {@link CoalesceRecord}, from within this
      * {@link CoalesceRecordset}, that has the matching key passed by parameter.
-     * 
+     *
      * @param key String of the {@link CoalesceRecord} key to remove from the
      *            {@link CoalesceRecordset} .
      */
@@ -585,7 +577,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
 
     /**
      * Returns the Record list contained by the Recordset.
-     * 
+     *
      * @return List&lt;Record&gt; the Recordset's record list.
      */
     protected List<Record> getEntityRecords()
@@ -595,7 +587,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
 
     /**
      * Returns the Fielddefinition list contained by the Recordset.
-     * 
+     *
      * @return List&lt;Fielddefinition&gt; the Recordset's Fielddefinition list.
      */
     protected List<Fielddefinition> getEntityFieldDefinitions()
@@ -627,7 +619,8 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     @Override
     protected boolean setExtendedAttributes(String name, String value)
     {
-        switch (name.toLowerCase()) {
+        switch (name.toLowerCase())
+        {
         case "minrecords":
             try
             {
@@ -660,14 +653,8 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     {
         Map<QName, String> map = super.getAttributes();
 
-        if (_entityRecordset.getMinrecords() != null)
-        {
-            map.put(new QName("minrecords"), _entityRecordset.getMinrecords().toString());
-        }
-        if (_entityRecordset.getMaxrecords() != null)
-        {
-            map.put(new QName("maxrecords"), _entityRecordset.getMaxrecords().toString());
-        }
+        map.put(new QName("minrecords"), Integer.toString(_entityRecordset.getMinrecords()));
+        map.put(new QName("maxrecords"), Integer.toString(_entityRecordset.getMaxrecords()));
 
         return map;
     }

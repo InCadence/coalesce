@@ -4,7 +4,6 @@ import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
 import org.opengis.filter.expression.PropertyName;
 
 import java.util.ArrayList;
@@ -30,7 +29,14 @@ public class FeatureColumnIterator implements Iterator<Object[]> {
         // Normalize
         for (int ii = 0; ii < properties.size(); ii++)
         {
-            this.properties.add(CoalescePropertyFactory.getColumnName(normalizer, properties.get(ii)));
+            if (!CoalescePropertyFactory.isRecordPropertyName(properties.get(ii).getPropertyName()))
+            {
+                this.properties.add(CoalescePropertyFactory.getColumnName(normalizer, properties.get(ii)));
+            }
+            else
+            {
+               this.properties.add("recordkey");
+            }
         }
     }
 
@@ -47,9 +53,18 @@ public class FeatureColumnIterator implements Iterator<Object[]> {
 
         Object[] row = new Object[properties.size()];
 
-        for (int ii=0; ii<properties.size(); ii++)
+        for (int ii = 0; ii < properties.size(); ii++)
         {
-            row[ii] = feature.getProperty(properties.get(ii)).getValue();
+            String property = properties.get(ii);
+
+            if (!property.equals("recordkey"))
+            {
+                row[ii] = feature.getProperty(property).getValue();
+            }
+            else
+            {
+                row[ii] = feature.getIdentifier().getID();
+            }
         }
 
         return row;

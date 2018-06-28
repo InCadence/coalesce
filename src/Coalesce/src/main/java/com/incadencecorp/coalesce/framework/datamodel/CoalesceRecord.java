@@ -322,34 +322,6 @@ public class CoalesceRecord extends CoalesceObjectHistory {
     // Protected Methods
     // -----------------------------------------------------------------------//
 
-    @Override
-    public void setStatus(ECoalesceObjectStatus status)
-    {
-        if (status == getStatus())
-            return;
-
-        _entityRecord.setStatus(status);
-
-        switch (status) {
-        case NEW:
-        case READONLY:
-        case ACTIVE:
-            if (!getCastParent().contains(this))
-            {
-                getCastParent().getRecords().add(this);
-            }
-            break;
-        default:
-            if (getCastParent().contains(this))
-            {
-                getCastParent().remove(getKey());
-            }
-            break;
-
-        }
-
-    }
-
     protected List<Field> getEntityFields()
     {
         return _entityRecord.getField();

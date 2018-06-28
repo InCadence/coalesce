@@ -20,6 +20,8 @@
 package ${packagename_root}.${packagename_sub};
 ## Create Imports
 #set($imports = [])
+#if( $imports.add("java.util.List") ) #end
+#if( $imports.add("com.fasterxml.jackson.annotation.JsonIgnore") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceSection") ) #end
@@ -179,7 +181,8 @@ public class ${classname} extends CoalesceRecord implements I${name}Record {
 #elseif($fd.getDataType() == "GEOCOORDINATE_LIST_TYPE")
         return get$normalizer.normalize($fd.getName())Field().getValueAsMultiPoint();
 #elseif($fd.getDataType() == "DATE_TIME_TYPE")
-        return new Date(get$normalizer.normalize($fd.getName())Field().getValue().getMillis());
+        DateTime value = get$normalizer.normalize($fd.getName())Field().getValue();
+        return value != null ? value.toDate() : null;
 #else
         return get$normalizer.normalize($fd.getName())Field().getValue();
 #end 
@@ -208,13 +211,24 @@ public class ${classname} extends CoalesceRecord implements I${name}Record {
     --------------------------------------------------------------------------*/
 #foreach($fd in $definitions)
 #set($fieldtype = $fieldmapper.map($fd.getDataType()).getClass().getSimpleName())
-    
+
+    @JsonIgnore
     public $fieldtype get$normalizer.normalize($fd.getName())Field()
     {
 #set($enum = $fd.getName().toUpperCase().replaceAll(" ", "_"))
         return ($fieldtype) getFieldByName(E${name}Fields.${enum});
     }
 #end
+
+    /*--------------------------------------------------------------------------
+    Overrides to add JsonIgnore
+    --------------------------------------------------------------------------*/
+
+    @JsonIgnore
+    public List<CoalesceField<?>> getFields()
+    {
+        return super.getFields();
+    }
 
     /*--------------------------------------------------------------------------
     Private Methods

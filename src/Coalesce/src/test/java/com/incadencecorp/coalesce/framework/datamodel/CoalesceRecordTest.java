@@ -1,23 +1,18 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-import java.util.UUID;
-
+import com.incadencecorp.coalesce.api.ICoalesceFieldDefinitionFactory;
+import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.api.ICoalesceFieldDefinitionFactory;
-import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.*;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -246,7 +241,8 @@ public class CoalesceRecordTest {
 
         for (CoalesceField<?> field : fields)
         {
-            switch (field.getKey()) {
+            switch (field.getKey())
+            {
             case "D7067C3F-54B1-47FD-9C8A-A2D7946E0C2A":
 
                 firstFound = true;
@@ -289,7 +285,8 @@ public class CoalesceRecordTest {
 
         for (String fieldName : fieldNames)
         {
-            switch (fieldName) {
+            switch (fieldName)
+            {
             case "ActionNumber":
 
                 firstFound = true;
@@ -332,7 +329,8 @@ public class CoalesceRecordTest {
 
         for (String fieldKey : fieldKeys)
         {
-            switch (fieldKey) {
+            switch (fieldKey)
+            {
             case "D7067C3F-54B1-47FD-9C8A-A2D7946E0C2A":
 
                 firstFound = true;
@@ -409,8 +407,8 @@ public class CoalesceRecordTest {
         String entityXml = entity.toXml();
 
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
-        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH
-                + "/New Record");
+        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getCoalesceObjectForNamePath(
+                CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH + "/New Record");
 
         assertTrue(desRecord.isNoIndex());
 
@@ -456,7 +454,8 @@ public class CoalesceRecordTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecord record = (CoalesceRecord) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecord record = (CoalesceRecord) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record");
         String recordXml = record.toXml();
 
         Record desRecord = (Record) XmlHelper.deserialize(recordXml, Record.class);
@@ -473,21 +472,36 @@ public class CoalesceRecordTest {
     @Test
     public void setStatusTest()
     {
-        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecord record = (CoalesceRecord) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record");
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
 
         assertEquals(ECoalesceObjectStatus.ACTIVE, record.getStatus());
 
         record.setStatus(ECoalesceObjectStatus.UNKNOWN);
 
-        assertEquals(ECoalesceObjectStatus.DELETED, record.getStatus());
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, record.getStatus());
 
         String recordXml = record.toXml();
 
         Record desRecord = (Record) XmlHelper.deserialize(recordXml, Record.class);
 
-        assertEquals(ECoalesceObjectStatus.DELETED, desRecord.getStatus());
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, desRecord.getStatus());
 
+    }
+
+    @Test
+    public void setStatusNullTest()
+    {
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
+
+        assertEquals(ECoalesceObjectStatus.ACTIVE, record.getStatus());
+
+        record.setStatus(null);
+
+        assertEquals(ECoalesceObjectStatus.ACTIVE, record.getStatus());
     }
 
     @Test
@@ -495,7 +509,8 @@ public class CoalesceRecordTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecord record = (CoalesceRecord) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecord record = (CoalesceRecord) entity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record");
 
         int before = record.getAttributes().size();
 
@@ -527,7 +542,7 @@ public class CoalesceRecordTest {
         assertEquals(true, record.isNoIndex());
 
         record.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
-        assertEquals(ECoalesceObjectStatus.DELETED, record.getStatus());
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, record.getStatus());
 
         record.setStatus(ECoalesceObjectStatus.ACTIVE);
 
@@ -536,7 +551,8 @@ public class CoalesceRecordTest {
 
         String entityXml = entity.toXml();
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
-        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/TestingName");
+        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getCoalesceObjectForNamePath(
+                "TREXMission/Mission Information Section/Mission Information Recordset/TestingName");
 
         assertEquals("TestingValue", desRecord.getAttribute("TestAttribute"));
         assertEquals("TestingName", desRecord.getName());
@@ -553,14 +569,13 @@ public class CoalesceRecordTest {
      * {@link CoalesceRecord#getFieldByName(String, ICoalesceFieldDefinitionFactory)}
      * will create the field along with its definition using the provided
      * factory if not found.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testMissingField() throws Exception
     {
-        final String[] fields = new String[] {
-                "field1", "field2", "field3"
+        final String[] fields = new String[] { "field1", "field2", "field3"
         };
 
         final ICoalesceFieldDefinitionFactory factory = new ICoalesceFieldDefinitionFactory() {
@@ -570,7 +585,8 @@ public class CoalesceRecordTest {
             {
                 CoalesceFieldDefinition fd = null;
 
-                switch (name) {
+                switch (name)
+                {
                 case "field1":
                     fd = CoalesceFieldDefinition.create(recordset, name, ECoalesceFieldDataTypes.STRING_TYPE);
                     break;

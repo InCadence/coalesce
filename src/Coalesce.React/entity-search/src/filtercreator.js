@@ -117,7 +117,7 @@ export class FilterCreator extends React.Component {
 
     row.recordset = e.target.value;
     row.field = defaultField;
-    row.operator = '=';
+    row.operator = 'EqualTo';
     row.value = '';
 
     this.setState({tabledata: tabledata});
@@ -128,7 +128,7 @@ export class FilterCreator extends React.Component {
     var row = this.getRow(tabledata, key);
 
     row.field = e.target.value;
-    row.operator = '=';
+    row.operator = 'EqualTo';
     row.value = '';
 
     this.setState({tabledata: tabledata});
@@ -188,7 +188,7 @@ export class FilterCreator extends React.Component {
         key: keyvalue,
         recordset: recordsets[0].name,
         field: recordsets[0].definition[0].name,
-        operator: '=',
+        operator: 'EqualTo',
         value: '',
         matchCase: false
       });
@@ -283,8 +283,18 @@ function createColumns(that, recordsets) {
       width: 80,
       Cell: (cell) => (
         <select className="form-control"  value={cell.row.operator} onChange={that.onOperatorChange.bind(that, cell.row.key)}>
-          <option>=</option>
-          <option>!=</option>
+          <option>EqualTo</option>
+          <option>NotEqualTo</option>
+          <option>Like</option>
+          <option>Between</option>
+          <option>GreaterThan</option>
+          <option>GreaterThanOrEqualTo</option>
+          <option>LessThan</option>
+          <option>LessThanOrEqualTo</option>
+          <option>During</option>
+          <option>After</option>
+          <option>Before</option>
+          <option>BBOX</option>
         </select>
       )
     });

@@ -1,5 +1,42 @@
 version: "2"
+
+volumes:
+  db-backups:
+  geoserver-data:
+
+networks:
+  estest:
+    driver: bridge
+
 services:
+    db:
+      image: kartoza/postgis:10.0-2.4
+      hostname: postgis
+      volumes:
+        #- ./pg/postgres_data:/var/lib/postgresql
+        - db-backups:/backups
+      ports:
+        - "25432:5432"
+      networks:
+        - estest
+      environment:
+        - USERNAME=docker
+        - PASS=docker
+        - ALLOW_IP_RANGE=172.20.0.0/24
+      restart: unless-stopped
+    geoserver:
+      image: eeacms/elasticgeo #kartoza/geoserver:2.12.0
+      hostname: geoserver 
+      volumes:
+        - geoserver-data:/opt/geoserver/data_dir
+      ports:
+        - "8080:8080"
+      networks:
+        - estest
+      links:
+        - db:db
+      restart: unless-stopped
+      user: root
     elasticsearch5:
         image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
         container_name: rbcf-elasticsearch

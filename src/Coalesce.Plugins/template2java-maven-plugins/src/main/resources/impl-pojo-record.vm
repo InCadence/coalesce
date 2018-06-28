@@ -78,7 +78,7 @@ public class ${classname} implements I${name}Record {
     /**
      * Constructs a new instance from an existing record
      * 
-     * @param record
+     * @param record to initialize this instance with.
      */
     public ${classname}(I${name}Record record) throws CoalesceDataFormatException
     {
