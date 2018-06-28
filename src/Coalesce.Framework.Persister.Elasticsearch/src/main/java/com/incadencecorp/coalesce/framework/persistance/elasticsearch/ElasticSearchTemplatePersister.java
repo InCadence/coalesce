@@ -30,6 +30,9 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalesceTemplatePersist
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+
+import mil.nga.giat.data.elasticsearch.ElasticDataStoreFactory;
+
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ResourceAlreadyExistsException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
@@ -48,10 +51,13 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFinder;
 import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 
 public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersister {
@@ -96,6 +102,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     protected final Map<String, String> params;
     protected final ElasticSearchIterator iterator;
     protected final boolean isAuthoritative;
+    protected DataStore datastore;
 
     /**
      * Default Constructor
@@ -113,6 +120,8 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         isAuthoritative = this.params.containsKey(ElasticSearchSettings.PARAM_IS_AUTHORITATIVE)
                 && Boolean.parseBoolean(this.params.get(ElasticSearchSettings.PARAM_IS_AUTHORITATIVE));
         iterator = new ElasticSearchIterator(NORMALIZER, isAuthoritative);
+        
+        initializeDataStore();
 
         if (LOGGER.isDebugEnabled())
         {
@@ -123,6 +132,46 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
             }
         }
 
+    }
+    
+    public DataStore getDataStore() {
+    	if(datastore != null) {
+    		return datastore;
+    	} else {
+    		initializeDataStore();
+    		return datastore;
+    	}
+    }
+    
+    protected void initializeDataStore () {
+    	if(!params.isEmpty()) {
+	        try {
+		        Map<String, String> props = new HashMap<>();
+		        props.put(ElasticDataStoreFactory.HOSTNAME.key, params.get(ElasticSearchSettings.PARAM_HTTP_HOST));
+		        props.put(ElasticDataStoreFactory.HOSTPORT.key, params.get(ElasticSearchSettings.PARAM_HTTP_PORT));
+		        props.put(ElasticDataStoreFactory.SSL_ENABLED.key, params.get(ElasticSearchSettings.PARAM_SSL_ENABLED));
+		        props.put(ElasticDataStoreFactory.SSL_REJECT_UNAUTHORIZED.key, params.get(ElasticSearchSettings.PARAM_SSL_REJECT_UNAUTHORIZED));
+		        props.put(ElasticDataStoreFactory.SOURCE_FILTERING_ENABLED.key, Boolean.TRUE.toString());
+		
+		        if (Boolean.parseBoolean(params.get(ElasticSearchSettings.PARAM_SSL_ENABLED)))
+		        {
+		            System.setProperty("javax.net.ssl.keyStore", params.get(ElasticSearchSettings.PARAM_KEYSTORE_FILE));
+		            System.setProperty("javax.net.ssl.keyStorePassword",
+		                               params.get(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD));
+		
+		            System.setProperty("javax.net.ssl.trustStore", params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE));
+		            System.setProperty("javax.net.ssl.trustStorePassword",
+		                               params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));
+		        }
+	
+				datastore = DataStoreFinder.getDataStore(props);
+			} catch (IOException e) {
+				LOGGER.error("DataStore not initialized: " + e.getMessage());
+				datastore = null;
+			}
+    	} else {
+    		LOGGER.error("No params are set, I can't initialize the datastore.");
+    	}
     }
 
     @Override

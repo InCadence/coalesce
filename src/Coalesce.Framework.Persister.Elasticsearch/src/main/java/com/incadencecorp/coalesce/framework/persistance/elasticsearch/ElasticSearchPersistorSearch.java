@@ -72,30 +72,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             ElasticSearchQueryRewriter rewriter = new ElasticSearchQueryRewriter();
             Query localQuery = rewriter.rewrite(query);
 
-            Map<String, String> props = new HashMap<>();
-            props.put(ElasticDataStoreFactory.HOSTNAME.key, params.get(ElasticSearchSettings.PARAM_HTTP_HOST));
-            props.put(ElasticDataStoreFactory.HOSTPORT.key, params.get(ElasticSearchSettings.PARAM_HTTP_PORT));
-            props.put(ElasticDataStoreFactory.SSL_ENABLED.key, params.get(ElasticSearchSettings.PARAM_SSL_ENABLED));
-            props.put(ElasticDataStoreFactory.SSL_REJECT_UNAUTHORIZED.key,
-                      params.get(ElasticSearchSettings.PARAM_SSL_REJECT_UNAUTHORIZED));
-            props.put(ElasticDataStoreFactory.SOURCE_FILTERING_ENABLED.key, Boolean.TRUE.toString());
-
-            if (Boolean.parseBoolean(params.get(ElasticSearchSettings.PARAM_SSL_ENABLED)))
-            {
-                System.setProperty("javax.net.ssl.keyStore", params.get(ElasticSearchSettings.PARAM_KEYSTORE_FILE));
-                System.setProperty("javax.net.ssl.keyStorePassword",
-                                   params.get(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD));
-
-                System.setProperty("javax.net.ssl.trustStore", params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE));
-                System.setProperty("javax.net.ssl.trustStorePassword",
-                                   params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));
-            }
-
-            // TODO Add support for JOINS.
-            props.put(ElasticDataStoreFactory.INDEX_NAME.key, localQuery.getTypeName());
-
-            DataStore datastore = DataStoreFinder.getDataStore(props);
-
+            /*
             if (LOGGER.isDebugEnabled())
             {
                 Iterator<DataStoreFactorySpi> availableStores = DataStoreFinder.getAvailableDataStores();
@@ -108,6 +85,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
                 LOGGER.info("Selected Store: {}", datastore.getClass().getSimpleName());
             }
+            */
 
             String typeName;
 
@@ -123,6 +101,9 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
                 typeName = "recordset";
                 break;
             }
+            
+            //Make sure the datastore was acutally populated with the properties
+            initializeDataStore();
 
             SimpleFeatureSource featureSource = datastore.getFeatureSource(typeName);
 
