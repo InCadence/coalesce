@@ -48,15 +48,26 @@ public class FeatureColumnIterator implements Iterator<Object[]> {
 
         for (int i = 0; i < properties.size(); i++)
         {
-            Object value = feature.getProperty(properties.get(i)).getValue();
+            String property = properties.get(i);
+            Object value;
 
-            if (value instanceof ArrayList)
+            if (!CoalescePropertyFactory.isRecordPropertyName(property))
             {
-                value = StringUtils.join((ArrayList) value, ",");
+                value = feature.getProperty(property).getValue();
+
+                if (value instanceof ArrayList)
+                {
+                    value = StringUtils.join((ArrayList) value, ",");
+                }
+                else if (value instanceof String && ((String) value).startsWith("[") && ((String) value).endsWith("]"))
+                {
+                    value = StringUtils.join(new JSONArray((String) value).iterator(), ",");
+                }
             }
-            else if (value instanceof String && ((String) value).startsWith("[") && ((String) value).endsWith("]"))
+            else
             {
-                value = StringUtils.join(new JSONArray((String) value).iterator(), ",");
+                String id = feature.getIdentifier().getID();
+                value = id.substring(id.indexOf(".") + 1);
             }
 
             row[i] = value;

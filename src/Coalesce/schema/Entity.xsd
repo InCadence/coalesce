@@ -91,8 +91,8 @@
 							maxOccurs="unbounded" />
 						<xs:element ref="record" minOccurs="0" maxOccurs="unbounded" />
 					</xs:sequence>
-					<xs:attribute name="minrecords" type="xs:int" />
-					<xs:attribute name="maxrecords" type="xs:int" />
+					<xs:attribute name="minrecords" type="xs:int" default="0" />
+					<xs:attribute name="maxrecords" type="xs:int" default="0"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>

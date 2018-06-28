@@ -61,9 +61,11 @@ public class ElasticSearchMapperImpl implements ICoalesceMapper<String> {
 
         case GUID_LIST_TYPE:
         case GUID_TYPE:
-        case STRING_LIST_TYPE:
-        case STRING_TYPE:
         case URI_TYPE:
+        case STRING_LIST_TYPE:
+            return "keyword";
+
+        case STRING_TYPE:
             return "text";
 
         case DATE_TIME_TYPE:

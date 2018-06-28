@@ -22,7 +22,6 @@ import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import org.geotools.factory.CommonFactoryFinder;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
 
@@ -129,6 +128,23 @@ public class CoalescePropertyFactory {
     public static PropertyName getEntityKey()
     {
         return getFilterFactory().property(COALESCE_ENTITY_TABLE + "objectkey");
+    }
+
+    /**
+     * @return the property used for filtering on the entity key.
+     */
+    public static PropertyName getRecordKey(String recordset)
+    {
+        return getFilterFactory().property(recordset + ".objectkey");
+    }
+
+    /**
+     * @param property to test
+     * @return whether or not the property name refers to a record key verse a entity key.
+     */
+    public static final boolean isRecordPropertyName(String property)
+    {
+        return property.toLowerCase().endsWith("objectkey") && !property.toLowerCase().startsWith("coalesceentity");
     }
 
     /**

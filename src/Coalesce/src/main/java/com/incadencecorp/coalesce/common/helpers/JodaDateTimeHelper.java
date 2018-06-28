@@ -1,16 +1,18 @@
 package com.incadencecorp.coalesce.common.helpers;
 
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
+import org.joda.time.format.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /*-----------------------------------------------------------------------------'
@@ -39,6 +41,34 @@ import java.util.concurrent.TimeUnit;
 public final class JodaDateTimeHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JodaDateTimeHelper.class);
+    private static final DateTimeFormatter FORMATTER = createFormatter();
+
+    private static DateTimeFormatter createFormatter()
+    {
+        List<DateTimeParser> parsers = new ArrayList<>();
+        parsers.add(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss z").getParser());
+        parsers.add(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").getParser());
+        parsers.add(ISODateTimeFormat.basicDate().getParser());
+        parsers.add(ISODateTimeFormat.basicDateTime().getParser());
+        parsers.add(ISODateTimeFormat.basicDateTime().withZone(DateTimeZone.UTC).getParser());
+        parsers.add(ISODateTimeFormat.dateHourMinuteSecond().getParser());
+        parsers.add(ISODateTimeFormat.dateHourMinuteSecond().withZone(DateTimeZone.UTC).getParser());
+        parsers.add(ISODateTimeFormat.dateTime().getParser());
+        parsers.add(ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC).getParser());
+        parsers.add(ISODateTimeFormat.dateTimeParser().getParser());
+        parsers.add(ISODateTimeFormat.dateTimeNoMillis().getParser());
+
+        for (String format : CoalesceSettings.getTimePatterns())
+        {
+            if (!StringHelper.isNullOrEmpty(format))
+            {
+                parsers.add(DateTimeFormat.forPattern(format).getParser());
+            }
+        }
+
+        return new DateTimeFormatterBuilder().append(null,
+                                                     parsers.toArray(new DateTimeParser[parsers.size()])).toFormatter();
+    }
 
     // Make static class
     private JodaDateTimeHelper()
@@ -347,14 +377,15 @@ public final class JodaDateTimeHelper {
      */
     public static String toXmlDateTimeUTC(DateTime forDate)
     {
-        if (forDate == null)
+        String result = null;
+
+        if (forDate != null)
         {
-            throw new NullArgumentException("forDate");
+            DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
+            result = formatter.print(forDate);
         }
 
-        DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
-
-        return formatter.print(forDate);
+        return result;
 
     }
 
@@ -369,23 +400,47 @@ public final class JodaDateTimeHelper {
      */
     public static DateTime fromXmlDateTimeUTC(String xmlDate)
     {
-        if (StringHelper.isNullOrEmpty(xmlDate))
-        {
-            return null;
-        }
+        DateTime result = null;
 
         try
         {
-            DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
-
-            return formatter.parseDateTime(xmlDate);
-
+            if (!StringHelper.isNullOrEmpty(xmlDate))
+            {
+                DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
+                result = formatter.parseDateTime(xmlDate);
+            }
         }
         catch (IllegalArgumentException e)
         {
             LOGGER.warn("Invalid Time Format: ({})", xmlDate, e);
-            return null;
         }
+
+        return result;
+    }
+
+    /**
+     * The formatter used has several default formats which can be extended using {@link CoalesceSettings#setTimePatterns(List)}.
+     *
+     * @param value
+     * @return the DateTime object parsed from the argument.
+     */
+    public static DateTime parseDateTime(String value)
+    {
+        DateTime result = null;
+
+        try
+        {
+            if (!StringHelper.isNullOrEmpty(value))
+            {
+                result = FORMATTER.parseDateTime(value);
+            }
+        }
+        catch (IllegalArgumentException e)
+        {
+            LOGGER.warn("Invalid Time Format: ({})", value, e);
+        }
+
+        return result;
     }
 
     /**

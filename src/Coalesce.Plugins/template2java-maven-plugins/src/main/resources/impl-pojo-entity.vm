@@ -29,6 +29,11 @@ package ${packagename_root}.${packagename_sub};
 		#if(!$imports.contains( "java.util.Map" ) && $imports.add("java.util.Map")) #end
 		#if(!$imports.contains( "java.util.HashMap" ) && $imports.add("java.util.HashMap")) #end
 		#if(!$imports.contains( "java.util.ArrayList" ) && $imports.add("java.util.ArrayList")) #end
+		#if(!$imports.contains( "java.util.UUID" ) && $imports.add("java.util.UUID")) #end
+		#if(!$imports.contains( "com.incadencecorp.coalesce.common.helpers.StringHelper" ) && $imports.add("com.incadencecorp.coalesce.common.helpers.StringHelper")) #end
+	#else
+		#if(!$imports.contains( "com.fasterxml.jackson.annotation.JsonIgnore" ) && $imports.add("com.fasterxml.jackson.annotation.JsonIgnore")) #end
+		#if(!$imports.contains( "com.fasterxml.jackson.annotation.JsonProperty" ) && $imports.add("com.fasterxml.jackson.annotation.JsonProperty")) #end
 	#end
 #end
 $imports.sort(null)
@@ -49,9 +54,10 @@ public class ${classname} implements I${name}Entity {
 
 #foreach($recordset in $recordsets)
 #if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
-    private $normalizer.normalize($recordset.getName())PojoRecord record_$normalizer.normalize($recordset.getName());
+    @JsonProperty
+    private $normalizer.normalize($recordset.getName())PojoRecord $normalizer.normalizeVariable($recordset.getName())Record = new $normalizer.normalize($recordset.getName())PojoRecord();
 #else
-    private Map<String, $normalizer.normalize($recordset.getName())PojoRecord> recordset_$normalizer.normalize($recordset.getName()) = new HashMap<String, $normalizer.normalize($recordset.getName())PojoRecord>();
+    private Map<String, $normalizer.normalize($recordset.getName())PojoRecord> $normalizer.normalizeVariable($recordset.getName())Records = new HashMap<>();
 #end
 #end
 	
@@ -147,28 +153,35 @@ public class ${classname} implements I${name}Entity {
     }
 
 #foreach($recordset in $recordsets)
+#set($recordset_name = "$normalizer.normalizeVariable($recordset.getName())Record")
+
 #if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
     @Override
     public $normalizer.normalize($recordset.getName())PojoRecord get$normalizer.normalize($recordset.getName())Record()
     {
-        return record_$normalizer.normalize($recordset.getName());
+        return ${recordset_name};
     }
 
+    @JsonIgnore
     @Override
     public void set$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record) throws CoalesceDataFormatException
     {
-        record_$normalizer.normalize($recordset.getName()) = new $normalizer.normalize($recordset.getName())PojoRecord(record);
+        ${recordset_name} = new $normalizer.normalize($recordset.getName())PojoRecord(record);
     }
-
+/*
+    public void set$normalizer.normalize($recordset.getName())Record($normalizer.normalize($recordset.getName())PojoRecord record) throws CoalesceDataFormatException
+    {
+        ${recordset_name} = new $normalizer.normalize($recordset.getName())PojoRecord(record);
+    }
+*/
 #else
-#set($recordset_name = "recordset_$normalizer.normalize($recordset.getName())")
 
     @Override
     public void add$normalizer.normalize($recordset.getName())Record(List<I$normalizer.normalize($recordset.getName())Record> records) throws CoalesceDataFormatException
     {
         for (I$normalizer.normalize($recordset.getName())Record value : records)
         {
-            ${recordset_name}.put(value.getKey(), new $normalizer.normalize($recordset.getName())PojoRecord(value));
+            ${recordset_name}s.put(value.getKey(), new $normalizer.normalize($recordset.getName())PojoRecord(value));
         }
 	}
 
@@ -176,22 +189,35 @@ public class ${classname} implements I${name}Entity {
     public $normalizer.normalize($recordset.getName())PojoRecord add$normalizer.normalize($recordset.getName())Record()
     {
 		$normalizer.normalize($recordset.getName())PojoRecord result = new $normalizer.normalize($recordset.getName())PojoRecord();
-		${recordset_name}.put(result.getKey(), result);
+		${recordset_name}s.put(result.getKey(), result);
         return result;
     }
 
     @Override
     public List<I$normalizer.normalize($recordset.getName())Record> get$normalizer.normalize($recordset.getName())Records()
     {
-		List<I$normalizer.normalize($recordset.getName())Record> result = new ArrayList<I$normalizer.normalize($recordset.getName())Record>();
-		result.addAll(${recordset_name}.values());
+		List<I$normalizer.normalize($recordset.getName())Record> result = new ArrayList<>();
+		result.addAll(${recordset_name}s.values());
         return result;
+    }
+
+    private void set$normalizer.normalize($recordset.getName())Records(List<$normalizer.normalize($recordset.getName())PojoRecord> values) throws CoalesceDataFormatException
+    {
+        ${recordset_name}s.clear();
+        for (I$normalizer.normalize($recordset.getName())Record record : values)
+        {
+            if (StringHelper.isNullOrEmpty(record.getKey()))
+            {
+                record.setKey(UUID.randomUUID().toString());
+            }
+            ${recordset_name}s.put(record.getKey(), new $normalizer.normalize($recordset.getName())PojoRecord(record));
+        }
     }
 
     @Override
     public $normalizer.normalize($recordset.getName())PojoRecord get$normalizer.normalize($recordset.getName())Record(String key)
     {
-		return ${recordset_name}.get(key);
+		return ${recordset_name}s.get(key);
     }
 
     @Override
@@ -203,7 +229,7 @@ public class ${classname} implements I${name}Entity {
     @Override
     public void rmv$normalizer.normalize($recordset.getName())Record(String key)
     {
-		${recordset_name}.remove(key);
+		${recordset_name}s.remove(key);
     }
 
 #end

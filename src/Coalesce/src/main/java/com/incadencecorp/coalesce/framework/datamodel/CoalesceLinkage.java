@@ -118,7 +118,15 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
         if (!newLinkage.initialize(parent, entityLinkage))
             return null;
 
+        CoalesceEntity entity = parent.getEntity();
+
+        newLinkage.setSuspendHistory(true);
         newLinkage.setName(NAME);
+        newLinkage.setEntity1Key(entity.getKey());
+        newLinkage.setEntity1Name(entity.getName());
+        newLinkage.setEntity1Source(entity.getSource());
+        newLinkage.setEntity1Version(entity.getVersion());
+        newLinkage.setObjectVersion(entity.getObjectVersion());
 
         parent.addChildCoalesceObject(newLinkage);
 

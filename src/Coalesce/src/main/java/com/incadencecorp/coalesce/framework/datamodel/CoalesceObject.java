@@ -306,6 +306,11 @@ public abstract class CoalesceObject implements ICoalesceObject {
     @Override
     public void setStatus(ECoalesceObjectStatus value)
     {
+        if (value == getStatus())
+        {
+            return;
+        }
+
         // Set Status SUccessful?
         _object.setStatus(value);
 
@@ -1035,7 +1040,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
                                                                                                 ECoalesceObjectStatus... exclusions)
     {
         List<ECoalesceObjectStatus> statusList = Arrays.asList(exclusions);
-        List<T> results = new ArrayList<T>();
+        List<T> results = new ArrayList<>();
 
         for (Y item : items)
         {

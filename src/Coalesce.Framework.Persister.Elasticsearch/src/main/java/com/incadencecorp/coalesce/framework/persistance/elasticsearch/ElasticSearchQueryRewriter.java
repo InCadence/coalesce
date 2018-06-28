@@ -23,6 +23,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.geotools.data.Query;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.visitor.DuplicatingFilterVisitor;
@@ -44,8 +45,6 @@ import java.util.function.Predicate;
  * Walks through a Filter, re-writing any property names removing the tablename from the property along with the /
  */
 class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
-
-    private static final ElasticSearchMapperImpl MAPPER = new ElasticSearchMapperImpl();
 
     private final Set<String> features = new HashSet<>();
     private final ICoalesceNormalizer normalizer;
@@ -74,19 +73,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
         if (extraData instanceof Boolean)
         {
-            ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(expression.getPropertyName());
-
-            if (type == null)
-            {
-                throw new RuntimeException("Unknown Parameter Specified: " + expression.getPropertyName());
-            }
-
-            LOGGER.info("({}): ({})", expression.getPropertyName(), type);
-
-            String property = expression.getPropertyName().toLowerCase();
-
-            if (MAPPER.map(type).equalsIgnoreCase("text") && !(property.startsWith("coalesceentity") || property.startsWith(
-                    "coalescelinkage")))
+            if (isStringField(expression))
             {
                 name = ff.property(getNormalizedPropertyName(expression.getPropertyName()) + ".keyword");
 
@@ -103,6 +90,23 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         }
 
         return super.visit(name, extraData);
+    }
+
+    private boolean isStringField(PropertyName name)
+    {
+        String property = name.getPropertyName().toLowerCase();
+
+        ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(property);
+
+        if (type == null)
+        {
+            throw new RuntimeException("Unknown Parameter Specified: " + property);
+        }
+
+        LOGGER.info("({}): ({})", property, type);
+
+        return (type == ECoalesceFieldDataTypes.STRING_TYPE) && !(property.startsWith("coalesceentity")
+                || property.startsWith("coalescelinkage"));
     }
 
     @Override
@@ -134,7 +138,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         // so make sure it is the first in the list
         if ((newQuery.getTypeName() != null) && (!newQuery.getTypeName().equalsIgnoreCase("coalesce")))
         {
-            addFeature(normalizer.normalize(newQuery.getTypeName()));
+            addFeature(newQuery.getTypeName());
         }
 
         // Clear the type name from the query
@@ -152,9 +156,12 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         {
             String normalized = getNormalizedPropertyName(property);
 
-            if (!properties.contains(normalized))
+            if (!CoalescePropertyFactory.isRecordPropertyName(property))
             {
-                properties.add(normalized);
+                if (!properties.contains(normalized))
+                {
+                    properties.add(normalized);
+                }
             }
         }
 
@@ -167,8 +174,8 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
             for (int i = 0; i < sorts.length; i++)
             {
                 String name = getNormalizedPropertyName(sorts[i].getPropertyName().getPropertyName());
-                if (MAPPER.map(CoalesceTemplateUtil.getDataTypes().get(sorts[i].getPropertyName().getPropertyName())).equalsIgnoreCase(
-                        "text"))
+
+                if (isStringField(sorts[i].getPropertyName()))
                 {
                     name = name + ".keyword";
                 }
@@ -273,6 +280,10 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
             if (templates.size() == 1)
             {
                 features.add(templates.iterator().next().getName());
+            }
+            else if (templates.size() == 0)
+            {
+                LOGGER.error("(ERROR) Could not determine index; recordset ({}) does not exists in templates", feature);
             }
             else
             {

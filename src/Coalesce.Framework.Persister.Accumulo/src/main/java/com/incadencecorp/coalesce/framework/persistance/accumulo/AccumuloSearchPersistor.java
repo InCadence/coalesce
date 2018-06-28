@@ -125,20 +125,30 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
             List<CoalesceColumnMetadata> columnList = new ArrayList<>();
             for (PropertyName entry : properties)
             {
-                ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(entry.getPropertyName());
+                String property = entry.getPropertyName();
 
-                if (type == null)
+                ECoalesceFieldDataTypes type;
+
+                if (!CoalescePropertyFactory.isRecordPropertyName(property))
+                {
+                    type = CoalesceTemplateUtil.getDataType(property);
+
+                    if (type == null)
+                    {
+                        throw new IllegalArgumentException("Unknown Property: " + property);
+                    }
+
+                    LOGGER.debug("Property: {} Type: {}", property, type);
+                }
+                else
                 {
                     type = ECoalesceFieldDataTypes.STRING_TYPE;
-
                 }
 
-                LOGGER.debug("Property: {} Type: {}", entry.getPropertyName(), type);
-
-                    columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(entry.getPropertyName()),
-                                                              MAPPER_JAVA.map(type).getTypeName(),
-                                                              MAPPER_TYPE.map(type)));
-                }
+                columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(property),
+                                                          MAPPER_JAVA.map(type).getTypeName(),
+                                                          MAPPER_TYPE.map(type)));
+            }
 
             if (LOGGER.isDebugEnabled())
             {

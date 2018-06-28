@@ -17,14 +17,13 @@
 
 package com.incadencecorp.coalesce.plugins.template2java;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Paths;
-import java.util.List;
-
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -37,23 +36,15 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
-import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Paths;
 
-
-@Mojo(name = "generate", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true)
 /**
- * 
  * @requiresDependencyResolution test
- *
  */
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true)
 public class Template2JavaMojo extends AbstractMojo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Template2JavaMojo.class);
@@ -96,27 +87,24 @@ public class Template2JavaMojo extends AbstractMojo {
                     {
                         template = persistor.getEntityTemplate(meta.getKey());
 
-                        LOGGER.info("Generating ({}) ({}) ({})",
-                                    template.getName(),
-                                    template.getSource(),
-                                    template.getKey());
-
-                        if (StringHelper.isNullOrEmpty(template.getClassName()))
-                        {
-                            LOGGER.warn("No Classname Specified!!!");
-                        }
-
                         if (template != null)
                         {
+                            LOGGER.info("Generating ({}) ({}) ({})",
+                                        template.getName(),
+                                        template.getSource(),
+                                        template.getKey());
+
+                            if (StringHelper.isNullOrEmpty(template.getClassName()))
+                            {
+                                LOGGER.warn("No Classname Specified!!!");
+                            }
+
                             it.generateCode(template);
                         }
                     }
                     catch (CoalesceException e)
                     {
-                        String errorMsg = String.format(CoalesceErrors.INVALID_OBJECT,
-                                                        CoalesceEntityTemplate.class.getSimpleName(),
-                                                        meta.getKey(),
-                                                        e.getMessage());
+                        String errorMsg = String.format(CoalesceErrors.INVALID_OBJECT, meta.getKey(), e.getMessage());
                         LOGGER.error(errorMsg, e);
                     }
                 }
@@ -126,8 +114,7 @@ public class Template2JavaMojo extends AbstractMojo {
                 LOGGER.warn("(FAILED) Loading Persister ({}): {}", filePersistorName, "Invalid Implementation");
             }
         }
-        catch (MojoExecutionException | ClassNotFoundException | InstantiationException | IllegalAccessException
-               | CoalescePersistorException e)
+        catch (MojoExecutionException | ClassNotFoundException | InstantiationException | IllegalAccessException | CoalescePersistorException e)
         {
             LOGGER.warn("(FAILED) Loading Persister ({})", filePersistorName, e);
             throw new MojoExecutionException("", e);
@@ -159,59 +146,9 @@ public class Template2JavaMojo extends AbstractMojo {
         }
     }
 
-    private void addDependenciesToClasspath(String artifactId) throws MojoExecutionException
-    {
-        for (Object artifact : project.getDependencyArtifacts())
-        {
-            if (((Artifact) artifact).getArtifactId().equals(artifactId))
-            {
-                try
-                {
-                    final URL url = ((Artifact) artifact).getFile().toURI().toURL();
-                    final ClassRealm realm = descriptor.getClassRealm();
-                    realm.addURL(url);
-                }
-                catch (MalformedURLException e)
-                {
-                    throw new MojoExecutionException(e.getMessage(), e);
-                }
-            }
-        }
-    }
-
     private ClassLoader getClassLoaderFromRealm() throws MojoExecutionException
     {
         return descriptor.getClassRealm();
-    }
-
-    private ClassLoader getClassLoader() throws MojoExecutionException
-    {
-        try
-        {
-            List<String> classpathElements = project.getCompileClasspathElements();
-            classpathElements.add(project.getBuild().getOutputDirectory());
-            classpathElements.add(project.getBuild().getTestOutputDirectory());
-            classpathElements.add(project.getBuild().getSourceDirectory());
-
-            for (String value : classpathElements)
-            {
-                LOGGER.debug(value);
-            }
-
-            URL urls[] = new URL[classpathElements.size()];
-
-            for (int i = 0; i < classpathElements.size(); ++i)
-            {
-                urls[i] = new File((String) classpathElements.get(i)).toURI().toURL();
-            }
-
-            return new URLClassLoader(urls, getClass().getClassLoader());
-        }
-        catch (Exception e)// gotta catch em all
-        {
-            LOGGER.error("FAILED", e);
-            throw new MojoExecutionException("Couldn't create a classloader.", e);
-        }
     }
 
 }

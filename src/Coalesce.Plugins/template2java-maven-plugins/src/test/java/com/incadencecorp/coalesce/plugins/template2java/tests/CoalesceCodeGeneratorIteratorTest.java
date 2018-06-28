@@ -17,41 +17,46 @@
 
 package com.incadencecorp.coalesce.plugins.template2java.tests;
 
-import java.nio.file.Paths;
-
+import com.incadencecorp.coalesce.api.CoalesceParameters;
+import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.plugins.template2java.CoalesceCodeGeneratorIterator;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
-import com.incadencecorp.coalesce.plugins.template2java.CoalesceCodeGeneratorIterator;
+import java.nio.file.Paths;
 
 /**
  * These test ensure the code generator creates useable code.
- * 
+ *
  * @author Derek Clemenzi
  */
 public class CoalesceCodeGeneratorIteratorTest {
 
     /**
+     * Test initialization
+     */
+    @BeforeClass
+    public static void initialize()
+    {
+        System.setProperty(CoalesceParameters.COALESCE_CONFIG_LOCATION_PROPERTY, "src/test/resources");
+    }
+
+    /**
      * This test creates an entity with two record sets of {@link TestRecord}.
      * The first can only contain a single entry and the second can contain
      * multiple.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void test() throws Exception
     {
-        CoalesceEntity entity = CoalesceEntity.create("gen-test", "A B C", "0.0.25-SNAPSHOT");
+        TestEntity entity = new TestEntity();
         entity.initialize();
 
         CoalesceSection section = CoalesceSection.create(entity, "my-section");
-        TestRecord.createCoalesceRecordset(section, "test-1").setMaxRecords(1);
-//        TestRecord.createCoalesceRecordset(section, "test-2");
+        TestRecord.createCoalesceRecordset(section, "OEtest-1").setMaxRecords(1);
+        TestRecord.createCoalesceRecordset(section, "test-2");
 
         CoalesceRecordset recordset = CoalesceRecordset.create(section, "all data types");
         for (ECoalesceFieldDataTypes type : ECoalesceFieldDataTypes.values())
@@ -70,20 +75,22 @@ public class CoalesceCodeGeneratorIteratorTest {
      * first time as the source has not been generated yet. Once you have ran
      * these test once you can uncomment this code remember to re-comment it
      * before committing.
-     * 
+     * <p>
      * TODO Ensure this unit test is commented out before committing.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGeneratedCode() throws Exception
     {
-//         GenTestCoalesceEntity entity = new GenTestCoalesceEntity();
-//         entity.initialize();
-//         entity.getTest1Record().getStringField().setValue("Hello World");
-//         entity.addAllDataTypesRecord().setBooleanField(false);
-//         entity.addAllDataTypesRecord().setBooleanField(true);
-//         System.out.println(entity.toXml());
+        /*
+        UnitTestCoalesceEntity entity = new UnitTestCoalesceEntity();
+        entity.initialize();
+        entity.getTest1Record().getStringField().setValue("Hello World");
+        entity.addAllDataTypesRecord().setBooleanField(false);
+        entity.addAllDataTypesRecord().setBooleanField(true);
+        System.out.println(entity.toXml());
+        //*/
     }
 
 }

@@ -115,6 +115,50 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         }
     }
 
+        /**
+     * This test ensures that you are able to request the record key to be returned as a property.
+     */
+    @Test
+    public void testReturningRecordKey() throws Exception
+    {
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
+
+        T persister = createPersister();
+        persister.saveEntity(false, entity);
+
+        List<PropertyName> properties = new ArrayList<>();
+        properties.add(CoalescePropertyFactory.getName());
+        properties.add(CoalescePropertyFactory.getRecordKey(entity.getRecordset1().getName()));
+
+        Query searchQuery = new Query();
+        searchQuery.setStartIndex(1);
+        searchQuery.setMaxFeatures(200);
+        searchQuery.setFilter(CoalescePropertyFactory.getEntityKey(entity.getKey()));
+        searchQuery.setProperties(properties);
+
+        SearchResults results = persister.search(searchQuery);
+
+        Assert.assertEquals(1, results.getTotal());
+
+        CachedRowSet rowset = results.getResults();
+
+        // Verify EntityKey and two requested columns
+        Assert.assertEquals(properties.size() + 1, rowset.getMetaData().getColumnCount());
+        Assert.assertTrue(rowset.next());
+        Assert.assertEquals(entity.getKey(), rowset.getObject(1));
+        Assert.assertEquals(entity.getName(), rowset.getObject(2));
+        Assert.assertEquals(record.getKey(), rowset.getObject(3));
+
+        rowset.close();
+
+        entity.markAsDeleted();
+
+        persister.saveEntity(true, entity);
+    }
+
     @Test
     public void searchAllDataTypes() throws Exception
     {
