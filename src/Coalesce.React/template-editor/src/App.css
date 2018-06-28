@@ -56,7 +56,7 @@
 
 #graphContainer {
   position:relative;
-  overflow:hidden;
+  overflow:scroll;
   cursor:default;
   min-height: 100%;
 }
@@ -68,6 +68,8 @@
   overflow-x: hidden;
   overflow-y: scroll;
 }
+
+
 /*
 #editor {
   color: #839496;
