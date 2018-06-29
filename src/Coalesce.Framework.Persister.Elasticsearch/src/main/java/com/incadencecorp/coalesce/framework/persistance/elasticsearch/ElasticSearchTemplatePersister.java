@@ -120,8 +120,6 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         isAuthoritative = this.params.containsKey(ElasticSearchSettings.PARAM_IS_AUTHORITATIVE)
                 && Boolean.parseBoolean(this.params.get(ElasticSearchSettings.PARAM_IS_AUTHORITATIVE));
         iterator = new ElasticSearchIterator(NORMALIZER, isAuthoritative);
-        
-        initializeDataStore();
 
         if (LOGGER.isDebugEnabled())
         {
@@ -131,19 +129,18 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 LOGGER.debug("\t{} = {}", param.getKey(), param.getValue());
             }
         }
-
     }
     
-    public DataStore getDataStore() {
+    public DataStore getDataStore(String index, String type) {
     	if(datastore != null) {
     		return datastore;
     	} else {
-    		initializeDataStore();
+    		initializeDataStore(index, type);
     		return datastore;
     	}
     }
     
-    protected void initializeDataStore () {
+    protected void initializeDataStore (String index, String type) {
     	if(!params.isEmpty()) {
 	        try {
 		        Map<String, String> props = new HashMap<>();
@@ -163,6 +160,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 		            System.setProperty("javax.net.ssl.trustStorePassword",
 		                               params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));
 		        }
+		        props.put(index, type); 
 	
 				datastore = DataStoreFinder.getDataStore(props);
 			} catch (IOException e) {

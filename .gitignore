@@ -114,3 +114,7 @@ src/Coalesce\.Synchronizer/service/src/test/resources/ExceptionOperationImpl/caa
 src/Coalesce\.Synchronizer/service/src/test/resources/ExceptionOperationImpl/f2751848-7b4a-428f-9c97-7cf39c939e5e
 
 src/Coalesce\.Synchronizer/service/src/test/resources/CopyOperationImpl/
+
+src/Coalesce\.Framework\.Persister\.Elasticsearch/src/test/resources/coalesce\.properties
+
+src/Coalesce\.Synchronizer/service/src/test/resources/ExceptionOperationImpl/

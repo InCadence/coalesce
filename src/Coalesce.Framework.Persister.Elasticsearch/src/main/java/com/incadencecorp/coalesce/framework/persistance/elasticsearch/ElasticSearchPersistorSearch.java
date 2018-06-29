@@ -102,8 +102,8 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
                 break;
             }
             
-            //Make sure the datastore was acutally populated with the properties
-            initializeDataStore();
+            //The datastore factory needs an index in order to find a matching store
+            datastore = getDataStore(ElasticDataStoreFactory.INDEX_NAME.key, localQuery.getTypeName());
 
             SimpleFeatureSource featureSource = datastore.getFeatureSource(typeName);
 
