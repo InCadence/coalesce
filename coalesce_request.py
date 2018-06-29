@@ -58,7 +58,7 @@ class CoalesceServer(object):
     CONTENT_TYPE = u"application/json; charset=utf-8"
     VALID_CONNECTION_TYPES = (u"keep-alive", u"close")
 
-    def __init__(self, server_URL = u"http://52.61.62.87:8181/cxf/",
+    def __init__(self, server_URL = u"http://localhost:8181/cxf/",
                  connection = u"keep-alive", max_attempts = 4):
         """
         Arguments:
@@ -118,8 +118,8 @@ FORMATS = (u"XML", u"JSON", u"python_dict")
 # for a properly formed URL.   
 
 def search(params = None, operation = u"search",
-           SUB_OPERATIONS = u"simple", OPERATOR = ["AND"], OPERATORS = ["!=", "!="], 
-           VALUES = ["hello", "max"], FIELDS = ["name", "objectkey"], query = {"test": "test"}):
+           SUB_OPERATIONS = u"simple", OPERATOR = "AND", OPERATORS = ["Like", "Like"], 
+           VALUES = ["hello", "max"], FIELDS = ["name", "objectkey"], query = [{"test": "test"}, {"NAME": "NAME"}]):
                               
     """
     Arguments:
@@ -128,7 +128,10 @@ def search(params = None, operation = u"search",
     :param method: the operation used to recieve data(GET, POST, etc)
     :param SUB_OPERATIONS: the type of search to be preformed(ie. simple, complex, custom?)
     :param OPERATOR: only applies to a complex search, ties together 
-        multiple searches in the type of results desired back
+        multiple searches in the type of results desired back: AND or OR are valid
+    :param OPERATORS: the type of operation preformed on each individual value
+        Valid types are - 
+        "=", "!=", "Like", 
     :param FIELDS: the type of value that is passed through
     :param VALUES: the search value
     :param query: for complex search only, input custom data for querty, 
@@ -150,7 +153,7 @@ def search(params = None, operation = u"search",
                     }
             CRITERIA = []
             PROPERTYNAMES = []
-                        
+                                    
             if len(FIELDS) == len(VALUES):
                 for i in range(len(FIELDS)):
                     """
@@ -171,10 +174,11 @@ def search(params = None, operation = u"search",
                 data = {
                             "pageSize":200,"pageNumber":1,
                             "propertyNames": PROPERTYNAMES,
-                            "group": 
-                                {}}
+                            "group":{"operator": OPERATOR, 
+                                     "criteria": CRITERIA
+                                     }}  
                 data = json.dumps(data)
-                print(data)
+
                 response = get_response(URL = server + OPERATIONS[operation][0],
                                     method = method,
                                     params = params,
@@ -192,13 +196,12 @@ def search(params = None, operation = u"search",
         
     if SUB_OPERATIONS == u"complex":
         #Add a check on the searh fuction to see what the user passes through
-             #WRITE YOUR QUERY HERE
             """
             Type of search involving multiple fields
             Has multiple type of operators as well
             Can be found in the search_parser.py file
             """
-            
+            GROUP = [{}]
             server = server.URL
             headers = {
                     "Connection" : u"keep-alive",
@@ -206,19 +209,25 @@ def search(params = None, operation = u"search",
                     }
             data = {
                             "pageSize":200,"pageNumber":1,
-                            "propertyNames": PROPERTYNAMES, #PASS THROUGH YOUR PROPERTIES HERE
-                            "group":[
-                                    query
-                                 ]}
+                            "propertyNames": PROPERTYNAMES, 
+                            "group": {"operator": OPERATOR, "criteria": GROUP}}
             
-# =============================================================================
-#             for key, value in query.iteritems:
-#                 if key in data:
-#                     data[key] = query[key]
-#                 else: 
-#                     data["group"][key] = value
-# =============================================================================
+            if type(query) == dict:
+                for key in query:
+                    if key in data:
+                        data[key] = query[key]
+                        del query[key]
+                    else: 
+                        GROUP[0][key] = query[key]
+                data = json.dumps(data)
             
+            elif type(query) == str:
+                raise ValueError("Please enter your query as a dictionary")
+            
+            elif type(query) == list:
+                GROUP = query
+                data = json.dumps(data)
+                
             response = get_response(URL = server + OPERATIONS[operation][0],
                                     method = method,
                                     params = params,
@@ -228,7 +237,7 @@ def search(params = None, operation = u"search",
                                     max_attempts = 2)
                 
             
-def read(ARTIFACT = ['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9'):
+def read(ARTIFACT = ['GDELTArtifact'], KEY = '25587bc2-9193-4bd0-80de-c3efe3cc6f0d'):
         
         """
         Arguments:
@@ -320,7 +329,7 @@ def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f
                             max_attempts = 2)
     return response.status
 
-def create():
+def create(TYPE = "Enumeration", FIELDSADDED = ""):
     
     serverobj = CoalesceServer()
     server = serverobj.URL
@@ -343,7 +352,7 @@ def create():
     operation = u"create"
     method = OPERATIONS[operation][0]
     
-    response = get_response(URL = server+ "data/{}".format(ENTITYTEMPLATES["Enumeration"]), #Add UUID for this because of keys
+    response = get_response(URL = server+ "data/{}".format(ENTITYTEMPLATES[TYPE]), #Add UUID for this because of keys
                             method = 'get',
                             params = params,
                             data = None,
@@ -353,14 +362,17 @@ def create():
                             )
     
     TEMPLATE = (json.dumps(json.loads(response.text), indent = 4, sort_keys = True))
-    file = open("Template.txt", 'w')
-    file.write(TEMPLATE)
-    raw_input("Press enter once edited the Template in the new file...")
-    file.close()
     
-    file = open("Template.txt", "r")
-    data = (json.dumps(json.load(file)))
-    file.close()
+# =============================================================================
+#     file = open("Template.txt", 'w')
+#     file.write(TEMPLATE)
+#     raw_input("Press enter once edited the Template in the new file...")
+#     file.close()
+#     
+#     file = open("Template.txt", "r")
+#     data = (json.dumps(json.load(file)))
+#     file.close()
+# =============================================================================
     
     response = get_response(URL = server + OPERATIONS[operation][0] + 
                             json.loads(data)["key"],
@@ -372,9 +384,19 @@ def create():
                             max_attempts = 2)
     if response.status == 204:
         print("You're request has been succsessful. A new entity has been created.")
+
+
         
-def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9'):
-    
+def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9',
+           NEWVALUES = {"flatten" : "true"}):
+        
+        """
+        Arguments:
+        :VALUE: The type of entity being requested
+        :KEY: The specific entity key
+        :FIELD: The fields that require updating
+        """
+        
         serverobj = CoalesceServer()
         server = serverobj.URL
         headers = {
@@ -395,17 +417,48 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                                 delay = 1,
                                 max_attempts = 2
                                 )
-        response = json.loads((response.text))
-       
-        with open('Data.txt', 'w') as outfile:  
-            json.dump(response, outfile, indent = 4, sort_keys = True)
-        print("Please make changes to the script passed through in the data file")
-        raw_input("Press a key here once finished...")
+        response = json.loads(response.text)
         
-        file = open("Data.txt", 'r')
-        data = json.dumps(json.load(file))
-        file.close()
+        def Nester(d, c):
+            for i in NEWVALUES:
+                for j, k in d.iteritems():
+                    if k is dict:
+                        Nester(k)
+                    else:
+                        if i in j:
+                            d[j] = c[i]
+                            print (j + ":" + k)
+                        else:
+                            ValueError("You're key seems to not be in the template dictionary")
+                            
+        if type(NEWVALUES) == dict:
+            Nester(response, NEWVALUES)
+            try:
+                for i in NEWVALUES:
+                    response[json.loads(NEWVALUES)]
+            except:
+                print("This is neither a direct field or a dictionary path")
+        else:
+            if type(NEWVALUES) == str:
+                try:
+                    response[json.loads(NEWVALUES)]
+                except:
+                    print("This is not a valid path. Enter a complete path or field.")
         
+#OPTION FOR MANUAL EDITING OF TEMPLATE
+# =============================================================================
+#         with open('Data.txt', 'w') as outfile:
+#             json.dump(response, outfile, indent = 4, sort_keys = True)
+#                 
+#         print("Please make any desired manual changes to the script in the data file")
+#         raw_input("Press a key here once finished...")
+#         
+#         file = open("Data.txt", 'r')
+#         data = json.dumps(json.load(file))
+#         file.close()
+# =============================================================================
+        
+        data = json.dumps(response)
         response = get_response(URL = server + OPERATIONS[operation][0] +
                                 read_payload['entityKey'],
                                 method = method,
@@ -415,8 +468,4 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                                 delay = 1,
                                 max_attempts = 2)
         return response
-
-search()
-
-        
-        
+print(update())
