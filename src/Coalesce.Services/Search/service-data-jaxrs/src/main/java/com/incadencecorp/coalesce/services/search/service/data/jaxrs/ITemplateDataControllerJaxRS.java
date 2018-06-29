@@ -23,7 +23,7 @@ import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
 
 /**
  * JaxRs configuration for {@link TemplateDataControllerJaxRS}
- * 
+ *
  * @author Derek Clemenzi
  */
 @Path("templates")
@@ -38,7 +38,7 @@ public interface ITemplateDataControllerJaxRS {
     @Path("/{name}/{source}/{version}{ext:(.json)?}")
     @Produces(MediaType.APPLICATION_JSON)
     CoalesceEntity getTemplate(@PathParam("name") String name, @PathParam("source") String source, @PathParam("version") String version) throws RemoteException;
-    
+
     @GET
     @Path("/{name}/{source}/{version}.xml")
     @Produces(MediaType.APPLICATION_XML)
@@ -59,13 +59,13 @@ public interface ITemplateDataControllerJaxRS {
     @POST
     @Path("/{key}{ext:(.json)?}")
     @Consumes(MediaType.APPLICATION_JSON)
-    boolean setTemplateJson(@PathParam("key") String key, String json) throws RemoteException;
+    String setTemplateJson(@PathParam("key") String key, String json) throws RemoteException;
 
     @POST
     @Path("/{key}.xml")
     @Consumes(MediaType.APPLICATION_XML)
-    boolean setTemplateXml(@PathParam("key") String key, String xml) throws RemoteException;
-    
+    String setTemplateXml(@PathParam("key") String key, String xml) throws RemoteException;
+
     @PUT
     @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}")
     boolean registerTemplate(@PathParam("key") String key) throws RemoteException;

@@ -46,7 +46,7 @@ class TemplateEditor extends Component {
     const { template } = this.state;
 
     return (
-        <Panel className="ui-widget-content" id={template.key} style={{ 'overflowY': 'hidden' }}>
+        <Panel className="ui-widget-content" id={template.key} style={{ 'overflowY': 'auto' }}>
           <div style={{ 'display': 'table' }}>
             <div style={{ 'display': 'table-cell', width: '100%' }}>
               <TextField
