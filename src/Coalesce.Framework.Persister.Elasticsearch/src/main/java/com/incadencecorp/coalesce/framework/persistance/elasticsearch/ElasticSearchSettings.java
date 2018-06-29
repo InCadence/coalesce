@@ -98,10 +98,19 @@ public class ElasticSearchSettings {
      */
     public static final String PARAM_HTTP_PORT = PARAM_ELASTIC_BASE + "http.port";
 
+    /**
+     * (Integer) Number of attempts to save an entity on a NoNodeAvailableExceptions before giving up.
+     */
+    private static final String PARAM_RETRY_ATTEMPTS = PARAM_ELASTIC_BASE + "onerror.retryattempts";
+
+    private static final String PARAM_BACKOFF_INTERVAL = PARAM_ELASTIC_BASE + "onerror.backoffinterval";
+
     private static final String DEFAULT_KEYSTORE_FILE = getSystemProperty("javax.net.ssl.keyStore");
     private static final String DEFAULT_KEYSTORE_PASSWORD = getSystemProperty("javax.net.ssl.keyStorePassword");
     private static final String DEFAULT_TRUSTSTORE_FILE = getSystemProperty("javax.net.ssl.trustStore");
     private static final String DEFAULT_TRUSTSTORE_PASSWORD = getSystemProperty("javax.net.ssl.trustStorePassword");
+    private static final int DEFAULT_RETRIES = 5;
+    private static final int DEFAULT_BACKOFF_INTERVAL = 500;
 
     /*--------------------------------------------------------------------------    
     Initialization
@@ -245,6 +254,34 @@ public class ElasticSearchSettings {
         settings.setSetting(config_name, PARAM_IS_AUTHORITATIVE, value);
     }
 
+    public static int getRetryAttempts()
+    {
+        return settings.getSetting(config_name, PARAM_RETRY_ATTEMPTS, DEFAULT_RETRIES, false);
+    }
+
+    public static void setRetryAttempts(Boolean value)
+    {
+        settings.setSetting(config_name, PARAM_RETRY_ATTEMPTS, value);
+    }
+
+   /**
+     * @return the number of milliseconds between retry attempts.
+     */
+    public static int getBackoffInterval()
+    {
+        return settings.getSetting(config_name, PARAM_BACKOFF_INTERVAL, DEFAULT_BACKOFF_INTERVAL, true);
+    }
+
+    /**
+     * Sets the number of milliseconds between retry attempts.
+     *
+     * @param millis
+     */
+    public static void setBackoffInterval(int millis)
+    {
+        settings.setSetting(config_name, PARAM_BACKOFF_INTERVAL, millis);
+    }
+
     public static Map<String, String> getParameters()
     {
         Map<String, String> params = new HashMap<>();
@@ -260,6 +297,7 @@ public class ElasticSearchSettings {
         params.put(PARAM_CLUSTER_NAME, getElasticClusterName());
         params.put(PARAM_HTTP_HOST, getHTTPHost());
         params.put(PARAM_HTTP_PORT, getHTTPPort());
+        params.put(PARAM_RETRY_ATTEMPTS, Integer.toString(getRetryAttempts()));
 
         return params;
     }

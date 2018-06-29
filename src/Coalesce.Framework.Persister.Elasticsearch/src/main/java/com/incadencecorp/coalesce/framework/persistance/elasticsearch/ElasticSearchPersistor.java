@@ -14,6 +14,7 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.support.AbstractClient;
+import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.rest.RestStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +95,21 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
             LOGGER.debug("{} Entities Created {} Request", entities.length, request.requests().size());
 
+            executeRequest(client, request, 1);
+        }
+        catch (CoalesceException | InterruptedException e)
+        {
+            throw new CoalescePersistorException(e);
+        }
+
+        return true;
+    }
+
+    private void executeRequest(AbstractClient client, BulkRequest request, int attempt)
+            throws CoalescePersistorException, InterruptedException
+    {
+        try
+        {
             BulkResponse response = client.bulk(request).actionGet();
 
             for (BulkItemResponse item : response.getItems())
@@ -113,12 +129,35 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
             }
         }
-        catch (CoalesceException e)
+        catch (NoNodeAvailableException e)
         {
-            throw new CoalescePersistorException(e);
+            if (attempt > ElasticSearchSettings.getRetryAttempts())
+            {
+                throw new CoalescePersistorException("(FAILED) Executing Request", e);
+            }
+            else
+            {
+                int millis = new Random().nextInt(ElasticSearchSettings.getBackoffInterval())
+                        + ElasticSearchSettings.getBackoffInterval();
+
+                if (LOGGER.isDebugEnabled())
+                {
+                    LOGGER.debug("Sleeping ({}) for {} ms", Thread.currentThread().getId(), millis);
+                }
+
+                // Back off to allow other threads to close their locks.
+                Thread.sleep(millis * attempt);
+
+                if (LOGGER.isDebugEnabled())
+                {
+                    LOGGER.debug("Awaken ({})", Thread.currentThread().getId());
+                }
+
+                LOGGER.warn("(RETRYING) No Nodes Available - Attempt: {} after backing off for {} ms", attempt, millis);
+                executeRequest(client, request, ++attempt);
+            }
         }
 
-        return true;
     }
 
     @Override
