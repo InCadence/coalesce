@@ -102,6 +102,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     protected final Map<String, String> params;
     protected final ElasticSearchIterator iterator;
     protected final boolean isAuthoritative;
+    protected Map<String, DataStore> datastores = new HashMap<String, DataStore>();
     protected DataStore datastore;
 
     /**
@@ -132,11 +133,13 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     }
     
     public DataStore getDataStore(String index, String type) {
-    	if(datastore != null) {
-    		return datastore;
+    	//Check if the datastore for the given index is null, if not return it
+    	if(datastores.get(index) != null) {
+    		return datastores.get(index);
     	} else {
+    		//If it is null, initialize it
     		initializeDataStore(index, type);
-    		return datastore;
+    		return datastores.get(index);
     	}
     }
     
@@ -160,11 +163,13 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 		            System.setProperty("javax.net.ssl.trustStorePassword",
 		                               params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));
 		        }
+		        //Datastores need the index for some reason
 		        props.put(index, type); 
 	
-				datastore = DataStoreFinder.getDataStore(props);
+				datastores.put(index, DataStoreFinder.getDataStore(props));
+				datastore = datastores.get(index);
 			} catch (IOException e) {
-				LOGGER.error("DataStore not initialized: " + e.getMessage());
+				LOGGER.error("DataStore could not be initialized: " + e.getMessage());
 				datastore = null;
 			}
     	} else {
