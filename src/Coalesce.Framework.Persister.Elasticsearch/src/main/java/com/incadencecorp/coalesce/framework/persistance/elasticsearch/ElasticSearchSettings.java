@@ -103,6 +103,9 @@ public class ElasticSearchSettings {
      */
     private static final String PARAM_RETRY_ATTEMPTS = PARAM_ELASTIC_BASE + "onerror.retryattempts";
 
+    /**
+     * (Integer) Milliseconds range that back off logic should use before retrying.
+     */
     private static final String PARAM_BACKOFF_INTERVAL = PARAM_ELASTIC_BASE + "onerror.backoffinterval";
 
     private static final String DEFAULT_KEYSTORE_FILE = getSystemProperty("javax.net.ssl.keyStore");
