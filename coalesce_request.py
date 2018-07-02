@@ -329,7 +329,13 @@ def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f
                             max_attempts = 2)
     return response.status
 
-def create(TYPE = "Enumeration", FIELDSADDED = ""):
+def create(TYPE = "Enumeration", FIELDSADDED = {"flatten":"true"}):
+    
+    """
+    Arguments:
+    :TYPE: The type of artifact being looked for
+    :FIELDSADDED: The fields that are being created in the artifact
+    """
     
     serverobj = CoalesceServer()
     server = serverobj.URL
@@ -362,7 +368,21 @@ def create(TYPE = "Enumeration", FIELDSADDED = ""):
                             )
     
     TEMPLATE = (json.dumps(json.loads(response.text), indent = 4, sort_keys = True))
-    
+    def Nester(d, c):
+        for i in d:
+            for j, k in d.iteritems():
+                for i in range(2):
+                    if k is dict:
+                        Nester(k)
+                    else:
+                        if i in j:
+                            d[j] = c[i]
+                            print (j + ":" + d[j])
+                        else:
+                            ValueError("You're key does not exist in the first two layers." 
+                                       "\nPlease specify a path if beyond that.")
+    Nester(FIELDSADDED, TEMPLATE)
+    data = TEMPLATE
 # =============================================================================
 #     file = open("Template.txt", 'w')
 #     file.write(TEMPLATE)
@@ -382,6 +402,7 @@ def create(TYPE = "Enumeration", FIELDSADDED = ""):
                             headers = headers,
                             delay = 1,
                             max_attempts = 2)
+    
     if response.status == 204:
         print("You're request has been succsessful. A new entity has been created.")
 
@@ -422,14 +443,15 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
         def Nester(d, c):
             for i in NEWVALUES:
                 for j, k in d.iteritems():
-                    if k is dict:
-                        Nester(k)
-                    else:
-                        if i in j:
-                            d[j] = c[i]
-                            print (j + ":" + k)
+                    for i in range(2):
+                        if k is dict:
+                            Nester(k)
                         else:
-                            ValueError("You're key seems to not be in the template dictionary")
+                            if i in j:
+                                d[j] = c[i]
+                                print (j + ":" + k)
+                            else:
+                                ValueError("You're key seems to repeated, try entering it again")
                             
         if type(NEWVALUES) == dict:
             Nester(response, NEWVALUES)
@@ -468,4 +490,4 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                                 delay = 1,
                                 max_attempts = 2)
         return response
-print(update())
+print(create())
