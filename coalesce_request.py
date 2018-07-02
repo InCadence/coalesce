@@ -119,8 +119,8 @@ FORMATS = (u"XML", u"JSON", u"python_dict")
 
 def search(params = None, operation = u"search",
            SUB_OPERATIONS = u"simple", OPERATOR = "AND", OPERATORS = ["Like", "Like"], 
-           VALUES = ["hello", "max"], FIELDS = ["name", "objectkey"], query = [{"test": "test"}, 
-                                                                                {"NAME": "NAME"}]):
+           VALUES = ["hello", "max"], FIELDS = ["name", "objectkey"], 
+           query = [{"test": "test"}, {"NAME": "NAME"}]):
                               
     """
     Arguments:
@@ -328,7 +328,7 @@ def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f
                             headers = headers,
                             delay = 1,
                             max_attempts = 2)
-    return response.status
+    return response
 
 def create(TYPE = "Enumeration", FIELDSADDED = {"flatten":"true", '["linkageSection"]["flatten"]':"true"}):
     
@@ -358,9 +358,9 @@ def create(TYPE = "Enumeration", FIELDSADDED = {"flatten":"true", '["linkageSect
                    "OEEvent": "templates/4a10c22f-7738-340d-bc73-31466a91e8e2/new"}
     params = None
     operation = u"create"
-    method = OPERATIONS[operation][0]
+    method = OPERATIONS[operation][1]
     
-    response = get_response(URL = server+ "data/{}".format(ENTITYTEMPLATES[TYPE]), #Add UUID for this because of keys
+    response = get_response(URL = server + "data/{}".format(ENTITYTEMPLATES[TYPE]), 
                             method = 'get',
                             params = params,
                             data = None,
@@ -370,7 +370,7 @@ def create(TYPE = "Enumeration", FIELDSADDED = {"flatten":"true", '["linkageSect
                             )
     
     TEMPLATE = (json.dumps(json.loads(response.text), indent = 4, sort_keys = True))
-    
+
     def Nester(d, c):
         for i in d:
             for j, k in d.items():
@@ -404,9 +404,8 @@ def create(TYPE = "Enumeration", FIELDSADDED = {"flatten":"true", '["linkageSect
                             headers = headers,
                             delay = 1,
                             max_attempts = 2)
-    
-    if response.status == 204:
-        print("You're request has been succsessful. A new entity has been created.")
+     
+    return response
 
 
         
@@ -417,7 +416,9 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
         Arguments:
         :VALUE: The type of entity being requested
         :KEY: The specific entity key
-        :FIELD: The fields that require updating
+        :NEWVALUES: The fields that require updating, only key required if it is 
+        present in the first or second nest, else provide an entire path to ensure 
+        repeating keys are not confused
         """
         
         serverobj = CoalesceServer()
@@ -443,17 +444,26 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
         response = json.loads(response.text)
         
         def Nester(d, c):
-            for i in NEWVALUES:
-                for j, k in d.iteritems():
-                    for i in range(2):
-                        if k is dict:
-                            Nester(k)
+            for i in d:
+                for key, value in d.iteritems():
+                    for _ in range(2):
+                        if value is dict:
+                                Nester(value)
                         else:
-                            if i in j:
-                                d[j] = c[i]
-                                print (j + ":" + k)
+                            if i in d:
+                                    d[key] = c[key]
+                                    print (key + ":" + d[key])
                             else:
-                                ValueError("You're key seems to repeated, try entering it again")
+                                try:
+                                    path = i
+                                    path = path.replace('][', ',').replace(']', '').replace('[','').replace("'","").split(',')
+                                    for _ in path:
+                                        key = response[_]
+                                        response[key] = NEWVALUES[i]
+                                except:
+                                        ValueError("You're key does not exist in the first two layers." 
+                                                   "\nIf a path was inputted, it seems it is not working."
+                                                   "\nPlease check your input again.")
                             
         if type(NEWVALUES) == dict:
             Nester(response, NEWVALUES)
@@ -479,4 +489,4 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                                 delay = 1,
                                 max_attempts = 2)
         return response
-print(search())
+print(read())
