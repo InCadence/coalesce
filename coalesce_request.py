@@ -58,7 +58,7 @@ class CoalesceServer(object):
     CONTENT_TYPE = u"application/json; charset=utf-8"
     VALID_CONNECTION_TYPES = (u"keep-alive", u"close")
 
-    def __init__(self, server_URL = u"http://localhost:8181/cxf/",
+    def __init__(self, server_URL = u"http://52.61.62.87:8181/cxf/",
                  connection = u"keep-alive", max_attempts = 4):
         """
         Arguments:
@@ -119,7 +119,8 @@ FORMATS = (u"XML", u"JSON", u"python_dict")
 
 def search(params = None, operation = u"search",
            SUB_OPERATIONS = u"simple", OPERATOR = "AND", OPERATORS = ["Like", "Like"], 
-           VALUES = ["hello", "max"], FIELDS = ["name", "objectkey"], query = [{"test": "test"}, {"NAME": "NAME"}]):
+           VALUES = ["hello", "max"], FIELDS = ["name", "objectkey"], query = [{"test": "test"}, 
+                                                                                {"NAME": "NAME"}]):
                               
     """
     Arguments:
@@ -329,12 +330,13 @@ def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f
                             max_attempts = 2)
     return response.status
 
-def create(TYPE = "Enumeration", FIELDSADDED = {"flatten":"true"}):
+def create(TYPE = "Enumeration", FIELDSADDED = {"flatten":"true", '["linkageSection"]["flatten"]':"true"}):
     
     """
     Arguments:
     :TYPE: The type of artifact being looked for
-    :FIELDSADDED: The fields that are being created in the artifact
+    :FIELDSADDED: The fields that are being created in the artifact, can pass through
+    string path or individual keys
     """
     
     serverobj = CoalesceServer()
@@ -368,32 +370,32 @@ def create(TYPE = "Enumeration", FIELDSADDED = {"flatten":"true"}):
                             )
     
     TEMPLATE = (json.dumps(json.loads(response.text), indent = 4, sort_keys = True))
+    
     def Nester(d, c):
         for i in d:
-            for j, k in d.iteritems():
+            for j, k in d.items():
                 for i in range(2):
                     if k is dict:
                         Nester(k)
                     else:
-                        if i in j:
+                        if i in d:
                             d[j] = c[i]
                             print (j + ":" + d[j])
                         else:
-                            ValueError("You're key does not exist in the first two layers." 
-                                       "\nPlease specify a path if beyond that.")
-    Nester(FIELDSADDED, TEMPLATE)
-    data = TEMPLATE
-# =============================================================================
-#     file = open("Template.txt", 'w')
-#     file.write(TEMPLATE)
-#     raw_input("Press enter once edited the Template in the new file...")
-#     file.close()
-#     
-#     file = open("Template.txt", "r")
-#     data = (json.dumps(json.load(file)))
-#     file.close()
-# =============================================================================
+                            try:
+                                path = i
+                                path = path.replace('][', ',').replace(']', '').replace('[','').replace("'","").split(',')
+                                for _ in path:
+                                    key = TEMPLATE[_]
+                                TEMPLATE[key] = FIELDSADDED[i]
+                            except:
+                                ValueError("You're key does not exist in the first two layers." 
+                                           "\nPlease specify a path if beyond that.")
     
+    Nester(FIELDSADDED, TEMPLATE)
+        
+    data = TEMPLATE
+
     response = get_response(URL = server + OPERATIONS[operation][0] + 
                             json.loads(data)["key"],
                             method = method,
@@ -466,20 +468,7 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                     response[json.loads(NEWVALUES)]
                 except:
                     print("This is not a valid path. Enter a complete path or field.")
-        
-#OPTION FOR MANUAL EDITING OF TEMPLATE
-# =============================================================================
-#         with open('Data.txt', 'w') as outfile:
-#             json.dump(response, outfile, indent = 4, sort_keys = True)
-#                 
-#         print("Please make any desired manual changes to the script in the data file")
-#         raw_input("Press a key here once finished...")
-#         
-#         file = open("Data.txt", 'r')
-#         data = json.dumps(json.load(file))
-#         file.close()
-# =============================================================================
-        
+
         data = json.dumps(response)
         response = get_response(URL = server + OPERATIONS[operation][0] +
                                 read_payload['entityKey'],
@@ -490,4 +479,4 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                                 delay = 1,
                                 max_attempts = 2)
         return response
-print(create())
+print(search())
