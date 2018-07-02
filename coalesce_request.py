@@ -220,7 +220,7 @@ def search(params = None, operation = u"search",
                         del query[key]
                     else: 
                         GROUP[0][key] = query[key]
-                data = json.dumps(data)
+                    data = json.dumps(data)
             
             elif type(query) == str:
                 raise ValueError("Please enter your query as a dictionary")
@@ -443,42 +443,30 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                                 )
         response = json.loads(response.text)
         
-        def Nester(d, c):
-            for i in d:
-                for key, value in d.iteritems():
+        def Nester():
+            for i in NEWVALUES:
+                for key, value in NEWVALUES.iteritems():
                     for _ in range(2):
-                        if value is dict:
+                        if type(value) is dict:
                                 Nester(value)
                         else:
-                            if i in d:
-                                    d[key] = c[key]
-                                    print (key + ":" + d[key])
-                            else:
+                            try:
+                                    response[key] = NEWVALUES[key]
+                                    print (key + ":" + response[key])
+                            except:
                                 try:
                                     path = i
                                     path = path.replace('][', ',').replace(']', '').replace('[','').replace("'","").split(',')
                                     for _ in path:
                                         key = response[_]
                                         response[key] = NEWVALUES[i]
+                                        print(response[_])
                                 except:
                                         ValueError("You're key does not exist in the first two layers." 
                                                    "\nIf a path was inputted, it seems it is not working."
                                                    "\nPlease check your input again.")
                             
-        if type(NEWVALUES) == dict:
-            Nester(response, NEWVALUES)
-            try:
-                for i in NEWVALUES:
-                    response[json.loads(NEWVALUES)]
-            except:
-                print("This is neither a direct field or a dictionary path")
-        else:
-            if type(NEWVALUES) == str:
-                try:
-                    response[json.loads(NEWVALUES)]
-                except:
-                    print("This is not a valid path. Enter a complete path or field.")
-
+        Nester()
         data = json.dumps(response)
         response = get_response(URL = server + OPERATIONS[operation][0] +
                                 read_payload['entityKey'],
@@ -489,4 +477,4 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                                 delay = 1,
                                 max_attempts = 2)
         return response
-print(read())
+print(update())
