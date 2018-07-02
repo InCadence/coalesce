@@ -52,37 +52,75 @@ const example = {
       }
     }
 
-export class FilterCreator extends React.Component {
+export class SearchCreator extends React.Component {
 
   constructor(props) {
     super(props);
 
-    if (props.tabledata != null) {
+    /*if (props.tabledata != null) {
       for (var ii=0; ii<props.tabledata.length; ii++) {
         props.tabledata[ii].key = ii;
       }
-    }
+    }*/
 
     this.state = {
-      recordsets: props.recordsets,
-      tabledata: props.tabledata,
-      onSearch: props.onSearch,
-      groupRecordSet: props.groupRecordSet,
-      currentkey: props.currentkey,
-      criteriakey: props.criteriakey,
+      //recordSetSelection: 0,
+      //fieldSelection: 0,
+      //operatorSelection: 0,
+      //valueSelection: 0,
+      maxRows: 10,
+      matchCase: false,
+      currentkey: 0,
+      queryCount: 0,
+      tabledata: [{
+                   queryKey:0,
+                   key: 0,
+                   recordset: 'CoalesceEntity',
+                   field: 'name',
+                   operator: '=',
+                   value: 'aa',
+                   matchCase: true}],
+       groups: [],
+      //tableDataSelection: props.tabledata,
+      //onSearch: props.onSearch,
+      //groupRecordSet: props.groupRecordSet,
+      //criteriakey: props.criteriakey,
       isOpened: true
     }
+    this.setState({groups: this.state.groups.concat(this.state.tabledata)});
+    console.log("SearchCreator", this.state.tabledata, this.state.groups);
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.state = nextProps;
-  }
+  addGroup(){
+    console.log("Adding Group");
+    this.setState({
+            groups: this.state.groups.concat([{
+                               queryKey: this.state.queryCount+1,
+                               key: 0,
+                               recordset: 'CoalesceEntity',
+                               field: 'name',
+                               operator: '=',
+                               value: 'aa',
+                               matchCase: true}]),
+          // Increment the counter to ensure key is always unique.
+          queryCount: this.state.queryCount + 1
+     });
+      console.log("Groups now are", this.state.groups);
+    }
+
+  //componentWillReceiveProps(nextProps) {
+    //this.state = nextProps;
+  //  console.log("Next props", nextProps);
+ // }
 
   render() {
 
-    const {recordsets, tabledata, isOpened, currentkey} = this.state;
-    //console.log("Filter Creator table data", JSON.stringify(tabledata));
+    //const {recordsets, tabledata, isOpened, currentkey} = this.state;
+    console.log("SearchCreator recordsets", this.props.recordsets);
     //console.log("Filter Creator recordsets", JSON.stringify(recordsets));
+    console.log("SearchCreator isOpened", this.state.isOpened);
+    console.log("SearchCreator tableData", this.state.tabledata);
+    console.log("SearchCreator tableData length", this.state.tabledata.length);
     return (
       <div className="ui-widget">
         <Toggle
@@ -93,47 +131,45 @@ export class FilterCreator extends React.Component {
             this.setState({isOpened: value});
           }}
          />
-          <Collapse isOpened={isOpened}>
+          <Collapse isOpened={this.state.isOpened}>
             <div className="ui-widget-content">
               <ReactTable
-                pageSize={this.props.maxRows}
-                data={tabledata}
+                pageSize={this.state.maxRows}
+                data={this.state.tabledata}
                 showPagination={false}
-                columns={createColumns(this, recordsets, currentkey)}
+                columns={createColumns(this, this.props.recordsets, this.state.currentkey)}
               />
               <div className="form-buttons">
                 <IconButton icon="/images/svg/add.svg" title="Add Criteria" onClick={this.addRow.bind(this)} />
                 <IconButton icon="/images/svg/search.svg" title="Execute Query" onClick={this.props.onSearch.bind(this, this.state.tabledata)} />
+                <input type="checkbox" title="Add to Group" onChange={this.onAddGroupCheck.bind(this, this.state.tabledata.queryKey )}/>
+                <IconButton icon="/images/svg/add.svg" title="Add To Group" onClick={this.addGroup.bind(this)}/>
               </div>
             </div>
           </Collapse>
       </div>
-    )
+      )
   }
 
   onRecordsetChange(key, e) {
-    //console.log("On record set change key is", key, "e is", e);
-    const {tabledata, recordsets} = this.state;
-    var row = this.getRow(tabledata, key);
-    //console.log("row is", row, tabledata, key);
+    console.log("On record set change key is", key, "e is", e);
+
+    var row = this.getRow(this.state.tabledata, key);
     var defaultField;
-    var tempGroupRecordSet;
-    //console.log("recordsets.length is", recordsets.length, recordsets);
-    for (var ii=0; ii<recordsets.length; ii++) {
-      if (recordsets[ii].name === e.target.value) {
-        defaultField = recordsets[ii].definition[0].name;
-        //console.log("RecordSets", recordsets[ii], "Target value is", e.target.value);
+    for (var ii=0; ii<this.props.recordsets.length; ii++) {
+      if (this.props.recordsets[ii].name === e.target.value) {
+        defaultField = this.props.recordsets[ii].definition[0].name;
         break;
       }
     };
 
     row.recordset = e.target.value;
-    tempGroupRecordSet = e.target.value;
+    //tempGroupRecordSet = e.target.value;
     row.field = defaultField;
     row.operator = 'EqualTo';
     row.value = '';
 
-    this.setState({tabledata: tabledata,groupRecordSet: tempGroupRecordSet});
+    this.setState({tabledata: this.state.tabledata});
   }
 
   onFieldChange(key, e) {
@@ -166,6 +202,10 @@ export class FilterCreator extends React.Component {
     this.setState({tabledata: tabledata});
   }
 
+  onAddGroupCheck(key, e){
+    console.log("Add this tabledata (query) to group");
+    }
+
   onMatchCaseChange(key, e) {
     const {tabledata} = this.state;
     var row = this.getRow(tabledata, key);
@@ -175,9 +215,19 @@ export class FilterCreator extends React.Component {
     this.setState({tabledata: tabledata});
   }
 
+  onAndOrChange(key, e) {
+    const {tabledata} = this.state;
+    var row = this.getRow(tabledata, key);
+    row.andOr = e.target.value;
+
+    this.setState({tabledata: tabledata});
+
+  }
+
   deleteRow(key, e) {
 
     const {tabledata} = this.state;
+    if(tabledata != null){
     //console.log("delete row", key);
     // Delete Row
     for (var ii=0; ii<tabledata.length; ii++) {
@@ -186,25 +236,27 @@ export class FilterCreator extends React.Component {
           break;
       }
     }
+    }
 
     // Save State
     this.setState({tabledata: tabledata});
   }
 
   addRow(e) {
-    const {tabledata, currentkey, recordsets} = this.state;
-    //console.log("Adding row, recordsets is", recordsets, currentkey);
+    const {tabledata, currentkey} = this.state;
+    //console.log("Adding row, recordsets is", this.props.recordsets[0], this.props.recordsets[0].definition[0]);
     var keyvalue = currentkey + 1;
 
-    if (tabledata.length < this.props.maxRows) {
+    if (tabledata.length < this.state.maxRows) {
       // Create New Data Row
       tabledata.push({
         key: keyvalue,
-        recordset: this.state.groupRecordSet, //Assuming we always start with an existing recordset when we instantiate a filtercreator, always match with that
-        field: recordsets[0].definition[0].name,
+        recordset: this.props.recordsets[0].name,
+        field: this.props.recordsets[0].definition[0].name,
         operator: 'EqualTo',
         value: '',
-        matchCase: false
+        matchCase: false,
+        andOr: 'And'
       });
 
       // Save State
@@ -335,13 +387,26 @@ function createColumns(that, recordsets, key) {
         <input type="checkbox" className="form-control" title="Match Case" checked={cell.row.matchCase} onChange={that.onMatchCaseChange.bind(that, cell.row.key)}/>
       )
     });
+
+    columns.push({
+      Header: 'AndOr',
+      accessor: 'andOr',
+      resizable: false,
+      sortable: false,
+      width: 100,
+      Cell: (cell) => (
+       <select className="form-control"  value={cell.row.andOr} onChange={that.onAndOrChange.bind(that, cell.row.key)}>
+       <option>And</option>
+       <option>Or</option>
+       </select>
+      )});
   }
   return columns;
 }
 
-FilterCreator.defaultProps = {
-  maxRows: 10,
-  isOpened: true,
-  tabledata: [],
-  currentkey: 0
-}
+//SearchCreator.defaultProps = {
+//  maxRows: 10,
+//  isOpened: false,
+//  tabledata: [],
+ // currentkey: 0
+//}
