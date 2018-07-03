@@ -8,13 +8,33 @@ import FlatButton from 'material-ui/FlatButton';
 export class DialogMessage extends React.PureComponent {
 
   render() {
-    const actions = [
+    var actions = [];
+    console.log("DialogMessage", this.props.confirmation);
+    if(this.props.confirmation == null){
+    actions = [
       <FlatButton
         label="OK"
         primary={true}
         onClick={this.props.onClose}
       />
     ];
+    }
+    else{
+      actions = [
+      <div>
+      <FlatButton
+         label="OK"
+         primary={true}
+         onClick={this.props.onClick}
+       />
+       <FlatButton
+         label="Cancel"
+         primary={true}
+         onClick={this.props.onClose}
+       />
+       </div>
+       ];
+    }
 
     return (
         <Dialog

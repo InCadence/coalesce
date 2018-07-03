@@ -12,7 +12,7 @@ import { loadTemplates, loadTemplate, saveTemplate,registerTemplate } from 'comm
 import { loadJSON } from 'common-components/lib/js/propertyController';
 import {Menu} from 'common-components/lib/index.js';
 
-import { DialogMessage, DialogLoader, DialogTemplateSelection } from 'common-components/lib/components/dialogs';
+import { DialogMessage, DialogLoader, DialogTemplateSelection} from 'common-components/lib/components/dialogs';
 import RGL,{WidthProvider} from 'react-grid-layout';
 
 import { getRootKarafUrl } from 'common-components/lib/js/common';
@@ -33,6 +33,13 @@ class TemplateWorkspace extends Component {
       promptTemplate: false,
       loading: null,
       error: null,
+      duplicate: null,
+      dupeX: 0,
+      dupeY: 0,
+      dupeI: 0,
+      dupeIndex: 0,
+      dupeKey: null,
+      dupeTemplate: null,
       emptySpace: false,
       removedItems: [],
       removedCount: 0,
@@ -122,6 +129,27 @@ class TemplateWorkspace extends Component {
     });
   }
 
+
+  handleDuplicateTemplateLoad(){
+    //Release existing template
+    this.state.items.splice(this.state.dupeIndex,1);
+    //Place new template in old location
+    this.setState({
+          items: this.state.items.concat({
+             i: this.state.dupeI,
+             x: this.state.dupeX,
+             y: this.state.dupeY,
+             w: 5,
+             h: 15,
+             static: false,
+             widgetType: "template",
+             template: this.state.dupeTemplate
+             }),
+             newCounter: this.state.newCounter + 1,
+             duplicate: null
+             });
+    }
+
   handleTemplateLoad(key) {
     //Need to do this due to asynchronous nature of then command
     //Without it, this does not exist(?) in this scope after
@@ -134,17 +162,16 @@ class TemplateWorkspace extends Component {
       //Check to see if template with desired key already exists
       for(var ii = 0; ii < that.state.items.length; ii++){
         if(that.state.items[ii].template.key === key){
-          //If key exists, store location, i value, and index
-          oldI = that.state.items[ii].i;
-          oldX = that.state.items[ii].x;
-          oldY = that.state.items[ii].y;
-          index = ii;
+          that.setState({dupeIndex: ii, dupeI: that.state.items[ii].i+1, dupeX: that.state.items[ii].x, dupeY: that.state.items[ii].y, duplicate: true, dupeTemplate: template, dupeKey: key});
         }
       }
       //If index is not default value, key exists
-      if(index !== -1){
+      if(that.state.duplicate){
+          /*that.setState({duplicate: true});
         //Dialog box alerting user that this will overwrite existing changes
-        if(window.confirm("Template with matching key exists.  Continuing(OK) will overwrite any existing changes")){
+        //if(window.confirm("Template with matching key exists.  Continuing(OK) will overwrite any existing changes")){
+          if(that.state.overwriteDupe){
+          console.log("This means we want to overwrite the dupe");
           //Release existing template with matching key
           that.state.items.splice(index,1);
           //Place new template in old location
@@ -165,8 +192,10 @@ class TemplateWorkspace extends Component {
           });
       }
       else{
+        console.log("This means we don't want to overwrite the dupe");
         return;
-      }
+      }*/
+      return;
     }
       //Key does not already exist
       else{
@@ -516,6 +545,14 @@ class TemplateWorkspace extends Component {
           <DialogLoader
             title={this.state.loading}
             opened={this.state.loading != null}
+          />
+          <DialogMessage
+            title="Duplicate"
+            confirmation="true"
+            opened={this.state.duplicate != null}
+            message="Template with matching key exists.  Continuing(OK) will overwrite any existing changes"
+            onClose={() => {this.setState({duplicate: null});}}
+            onClick={() => {this.handleDuplicateTemplateLoad();}}
           />
           <DialogTemplateSelection
             templates={this.state.templates}
