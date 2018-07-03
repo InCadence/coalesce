@@ -9,8 +9,9 @@ export class DialogMessage extends React.PureComponent {
 
   render() {
     var actions = [];
-    console.log("DialogMessage", this.props.confirmation);
+    //Confirmation prop will be used to decide if user needs to make decision
     if(this.props.confirmation == null){
+    //If confirmation is not set, this renders a simple message, one ok button input from user
     actions = [
       <FlatButton
         label="OK"
@@ -20,6 +21,7 @@ export class DialogMessage extends React.PureComponent {
     ];
     }
     else{
+      //If confirmation is set (to anything really), user is deciding between ok or cancel
       actions = [
       <div>
       <FlatButton
