@@ -4,12 +4,20 @@ import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
 import Modal from 'react-responsive-modal';
 import 'common-components/css/map_popup.css'
-import 'openlayers/css/ol.css';
-import * as ol from 'openlayers'
+import 'common-components/css/ol.css';
 import { DialogMap } from '../../map/dialogmap.js'
 import MapMaker from '../../map/mapmaker.js';
-
-
+import VectorSource from 'ol/source/Vector';
+import Collection from 'ol/Collection';
+import Point from 'ol/geom/Point';
+import Feature from 'ol/Feature';
+import Style from 'ol/style/Style';
+import Icon from 'ol/style/Icon';
+import {toStringHDMS} from 'ol/coordinate';
+import VectorLayer from 'ol/layer/Vector';
+import TileLayer from 'ol/layer/Tile';
+import Overlay from 'ol/Overlay';
+import OSM from 'ol/source/OSM';
 
 var mgrs = require('mgrs');
 
@@ -21,9 +29,9 @@ export default class MapPoint extends React.Component {
 
     this.state = {
       features: [],
-      vectorSource: new ol.source.Vector({
+      vectorSource: new VectorSource({
         wrapX: false,
-        features: new ol.Collection(),
+        features: new Collection(),
       }),
       clickEvt: this.props.clickEvt,
       open: false,
@@ -48,8 +56,8 @@ export default class MapPoint extends React.Component {
   }
 
   createFeature(coords) {
-    var point = new ol.geom.Point(coords);
-    var iconFeature = new ol.Feature({
+    var point = new Point(coords);
+    var iconFeature = new Feature({
       geometry: point
     });
 
@@ -58,8 +66,8 @@ export default class MapPoint extends React.Component {
   }
 
   stylizeFeature(feature) {
-    var iconStyle = new ol.style.Style({
-       image: new ol.style.Icon({
+    var iconStyle = new Style({
+       image: new Icon({
          anchor: [.5, 33],
          anchorXUnits: 'fraction',
          anchorYUnits: 'pixels',
@@ -100,7 +108,7 @@ export default class MapPoint extends React.Component {
     //var lonLatElem = document.getElementById('lonlat');
     //lonLatElem.textContent ='LonLat: ' + coords[0].toFixed(4) + ", " + coords[1].toFixed(4);
 
-    var hdms = ol.coordinate.toStringHDMS(coords)
+    var hdms = toStringHDMS(coords)
     //var hdmsElem = document.getElementById('hdms' );
     //hdmsElem.textContent = 'HDMS: ' + hdms;
 
@@ -139,22 +147,24 @@ export default class MapPoint extends React.Component {
   }
 
 
-  configureMap() {
-    var vectorLayer = new ol.layer.Vector({
+  configureMap(opt_options) {
+
+    var controls = opt_options['controls']
+    var vectorLayer = new VectorLayer({
       name: 'markers',
       source: this.state.vectorSource
     });
 
     var layers = [
-      new ol.layer.Tile({
-        source: new ol.source.OSM({
+      new TileLayer({
+        source: new OSM({
           wrapX: false
         }),
       }),
       vectorLayer
     ];
 
-    var pop = new ol.Overlay({
+    var pop = new Overlay({
       element: document.getElementById('popup' + this.props.uniqueID),
       insertFirst: false,
   })
@@ -163,7 +173,7 @@ export default class MapPoint extends React.Component {
 
     var interactions = null;
 
-    this.map = new MapMaker(layers, overlays, interactions, 'map' + this.props.uniqueID).getMap();
+    this.map = new MapMaker(layers, overlays, interactions, controls, 'map' + this.props.uniqueID).getMap();
 
     var self = this;
     this.map.on('click',
@@ -194,17 +204,7 @@ export default class MapPoint extends React.Component {
 
     return (
       <div>
-      <TextField
-        id={field.key}
-        fullWidth={true}
-        floatingLabelText={label + " - " + this.props.tag + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
-        underlineShow={this.props.showLabels}
-        style={style.root}
-        value={this.props.wkt}
-        onFocus={this.handleInputFocus}
-        onChange={this.handleInputChange}
-        onBlur={this.handleInputBlur}
-        defaultValue={field.defaultValue}></TextField>
+
 
 
 
@@ -218,7 +218,19 @@ export default class MapPoint extends React.Component {
           Delete
         </button>
 
-        <DialogMap configureMap={this.configureMap} uniqueID={this.props.uniqueID} shape={this.props.shape}/>
+        <DialogMap features={this.state.vectorSource.getFeatures()} configureMap={this.configureMap} uniqueID={this.props.uniqueID} shape={this.props.shape} textInput={
+          <TextField
+            id={field.key}
+            fullWidth={true}
+            floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
+            underlineShow={this.props.showLabels}
+            style={style.root}
+            value={this.props.wkt}
+            onFocus={this.handleInputFocus}
+            onChange={this.handleInputChange}
+            onBlur={this.handleInputBlur}
+            defaultValue={field.defaultValue}></TextField>
+        }/>
 
 
       </div>

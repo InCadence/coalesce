@@ -1,15 +1,19 @@
 import * as React from "react";
-import * as ol from 'openlayers';
 import Dialog from 'material-ui/Dialog';
+import 'common-components/css/mapping.css'
 
 // Map Controls
-import 'openlayers/css/ol.css';
+import 'ol/ol.css';
 
 export default class MapView extends React.Component {
 
-  componentDidMount() {
-    this.props.configureMap()
+  constructor (props) {
+    super(props)
 
+  }
+
+  componentDidMount() {
+    this.props.configureMap(this.props.opt_options)
   }
 
   render() {

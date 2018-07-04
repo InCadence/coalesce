@@ -1,6 +1,23 @@
 import React from 'react';
 import MapPoint from './MapPoint.js'
-import * as ol from 'openlayers'
+import Map from 'ol/Map';
+import VectorSource from 'ol/source/Vector';
+import Collection from 'ol/Collection';
+import Feature from 'ol/Feature';
+import Style from 'ol/style/Style';
+import Icon from 'ol/style/Icon';
+import {toStringHDMS} from 'ol/coordinate';
+import VectorLayer from 'ol/layer/Vector';
+import TileLayer from 'ol/layer/Tile';
+import Overlay from 'ol/Overlay';
+import OSM from 'ol/source/OSM';
+import Draw from 'ol/interaction/Draw';
+import Modify from 'ol/interaction/Modify';
+import WKT from 'ol/format/WKT';
+import Circle from 'ol/geom/Circle';
+import {defaults as defaultControls} from 'ol/control'
+import {defaults as defaultInteractions} from 'ol/interaction'
+import MultiPoint from 'ol/geom/MultiPoint';
 
 
 export default class Point extends React.Component {
@@ -17,7 +34,7 @@ export default class Point extends React.Component {
   }
 
   handlePoint(feature, self, that) {
-    var formatted =  new ol.format.WKT().writeFeature(new ol.Feature({geometry: feature.getGeometry()}), {
+    var formatted =  new WKT().writeFeature(new Feature({geometry: feature.getGeometry()}), {
       decimals: 5
     });
     self.setState({wkt: formatted})
@@ -34,7 +51,7 @@ export default class Point extends React.Component {
     var field = opts['field'];
     that.setState({visibility: 'hidden'});
     var input = document.getElementById(field.key).getAttribute('value')
-    var feature = new ol.format.WKT().readFeature(input)
+    var feature = new WKT().readFeature(input)
 
     var point = feature.getGeometry()
 

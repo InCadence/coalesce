@@ -242,14 +242,16 @@ export class FieldInput extends React.Component {
             <Shape
               shape='LineString'
               opts={opts}
-              showLabels={this.props.showLabels}/>
+              showLabels={this.props.showLabels}
+              multi={false}/>
           );
       case 'POLYGON_TYPE':
           return (
             <Shape
               shape='Polygon'
               opts={opts}
-              showLabels={this.props.showLabels}/>
+              showLabels={this.props.showLabels}
+              multi={false}/>
           );
       case 'GEOCOORDINATE_LIST_TYPE':
         return (
@@ -271,7 +273,8 @@ export class FieldInput extends React.Component {
           <Shape
             shape="Circle"
             opts={opts}
-            showLabels={this.props.showLabels}/>
+            showLabels={this.props.showLabels}
+            multi={false}/>
       );
       case 'GUID_TYPE':
         return (
