@@ -102,8 +102,6 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     protected final Map<String, String> params;
     protected final ElasticSearchIterator iterator;
     protected final boolean isAuthoritative;
-    protected Map<String, DataStore> datastores = new HashMap<String, DataStore>();
-    protected DataStore datastore;
 
     /**
      * Default Constructor
@@ -130,51 +128,6 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 LOGGER.debug("\t{} = {}", param.getKey(), param.getValue());
             }
         }
-    }
-    
-    public DataStore getDataStore(String index, String type) {
-    	//Check if the datastore for the given index is null, if not return it
-    	if(datastores.get(index) != null) {
-    		return datastores.get(index);
-    	} else {
-    		//If it is null, initialize it
-    		initializeDataStore(index, type);
-    		return datastores.get(index);
-    	}
-    }
-    
-    protected void initializeDataStore (String index, String type) {
-    	if(!params.isEmpty()) {
-	        try {
-		        Map<String, String> props = new HashMap<>();
-		        props.put(ElasticDataStoreFactory.HOSTNAME.key, params.get(ElasticSearchSettings.PARAM_HTTP_HOST));
-		        props.put(ElasticDataStoreFactory.HOSTPORT.key, params.get(ElasticSearchSettings.PARAM_HTTP_PORT));
-		        props.put(ElasticDataStoreFactory.SSL_ENABLED.key, params.get(ElasticSearchSettings.PARAM_SSL_ENABLED));
-		        props.put(ElasticDataStoreFactory.SSL_REJECT_UNAUTHORIZED.key, params.get(ElasticSearchSettings.PARAM_SSL_REJECT_UNAUTHORIZED));
-		        props.put(ElasticDataStoreFactory.SOURCE_FILTERING_ENABLED.key, Boolean.TRUE.toString());
-		
-		        if (Boolean.parseBoolean(params.get(ElasticSearchSettings.PARAM_SSL_ENABLED)))
-		        {
-		            System.setProperty("javax.net.ssl.keyStore", params.get(ElasticSearchSettings.PARAM_KEYSTORE_FILE));
-		            System.setProperty("javax.net.ssl.keyStorePassword",
-		                               params.get(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD));
-		
-		            System.setProperty("javax.net.ssl.trustStore", params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE));
-		            System.setProperty("javax.net.ssl.trustStorePassword",
-		                               params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));
-		        }
-		        //Datastores need the index for some reason
-		        props.put(index, type); 
-	
-				datastores.put(index, DataStoreFinder.getDataStore(props));
-				datastore = datastores.get(index);
-			} catch (IOException e) {
-				LOGGER.error("DataStore could not be initialized: " + e.getMessage());
-				datastore = null;
-			}
-    	} else {
-    		LOGGER.error("No params are set, I can't initialize the datastore.");
-    	}
     }
 
     @Override
