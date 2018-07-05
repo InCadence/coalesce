@@ -115,7 +115,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         }
     }
 
-        /**
+    /**
      * This test ensures that you are able to request the record key to be returned as a property.
      */
     @Test
@@ -153,6 +153,45 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Assert.assertEquals(record.getKey(), rowset.getObject(3));
 
         rowset.close();
+
+        entity.markAsDeleted();
+
+        persister.saveEntity(true, entity);
+    }
+
+    /**
+     * This test ensures that filters including a UUID field work
+     */
+    @Test
+    public void testFilteringOnUUID() throws Exception
+    {
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
+        record.getGuidField().setValue(UUID.randomUUID());
+
+        T persister = createPersister();
+        persister.saveEntity(false, entity);
+
+        Filter filter = FF.equals(CoalescePropertyFactory.getFieldProperty(record.getGuidField()),
+                                FF.literal(record.getGuidField().getValue()));
+
+        Query searchQuery = new Query();
+        searchQuery.setStartIndex(1);
+        searchQuery.setMaxFeatures(200);
+        searchQuery.setFilter(FF.and(filter, CoalescePropertyFactory.getEntityKey(entity.getKey())));
+
+        SearchResults results = persister.search(searchQuery);
+
+        Assert.assertEquals(1, results.getTotal());
+
+        try (CachedRowSet rowset = results.getResults())
+        {
+            // Verify EntityKey and two requested columns
+            Assert.assertTrue(rowset.next());
+            Assert.assertEquals(entity.getKey(), rowset.getObject(1));
+        }
 
         entity.markAsDeleted();
 
