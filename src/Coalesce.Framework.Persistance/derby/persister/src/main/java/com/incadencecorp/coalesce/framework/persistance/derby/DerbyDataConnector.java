@@ -159,8 +159,6 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             stmt.setObject(ii++, dateCreated);
             stmt.setObject(ii++, lastModified);
             stmt.setObject(ii, ivarobjectkey);
-
-            stmt.executeUpdate();
         }
 
         LOGGER.trace("{}", stmt);
