@@ -30,6 +30,9 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalesceTemplatePersist
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+
+import mil.nga.giat.data.elasticsearch.ElasticDataStoreFactory;
+
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ResourceAlreadyExistsException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
@@ -48,10 +51,13 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFinder;
 import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 
 public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersister {
@@ -122,7 +128,6 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 LOGGER.debug("\t{} = {}", param.getKey(), param.getValue());
             }
         }
-
     }
 
     @Override

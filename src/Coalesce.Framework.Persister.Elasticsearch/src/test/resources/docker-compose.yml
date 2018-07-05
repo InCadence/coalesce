@@ -38,30 +38,26 @@ services:
       restart: unless-stopped
       user: root
     elasticsearch5:
-      image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
-      container_name: rbcf-elasticsearch
-      environment:
-        - cluster.name=elasticsearch
-        - http.host=0.0.0.0
-        - network.publish_host=0.0.0.0
-        - transport.tcp.port=9300
-        - discovery.type=single-node
-        - xpack.security.enabled=false
-      restart: unless-stopped
-      networks:
-        - estest
-      ports:
-        - "9200:9200"
-        - "9300:9300"
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
+        container_name: rbcf-elasticsearch
+        environment:
+            - cluster.name=elasticsearch
+            - http.host=0.0.0.0
+            - network.publish_host=0.0.0.0
+            - transport.tcp.port=9300
+            - discovery.type=single-node
+            - xpack.security.enabled=false
+        ports:
+            - "9200:9200"
+            - "9300:9300"
+        restart: unless-stopped
     kibana5:
       image: docker.elastic.co/kibana/kibana:5.4.0
       container_name: rbcf-kibana
       environment:
         - ELASTICSEARCH_URL=http://elasticsearch5:9200
-      restart: unless-stopped
-      networks:
-        - estest
       ports:
         - "5601:5601"
       depends_on:
         - "elasticsearch5"
+      restart: unless-stopped

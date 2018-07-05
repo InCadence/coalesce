@@ -27,10 +27,12 @@ import javax.sql.rowset.RowSetProvider;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ElasticSearchPersistorSearch extends ElasticSearchPersistor implements ICoalesceSearchPersistor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistorSearch.class);
+    private Map<String, DataStore> datastores = new ConcurrentHashMap<String, DataStore>();
 
     /**
      * Default constructor using {@link ElasticSearchSettings} for configuration
@@ -72,30 +74,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             ElasticSearchQueryRewriter rewriter = new ElasticSearchQueryRewriter();
             Query localQuery = rewriter.rewrite(query);
 
-            Map<String, String> props = new HashMap<>();
-            props.put(ElasticDataStoreFactory.HOSTNAME.key, params.get(ElasticSearchSettings.PARAM_HTTP_HOST));
-            props.put(ElasticDataStoreFactory.HOSTPORT.key, params.get(ElasticSearchSettings.PARAM_HTTP_PORT));
-            props.put(ElasticDataStoreFactory.SSL_ENABLED.key, params.get(ElasticSearchSettings.PARAM_SSL_ENABLED));
-            props.put(ElasticDataStoreFactory.SSL_REJECT_UNAUTHORIZED.key,
-                      params.get(ElasticSearchSettings.PARAM_SSL_REJECT_UNAUTHORIZED));
-            props.put(ElasticDataStoreFactory.SOURCE_FILTERING_ENABLED.key, Boolean.TRUE.toString());
-
-            if (Boolean.parseBoolean(params.get(ElasticSearchSettings.PARAM_SSL_ENABLED)))
-            {
-                System.setProperty("javax.net.ssl.keyStore", params.get(ElasticSearchSettings.PARAM_KEYSTORE_FILE));
-                System.setProperty("javax.net.ssl.keyStorePassword",
-                                   params.get(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD));
-
-                System.setProperty("javax.net.ssl.trustStore", params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE));
-                System.setProperty("javax.net.ssl.trustStorePassword",
-                                   params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));
-            }
-
-            // TODO Add support for JOINS.
-            props.put(ElasticDataStoreFactory.INDEX_NAME.key, localQuery.getTypeName());
-
-            DataStore datastore = DataStoreFinder.getDataStore(props);
-
+            /*
             if (LOGGER.isDebugEnabled())
             {
                 Iterator<DataStoreFactorySpi> availableStores = DataStoreFinder.getAvailableDataStores();
@@ -108,6 +87,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
                 LOGGER.info("Selected Store: {}", datastore.getClass().getSimpleName());
             }
+            */
 
             String typeName;
 
@@ -123,6 +103,9 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
                 typeName = "recordset";
                 break;
             }
+            
+            //The datastore factory needs an index in order to find a matching store
+            DataStore datastore = getDataStore(ElasticDataStoreFactory.INDEX_NAME.key, localQuery.getTypeName());
 
             SimpleFeatureSource featureSource = datastore.getFeatureSource(typeName);
 
@@ -195,6 +178,46 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
         capability.addAll(Capabilities.LOGICAL);
 
         return capability;
+    }
+    
+    public DataStore getDataStore(String index, String type) throws IOException {
+    	//Check if the datastore for the given index is null, if not return it
+    	if(datastores.get(index) != null) {
+    		return datastores.get(index);
+    	} else {
+    		//If it is null, initialize it
+    		initializeDataStore(index, type);
+    		return datastores.get(index); 
+    	}
+    }
+    
+    private void initializeDataStore (String index, String type) throws IOException {
+    	if(!params.isEmpty()) {
+	        Map<String, String> props = new HashMap<>();
+	        props.put(ElasticDataStoreFactory.HOSTNAME.key, params.get(ElasticSearchSettings.PARAM_HTTP_HOST));
+	        props.put(ElasticDataStoreFactory.HOSTPORT.key, params.get(ElasticSearchSettings.PARAM_HTTP_PORT));
+	        props.put(ElasticDataStoreFactory.SSL_ENABLED.key, params.get(ElasticSearchSettings.PARAM_SSL_ENABLED));
+	        props.put(ElasticDataStoreFactory.SSL_REJECT_UNAUTHORIZED.key, params.get(ElasticSearchSettings.PARAM_SSL_REJECT_UNAUTHORIZED));
+	        props.put(ElasticDataStoreFactory.SOURCE_FILTERING_ENABLED.key, Boolean.TRUE.toString());
+	
+	        if (Boolean.parseBoolean(params.get(ElasticSearchSettings.PARAM_SSL_ENABLED)))
+	        {
+	            System.setProperty("javax.net.ssl.keyStore", params.get(ElasticSearchSettings.PARAM_KEYSTORE_FILE));
+	            System.setProperty("javax.net.ssl.keyStorePassword",
+	                               params.get(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD));
+	
+	            System.setProperty("javax.net.ssl.trustStore", params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE));
+	            System.setProperty("javax.net.ssl.trustStorePassword",
+	                               params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));
+	        }
+	        //Datastores need the index for some reason
+	        props.put(index, type); 
+
+			datastores.put(index, DataStoreFinder.getDataStore(props));
+    	} else {
+    		LOGGER.error("No params are set, I can't initialize the datastore.");
+    		throw new IOException();
+    	}
     }
 
 }
