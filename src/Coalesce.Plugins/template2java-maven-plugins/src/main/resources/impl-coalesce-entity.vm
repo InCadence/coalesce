@@ -142,6 +142,32 @@ public class ${classname} extends CoalesceEntity implements I${name}Entity {
         return $check;
     }
 
+    /**
+     * Populates the entity attributes and singleton records.
+     *
+     * @param entity to copy
+     * @throws CoalesceDataFormatException on error
+     */
+    public void populate(I${name}Entity entity) throws CoalesceDataFormatException
+    {
+        setKey(entity.getKey());
+        setDateCreated(entity.getDateCreated());
+        setLastModified(entity.getLastModified());
+        setModifiedBy(entity.getModifiedBy());
+        setStatus(entity.getStatus());
+        setTitle(entity.getTitle());
+
+#foreach($recordset in $recordsets)
+#if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
+#set($record_name = "record_$normalizer.normalize($recordset.getName())")
+        ${record_name}.populate(entity.get$normalizer.normalize($recordset.getName())Record());
+#else
+#set($recordset_name = "recordset_$normalizer.normalize($recordset.getName())")
+        add$normalizer.normalize($recordset.getName())Record(get$normalizer.normalize($recordset.getName())Records());
+#end
+#end
+    }
+
 #foreach($recordset in $recordsets)
 #if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
 #set($record_name = "record_$normalizer.normalize($recordset.getName())")
@@ -168,7 +194,17 @@ public class ${classname} extends CoalesceEntity implements I${name}Entity {
     @Override
     public void add$normalizer.normalize($recordset.getName())Record(List<I$normalizer.normalize($recordset.getName())Record> records) throws CoalesceDataFormatException
     {
-    	// TODO Not Implemented
+        for (I$normalizer.normalize($recordset.getName())Record record : records)
+        {
+            $normalizer.normalize($recordset.getName())CoalesceRecord entry = get$normalizer.normalize($recordset.getName())Record(record.getKey());
+
+            if (entry == null)
+            {
+                entry = add$normalizer.normalize($recordset.getName())Record();
+            }
+
+            entry.populate(record);
+        }
     }
     
     @Override
