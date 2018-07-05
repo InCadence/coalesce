@@ -62,6 +62,7 @@ public class ${classname} implements I${name}Entity {
 #end
 	
 	private String key;
+	private String title;
 	private DateTime dateCreated; 
 	private DateTime lastModified; 
 	private String lastModifiedBy;
@@ -82,7 +83,8 @@ public class ${classname} implements I${name}Entity {
 		setLastModified(entity.getLastModified());
 		setModifiedBy(entity.getModifiedBy());
 		setStatus(entity.getStatus());    
-		
+        setTitle(entity.getTitle());
+
 #foreach($recordset in $recordsets)
 #if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
         set$normalizer.normalize($recordset.getName())Record(entity.get$normalizer.normalize($recordset.getName())Record());
@@ -102,6 +104,18 @@ public class ${classname} implements I${name}Entity {
     public void setKey(String value)
     {
     	key = value; 
+    }
+
+    @Override
+    public String getTitle()
+    {
+        return title;
+    }
+
+    @Override
+    public void setTitle(String value)
+    {
+        title = value;
     }
 
     @Override
@@ -154,7 +168,6 @@ public class ${classname} implements I${name}Entity {
 
 #foreach($recordset in $recordsets)
 #set($recordset_name = "$normalizer.normalizeVariable($recordset.getName())Record")
-
 #if($recordset.getMaxRecords() == 1 && $recordset.getMinRecords() == 1)
     @Override
     public $normalizer.normalize($recordset.getName())PojoRecord get$normalizer.normalize($recordset.getName())Record()

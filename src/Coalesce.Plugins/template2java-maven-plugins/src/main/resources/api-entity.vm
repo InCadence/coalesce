@@ -39,15 +39,25 @@ import ${import};
 public interface ${classname} {
 
 	/**
-	* Returns this objects key.
+	* Returns this object's key.
 	*/
     String getKey(); 
     
 	/**
-	* Sets this objects key.
+	* Sets this object's key.
 	*/
     void setKey(String value);
-    
+
+	/**
+	* Returns this object's title.
+	*/
+    String getTitle();
+
+	/**
+	* Sets this object's title.
+	*/
+    void setTitle(String value);
+
 	/**
 	* Returns the date this object was created.
 	*/
@@ -97,8 +107,8 @@ public interface ${classname} {
 
 	/**
 	* Sets the singleton record belong to $recordset.getName(). Only the field's values are copied. History and other attributes are not.
-        *
-        * @param record
+    *
+    * @param record
 	*/
     void set$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record) throws CoalesceDataFormatException;
     
@@ -111,8 +121,8 @@ public interface ${classname} {
 
 	/**
 	* @return the specified record.
-        *
-        * @param key
+    *
+    * @param key
 	*/
     I$normalizer.normalize($recordset.getName())Record get$normalizer.normalize($recordset.getName())Record(String key);
 
@@ -128,15 +138,15 @@ public interface ${classname} {
 
 	/**
 	* Removes the record.
-        *
-        * @param record
+    *
+    * @param record
 	*/
     void rmv$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record);
 
 	/**
 	* Removes the record by its key.
-        *
-        * @param key
+    *
+    * @param key
 	*/
     void rmv$normalizer.normalize($recordset.getName())Record(String key);
     
