@@ -1,6 +1,5 @@
 import * as React from "react";
 import MapView from './mapview.js'
-import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -26,7 +25,6 @@ export class DialogMap extends React.Component {
       open: false,
       value: 0,
     }
-
     this.handleOpen = this.handleOpen.bind(this)
     this.handleClose = this.handleClose.bind(this)
     this.handleChange = this.handleChange.bind(this)
@@ -63,16 +61,6 @@ export class DialogMap extends React.Component {
   handleChange(value) {
     this.setState({value: value});
   };
-
-
-
-  TabContainer(props) {
-    return (
-      <Typography component="div" style={{ padding: 8 * 3 }}>
-        {props.children}
-      </Typography>
-    );
-  }
 
   render() {
     var {value} = this.state
@@ -122,7 +110,7 @@ export class DialogMap extends React.Component {
 //for the maps close Control
 var closeControl = function(opt_options) {
   var options = opt_options || {};
-  const this_ = this;
+
 
   const button = document.createElement('button');
   button.innerHTML = 'X';
@@ -148,8 +136,6 @@ var pointsControl = function(opt_options) {
   button.innerHTML = 'P';
   button.type = 'button';
   button.title = 'WKT/Points'
-
-  const this_ = this;
 
   button.onclick = () => options['function'](1);
 

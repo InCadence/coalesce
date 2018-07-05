@@ -38,6 +38,7 @@ export default class Shape extends React.Component {
       coordsHashmap: new HashMap(),
     };
 
+    this.fullWKT = ''
 
     this.handleInputFocus = this.handleInputFocus.bind(this)
     this.handleInputBlur = this.handleInputBlur.bind(this)
@@ -67,8 +68,6 @@ export default class Shape extends React.Component {
       vectorLayer
     ];
     var overlays = null;
-
-
 
     var maker = new MapMaker(layers, overlays, null, controls,  'map' + this.props.uniqueID)
     this.map = maker.getMap();
@@ -240,8 +239,8 @@ export default class Shape extends React.Component {
   }
 
   clearFeatures(vectorSource) {
+    console.log('clearedge');
     vectorSource.clear()
-    this.state.coordsHashmap.clear()
     }
 
   updateFeature(newXYZCoordsDict, coordsHashmap, index) {
@@ -254,38 +253,51 @@ export default class Shape extends React.Component {
 
     var indexNum = parseInt(index.slice(1));
 
-    var axis = index[0]
-    var oldFeatureCoordinates = this.state.vectorSource.getFeatures()[0].getGeometry().getCoordinates()
+    var axis = index[0] //get the letter (x y or z)
+    var oldFeatureCoordinates = null
     if (this.props.shape == 'Circle') {
-      oldFeatureCoordinates = this.state.vectorSource.getFeatures()[0].getGeometry().getCenter()
+      oldFeatureCoordinates = this.state.vectorSource.getFeatures()[0].getGeometry().getCenter().slice(0)
     }
+    else if (this.props.shape == 'Polygon') {
+      oldFeatureCoordinates = this.state.vectorSource.getFeatures()[0].getGeometry().getCoordinates()[0].slice(0)
+    }
+    else {
+      oldFeatureCoordinates = this.state.vectorSource.getFeatures()[0].getGeometry().getCoordinates().slice(0)
+    }
+
     if (axis == 'z') {
       //get the [x, y] array so the z can be set in the hashmap
       var xy = oldFeatureCoordinates[indexNum]
-      if(this.props.shape == 'Polygon') {
-        xy = oldFeatureCoordinates[0][indexNum]
-      }
+
       //set() returns the hashmap so programmers can chain functions
       var newCoordsHashmap = coordsHashmap.set(xy, newXYZCoordsDict[index])
 
       this.setState({coordsHashmap: newCoordsHashmap})
+      this.fullWKT = this.getFullWKT(this.state.wkt)
     }
     else {
-      var newFeatureCoordinates = this.state.vectorSource.getFeatures()[0].getGeometry().getCoordinates() //shallow copy of old Coordinates
-                                                                                            //this array will be updated ^
+      var oldXY = oldFeatureCoordinates[indexNum].slice(0) //grab a copy of the old [X,Y] pair so Z can be retrieved
       if(axis == 'x') {
-        newFeatureCoordinates[indexNum][0] = newXYZCoordsDict[index] //update the x value of the shallow copy's xy pair
+        oldFeatureCoordinates[indexNum][0] = newXYZCoordsDict[index] //update the x value of the shallow copy's xy pair
+        console.log(newXYZCoordsDict[index]);
       }
       else if (axis == 'y') {
-        newFeatureCoordinates[indexNum][1] = newXYZCoordsDict[index] //update the y value of the shallow copy's xy pair
+        oldFeatureCoordinates[indexNum][1] = newXYZCoordsDict[index] //update the y value of the shallow copy's xy pair
       }
-      var oldXY = oldFeatureCoordinates[indexNum]
       var oldZ = coordsHashmap.get(oldXY)
-      coordsHashmap.remove(oldXY).set(newFeatureCoordinates[indexNum], oldZ)
+      coordsHashmap.remove(oldXY).set(oldFeatureCoordinates[indexNum], oldZ)
 
       //set the feature/geometry's coordinates
-      this.state.vectorSource.getFeatures()[0].getGeometry().setCoordinates(newFeatureCoordinates)
-    }
+      if(this.props.shape == 'Polygon') {
+        oldFeatureCoordinates = [oldFeatureCoordinates]
+      }
+      var feature = this.state.vectorSource.getFeatures()[0]
+      feature.getGeometry().setCoordinates(oldFeatureCoordinates)
+
+      //set the wkt field, and create the fullwkt (fullwkt is wkt with z axis)
+      return this.setFeatureToWKT(feature)
+     }
+
   }
 
   convertCoordinates(coords) {
@@ -312,15 +324,64 @@ export default class Shape extends React.Component {
       var circle = feature.getGeometry();
       var center = circle.getCenter();
       var radius = circle.getRadius();
+      var wkt = `POINT (${center[0]} ${center[1]})`;
       this.setState({
-        wkt: `POINT (${center[0]} ${center[1]})`,
-        radius: radius
-      })
+        wkt: wkt,
+        radius: radius,
+        fullWKT: this.getFullWKT(wkt),
+      });
     }
     else {
       var wkt = new WKT().writeFeature(feature);
-      this.setState( {wkt: wkt} );
+      this.setState({
+        wkt: wkt,
+        fullWKT: this.getFullWKT(wkt)
+      });
     }
+  }
+
+  getFullWKT(wkt) {
+    if (wkt == this.wktEmpty) {
+      return wkt
+    }
+
+    if (this.props.shape == 'Circle')
+    {
+      var lastParen = wkt.length-1
+      var featureCoords = this.state.vectorSource.getFeatures()[0].getGeometry().getCenter()
+      var zCoord = this.state.coordsHashmap.get(featureCoords);
+      var fullWKT = [wkt.slice(0, lastParen), (' ' + zCoord), wkt.slice(lastParen)].join('')
+      return fullWKT;
+    }
+
+    var wktSplit = wkt.split(',')
+    var fullWKT = wktSplit[0] //initialize with the first part of the wkt to avoid fence post problem
+    var featureCoords = this.state.vectorSource.getFeatures()[0].getGeometry().getCoordinates()
+
+    var isPolygon = this.props.shape == 'Polygon';
+    if (isPolygon) {
+      featureCoords = featureCoords[0]
+    }
+    for (let i = 0; i < featureCoords.length-1; i++) {
+      var zCoord = (this.state.coordsHashmap.get(featureCoords[i]) || 0);
+      fullWKT += ' ' + zCoord  + ',' + wktSplit[i+1]
+    }
+
+
+    var lastParen = fullWKT.length-1
+    //insert the last zCoord into the string
+    if (isPolygon) {
+      lastParen = fullWKT.length-2
+      //polygons have the same zCoord for first and last coord
+      var zCoord = this.state.coordsHashmap.get(featureCoords[0]) || 0;
+      fullWKT = [fullWKT.slice(0, lastParen), (' ' + zCoord), fullWKT.slice(lastParen)].join('')
+    }
+    else {
+      var zCoord = this.state.coordsHashmap.get(featureCoords[featureCoords.length-1]) || 0;
+      fullWKT = [fullWKT.slice(0, lastParen), (' ' + zCoord), fullWKT.slice(lastParen)].join('')
+    }
+
+    return fullWKT;
   }
 
   shapeLabeler(format) {
@@ -338,6 +399,8 @@ export default class Shape extends React.Component {
     var attr = opts['attr'];
 
     var self = this;
+
+
 
     return (
       <div>

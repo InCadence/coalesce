@@ -25,10 +25,11 @@ export default class Multipoint extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      wkt: "MULTIPOINT EMPTY"
-    };
+    this.wktEmpty = "MULTIPOINT EMPTY"
 
+    this.state = {
+      wkt: this.wktEmpty
+    };
     this.multipoint = new MultiPoint();
 
   }
@@ -55,8 +56,9 @@ export default class Multipoint extends React.Component {
     else if (features.length === 0)
     {
       if (that.map.getOverlays().item(0).getPosition() === undefined) {
-        var test = that.createFeature(evt.coordinate);
-        return test
+        var point = that.createFeature(evt.coordinate);
+
+        return point
       }
       else {
         that.map.getOverlays().item(0).setPosition(undefined);
@@ -70,14 +72,14 @@ export default class Multipoint extends React.Component {
   handlePoint(feature, self, that) {
     that.setState({visibility: 'hidden'});
     self.multipoint.appendPoint(feature.getGeometry());
-    //that.getWKT(self.multipoint)
-    var formatted =  new WKT().writeFeature(new Feature({geometry: self.multipoint}), {
-      decimals: 5
-    });
+
+    var formatted =  new WKT().writeFeature(new Feature({geometry: self.multipoint}));
     self.setState({wkt: formatted})
   }
 
-  handleDelete(self, that) {
+  //also handles changes from the points table, since this
+  //  method simply grabs current features and sets the mulitpoint, then creates WKT
+  handlePointsChange(self, that) {
     self.multipoint = new MultiPoint();
     var features = that.state.vectorSource.getFeaturesCollection();
     var formatted = 'MULTIPOINT EMPTY'
@@ -92,7 +94,12 @@ export default class Multipoint extends React.Component {
       });
 
     }
-    self.setState({wkt: formatted});
+
+    var fullWKT = that.getFullWKT(formatted)
+    self.setState({
+      wkt: formatted,
+      fullWKT: fullWKT
+    });
 
   }
 
@@ -119,7 +126,16 @@ export default class Multipoint extends React.Component {
     var parent = this
     var clickEvt = this.clickEvt
     return(
-      <MapPoint clickEvt={clickEvt} opts={this.props.opts} uniqueID={uniqueID} showLabels={this.props.showLabels} wkt={parent.state.wkt} parent={parent} shape='MULTIPOINT'></MapPoint>
+      <MapPoint
+        clickEvt={clickEvt}
+        opts={this.props.opts}
+        uniqueID={uniqueID}
+        showLabels={this.props.showLabels}
+        wkt={this.state.wkt}
+        wktEmpty={this.wktEmpty}
+        parent={parent}
+        shape='MULTIPOINT'
+      />
     )
   }
 }

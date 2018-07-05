@@ -18,6 +18,8 @@ import VectorLayer from 'ol/layer/Vector';
 import TileLayer from 'ol/layer/Tile';
 import Overlay from 'ol/Overlay';
 import OSM from 'ol/source/OSM';
+import HashMap from 'hashmap/hashmap'
+import MultiPoint from 'ol/geom/MultiPoint';
 
 var mgrs = require('mgrs');
 
@@ -28,7 +30,6 @@ export default class MapPoint extends React.Component {
 
 
     this.state = {
-      features: [],
       vectorSource: new VectorSource({
         wrapX: false,
         features: new Collection(),
@@ -38,14 +39,18 @@ export default class MapPoint extends React.Component {
       coords: ['', '', ''],
       visibility: 'hidden',
       wkt: this.props.wkt,
+      coordsHashmap: new HashMap(),
     };
 
+    this.fullWKT = ''
+    this.wktEmpty = this.props.wktEmpty
 
     this.deleteFeature = this.deleteFeature.bind(this)
     this.handleInputFocus = this.handleInputFocus.bind(this)
     this.handleInputBlur = this.handleInputBlur.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
     this.configureMap = this.configureMap.bind(this)
+    this.updateFeature = this.updateFeature.bind(this)
 
     this.field = this.props.opts['field'];
 
@@ -62,6 +67,8 @@ export default class MapPoint extends React.Component {
     });
 
     this.stylizeFeature(iconFeature)
+    this.setState({visibility: "hidden"})
+
     return this.addFeature(iconFeature)
   }
 
@@ -81,6 +88,7 @@ export default class MapPoint extends React.Component {
 
   addFeature(feature) {
     this.state.vectorSource.addFeature(feature);
+    this.setState({visibility: "hidden"})
     return feature
   }
 
@@ -91,8 +99,10 @@ export default class MapPoint extends React.Component {
     var clicked = vecSource.getFeatureById('clicked')
     if (clicked) {
       vecSource.removeFeature(clicked);
-      this.props.parent.handleDelete(this.props.parent, this);
+      this.props.parent.handlePointsChange(this.props.parent, this);
     }
+    this.setState({visibility: "hidden"})
+
 
   }
 
@@ -100,6 +110,8 @@ export default class MapPoint extends React.Component {
     //unused
     this.map.getOverlays()[0].setPosition(undefined)
     this.state.vectorSource.clear()
+    this.setState({visibility: "hidden"})
+
   }
 
 
@@ -187,10 +199,95 @@ export default class MapPoint extends React.Component {
   }
 
   shapeLabeler(format) {
-    if(this.props.tag == 'MULTIPOINT') {
+    if(this.props.shape == 'MULTIPOINT') {
       return " ((x1 y1 z1), (x2 y2 z2), ...)"
     }
     return format;
+  }
+
+  getFullWKT(wkt) {
+    console.log(wkt);
+    if (wkt == this.wktEmpty) {
+      return wkt
+    }
+
+    var fullWKT = ''
+
+    if (this.props.shape == 'POINT') {
+      var featureCoords = this.state.vectorSource.getFeatures()[0].getGeometry().getCoordinates()
+      console.log(this.state.vectorSource.getFeatures()[0].getGeometry().getCoordinates());
+      fullWKT = wkt.slice(0, wkt.length-1) + ' ' + this.state.coordsHashmap.get(featureCoords) + ')'
+      console.log(this.state.coordsHashmap);
+
+    }
+    else if (this.props.shape == 'MULTIPOINT') {
+      var wktSplit = wkt.split(',')
+      //initialize with the first part of the wkt to avoid fence post problem
+      fullWKT = wktSplit[0]
+
+      var featureCoords = this.props.parent.multipoint.getCoordinates();
+
+      var firstZCoord = (this.state.coordsHashmap.get(featureCoords[0]) || 0);
+      // 'MULTIPOINT((x0 y0 z0)'
+      fullWKT = fullWKT.slice(0, fullWKT.length-1) + ' ' + firstZCoord + ')';
+
+      for (let i = 0; i < featureCoords.length-2; i++) {
+        var zCoord = (this.state.coordsHashmap.get(featureCoords[i+1]) || 0);
+        var wktNextPart = wktSplit[i+1];
+        fullWKT += ',' + wktNextPart.slice(0, wktNextPart.length-1) + ' ' + zCoord + ')';
+      }
+
+      var wktLastPart = wktSplit[featureCoords.length-1];
+      var lastZCoord = this.state.coordsHashmap.get(featureCoords[featureCoords.length-1]);
+      fullWKT += ',' + wktLastPart.slice(0, wktLastPart.length-2) + ' ' + lastZCoord + '))';
+    }
+
+    console.log(fullWKT);
+
+    return fullWKT;
+
+  }
+
+  updateFeature(newXYZCoordsDict, coordsHashmap, index) {
+
+    var axis = index[0]
+    var indexNum = parseInt(index.slice(1))
+    var oldFeatureCoordinates = []
+    if (this.props.shape == 'MULTIPOINT') {
+      oldFeatureCoordinates = this.props.parent.multipoint.getCoordinates()
+    }
+    else if (this.props.shape === 'POINT') {
+      oldFeatureCoordinates = [this.state.vectorSource.getFeatures()[0].getGeometry().getCoordinates()]
+    }
+
+    if (axis == 'z') {
+      var xy = oldFeatureCoordinates[indexNum]
+      var newZ = newXYZCoordsDict[index]
+      var newCoordsHashmap = this.state.coordsHashmap.set(xy, newZ)
+      this.setState({coordsHashmap: newCoordsHashmap})
+      this.fullWKT = this.getFullWKT(this.props.wkt)
+    }
+    else {
+      //keep old xy
+      var xy = oldFeatureCoordinates[indexNum].slice(0)
+      if (axis == 'x') {
+        var oldZ = coordsHashmap.get(xy)
+        console.log(coordsHashmap);
+        var currentFeatures = this.state.vectorSource.getFeatures()
+        xy[0] = parseFloat(newXYZCoordsDict[index])
+        var newXY = xy
+        currentFeatures[indexNum].getGeometry().setCoordinates(newXY)
+        this.props.parent.handlePointsChange(this.props.parent, this)
+      }
+      else if (axis == 'y') {
+        var oldZ = coordsHashmap.get(xy)
+        var currentFeatures = this.state.vectorSource.getFeatures()
+        xy[1] = parseFloat(newXYZCoordsDict[index])
+        var newXY = xy
+        currentFeatures[indexNum].getGeometry().setCoordinates(newXY)
+        this.props.parent.handlePointsChange(this.props.parent, this)
+      }
+    }
   }
 
   render() {
@@ -202,11 +299,16 @@ export default class MapPoint extends React.Component {
 
     var self = this;
 
+    var feature = this.state.vectorSource.getFeatures()[0];
+
+    if (this.props.shape == 'MULTIPOINT' && this.state.vectorSource.getFeatures().length > 0) {
+      feature = new Feature({
+        geometry: this.props.parent.multipoint
+      });
+    }
+
     return (
       <div>
-
-
-
 
         <div id={"popup" + this.props.uniqueID} className="ol-popup">
           <p onClick="this.select();"  id={'lonlat' + this.props.uniqueID}>{this.state.coords[0]}</p>
@@ -218,19 +320,27 @@ export default class MapPoint extends React.Component {
           Delete
         </button>
 
-        <DialogMap features={this.state.vectorSource.getFeatures()} configureMap={this.configureMap} uniqueID={this.props.uniqueID} shape={this.props.shape} textInput={
-          <TextField
-            id={field.key}
-            fullWidth={true}
-            floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
-            underlineShow={this.props.showLabels}
-            style={style.root}
-            value={this.props.wkt}
-            onFocus={this.handleInputFocus}
-            onChange={this.handleInputChange}
-            onBlur={this.handleInputBlur}
-            defaultValue={field.defaultValue}></TextField>
-        }/>
+        <DialogMap
+          feature={feature}
+          configureMap={this.configureMap}
+          uniqueID={this.props.uniqueID}
+          shape={this.props.shape}
+          updateFeature={this.updateFeature}
+          coordsHashmap={this.state.coordsHashmap}
+          textInput={
+            <TextField
+              id={field.key}
+              fullWidth={true}
+              floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
+              underlineShow={this.props.showLabels}
+              style={style.root}
+              value={this.props.wkt}
+              onFocus={this.handleInputFocus}
+              onChange={this.handleInputChange}
+              onBlur={this.handleInputBlur}
+              defaultValue={field.defaultValue}></TextField>
+          }
+        />
 
 
       </div>

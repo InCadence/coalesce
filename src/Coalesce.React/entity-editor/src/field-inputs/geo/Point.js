@@ -34,16 +34,31 @@ export default class Point extends React.Component {
   }
 
   handlePoint(feature, self, that) {
-    var formatted =  new WKT().writeFeature(new Feature({geometry: feature.getGeometry()}), {
-      decimals: 5
-    });
+    var formatted =  new WKT().writeFeature(new Feature({geometry: feature.getGeometry()}));
     self.setState({wkt: formatted})
   }
 
-  handleDelete(self, that) {
+  handlePointsChange(self, that) {
+    var features = that.state.vectorSource.getFeatures();
     var formatted = 'POINT EMPTY'
-    self.setState({wkt: formatted});
+    var fullWKT = ''
+    if(features.length == 0) {
+      fullWKT = that.getFullWKT(formatted)
+      self.setState({
+        wkt: formatted,
+        fullWKT: fullWKT
+      });
+    }
+    else {
+      formatted = new WKT().writeFeature(new Feature({geometry: features[0].getGeometry()}));
+      fullWKT = that.getFullWKT(formatted)
+    }
 
+    self.setState({
+      wkt: formatted,
+      fullWKT: fullWKT
+    });
+    
   }
 
   handleInput(that) {
@@ -102,7 +117,6 @@ export default class Point extends React.Component {
         that.map.getOverlays().item(0).setPosition(undefined);
         that.state.vectorSource.getFeatureById('clicked').setId('')
         that.setState({visibility: "hidden"})
-        console.log('hidden');
       }
     }
 

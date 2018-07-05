@@ -39,7 +39,13 @@ export default class PointsTable extends React.Component {
       if (this.props.feature) {
         if (this.props.shape == 'Circle') {
           var center = this.props.feature.getGeometry().getCenter()
+          var z = coordsHashmap.get(center) || 0
           coordsHashmap.set(center, z)
+        }
+        else if (this.props.shape == 'POINT') {
+          var point = this.props.feature.getGeometry().getCoordinates()
+          var z = coordsHashmap.get(point) || 0
+          coordsHashmap.set(point, z)
         }
         else {
           var coordinates = this.getCoordinates()
@@ -68,14 +74,8 @@ export default class PointsTable extends React.Component {
 
   createTables()
   {
+
     var tables = []
-    if(this.props.shape == 'Circle') {
-      if(this.props.feature) {
-        var circle = this.props.feature.getGeometry()
-        return this.createTextField(this.props.coordsHashmap.get(circle.getCenter()), this.handleInputFocus, this.handleInputZ, this.handleOnBlurZ, 'z0');
-      }
-      return null;
-    }
     tables.push(
       <ExpansionPanel>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
@@ -107,26 +107,56 @@ export default class PointsTable extends React.Component {
     if(!feature) {
       return null;
     }
+
     var rows = [];
-    var coordinates = this.getCoordinates()
-    var numCoordinates = coordinates.length
-    if (this.props.shape == 'Polygon') {
-      numCoordinates -= 1;
+
+    if (this.props.shape == 'Circle') {
+      var center = feature.getGeometry().getCenter()
+      rows.push(this.createSingleRow(center))
     }
-    for (let j = 0; j < numCoordinates; j++) {
+    else if (this.props.shape == 'POINT') {
+      var point = feature.getGeometry().getCoordinates()
+      console.log(point);
+      rows.push(this.createSingleRow(point))
+    }
+    else {
+      var coordinates = this.getCoordinates()
+      var numCoordinates = coordinates.length
+      if (this.props.shape == 'Polygon') {
+        numCoordinates -= 1;
+      }
+      for (let j = 0; j < numCoordinates; j++) {
 
-      var index = j
-      var coords = coordinates[j]
+        var index = j
+        var coords = coordinates[j]
 
-      rows.push(
-        <TableRow>
-          <TableCell> {this.createTextField(coordinates[j][0], this.handleInputFocus, this.handleInputXY, this.handleOnBlur, 'x' + index)} </TableCell>
-          <TableCell> {this.createTextField(coordinates[j][1], this.handleInputFocus, this.handleInputXY, this.handleOnBlur, 'y' + index)} </TableCell>
-          <TableCell> {this.createTextField(this.props.coordsHashmap.get(coords), this.handleInputFocus, this.handleInputZ, this.handleOnBlurZ, 'z' + index)} </TableCell>
-        </TableRow>
-      )
+        var x = coordinates[j][0];
+        var y = coordinates[j][1];
+        rows.push(
+          <TableRow>
+            <TableCell> {this.createTextField(x, this.handleInputFocus, this.handleInputXY, this.handleOnBlur, 'x' + index)} </TableCell>
+            <TableCell> {this.createTextField(y, this.handleInputFocus, this.handleInputXY, this.handleOnBlur, 'y' + index)} </TableCell>
+            <TableCell> {this.createTextField(this.props.coordsHashmap.get(coords), this.handleInputFocus, this.handleInputZ, this.handleOnBlurZ, 'z' + index)} </TableCell>
+          </TableRow>
+        )
+      }
     }
     return rows;
+
+  }
+
+  createSingleRow(point) {
+    console.log(point);
+    console.log(this.props.coordsHashmap);
+    console.log(this.props.coordsHashmap.get(point));
+    var row = (
+      <TableRow>
+        <TableCell> {this.createTextField(point[0], this.handleInputFocus, this.handleInputXY, this.handleOnBlur, 'x0')} </TableCell>
+        <TableCell> {this.createTextField(point[1], this.handleInputFocus, this.handleInputXY, this.handleOnBlur, 'y0')} </TableCell>
+        <TableCell> {this.createTextField(this.props.coordsHashmap.get(point), this.handleInputFocus, this.handleInputZ, this.handleOnBlurZ, 'z0')} </TableCell>
+      </TableRow>
+    )
+    return row;
   }
 
   createTextField(value, onInputFocus, onInputChange, onInputBlur, index) {
@@ -139,12 +169,13 @@ export default class PointsTable extends React.Component {
     var defaultValue = 0
     if (Object.keys(this.state.values).length == 0)
     {
+      //if there is no input
       defaultValue = value
     }
     else {
+      //if there is input, value = text input
       defaultValue = this.state.values[index]
     }
-
 
     return <TextField
       id={index}
@@ -158,6 +189,7 @@ export default class PointsTable extends React.Component {
   }
 
   handleInputFocus(evt) {
+    console.log(evt.target.value);
     this.setState({safeValue: evt.target.value})
   }
 
@@ -176,6 +208,7 @@ export default class PointsTable extends React.Component {
     }
     //this ensures it doesn't update when the user didn't even change anything
     if(inputValue != self.state.safeValue && !isNaN(self.state.safeValue)) {
+      console.log(this.state.coordsHashmap);
       self.props.updateFeature(self.state.values, this.state.coordsHashmap, index)
     }
     else {
@@ -186,7 +219,9 @@ export default class PointsTable extends React.Component {
 
   handleInputZ(evt, index) {
     //currently the same as handleInputXY function
+
     this.state.values[index] = evt.target.value
+
     this.setState({values: this.state.values})
     // var inputElem = document.getElementById(index)
     // inputElem.value = evt.target.value
