@@ -43,13 +43,14 @@ services:
         environment:
             - cluster.name=elasticsearch
             - http.host=0.0.0.0
-            - network.publish_host=127.0.0.1
+            - network.publish_host=0.0.0.0
             - transport.tcp.port=9300
             - discovery.type=single-node
             - xpack.security.enabled=false
         ports:
             - "9200:9200"
             - "9300:9300"
+        restart: unless-stopped
     kibana5:
       image: docker.elastic.co/kibana/kibana:5.4.0
       container_name: rbcf-kibana
@@ -59,3 +60,4 @@ services:
         - "5601:5601"
       depends_on:
         - "elasticsearch5"
+      restart: unless-stopped
