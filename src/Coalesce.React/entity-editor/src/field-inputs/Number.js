@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default class Number extends from React.Component {
+export default class Number extends React.Component {
 
   constructor(props) {
     super(props);
