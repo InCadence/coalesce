@@ -330,20 +330,21 @@ def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f
                             max_attempts = 2)
     return response
 
-def create(TYPE = "Enumeration", FIELDSADDED = {"flatten":"true", '["linkageSection"]["flatten"]':"true"}):
+def create(TYPE = "Enumeration", FIELDSADDED = {"flatten": "false", "['flatten']":"false"}):
     
     """
     Arguments:
     :TYPE: The type of artifact being looked for
     :FIELDSADDED: The fields that are being created in the artifact, can pass through
-    string path or individual keys
+    string path or individual keys ***Only metadata can be changed without a path
     """
     
     serverobj = CoalesceServer()
     server = serverobj.URL
     headers = {
             "Connection" : u"keep-alive",
-            "content-type" : u"application/json; charset=utf-8" #come back to this to find the bug
+            "content-type" : u"application/json; charset=utf-8" 
+            
         }
     ENTITYTEMPLATES = {
                    "WordPressMetadata": "templates/94ea887b-4817-3585-a972-420236224cbc/new",
@@ -370,32 +371,28 @@ def create(TYPE = "Enumeration", FIELDSADDED = {"flatten":"true", '["linkageSect
                             )
     
     TEMPLATE = (json.dumps(json.loads(response.text), indent = 4, sort_keys = True))
-
-    def Nester(d, c):
-        for i in d:
-            for j, k in d.items():
-                for i in range(2):
-                    if k is dict:
-                        Nester(k)
-                    else:
-                        if i in d:
-                            d[j] = c[i]
-                            print (j + ":" + d[j])
-                        else:
-                            try:
-                                path = i
-                                path = path.replace('][', ',').replace(']', '').replace('[','').replace("'","").split(',')
-                                for _ in path:
-                                    key = TEMPLATE[_]
-                                TEMPLATE[key] = FIELDSADDED[i]
-                            except:
-                                ValueError("You're key does not exist in the first two layers." 
-                                           "\nPlease specify a path if beyond that.")
-    
-    Nester(FIELDSADDED, TEMPLATE)
+    def Nester(changes, dictionary):
+        for key1, value1 in changes.iteritems():
+            if '[' not in key1:
+                for key2,value2 in dictionary.items():
+                    if key1 == key2:
+                        dictionary[key2] = changes[key1]
+                return dictionary
         
-    data = TEMPLATE
-
+            elif ("[" and "]") in key1:
+                path = key1.replace('][', ',').replace(']', '').replace('[','').replace("'","").split(',')
+                str_integers = []
+                for i in range(10):
+                    str_integers += "{}".format(i)
+                for i in path:
+                    if i in str_integers:
+                        i = int(i)
+                    field = dictionary[i]
+                field = changes[key1]
+        Nester.TEMPLATE = json.dumps(dictionary)
+        
+    Nester(changes = FIELDSADDED, dictionary = json.loads(TEMPLATE))
+    data = Nester.TEMPLATE
     response = get_response(URL = server + OPERATIONS[operation][0] + 
                             json.loads(data)["key"],
                             method = method,
@@ -404,13 +401,12 @@ def create(TYPE = "Enumeration", FIELDSADDED = {"flatten":"true", '["linkageSect
                             headers = headers,
                             delay = 1,
                             max_attempts = 2)
-     
     return response
 
 
         
 def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9',
-           NEWVALUES = {"flatten" : "true"}):
+           NEWVALUES = {"namePath": "OEvent"}):
         
         """
         Arguments:
@@ -432,7 +428,6 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
         params = None
         operation = u"update"
         method = OPERATIONS[operation][1]
-        
         response = get_response(URL = server + OPERATIONS[u"read"][0] + read_payload['entityKey'],
                                 method = OPERATIONS[u"read"][1],
                                 params = params,
@@ -441,33 +436,31 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                                 delay = 1,
                                 max_attempts = 2
                                 )
-        response = json.loads(response.text)
         
-        def Nester():
-            for i in NEWVALUES:
-                for key, value in NEWVALUES.iteritems():
-                    for _ in range(2):
-                        if type(value) is dict:
-                                Nester(value)
-                        else:
-                            try:
-                                    response[key] = NEWVALUES[key]
-                                    print (key + ":" + response[key])
-                            except:
-                                try:
-                                    path = i
-                                    path = path.replace('][', ',').replace(']', '').replace('[','').replace("'","").split(',')
-                                    for _ in path:
-                                        key = response[_]
-                                        response[key] = NEWVALUES[i]
-                                        print(response[_])
-                                except:
-                                        ValueError("You're key does not exist in the first two layers." 
-                                                   "\nIf a path was inputted, it seems it is not working."
-                                                   "\nPlease check your input again.")
-                            
-        Nester()
-        data = json.dumps(response)
+        TEMPLATE = (json.dumps(json.loads(response.text), indent = 4, sort_keys = True))
+        
+        def Nester(changes, dictionary):
+            for key1, value1 in changes.iteritems():
+                if '[' not in key1:
+                    for key2,value2 in dictionary.items():
+                        if key1 == key2:
+                            dictionary[key2] = changes[key1]
+                    
+                elif ("[" and "]") in key1:
+                    path = key1.replace('][', ',').replace(']', '').replace('[','').replace("'","").split(',')
+                    str_integers = []
+                    for i in range(10):
+                        str_integers += "{}".format(i)
+                    for i in path:
+                        if i in str_integers:
+                            i = int(i)
+                        field = dictionary[i]
+                    field = changes[key1]
+                    print(dictionary)
+            Nester.TEMPLATE = json.dumps(dictionary)
+            
+        Nester(changes = NEWVALUES, dictionary = json.loads(TEMPLATE))        
+        data = Nester.TEMPLATE
         response = get_response(URL = server + OPERATIONS[operation][0] +
                                 read_payload['entityKey'],
                                 method = method,
@@ -477,4 +470,3 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                                 delay = 1,
                                 max_attempts = 2)
         return response
-print(update())
