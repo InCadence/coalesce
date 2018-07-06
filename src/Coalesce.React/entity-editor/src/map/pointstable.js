@@ -45,6 +45,7 @@ export default class PointsTable extends React.Component {
         else if (this.props.shape == 'POINT') {
           var point = this.props.feature.getGeometry().getCoordinates()
           var z = coordsHashmap.get(point) || 0
+
           coordsHashmap.set(point, z)
         }
         else {
@@ -146,9 +147,6 @@ export default class PointsTable extends React.Component {
   }
 
   createSingleRow(point) {
-    console.log(point);
-    console.log(this.props.coordsHashmap);
-    console.log(this.props.coordsHashmap.get(point));
     var row = (
       <TableRow>
         <TableCell> {this.createTextField(point[0], this.handleInputFocus, this.handleInputXY, this.handleOnBlur, 'x0')} </TableCell>

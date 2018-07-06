@@ -99,7 +99,7 @@ export default class MapPoint extends React.Component {
     var clicked = vecSource.getFeatureById('clicked')
     if (clicked) {
       vecSource.removeFeature(clicked);
-      this.props.parent.handlePointsChange(this.props.parent, this);
+      this.props.parent.handleChangeFeature(this.props.parent, this);
     }
     this.setState({visibility: "hidden"})
 
@@ -206,7 +206,6 @@ export default class MapPoint extends React.Component {
   }
 
   getFullWKT(wkt) {
-    console.log(wkt);
     if (wkt == this.wktEmpty) {
       return wkt
     }
@@ -215,7 +214,7 @@ export default class MapPoint extends React.Component {
 
     if (this.props.shape == 'POINT') {
       var featureCoords = this.state.vectorSource.getFeatures()[0].getGeometry().getCoordinates()
-      console.log(this.state.vectorSource.getFeatures()[0].getGeometry().getCoordinates());
+      console.log(featureCoords);
       fullWKT = wkt.slice(0, wkt.length-1) + ' ' + this.state.coordsHashmap.get(featureCoords) + ')'
       console.log(this.state.coordsHashmap);
 
@@ -226,7 +225,7 @@ export default class MapPoint extends React.Component {
       fullWKT = wktSplit[0]
 
       var featureCoords = this.props.parent.multipoint.getCoordinates();
-
+      console.log(featureCoords);
       var firstZCoord = (this.state.coordsHashmap.get(featureCoords[0]) || 0);
       // 'MULTIPOINT((x0 y0 z0)'
       fullWKT = fullWKT.slice(0, fullWKT.length-1) + ' ' + firstZCoord + ')';
@@ -239,6 +238,7 @@ export default class MapPoint extends React.Component {
 
       var wktLastPart = wktSplit[featureCoords.length-1];
       var lastZCoord = this.state.coordsHashmap.get(featureCoords[featureCoords.length-1]);
+
       fullWKT += ',' + wktLastPart.slice(0, wktLastPart.length-2) + ' ' + lastZCoord + '))';
     }
 
@@ -270,23 +270,26 @@ export default class MapPoint extends React.Component {
     else {
       //keep old xy
       var xy = oldFeatureCoordinates[indexNum].slice(0)
+      console.log(xy);
+      var oldZ = coordsHashmap.get(xy)
+      console.log(oldZ);
+
+      var newXY = xy.slice(0)
       if (axis == 'x') {
-        var oldZ = coordsHashmap.get(xy)
-        console.log(coordsHashmap);
+
         var currentFeatures = this.state.vectorSource.getFeatures()
-        xy[0] = parseFloat(newXYZCoordsDict[index])
-        var newXY = xy
+        newXY[0] = parseFloat(newXYZCoordsDict[index])
         currentFeatures[indexNum].getGeometry().setCoordinates(newXY)
-        this.props.parent.handlePointsChange(this.props.parent, this)
       }
       else if (axis == 'y') {
-        var oldZ = coordsHashmap.get(xy)
         var currentFeatures = this.state.vectorSource.getFeatures()
-        xy[1] = parseFloat(newXYZCoordsDict[index])
-        var newXY = xy
+        newXY[1] = parseFloat(newXYZCoordsDict[index])
         currentFeatures[indexNum].getGeometry().setCoordinates(newXY)
-        this.props.parent.handlePointsChange(this.props.parent, this)
       }
+
+      coordsHashmap.remove(xy).set(newXY, oldZ)
+      this.props.parent.handleChangeFeature(this.props.parent, this)
+
     }
   }
 

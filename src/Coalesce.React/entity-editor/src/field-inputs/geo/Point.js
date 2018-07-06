@@ -35,22 +35,21 @@ export default class Point extends React.Component {
 
   handlePoint(feature, self, that) {
     var formatted =  new WKT().writeFeature(new Feature({geometry: feature.getGeometry()}));
-    self.setState({wkt: formatted})
+    self.setState({
+      wkt: formatted,
+    });
   }
 
-  handlePointsChange(self, that) {
+  handleChangeFeature(self, that) {
     var features = that.state.vectorSource.getFeatures();
     var formatted = 'POINT EMPTY'
     var fullWKT = ''
     if(features.length == 0) {
       fullWKT = that.getFullWKT(formatted)
-      self.setState({
-        wkt: formatted,
-        fullWKT: fullWKT
-      });
     }
     else {
       formatted = new WKT().writeFeature(new Feature({geometry: features[0].getGeometry()}));
+      console.log(formatted);
       fullWKT = that.getFullWKT(formatted)
     }
 
@@ -58,7 +57,7 @@ export default class Point extends React.Component {
       wkt: formatted,
       fullWKT: fullWKT
     });
-    
+
   }
 
   handleInput(that) {

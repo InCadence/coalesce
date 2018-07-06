@@ -6,7 +6,7 @@ import Collection from 'ol/Collection';
 import Point from 'ol/geom/Point';
 import Feature from 'ol/Feature';
 import Style from 'ol/style/Style';
-import Icon from 'ol/style/Icon';
+import Icon from 'ol/style/Icon'; 
 import {toStringHDMS} from 'ol/coordinate';
 import VectorLayer from 'ol/layer/Vector';
 import TileLayer from 'ol/layer/Tile';
@@ -79,7 +79,7 @@ export default class Multipoint extends React.Component {
 
   //also handles changes from the points table, since this
   //  method simply grabs current features and sets the mulitpoint, then creates WKT
-  handlePointsChange(self, that) {
+  handleChangeFeature(self, that) {
     self.multipoint = new MultiPoint();
     var features = that.state.vectorSource.getFeaturesCollection();
     var formatted = 'MULTIPOINT EMPTY'
