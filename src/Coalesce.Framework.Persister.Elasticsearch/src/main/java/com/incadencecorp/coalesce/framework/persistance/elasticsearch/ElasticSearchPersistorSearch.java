@@ -104,7 +104,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             }
 
             //The datastore factory needs an index in order to find a matching store
-            DataStore datastore = getDataStore(ElasticDataStoreFactory.INDEX_NAME.key, localQuery.getTypeName());
+            DataStore datastore = getDataStore(localQuery.getTypeName());
 
             SimpleFeatureSource featureSource = datastore.getFeatureSource(typeName);
 
@@ -179,7 +179,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
         return capability;
     }
 
-    private DataStore getDataStore(String index, String type) throws IOException, CoalescePersistorException
+    private DataStore getDataStore(String index) throws IOException, CoalescePersistorException
     {
         //Check if the datastore for the given index is null, if not return it
         if (datastores.get(index) != null)
@@ -189,12 +189,12 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
         else
         {
             //If it is null, initialize it
-            initializeDataStore(index, type);
+            initializeDataStore(index);
             return datastores.get(index);
         }
     }
 
-    private void initializeDataStore(String index, String type) throws IOException, CoalescePersistorException
+    private void initializeDataStore(String index) throws IOException, CoalescePersistorException
     {
         if (!params.isEmpty())
         {
@@ -219,7 +219,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
             // TODO Add support for JOINS.
             //Datastores need the index for some reason
-            props.put(index, type);
+            props.put(ElasticDataStoreFactory.INDEX_NAME.key, index);
 
             datastores.put(index, DataStoreFinder.getDataStore(props));
         }
