@@ -843,9 +843,8 @@ public class CoalesceFieldHistoryTest {
 
         UUID data = fh.getGuidValue();
 
-        assertTrue(data instanceof UUID);
         assertEquals(guid, data);
-        assertEquals(GUIDHelper.getGuidString(guid), fh.getBaseValue());
+        assertEquals(guid.toString(), fh.getBaseValue());
         assertEquals(guid, fh.getGuidValue());
 
         UUID newGuid = UUID.randomUUID();
@@ -854,9 +853,8 @@ public class CoalesceFieldHistoryTest {
         data = null;
         data = fh.getGuidValue();
 
-        assertTrue(data instanceof UUID);
         assertEquals(newGuid, data);
-        assertEquals(GUIDHelper.getGuidString(newGuid), fh.getBaseValue());
+        assertEquals(newGuid.toString(), fh.getBaseValue());
         assertEquals(newGuid, fh.getGuidValue());
 
     }

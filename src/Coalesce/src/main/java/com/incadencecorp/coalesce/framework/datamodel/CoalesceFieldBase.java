@@ -206,7 +206,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         }
         else
         {
-            setBaseValue(GUIDHelper.getGuidString(value));
+            setBaseValue(value.toString());
         }
 
     }

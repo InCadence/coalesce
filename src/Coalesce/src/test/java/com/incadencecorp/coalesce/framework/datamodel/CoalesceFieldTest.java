@@ -1259,7 +1259,7 @@ public class CoalesceFieldTest {
 
         assertTrue(data instanceof UUID);
         assertEquals(guid, data);
-        assertEquals(GUIDHelper.getGuidString(guid), field.getBaseValue());
+        assertEquals(guid.toString(), field.getBaseValue());
         assertEquals(guid, field.getGuidValue());
 
     }
