@@ -72,7 +72,7 @@ export class SearchCreator extends React.Component {
       matchCase: false,
       groupKey: 0,
       queryCount: 0,
-      rowKey: 0,
+      //rowKey: 0,
       /*tabledata: [{
                    queryKey:0,
                    tableDataKey: 0,
@@ -137,7 +137,7 @@ export class SearchCreator extends React.Component {
     //console.log("SearchCreator isOpened", this.state.isOpened);
     //console.log("SearchCreator tableData", this.state.tabledata);
     //console.log("SearchCreator tableData length", this.state.tabledata.length);
-    console.log("SearchCreator render", this.state.groups, this.state.groups[0].rowKey);
+    console.log("SearchCreator render", this.state.groups, this.state.groups.length);
     var that = this;
     return (
       <div>
@@ -159,7 +159,7 @@ export class SearchCreator extends React.Component {
                     pageSize={that.state.maxRows}
                     data={table}
                     showPagination={false}
-                    columns={createColumns(that, that.props.recordsets, that.state.rowKey, table)}
+                    columns={createColumns(that, that.props.recordsets, table[0].rowKey, table)}
                  />
                  <div className="form-buttons">
                    <IconButton icon="/images/svg/add.svg" title="Add Criteria" onClick={that.addRow.bind(that, table)} />
@@ -281,9 +281,10 @@ export class SearchCreator extends React.Component {
 
   addRow(table,e) {
     const {tabledata, currentkey} = this.state;
-    console.log("Adding row", table, e, table.rowKey, table.length, this.state.maxRows);
+    console.log("Adding row", table, table[0].rowKey, table.length, this.state.maxRows);
     //console.log("Adding row, recordsets is", this.props.recordsets[0], this.props.recordsets[0].definition[0]);
-    var keyvalue = this.state.rowKey + 1;
+
+    var keyvalue = table[table.length-1].rowKey + 1;
     if (table.length < this.state.maxRows) {
       // Create New Data Row
       table.push({
@@ -295,11 +296,9 @@ export class SearchCreator extends React.Component {
         matchCase: false,
         andOr: ''
       });
-
       // Save State
       this.setState({
         groups:this.state.groups,
-        rowKey: this.state.rowKey+1
       });
     } else {
       alert("Row limit reached");
@@ -325,7 +324,7 @@ export class SearchCreator extends React.Component {
 function createColumns(that, recordsets, key, table) {
 
   var columns = [{Header: 'key', accessor: 'key', show: false}];
-  console.log("createColumns", key);
+  console.log("createColumns", key, recordsets, table);
   if (recordsets != null) {
     columns.push({
       Header: '',
@@ -347,7 +346,6 @@ function createColumns(that, recordsets, key, table) {
         return (
           <select className="form-control" value={cell.row.recordset} onChange={that.onRecordsetChange.bind(that, cell.row.key, table)}>
             {recordsets.map((recordset) => {
-              console.log("column push", cell.row.key, cell, recordset.name);
               return (<option key={recordset.name + cell.row.key} value={recordset.name}>{recordset.name}</option>);
             })}
           </select>
