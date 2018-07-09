@@ -84,7 +84,7 @@ export class SearchCreator extends React.Component {
        groups: [[{
                           queryKey:0,
                           tableDataKey: 0,
-                          rowKey: 0,
+                          key: 0,
                           recordset: 'CoalesceEntity',
                           field: 'name',
                           operator: '=',
@@ -107,7 +107,7 @@ export class SearchCreator extends React.Component {
     console.log("Adding Group", this.state.groups, this.state.queryCount);
     var temp = [[{queryKey: this.state.queryCount+1,
                  tableDataKey: 0,
-                 rowKey: 0,
+                 key: 0,
                  recordset: 'CoalesceEntity',
                  field: 'name',
                  operator: '=',
@@ -159,7 +159,7 @@ export class SearchCreator extends React.Component {
                     pageSize={that.state.maxRows}
                     data={table}
                     showPagination={false}
-                    columns={createColumns(that, that.props.recordsets, table[0].rowKey, table)}
+                    columns={createColumns(that, that.props.recordsets, table[table.length-1].key, table)}
                  />
                  <div className="form-buttons">
                    <IconButton icon="/images/svg/add.svg" title="Add Criteria" onClick={that.addRow.bind(that, table)} />
@@ -281,14 +281,14 @@ export class SearchCreator extends React.Component {
 
   addRow(table,e) {
     const {tabledata, currentkey} = this.state;
-    console.log("Adding row", table, table[0].rowKey, table.length, this.state.maxRows);
+    console.log("Adding row", table, table[0].key, table.length, this.state.maxRows);
     //console.log("Adding row, recordsets is", this.props.recordsets[0], this.props.recordsets[0].definition[0]);
 
-    var keyvalue = table[table.length-1].rowKey + 1;
+    var keyvalue = table[table.length-1].key + 1;
     if (table.length < this.state.maxRows) {
       // Create New Data Row
       table.push({
-        rowKey: keyvalue,
+        key: keyvalue,
         recordset: this.props.recordsets[0].name,
         field: this.props.recordsets[0].definition[0].name,
         operator: 'EqualTo',
@@ -346,6 +346,7 @@ function createColumns(that, recordsets, key, table) {
         return (
           <select className="form-control" value={cell.row.recordset} onChange={that.onRecordsetChange.bind(that, cell.row.key, table)}>
             {recordsets.map((recordset) => {
+              console.log("RecordSet push", cell, cell.row, cell.row.key);
               return (<option key={recordset.name + cell.row.key} value={recordset.name}>{recordset.name}</option>);
             })}
           </select>
