@@ -112,33 +112,34 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
     protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, List<SimpleFeatureType> features)
             throws CoalesceException
     {
-        String featureName = normalizer.normalize(recordset.getName());
-
-        // Get Feature Fields
-        Map<String, ECoalesceFieldDataTypes> fields = getCommonFields();
-        fields.put(normalizer.normalize(recordset.getName(), "status"), ECoalesceFieldDataTypes.ENUMERATION_TYPE);
-        fields.putAll(iterator.getDataTypes(recordset));
-
-        // Create Feature
-        SimpleFeatureType feature = CoalesceFeatureTypeFactory.createSimpleFeatureType(featureName,
-                                                                                       fields,
-                                                                                       new AccumuloMapperImpl());
-
-        // Create Indexes
-        createIndex(feature, ENTITY_KEY_COLUMN_NAME, EIndex.FULL, ECardinality.HIGH);
-
-        for (CoalesceFieldDefinition definition : recordset.getFieldDefinitions())
+        if (recordset.isFlatten())
         {
-            if (!definition.isNoIndex())
+            String featureName = normalizer.normalize(recordset.getName());
+
+            // Get Feature Fields
+            Map<String, ECoalesceFieldDataTypes> fields = getCommonFields();
+            fields.put(normalizer.normalize(recordset.getName(), "status"), ECoalesceFieldDataTypes.ENUMERATION_TYPE);
+            fields.putAll(iterator.getDataTypes(recordset));
+
+            // Create Feature
+            SimpleFeatureType feature = CoalesceFeatureTypeFactory.createSimpleFeatureType(featureName, fields, new AccumuloMapperImpl());
+
+            // Create Indexes
+            createIndex(feature, ENTITY_KEY_COLUMN_NAME, EIndex.FULL, ECardinality.HIGH);
+
+            for (CoalesceFieldDefinition definition : recordset.getFieldDefinitions())
             {
-                createIndex(feature, normalizer.normalize(definition.getName()), EIndex.JOIN, ECardinality.HIGH);
+                if (!definition.isNoIndex())
+                {
+                    createIndex(feature, normalizer.normalize(definition.getName()), EIndex.JOIN, ECardinality.HIGH);
+                }
             }
+
+            feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
+            feature.getUserData().put(DTG_INDEX, null);
+
+            features.add(feature);
         }
-
-        feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
-        feature.getUserData().put(DTG_INDEX, null);
-
-        features.add(feature);
 
         return false;
     }

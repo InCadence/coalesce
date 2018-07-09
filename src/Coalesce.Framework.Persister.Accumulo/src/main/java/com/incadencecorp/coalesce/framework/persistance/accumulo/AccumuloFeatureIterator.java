@@ -255,63 +255,64 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
     protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, Map<String, FeatureCollections> features)
             throws CoalesceException
     {
-        String featureName = normalizer.normalize(recordset.getName());
-
-        try
+        if (recordset.isFlatten())
         {
-            SimpleFeatureType featureType = datastore.getSchema(featureName);
+            String featureName = normalizer.normalize(recordset.getName());
 
-            if (featureType != null)
+            try
             {
-                FeatureCollections collection = getCollection(features, featureName);
+                SimpleFeatureType featureType = datastore.getSchema(featureName);
 
-                CoalesceEntity entity = recordset.getEntity();
-
-                if (entity != null)
+                if (featureType != null)
                 {
-                    SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
+                    FeatureCollections collection = getCollection(features, featureName);
 
-                    for (CoalesceRecord record : recordset.getAllRecords())
+                    CoalesceEntity entity = recordset.getEntity();
+
+                    if (entity != null)
                     {
-                        String id = record.getKey();
+                        SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
 
-                        if (filter.filter(record))
+                        for (CoalesceRecord record : recordset.getAllRecords())
                         {
-                            if (!record.isMarkedDeleted() && !entity.isMarkedDeleted())
+                            String id = record.getKey();
+
+                            if (filter.filter(record) && record.isFlatten())
                             {
-                                SimpleFeature feature = builder.buildFeature(id);
-                                feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
-                                feature.getUserData().put(AccumuloRegisterIterator.DTG_INDEX, null);
+                                if (!record.isMarkedDeleted() && !entity.isMarkedDeleted())
+                                {
+                                    SimpleFeature feature = builder.buildFeature(id);
+                                    feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
+                                    feature.getUserData().put(AccumuloRegisterIterator.DTG_INDEX, null);
 
-                                populateCommon(feature, entity);
-                                populateFeature(feature, record);
+                                    populateCommon(feature, entity);
+                                    populateFeature(feature, record);
 
-                                ensureDefaultGeometry(featureType, feature);
+                                    ensureDefaultGeometry(featureType, feature);
 
-                                collection.featuresToAdd.add(feature);
-                            }
-                            else
-                            {
-                                collection.keysToDelete.add(FF.featureId(id));
+                                    collection.featuresToAdd.add(feature);
+                                }
+                                else
+                                {
+                                    collection.keysToDelete.add(FF.featureId(id));
+                                }
                             }
                         }
+                    }
+                    else
+                    {
+                        throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT, "Recordset's Entity is Null"));
                     }
                 }
                 else
                 {
-                    throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT, "Recordset's Entity is Null"));
+                    LOGGER.warn(String.format(CoalesceErrors.INVALID_OBJECT, featureName, datastore.getInfo().getSource()));
                 }
             }
-            else
+            catch (IOException e)
             {
-                LOGGER.warn(String.format(CoalesceErrors.INVALID_OBJECT, featureName, datastore.getInfo().getSource()));
+                throw new CoalesceException(String.format(CoalesceErrors.INVALID_OBJECT, featureName, datastore.getInfo().getSource()), e);
             }
-        }
-        catch (IOException e)
-        {
-            throw new CoalesceException(String.format(CoalesceErrors.INVALID_OBJECT,
-                                                      featureName,
-                                                      datastore.getInfo().getSource()), e);
         }
 
         return false;
