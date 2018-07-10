@@ -40,7 +40,7 @@ export class RecordSet extends Component {
     const { recordset } = this.state;
 
     return (
-      <div className="ui-widget-content" style={{'overflowY': 'auto', 'overflowX': 'hidden','maxHeight': '500px'}}>
+      <div className="ui-widget-content" >
         <Row>
           <Col xs={4}>
             <Checkbox

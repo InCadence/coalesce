@@ -7,6 +7,8 @@ import { Row } from 'react-bootstrap'
 
 const iconStyles = {
   marginRight: 2,
+  padding: "0px",
+  width: 24,
   width: 24
 };
 
@@ -31,7 +33,7 @@ export class TabTextField extends React.PureComponent {
           <Row style={{height: '24px'}}>
             <ContentDeleteSweep
               style={iconStyles}
-              color="#3d3d3c"
+              color="#000000"
               hoverColor="#FF9900"
               onClick={() => this.props.onDelete(this.props.item.key)}
             />
@@ -41,7 +43,7 @@ export class TabTextField extends React.PureComponent {
           <Row style={{height: '24px'}}>
             <AvPlaylistAdd
               style={iconStyles}
-              color="#3d3d3c"
+              color="#000000"
               hoverColor="#FF9900"
               onClick={() => this.props.onAdd(this.props.item.key)}
             />

@@ -29,14 +29,14 @@ export class Definitions extends React.Component {
                 secondaryText={item.dataType}
                 leftIcon={
                   <EditorModeEdit
-                    color="#3d3d3c"
+                    color="#000000"
                     hoverColor="#FF9900"
                     onClick={() => {this.setState({selected: item})}}
                   />
                 }
                 rightIcon={
                   <ActionDelete
-                    color="#3d3d3c"
+                    color="#000000"
                     hoverColor="#FF9900"
                     onClick={() => {this.handleDeleteDefinition(item.key)}}
                   />

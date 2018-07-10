@@ -550,7 +550,7 @@ class TemplateWorkspace extends Component {
             title="Duplicate"
             confirmation="true"
             opened={this.state.duplicate != null}
-            message="Template with matching key exists.  Continuing(OK) will overwrite any existing changes"
+            message="Template with matching key exists.  Continuing(OK) will overwrite any unsaved changes"
             onClose={() => {this.setState({duplicate: null});}}
             onClick={() => {this.handleDuplicateTemplateLoad();}}
           />
