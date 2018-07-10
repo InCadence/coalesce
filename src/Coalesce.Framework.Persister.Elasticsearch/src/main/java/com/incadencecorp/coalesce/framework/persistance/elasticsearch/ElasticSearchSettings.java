@@ -101,12 +101,17 @@ public class ElasticSearchSettings {
     /**
      * (Integer) Number of attempts to save an entity on a NoNodeAvailableExceptions before giving up.
      */
-    private static final String PARAM_RETRY_ATTEMPTS = PARAM_ELASTIC_BASE + "onerror.retryattempts";
+    public static final String PARAM_RETRY_ATTEMPTS = PARAM_ELASTIC_BASE + "onerror.retryattempts";
 
     /**
      * (Integer) Milliseconds range that back off logic should use before retrying.
      */
-    private static final String PARAM_BACKOFF_INTERVAL = PARAM_ELASTIC_BASE + "onerror.backoffinterval";
+    public static final String PARAM_BACKOFF_INTERVAL = PARAM_ELASTIC_BASE + "onerror.backoffinterval";
+
+    /**
+     * (Boolean) Specifies whether or not the datastores should be cached for reused.
+     */
+    public static final String PARAM_DATASTORE_CACHE_ENABLED = PARAM_ELASTIC_BASE + "datastore.cache.enabled";
 
     private static final String DEFAULT_KEYSTORE_FILE = getSystemProperty("javax.net.ssl.keyStore");
     private static final String DEFAULT_KEYSTORE_PASSWORD = getSystemProperty("javax.net.ssl.keyStorePassword");
@@ -267,7 +272,7 @@ public class ElasticSearchSettings {
         settings.setSetting(config_name, PARAM_RETRY_ATTEMPTS, value);
     }
 
-   /**
+    /**
      * @return the number of milliseconds between retry attempts.
      */
     public static int getBackoffInterval()
@@ -283,6 +288,24 @@ public class ElasticSearchSettings {
     public static void setBackoffInterval(int millis)
     {
         settings.setSetting(config_name, PARAM_BACKOFF_INTERVAL, millis);
+    }
+
+    /**
+     * @return whether datastore caching is enabled.
+     */
+    public static Boolean isDataStoreCacheEnabled()
+    {
+        return settings.getSetting(config_name, PARAM_DATASTORE_CACHE_ENABLED, false, true);
+    }
+
+    /**
+     * Sets whether datastore caching is enabled.
+     *
+     * @param value
+     */
+    public static void setDataStoreCacheEnabled(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_DATASTORE_CACHE_ENABLED, value);
     }
 
     public static Map<String, String> getParameters()
@@ -301,13 +324,14 @@ public class ElasticSearchSettings {
         params.put(PARAM_HTTP_HOST, getHTTPHost());
         params.put(PARAM_HTTP_PORT, getHTTPPort());
         params.put(PARAM_RETRY_ATTEMPTS, Integer.toString(getRetryAttempts()));
+        params.put(PARAM_DATASTORE_CACHE_ENABLED, Boolean.toString(isDataStoreCacheEnabled()));
 
         return params;
     }
 
     private static String getSystemProperty(String property)
     {
-        String value = System.getProperty("javax.net.ssl.trustStorePassword");
+        String value = System.getProperty(property);
 
         if (value == null)
         {

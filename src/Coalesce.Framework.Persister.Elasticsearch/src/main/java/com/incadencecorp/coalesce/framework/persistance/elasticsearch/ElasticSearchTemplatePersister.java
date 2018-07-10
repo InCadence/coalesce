@@ -114,6 +114,15 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 && Boolean.parseBoolean(this.params.get(ElasticSearchSettings.PARAM_IS_AUTHORITATIVE));
         iterator = new ElasticSearchIterator(NORMALIZER, isAuthoritative);
 
+        if (this.params.containsKey(ElasticSearchSettings.PARAM_DATASTORE_CACHE_ENABLED))
+        {
+            if (!Boolean.parseBoolean(this.params.get(ElasticSearchSettings.PARAM_DATASTORE_CACHE_ENABLED)))
+            {
+                // If False remove so we can simply do a contains key.
+                this.params.remove(ElasticSearchSettings.PARAM_DATASTORE_CACHE_ENABLED);
+            }
+        }
+
         if (LOGGER.isDebugEnabled())
         {
             LOGGER.debug("Parameters: ");
