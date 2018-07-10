@@ -5,6 +5,7 @@ import {RecordView} from './record'
 import {Row, Col} from 'react-bootstrap'
 import {Tabs, Tab} from 'material-ui/Tabs';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {FieldInput} from './FieldInput.js'
 
 import './index.css'
 import 'react-table/react-table.css'
@@ -48,7 +49,14 @@ export class EntityView extends React.Component {
             <label>Title</label>
           </Col>
           <Col xs={4}>
-            {data != null ? data.title : ''}
+            {data &&
+              <FieldInput
+                field={data}
+                dataType="STRING_TYPE"
+                attr="title"
+                showLabels={false}
+              />
+            }
           </Col>
           <Col xs={2}>
             <label>Name</label>
