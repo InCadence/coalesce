@@ -58,7 +58,7 @@ class CoalesceServer(object):
     CONTENT_TYPE = u"application/json; charset=utf-8"
     VALID_CONNECTION_TYPES = (u"keep-alive", u"close")
 
-    def __init__(self, server_URL = u"http://52.61.62.87:8181/cxf/",
+    def __init__(self, server_URL = u"http://localhost:8181/cxf/",
                  connection = u"keep-alive", max_attempts = 4):
         """
         Arguments:
@@ -238,7 +238,7 @@ def search(params = None, operation = u"search",
                                     max_attempts = 2)
                 
             
-def read(ARTIFACT = ['GDELTArtifact'], KEY = '25587bc2-9193-4bd0-80de-c3efe3cc6f0d'):
+def read(ARTIFACT = None, KEY = None):
         
         """
         Arguments:
@@ -246,6 +246,9 @@ def read(ARTIFACT = ['GDELTArtifact'], KEY = '25587bc2-9193-4bd0-80de-c3efe3cc6f
         :KEY: The UUID assigned to the entity
         """
         
+        if (ARTIFACT or KEY) == None:
+            raise ValueError("Re-check parameters, make sure they are not none")
+            
         serverobj = CoalesceServer()
         server = serverobj.URL
         headers = {
@@ -330,7 +333,7 @@ def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f
                             max_attempts = 2)
     return response
 
-def create(TYPE = "Enumeration", FIELDSADDED = {"flatten": "false", "['flatten']":"false"}):
+def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']":"false"}): #FIX NESTER AND BUG ON THE GET KEYS
     
     """
     Arguments:
@@ -339,29 +342,36 @@ def create(TYPE = "Enumeration", FIELDSADDED = {"flatten": "false", "['flatten']
     string path or individual keys ***Only metadata can be changed without a path
     """
     
+    if TYPE == None:
+        raise ValueError("Please specify a type of template to retrieve from the server"
+                         )
+        
     serverobj = CoalesceServer()
     server = serverobj.URL
     headers = {
             "Connection" : u"keep-alive",
-            "content-type" : u"application/json; charset=utf-8" 
-            
+            "content-type" : u"application/json; charset=utf-8"    
         }
-    ENTITYTEMPLATES = {
-                   "WordPressMetadata": "templates/94ea887b-4817-3585-a972-420236224cbc/new",
-                   "Spider_Results": "templates/ac2a8881-2b19-39a7-aad3-adb956e3a4c5/new", 
-                   "SpiderQuery": "templates/13654d11-ab3b-30a4-88c7-f795e4a5182d/new", 
-                   "Enumeration": "templates/0d7e02d1-e706-3f6e-b728-dae18bb9ac24/new",
-                   "GDELT": "templates/cc239b9d-7c9b-33ec-a5ee-545a83904ecd/new", 
-                   "OEAgent": "templates/d9fb4c93-36fd-39a3-916d-53966677ca1a/new", 
-                   "OEDocument": "templates/688174ea-8753-3e56-9887-92dd733a048f/new", 
-                   "NLPPipeline": "templates/d7c77fa5-bf9f-3ecf-a313-201d8f1ebc5e/new", 
-                   "OERolePlayer": "templates/70a9eb16-4b21-3e02-90fc-e356674b7231/new",
-                   "OEEvent": "templates/4a10c22f-7738-340d-bc73-31466a91e8e2/new"}
+    
     params = None
     operation = u"create"
     method = OPERATIONS[operation][1]
     
-    response = get_response(URL = server + "data/{}".format(ENTITYTEMPLATES[TYPE]), 
+    response = get_response(URL = server + "data/templates", 
+                            method = 'get',
+                            params = params,
+                            data = None,
+                            headers = headers,
+                            delay = 1,
+                            max_attempts = 2
+                            )
+    TEMPLATE_KEYS = json.loads(response.text)
+    
+    for i in range(len(TEMPLATE_KEYS)):
+        if TEMPLATE_KEYS[i][u"name"] == TYPE:
+            key = TEMPLATE_KEYS[i][u"key"]
+        
+    response = get_response(URL = server + "data/templates/{}/new".format(key), 
                             method = 'get',
                             params = params,
                             data = None,
@@ -371,14 +381,15 @@ def create(TYPE = "Enumeration", FIELDSADDED = {"flatten": "false", "['flatten']
                             )
     
     TEMPLATE = (json.dumps(json.loads(response.text), indent = 4, sort_keys = True))
+    #FIX THIS NESTER AND YOUR COMPLETELY DONE WITH THIS
     def Nester(changes, dictionary):
         for key1, value1 in changes.iteritems():
+            print key1, value1
             if '[' not in key1:
                 for key2,value2 in dictionary.items():
                     if key1 == key2:
                         dictionary[key2] = changes[key1]
-                return dictionary
-        
+                print(dictionary[key2])
             elif ("[" and "]") in key1:
                 path = key1.replace('][', ',').replace(']', '').replace('[','').replace("'","").split(',')
                 str_integers = []
@@ -389,15 +400,15 @@ def create(TYPE = "Enumeration", FIELDSADDED = {"flatten": "false", "['flatten']
                         i = int(i)
                     field = dictionary[i]
                 field = changes[key1]
-        Nester.TEMPLATE = json.dumps(dictionary)
-        
-    Nester(changes = FIELDSADDED, dictionary = json.loads(TEMPLATE))
-    data = Nester.TEMPLATE
-    response = get_response(URL = server + OPERATIONS[operation][0] + 
-                            json.loads(data)["key"],
+        return json.dumps(dictionary)       
+    #Error resides in the nester, check to see where
+    data = json.loads(Nester(changes = FIELDSADDED, dictionary = json.loads(TEMPLATE)))
+    print data['key']
+    response = get_response(URL = server + OPERATIONS[operation][0] +
+                            data["key"],
                             method = method,
                             params = params,
-                            data = data,
+                            data = TEMPLATE,
                             headers = headers,
                             delay = 1,
                             max_attempts = 2)
@@ -457,10 +468,10 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                         field = dictionary[i]
                     field = changes[key1]
                     print(dictionary)
-            Nester.TEMPLATE = json.dumps(dictionary)
+            TEMPLATE = json.dumps(dictionary)
+            return TEMPLATE
             
-        Nester(changes = NEWVALUES, dictionary = json.loads(TEMPLATE))        
-        data = Nester.TEMPLATE
+        data = Nester(changes = NEWVALUES, dictionary = json.loads(TEMPLATE)) 
         response = get_response(URL = server + OPERATIONS[operation][0] +
                                 read_payload['entityKey'],
                                 method = method,
@@ -470,3 +481,4 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                                 delay = 1,
                                 max_attempts = 2)
         return response
+print(create())
