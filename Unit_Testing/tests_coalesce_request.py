@@ -6,63 +6,40 @@ Created on Fri Jul  6 11:39:12 2018
 """
 
 import unittest
-from coalesce_request import search
-from coalesce_request import read
-from coalesce_request import delete
-from coalesce_request import create
-from coalesce_request import update
+from coalesce_request import *
 
 class test_search(unittest.TestCase):
+    def setUp(self):
+        self.search = search()
     
-    def test_header(self):
-        self.assertEqual(type(search.headers), dict)
-        
-    def test_URL(self):
-        self.assertEqual(type(URL), str)
-    
-    def test_data(self):
-        self.assertEqual(type(data), dict)
-        self.assertIn("group", data)
-        
-    def test_method(self):
-        self.assertEqual(search.method, "post")
-    
-class test_read(unittest.TestCase):
-    
-    def test_header(self):
-        self.assertEqual(type(read.headers), dict)
-    
-    def test_URL(self):
-        self.assertEqual(type(URL), str)
-    
-    def test_data(self):
-        self.assertEqual(type(data), dict)
-        self.assertIn("group", data)
-    
-    def test_method(self):    
-        self.assertEqual(read.method, "get")
-        
+    def test_response_status(self):
+        self.assertEqual(type(self.search), unicode)
 
+class test_read(unittest.TestCase):
+    def setUp(self):
+        self.read = read()
+        
+    def test_response_status(self):
+        with self.assertRaises(ValueError):
+            read()
+        
 class test_delete(unittest.TestCase):
-    
-    def test_header(self):
-        self.assertEqual(type(delete.headers), dict)
+    def setUp(self):
+        self.delete = delete()
         
-    def test_URL(self):
-        self.assertEqual(type(data), dict)
-        
-    
-    def test_data(self):
-        self.assertEqual(type(data), dict)
-        self.assertIn("group", data)
-    
-    def test_method(self):
-        self.assertEqual(delete.method, "delete")
+    def test_response_status(self):
+        self.assertEqual(self.delete.status_code, 200)
 
 class test_update(unittest.TestCase):
-
+    def setUp(self):
+        self.update = update()
+        
+    def test_response_status(self):
+        self.assertEqual(self.update.status_code, 200)
+        
 class test_create(unittest.TestCase):
-    
-    
-if __name__ == '__main__':
-    unittest.main()
+    def setUp(self):
+        self.create = create()
+        
+    def test_response_status(self):
+        self.assertEqual(self.create.status_code, 204)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: venkat
+@author: dvenkat
 """
 
 from urlparse import urlsplit
@@ -9,9 +9,8 @@ from pandas import Series
 
 import simplejson as json
 
-from pyCoalesce import package_logger
 from API.API_request import get_response
-
+from pyCoalesce import package_logger
 
 # Set up logging.
 logger = package_logger.getChild(__name__) 
@@ -193,7 +192,7 @@ def search(params = None, operation = u"search",
                 raise ValueError("You're inputted criteria are not in sync." 
                                  "\n Check individual fields to make sure"
                                  "\nthere are an equal number in each")
-                return response.text
+                return response
         
     if SUB_OPERATIONS == u"complex":
         #Add a check on the searh fuction to see what the user passes through
@@ -236,7 +235,7 @@ def search(params = None, operation = u"search",
                                     headers = headers,
                                     delay = 1,
                                     max_attempts = 2)
-                
+            return response
             
 def read(ARTIFACT = None, KEY = None):
         
@@ -411,8 +410,6 @@ def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']['se
                             delay = 1,
                             max_attempts = 2)
     return response
-
-
         
 def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9',
            NEWVALUES = {"namePath": "OEvent"}):
