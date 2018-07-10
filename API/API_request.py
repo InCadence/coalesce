@@ -61,7 +61,7 @@ def get_response(URL, method = "get", params = None, data = None,
         try:
             response = session.send(prepped_req)
             status = response.status_code
-            if status == 200:
+            if 200 <= status < 300:
                 return response
             else:
                 logger.warn('Server at ' + URL + ' returned status code "' +

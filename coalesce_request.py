@@ -333,7 +333,7 @@ def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f
                             max_attempts = 2)
     return response
 
-def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']":"false"}): #FIX NESTER AND BUG ON THE GET KEYS
+def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']['sectionsAsList']":"false"}): #FIX NESTER AND BUG ON THE GET KEYS
     
     """
     Arguments:
@@ -381,15 +381,13 @@ def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']":"f
                             )
     
     TEMPLATE = (json.dumps(json.loads(response.text), indent = 4, sort_keys = True))
-    #FIX THIS NESTER AND YOUR COMPLETELY DONE WITH THIS
+    
     def Nester(changes, dictionary):
         for key1, value1 in changes.iteritems():
-            print key1, value1
             if '[' not in key1:
                 for key2,value2 in dictionary.items():
                     if key1 == key2:
                         dictionary[key2] = changes[key1]
-                print(dictionary[key2])
             elif ("[" and "]") in key1:
                 path = key1.replace('][', ',').replace(']', '').replace('[','').replace("'","").split(',')
                 str_integers = []
@@ -399,11 +397,11 @@ def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']":"f
                     if i in str_integers:
                         i = int(i)
                     field = dictionary[i]
-                field = changes[key1]
-        return json.dumps(dictionary)       
-    #Error resides in the nester, check to see where
+                changes[key1] = field
+        return json.dumps(dictionary)
+    
     data = json.loads(Nester(changes = FIELDSADDED, dictionary = json.loads(TEMPLATE)))
-    print data['key']
+    
     response = get_response(URL = server + OPERATIONS[operation][0] +
                             data["key"],
                             method = method,
@@ -466,8 +464,8 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                         if i in str_integers:
                             i = int(i)
                         field = dictionary[i]
-                    field = changes[key1]
-                    print(dictionary)
+                    changes[key1] = field
+                    
             TEMPLATE = json.dumps(dictionary)
             return TEMPLATE
             
@@ -481,4 +479,3 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                                 delay = 1,
                                 max_attempts = 2)
         return response
-print(create())
