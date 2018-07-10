@@ -494,41 +494,41 @@ class TemplateWorkspace extends Component {
             title: 'Home',
             onClick: () => {window.location.href = "/home"}
           },{
+            id: 'new',
+            name: 'new',
+            img: "/images/svg/new.svg",
+            title: 'Create New Template',
+            onClick: () => {this.handleTemplateAdd()}
+          },{
             id: 'select',
             name: 'Select',
             img: "/images/svg/load.svg",
-            title: 'Load Template',
+            title: 'Load Saved Template',
             onClick: () => {this.handlePromptTemplate()}
-          },{
-            id: 'new',
-            name: 'new',
-            img: "/images/svg/add.svg",
-            title: 'New Template',
-            onClick: () => {this.handleTemplateAdd()}
           },{
             id: 'save',
             name: 'save',
             img: "/images/svg/save.svg",
-            title: 'Save Templates',
+            title: 'Save All Loaded Templates',
             onClick: () => {this.handleTemplateSave()}
-          },{
-            id: 'register',
-            name: 'register',
-            img: "/images/svg/template.svg",
-            title: 'Register Template',
-            onClick: () => {this.handleTemplateRegister()}
           },{
             id: 'clear',
             name: 'clear',
-            img: "/images/svg/remove.svg",
-            title: 'Clear Workspace',
+            img: "/images/svg/clear.svg",
+            title: 'Remove All Loaded Templates',
             onClick: () => {this.handleTemplateClear()}
           },{
             id: 'download',
             name: 'download',
-            img: "/images/svg/down.svg",
-            title: 'Download Templates',
+            img: "/images/svg/download.svg",
+            title: 'Download All Loaded Templates',
             onClick: () => {this.handleTemplateDownload()}
+          },{
+            id: 'register',
+            name: 'register',
+            img: "/images/svg/template.svg",
+            title: 'Register All Loaded Templates',
+            onClick: () => {this.handleTemplateRegister()}
           }
         ]}/>
         <MuiThemeProvider muiTheme={this.state.theme}>
