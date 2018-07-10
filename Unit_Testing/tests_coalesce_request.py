@@ -20,7 +20,7 @@ class test_read(unittest.TestCase):
         self.read = read()
         
     def test_response_status(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaise(ValueError):
             read()
         
 class test_delete(unittest.TestCase):
@@ -28,14 +28,14 @@ class test_delete(unittest.TestCase):
         self.delete = delete()
         
     def test_response_status(self):
-        self.assertEqual(self.delete.status_code, 200)
+        self.assertEqual(self.delete.status_code, 204)
 
 class test_update(unittest.TestCase):
     def setUp(self):
         self.update = update()
         
     def test_response_status(self):
-        self.assertEqual(self.update.status_code, 200)
+        self.assertEqual(self.update.status_code, 204)
         
 class test_create(unittest.TestCase):
     def setUp(self):
