@@ -95,6 +95,13 @@ export class SearchCreator extends React.Component {
       //onSearch: props.onSearch,
       //groupRecordSet: props.groupRecordSet,
       //criteriakey: props.criteriakey,
+      actualSearch: [[{key: 0,
+                       recordset: 'CoalesceEntity',
+                       field: 'name',
+                       operator: '=',
+                       value: 'aa',
+                       andOr: '',
+                       matchCase: true}]],
       isOpened: true
     }
     //this.setState({groups: this.state.groups.concat(this.state.tabledata)});
@@ -105,6 +112,14 @@ export class SearchCreator extends React.Component {
 
   addGroup(){
     console.log("Adding Group", this.state.groups, this.state.queryCount);
+    var temp2 = [[{key: 0,
+                   recordset: 'CoalesceEntity',
+                   field: 'name',
+                   operator: '=',
+                   value: 'aa',
+                   andOr: '',
+                   matchCase: true}]];
+
     var temp = [[{queryKey: this.state.queryCount+1,
                  tableDataKey: 0,
                  key: 0,
@@ -119,6 +134,7 @@ export class SearchCreator extends React.Component {
     this.setState({
             groups: this.state.groups.concat(temp),
           // Increment the counter to ensure key is always unique.
+            actualSearch: this.state.groups.concat(temp2),
           queryCount: this.state.queryCount + 1
      });
       console.log("Groups now are", this.state.groups, this.state.queryCount, this.state.groups.length);
@@ -346,7 +362,6 @@ function createColumns(that, recordsets, key, table) {
         return (
           <select className="form-control" value={cell.row.recordset} onChange={that.onRecordsetChange.bind(that, cell.row.key, table)}>
             {recordsets.map((recordset) => {
-              console.log("RecordSet push", cell, cell.row, cell.row.key);
               return (<option key={recordset.name + cell.row.key} value={recordset.name}>{recordset.name}</option>);
             })}
           </select>

@@ -169,10 +169,11 @@ function search(data, e) {
       "criteria": data
     }
   };
-
+  console.log("Index search", data);
   // Get additional columns
   data.forEach(function (criteria) {
     query.propertyNames.push(criteria.recordset + "." + criteria.field);
+    console.log("Index search", query.propertyNames);
   });
 
   // Display Spinner
