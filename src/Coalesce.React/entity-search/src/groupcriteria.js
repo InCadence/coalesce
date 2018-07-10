@@ -17,7 +17,7 @@ Object.assign(ReactTableDefaults, {
   // etc...
 })
 
-export class FilterCreator extends React.Component {
+export class GroupCriteria extends React.Component {
 
   constructor(props) {
     super(props);
@@ -29,8 +29,7 @@ export class FilterCreator extends React.Component {
                   field: 'name',
                   operator: '=',
                   value: 'aa',
-                  matchCase: true},
-      currentkey: 0,
+                  matchCase: true}
       isOpened: true
     }
   }
@@ -49,16 +48,17 @@ export class FilterCreator extends React.Component {
             this.setState({isOpened: value});
           }}
          />
-          <Collapse isOpened={this.state.isOpened}>
+          <Collapse isOpened={isOpened}>
             <div className="ui-widget-content">
               <ReactTable
                 pageSize={this.props.maxRows}
                 data={this.state.tabledata}
                 showPagination={false}
-                columns={createColumns(this, this.props.recordsets, this.state.currentkey)}
+                columns={createColumns(this, this.props.recordsets, currentkey)}
               />
               <div className="form-buttons">
                 <IconButton icon="/images/svg/add.svg" title="Add Criteria" onClick={this.addRow.bind(this)} />
+                <IconButton icon="/images/svg/search.svg" title="Execute Query" onClick={this.props.onSearch.bind(this, this.state.tabledata)} />
               </div>
             </div>
           </Collapse>

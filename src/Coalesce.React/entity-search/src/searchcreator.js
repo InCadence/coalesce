@@ -5,6 +5,7 @@ import {Toggle} from 'common-components/lib/toggle.js'
 import {Collapse} from 'react-collapse';
 import {IconButton} from 'common-components/lib/components/IconButton.js'
 import {FilterGroup} from './filtergroup'
+import {FilterCreator} from './filtercreator.js'
 import 'react-table/react-table.css'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -17,51 +18,10 @@ Object.assign(ReactTableDefaults, {
   // etc...
 })
 
-const example = {
-    "pageSize":200,
-    "pageNumber":1,
-    "propertyNames":["CoalesceEntity.objectkey"],
-    "group":{
-      "operator":"AND",
-      "criteria":[
-          {
-            "key":0,
-            "recordset":"CoalesceEntity",
-            "field":"objectkey",
-            "operator":"PropertyIsNotEqualTo",
-            "value":"aa",
-            "matchCase":false
-          },
-        ],
-
-        "groups":[{
-          "operator":"AND",
-          "criteria":[
-              {
-                "key":0,
-                "recordset":"CoalesceEntity",
-                "field":"name",
-                "operator":"!=",
-                "value":"aa",
-                "matchCase":false
-              },
-            ]
-          }
-        ]
-
-      }
-    }
-
 export class SearchCreator extends React.Component {
 
   constructor(props) {
     super(props);
-
-    /*if (props.tabledata != null) {
-      for (var ii=0; ii<props.tabledata.length; ii++) {
-        props.tabledata[ii].key = ii;
-      }
-    }*/
 
     this.state = {
       //recordSetSelection: 0,
@@ -158,42 +118,23 @@ export class SearchCreator extends React.Component {
     return (
       <div>
       <IconButton icon="/images/svg/add.svg" title="Add Group" onClick={that.addGroup.bind(that)}/>
-      {this.state.groups.map(function(table)
-        {return(
-               <div className="ui-widget">
-                 <Toggle
-                  ontext= "Search Criteria"
-                  offtext="Search Criteria"
-                  isToggleOn={true}
-                  onToggle={(value) => {
-                  that.setState({isOpened: value});
-                  }}
-                 />
-                 <Collapse isOpened={that.state.isOpened}>
-                   <div className="ui-widget-content">
-                   <ReactTable
-                    pageSize={that.state.maxRows}
-                    data={table}
-                    showPagination={false}
-                    columns={createColumns(that, that.props.recordsets, table[table.length-1].key, table)}
-                 />
-                 <div className="form-buttons">
-                   <IconButton icon="/images/svg/add.svg" title="Add Criteria" onClick={that.addRow.bind(that, table)} />
-                   <IconButton icon="/images/svg/search.svg" title="Execute Query" onClick={that.props.onSearch.bind(that, table)} />
-                   <IconButton icon="/images/svg/remove.svg" title="Delete Group" onClick={that.onDeleteGroup.bind(that, table)}/>
-                 </div>
-                 </div>
-                 </Collapse>
-               </div>
-         )
-         }
-       )
-    }
-     </div>
+      <IconButton icon="/images/svg/search.svg" title="Execute Query" onClick={that.props.onSearch.bind(that, that.state.groups)} />
+      <FilterCreator maxRows={that.state.maxRows} recordsets={that.props.recordsets} />
+      </div>
+      //{this.state.groups.map(function(table)
+      //  {return(
+               //<div className="ui-widget">
+
+              // </div>
+      //   )
+      //   }
+      //)
+    //}
+
     )
   }
 
-  onRecordsetChange(key, table, e) {
+  /*onRecordsetChange(key, table, e) {
     console.log("On record set change key is", key, "e is", e, table);
 
     var row = this.getRow(table, key);
@@ -332,12 +273,12 @@ export class SearchCreator extends React.Component {
     }
 
     return result;
-  }
+  }*/
 }
 
 
 
-function createColumns(that, recordsets, key, table) {
+/*function createColumns(that, recordsets, key, table) {
 
   var columns = [{Header: 'key', accessor: 'key', show: false}];
   console.log("createColumns", key, recordsets, table);
@@ -454,7 +395,7 @@ function createColumns(that, recordsets, key, table) {
       )});
   }
   return columns;
-}
+}*/
 
 //SearchCreator.defaultProps = {
 //  maxRows: 10,
