@@ -9,8 +9,8 @@ from pandas import Series
 
 import simplejson as json
 
-from API.API_request import get_response
-from .API import package_logger
+from utilities.API_request import get_response
+from utilities.logger import package_logger
 
 # Set up logging.
 logger = package_logger.getChild(__name__) 
@@ -332,7 +332,7 @@ def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f
                             max_attempts = 2)
     return response
 
-def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']['sectionsAsList']":"false"}): #FIX NESTER AND BUG ON THE GET KEYS
+def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']['sectionsAsList']":"false"}):
     
     """
     Arguments:

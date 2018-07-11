@@ -9,8 +9,7 @@ from random import randint
 
 from requests import Session, Request, ConnectionError, Timeout, ConnectTimeout
 
-from . import package_logger
-
+from logger import package_logger
 
 # Set up logging.
 logger = package_logger.getChild(__name__)

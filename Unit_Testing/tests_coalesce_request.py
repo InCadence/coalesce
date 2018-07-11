@@ -5,21 +5,30 @@ Created on Fri Jul  6 11:39:12 2018
 @author: dvenkat
 """
 
+#Write a test for anywhere I write a query
+#   - Read is done, only need to check response
+#   - Can test delete by deleting what I set up
+#   - Test simple search by sending in simple query with the object created, test complex by searching specifically for key
+#   - Create is tested by making sure object is created with fields
+#   - Update can be tested by updating object then checking to see if fields were updated
+
+
 import ConfigParser
 import unittest
-from Wrapper.coalesce_request import *
+from wrapper.coalesce_request import *
 
 config = ConfigParser.ConfigParser()
 config.read('config.ini')
 
 class prepare_coalesce(unittest.TestCase):
     def setUp(self):
-        self.new = create(TYPE = "OEEvent",VALUES = {"flattern": "true"})
+        self.new = create(TYPE = "OEEvent",VALUES = {"flatten":"false"})
+        self.key = self.new.data["key"]
 
 class test_search(unittest.TestCase):
-
+    #Search tests done
     def test_response_status(self):
-        self.search = search()
+        self.search = search(VALUES = [key], FIELDS = ["objectkey"])
         self.assertEqual(type(self.search), unicode)
 
     def test_response_simple_search(self):
@@ -27,16 +36,17 @@ class test_search(unittest.TestCase):
         self.assertEqual(type(self.search), unicode)
 
     def test_response_complex_search(self):
-        self.search = search()
+        self.search = search(SUB_OPERATIONS=u"complex", query=[{}])
 
 class test_read(unittest.TestCase):
-    def setUp(self):
-        self.read = read()
         
-    def test_response_status(self):
+    def test_default_response_status(self):
         with self.assertRaise(ValueError):
             read()
-        
+
+    def test_created_response_status(self):
+        self.asserEqual(read(ARTIFACT="OEEvent", KEY=key), True)
+    #Test a read function with my function
 class test_delete(unittest.TestCase):
     def setUp(self):
         self.delete = delete()
@@ -60,4 +70,4 @@ class test_create(unittest.TestCase):
 
 class revert_coalesce(unittest.TestCase):
     def tearDown(self):
-
+        self.delete = delete(TYPE = ["OEEvent"], KEY = key)
