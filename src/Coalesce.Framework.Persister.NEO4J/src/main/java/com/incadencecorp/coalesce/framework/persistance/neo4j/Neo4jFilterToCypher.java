@@ -467,7 +467,7 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
         Expression upperbounds = filter.getUpperBoundary();
 
         Class<?> context;
-        AttributeDescriptor attType = (AttributeDescriptor) expr.evaluate(null);
+        AttributeDescriptor attType = (AttributeDescriptor) expr.evaluate(featureType);
         if (attType != null)
         {
             context = attType.getType().getBinding();
@@ -565,7 +565,7 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
 
         // hack for date values, we append some additional padding to handle
         // the matching of time/timezone/etc...
-        AttributeDescriptor ad = (AttributeDescriptor) att.evaluate(null);
+        AttributeDescriptor ad = (AttributeDescriptor) att.evaluate(featureType);
         if (ad != null && Date.class.isAssignableFrom(ad.getType().getBinding()))
         {
             literal += wildcard;
@@ -1061,7 +1061,7 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
     {
 
         Class<?> typeContext = null;
-        AttributeDescriptor attType = (AttributeDescriptor) property.evaluate(null);
+        AttributeDescriptor attType = (AttributeDescriptor) property.evaluate(featureType);
         if (attType != null)
         {
             typeContext = attType.getType().getBinding();
@@ -1069,9 +1069,9 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
 
         // check for time period
         Period period = null;
-        if (temporal.evaluate(null) instanceof Period)
+        if (temporal.evaluate(featureType) instanceof Period)
         {
-            period = (Period) temporal.evaluate(null);
+            period = (Period) temporal.evaluate(featureType);
         }
 
         // verify that those filters that require a time period have one
@@ -1300,7 +1300,7 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
             }
             else
             {
-                literal = expression.evaluate(null, target);
+                literal = expression.evaluate(featureType, target);
             }
         }
 
@@ -1309,7 +1309,7 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
         // method call
         if (literal == null)
         {
-            literal = expression.evaluate(null);
+            literal = expression.evaluate(featureType);
         }
 
         // if that failed as well, grab the value as is
@@ -1364,7 +1364,7 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
      */
     Number safeConvertToNumber(Expression expression, Class<?> target)
     {
-        return (Number) Converters.convert(expression.evaluate(null),
+        return (Number) Converters.convert(expression.evaluate(featureType),
                                            target,
                                            new Hints(ConverterFactory.SAFE_CONVERSION, true));
     }
