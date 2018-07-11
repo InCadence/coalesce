@@ -5,15 +5,29 @@ Created on Fri Jul  6 11:39:12 2018
 @author: dvenkat
 """
 
+import ConfigParser
 import unittest
-from coalesce_request import *
+from Wrapper.coalesce_request import *
+
+config = ConfigParser.ConfigParser()
+config.read('config.ini')
+
+class prepare_coalesce(unittest.TestCase):
+    def setUp(self):
+        self.new = create(TYPE = "OEEvent",VALUES = {"flattern": "true"})
 
 class test_search(unittest.TestCase):
-    def setUp(self):
-        self.search = search()
-    
+
     def test_response_status(self):
+        self.search = search()
         self.assertEqual(type(self.search), unicode)
+
+    def test_response_simple_search(self):
+        self.search = search(FIELDS = ["objectkey"])
+        self.assertEqual(type(self.search), unicode)
+
+    def test_response_complex_search(self):
+        self.search = search()
 
 class test_read(unittest.TestCase):
     def setUp(self):
@@ -43,3 +57,7 @@ class test_create(unittest.TestCase):
         
     def test_response_status(self):
         self.assertEqual(self.create.status_code, 204)
+
+class revert_coalesce(unittest.TestCase):
+    def tearDown(self):
+

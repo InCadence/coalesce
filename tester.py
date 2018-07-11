@@ -6,6 +6,6 @@ Created on Tue Jul 10 12:31:38 2018
 """
 
 #File to run unittest modules
-from unit_testing.tests_coalesce_request import *
+from Unit_Testing.tests_coalesce_request import *
 
 unittest.main()

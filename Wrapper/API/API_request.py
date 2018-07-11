@@ -9,7 +9,7 @@ from random import randint
 
 from requests import Session, Request, ConnectionError, Timeout, ConnectTimeout
 
-from pyCoalesce import package_logger
+from . import package_logger
 
 
 # Set up logging.

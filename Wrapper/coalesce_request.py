@@ -10,7 +10,7 @@ from pandas import Series
 import simplejson as json
 
 from API.API_request import get_response
-from pyCoalesce import package_logger
+from .API import package_logger
 
 # Set up logging.
 logger = package_logger.getChild(__name__) 
