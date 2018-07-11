@@ -160,7 +160,7 @@ public class SearchDataController {
             query.setStartIndex(searchQuery.getPageNumber());
             query.setMaxFeatures(searchQuery.getPageSize());
 
-            return createResponse(framework.search(query), properties);
+            return createResponse(framework.searchBulk(searchQuery.getCapabilities(), query).get(0), properties);
         }
         catch (CoalesceException e)
         {
@@ -430,14 +430,12 @@ public class SearchDataController {
                 filters.add(ff.during(property, ff.literal(new DefaultPeriod(start, end))));
                 break;
             case After.NAME:
-                DefaultInstant after = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(
-                        criteria.getValue()).toDate()));
+                DefaultInstant after = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(criteria.getValue()).toDate()));
 
                 filters.add(ff.after(CoalescePropertyFactory.getLastModified(), ff.literal(after)));
                 break;
             case Before.NAME:
-                DefaultInstant before = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(
-                        criteria.getValue()).toDate()));
+                DefaultInstant before = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(criteria.getValue()).toDate()));
 
                 filters.add(ff.before(CoalescePropertyFactory.getLastModified(), ff.literal(before)));
                 break;

@@ -163,8 +163,10 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
     {
         EnumSet<EPersistorCapabilities> capabilities = super.getCapabilities();
 
+        capabilities.add(EPersistorCapabilities.SEARCH);
         capabilities.add(EPersistorCapabilities.GEOSPATIAL_SEARCH);
         capabilities.add(EPersistorCapabilities.TEMPORAL_SEARCH);
+        capabilities.add(EPersistorCapabilities.LUCENE_SYNTAX);
 
         return capabilities;
     }

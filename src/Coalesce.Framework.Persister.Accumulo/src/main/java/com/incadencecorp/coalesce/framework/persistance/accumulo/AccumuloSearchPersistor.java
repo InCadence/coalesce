@@ -210,9 +210,10 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
     public EnumSet<EPersistorCapabilities> getCapabilities()
     {
         EnumSet<EPersistorCapabilities> capabilities = super.getCapabilities();
-        capabilities.addAll(EnumSet.of(EPersistorCapabilities.GEOSPATIAL_SEARCH,
-                                       EPersistorCapabilities.TEMPORAL_SEARCH,
-                                       EPersistorCapabilities.SEARCH));
+
+        capabilities.addAll(EnumSet.of(EPersistorCapabilities.SEARCH,
+                                       EPersistorCapabilities.GEOSPATIAL_SEARCH,
+                                       EPersistorCapabilities.TEMPORAL_SEARCH));
 
         return capabilities;
     }

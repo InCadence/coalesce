@@ -101,7 +101,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
             throw new RuntimeException("Unknown Parameter Specified: " + property);
         }
 
-        LOGGER.info("({}): ({})", property, type);
+        LOGGER.trace("({}): ({})", property, type);
 
         return (type == ECoalesceFieldDataTypes.STRING_TYPE) && !(property.startsWith("coalesceentity")
                 || property.startsWith("coalescelinkage"));
