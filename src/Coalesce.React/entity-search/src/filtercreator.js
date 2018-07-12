@@ -23,14 +23,21 @@ export class FilterCreator extends React.Component {
     super(props);
 
     this.state = {
-      tabledata: {
+      tabledata: [{
                   key:0,
                   recordset: 'CoalesceEntity',
                   field: 'name',
                   operator: '=',
                   value: 'aa',
-                  matchCase: true},
+                  matchCase: true}],
       currentkey: 0,
+      //queryDataKey: this.props.queryDataKey,
+      //queryDataRecordSet: this.props.queryDataRecordSet,
+      //queryDataField: this.props.queryDataField,
+      //queryDataOperator: this.props.queryDataOperator,
+      //queryDataValue: this.props.queryDataValue,
+      //queryDataMatchCase: this.props.queryDataMatchCase,
+      queryData: this.props.queryData,
       isOpened: true
     }
   }
@@ -53,12 +60,13 @@ export class FilterCreator extends React.Component {
             <div className="ui-widget-content">
               <ReactTable
                 pageSize={this.props.maxRows}
-                data={this.state.tabledata}
+                data={this.state.queryData}
                 showPagination={false}
                 columns={createColumns(this, this.props.recordsets, this.state.currentkey)}
               />
               <div className="form-buttons">
                 <IconButton icon="/images/svg/add.svg" title="Add Criteria" onClick={this.addRow.bind(this)} />
+                <IconButton icon="/images/svg/add.svg" title="Add SubGroup" onClick={this.addSubGroup.bind(this)}/>
               </div>
             </div>
           </Collapse>
@@ -66,17 +74,22 @@ export class FilterCreator extends React.Component {
     )
   }
 
+
+  getTableData() {
+    return(this.state.tabledata);
+  }
+
   onRecordsetChange(key, e) {
     //console.log("On record set change key is", key, "e is", e);
-    const {tabledata, recordsets} = this.state;
-    var row = this.getRow(tabledata, key);
+    const {tabledata, queryData, queryDataRecordSet, queryDataField, queryDataKey, queryDataMatchCase, queryDataOperator, queryDataValue} = this.state;
+    var row = this.getRow(queryData, key);
     //console.log("row is", row, tabledata, key);
     var defaultField;
     var tempGroupRecordSet;
     //console.log("recordsets.length is", recordsets.length, recordsets);
-    for (var ii=0; ii<recordsets.length; ii++) {
-      if (recordsets[ii].name === e.target.value) {
-        defaultField = recordsets[ii].definition[0].name;
+    for (var ii=0; ii<this.props.recordsets.length; ii++) {
+      if (this.props.recordsets[ii].name === e.target.value) {
+        defaultField = this.props.recordsets[ii].definition[0].name;
         //console.log("RecordSets", recordsets[ii], "Target value is", e.target.value);
         break;
       }
@@ -86,90 +99,111 @@ export class FilterCreator extends React.Component {
     tempGroupRecordSet = e.target.value;
     row.field = defaultField;
     row.operator = 'EqualTo';
-    row.value = '';
-
-    this.setState({tabledata: tabledata,groupRecordSet: tempGroupRecordSet});
+    row.value = 'aa';
+    console.log("FilterCreator queryData is", queryData);
+    this.setState({tabledata: tabledata,
+                   queryDataRecordSet: e.target.value,
+                   queryData: queryData});
   }
 
   onFieldChange(key, e) {
-    const {tabledata} = this.state;
+    const {tabledata, queryData} = this.state;
     //console.log("On field change", key);
-    var row = this.getRow(tabledata, key);
+    var row = this.getRow(queryData, key);
 
     row.field = e.target.value;
     row.operator = 'EqualTo';
-    row.value = '';
+    row.value = 'aa';
 
-    this.setState({tabledata: tabledata});
+    this.setState({tabledata: tabledata, queryData: queryData});
   }
 
   onOperatorChange(key, e) {
-    const {tabledata} = this.state;
-    var row = this.getRow(tabledata, key);
+    const {tabledata, queryData} = this.state;
+    var row = this.getRow(queryData, key);
 
     row.operator = e.target.value;
 
-    this.setState({tabledata: tabledata});
+    this.setState({tabledata: tabledata, queryData: queryData});
   }
 
   onValueChange(key, e) {
-    const {tabledata} = this.state;
-    var row = this.getRow(tabledata, key);
+    const {tabledata, queryData} = this.state;
+    var row = this.getRow(queryData, key);
 
     row.value = e.target.value;
 
-    this.setState({tabledata: tabledata});
+    this.setState({tabledata: tabledata, queryData: queryData});
   }
 
   onMatchCaseChange(key, e) {
-    const {tabledata} = this.state;
-    var row = this.getRow(tabledata, key);
+    const {tabledata, queryData} = this.state;
+    var row = this.getRow(queryData, key);
 
     row.matchCase = e.target.checked;
 
-    this.setState({tabledata: tabledata});
+    this.setState({tabledata: tabledata, queryData: queryData});
   }
 
   deleteRow(key, e) {
 
-    const {tabledata} = this.state;
+    const {tabledata, queryData} = this.state;
     //console.log("delete row", key);
     // Delete Row
-    for (var ii=0; ii<tabledata.length; ii++) {
-      if (tabledata[ii].key === key) {
-          tabledata.splice(ii, 1);
+    for (var ii=0; ii<queryData.length; ii++) {
+      if (queryData[ii].key === key) {
+          queryData.splice(ii, 1);
           break;
       }
     }
 
     // Save State
-    this.setState({tabledata: tabledata});
+    this.setState({tabledata: tabledata, queryData: queryData});
   }
-
+  addSubGroup(e){
+    console.log("Adding SubGroup");
+    const {queryData} = this.state;
+    var tempTable = {
+                     operator:'AND',
+                     criteria: [{key:0,
+                     recordset: 'CoalesceEntity',
+                     field: 'name',
+                     operator: '=',
+                     value: 'aa',
+                     matchCase: true}],
+                     groups:[]
+                    };
+    queryData.groups.push(tempTable);
+    this.setState({queryData: queryData});
+  }
   addRow(e) {
-    const {tabledata, currentkey, recordsets} = this.state;
+    const {tabledata, currentkey, queryData} = this.state;
     //console.log("Adding row, recordsets is", recordsets, currentkey);
     var keyvalue = currentkey + 1;
 
-    if (tabledata.length < this.props.maxRows) {
+    if (queryData.length < this.props.maxRows) {
       // Create New Data Row
-      tabledata.push({
+      queryData.push({
         key: keyvalue,
-        recordset: this.state.groupRecordSet, //Assuming we always start with an existing recordset when we instantiate a filtercreator, always match with that
-        field: recordsets[0].definition[0].name,
+        recordset: this.props.recordsets[0].name, //Assuming we always start with an existing recordset when we instantiate a filtercreator, always match with that
+        field: this.props.recordsets[0].definition[0].name,
         operator: 'EqualTo',
-        value: '',
+        value: 'aa',
         matchCase: false
       });
 
       // Save State
       this.setState({
         tabledata: tabledata,
-        currentkey: keyvalue
+        currentkey: keyvalue,
+        queryData: queryData
       });
     } else {
       alert("Row limit reached");
     }
+    if(queryData === this.props.queryData){
+      console.log("addRow queryData is equal", queryData, this.props.queryData);
+      }
   }
 
   getRow(data, key) {
@@ -294,9 +328,3 @@ function createColumns(that, recordsets, key) {
   return columns;
 }
 
-FilterCreator.defaultProps = {
-  maxRows: 10,
-  isOpened: true,
-  tabledata: [],
-  currentkey: 0
-}

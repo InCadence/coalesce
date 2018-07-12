@@ -164,14 +164,11 @@ function search(data, e) {
     "pageSize": 200,
     "pageNumber": 1,
     "propertyNames": [],
-    "group": {
-      "operator": "AND",
-      "criteria": data
-    }
+    "group": data
   };
   console.log("Index search", data);
   // Get additional columns
-  data.forEach(function (criteria) {
+  data.criteria.forEach(function (criteria) {
     query.propertyNames.push(criteria.recordset + "." + criteria.field);
     console.log("Index search", query.propertyNames);
   });

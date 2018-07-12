@@ -4,7 +4,7 @@ import { ReactTableDefaults } from 'react-table'
 import {Toggle} from 'common-components/lib/toggle.js'
 import {Collapse} from 'react-collapse';
 import {IconButton} from 'common-components/lib/components/IconButton.js'
-import {FilterGroup} from './filtergroup'
+import {FilterGroup} from './filtergroup.js'
 import {FilterCreator} from './filtercreator.js'
 import 'react-table/react-table.css'
 
@@ -32,72 +32,55 @@ export class SearchCreator extends React.Component {
       matchCase: false,
       groupKey: 0,
       queryCount: 0,
-      //rowKey: 0,
-      /*tabledata: [{
-                   queryKey:0,
-                   tableDataKey: 0,
-                   recordset: 'CoalesceEntity',
-                   field: 'name',
-                   operator: '=',
-                   value: 'aa',
-                   matchCase: true}],*/
-       groups: [[{
-                          queryKey:0,
-                          tableDataKey: 0,
-                          key: 0,
-                          recordset: 'CoalesceEntity',
-                          field: 'name',
-                          operator: '=',
-                          value: 'aa',
-                          andOr: '',
-                          matchCase: true}]],
+      group: {
+                  operator:'AND',
+                  criteria: [{key:0,
+                  recordset: 'CoalesceEntity',
+                  field: 'name',
+                  operator: 'EqualTo',
+                  value: 'aa',
+                  matchCase: false}],
+                  groups: []
+                  },
       //tableDataSelection: props.tabledata,
       //onSearch: props.onSearch,
       //groupRecordSet: props.groupRecordSet,
       //criteriakey: props.criteriakey,
-      actualSearch: [[{key: 0,
-                       recordset: 'CoalesceEntity',
-                       field: 'name',
-                       operator: '=',
-                       value: 'aa',
-                       andOr: '',
-                       matchCase: true}]],
       isOpened: true
     }
     //this.setState({groups: this.state.groups.concat(this.state.tabledata)});
    // this.addRow.bind(this);
    // this.onAddGroupCheck.bind(this, this.state.tabledata.queryKey );
-    console.log("SearchCreator", this.state.groups);
+    console.log("SearchCreator", this.state.group.criteria);
   }
 
   addGroup(){
-    console.log("Adding Group", this.state.groups, this.state.queryCount);
-    var temp2 = [[{key: 0,
-                   recordset: 'CoalesceEntity',
-                   field: 'name',
-                   operator: '=',
-                   value: 'aa',
-                   andOr: '',
-                   matchCase: true}]];
-
-    var temp = [[{queryKey: this.state.queryCount+1,
-                 tableDataKey: 0,
-                 key: 0,
-                 recordset: 'CoalesceEntity',
-                 field: 'name',
-                 operator: '=',
-                 value: 'aa',
-                 andOr: '',
-                 matchCase: true}]];
-    console.log("Adding Group temp is", temp);
-    console.log("Adding Group concat result is", this.state.groups.concat(temp));
+    const {group} = this.state;
+    var tempTable = {
+                      operator:'AND',
+                      criteria: [{key:0,
+                      recordset: 'CoalesceEntity',
+                      field: 'name',
+                      operator: '=',
+                      value: 'aa',
+                      matchCase: false}],
+                      groups:[]
+                      };
+    console.log("Adding Group", group.groups);
+    console.log("Adding Group", group, this.state.groupKey);
+    let tempGroup = Object.assign({}, this.state.group);
+   // console.log("tempGroup is", tempGroup, "Default table is", this.state.defaultTable);
+    //console.log("Adding Group Concat", tempGroup[0][0].groups.concat(this.state.defaultTable), tempGroup);
+    console.log("Temp table is", tempTable);
+    tempGroup.groups.push(tempTable);
+    console.log("Adding Group concat", tempGroup.groups);
     this.setState({
-            groups: this.state.groups.concat(temp),
+            group: tempGroup,
           // Increment the counter to ensure key is always unique.
-            actualSearch: this.state.groups.concat(temp2),
+          groupKey: this.state.groupKey+1,
           queryCount: this.state.queryCount + 1
      });
-      console.log("Groups now are", this.state.groups, this.state.queryCount, this.state.groups.length);
+      console.log("Group now are", this.state.group, this.state.queryCount, this.state.group.length);
     }
 
   //componentWillReceiveProps(nextProps) {
@@ -113,27 +96,31 @@ export class SearchCreator extends React.Component {
     //console.log("SearchCreator isOpened", this.state.isOpened);
     //console.log("SearchCreator tableData", this.state.tabledata);
     //console.log("SearchCreator tableData length", this.state.tabledata.length);
-    console.log("SearchCreator render", this.state.groups, this.state.groups.length);
+    console.log("SearchCreator render", this.state.group, this.state.group.groups);
     var that = this;
     return (
       <div>
-      <IconButton icon="/images/svg/add.svg" title="Add Group" onClick={that.addGroup.bind(that)}/>
-      <IconButton icon="/images/svg/search.svg" title="Execute Query" onClick={that.props.onSearch.bind(that, that.state.groups)} />
-      <FilterCreator maxRows={that.state.maxRows} recordsets={that.props.recordsets} />
-      </div>
-      //{this.state.groups.map(function(table)
-      //  {return(
-               //<div className="ui-widget">
-
-              // </div>
-      //   )
-      //   }
-      //)
-    //}
-
+      <IconButton icon="/images/svg/add.svg" title="Add Group" onClick={this.addGroup.bind(this)}/>
+      <IconButton icon="/images/svg/search.svg" title="Execute Query" onClick={this.props.onSearch.bind(this, this.state.group)} />
+      <FilterCreator maxRows={this.state.maxRows} recordsets={this.props.recordsets} queryData = {this.state.group.criteria} />
+     // <FilterGroup data={this.state.group} recordsets={this.props.recordsets}/>
+      {this.state.group.groups.map(function(table)
+        {return(
+               <FilterCreator maxRows={that.state.maxRows} recordsets={that.props.recordsets} queryData = {table.criteria} />
+         )
+        }
+      )
+    }
+    </div>
     )
   }
 
+  createSearchQuery(){
+    console.log("SearchCreator queryData is", this.state.group);
+   // this.state.groups.forEach(function(query){
+   //   this.state.})
+    //Loop over filtercreators and return table data of each filter creator instance
+  }
   /*onRecordsetChange(key, table, e) {
     console.log("On record set change key is", key, "e is", e, table);
 

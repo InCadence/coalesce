@@ -22,13 +22,14 @@ export class FilterGroup extends React.Component {
 
 
     this.state = {
-      data: props.data,
+      data: props.data
       //recordsets: props.recordsets
     }
   }
 
   addField(){
     console.log("Adding field");
+    //this.state.data.criteria.push()
   }
 
   addGroup(){
