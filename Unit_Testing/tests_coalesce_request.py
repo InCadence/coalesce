@@ -20,54 +20,72 @@ from wrapper.coalesce_request import *
 config = ConfigParser.ConfigParser()
 config.read('config.ini')
 
-class prepare_coalesce(unittest.TestCase):
-    def setUp(self):
-        self.new = create(TYPE = "OEEvent",VALUES = {"flatten":"false"})
-        self.key = self.new.data["key"]
-
 class test_search(unittest.TestCase):
-    #Search tests done
+
+    def setUp(self):
+        self.new = create(TYPE = "OEEvent",FIELDSADDED= {"flatten":"false"}, TESTING="true")
+        self.key = self.new[1]["key"]
+
     def test_response_status(self):
-        self.search = search(VALUES = [key], FIELDS = ["objectkey"])
-        self.assertEqual(type(self.search), unicode)
+        self.search = search(VALUES=[self.key], FIELDS=["objectkey"])
+        self.assertEqual(type(search(FIELDS=["objectkey"], OPERATORS=["="], VALUES=["{}".format(self.key)])), unicode)
 
     def test_response_simple_search(self):
-        self.search = search(FIELDS = ["objectkey"])
+        self.search = search(FIELDS=["objectkey"], VALUES=[self.key])
         self.assertEqual(type(self.search), unicode)
 
     def test_response_complex_search(self):
-        self.search = search(SUB_OPERATIONS=u"complex", query=[{}])
+        self.search = search(SUB_OPERATIONS=u"complex", query=[{"field":"objectkey"},
+                                                                {"key":0,"recordset":"CoalesceEntity","field":"objectkey",
+                                                                "operator":"=","value":"{}".format(self.key),"matchCase":"false"
+                                                                 }])
+    def tearDown(self):
+        delete(KEY=self.key, TYPE="OEEvent")
 
 class test_read(unittest.TestCase):
-        
+    #Add tests for each field query
+    def setUp(self):
+        self.new = create(TYPE="OEEvent",FIELDSADDED={"flatten":"false"}, TESTING="true")
+        self.key = self.new[1]["key"]
+
     def test_default_response_status(self):
-        with self.assertRaise(ValueError):
+        with self.assertRaises(ValueError):
             read()
 
     def test_created_response_status(self):
-        self.asserEqual(read(ARTIFACT="OEEvent", KEY=key), True)
-    #Test a read function with my function
+        self.assertTrue(read(ARTIFACT="OEEvent", KEY=self.key))
+    # Test a read function with my function
+
+    def tearDown(self):
+        delete(KEY=self.key, TYPE="OEEvent")
+
 class test_delete(unittest.TestCase):
+
     def setUp(self):
-        self.delete = delete()
+        self.create = create(TYPE="OEEvent")
+        self.delete = delete(KEY=self.create[1]["key"], TYPE="OEEvent")
         
     def test_response_status(self):
         self.assertEqual(self.delete.status_code, 204)
 
 class test_update(unittest.TestCase):
     def setUp(self):
-        self.update = update()
+        self.create = create(TYPE="OEEvent", TESTING="true")
+        self.update = update(NEWVALUES={"flatten":"false"}, KEY=self.create[1]["key"])
         
     def test_response_status(self):
         self.assertEqual(self.update.status_code, 204)
+
+    def tearDown(self):
+        delete(TYPE="OEEvent", KEY=self.create["key"])
         
 class test_create(unittest.TestCase):
     def setUp(self):
         self.create = create()
+        self.key = create[1]["key"]
         
     def test_response_status(self):
-        self.assertEqual(self.create.status_code, 204)
+        self.assertEqual(self.create[0].status_code, 204)
 
-class revert_coalesce(unittest.TestCase):
     def tearDown(self):
-        self.delete = delete(TYPE = ["OEEvent"], KEY = key)
+        self.delete(TYPE= "OEEvent", KEY=self.key)

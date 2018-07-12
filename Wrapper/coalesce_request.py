@@ -119,8 +119,8 @@ FORMATS = (u"XML", u"JSON", u"python_dict")
 def search(params = None, operation = u"search",
            SUB_OPERATIONS = u"simple", OPERATOR = "AND", OPERATORS = ["Like", "Like"], 
            VALUES = ["hello", "max"], FIELDS = ["name", "objectkey"], 
-           query = [{"test": "test"}, {"NAME": "NAME"}]):
-                              
+           query = [{"test": "test"}, {"NAME": "NAME"}], TESTING = "false"):
+
     """
     Arguments:
     :param parameters: search parameters included in the search
@@ -186,13 +186,15 @@ def search(params = None, operation = u"search",
                                     headers = headers,
                                     delay = 1,
                                     max_attempts = 2)
+                if TESTING == "true":
+                    return response.text, data
                 return response.text
             
             else:
                 raise ValueError("You're inputted criteria are not in sync." 
                                  "\n Check individual fields to make sure"
                                  "\nthere are an equal number in each")
-                return response
+
         
     if SUB_OPERATIONS == u"complex":
         #Add a check on the searh fuction to see what the user passes through
@@ -202,6 +204,9 @@ def search(params = None, operation = u"search",
             Can be found in the search_parser.py file
             """
             GROUP = [{}]
+            PROPERTYNAMES = []
+            for i in range(len(FIELDS)):
+                PROPERTYNAMES.append("CoalesceEntity" + "." + FIELDS[i])
             server = server.URL
             headers = {
                     "Connection" : u"keep-alive",
@@ -211,22 +216,19 @@ def search(params = None, operation = u"search",
                             "pageSize":200,"pageNumber":1,
                             "propertyNames": PROPERTYNAMES, 
                             "group": {"operator": OPERATOR, "criteria": GROUP}}
-            
-            if type(query) == dict:
+
+            if type(query) == list:
                 for key in query:
-                    if key in data:
-                        data[key] = query[key]
-                        del query[key]
-                    else: 
-                        GROUP[0][key] = query[key]
+                    if type(query) == dict:
+                        for key2, value2 in query:
+                            if key2 in data:
+                                data[key2] = query[key2]
+                            del query[key]
+                    query = GROUP
                     data = json.dumps(data)
-            
-            elif type(query) == str:
+
+            if type(query) == str:
                 raise ValueError("Please enter your query as a dictionary")
-            
-            elif type(query) == list:
-                GROUP = query
-                data = json.dumps(data)
                 
             response = get_response(URL = server + OPERATIONS[operation][0],
                                     method = method,
@@ -235,9 +237,11 @@ def search(params = None, operation = u"search",
                                     headers = headers,
                                     delay = 1,
                                     max_attempts = 2)
+            if TESTING == "true":
+                return response, data
             return response
             
-def read(ARTIFACT = None, KEY = None):
+def read(ARTIFACT = None, KEY = None, TESTING = "false"):
         
         """
         Arguments:
@@ -305,7 +309,7 @@ def read(ARTIFACT = None, KEY = None):
         else:
             ValueError("You have entered an invalid parameter. Check again.")
 
-def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f'): 
+def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f', TESTING = "false"):
     
     """
     :TYPE: The type of entity being deleted
@@ -332,7 +336,7 @@ def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f
                             max_attempts = 2)
     return response
 
-def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']['sectionsAsList']":"false"}):
+def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']['sectionsAsList']":"false"}, TESTING = "false"):
     
     """
     Arguments:
@@ -409,10 +413,12 @@ def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']['se
                             headers = headers,
                             delay = 1,
                             max_attempts = 2)
+    if TESTING == "true":
+        return response.text, data
     return response
         
 def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9',
-           NEWVALUES = {"namePath": "OEvent"}):
+           NEWVALUES = {"namePath": "OEvent"}, TESTING = "false"):
         
         """
         Arguments:
@@ -475,4 +481,6 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                                 headers = headers,
                                 delay = 1,
                                 max_attempts = 2)
+        if TESTING == "true":
+            return response, data
         return response
