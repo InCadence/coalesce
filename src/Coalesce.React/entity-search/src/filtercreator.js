@@ -25,12 +25,14 @@ export class FilterCreator extends React.Component {
     this.state = {
       queryData: this.props.queryData,
       subGroups: this.props.subGroups,
-      isOpened: true
+      isOpened: true,
+      currentkey: 0
     }
   }
 
   render() {
     var that = this;
+    console.log("subGroups", this.state.subGroups, this.props.subGroups);
     return (
       <div className="ui-widget">
         <Toggle
@@ -49,6 +51,15 @@ export class FilterCreator extends React.Component {
                 showPagination={false}
                 columns={createColumns(this, this.props.recordsets, this.state.currentkey)}
               />
+               {this.state.subGroups.map(function(table)
+                   {console.log("FilterCreator map", table);
+                   return(
+
+                           <FilterCreator maxRows={that.state.maxRows} recordsets={that.props.recordsets} queryData = {table.criteria} subGroups = {table.groups}/>
+                          )
+                   }
+                 )
+               }
 
               <div className="form-buttons">
                 <IconButton icon="/images/svg/add.svg" title="Add Criteria" onClick={this.addRow.bind(this)} />
@@ -122,7 +133,7 @@ export class FilterCreator extends React.Component {
   deleteRow(key, e) {
 
     const {queryData} = this.state;
-    //console.log("delete row", key);
+    console.log("delete row", key);
     // Delete Row
     for (var ii=0; ii<queryData.length; ii++) {
       if (queryData[ii].key === key) {
@@ -144,12 +155,14 @@ export class FilterCreator extends React.Component {
                      field: 'name',
                      operator: '=',
                      value: 'aa',
-                     matchCase: true}],
+                     matchCase: false}],
                      groups:[]
                     };
     subGroups.push(tempTable);
     this.setState({subGroups: subGroups});
+    console.log("SubGroups is now", this.state.subGroups);
   }
+
   addRow(e) {
     const {currentkey, queryData} = this.state;
     //console.log("Adding row, recordsets is", recordsets, currentkey);
@@ -291,6 +304,20 @@ function createColumns(that, recordsets, key) {
         <input type="checkbox" className="form-control" title="Match Case" checked={cell.row.matchCase} onChange={that.onMatchCaseChange.bind(that, cell.row.key)}/>
       )
     });
+
+    columns.push({
+      Header: 'AndOr',
+      accessor: 'andor',
+      resizable: false,
+      sortable: false,
+      width: 100,
+      Cell: (cell) => (
+        <select className="form-control" onChange={that.onAndOrChange.bind(that, cell.row.key)}>
+        <option></option>
+        <option>AND</option>
+        <option><OR<
+
+        )})
   }
   return columns;
 }

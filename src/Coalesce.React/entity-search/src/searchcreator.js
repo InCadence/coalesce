@@ -28,7 +28,7 @@ export class SearchCreator extends React.Component {
       matchCase: false,
       groupKey: 0,
       queryCount: 0,
-      group: {
+      group: [{
                   operator:'AND',
                   criteria: [{key:0,
                   recordset: 'CoalesceEntity',
@@ -37,14 +37,15 @@ export class SearchCreator extends React.Component {
                   value: 'aa',
                   matchCase: false}],
                   groups: []
-                  },
+                  }],
       isOpened: true
     }
   }
 
   addGroup(){
     const {group} = this.state;
-    var tempTable = {
+    console.log("ADDING GROUP");
+    var tempTable = [{
                       operator:'AND',
                       criteria: [{key:0,
                       recordset: 'CoalesceEntity',
@@ -53,32 +54,59 @@ export class SearchCreator extends React.Component {
                       value: 'aa',
                       matchCase: false}],
                       groups:[]
-                      };
-    let tempGroup = Object.assign({}, this.state.group);
-    tempGroup.groups.push(tempTable);
+                      }];
+    //let tempGroup = Object.assign({}, this.state.group);
+    //console.log("TempGroup is", tempGroup);
+    //group.push(tempTable);
     this.setState({
-            group: tempGroup,
+            group: group.concat(tempTable),
           // Increment the counter to ensure key is always unique.
           groupKey: this.state.groupKey+1,
           queryCount: this.state.queryCount + 1
      });
   }
 
+  deleteGroup(){
+    const {group} = this.state;
+    let tempGroup = Object.assign({}, this.state.group);
+    if(group.length > 1)
+    {
+      group.splice(group.length-1,1);
+      this.setState({group: group});
+    }
+  }
+
+  runSearch(){
+    var that = this;
+    this.state.group.map(function(groupData){
+         that.props.onSearch(groupData);
+    }
+   )
+  }
 
   render() {
     var that = this;
     return (
       <div>
       <IconButton icon="/images/svg/add.svg" title="Add Group" onClick={this.addGroup.bind(this)}/>
-      <IconButton icon="/images/svg/search.svg" title="Execute Query" onClick={this.props.onSearch.bind(this, this.state.group)} />
-      <FilterCreator maxRows={this.state.maxRows} recordsets={this.props.recordsets} queryData = {this.state.group.criteria} />
-      {this.state.group.groups.map(function(table)
-        {return(
-               <FilterCreator maxRows={that.state.maxRows} recordsets={that.props.recordsets} queryData = {table.criteria} subGroups = {table.groups}/>
-         )
+      <IconButton icon="/images/svg/search.svg" title="Execute Query" onClick={this.runSearch.bind(this)} />
+      <IconButton icon="/images/svg/remove.svg" title="Delete Latest Group" onClick={this.deleteGroup.bind(this)}/>
+      {this.state.group.map(function(groupData){
+             return(
+                <div>
+                <FilterCreator maxRows={that.state.maxRows} recordsets={that.props.recordsets} queryData = {groupData.criteria} subGroups = {groupData.groups}/>
+                {groupData.groups.map(function(table){
+                          return(
+                          <FilterCreator maxRows={that.state.maxRows} recordsets={that.props.recordsets} queryData = {table.criteria} subGroups = {table.groups}/>)
+                  }
+                 )
+
+                }
+                </div>
+             )
         }
       )
-    }
+     }
     </div>
     )
   }
