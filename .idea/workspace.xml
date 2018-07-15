@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="be2e82be-f551-461f-ba18-0ed2a388311f" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wrapper_runner.py" beforeDir="false" afterPath="$PROJECT_DIR$/wrapper_runner.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,79 +15,51 @@
     <favorites_list name="pyCoalesce" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="coalesce_request.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="160">
-                  <caret line="371" column="4" lean-forward="true" selection-start-line="371" selection-start-column="4" selection-end-line="371" selection-end-column="4" />
-                  <folding>
-                    <element signature="e#50#79#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="wrapper_runner.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/wrapper_runner.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="34">
-                  <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="tester.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/tester.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="170">
-                  <caret line="10" column="15" lean-forward="true" selection-start-line="10" selection-start-column="15" selection-end-line="10" selection-end-column="15" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="tests_coalesce_request.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="330">
-                  <caret line="29" column="35" lean-forward="true" selection-start-line="29" selection-start-column="35" selection-end-line="29" selection-end-column="35" />
-                  <folding>
-                    <element signature="e#510#529#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="config.ini" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/unit_testing/config.ini">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="68">
-                  <caret line="4" column="26" selection-start-line="4" selection-start-column="26" selection-end-line="4" selection-end-column="26" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file leaf-file-name="coalesce_request.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="150">
-                  <caret line="371" column="4" selection-start-line="371" selection-start-column="4" selection-end-line="371" selection-end-column="4" />
-                  <folding>
-                    <element signature="e#50#79#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="tests_coalesce_request.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="7" column="2" selection-start-line="7" selection-start-column="2" selection-end-line="7" selection-end-column="2" />
+              <folding>
+                <element signature="e#24#85#1" />
+                <element signature="e#286#301#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="60">
+                <caret line="3" column="15" selection-start-line="3" selection-start-column="15" selection-end-line="3" selection-end-column="15" />
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="req_set.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/pip/_internal/req/req_set.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="157">
+              <caret line="101" column="18" selection-start-line="101" selection-start-column="18" selection-end-line="101" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="coalesce_request.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2160">
+              <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -100,6 +71,8 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>TESTING</find>
+      <find>new</find>
+      <find>print</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -110,7 +83,6 @@
       <list>
         <option value="$PROJECT_DIR$/coalesce_request.py" />
         <option value="$PROJECT_DIR$/API/API_request.py" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/Wrapper/__init__.py" />
         <option value="$PROJECT_DIR$/Wrapper/coalesce_request.py" />
         <option value="$PROJECT_DIR$/Wrapper/API/API_request.py" />
@@ -121,16 +93,17 @@
         <option value="$PROJECT_DIR$/wrapper/utilities/logger.py" />
         <option value="$PROJECT_DIR$/wrapper/utilities/API_request.py" />
         <option value="$PROJECT_DIR$/wrapper/utilities/__init__.py" />
+        <option value="$PROJECT_DIR$/wrapper_runner.py" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/wrapper/coalesce_request.py" />
         <option value="$PROJECT_DIR$/unit_testing/config.ini" />
         <option value="$PROJECT_DIR$/unit_testing/tests_coalesce_request.py" />
-        <option value="$PROJECT_DIR$/wrapper_runner.py" />
-        <option value="$PROJECT_DIR$/wrapper/coalesce_request.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="538" />
-    <option name="y" value="-14" />
+    <option name="x" value="133" />
+    <option name="y" value="-8" />
     <option name="width" value="1399" />
     <option name="height" value="820" />
   </component>
@@ -169,7 +142,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="preferences.customizations" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -190,7 +163,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.wrapper_runner">
+  <component name="RunManager" selected="Python.coalesce_request">
     <configuration name="API_request" type="PythonConfigurationType" factoryName="Python">
       <module name="06-pycoalesce" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -227,7 +200,7 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="logger" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="tester" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="06-pycoalesce" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -235,11 +208,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/wrapper/utilities" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/wrapper/utilities/logger.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tester.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -291,19 +264,19 @@
     </configuration>
     <list>
       <item itemvalue="Python.API_request" />
-      <item itemvalue="Python.logger" />
       <item itemvalue="Python tests.Unittests for tests_coalesce_request.test_update" />
       <item itemvalue="Python.coalesce_request" />
       <item itemvalue="Python tests.Unittests for tests_coalesce_request.test_search" />
       <item itemvalue="Python.wrapper_runner" />
+      <item itemvalue="Python.tester" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.coalesce_request" />
+        <item itemvalue="Python.tester" />
         <item itemvalue="Python.wrapper_runner" />
         <item itemvalue="Python tests.Unittests for tests_coalesce_request.test_search" />
-        <item itemvalue="Python.coalesce_request" />
         <item itemvalue="Python tests.Unittests for tests_coalesce_request.test_update" />
-        <item itemvalue="Python.logger" />
       </list>
     </recent_temporary>
   </component>
@@ -350,7 +323,21 @@
       <option name="project" value="LOCAL" />
       <updated>1531365746979</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Wrapper is once again functional">
+      <created>1531403255873</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1531403255873</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Finished except for setup.py file">
+      <created>1531669599091</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1531669599091</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -373,7 +360,7 @@
       <configuration name="Unittests for tests_coalesce_request.test_search" configurationId="tests" />
     </history-entry>
   </component>
-  <component name="TodoView">
+  <component name="TodoView" selected-index="2">
     <todo-panel id="selected-file">
       <is-autoscroll-to-source value="true" />
     </todo-panel>
@@ -385,18 +372,19 @@
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.07133676" />
-      <window_info anchor="bottom" id="TODO" order="15" weight="0.3292683" />
+      <window_info anchor="bottom" id="TODO" order="15" weight="0.32795697" />
+      <window_info anchor="bottom" id="Event Log" order="17" side_tool="true" weight="0.3293011" />
+      <window_info anchor="bottom" id="Version Control" order="16" weight="0.32258064" />
+      <window_info anchor="bottom" id="Python Console" order="19" visible="true" weight="0.32258064" />
+      <window_info anchor="bottom" id="Run" order="6" weight="0.32795697" />
+      <window_info anchor="bottom" id="Terminal" order="18" weight="0.34900284" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49801588" visible="true" weight="0.13624679" />
       <window_info anchor="right" id="R Packages" order="6" />
       <window_info anchor="right" id="R Graphics" order="5" />
-      <window_info anchor="bottom" id="Event Log" order="17" side_tool="true" weight="0.3298292" />
-      <window_info anchor="bottom" id="Version Control" order="16" visible="true" weight="0.3252688" />
-      <window_info anchor="bottom" id="Python Console" order="19" weight="0.3266129" />
-      <window_info anchor="bottom" id="Run" order="6" weight="0.3292517" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="18" weight="0.3293011" />
+      <window_info anchor="bottom" id="Find" order="5" weight="0.31048387" />
+      <window_info id="Structure" order="1" sideWeight="0.5019841" side_tool="true" visible="true" weight="0.13624679" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="9" weight="0.4" />
+      <window_info anchor="bottom" id="Debug" order="9" weight="0.39919356" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -404,8 +392,29 @@
       <window_info anchor="bottom" id="Message" order="1" />
       <window_info anchor="bottom" id="Inspection" order="14" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="13" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="5" />
     </layout>
+    <layout-to-restore>
+      <window_info anchor="bottom" id="Find" order="2" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Run" order="3" weight="0.3292517" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11953727" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="7" weight="0.3292683" />
+      <window_info anchor="right" id="R Graphics" order="3" />
+      <window_info anchor="bottom" id="Inspection Results" order="0" weight="0.3293011" />
+      <window_info anchor="right" id="R Packages" order="4" />
+      <window_info anchor="bottom" id="Debug" order="4" weight="0.4" />
+      <window_info anchor="bottom" id="Terminal" order="10" weight="0.3293011" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="11" visible="true" weight="0.3252688" />
+      <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.3252688" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" weight="0.3293011" />
+      <window_info anchor="bottom" id="Message" order="1" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.History.Properties">
     <option name="COLUMN_ORDER">
@@ -451,7 +460,9 @@
     <MESSAGE value="Added an excecutable python file to call wrapper, also added configuration file" />
     <MESSAGE value="Re-organized logging directories" />
     <MESSAGE value="4/6 Current UnitTests are functional, should finsih the rest soon, wrapper is also back up and running" />
-    <option name="LAST_COMMIT_MESSAGE" value="4/6 Current UnitTests are functional, should finsih the rest soon, wrapper is also back up and running" />
+    <MESSAGE value="Wrapper is once again functional" />
+    <MESSAGE value="Finished except for setup.py file" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished except for setup.py file" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -460,8 +471,20 @@
           <url>file://$PROJECT_DIR$/wrapper_runner.py</url>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py</url>
+          <line>14</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="6" />
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+      <option name="time" value="10" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -469,9 +492,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1904">
           <caret line="112" column="24" selection-start-line="112" selection-start-column="24" selection-end-line="112" selection-end-column="24" />
-          <folding>
-            <element signature="e#50#79#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -497,7 +517,8 @@
         <state relative-caret-position="408">
           <caret line="26" column="34" lean-forward="true" selection-start-line="26" selection-start-column="34" selection-end-line="26" selection-end-column="34" />
           <folding>
-            <element signature="e#510#529#0" expanded="true" />
+            <element signature="e#24#85#1" />
+            <element signature="e#286#301#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -513,9 +534,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
           <caret line="17" column="20" lean-forward="true" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
-          <folding>
-            <element signature="e#50#79#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -531,9 +549,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
           <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
-          <folding>
-            <element signature="e#50#79#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -549,9 +564,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
           <caret line="12" column="5" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="5" />
-          <folding>
-            <element signature="e#50#79#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -591,16 +603,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/wrapper_executable.py" />
     <entry file="file://$PROJECT_DIR$/wrapper/API/API_request.py" />
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="17">
-            <caret line="1" column="65" selection-start-line="1" selection-start-column="65" selection-end-line="1" selection-end-column="65" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/Python27/Lib/unittest/case.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3766">
@@ -638,20 +640,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/unit_testing/config.ini">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="26" selection-start-line="4" selection-start-column="26" selection-end-line="4" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wrapper_runner.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/unit_testing/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
@@ -659,29 +647,65 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/pip/_internal/basecommand.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3400">
+          <caret line="207" column="10" selection-start-line="207" selection-start-column="10" selection-end-line="207" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wrapper_runner.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="38" lean-forward="true" selection-start-column="38" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/tester.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="15" lean-forward="true" selection-start-line="10" selection-start-column="15" selection-end-line="10" selection-end-column="15" />
+        <state>
+          <caret column="23" lean-forward="true" selection-start-column="23" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/unit_testing/config.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="3" column="28" lean-forward="true" selection-start-line="3" selection-start-column="28" selection-end-line="3" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/pip/_internal/req/req_set.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="101" column="18" selection-start-line="101" selection-start-column="18" selection-end-line="101" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="371" column="4" lean-forward="true" selection-start-line="371" selection-start-column="4" selection-end-line="371" selection-end-column="4" />
-          <folding>
-            <element signature="e#50#79#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-2160">
+          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="60">
+            <caret line="3" column="15" selection-start-line="3" selection-start-column="15" selection-end-line="3" selection-end-column="15" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="29" column="35" lean-forward="true" selection-start-line="29" selection-start-column="35" selection-end-line="29" selection-end-column="35" />
+        <state relative-caret-position="60">
+          <caret line="7" column="2" selection-start-line="7" selection-start-column="2" selection-end-line="7" selection-end-column="2" />
           <folding>
-            <element signature="e#510#529#0" expanded="true" />
+            <element signature="e#24#85#1" />
+            <element signature="e#286#301#0" expanded="true" />
           </folding>
         </state>
       </provider>

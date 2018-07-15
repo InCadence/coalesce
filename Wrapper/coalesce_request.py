@@ -5,8 +5,6 @@
 
 from urlparse import urlsplit
 import pprint
-from copy import deepcopy
-from sys import stdout
 import collections
 
 
@@ -309,13 +307,15 @@ def read(ARTIFACT = None, KEY = None, TESTING = "false"):
         else:
             ValueError("You have entered an invalid parameter. Check again.")
 
-def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f', TESTING = "false"):
+def delete(TYPE = None, KEY = None, TESTING = "false"):
     
     """
     :TYPE: The type of entity being deleted
     :KEY: The UUID of the entity being deleted
     """
-    
+    if (TYPE or KEY) == None:
+        raise ValueError("Please ensure that any inputs are not none")
+
     serverobj = CoalesceServer()
     server = serverobj.URL
     headers = {
@@ -334,6 +334,8 @@ def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f
                             headers = headers,
                             delay = 1,
                             max_attempts = 2)
+    if TESTING == "true":
+        return response, data
     return response
 
 def update_template(orignal, change):
