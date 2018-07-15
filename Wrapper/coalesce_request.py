@@ -5,9 +5,13 @@
 
 from urlparse import urlsplit
 import pprint
-from pandas import Series
+from copy import deepcopy
+from sys import stdout
+import collections
+
 
 import simplejson as json
+from pandas import Series
 
 from utilities.API_request import get_response
 from utilities.logger import package_logger
@@ -203,7 +207,7 @@ def search(params = None, operation = u"search",
             Has multiple type of operators as well
             Can be found in the search_parser.py file
             """
-            GROUP = [{}]
+            GROUP = query
             PROPERTYNAMES = []
             for i in range(len(FIELDS)):
                 PROPERTYNAMES.append("CoalesceEntity" + "." + FIELDS[i])
@@ -212,24 +216,19 @@ def search(params = None, operation = u"search",
                     "Connection" : u"keep-alive",
                     "Content-Type" : u"application/json; charset=utf-8"
                     }
-            data = {
-                            "pageSize":200,"pageNumber":1,
-                            "propertyNames": PROPERTYNAMES, 
-                            "group": {"operator": OPERATOR, "criteria": GROUP}}
 
-            if type(query) == list:
-                for key in query:
-                    if type(query) == dict:
-                        for key2, value2 in query:
-                            if key2 in data:
-                                data[key2] = query[key2]
-                            del query[key]
-                    query = GROUP
-                    data = json.dumps(data)
+            data = {
+                "pageSize": 200, "pageNumber": 1,
+                "propertyNames": PROPERTYNAMES,
+                "group": {"operator": OPERATOR, "criteria": GROUP}}
+
+            data = json.dumps(data, indent = 4, sort_keys = True)
 
             if type(query) == str:
                 raise ValueError("Please enter your query as a dictionary")
-                
+
+            data = json.dumps(json.loads(data))
+
             response = get_response(URL = server + OPERATIONS[operation][0],
                                     method = method,
                                     params = params,
@@ -239,7 +238,8 @@ def search(params = None, operation = u"search",
                                     max_attempts = 2)
             if TESTING == "true":
                 return response, data
-            return response
+            else:
+                return response
             
 def read(ARTIFACT = None, KEY = None, TESTING = "false"):
         
@@ -336,7 +336,22 @@ def delete(TYPE = ['GDELTArtifact'], KEY = '30000105-9037-48d2-84be-ddb414d5748f
                             max_attempts = 2)
     return response
 
-def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']['sectionsAsList']":"false"}, TESTING = "false"):
+def update_template(orignal, change):
+    for key, value in change.iteritems():
+        if isinstance(value, collections.Mapping):
+            placeholder = update_template(orignal.get(key), value)
+            orignal[key] = placeholder
+        elif isinstance(value, list):
+            for key1 in value:
+                index = value.index(key1)
+                change[key] = value[index]
+                placeholder = [update_template(orignal[key][index], change[key])]
+                orignal[key] = placeholder
+        else:
+            orignal[key] = change[key]
+    return  orignal
+
+def create(TYPE = None, FIELDSADDED = None, TESTING = "false"):
     
     """
     Arguments:
@@ -348,7 +363,10 @@ def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']['se
     if TYPE == None:
         raise ValueError("Please specify a type of template to retrieve from the server"
                          )
-        
+
+    if FIELDSADDED == None:
+        raise ValueError("Please specify fields to add, or enter an empty list")
+
     serverobj = CoalesceServer()
     server = serverobj.URL
     headers = {
@@ -369,7 +387,7 @@ def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']['se
                             max_attempts = 2
                             )
     TEMPLATE_KEYS = json.loads(response.text)
-    
+
     for i in range(len(TEMPLATE_KEYS)):
         if TEMPLATE_KEYS[i][u"name"] == TYPE:
             key = TEMPLATE_KEYS[i][u"key"]
@@ -382,44 +400,29 @@ def create(TYPE = "OEEvent", FIELDSADDED = {"flatten": "false", "['flatten']['se
                             delay = 1,
                             max_attempts = 2
                             )
-    
-    TEMPLATE = (json.dumps(json.loads(response.text), indent = 4, sort_keys = True))
-    
-    def Nester(changes, dictionary):
-        for key1, value1 in changes.iteritems():
-            if '[' not in key1:
-                for key2,value2 in dictionary.items():
-                    if key1 == key2:
-                        dictionary[key2] = changes[key1]
-            elif ("[" and "]") in key1:
-                path = key1.replace('][', ',').replace(']', '').replace('[','').replace("'","").split(',')
-                str_integers = []
-                for i in range(10):
-                    str_integers += "{}".format(i)
-                for i in path:
-                    if i in str_integers:
-                        i = int(i)
-                    field = dictionary[i]
-                changes[key1] = field
-        return json.dumps(dictionary)
-    
-    data = json.loads(Nester(changes = FIELDSADDED, dictionary = json.loads(TEMPLATE)))
-    
+
+    TEMPLATE = json.loads(response.text)
+    for item in FIELDSADDED:
+        tmp = update_template(TEMPLATE, item)
+    data = json.dumps(tmp)
+
     response = get_response(URL = server + OPERATIONS[operation][0] +
-                            data["key"],
+                            json.loads(data)["key"],
                             method = method,
                             params = params,
-                            data = TEMPLATE,
+                            data = data,
                             headers = headers,
                             delay = 1,
                             max_attempts = 2)
     if TESTING == "true":
-        return response.text, data
-    return response
+        return response, json.loads(data)
+    else:
+        return response
         
-def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9',
-           NEWVALUES = {"namePath": "OEvent"}, TESTING = "false"):
-        
+def update(VALUE = None, KEY = None,
+           NEWVALUES = None,
+           TESTING = "false"):
+
         """
         Arguments:
         :VALUE: The type of entity being requested
@@ -428,7 +431,9 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
         present in the first or second nest, else provide an entire path to ensure 
         repeating keys are not confused
         """
-        
+        if (VALUE or KEY or NEWVALUES) == None:
+            raise ValueError("Make sure no input parameters are None and retry")
+
         serverobj = CoalesceServer()
         server = serverobj.URL
         headers = {
@@ -449,38 +454,29 @@ def update(VALUE =['GDELTArtifact'], KEY = '90001276-e620-4f9c-bf64-3907f7870cb9
                                 max_attempts = 2
                                 )
         
-        TEMPLATE = (json.dumps(json.loads(response.text), indent = 4, sort_keys = True))
-        
-        def Nester(changes, dictionary):
-            for key1, value1 in changes.iteritems():
-                if '[' not in key1:
-                    for key2,value2 in dictionary.items():
-                        if key1 == key2:
-                            dictionary[key2] = changes[key1]
-                    
-                elif ("[" and "]") in key1:
-                    path = key1.replace('][', ',').replace(']', '').replace('[','').replace("'","").split(',')
-                    str_integers = []
-                    for i in range(10):
-                        str_integers += "{}".format(i)
-                    for i in path:
-                        if i in str_integers:
-                            i = int(i)
-                        field = dictionary[i]
-                    changes[key1] = field
-                    
-            TEMPLATE = json.dumps(dictionary)
-            return TEMPLATE
-            
-        data = Nester(changes = NEWVALUES, dictionary = json.loads(TEMPLATE)) 
+        TEMPLATE = json.loads(response.text)
+
+        if len(NEWVALUES) > 0:
+            for item in NEWVALUES:
+                tmp = update_template(TEMPLATE, item)
+            data = tmp
+
+        elif len(NEWVALUES) == 0:
+            data = TEMPLATE
+
+        elif len(NEWVALUES) < 0:
+            raise ValueError("HOW?")
+
         response = get_response(URL = server + OPERATIONS[operation][0] +
                                 read_payload['entityKey'],
                                 method = method,
                                 params = params,
-                                data = data,
+                                data = json.dumps(data),
                                 headers = headers,
                                 delay = 1,
                                 max_attempts = 2)
+
         if TESTING == "true":
             return response, data
+
         return response
