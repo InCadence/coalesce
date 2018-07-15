@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="be2e82be-f551-461f-ba18-0ed2a388311f" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/LICENSE.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tester.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/wrapper_runner.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,7 +21,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="tests_coalesce_request.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="tests_coalesce_request.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="60">
@@ -30,11 +35,39 @@
         </entry>
       </file>
       <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/unit_testing/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor />
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="200">
+              <caret line="10" column="56" selection-start-line="10" selection-start-column="56" selection-end-line="10" selection-end-column="56" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LICENSE.txt" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/LICENSE.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="20">
+              <caret line="1" selection-start-line="1" selection-end-line="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor relative-caret-position="60">
-                <caret line="3" column="15" selection-start-line="3" selection-start-column="15" selection-end-line="3" selection-end-column="15" />
+                <caret line="3" column="64" selection-start-line="3" selection-start-column="64" selection-end-line="3" selection-end-column="64" />
               </first_editor>
               <second_editor />
             </state>
@@ -93,16 +126,18 @@
         <option value="$PROJECT_DIR$/wrapper/utilities/logger.py" />
         <option value="$PROJECT_DIR$/wrapper/utilities/API_request.py" />
         <option value="$PROJECT_DIR$/wrapper/utilities/__init__.py" />
-        <option value="$PROJECT_DIR$/wrapper_runner.py" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/wrapper/coalesce_request.py" />
         <option value="$PROJECT_DIR$/unit_testing/config.ini" />
         <option value="$PROJECT_DIR$/unit_testing/tests_coalesce_request.py" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/wrapper_runner.py" />
+        <option value="$PROJECT_DIR$/wrapper/utilities/setup.py" />
+        <option value="$PROJECT_DIR$/LICENSE.txt" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="133" />
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="154" />
     <option name="y" value="-8" />
     <option name="width" value="1399" />
     <option name="height" value="820" />
@@ -122,16 +157,6 @@
             </path>
             <path>
               <item name="pyCoalesce" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pyCoalesce" type="462c0819:PsiDirectoryNode" />
-              <item name="unit_testing" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pyCoalesce" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pyCoalesce" type="462c0819:PsiDirectoryNode" />
-              <item name="wrapper" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pyCoalesce" type="b2602c69:ProjectViewProjectNode" />
               <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
@@ -146,9 +171,9 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\dvenkat\Desktop\Projects\pyCoalesce" />
       <recent name="C:\Users\dvenkat\Desktop\Projects\pyCoalesce\Wrapper" />
       <recent name="C:\Users\dvenkat\Desktop\Projects\pyCoalesce\Wrapper\search" />
-      <recent name="C:\Users\dvenkat\Desktop\Projects\pyCoalesce" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -370,19 +395,19 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
+    <frame x="-8" y="-8" width="1616" height="876" extended-state="7" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="15" weight="0.32795697" />
       <window_info anchor="bottom" id="Event Log" order="17" side_tool="true" weight="0.3293011" />
       <window_info anchor="bottom" id="Version Control" order="16" weight="0.32258064" />
-      <window_info anchor="bottom" id="Python Console" order="19" visible="true" weight="0.32258064" />
+      <window_info anchor="bottom" id="Python Console" order="19" weight="0.32258064" />
       <window_info anchor="bottom" id="Run" order="6" weight="0.32795697" />
-      <window_info anchor="bottom" id="Terminal" order="18" weight="0.34900284" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49801588" visible="true" weight="0.13624679" />
+      <window_info anchor="bottom" id="Terminal" order="18" visible="true" weight="0.34811828" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49896908" visible="true" weight="0.13624679" />
       <window_info anchor="right" id="R Packages" order="6" />
       <window_info anchor="right" id="R Graphics" order="5" />
       <window_info anchor="bottom" id="Find" order="5" weight="0.31048387" />
-      <window_info id="Structure" order="1" sideWeight="0.5019841" side_tool="true" visible="true" weight="0.13624679" />
+      <window_info id="Structure" order="1" sideWeight="0.5010309" side_tool="true" visible="true" weight="0.13624679" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="9" weight="0.39919356" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -467,10 +492,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/wrapper_runner.py</url>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py</url>
           <line>14</line>
@@ -589,14 +610,6 @@
         <state relative-caret-position="-459" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/unit_testing/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor />
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wrapper/API/__init__.py" />
     <entry file="file://$PROJECT_DIR$/.Rhistory">
       <provider selected="true" editor-type-id="text-editor" />
@@ -654,13 +667,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wrapper_runner.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="38" lean-forward="true" selection-start-column="38" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tester.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -689,16 +695,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="60">
-            <caret line="3" column="15" selection-start-line="3" selection-start-column="15" selection-end-line="3" selection-end-column="15" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -707,6 +703,41 @@
             <element signature="e#24#85#1" />
             <element signature="e#286#301#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="60">
+            <caret line="3" column="64" selection-start-line="3" selection-start-column="64" selection-end-line="3" selection-end-column="64" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wrapper_runner.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/unit_testing/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="10" column="56" selection-start-line="10" selection-start-column="56" selection-end-line="10" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LICENSE.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="20">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
         </state>
       </provider>
     </entry>

@@ -1,0 +1,15 @@
+README.md
+setup.py
+Coalesce_Wrapper.egg-info/PKG-INFO
+Coalesce_Wrapper.egg-info/SOURCES.txt
+Coalesce_Wrapper.egg-info/dependency_links.txt
+Coalesce_Wrapper.egg-info/top_level.txt
+unit_testing/__init__.py
+unit_testing/tests_coalesce_request.py
+wrapper/__init__.py
+wrapper/coalesce_request.py
+wrapper/search/__init__.py
+wrapper/search/search_parser.py
+wrapper/utilities/API_request.py
+wrapper/utilities/__init__.py
+wrapper/utilities/logger.py
