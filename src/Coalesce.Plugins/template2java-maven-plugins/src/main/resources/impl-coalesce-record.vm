@@ -198,7 +198,7 @@ public class ${classname} extends CoalesceRecord implements I${name}Record {
     {
 #if($fd.getDataType() == "FILE_TYPE")
 #elseif($fd.getDataType() == "DATE_TIME_TYPE")
-        get$normalizer.normalize($fd.getName())Field().setValue(new DateTime(value.getTime()));
+        get$normalizer.normalize($fd.getName())Field().setValue(value != null ? new DateTime(value.getTime()) : null);
 #elseif($fd.getDataType() == "BINARY_TYPE")
 #else
         get$normalizer.normalize($fd.getName())Field().setValue(value);
