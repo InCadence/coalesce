@@ -8,14 +8,14 @@ import { getDefaultTheme } from 'common-components/lib/js/theme'
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import uuid from 'uuid';
 
-import { loadTemplates, loadTemplate, saveTemplate,registerTemplate } from 'common-components/lib/js/templateController.js';
+import { loadTemplates, loadTemplate, saveTemplate,registerTemplate, loadTemplateAsXML } from 'common-components/lib/js/templateController';
+import { saveFile } from 'common-components/lib/js/common';
+
 import { loadJSON } from 'common-components/lib/js/propertyController';
 import {Menu} from 'common-components/lib/index.js';
 
 import { DialogMessage, DialogLoader, DialogTemplateSelection} from 'common-components/lib/components/dialogs';
 import RGL,{WidthProvider} from 'react-grid-layout';
-
-import { getRootKarafUrl } from 'common-components/lib/js/common';
 
 var pjson = require('../package.json');
 const ReactGridLayout = WidthProvider(RGL);
@@ -419,10 +419,11 @@ class TemplateWorkspace extends Component {
   }
 
   handleTemplateDownload(){
-      var karafRootAddr = getRootKarafUrl();
-      for(var ii = 0; ii < this.state.items.length; ii++){
-        window.open(`${karafRootAddr}` + '/templates/' + this.state.items[ii].template.key + '.xml', '_blank');
-      }
+      this.state.items.forEach(function (item) {
+        loadTemplateAsXML(item.template.key).then((xml) => {
+          saveFile(new Blob([xml]), item.template.key + ".xml");
+        })
+      })
   }
 
   handleGraphAdd() {

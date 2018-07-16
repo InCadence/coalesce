@@ -8,7 +8,6 @@ import { Row } from 'react-bootstrap'
 const iconStyles = {
   marginRight: 2,
   padding: "0px",
-  width: 24,
   width: 24
 };
 
