@@ -31,12 +31,18 @@ export class DialogMap extends React.Component {
     this.handleChange = this.handleChange.bind(this)
     inherits(closeControl, Control)
     inherits(pointsControl, Control)
+    inherits(deletePointControl, Control)
 
+
+    var controls = [
+      new closeControl({function: this.handleClose}),
+      new pointsControl({function: this.handleChange}),
+    ]
+    if(this.props.shape === 'MULTIPOINT' || this.props.shape === 'POINT') {
+      controls.push(new deletePointControl({function: this.props.deleteFeature}))
+    }
     this.opt_options = {
-      controls: [
-        new closeControl({function: this.handleClose}),
-        new pointsControl({function: this.handleChange}),
-      ],
+      controls: controls
     }
   }
 
@@ -56,6 +62,7 @@ export class DialogMap extends React.Component {
     this.setState({
       open: false
     });
+    
     // this.setState({multipoint: this.getWKT(this.state.value)});
   }
 
@@ -81,7 +88,9 @@ export class DialogMap extends React.Component {
               opt_options={this.opt_options}
               configureMap={this.props.configureMap}
               handleClose={this.handleClose}
-              uniqueID={this.props.uniqueID}/>
+              uniqueID={this.props.uniqueID}
+              coords={this.props.convertCoordinates}
+              shape={this.props.shape}/>
           </div>}
 
         {value == 1 &&
@@ -140,6 +149,26 @@ var pointsControl = function(opt_options) {
 
   const element = document.createElement('div');
   element.className = 'ol-unselectable ol-control points-control';
+  element.appendChild(button);
+
+  Control.call(this, {
+    element: element,
+    target: options.target
+  })
+}
+
+var deletePointControl = function(opt_options) {
+  var options = opt_options || {};
+
+  const button = document.createElement('button');
+  button.innerHTML = 'D';
+  button.type = 'button';
+  button.title = 'WKT/Points'
+
+  button.onclick = () => options['function']();
+
+  const element = document.createElement('div');
+  element.className = 'ol-unselectable ol-control delete-control';
   element.appendChild(button);
 
   Control.call(this, {

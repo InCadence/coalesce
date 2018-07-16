@@ -25,7 +25,6 @@ export default class PointsTable extends React.Component {
       coordsHashmap: this.initCoordsHashmap(),
       values: this.props.values || {}
     }
-
     this.handleInputFocus = this.handleInputFocus.bind(this);
     this.handleInputXY = this.handleInputXY.bind(this);
     this.handleOnBlur = this.handleOnBlur.bind(this);
@@ -38,6 +37,7 @@ export default class PointsTable extends React.Component {
 
     if (coordsHashmap.size == 0) {
       if (this.props.feature) {
+        console.log(this.props.feature);
         if (this.props.shape == 'Circle') {
 
           var center = this.props.feature.getGeometry().getCenter()
@@ -68,6 +68,7 @@ export default class PointsTable extends React.Component {
 
   getCoordinates() {
     var coordinates = this.props.feature.getGeometry().getCoordinates()
+    console.log(coordinates);
     if (this.props.shape == 'Polygon') {
       coordinates = coordinates[0]
     }
@@ -109,6 +110,7 @@ export default class PointsTable extends React.Component {
     if(!feature) {
       return null;
     }
+    console.log(feature.getGeometry().getCoordinates());
 
     var rows = [];
 

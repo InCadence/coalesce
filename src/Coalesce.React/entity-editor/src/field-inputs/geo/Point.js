@@ -16,6 +16,7 @@ import Modify from 'ol/interaction/Modify';
 import WKT from 'ol/format/WKT';
 import Circle from 'ol/geom/Circle';
 import HashMap from 'hashmap/hashmap'
+import ReactDOM from 'react-dom'
 import {defaults as defaultControls} from 'ol/control'
 import {defaults as defaultInteractions} from 'ol/interaction'
 
@@ -24,7 +25,6 @@ export default class Point extends React.Component {
 
   constructor(props) {
     super(props);
-
     this.wktEmpty = 'POINT EMPTY'
 
     this.opts = this.props.opts;
@@ -52,7 +52,6 @@ export default class Point extends React.Component {
     var coords = fullWKT.match(pattern) //[x, y, z]
     this.coordsHashmap = new HashMap()
     this.coordsHashmap.set([parseFloat(coords[0]), parseFloat(coords[1])], parseFloat(coords[2]))
-    console.log(this.coordsHashmap);
     var wkt = 'POINT(' + coords[0] + ' ' + coords[1] + ')'
 
     return wkt
@@ -80,12 +79,10 @@ export default class Point extends React.Component {
     }
     else {
       formatted = new WKT().writeFeature(new Feature({geometry: features[0].getGeometry()}));
-      console.log(formatted);
       fullWKT = that.getFullWKT(formatted)
     }
 
     this.props.handleOnChange(this.attr, fullWKT)
-
     self.setState({
       wkt: formatted,
       fullWKT: fullWKT
@@ -117,6 +114,8 @@ export default class Point extends React.Component {
   }
 
   clickEvt(evt, that) {
+
+
     var features = [];
     that.map.forEachFeatureAtPixel(evt.pixel,
       function(feature, layer) {
@@ -129,7 +128,9 @@ export default class Point extends React.Component {
       var lonLat = features[0].getGeometry().getCoordinates()
       var coordinates = that.convertCoordinates(lonLat)
       features[0].setId('clicked')
-      that.setState({visibility: "inline-block"})
+
+      that.map.getOverlays().item(0).setElement(document.getElementById('popup' + that.field.key))
+      this.props.uniqueIDg(that.map.getOverlays().item(0));
       that.map.getOverlays().item(0).setPosition(lonLat);
     }
     else if (features.length === 0)
@@ -154,10 +155,7 @@ export default class Point extends React.Component {
   }
 
 
-
   render() {
-    const uniqueID = Date.now()
-
     var clickEvt = this.clickEvt
     var parent = this
     return(
@@ -165,7 +163,7 @@ export default class Point extends React.Component {
         handleOnChange={this.props.handleOnChange}
         clickEvt={clickEvt}
         opts={this.props.opts}
-        uniqueID={uniqueID}
+        uniqueID={this.field.key}
         showLabels={this.props.showLabels}
         wkt={this.state.wkt}
         fullWKT={this.field[this.attr]}

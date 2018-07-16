@@ -20,6 +20,7 @@ import WKT from 'ol/format/WKT';
 import Circle from 'ol/geom/Circle';
 import Snap from 'ol/interaction/Snap';
 import HashMap from 'hashmap/hashmap'
+import { IconButton } from 'common-components/lib/components/IconButton.js'
 
 var mgrs = require('mgrs');
 
@@ -41,8 +42,6 @@ export default class Shape extends React.Component {
       }
     )
 
-    console.log(this.field);
-
     if(this.field[this.attr]) {
 
       this.state = {
@@ -53,7 +52,6 @@ export default class Shape extends React.Component {
         coordsHashmap: new HashMap(),
       };
       this.state.coordsHashmap = this.coordsHashmap
-      console.log(this.state.coordsHashmap);
     }
     else {
       this.state = {
@@ -73,7 +71,7 @@ export default class Shape extends React.Component {
     this.configureMap = this.configureMap.bind(this)
     this.handleHashmap = this.handleHashmap.bind(this)
     this.updateFeature = this.updateFeature.bind(this)
-
+    this.deleteFeatures = this.deleteFeatures.bind(this)
   }
 
   stripZAxis(fullWKT) {
@@ -85,7 +83,6 @@ export default class Shape extends React.Component {
       this.coordsHashmap = new HashMap()
       this.coordsHashmap.set([parseFloat(coords[0]), parseFloat(coords[1])], parseFloat(coords[2]))
       var wkt = 'POINT(' + coords[0] + ' ' + coords[1] + ')'
-      console.log(this.field['radius'])
       return wkt
     }
     else {
@@ -120,7 +117,6 @@ export default class Shape extends React.Component {
       if (this.props.shape === 'Polygon') {
         wkt += ')'
       }
-      console.log(wkt);
       return wkt
     }
   }
@@ -129,18 +125,18 @@ export default class Shape extends React.Component {
     var self = this;
 
     this.state.vectorSource.clear()
-    var feature = new WKT().readFeature(this.state.wkt)
 
-    if (this.props.shape === 'Circle') {
-      feature = new Feature({
-        geometry: new Circle(feature.getGeometry().getCoordinates(), this.state.radius)
-      })
+    if (this.state.wkt != this.wktEmpty)
+    {
+      var feature = new WKT().readFeature(this.state.wkt)
+
+      if (this.props.shape === 'Circle') {
+        feature = new Feature({
+          geometry: new Circle(feature.getGeometry().getCoordinates(), this.state.radius)
+        })
+      }
       this.state.vectorSource.addFeature(feature)
     }
-    else {
-      this.state.vectorSource.addFeature(feature)
-    }
-
     //controls should be passed into the dictionary opt_options as a list
     var controls = opt_options['controls']
 
@@ -228,7 +224,6 @@ export default class Shape extends React.Component {
   handleInputChange(event, opts) {
     if (opts == 'radius') {
       this.setState({radius: event.target.value})
-      console.log(event.target.value);
       this.props.handleOnChange('radius', event.target.value)
     }
     else {
@@ -335,7 +330,6 @@ export default class Shape extends React.Component {
   }
 
   clearFeatures(vectorSource) {
-    console.log('clearedge');
     vectorSource.clear()
     }
 
@@ -432,7 +426,6 @@ export default class Shape extends React.Component {
         fullWKT: fullWKT,
       });
       this.props.handleOnChange(this.attr, fullWKT)
-      console.log(radius);
       this.props.handleOnChange('radius', radius)
     }
     else {
@@ -459,7 +452,6 @@ export default class Shape extends React.Component {
       var featureCoords = this.state.vectorSource.getFeatures()[0].getGeometry().getCenter()
       var zCoord = this.state.coordsHashmap.get(featureCoords) || 0;
       var fullWKT = [wkt.slice(0, lastParen), (' ' + zCoord), wkt.slice(lastParen)].join('')
-      console.log(fullWKT);
       return fullWKT;
     }
 
@@ -500,13 +492,25 @@ export default class Shape extends React.Component {
   }
 
   getFeature() {
-    var feature = new WKT().readFeature(this.state.wkt)
-    if (this.props.shape === 'Circle') {
-      feature = new Feature({
-        geometry: new Circle(feature.getGeometry().getCoordinates(), this.state.radius)
+    // var feature = new WKT().readFeature(this.state.wkt)
+    // if (this.props.shape === 'Circle') {
+    //   feature = new Feature({
+    //     geometry: new Circle(feature.getGeometry().getCoordinates(), this.state.radius)
+    //   })
+    // }
+    // return feature;
+  }
+
+  deleteFeatures() {
+    if(this.map) {
+      this.state.vectorSource.clear()
+      this.state.coordsHashmap.clear()
+      this.props.handleOnChange(this.attr, this.wktEmpty)
+      this.setState({
+        wkt: this.wktEmpty,
+        fullWKT: this.wktEmpty
       })
     }
-    return feature;
   }
 
   render() {
@@ -517,8 +521,6 @@ export default class Shape extends React.Component {
     var attr = opts['attr'];
 
     var self = this;
-
-    console.log(this.field);
 
     return (
       <div>
@@ -531,6 +533,8 @@ export default class Shape extends React.Component {
         value={this.state.fullWKT}
         disabled
         defaultValue={this.field.defaultValue}></TextField>
+
+        <IconButton icon='/images/svg/erase.svg' id={'button' + this.field.key} onClick={this.deleteFeatures}/>
 
         <DialogMap
           feature={this.state.vectorSource.getFeatures()[0] || this.getFeature()}

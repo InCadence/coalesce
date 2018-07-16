@@ -1,5 +1,4 @@
 import React from 'react';
-//import Modal from 'material-ui/Modal';
 import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
 import Modal from 'react-responsive-modal';
@@ -7,6 +6,7 @@ import 'common-components/css/map_popup.css'
 import 'common-components/css/ol.css';
 import { DialogMap } from '../../map/dialogmap.js'
 import MapMaker from '../../map/mapmaker.js';
+import Popup from '../../map/popup.js';
 import VectorSource from 'ol/source/Vector';
 import Collection from 'ol/Collection';
 import Point from 'ol/geom/Point';
@@ -41,8 +41,7 @@ export default class MapPoint extends React.Component {
       }),
       clickEvt: this.props.clickEvt,
       open: false,
-      coords: ['', '', ''],
-      visibility: 'none',
+      coords: [' ', ' ', ' '],
       wkt: this.props.wkt,
       fullWKT: this.props.fullWKT,
       coordsHashmap: this.props.coordsHashmap || new HashMap(),
@@ -52,17 +51,14 @@ export default class MapPoint extends React.Component {
 
 
     this.deleteFeature = this.deleteFeature.bind(this)
+    this.deleteFeatures = this.deleteFeatures.bind(this)
     this.handleInputFocus = this.handleInputFocus.bind(this)
     this.handleInputBlur = this.handleInputBlur.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
     this.configureMap = this.configureMap.bind(this)
     this.updateFeature = this.updateFeature.bind(this)
-
   }
 
-  componentDidMount() {
-    //this.map.updateSize()
-  }
 
   createFeature(coords) {
     var point = new Point(coords);
@@ -71,7 +67,6 @@ export default class MapPoint extends React.Component {
     });
 
     this.stylizeFeature(iconFeature)
-    this.setState({visibility: "none"})
 
     return this.addFeature(iconFeature)
   }
@@ -92,7 +87,6 @@ export default class MapPoint extends React.Component {
 
   addFeature(feature) {
     this.state.vectorSource.addFeature(feature);
-    this.setState({visibility: "none"})
     return feature
   }
 
@@ -104,16 +98,30 @@ export default class MapPoint extends React.Component {
       vecSource.removeFeature(clicked);
       this.props.parent.handleChangeFeature(this.props.parent, this);
     }
-    this.setState({visibility: "none"})
-
 
   }
 
+
+
+
   deleteFeatures() {
-    //unused
-    this.map.getOverlays()[0].setPosition(undefined)
-    this.state.vectorSource.clear()
-    this.setState({visibility: "none"})
+
+    if(this.map) {
+      this.map.getOverlays().item(0).setPosition(undefined)
+      this.state.vectorSource.clear()
+      this.props.handleOnChange(this.attr, this.wktEmpty)
+      this.props.parent.handleChangeFeature(this.props.parent, this)
+      this.setState({
+        wkt: this.wktEmpty,
+        fullWKT: this.wktEmpty
+      })
+      // var features = this.state.vectorSource.getFeatures()
+      // for (let i = 0; i < features.length; i++) {
+      //   this.state.vectorSource.removeFeatures
+      // }
+    }
+
+
 
   }
 
@@ -163,7 +171,6 @@ export default class MapPoint extends React.Component {
 
 
   configureMap(opt_options) {
-
     this.state.vectorSource.clear()
     var feature = new WKT().readFeature(this.props.wkt)
 
@@ -193,15 +200,13 @@ export default class MapPoint extends React.Component {
     ];
 
     var pop = new Overlay({
-      element: document.getElementById('popup' + this.props.uniqueID),
-      insertFirst: false,
-  })
-
+      element: document.getElementById('popup' + this.field.key),
+    })
     var overlays = [pop];
 
     var interactions = null;
 
-    this.map = new MapMaker(layers, overlays, interactions, controls, 'map' + this.props.uniqueID).getMap();
+    this.map = new MapMaker(layers, overlays, interactions, controls, 'map' + this.field.key).getMap();
 
     var self = this;
     this.map.on('click',
@@ -211,6 +216,7 @@ export default class MapPoint extends React.Component {
         self.props.parent.handlePoint(point, self.props.parent, self);
       }
     });
+    this.setState({map: this.map})
     return this.map;
   }
 
@@ -231,7 +237,6 @@ export default class MapPoint extends React.Component {
     var fullWKT = ''
     if (this.props.shape == 'POINT') {
       var featureCoords = this.state.vectorSource.getFeatures()[0].getGeometry().getCoordinates()
-      console.log(this.state.coordsHashmap);
       fullWKT = wkt.slice(0, wkt.length-1) + ' ' + (this.state.coordsHashmap.get(featureCoords) || 0) + ')'
 
     }
@@ -296,7 +301,6 @@ export default class MapPoint extends React.Component {
       var xy = oldFeatureCoordinates[indexNum].slice(0)
 
       var oldZ = coordsHashmap.get(xy)
-      console.log(oldZ);
 
       var newXY = xy.slice(0)
       if (axis == 'x') {
@@ -317,12 +321,20 @@ export default class MapPoint extends React.Component {
     }
   }
 
+  // generatePopup() {
+  //   return (<div id={"popup" + this.field.key} className="ol-popup">
+  //     <p onClick="this.select();"  id={'lonlat' + this.field.key}>{this.state.coords[0]}</p>
+  //     <p onClick="this.select();"  readonly id={'hdms' + this.field.key}>{this.state.coords[1]}</p>
+  //     <p onClick="this.select();" readonly id={'mgrs' + this.field.key}>{this.state.coords[2]}</p>
+  //
+  //   </div>)
+  // }
+
   render() {
     var style = this.opts['style'];
     var label = this.opts['label'];
 
     var self = this;
-
     var feature = this.state.vectorSource.getFeatures()[0];
 
     if (this.props.shape == 'MULTIPOINT' && this.state.vectorSource.getFeatures().length > 0) {
@@ -333,7 +345,7 @@ export default class MapPoint extends React.Component {
 
     return (
       <div>
-
+      <div id={"div" + this.field.key}/>
       <TextField
         id={this.field.key}
         fullWidth={true}
@@ -344,22 +356,18 @@ export default class MapPoint extends React.Component {
         disabled
         defaultValue={this.field.defaultValue}></TextField>
 
-        <div id={"popup" + this.props.uniqueID} className="ol-popup">
-          <p onClick="this.select();"  id={'lonlat' + this.props.uniqueID}>{this.state.coords[0]}</p>
-          <p onClick="this.select();"  readonly id={'hdms' + this.props.uniqueID}>{this.state.coords[1]}</p>
-          <p onClick="this.select();" readonly id={'mgrs' + this.props.uniqueID}>{this.state.coords[2]}</p>
-
-        </div>
-        <IconButton icon='/images/svg/erase.svg' id={'button' + this.props.uniqueID} onClick={self.deleteFeature} visibility={this.state.visibility}/>
+        <IconButton icon='/images/svg/erase.svg' id={'button' + this.field.key} onClick={this.deleteFeatures}/>
 
 
         <DialogMap
           feature={feature}
           configureMap={this.configureMap}
-          uniqueID={this.props.uniqueID}
+          uniqueID={this.field.key}
           shape={this.props.shape}
           updateFeature={this.updateFeature}
+          deleteFeature={this.deleteFeature}
           coordsHashmap={this.state.coordsHashmap}
+          convertCoordinates={this.state.coords}
         />
 
       </div>

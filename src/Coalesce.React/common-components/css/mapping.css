@@ -5,13 +5,19 @@
 }
 
 .close-control {
-  top:85px;
+  top:107px;
   left: .5em;
   zIndex: 1001;
 }
 
 .points-control {
-  top: 57px;
+  top: 56px;
+  left: .5em;
+  zIndex: 1001;
+}
+
+.delete-control {
+  top: 81px;
   left: .5em;
   zIndex: 1001;
 }
