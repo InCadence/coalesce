@@ -11,7 +11,7 @@ setuptools.setup(
     description="A python wrapper for coalesce objects",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url=None,
+    url="https://github.com/InCadence/coalesce/wiki",
     packages=setuptools.find_packages(),
     classifiers=(
         "Programming Language :: Python :: 2.7",
