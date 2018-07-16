@@ -522,6 +522,15 @@ export default class Shape extends React.Component {
 
     return (
       <div>
+      <TextField
+        id={this.field.key}
+        fullWidth={true}
+        floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
+        underlineShow={this.props.showLabels}
+        style={style.root}
+        value={this.state.fullWKT}
+        disabled
+        defaultValue={this.field.defaultValue}></TextField>
 
         <DialogMap
           feature={this.state.vectorSource.getFeatures()[0] || this.getFeature()}
@@ -555,6 +564,7 @@ export default class Shape extends React.Component {
       </div>
     );
   }
+  //  // text input for editing wkt, removed from all map fields
   // <TextField
   //   id={'center' + this.props.uniqueID}
   //   fullWidth={true}

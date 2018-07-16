@@ -21,6 +21,7 @@ import OSM from 'ol/source/OSM';
 import HashMap from 'hashmap/hashmap'
 import MultiPoint from 'ol/geom/MultiPoint';
 import WKT from 'ol/format/WKT';
+import { IconButton } from 'common-components/lib/components/IconButton.js'
 
 var mgrs = require('mgrs');
 
@@ -41,12 +42,12 @@ export default class MapPoint extends React.Component {
       clickEvt: this.props.clickEvt,
       open: false,
       coords: ['', '', ''],
-      visibility: 'hidden',
+      visibility: 'none',
       wkt: this.props.wkt,
+      fullWKT: this.props.fullWKT,
       coordsHashmap: this.props.coordsHashmap || new HashMap(),
     };
 
-    this.fullWKT = ''
     this.wktEmpty = this.props.wktEmpty
 
 
@@ -70,7 +71,7 @@ export default class MapPoint extends React.Component {
     });
 
     this.stylizeFeature(iconFeature)
-    this.setState({visibility: "hidden"})
+    this.setState({visibility: "none"})
 
     return this.addFeature(iconFeature)
   }
@@ -91,7 +92,7 @@ export default class MapPoint extends React.Component {
 
   addFeature(feature) {
     this.state.vectorSource.addFeature(feature);
-    this.setState({visibility: "hidden"})
+    this.setState({visibility: "none"})
     return feature
   }
 
@@ -103,7 +104,7 @@ export default class MapPoint extends React.Component {
       vecSource.removeFeature(clicked);
       this.props.parent.handleChangeFeature(this.props.parent, this);
     }
-    this.setState({visibility: "hidden"})
+    this.setState({visibility: "none"})
 
 
   }
@@ -112,7 +113,7 @@ export default class MapPoint extends React.Component {
     //unused
     this.map.getOverlays()[0].setPosition(undefined)
     this.state.vectorSource.clear()
-    this.setState({visibility: "hidden"})
+    this.setState({visibility: "none"})
 
   }
 
@@ -266,7 +267,6 @@ export default class MapPoint extends React.Component {
     }
 
     this.props.handleOnChange(this.attr, fullWKT)
-    console.log(fullWKT);
 
     return fullWKT;
 
@@ -289,7 +289,7 @@ export default class MapPoint extends React.Component {
       var newZ = newXYZCoordsDict[index]
       var newCoordsHashmap = this.state.coordsHashmap.set(xy, newZ)
       this.setState({coordsHashmap: newCoordsHashmap})
-      this.fullWKT = this.getFullWKT(this.props.wkt)
+      this.state.fullWKT = this.getFullWKT(this.props.wkt)
     }
     else {
       //keep old xy
@@ -334,15 +334,24 @@ export default class MapPoint extends React.Component {
     return (
       <div>
 
+      <TextField
+        id={this.field.key}
+        fullWidth={true}
+        floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
+        underlineShow={this.props.showLabels}
+        style={style.root}
+        value={this.props.fullWKT}
+        disabled
+        defaultValue={this.field.defaultValue}></TextField>
+
         <div id={"popup" + this.props.uniqueID} className="ol-popup">
           <p onClick="this.select();"  id={'lonlat' + this.props.uniqueID}>{this.state.coords[0]}</p>
           <p onClick="this.select();"  readonly id={'hdms' + this.props.uniqueID}>{this.state.coords[1]}</p>
           <p onClick="this.select();" readonly id={'mgrs' + this.props.uniqueID}>{this.state.coords[2]}</p>
 
         </div>
-        <button id={'button' + this.props.uniqueID} type="button" onClick={self.deleteFeature} style={{visibility: this.state.visibility}}>
-          Delete
-        </button>
+        <IconButton icon='/images/svg/erase.svg' id={'button' + this.props.uniqueID} onClick={self.deleteFeature} visibility={this.state.visibility}/>
+
 
         <DialogMap
           feature={feature}
@@ -351,24 +360,22 @@ export default class MapPoint extends React.Component {
           shape={this.props.shape}
           updateFeature={this.updateFeature}
           coordsHashmap={this.state.coordsHashmap}
-          textInput={
-            <TextField
-              id={this.field.key}
-              fullWidth={true}
-              floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
-              underlineShow={this.props.showLabels}
-              style={style.root}
-              value={this.props.wkt}
-              onFocus={this.handleInputFocus}
-              onChange={this.handleInputChange}
-              onBlur={this.handleInputBlur}
-              defaultValue={this.field.defaultValue}></TextField>
-          }
         />
-
 
       </div>
     );
   }
-
+  // text input for editing wkt, removed from all map fields
+  // for use, pass into DialogMap as textInput prop
+  // <TextField
+  //   id={this.field.key}
+  //   fullWidth={true}
+  //   floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
+  //   underlineShow={this.props.showLabels}
+  //   style={style.root}
+  //   value={this.props.wkt}
+  //   onFocus={this.handleInputFocus}
+  //   onChange={this.handleInputChange}
+  //   onBlur={this.handleInputBlur}
+  //   defaultValue={this.field.defaultValue}></TextField>
 }

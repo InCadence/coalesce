@@ -10,6 +10,7 @@ import Icon from '@material-ui/core/Icon';
 import {Control} from 'ol/control';
 import {inherits} from 'ol/index.js';
 import PointsTable from './pointstable.js'
+import { IconButton } from 'common-components/lib/components/IconButton.js'
 
 import 'common-components/css/mapping.css'
 
@@ -66,7 +67,7 @@ export class DialogMap extends React.Component {
     var {value} = this.state
     return (
       <div>
-      <button type="button" onClick={this.handleOpen}>{this.props.shape}</button>
+      <IconButton icon='/images/svg/map.svg' onClick={this.handleOpen} />
 
       <Dialog
         open={this.state.open}
@@ -96,8 +97,6 @@ export class DialogMap extends React.Component {
             shape={this.props.shape}
             uniqueID={this.props.uniqueID}></PointsTable>
         </div>}
-
-        {value == 2 && <div>How did you get here.gif </div>}
 
       </Dialog>
 

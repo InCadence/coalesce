@@ -57,7 +57,6 @@ export default class Multipoint extends React.Component {
 
     var coords = fullWKT.match(pattern)
     this.coordsHashmap = new HashMap()
-    console.log(coords);
     var coordPos = 1;
 
     var wkt = 'MULTIPOINT((' + coords[0] + ' ' + coords[1] + ')'
@@ -100,7 +99,7 @@ export default class Multipoint extends React.Component {
       var lonLat = features[0].getGeometry().getCoordinates()
       var coordinates = that.convertCoordinates(lonLat)
       features[0].setId('clicked')
-      that.setState({visibility: "visible"})
+      that.setState({visibility: "inline-block"})
       that.map.getOverlays().item(0).setPosition(lonLat);
     }
     else if (features.length === 0)
@@ -114,13 +113,13 @@ export default class Multipoint extends React.Component {
         that.map.getOverlays().item(0).setPosition(undefined);
         var clicked = that.state.vectorSource.getFeatureById('clicked')
         clicked.setId('')
-        that.setState({visibility: "hidden"})
+        that.setState({visibility: "none"})
       }
     }
   }
 
   handlePoint(feature, self, that) {
-    that.setState({visibility: 'hidden'});
+    that.setState({visibility: 'none'});
     self.multipoint.appendPoint(feature.getGeometry());
 
     var formatted =  new WKT().writeFeature(new Feature({geometry: self.multipoint}));
@@ -193,6 +192,7 @@ export default class Multipoint extends React.Component {
         uniqueID={uniqueID}
         showLabels={this.props.showLabels}
         wkt={this.state.wkt}
+        fullWKT={this.field[this.attr]}
         wktEmpty={this.wktEmpty}
         coordsHashmap={this.coordsHashmap}
         parent={parent}

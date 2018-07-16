@@ -95,7 +95,7 @@ export default class Point extends React.Component {
 
   handleInput(that) {
 
-    that.setState({visibility: 'hidden'});
+    that.setState({visibility: 'none'});
     var input = document.getElementById(this.field.key).getAttribute('value')
     var feature = new WKT().readFeature(input)
 
@@ -129,7 +129,7 @@ export default class Point extends React.Component {
       var lonLat = features[0].getGeometry().getCoordinates()
       var coordinates = that.convertCoordinates(lonLat)
       features[0].setId('clicked')
-      that.setState({visibility: "visible"})
+      that.setState({visibility: "inline-block"})
       that.map.getOverlays().item(0).setPosition(lonLat);
     }
     else if (features.length === 0)
@@ -147,7 +147,7 @@ export default class Point extends React.Component {
       else {
         that.map.getOverlays().item(0).setPosition(undefined);
         that.state.vectorSource.getFeatureById('clicked').setId('')
-        that.setState({visibility: "hidden"})
+        that.setState({visibility: "none"})
       }
     }
 
@@ -168,6 +168,7 @@ export default class Point extends React.Component {
         uniqueID={uniqueID}
         showLabels={this.props.showLabels}
         wkt={this.state.wkt}
+        fullWKT={this.field[this.attr]}
         wktEmpty={this.wktEmpty}
         parent={parent}
         coordsHashmap={this.coordsHashmap}

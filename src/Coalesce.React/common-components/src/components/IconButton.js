@@ -16,6 +16,10 @@ export class IconButton extends React.PureComponent {
   }
 
   render() {
+    var display = 'inline-block'
+    if (this.props.visibility === 'none') {
+      display = this.props.visibility
+    }
 
     return (
       <img
@@ -23,7 +27,8 @@ export class IconButton extends React.PureComponent {
         alt={this.props.title}
         style={{
           width: this.props.size,
-          height: this.props.size
+          height: this.props.size,
+          display: display
         }}
         title={this.props.title}
         className={(this.props.enabled === true) ? "coalesce-img-button enabled" : "coalesce-img-button"}
@@ -31,7 +36,7 @@ export class IconButton extends React.PureComponent {
       />
     )
   }
-
+c
 }
 
 IconButton.defaultProps = {
