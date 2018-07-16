@@ -25,6 +25,7 @@ export class FilterCreator extends React.Component {
     this.state = {
       queryData: this.props.queryData,
       subGroups: this.props.subGroups,
+      andOr: this.props.andOr,
       isOpened: true,
       currentkey: 0
     }
@@ -52,7 +53,7 @@ export class FilterCreator extends React.Component {
                 columns={createColumns(this, this.props.recordsets, this.state.currentkey)}
               />
                {this.state.subGroups.map(function(table)
-                   {console.log("FilterCreator map", table);
+                   {
                    return(
 
                            <FilterCreator maxRows={that.state.maxRows} recordsets={that.props.recordsets} queryData = {table.criteria} subGroups = {table.groups}/>
@@ -88,7 +89,6 @@ export class FilterCreator extends React.Component {
     row.field = defaultField;
     row.operator = 'EqualTo';
     row.value = 'aa';
-    console.log("FilterCreator queryData is", queryData);
     this.setState({queryData: queryData});
   }
 
@@ -108,7 +108,6 @@ export class FilterCreator extends React.Component {
     var row = this.getRow(queryData, key);
 
     row.operator = e.target.value;
-
     this.setState({queryData: queryData});
   }
 
@@ -130,10 +129,15 @@ export class FilterCreator extends React.Component {
     this.setState({queryData: queryData});
   }
 
+  onAndOrChange(e) {
+    const {andOr} = this.state;
+    //Want to set the props to
+    this.setState({andOr: e.target.value});
+  }
+
   deleteRow(key, e) {
 
     const {queryData} = this.state;
-    console.log("delete row", key);
     // Delete Row
     for (var ii=0; ii<queryData.length; ii++) {
       if (queryData[ii].key === key) {
@@ -146,7 +150,6 @@ export class FilterCreator extends React.Component {
     this.setState({queryData: queryData});
   }
   addSubGroup(e){
-    console.log("Adding SubGroup");
     const {subGroups} = this.state;
     var tempTable = {
                      operator:'AND',
@@ -160,12 +163,10 @@ export class FilterCreator extends React.Component {
                     };
     subGroups.push(tempTable);
     this.setState({subGroups: subGroups});
-    console.log("SubGroups is now", this.state.subGroups);
   }
 
   addRow(e) {
     const {currentkey, queryData} = this.state;
-    //console.log("Adding row, recordsets is", recordsets, currentkey);
     var keyvalue = currentkey + 1;
 
     if (queryData.length < this.props.maxRows) {
@@ -305,19 +306,19 @@ function createColumns(that, recordsets, key) {
       )
     });
 
-    columns.push({
+    /*columns.push({
       Header: 'AndOr',
       accessor: 'andor',
       resizable: false,
       sortable: false,
       width: 100,
       Cell: (cell) => (
-        <select className="form-control" onChange={that.onAndOrChange.bind(that, cell.row.key)}>
-        <option></option>
-        <option>AND</option>
-        <option><OR<
-
-        )})
+        <select className="form-control" value={//need an array of and/or for each criteria.andor} onChange={that.onAndOrChange.bind(that, cell.row.key)}>
+          <option>AND</option>
+          <option>OR</option>
+        </select>
+      )
+    });*/
   }
   return columns;
 }

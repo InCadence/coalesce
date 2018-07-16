@@ -94,10 +94,10 @@ export class SearchCreator extends React.Component {
       {this.state.group.map(function(groupData){
              return(
                 <div>
-                <FilterCreator maxRows={that.state.maxRows} recordsets={that.props.recordsets} queryData = {groupData.criteria} subGroups = {groupData.groups}/>
+                <FilterCreator maxRows={that.state.maxRows} recordsets={that.props.recordsets} queryData = {groupData.criteria} andOr = {groupData.operator} subGroups = {groupData.groups}/>
                 {groupData.groups.map(function(table){
                           return(
-                          <FilterCreator maxRows={that.state.maxRows} recordsets={that.props.recordsets} queryData = {table.criteria} subGroups = {table.groups}/>)
+                          <FilterCreator maxRows={that.state.maxRows} recordsets={that.props.recordsets} queryData = {table.criteria} andOr = {table.operator} subGroups = {table.groups}/>)
                   }
                  )
 
