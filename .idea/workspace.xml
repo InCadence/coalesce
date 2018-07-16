@@ -3,14 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="be2e82be-f551-461f-ba18-0ed2a388311f" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Coalesce_Wrapper.egg-info/PKG-INFO" beforeDir="false" afterPath="$PROJECT_DIR$/Coalesce_Wrapper.egg-info/PKG-INFO" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Wrapper/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Wrapper/coalesce_request.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Wrapper/search/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Wrapper/search/search_parser.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Wrapper/utilities/API_request.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Wrapper/utilities/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Wrapper/utilities/logger.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -27,7 +19,25 @@
       <file leaf-file-name="coalesce_request.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/coalesce_wrapper/coalesce_request.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7007" />
+            <state relative-caret-position="-5567" />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="wrapper_runner.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wrapper_runner.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="80">
+              <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="380">
+              <caret line="19" column="6" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
+            </state>
           </provider>
         </entry>
       </file>
@@ -69,11 +79,11 @@
         <option value="$PROJECT_DIR$/unit_testing/config.ini" />
         <option value="$PROJECT_DIR$/unit_testing/tests_coalesce_request.py" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/wrapper_runner.py" />
         <option value="$PROJECT_DIR$/wrapper/utilities/setup.py" />
         <option value="$PROJECT_DIR$/LICENSE.txt" />
         <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/wrapper/__init__.py" />
+        <option value="$PROJECT_DIR$/wrapper_runner.py" />
       </list>
     </option>
   </component>
@@ -134,7 +144,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.coalesce_request">
+  <component name="RunManager" selected="Python.wrapper_runner">
     <configuration name="API_request" type="PythonConfigurationType" factoryName="Python">
       <module name="06-pycoalesce" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -243,9 +253,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.wrapper_runner" />
         <item itemvalue="Python.coalesce_request" />
         <item itemvalue="Python.tester" />
-        <item itemvalue="Python.wrapper_runner" />
         <item itemvalue="Python tests.Unittests for tests_coalesce_request.test_search" />
         <item itemvalue="Python tests.Unittests for tests_coalesce_request.test_update" />
       </list>
@@ -308,7 +318,14 @@
       <option name="project" value="LOCAL" />
       <updated>1531669599091</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Completed build, need to complete linkage section">
+      <created>1531764357514</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1531764357514</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -343,14 +360,14 @@
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4940476" visible="true" weight="0.13753213" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4940476" visible="true" weight="0.13753213" />
       <window_info anchor="bottom" id="TODO" order="15" weight="0.32795697" />
       <window_info anchor="right" id="R Packages" order="6" />
       <window_info anchor="right" id="R Graphics" order="5" />
       <window_info anchor="bottom" id="Event Log" order="17" side_tool="true" weight="0.3293011" />
-      <window_info anchor="bottom" id="Version Control" order="16" weight="0.32258064" />
-      <window_info anchor="bottom" id="Python Console" order="19" visible="true" weight="0.32258064" />
-      <window_info anchor="bottom" id="Run" order="6" weight="0.32795697" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="16" visible="true" weight="0.32258064" />
+      <window_info anchor="bottom" id="Python Console" order="19" weight="0.32258064" />
+      <window_info anchor="bottom" id="Run" order="6" weight="0.3266129" />
       <window_info id="Structure" order="1" sideWeight="0.50595236" side_tool="true" visible="true" weight="0.13753213" />
       <window_info anchor="bottom" id="Terminal" order="18" weight="0.34811828" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -433,7 +450,8 @@
     <MESSAGE value="4/6 Current UnitTests are functional, should finsih the rest soon, wrapper is also back up and running" />
     <MESSAGE value="Wrapper is once again functional" />
     <MESSAGE value="Finished except for setup.py file" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished except for setup.py file" />
+    <MESSAGE value="Completed build, need to complete linkage section" />
+    <option name="LAST_COMMIT_MESSAGE" value="Completed build, need to complete linkage section" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -600,19 +618,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wrapper_runner.py" />
     <entry file="file://$PROJECT_DIR$/unit_testing/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor />
           <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/setup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="19" column="6" lean-forward="true" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
         </state>
       </provider>
     </entry>
@@ -651,9 +661,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="19" column="6" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wrapper_runner.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/coalesce_wrapper/coalesce_request.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7007" />
+        <state relative-caret-position="-5567" />
       </provider>
     </entry>
   </component>
