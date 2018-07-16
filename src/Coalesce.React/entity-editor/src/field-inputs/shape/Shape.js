@@ -28,17 +28,44 @@ export default class Shape extends React.Component {
 
   constructor(props) {
     super(props);
-    this.wktEmpty = (this.props.shape == 'Circle' ? 'POINT' : this.props.shape.toUpperCase())  + ' EMPTY';
-    this.state = {
-      vectorSource: new VectorSource({
-        wrapX: false,
-      }),
-      wkt: this.wktEmpty,
-      radius: '0',
-      coordsHashmap: new HashMap(),
-    };
 
-    this.fullWKT = ''
+    this.wktEmpty = (this.props.shape == 'Circle' ? 'POINT' : this.props.shape.toUpperCase())  + ' EMPTY';
+
+    this.opts = this.props.opts;
+    this.attr = this.opts['attr'];
+    this.field = this.opts['field'];
+
+    var vectorSource = new VectorSource(
+      {
+        wrapX: false,
+      }
+    )
+
+    console.log(this.field);
+
+    if(this.field[this.attr]) {
+
+      this.state = {
+        vectorSource: vectorSource,
+        wkt: this.stripZAxis(this.field[this.attr]),
+        fullWKT: this.field[this.attr],
+        radius: this.field['radius'],
+        coordsHashmap: new HashMap(),
+      };
+      this.state.coordsHashmap = this.coordsHashmap
+      console.log(this.state.coordsHashmap);
+    }
+    else {
+      this.state = {
+        vectorSource: vectorSource,
+        wkt: this.wktEmpty,
+        fullWKT: this.wktEmpty,
+        radius: '0',
+        coordsHashmap: new HashMap(),
+      };
+    }
+
+
 
     this.handleInputFocus = this.handleInputFocus.bind(this)
     this.handleInputBlur = this.handleInputBlur.bind(this)
@@ -49,8 +76,71 @@ export default class Shape extends React.Component {
 
   }
 
+  stripZAxis(fullWKT) {
+    var pattern = / ?-?[0-9]\d*(\.\d+)?/g //matches the point's 3 values
+
+    if (this.props.shape === 'Circle') {
+      var coords = fullWKT.match(pattern) //[x, y, z]
+
+      this.coordsHashmap = new HashMap()
+      this.coordsHashmap.set([parseFloat(coords[0]), parseFloat(coords[1])], parseFloat(coords[2]))
+      var wkt = 'POINT(' + coords[0] + ' ' + coords[1] + ')'
+      console.log(this.field['radius'])
+      return wkt
+    }
+    else {
+      var coords = fullWKT.match(pattern) //[x, y, z]
+      var coordPos = 1;
+
+      this.coordsHashmap = new HashMap()
+
+      var wkt = this.props.shape +  '('
+      if (this.props.shape === 'Polygon') {
+        wkt += '('
+      }
+      wkt += coords[0] + ' ' + coords[1]
+      this.coordsHashmap.set([parseFloat(coords[0]), parseFloat(coords[1])], parseFloat(coords[2]) )
+
+      for (let i = 3; i < coords.length; i++) {
+        if (coordPos === 1) {
+          wkt += ',' + coords[i]
+          this.coordsHashmap.set([parseFloat(coords[i]), parseFloat(coords[i+1])], parseFloat(coords[i+2]) )
+          coordPos++;
+        }
+        else if (coordPos === 2) {
+          wkt += ' ' + coords[i]
+          coordPos++;
+        }
+        else if ( coordPos === 3) {
+          coordPos = 1;
+          continue
+        }
+      }
+      wkt += ')'
+      if (this.props.shape === 'Polygon') {
+        wkt += ')'
+      }
+      console.log(wkt);
+      return wkt
+    }
+  }
+
   configureMap(opt_options) {
     var self = this;
+
+    this.state.vectorSource.clear()
+    var feature = new WKT().readFeature(this.state.wkt)
+
+    if (this.props.shape === 'Circle') {
+      feature = new Feature({
+        geometry: new Circle(feature.getGeometry().getCoordinates(), this.state.radius)
+      })
+      this.state.vectorSource.addFeature(feature)
+    }
+    else {
+      this.state.vectorSource.addFeature(feature)
+    }
+
     //controls should be passed into the dictionary opt_options as a list
     var controls = opt_options['controls']
 
@@ -112,7 +202,7 @@ export default class Shape extends React.Component {
 
     self.setState( {wkt: self.wktEmpty})
     if (this.props.shape == 'Circle') {
-      self.setState( {radius: 'None'} )
+      self.setState( {radius: '0'} )
     }
   }
 
@@ -138,6 +228,8 @@ export default class Shape extends React.Component {
   handleInputChange(event, opts) {
     if (opts == 'radius') {
       this.setState({radius: event.target.value})
+      console.log(event.target.value);
+      this.props.handleOnChange('radius', event.target.value)
     }
     else {
       this.setState({wkt: event.target.value})
@@ -153,6 +245,8 @@ export default class Shape extends React.Component {
           wkt: this.wktEmpty,
           radius: '0'
         })
+        this.props.handleOnChange(this.attr, this.wktEmpty)
+        this.props.handleOnChange('radius', '0')
         this.clearFeatures(this.state.vectorSource)
       }
       else {
@@ -182,6 +276,8 @@ export default class Shape extends React.Component {
               //if the radius was '' and is therefore turned into '0',
               //    update the text field to be '0' instead of '' (for aesthetics)
               //this won't set the text field to '0' if it was already a number
+              this.props.handleOnChange('radius', radiusAsString)
+              console.log(radiusAsString);
               this.setState({radius: radiusAsString})
             }
           }
@@ -256,7 +352,7 @@ export default class Shape extends React.Component {
     var axis = index[0] //get the letter (x y or z)
     var oldFeatureCoordinates = null
     if (this.props.shape == 'Circle') {
-      oldFeatureCoordinates = this.state.vectorSource.getFeatures()[0].getGeometry().getCenter().slice(0)
+      oldFeatureCoordinates = [this.state.vectorSource.getFeatures()[0].getGeometry().getCenter().slice(0)]
     }
     else if (this.props.shape == 'Polygon') {
       oldFeatureCoordinates = this.state.vectorSource.getFeatures()[0].getGeometry().getCoordinates()[0].slice(0)
@@ -270,10 +366,13 @@ export default class Shape extends React.Component {
       var xy = oldFeatureCoordinates[indexNum]
 
       //set() returns the hashmap so programmers can chain functions
+      console.log(xy);
       var newCoordsHashmap = coordsHashmap.set(xy, newXYZCoordsDict[index])
 
-      this.setState({coordsHashmap: newCoordsHashmap})
-      this.fullWKT = this.getFullWKT(this.state.wkt)
+      this.setState({
+        coordsHashmap: newCoordsHashmap,
+        fullWKT: this.getFullWKT(this.state.wkt)
+      })
     }
     else {
       var oldXY = oldFeatureCoordinates[indexNum].slice(0) //grab a copy of the old [X,Y] pair so Z can be retrieved
@@ -325,23 +424,32 @@ export default class Shape extends React.Component {
       var center = circle.getCenter();
       var radius = circle.getRadius();
       var wkt = `POINT (${center[0]} ${center[1]})`;
+
+      var fullWKT = this.getFullWKT(wkt)
       this.setState({
         wkt: wkt,
         radius: radius,
-        fullWKT: this.getFullWKT(wkt),
+        fullWKT: fullWKT,
       });
+      this.props.handleOnChange(this.attr, fullWKT)
+      console.log(radius);
+      this.props.handleOnChange('radius', radius)
     }
     else {
       var wkt = new WKT().writeFeature(feature);
+      var fullWKT = this.getFullWKT(wkt)
       this.setState({
         wkt: wkt,
-        fullWKT: this.getFullWKT(wkt)
+        fullWKT: fullWKT
       });
+      this.props.handleOnChange(this.attr, fullWKT)
+
     }
   }
 
   getFullWKT(wkt) {
     if (wkt == this.wktEmpty) {
+      this.props.handleOnChange(this.attr, wkt)
       return wkt
     }
 
@@ -349,8 +457,9 @@ export default class Shape extends React.Component {
     {
       var lastParen = wkt.length-1
       var featureCoords = this.state.vectorSource.getFeatures()[0].getGeometry().getCenter()
-      var zCoord = this.state.coordsHashmap.get(featureCoords);
+      var zCoord = this.state.coordsHashmap.get(featureCoords) || 0;
       var fullWKT = [wkt.slice(0, lastParen), (' ' + zCoord), wkt.slice(lastParen)].join('')
+      console.log(fullWKT);
       return fullWKT;
     }
 
@@ -380,7 +489,6 @@ export default class Shape extends React.Component {
       var zCoord = this.state.coordsHashmap.get(featureCoords[featureCoords.length-1]) || 0;
       fullWKT = [fullWKT.slice(0, lastParen), (' ' + zCoord), fullWKT.slice(lastParen)].join('')
     }
-
     return fullWKT;
   }
 
@@ -389,6 +497,16 @@ export default class Shape extends React.Component {
       return `(${format})`
     }
     return format;
+  }
+
+  getFeature() {
+    var feature = new WKT().readFeature(this.state.wkt)
+    if (this.props.shape === 'Circle') {
+      feature = new Feature({
+        geometry: new Circle(feature.getGeometry().getCoordinates(), this.state.radius)
+      })
+    }
+    return feature;
   }
 
   render() {
@@ -400,13 +518,13 @@ export default class Shape extends React.Component {
 
     var self = this;
 
-
+    console.log(this.field);
 
     return (
       <div>
 
         <DialogMap
-          feature={this.state.vectorSource.getFeatures()[0]}
+          feature={this.state.vectorSource.getFeatures()[0] || this.getFeature()}
           configureMap={this.configureMap}
           uniqueID={this.props.uniqueID}
           shape={this.props.shape}
@@ -417,18 +535,7 @@ export default class Shape extends React.Component {
           textInput={
             (this.props.shape == 'Circle' &&
               <div>
-                <TextField
-                  id={'center' + this.props.uniqueID}
-                  fullWidth={true}
-                  floatingLabelText={"Circle - POINT (x1 y1 z1)"}
-                  underlineShow={this.props.showLabels}
-                  style={style.root}
-                  value={this.state.wkt}
-                  defaultValue={field.defaultValue}
-                  onFocus={this.handleInputFocus}
-                  onChange={this.handleInputChange}
-                  onBlur={this.handleInputBlur}
-                />
+
                 <TextField
                   id={'radius' + this.props.uniqueID}
                   fullWidth={true}
@@ -441,25 +548,36 @@ export default class Shape extends React.Component {
                   onChange={(e) => this.handleInputChange(e, 'radius')}
                   onBlur={this.handleInputBlur}
                 />
-              </div>)  ||
+              </div>)
 
 
-            (this.props.shape != 'Circle' &&
-              <TextField
-                id={field.key}
-                fullWidth={true}
-                floatingLabelText={label + " - " + self.props.shape.toUpperCase() + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
-                underlineShow={this.props.showLabels}
-                style={style.root}
-                value={this.state.wkt}
-                defaultValue={field.defaultValue}
-                onFocus={this.handleInputFocus}
-                onChange={this.handleInputChange}
-                onBlur={this.handleInputBlur}
-              />)
         }/>
       </div>
     );
   }
-
+  // <TextField
+  //   id={'center' + this.props.uniqueID}
+  //   fullWidth={true}
+  //   floatingLabelText={"Circle - POINT (x1 y1 z1)"}
+  //   underlineShow={this.props.showLabels}
+  //   style={style.root}
+  //   value={this.state.wkt}
+  //   defaultValue={field.defaultValue}
+  //   onFocus={this.handleInputFocus}
+  //   onChange={this.handleInputChange}
+  //   onBlur={this.handleInputBlur}
+  // />
+  // (this.props.shape != 'Circle' &&
+  //   <TextField
+  //     id={field.key}
+  //     fullWidth={true}
+  //     floatingLabelText={label + " - " + self.props.shape.toUpperCase() + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
+  //     underlineShow={this.props.showLabels}
+  //     style={style.root}
+  //     value={this.state.wkt}
+  //     defaultValue={field.defaultValue}
+  //     onFocus={this.handleInputFocus}
+  //     onChange={this.handleInputChange}
+  //     onBlur={this.handleInputBlur}
+  //   />)
 }

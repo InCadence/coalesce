@@ -35,9 +35,11 @@ export default class PointsTable extends React.Component {
 
   initCoordsHashmap() {
     var coordsHashmap = this.props.coordsHashmap
+
     if (coordsHashmap.size == 0) {
       if (this.props.feature) {
         if (this.props.shape == 'Circle') {
+
           var center = this.props.feature.getGeometry().getCenter()
           var z = coordsHashmap.get(center) || 0
           coordsHashmap.set(center, z)
@@ -57,8 +59,7 @@ export default class PointsTable extends React.Component {
             coordsHashmap.set(xy, z)
           }
         }
-      //don't remember why I have this here but i don't think I actually want it here
-      //this.props.handleHashmap(coordsHashmap);
+
       }
     }
 
@@ -117,7 +118,6 @@ export default class PointsTable extends React.Component {
     }
     else if (this.props.shape == 'POINT') {
       var point = feature.getGeometry().getCoordinates()
-      console.log(point);
       rows.push(this.createSingleRow(point))
     }
     else {
@@ -131,8 +131,8 @@ export default class PointsTable extends React.Component {
         var index = j
         var coords = coordinates[j]
 
-        var x = coordinates[j][0];
-        var y = coordinates[j][1];
+        var x = coords[0];
+        var y = coords[1];
         rows.push(
           <TableRow>
             <TableCell> {this.createTextField(x, this.handleInputFocus, this.handleInputXY, this.handleOnBlur, 'x' + index)} </TableCell>
@@ -147,6 +147,7 @@ export default class PointsTable extends React.Component {
   }
 
   createSingleRow(point) {
+
     var row = (
       <TableRow>
         <TableCell> {this.createTextField(point[0], this.handleInputFocus, this.handleInputXY, this.handleOnBlur, 'x0')} </TableCell>
@@ -187,7 +188,6 @@ export default class PointsTable extends React.Component {
   }
 
   handleInputFocus(evt) {
-    console.log(evt.target.value);
     this.setState({safeValue: evt.target.value})
   }
 
@@ -206,7 +206,6 @@ export default class PointsTable extends React.Component {
     }
     //this ensures it doesn't update when the user didn't even change anything
     if(inputValue != self.state.safeValue && !isNaN(self.state.safeValue)) {
-      console.log(this.state.coordsHashmap);
       self.props.updateFeature(self.state.values, this.state.coordsHashmap, index)
     }
     else {

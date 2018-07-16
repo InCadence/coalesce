@@ -20,6 +20,7 @@ import Overlay from 'ol/Overlay';
 import OSM from 'ol/source/OSM';
 import HashMap from 'hashmap/hashmap'
 import MultiPoint from 'ol/geom/MultiPoint';
+import WKT from 'ol/format/WKT';
 
 var mgrs = require('mgrs');
 
@@ -28,6 +29,9 @@ export default class MapPoint extends React.Component {
   constructor(props) {
     super(props);
 
+    this.opts = this.props.opts;
+    this.attr = this.opts['attr'];
+    this.field = this.opts['field'];
 
     this.state = {
       vectorSource: new VectorSource({
@@ -39,11 +43,12 @@ export default class MapPoint extends React.Component {
       coords: ['', '', ''],
       visibility: 'hidden',
       wkt: this.props.wkt,
-      coordsHashmap: new HashMap(),
+      coordsHashmap: this.props.coordsHashmap || new HashMap(),
     };
 
     this.fullWKT = ''
     this.wktEmpty = this.props.wktEmpty
+
 
     this.deleteFeature = this.deleteFeature.bind(this)
     this.handleInputFocus = this.handleInputFocus.bind(this)
@@ -51,8 +56,6 @@ export default class MapPoint extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this)
     this.configureMap = this.configureMap.bind(this)
     this.updateFeature = this.updateFeature.bind(this)
-
-    this.field = this.props.opts['field'];
 
   }
 
@@ -91,7 +94,6 @@ export default class MapPoint extends React.Component {
     this.setState({visibility: "hidden"})
     return feature
   }
-
 
   deleteFeature() {
     this.map.getOverlays().item(0).setPosition(undefined);
@@ -161,6 +163,19 @@ export default class MapPoint extends React.Component {
 
   configureMap(opt_options) {
 
+    this.state.vectorSource.clear()
+    var feature = new WKT().readFeature(this.props.wkt)
+
+    if (this.props.shape == 'MULTIPOINT') {
+      var multicoords = feature.getGeometry().getCoordinates()
+      for (let i = 0; i < multicoords.length; i++) {
+        this.createFeature(multicoords[i])
+      }
+    }
+    else if (this.props.shape === 'POINT' && this.props.wkt != this.wktEmpty) {
+      this.createFeature(feature.getGeometry().getCoordinates())
+    }
+
     var controls = opt_options['controls']
     var vectorLayer = new VectorLayer({
       name: 'markers',
@@ -206,42 +221,51 @@ export default class MapPoint extends React.Component {
   }
 
   getFullWKT(wkt) {
+
     if (wkt == this.wktEmpty) {
+      this.props.handleOnChange(this.attr, wkt)
       return wkt
     }
 
     var fullWKT = ''
-
     if (this.props.shape == 'POINT') {
       var featureCoords = this.state.vectorSource.getFeatures()[0].getGeometry().getCoordinates()
-      console.log(featureCoords);
-      fullWKT = wkt.slice(0, wkt.length-1) + ' ' + this.state.coordsHashmap.get(featureCoords) + ')'
       console.log(this.state.coordsHashmap);
+      fullWKT = wkt.slice(0, wkt.length-1) + ' ' + (this.state.coordsHashmap.get(featureCoords) || 0) + ')'
 
     }
     else if (this.props.shape == 'MULTIPOINT') {
       var wktSplit = wkt.split(',')
       //initialize with the first part of the wkt to avoid fence post problem
-      fullWKT = wktSplit[0]
 
       var featureCoords = this.props.parent.multipoint.getCoordinates();
-      console.log(featureCoords);
       var firstZCoord = (this.state.coordsHashmap.get(featureCoords[0]) || 0);
       // 'MULTIPOINT((x0 y0 z0)'
-      fullWKT = fullWKT.slice(0, fullWKT.length-1) + ' ' + firstZCoord + ')';
 
-      for (let i = 0; i < featureCoords.length-2; i++) {
-        var zCoord = (this.state.coordsHashmap.get(featureCoords[i+1]) || 0);
-        var wktNextPart = wktSplit[i+1];
-        fullWKT += ',' + wktNextPart.slice(0, wktNextPart.length-1) + ' ' + zCoord + ')';
+      if (featureCoords.length == 1) {
+        fullWKT = wktSplit[0].slice(0, fullWKT.length-2)+ ' ' + firstZCoord + '))'
+      }
+      else if (featureCoords.length > 1) {
+        fullWKT = wktSplit[0]
+        fullWKT = fullWKT.slice(0, fullWKT.length-1) + ' ' + firstZCoord + ')';
+
+        for (let i = 0; i < featureCoords.length-2; i++) {
+          var zCoord = (this.state.coordsHashmap.get(featureCoords[i+1]) || 0);
+          var wktNextPart = wktSplit[i+1];
+          fullWKT += ',' + wktNextPart.slice(0, wktNextPart.length-1) + ' ' + zCoord + ')';
+        }
+
+        var wktLastPart = wktSplit[featureCoords.length-1];
+        var lastZCoord = this.state.coordsHashmap.get(featureCoords[featureCoords.length-1]) || 0;
+        fullWKT += ',' + wktLastPart.slice(0, wktLastPart.length-2) + ' ' + lastZCoord + '))';
+      }
+      else {
+        fullWKT += ')';
       }
 
-      var wktLastPart = wktSplit[featureCoords.length-1];
-      var lastZCoord = this.state.coordsHashmap.get(featureCoords[featureCoords.length-1]);
-
-      fullWKT += ',' + wktLastPart.slice(0, wktLastPart.length-2) + ' ' + lastZCoord + '))';
     }
 
+    this.props.handleOnChange(this.attr, fullWKT)
     console.log(fullWKT);
 
     return fullWKT;
@@ -270,7 +294,7 @@ export default class MapPoint extends React.Component {
     else {
       //keep old xy
       var xy = oldFeatureCoordinates[indexNum].slice(0)
-      console.log(xy);
+
       var oldZ = coordsHashmap.get(xy)
       console.log(oldZ);
 
@@ -294,11 +318,8 @@ export default class MapPoint extends React.Component {
   }
 
   render() {
-    var opts = this.props.opts;
-    var field = opts['field'];
-    var style = opts['style'];
-    var label = opts['label'];
-    var attr = opts['attr'];
+    var style = this.opts['style'];
+    var label = this.opts['label'];
 
     var self = this;
 
@@ -332,7 +353,7 @@ export default class MapPoint extends React.Component {
           coordsHashmap={this.state.coordsHashmap}
           textInput={
             <TextField
-              id={field.key}
+              id={this.field.key}
               fullWidth={true}
               floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
               underlineShow={this.props.showLabels}
@@ -341,7 +362,7 @@ export default class MapPoint extends React.Component {
               onFocus={this.handleInputFocus}
               onChange={this.handleInputChange}
               onBlur={this.handleInputBlur}
-              defaultValue={field.defaultValue}></TextField>
+              defaultValue={this.field.defaultValue}></TextField>
           }
         />
 

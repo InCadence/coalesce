@@ -68,7 +68,6 @@ export class FieldInput extends React.Component {
     var type = (this.props.dataType != null) ? this.props.dataType : field.dataType;
     var attr = (this.props.attr != null) ? this.props.attr : 'value';
     var label = this.props.showLabels ? (field.label != null && field.label.length > 0 ? field.label : field.name) : null;
-
     var opts = {
       label: label,
       attr: attr,
@@ -243,7 +242,9 @@ export class FieldInput extends React.Component {
               shape='LineString'
               opts={opts}
               showLabels={this.props.showLabels}
-              multi={false}/>
+              multi={false}
+              handleOnChange={this.handleOnChange}
+            />
           );
       case 'POLYGON_TYPE':
           return (
@@ -251,20 +252,25 @@ export class FieldInput extends React.Component {
               shape='Polygon'
               opts={opts}
               showLabels={this.props.showLabels}
-              multi={false}/>
+              multi={false}
+              handleOnChange={this.handleOnChange}
+            />
           );
       case 'GEOCOORDINATE_LIST_TYPE':
         return (
           <Multipoint
             opts={opts}
             showLabels={this.props.showLabels}
-            />
+            handleOnChange={this.handleOnChange}
+          />
         );
       case 'GEOCOORDINATE_TYPE':
         return (
           <Point
             opts={opts}
-            showLabels={this.props.showLabels}/>
+            showLabels={this.props.showLabels}
+            handleOnChange={this.handleOnChange}
+          />
         );
 
       case 'CIRCLE_TYPE':
@@ -274,7 +280,9 @@ export class FieldInput extends React.Component {
             shape="Circle"
             opts={opts}
             showLabels={this.props.showLabels}
-            multi={false}/>
+            multi={false}
+            handleOnChange={this.handleOnChange}
+          />
       );
       case 'GUID_TYPE':
         return (

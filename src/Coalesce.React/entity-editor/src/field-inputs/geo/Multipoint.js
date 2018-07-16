@@ -6,7 +6,7 @@ import Collection from 'ol/Collection';
 import Point from 'ol/geom/Point';
 import Feature from 'ol/Feature';
 import Style from 'ol/style/Style';
-import Icon from 'ol/style/Icon'; 
+import Icon from 'ol/style/Icon';
 import {toStringHDMS} from 'ol/coordinate';
 import VectorLayer from 'ol/layer/Vector';
 import TileLayer from 'ol/layer/Tile';
@@ -16,6 +16,7 @@ import Draw from 'ol/interaction/Draw';
 import Modify from 'ol/interaction/Modify';
 import WKT from 'ol/format/WKT';
 import Circle from 'ol/geom/Circle';
+import HashMap from 'hashmap/hashmap'
 import {defaults as defaultControls} from 'ol/control'
 import {defaults as defaultInteractions} from 'ol/interaction'
 import MultiPoint from 'ol/geom/MultiPoint';
@@ -27,10 +28,59 @@ export default class Multipoint extends React.Component {
 
     this.wktEmpty = "MULTIPOINT EMPTY"
 
-    this.state = {
-      wkt: this.wktEmpty
-    };
-    this.multipoint = new MultiPoint();
+    this.opts = this.props.opts;
+    this.attr = this.opts['attr'];
+    this.field = this.opts['field'];
+    console.log('constructor');
+
+    if(this.field[this.attr]) {
+
+      this.state = {
+        wkt: this.stripZAxis(this.field[this.attr]),
+        fullWKT: this.field[this.attr]
+      };
+
+    }
+    else {
+      this.state = {
+        wkt: this.wktEmpty,
+        fullWKT: this.wktEmpty
+      };
+    }
+
+    this.multipoint = new WKT().readFeature(this.state.wkt).getGeometry();
+
+  }
+
+  stripZAxis (fullWKT) {
+    var pattern = / ?-?[0-9]\d*(\.\d+)?/g
+
+    var coords = fullWKT.match(pattern)
+    this.coordsHashmap = new HashMap()
+    console.log(coords);
+    var coordPos = 1;
+
+    var wkt = 'MULTIPOINT((' + coords[0] + ' ' + coords[1] + ')'
+    this.coordsHashmap.set([parseFloat(coords[0]), parseFloat(coords[1])], parseFloat(coords[2]) )
+
+    for (let i = 3; i < coords.length; i++) {
+      if (coordPos === 1) {
+        wkt += ',(' + coords[i]
+        this.coordsHashmap.set([parseFloat(coords[i]), parseFloat(coords[i+1])], parseFloat(coords[i+2]) )
+        coordPos++;
+      }
+      else if (coordPos === 2) {
+        wkt += ' ' + coords[i] + ')'
+        coordPos++;
+      }
+      else if ( coordPos === 3) {
+        coordPos = 1;
+        continue
+      }
+    }
+    wkt += ')'
+    console.log(wkt);
+    return wkt
 
   }
 
@@ -74,7 +124,15 @@ export default class Multipoint extends React.Component {
     self.multipoint.appendPoint(feature.getGeometry());
 
     var formatted =  new WKT().writeFeature(new Feature({geometry: self.multipoint}));
-    self.setState({wkt: formatted})
+
+    var fullWKT = that.getFullWKT(formatted)
+
+    this.props.handleOnChange(this.attr, fullWKT)
+
+    self.setState({
+      wkt: formatted,
+      fullWKT: fullWKT
+    })
   }
 
   //also handles changes from the points table, since this
@@ -96,6 +154,9 @@ export default class Multipoint extends React.Component {
     }
 
     var fullWKT = that.getFullWKT(formatted)
+
+    this.props.handleOnChange(this.attr, fullWKT)
+
     self.setState({
       wkt: formatted,
       fullWKT: fullWKT
@@ -104,10 +165,8 @@ export default class Multipoint extends React.Component {
   }
 
   handleInput(that) {
-    var opts = this.props.opts;
-    var field = opts['field'];
 
-    var input = document.getElementById(field.key).getAttribute('value')
+    var input = document.getElementById(this.field.key).getAttribute('value')
     var feature = new WKT().readFeature(input)
     this.multipoint = feature.getGeometry();
 
@@ -125,14 +184,17 @@ export default class Multipoint extends React.Component {
     const uniqueID = Date.now()
     var parent = this
     var clickEvt = this.clickEvt
+
     return(
       <MapPoint
+        handleOnChange={this.props.handleOnChange}
         clickEvt={clickEvt}
-        opts={this.props.opts}
+        opts={this.opts}
         uniqueID={uniqueID}
         showLabels={this.props.showLabels}
         wkt={this.state.wkt}
         wktEmpty={this.wktEmpty}
+        coordsHashmap={this.coordsHashmap}
         parent={parent}
         shape='MULTIPOINT'
       />

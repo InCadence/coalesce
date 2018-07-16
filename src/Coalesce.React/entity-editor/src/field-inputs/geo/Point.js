@@ -15,9 +15,9 @@ import Draw from 'ol/interaction/Draw';
 import Modify from 'ol/interaction/Modify';
 import WKT from 'ol/format/WKT';
 import Circle from 'ol/geom/Circle';
+import HashMap from 'hashmap/hashmap'
 import {defaults as defaultControls} from 'ol/control'
 import {defaults as defaultInteractions} from 'ol/interaction'
-import MultiPoint from 'ol/geom/MultiPoint';
 
 
 export default class Point extends React.Component {
@@ -25,18 +25,49 @@ export default class Point extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      map: this.props.map,
-      createFeature: this.props.createFeature,
-      deleteFeature: this.props.deleteFeature,
-      wkt: 'POINT EMPTY',
+    this.wktEmpty = 'POINT EMPTY'
+
+    this.opts = this.props.opts;
+    this.attr = this.opts['attr'];
+    this.field = this.opts['field'];
+
+    if(this.field[this.attr]) {
+
+      this.state = {
+        wkt: this.stripZAxis(this.field[this.attr]),
+        fullWKT: this.field[this.attr]
+      };
+
     }
+    else {
+      this.state = {
+        wkt: this.wktEmpty,
+        fullWKT: this.wktEmpty
+      };
+    }
+  }
+
+  stripZAxis(fullWKT) {
+    var pattern = / ?-?[0-9]\d*(\.\d+)?/g //matches the point's 3 values
+    var coords = fullWKT.match(pattern) //[x, y, z]
+    this.coordsHashmap = new HashMap()
+    this.coordsHashmap.set([parseFloat(coords[0]), parseFloat(coords[1])], parseFloat(coords[2]))
+    console.log(this.coordsHashmap);
+    var wkt = 'POINT(' + coords[0] + ' ' + coords[1] + ')'
+
+    return wkt
   }
 
   handlePoint(feature, self, that) {
     var formatted =  new WKT().writeFeature(new Feature({geometry: feature.getGeometry()}));
+
+    var fullWKT = that.getFullWKT(formatted)
+
+    this.props.handleOnChange(this.attr, fullWKT)
+
     self.setState({
       wkt: formatted,
+      fullWKT: fullWKT
     });
   }
 
@@ -53,6 +84,8 @@ export default class Point extends React.Component {
       fullWKT = that.getFullWKT(formatted)
     }
 
+    this.props.handleOnChange(this.attr, fullWKT)
+
     self.setState({
       wkt: formatted,
       fullWKT: fullWKT
@@ -61,10 +94,9 @@ export default class Point extends React.Component {
   }
 
   handleInput(that) {
-    var opts = this.props.opts;
-    var field = opts['field'];
+
     that.setState({visibility: 'hidden'});
-    var input = document.getElementById(field.key).getAttribute('value')
+    var input = document.getElementById(this.field.key).getAttribute('value')
     var feature = new WKT().readFeature(input)
 
     var point = feature.getGeometry()
@@ -129,7 +161,17 @@ export default class Point extends React.Component {
     var clickEvt = this.clickEvt
     var parent = this
     return(
-      <MapPoint clickEvt={clickEvt} opts={this.props.opts} uniqueID={uniqueID} showLabels={this.props.showLabels} wkt={this.state.wkt} parent={parent} shape='POINT'></MapPoint>
+      <MapPoint
+        handleOnChange={this.props.handleOnChange}
+        clickEvt={clickEvt}
+        opts={this.props.opts}
+        uniqueID={uniqueID}
+        showLabels={this.props.showLabels}
+        wkt={this.state.wkt}
+        wktEmpty={this.wktEmpty}
+        parent={parent}
+        coordsHashmap={this.coordsHashmap}
+        shape='POINT'/>
     )
   }
 

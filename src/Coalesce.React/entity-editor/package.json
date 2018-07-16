@@ -17,7 +17,7 @@
     "hashmap": "^2.3.0",
     "material-ui": "^0.20.0",
     "mgrs": "^1.0.0",
-    "ol": "^5.0.0",
+    "ol": "^5.0.2",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
     "react-bootstrap": "^0.32.1",
