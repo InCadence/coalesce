@@ -1,16 +1,17 @@
-FROM java:8-jre
-ARG tarball=coalesce-karaf-dist-0.0.28-SNAPSHOT.tar.gz
+FROM openjdk:8u171-jdk-alpine3.8
 
-# Add Maven dependencies (not shaded into the artifact; Docker-cached)
-# ADD target/lib           /usr/share/myservice/lib
-# Add the service itself
-RUN mkdir /tmp/install
-COPY target/coalesce-karaf-dist-0.0.28-SNAPSHOT.tar.gz /tmp/install
 
-RUN mkdir /opt/karaf
-RUN tar -xzvf /tmp/install/coalesce-karaf-dist-0.0.28-SNAPSHOT.tar.gz -C /opt/karaf/
-RUN rm -rf /tmp/install/${tarball}
+ARG TARBALL=coalesce-karaf-dist-0.0.27-SNAPSHOT.tar.gz
+ARG TAR_PATH=./target/$TARBALL
 
-EXPOSE  8101 8181
 
-ENTRYPOINT ["/opt/karaf/bin/karaf"]
+RUN mkdir -p /opt/karaf
+ADD $TAR_PATH /opt/karaf
+
+
+RUN apk add --no-cache bash
+
+EXPOSE 8101
+EXPOSE 8181
+
+ENTRYPOINT ["bash", "-c", "/opt/karaf/bin/karaf"] 
