@@ -6,6 +6,10 @@ import { Image } from 'common-components/lib/components/image'
 export class IconButton extends React.PureComponent {
 
   render() {
+    var display = 'inline-block'
+    if (this.props.visibility === 'none') {
+      display = this.props.visibility
+    }
 
     return (
       <Image
@@ -15,6 +19,7 @@ export class IconButton extends React.PureComponent {
         style={{
           backgroundColor: this.props.theme.palette.primary.dark,
           borderColor: this.props.theme.palette.primary.light
+          display: display
         }}
         class={(this.props.enabled === true) ? "coalesce-img-button enabled" : "coalesce-img-button"}
         onClick={(this.props.enabled === true) ? this.props.onClick : ''}
@@ -22,7 +27,6 @@ export class IconButton extends React.PureComponent {
       />
     )
   }
-
 }
 
 IconButton.defaultProps = {
