@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
-import './App.css';
+import React from 'react';
 import TemplateWorkspace from './TemplateWorkspace.js';
 
-class App extends Component {
+import './App.css';
+
+class App extends React.Component {
 
   render() {
     return (

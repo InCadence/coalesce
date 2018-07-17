@@ -1,15 +1,21 @@
 import React from 'react';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import {List, ListItem} from 'material-ui/List';
-import TextField from 'material-ui/TextField';
-import Checkbox from 'material-ui/Checkbox';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import DialogContent from '@material-ui/core/DialogContent';
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Button from '@material-ui/core/Button';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import TextField from '@material-ui/core/TextField';
+import Checkbox from '@material-ui/core/Checkbox';
 import { Row, Col } from 'react-bootstrap';
-import ActionDelete from 'material-ui/svg-icons/action/delete';
-import EditorModeEdit from 'material-ui/svg-icons/editor/mode-edit';
-import Subheader from 'material-ui/Subheader';
+import ActionDelete from '@material-ui/icons/Delete';
+import EditorModeEdit from '@material-ui/icons/ModeEdit';
+import ListSubheader from '@material-ui/core/ListSubheader';
 
 // TODO Move this to a common file
 
@@ -71,103 +77,116 @@ export class DialogEditDefinition extends React.Component {
 
     const { definition } = this.state;
 
-    const actions = [
-      <FlatButton
-        label="OK"
-        primary={true}
-        onClick={this.handleClose}
-      />
-    ];
-
     return (
       <Dialog
         title="Edit Field Definition"
-        actions={actions}
-        modal={false}
         open={this.props.opened}
-        onRequestClose={this.handleClose}
+        onClose={this.handleClose}
       >
-        <TextField
-          fullWidth={true}
-          floatingLabelText="Name"
-          value={definition.name}
-          onChange={(event, value) => {this.handleChange("name", value);}}
-        />
-        <TextField
-          fullWidth={true}
-          floatingLabelText="Label"
-          value={definition.label}
-          onChange={(event, value) => {this.handleChange("label", value);}}
-        />
-        <SelectField
-          fullWidth={true}
-          floatingLabelText="Type"
-          value={dataTypes.indexOf(definition.dataType)}
-          onChange={(event, key, payload) => {this.handleChange("dataType", dataTypes[payload]);}}
-        >
-          {dataTypes.map((type) => {
-            return (<MenuItem key={type} value={dataTypes.indexOf(type)} primaryText={type} />);
-          })}
-        </SelectField>
-        <TextField
-          fullWidth={true}
-          floatingLabelText="Default Value"
-          value={definition.defaultValue}
-          onChange={(event, value) => {this.handleChange("defaultValue", value);}}
-        />
-        <Row>
-          <Col xs={4}>
-            <Checkbox
-              label="Flatten"
-              checked={definition.flatten}
-              onCheck={(event, checked) => {
-                this.handleChange("flatten", checked);
-              }}
-            />
-          </Col>
-          <Col xs={4}>
-            <Checkbox
-              label="Index"
-              checked={!definition.noIndex}
-              onCheck={(event, checked) => {
-                this.handleChange("noIndex", !checked);
-              }}
-            />
-          </Col>
-          <Col xs={4}>
-            <Checkbox
-              label="Disable History"
-              checked={definition.disableHistory}
-              onCheck={(event, checked) => {
-                this.handleChange("disableHistory", checked);
-              }}
-            />
-          </Col>
-        </Row>
-        <List>
-          <Subheader>Constraints</Subheader>
-          {definition.constraints.map((item) => {return (
-              <ListItem
-                key={item.key}
-                primaryText={item.name}
-                secondaryText={item.type}
-                leftIcon={
+        <DialogTitle id="alert-dialog-title">Edit Field</DialogTitle>
+        <DialogContent>
+          <TextField
+            autofocus
+            fullWidth
+            label="Name"
+            value={definition.name}
+            onChange={(event) => {this.handleChange("name", event.target.value);}}
+          />
+          <TextField
+            fullWidth
+            label="Label"
+            value={definition.label}
+            onChange={(event) => {this.handleChange("label", event.target.value);}}
+          />
+          <Select
+            fullWidth
+            label="Type"
+            value={dataTypes.indexOf(definition.dataType)}
+            onChange={(event) => {this.handleChange("dataType", dataTypes[event.target.value]);}}
+          >
+            {dataTypes.map((type) => {
+              return (
+                <MenuItem
+                  key={type}
+                  value={dataTypes.indexOf(type)}
+                >
+                  {type}
+                </MenuItem>
+              );
+            })}
+          </Select>
+          <TextField
+            fullWidth
+            label="Default Value"
+            value={definition.defaultValue}
+            onChange={(event) => {this.handleChange("defaultValue", event.target.value);}}
+          />
+          <Row>
+            <Col xs={4}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={definition.flatten}
+                    onChange={(event, checked) => {
+                      this.handleChange("flatten", checked);
+                    }}
+                  />
+                }
+                label="Flatten"
+              />
+            </Col>
+            <Col xs={4}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={!definition.noIndex}
+                    onChange={(event, checked) => {
+                      this.handleChange("noIndex", !checked);
+                    }}
+                  />
+                }
+                label="Index"
+              />
+            </Col>
+            <Col xs={4}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={definition.disableHistory}
+                    onChange={(event, checked) => {
+                      this.handleChange("disableHistory", checked);
+                    }}
+                  />
+                }
+                label="Disable History"
+              />
+            </Col>
+          </Row>
+          <List>
+            <ListSubheader>Constraints</ListSubheader>
+            {definition.constraints.map((item) => {return (
+                <ListItem key={item.key} >
                   <EditorModeEdit
-                    color="#3d3d3c"
-                    hoverColor="#FF9900"
+                    color="primary"
                     onClick={() => {this.setState({selected: item})}}
                   />
-                }
-                rightIcon={
+                  <ListItemText primary={item.name} secondary={item.type} />
                   <ActionDelete
-                    color="#3d3d3c"
-                    hoverColor="#FF9900"
+                    color="primary"
                     onClick={() => {this.handleDeleteDefinition(item.key)}}
                   />
-                }
-              />
-          )})}
-        </List>
+                </ListItem>
+            )})}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            color="primary"
+            onClick={this.handleClose}
+          >
+            OK
+          </Button>
+        </DialogActions>
       </Dialog>
     )
   }

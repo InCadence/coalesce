@@ -1,9 +1,12 @@
 import React from 'react';
-import {Tabs, Tab} from 'material-ui/Tabs';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import { RecordSet } from './TemplateRecordset'
 import { TabTextField } from './TabTextField'
-import { DialogAddOptions } from './DialogAddOptions';
+import { DialogOptions } from 'common-components/lib/components/dialogs';
 import uuid from 'uuid';
+import PropTypes from 'prop-types';
+import Typography from '@material-ui/core/Typography';
 
 export class Section extends React.Component {
 
@@ -18,6 +21,10 @@ export class Section extends React.Component {
     this.handleDeleteRecordset = this.handleDeleteRecordset.bind(this);
     this.handleEditToggle = this.handleEditToggle.bind(this);
     this.handleAddField = this.handleAddField.bind(this);
+    this.handleSectionChange = this.handleSectionChange.bind(this);
+    this.handleRecordsetChange = this.handleRecordsetChange.bind(this);
+
+    this.handleTabChange = this.handleTabChange.bind(this);
 
     this.state = {
       section: props.data,
@@ -182,35 +189,64 @@ export class Section extends React.Component {
     this.setState({ edit: !this.state.edit })
   }
 
+  handleTabChange = (event, tabIndex) => {
+    this.setState({ tabIndex });
+  };
+
   render() {
 
-    const { section } = this.state;
+    const { section, tabIndex } = this.state;
 
     return (
       <div>
-        <Tabs>
+        <Tabs
+          value={tabIndex}
+          onChange={this.handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+          scrollable
+          scrollButtons="auto"
+          style={{
+            overflowX: "hidden"
+          }}
+        >
           {section.sectionsAsList != null && section.sectionsAsList.map((item) => {return (
-            <Tab key={item.key} label={<TabTextField
-                                          item={item}
-                                          onNameChange={this.handleSectionChange.bind(this)}
-                                          onAdd={this.handleAdd}
-                                          onDelete={this.handleDeleteSection}
-                                        />}>
-              <Section data={item}/>
-            </Tab>
+              <Tab
+                key={item.key}
+                style={{backgroundColor: '#6666'}}
+                label={
+                  <TabTextField
+                    item={item}
+                    onNameChange={this.handleSectionChange}
+                    onAdd={this.handleAdd}
+                    onDelete={this.handleDeleteSection}
+                  />
+                }
+              />
           )})}
           {section.recordsetsAsList != null && section.recordsetsAsList.map((item) => {return (
-            <Tab key={item.key} label={<TabTextField
-                                          item={item}
-                                          onNameChange={this.handleRecordsetChange.bind(this)}
-                                          onAdd={this.handleAddField}
-                                          onDelete={this.handleDeleteRecordset}
-                                        />}  >
-              <RecordSet data={item}/>
-            </Tab>
+            <Tab
+              key={item.key}
+              style={{backgroundColor: '#AAFFAA'}}
+              label={
+                <TabTextField
+                  item={item}
+                  onNameChange={this.handleRecordsetChange}
+                  onAdd={this.handleAddField}
+                  onDelete={this.handleDeleteRecordset}
+                />
+              }  />
           )})}
         </Tabs>
-        <DialogAddOptions
+
+        { tabIndex < section.sectionsAsList.length &&
+            <Section data={section.sectionsAsList[tabIndex]}/>
+        }
+        { tabIndex >= section.sectionsAsList.length &&
+            <RecordSet data={section.recordsetsAsList[tabIndex - section.sectionsAsList.length]}/>
+        }
+
+        <DialogOptions
           title="Select Option"
           open={this.state.editKey != null}
           onClose={() => this.setState({editKey: null})}
@@ -225,12 +261,24 @@ export class Section extends React.Component {
               onClick: this.handleAddRecordset
             }
           ]}
-      />
+      >
+      </DialogOptions>
       </div>
     );
   }
 }
 
+function TabContainer(props) {
+  return (
+    <Typography component="div" style={{ padding: 8 * 3 }}>
+      {props.children}
+    </Typography>
+  );
+}
+
+TabContainer.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 // TODO Pull the below functions out into their own file in common which can be imported by others.
 

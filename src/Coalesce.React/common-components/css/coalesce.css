@@ -3,6 +3,18 @@ body {
   color: #000000;
 }
 
+html {
+  font-size: 16px;
+
+  @media screen and (min-width: 900px) {
+    font-size: 18px;
+  }
+
+  @media screen and (min-width: 1200px) {
+    font-size: 20px;
+  }
+}
+
 /* Overrides Bootstrap spacing for icon in navbar */
 .nav>li>a {
     padding: 2px 2px;
@@ -149,7 +161,7 @@ body {
 }
 
 .ReactTable {
-  border-color: #FF9900;
+  /*border-color: #FF9900;*/
   /*background-color: #FFFFFF;*/
 }
 

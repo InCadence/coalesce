@@ -1,11 +1,13 @@
 import * as React from "react";
-import { DialogOptions, DialogMessage } from 'common-components/lib/components/dialogs'
-import {GraphView} from './graph.js'
-import { getRootKarafUrl } from 'common-components/lib/js/common.js'
-import {Menu} from 'common-components/lib/index.js'
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import { loadJSON } from 'common-components/lib/js/propertyController'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
+import { DialogMessage, DialogOptions } from 'common-components/lib/components/dialogs'
+import { Menu } from 'common-components/lib/components'
+import { getRootKarafUrl } from 'common-components/lib/js/common'
+
+import { MuiThemeProvider } from '@material-ui/core/styles'
+
+import { GraphView } from './graph'
+
 
 export class App extends React.Component {
 
@@ -18,17 +20,6 @@ export class App extends React.Component {
   }
 
   componentDidMount() {
-
-    const that = this;
-
-    loadJSON('theme').then((value) => {
-      that.setState({
-        theme: getMuiTheme(value)
-      })
-    }).catch((err) => {
-      console.log("Loading Theme: " + err);
-    })
-
     this.loadBlueprint("rest-blueprint.xml");
   }
 
@@ -38,7 +29,7 @@ export class App extends React.Component {
     const that = this;
 
     return (
-      <MuiThemeProvider muiTheme={this.state.theme}>
+      <MuiThemeProvider theme={this.props.theme}>
         <Menu logoSrc={this.props.icon} title={`${this.props.title} / ${selected}`} items={[
           {
             id: 'load',
@@ -74,7 +65,6 @@ export class App extends React.Component {
               title="Selection"
               open={data == null && this.state.error == null}
               onClose={() => {this.loadBlueprint(selected)}}
-              // TODO These options should be pulled from a configuration file
               options={blueprints.map((blueprint) => {
                 return {
                   key: blueprint,
@@ -83,7 +73,8 @@ export class App extends React.Component {
                 }
               })}
 
-            />
+            >
+            </DialogOptions>
           }
         </MuiThemeProvider>
     )

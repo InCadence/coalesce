@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Panel, Row, Col } from 'react-bootstrap';
-import TextField from 'material-ui/TextField';
-import ContentClear from 'material-ui/svg-icons/content/clear';
-import AvPlaylistAdd from 'material-ui/svg-icons/av/playlist-add';
-import IconButton from 'material-ui/IconButton';
+import TextField from '@material-ui/core/TextField';
+import ContentClear from '@material-ui/icons/Clear';
+import AvPlaylistAdd from '@material-ui/icons/PlaylistAdd';
+import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
 import { Section } from './TemplateSection'
 import uuid from 'uuid';
 
@@ -46,21 +47,20 @@ class TemplateEditor extends Component {
     const { template } = this.state;
 
     return (
-        <Panel className="ui-widget-content" id={template.key} style={{ 'overflowY': 'auto' }}>
+        <Panel className="MuiPaper-root-27 MuiPaper-rounded-28 MuiPaper-elevation2-31" id={template.key} >
           <div style={{ 'display': 'table' }}>
             <div style={{ 'display': 'table-cell', width: '100%' }}>
               <TextField
                 fullWidth={true}
-                floatingLabelText="Name"
+                label="Name"
                 value={template.name}
-                onChange={(event, value) => { this.handleChange("name", value); }}
+                onChange={(event) => { this.handleChange("name", event.target.value); }}
               />
             </div>
             <div style={{ 'display': 'table-cell', 'width': '24px' }}>
-              <IconButton iconStyle={{ width: '24px', height: '24px', padding: '0px' }} style={{ width: '24px', height: '24px', padding: '2px' }}>
+              <IconButton iconstyle={{ width: '24px', height: '24px', padding: '0px' }} style={{ width: '24px', height: '24px', padding: '2px' }}>
                 <ContentClear
-                  color="#3d3d3c"
-                  hoverColor="#FF9900"
+                  color="primary"
                   onClick={this.handleRemove}
                 />
               </IconButton>
@@ -68,9 +68,9 @@ class TemplateEditor extends Component {
           </div>
           <TextField
             fullWidth={true}
-            floatingLabelText="Classname"
+            label="Classname"
             value={template.className}
-            onChange={(event, value) => { this.handleChange("className", value); }}
+            onChange={(event) => { this.handleChange("className", event.target.value); }}
           />
 
           <div style={{ 'display': 'table' }}>
@@ -79,26 +79,25 @@ class TemplateEditor extends Component {
                 <Col xs={7}>
                   <TextField
                     fullWidth={true}
-                    floatingLabelText="Source"
+                    label="Source"
                     value={template.source}
-                    onChange={(event, value) => this.handleChange("source", value)}
+                    onChange={(event) => this.handleChange("source", event.target.value)}
                   />
                 </Col>
                 <Col xs={5}>
                   <TextField
                     fullWidth={true}
-                    floatingLabelText="Version"
+                    label="Version"
                     value={template.version}
-                    onChange={(event, value) => this.handleChange("version", value)}
+                    onChange={(event) => this.handleChange("version", event.target.value)}
                   />
                 </Col>
               </Row>
             </div>
             <div style={{ 'display': 'table-cell', 'width': '24px' }}>
-              <IconButton iconStyle={{ width: '24px', height: '24px', padding: '0px' }} style={{ width: '24px', height: '24px', padding: '2px' }}>
+              <IconButton iconstyle={{ width: '24px', height: '24px', padding: '0px' }} style={{ width: '24px', height: '24px', padding: '2px' }}>
                 <AvPlaylistAdd
-                  color="#3d3d3c"
-                  hoverColor="#FF9900"
+                  color="primary"
                   onClick={this.handleAddSection}
                 />
               </IconButton>

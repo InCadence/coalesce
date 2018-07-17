@@ -1,7 +1,13 @@
 import React from 'react';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import { DialogMessage } from './DialogMessage'
+import FieldInput from '../FieldInput'
 
 /**
  * Dialog to display error messages.
@@ -12,38 +18,39 @@ export class DialogPrompt extends React.Component {
     super(props);
 
     this.state = {value: props.value};
+
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(value) {
+    this.setState(() => {
+      return {
+        value: event.target.value
+      }
+    })
   }
 
   render() {
-    const actions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={this.props.onClose}
-      />,
-      <FlatButton
-        label="OK"
-        primary={true}
-        onClick={() => {this.props.onSubmit(this.state.value)}}
-      />
-    ];
 
     return (
-        <Dialog
-          title={this.props.title}
-          actions={actions}
-          modal={false}
-          open={this.props.opened}
-          onRequestClose={this.props.onClose}
-          autoScrollBodyContent={true}
+        <DialogMessage
+          {...this.props}
+          confirmation={true}
+          onClick={() => {this.props.onSubmit(this.state.value)}}
         >
           <TextField
             autoFocus
             fullWidth={true}
             value={this.state.value}
-            onChange={(event, value) => {this.setState({value: value})}}
+            onChange={(event) => {this.handleChange(event.target.value)}}
+            onKeyDown={ (e) => {
+                  if (e.key === 'Enter') {
+                    this.props.onSubmit(this.state.value);
+                  }
+                }}
           />
-        </Dialog>
+        </DialogMessage>
+
     );
   }
 }

@@ -3,9 +3,8 @@ import React, { Component } from 'react';
 import TemplateGraph from './TemplateGraph.js';
 import TemplateEditor from './TemplateEditor.js';
 import { Template } from './TemplateObjects.js';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { getDefaultTheme } from 'common-components/lib/js/theme'
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import uuid from 'uuid';
 
 import { loadTemplates, loadTemplate, saveTemplate,registerTemplate, loadTemplateAsXML } from 'common-components/lib/js/templateController';
@@ -14,7 +13,7 @@ import { saveFile } from 'common-components/lib/js/common';
 import { loadJSON } from 'common-components/lib/js/propertyController';
 import {Menu} from 'common-components/lib/index';
 
-import { DialogMessage, DialogLoader, DialogTemplateSelection} from 'common-components/lib/components/dialogs';
+import { DialogMessage, DialogLoader, DialogOptions} from 'common-components/lib/components/dialogs';
 import RGL,{WidthProvider} from 'react-grid-layout';
 
 var pjson = require('../package.json');
@@ -44,7 +43,7 @@ class TemplateWorkspace extends Component {
       removedItems: [],
       removedCount: 0,
       scaling: [1,2,3,4],
-      theme: getDefaultTheme()
+      theme: createMuiTheme(getDefaultTheme())
     }
 
     this.handlePromptTemplate = this.handlePromptTemplate.bind(this);
@@ -64,7 +63,7 @@ class TemplateWorkspace extends Component {
     var that = this;
     loadJSON('theme').then((value) => {
       that.setState({
-        theme: getMuiTheme(value)
+        theme: createMuiTheme(value)
       })
     }).catch((err) => {
       console.log("Loading Theme: " + err);
@@ -99,7 +98,14 @@ class TemplateWorkspace extends Component {
           h: 15,
           static: false,
           widgetType: "template",
-          template: {key: uuid.v4(), sectionsAsList: []},
+          template: {
+            className: "",
+            key: uuid.v4(),
+            name: "",
+            source: "",
+            version: "",
+            sectionsAsList: []
+          },
         }),
         // Increment the counter to ensure key is always unique.
         newCounter: this.state.newCounter + 1,
@@ -157,12 +163,16 @@ class TemplateWorkspace extends Component {
     var that = this;
     var oldI, oldX, oldY;
     var index = -1;
+
+    this.setState({promptTemplate: false})
+
     // Load Template
     loadTemplate(key).then (function(template) {
       //Check to see if template with desired key already exists
       for(var ii = 0; ii < that.state.items.length; ii++){
         if(that.state.items[ii].template.key === key){
           that.setState({dupeIndex: ii, dupeI: that.state.items[ii].i+1, dupeX: that.state.items[ii].x, dupeY: that.state.items[ii].y, duplicate: true, dupeTemplate: template, dupeKey: key});
+          break;
         }
       }
       //If index is not default value, key exists
@@ -486,8 +496,7 @@ class TemplateWorkspace extends Component {
   render() {
 
     return (
-      <div>
-        <MuiThemeProvider muiTheme={this.state.theme} theme={this.state.theme}>
+      <MuiThemeProvider theme={this.state.theme}>
         <Menu logoSrc={pjson.icon} title={pjson.title} homeEnabled={false} items={[
           {
             id: 'home',
@@ -500,70 +509,78 @@ class TemplateWorkspace extends Component {
             name: 'new',
             img: "/images/svg/new.svg",
             title: 'Create New Template',
-            onClick: () => {this.handleTemplateAdd()}
+            onClick: this.handleTemplateAdd
           },{
             id: 'select',
             name: 'Select',
             img: "/images/svg/load.svg",
             title: 'Load Saved Template',
-            onClick: () => {this.handlePromptTemplate()}
+            onClick: this.handlePromptTemplate
           },{
             id: 'save',
             name: 'save',
             img: "/images/svg/save.svg",
             title: 'Save All Loaded Templates',
-            onClick: () => {this.handleTemplateSave()}
+            onClick: this.handleTemplateSave
           },{
             id: 'clear',
             name: 'clear',
             img: "/images/svg/clear.svg",
             title: 'Remove All Loaded Templates',
-            onClick: () => {this.handleTemplateClear()}
+            onClick: this.handleTemplateClear
           },{
             id: 'download',
             name: 'download',
             img: "/images/svg/download.svg",
             title: 'Download All Loaded Templates',
-            onClick: () => {this.handleTemplateDownload()}
+            onClick: this.handleTemplateDownload
           },{
             id: 'register',
             name: 'register',
             img: "/images/svg/template.svg",
             title: 'Register All Loaded Templates',
-            onClick: () => {this.handleTemplateRegister()}
+            onClick: this.handleTemplateRegister
           }
         ]}/>
           <div>
           <ReactGridLayout className="layout" layout={this.state.items} rowHeight={this.state.rowHeight} cols= {this.state.cols} draggableCancel="input,textarea">
             {this.state.items.map((item) => this.createElement(item))}
           </ReactGridLayout>
-          <DialogMessage
-            title="Error"
-            opened={this.state.error != null}
-            message={this.state.error}
-            onClose={() => {this.setState({error: null})}}
-          />
-          <DialogLoader
-            title={this.state.loading}
-            opened={this.state.loading != null}
-          />
-          <DialogMessage
-            title="Duplicate"
-            confirmation="true"
-            opened={this.state.duplicate != null}
-            message="Template with matching key exists.  Continuing(OK) will overwrite any unsaved changes"
-            onClose={() => {this.setState({duplicate: null});}}
-            onClick={() => {this.handleDuplicateTemplateLoad();}}
-          />
-          <DialogTemplateSelection
-            templates={this.state.templates}
-            opened={this.state.promptTemplate}
-            onClose={() => {this.setState({promptTemplate: false});}}
-            onClick={this.handleTemplateLoad}
-          />
+          { this.state.error &&
+            <DialogMessage
+              title="Error"
+              opened={true}
+              message={this.state.error}
+              onClose={() => {this.setState({error: null})}}
+            />
+          }
+          { this.state.loading &&
+            <DialogLoader
+              title={this.state.loading}
+              opened={true}
+            />
+          }
+          {this.state.duplicate &&
+            <DialogMessage
+              title="Duplicate"
+              confirmation="true"
+              opened={true}
+              message="Template with matching key exists.  Continuing(OK) will overwrite any unsaved changes"
+              onClose={() => {this.setState({duplicate: null});}}
+              onClick={() => {this.handleDuplicateTemplateLoad();}}
+            />
+          }
+          {this.state.promptTemplate &&
+            <DialogOptions
+              title="Select Template"
+              open={true}
+              onClose={() => {this.setState({promptTemplate: false})}}
+              onClick={this.handleTemplateLoad}
+              options={this.state.templates}
+            />
+          }
           </div>
-        </MuiThemeProvider>
-      </div>
+      </MuiThemeProvider>
     );
 
   }

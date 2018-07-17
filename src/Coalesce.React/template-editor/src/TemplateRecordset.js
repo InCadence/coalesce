@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import Checkbox from 'material-ui/Checkbox';
+import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
 import { Row, Col } from 'react-bootstrap';
-import TextField from 'material-ui/TextField';
 
 import { Definitions } from './TemplateDefinitions'
 
@@ -40,39 +40,34 @@ export class RecordSet extends Component {
     const { recordset } = this.state;
 
     return (
-      <div className="ui-widget-content" >
+      <div  >
         <Row>
           <Col xs={4}>
             <Checkbox
               label="Singleton"
               checked={recordset.minRecords === 1 && recordset.maxRecords === 1}
-              onCheck={(event, checked) => {
+              onChange={(event, checked) => {
                 this.handleChange("minRecords", checked ? 1 : 0);
                 this.handleChange("maxRecords", checked ? 1 : 0);
               }}
             />
           </Col>
-          <Col xs={4} style={{'textAlign': 'right'}}>
-            Min / Max
-          </Col>
-          <Col xs={2}>
+          <Col xs={4}>
             <TextField
               id={recordset.key + "_min"}
+              label="min"
               type='number'
-              fullWidth={true}
-              underlineShow={false}
-              style={{height: '16px'}}
+              fullWidth
               value={recordset.minRecords}
               onChange={(event, value) => this.handleChange("minRecords", value)}
             />
           </Col>
-          <Col xs={2}>
+          <Col xs={4}>
             <TextField
               id={recordset.key + "_max"}
+              label="max"
               type='number'
-              fullWidth={true}
-              underlineShow={false}
-              style={{height: '16px'}}
+              fullWidth
               value={recordset.maxRecords}
               onChange={(event, value) => this.handleChange("maxRecords", value)}
             />
