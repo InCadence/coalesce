@@ -12,7 +12,7 @@ import { loadTemplates, loadTemplate, saveTemplate,registerTemplate, loadTemplat
 import { saveFile } from 'common-components/lib/js/common';
 
 import { loadJSON } from 'common-components/lib/js/propertyController';
-import {Menu} from 'common-components/lib/index.js';
+import {Menu} from 'common-components/lib/index';
 
 import { DialogMessage, DialogLoader, DialogTemplateSelection} from 'common-components/lib/components/dialogs';
 import RGL,{WidthProvider} from 'react-grid-layout';
@@ -487,6 +487,7 @@ class TemplateWorkspace extends Component {
 
     return (
       <div>
+        <MuiThemeProvider muiTheme={this.state.theme} theme={this.state.theme}>
         <Menu logoSrc={pjson.icon} title={pjson.title} homeEnabled={false} items={[
           {
             id: 'home',
@@ -532,7 +533,6 @@ class TemplateWorkspace extends Component {
             onClick: () => {this.handleTemplateRegister()}
           }
         ]}/>
-        <MuiThemeProvider muiTheme={this.state.theme}>
           <div>
           <ReactGridLayout className="layout" layout={this.state.items} rowHeight={this.state.rowHeight} cols= {this.state.cols} draggableCancel="input,textarea">
             {this.state.items.map((item) => this.createElement(item))}
