@@ -10,8 +10,16 @@ export class DialogOptions extends React.Component {
       <ListItem
         key={item.key}
         id={item.key}
+        initiallyOpen={false}
         primaryText={item.name}
         onClick={item.onClick}
+        nestedItems={item.description ? [
+          <ListItem
+            key={item.key + "_description"}
+            primaryText={item.description}
+            onClick={(event) => this.props.onClick(item)}
+          />
+          ] : undefined}
       />
     )
   }
@@ -35,7 +43,8 @@ export class DialogOptions extends React.Component {
         autoScrollBodyContent={true}
       >
         <List>
-          {this.props.options.map((item) => {return this.renderItem(item);})}
+          {this.props.options && this.props.options.map((item) => {return this.renderItem(item);})}
+          {this.props.children}
         </List>
       </Dialog>
     )

@@ -18,7 +18,7 @@ export class IconButton extends React.PureComponent {
         size={this.props.size}
         style={{
           backgroundColor: this.props.theme.palette.primary.dark,
-          borderColor: this.props.theme.palette.primary.light
+          borderColor: this.props.theme.palette.primary.light,
           display: display
         }}
         class={(this.props.enabled === true) ? "coalesce-img-button enabled" : "coalesce-img-button"}
