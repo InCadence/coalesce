@@ -1,9 +1,69 @@
-version: '2'
-services:
-  coalesce:
-    # build: .
-    image: coalesce
-    ports:
-      - "8181:8181"
-      - "8101:8101"
+version: "2"
 
+volumes:
+  db-backups:
+  geoserver-data:
+
+networks:
+  estest:
+    driver: bridge
+
+services:
+    coalesce:
+      # build: .
+      image: 192.168.11.86:8082/coalesce
+      ports:
+        - "8181:8181"
+        - "8101:8101"
+    db:
+      image: kartoza/postgis:10.0-2.4
+      hostname: postgis
+      volumes:
+        #- ./pg/postgres_data:/var/lib/postgresql
+        - db-backups:/backups
+      ports:
+        - "25432:5432"
+      networks:
+        - estest
+      environment:
+        - USERNAME=docker
+        - PASS=docker
+        - ALLOW_IP_RANGE=172.20.0.0/24
+      restart: unless-stopped
+    geoserver:
+      image: eeacms/elasticgeo #kartoza/geoserver:2.12.0
+      hostname: geoserver
+      volumes:
+        - geoserver-data:/opt/geoserver/data_dir
+      ports:
+        - "8080:8080"
+      networks:
+        - estest
+      links:
+        - db:db
+      restart: unless-stopped
+      user: root
+    elasticsearch5:
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
+        container_name: rbcf-elasticsearch
+        environment:
+            - cluster.name=elasticsearch
+            - http.host=0.0.0.0
+            - network.publish_host=0.0.0.0
+            - transport.tcp.port=9300
+            - discovery.type=single-node
+            - xpack.security.enabled=false
+        ports:
+            - "9200:9200"
+            - "9300:9300"
+        restart: unless-stopped
+    kibana5:
+      image: docker.elastic.co/kibana/kibana:5.4.0
+      container_name: rbcf-kibana
+      environment:
+        - ELASTICSEARCH_URL=http://elasticsearch5:9200
+      ports:
+        - "5601:5601"
+      depends_on:
+        - "elasticsearch5"
+      restart: unless-stopped
