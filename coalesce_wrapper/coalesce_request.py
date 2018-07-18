@@ -118,67 +118,179 @@ FORMATS = (u"XML", u"JSON", u"python_dict")
 # Convert a server URL to a CoalesceServer object. This also serves as a check 
 # for a properly formed URL.   
 
+def read(ARTIFACT=None, key=None, TESTING="false"):
+    """
+    Arguments:
+    :ARTIFACT: The type of entity being requested
+    :key: The UUID assigned to the entity
+    """
+
+    if (ARTIFACT or key) == None:
+        raise ValueError("Re-check parameters, make sure botht the Artifact and UUID key have been entered")
+
+    serverobj = CoalesceServer()
+    server = serverobj.URL
+    headers = {
+        "Connection": u"keep-alive",
+        "content-type": u"application/json; charset=utf-8"  # come back to this to find the bug
+    }
+    data = {
+        'values': ARTIFACT, 'entityKey': key
+    }
+    operation = u"read"
+    method = OPERATIONS[operation][1]
+    params = None
+
+    response = get_response(URL=server + OPERATIONS[operation][0] +
+                                data[u'entityKey'],
+                            method=method,
+                            params=params,
+                            data=data,
+                            headers=headers,
+                            delay=1,
+                            max_attempts=2
+                            )
+    response = json.loads(response.text)
+
+    parameters = "data"
+
+    Response_dict = dict(response)
+
+    """
+    :parameters are what subcategory the user would like to draw from 
+    the outputted data. They could be: "raw", "fields", "linkages" or
+    "data"
+    """
+
+    if parameters == "raw":
+        return response
+
+    elif parameters == "linkages":
+        Response_dict = (Series((Response_dict)['linkageSection']['linkagesAsList']))
+        return Response_dict[0], Response_dict[1]
+
+    elif parameters == "data":  # Removes all metadata
+        response_dict = Response_dict['sectionsAsList'][0]['recordsetsAsList']
+        return response_dict
+
+    elif parameters == "fields":
+        Response_dict = Response_dict['sectionsAsList'][0]['recordsetsAsList'][0]['allRecords'][0]['fields']
+        Field_Attributes = [u'status', u'classificationMarkingAsString', u'label']
+        for _ in range(len(Response_dict)):
+            for i in Field_Attributes:
+                response = Response_dict[_]
+                print(pprint.pprint(response))
+        return response
+
+    else:
+        ValueError("You have entered an invalid parameter. Check again.")
+
+def delete(type = None, key = None, TESTING = "false"):
+
+    """
+    :type: The type of entity being deleted
+    :key: The UUID of the entity being deleted
+    """
+    if (type or key) == None:
+        raise ValueError("Please ensure that any inputs are not none")
+
+    serverobj = CoalesceServer()
+    server = serverobj.URL
+    headers = {
+            "Connection" : u"keep-alive",
+            "content-type" : u"application/json; charset=utf-8" #come back to this to find the bug
+        }
+    data = {'values': type, 'entityKey': key}
+    operation = u"delete"
+    method = OPERATIONS[operation][1]
+    params = None
+
+    response = get_response(URL = server + OPERATIONS[operation][0] + data[u'entityKey'],
+                            method = method,
+                            params = params,
+                            data = data,
+                            headers = headers,
+                            delay = 1,
+                            max_attempts = 2)
+    if TESTING == "true":
+        return response, data
+    return response
+
+def update_template(orignal, change):
+    for key, value in change.iteritems():
+        if isinstance(value, collections.Mapping):
+            placeholder = update_template(orignal.get(key), value)
+            orignal[key] = placeholder
+        elif isinstance(value, list):
+            for key1 in value:
+                index = value.index(key1)
+                change[key] = value[index]
+                placeholder = [update_template(orignal[key][index], change[key])]
+                orignal[key] = placeholder
+        else:
+            orignal[key] = change[key]
+    return  orignal
+
 def search(params = None, operation = u"search",
-           SUB_OPERATIONS = u"simple", OPERATOR = "AND", OPERATORS = ["Like", "Like"], 
-           VALUES = ["hello", "max"], FIELDS = ["name", "objectkey"], 
+           SUB_OPERATIONS = u"simple", OPERATOR = "AND", operators = ["Like", "Like"],
+           values = ["hello", "max"], fields = ["name", "objectkey"],
            query = [{"test": "test"}, {"NAME": "NAME"}], TESTING = "false"):
 
     """
     Arguments:
-    :param parameters: search parameters included in the search
     :param operation: the operation to be preformed on the database
     :param method: the operation used to recieve data(GET, POST, etc)
     :param SUB_OPERATIONS: the type of search to be preformed(ie. simple, complex, custom?)
-    :param OPERATOR: only applies to a complex search, ties together 
+    :param OPERATOR: only applies to a complex search, ties together
         multiple searches in the type of results desired back: AND or OR are valid
-    :param OPERATORS: the type of operation preformed on each individual value
-        Valid types are - 
-        "=", "!=", "Like", 
-    :param FIELDS: the type of value that is passed through
-    :param VALUES: the search value
-    :param query: for complex search only, input custom data for querty, 
+    :param operators: the type of operation preformed on each individual value
+        Valid types are -
+        "=", "!=", "Like", more on the github documentation
+    :param fields: the type of value that is passed through
+    :param values: the search value
+    :param query: for complex search only, input custom data for querty,
     if multiple values are desired, follow data format from simple
     """
-        
+
     if not OPERATIONS.has_key(operation):
         raise ValueError('The parameter "operation" must take one of the ' +
                          'following values:\n' + u", ".join(OPERATIONS.keys()))
-    
+
     server = CoalesceServer()
     method = OPERATIONS[operation][1]
-    
+
     if SUB_OPERATIONS == u"simple":
-           
-            server = server.URL        
+
+            server = server.URL
             headers = {
                     "Connection" : u"keep-alive","content-type" : u"application/json; charset=utf-8"
                     }
             CRITERIA = []
             PROPERTYNAMES = []
-                                    
-            if len(FIELDS) == len(VALUES):
-                for i in range(len(FIELDS)):
+
+            if len(fields) == len(values):
+                for i in range(len(fields)):
                     """
                     Setting the data payload format
                     """
                     CRITERIA.append(
                             {
-                                    "key": i, 
-                                    "recordset": "CoalesceEntity", 
-                                    "field": FIELDS[i], 
-                                    "operator": OPERATORS[i],
-                                    "value": VALUES[i],
+                                    "key": i,
+                                    "recordset": "CoalesceEntity",
+                                    "field": fields[i],
+                                    "operator": operators[i],
+                                    "value": values[i],
                                     "matchCase": "false"
                                     })
-                
-                for i in range(len(FIELDS)):
-                    PROPERTYNAMES.append("CoalesceEntity" + "." + FIELDS[i])
+
+                for i in range(len(fields)):
+                    PROPERTYNAMES.append("CoalesceEntity" + "." + fields[i])
                 data = {
                             "pageSize":200,"pageNumber":1,
                             "propertyNames": PROPERTYNAMES,
-                            "group":{"operator": OPERATOR, 
+                            "group":{"operator": OPERATOR,
                                      "criteria": CRITERIA
-                                     }}  
+                                     }}
                 data = json.dumps(data)
 
                 response = get_response(URL = server + OPERATIONS[operation][0],
@@ -191,13 +303,13 @@ def search(params = None, operation = u"search",
                 if TESTING == "true":
                     return response.text, data
                 return response.text
-            
+
             else:
                 raise ValueError("You're inputted criteria are not in sync." 
                                  "\n Check individual fields to make sure"
                                  "\nthere are an equal number in each")
 
-        
+
     if SUB_OPERATIONS == u"complex":
         #Add a check on the searh fuction to see what the user passes through
             """
@@ -207,8 +319,8 @@ def search(params = None, operation = u"search",
             """
             GROUP = query
             PROPERTYNAMES = []
-            for i in range(len(FIELDS)):
-                PROPERTYNAMES.append("CoalesceEntity" + "." + FIELDS[i])
+            for i in range(len(fields)):
+                PROPERTYNAMES.append("CoalesceEntity" + "." + fields[i])
             server = server.URL
             headers = {
                     "Connection" : u"keep-alive",
@@ -238,149 +350,35 @@ def search(params = None, operation = u"search",
                 return response, data
             else:
                 return response
-            
-def read(ARTIFACT = None, KEY = None, TESTING = "false"):
-        
-        """
-        Arguments:
-        :ARTIFACT: The type of entity being requested
-        :KEY: The UUID assigned to the entity
-        """
-        
-        if (ARTIFACT or KEY) == None:
-            raise ValueError("Re-check parameters, make sure they are not none")
-            
-        serverobj = CoalesceServer()
-        server = serverobj.URL
-        headers = {
-                "Connection" : u"keep-alive",
-                "content-type" : u"application/json; charset=utf-8" #come back to this to find the bug
-                }
-        data = {
-            'values': ARTIFACT, 'entityKey': KEY
-            }
-        operation = u"read"
-        method = OPERATIONS[operation][1]
-        params = None
-        
-        response = get_response(URL = server + OPERATIONS[operation][0] +
-                                data[u'entityKey'],
-                                method = method,
-                                params = params,
-                                data = data,
-                                headers = headers,
-                                delay = 1,
-                                max_attempts = 2
-                                )
-        response = json.loads(response.text)
-        
-        parameters = "data"
-            
-        Response_dict = dict(response)
-        
-        """
-        :parameters are what subcategory the user would like to draw from 
-        the outputted data. They could be: "raw", "fields", "linkages" or
-        "data"
-        """
-        
-        if parameters == "raw":
-            return response
-        
-        elif parameters == "linkages":
-            Response_dict = (Series((Response_dict)['linkageSection']['linkagesAsList']))
-            return Response_dict[0], Response_dict[1]
-        
-        elif parameters == "data": #Removes all metadata
-            response_dict = Response_dict['sectionsAsList'][0]['recordsetsAsList']
-            return response_dict
-            
-        elif parameters == "fields":
-            Response_dict = Response_dict['sectionsAsList'][0]['recordsetsAsList'][0]['allRecords'][0]['fields']    
-            Field_Attributes = [u'status', u'classificationMarkingAsString', u'label']
-            for _ in range(len(Response_dict)):
-                for i in Field_Attributes:
-                    response = Response_dict[_]
-                    print(pprint.pprint(response))
-            return response
-        
-        else:
-            ValueError("You have entered an invalid parameter. Check again.")
 
-def delete(TYPE = None, KEY = None, TESTING = "false"):
-    
-    """
-    :TYPE: The type of entity being deleted
-    :KEY: The UUID of the entity being deleted
-    """
-    if (TYPE or KEY) == None:
-        raise ValueError("Please ensure that any inputs are not none")
+def create(TYPE = None, fieldsadded = None, TESTING = "false"):
 
-    serverobj = CoalesceServer()
-    server = serverobj.URL
-    headers = {
-            "Connection" : u"keep-alive",
-            "content-type" : u"application/json; charset=utf-8" #come back to this to find the bug
-        }
-    data = {'values': TYPE, 'entityKey': KEY}
-    operation = u"delete"
-    method = OPERATIONS[operation][1]
-    params = None
-                  
-    response = get_response(URL = server + OPERATIONS[operation][0] + data[u'entityKey'],
-                            method = method,
-                            params = params,
-                            data = data,
-                            headers = headers,
-                            delay = 1,
-                            max_attempts = 2)
-    if TESTING == "true":
-        return response, data
-    return response
-
-def update_template(orignal, change):
-    for key, value in change.iteritems():
-        if isinstance(value, collections.Mapping):
-            placeholder = update_template(orignal.get(key), value)
-            orignal[key] = placeholder
-        elif isinstance(value, list):
-            for key1 in value:
-                index = value.index(key1)
-                change[key] = value[index]
-                placeholder = [update_template(orignal[key][index], change[key])]
-                orignal[key] = placeholder
-        else:
-            orignal[key] = change[key]
-    return  orignal
-
-def create(TYPE = None, FIELDSADDED = None, TESTING = "false"):
-    
     """
     Arguments:
     :TYPE: The type of artifact being looked for
-    :FIELDSADDED: The fields that are being created in the artifact, can pass through
+    :fieldsadded: The fields that are being created in the artifact, can pass through
     string path or individual keys ***Only metadata can be changed without a path
     """
-    
+
     if TYPE == None:
         raise ValueError("Please specify a type of template to retrieve from the server"
                          )
 
-    if FIELDSADDED == None:
+    if fieldsadded == None:
         raise ValueError("Please specify fields to add, or enter an empty list")
 
     serverobj = CoalesceServer()
     server = serverobj.URL
     headers = {
             "Connection" : u"keep-alive",
-            "content-type" : u"application/json; charset=utf-8"    
+            "content-type" : u"application/json; charset=utf-8"
         }
-    
+
     params = None
     operation = u"create"
     method = OPERATIONS[operation][1]
-    
-    response = get_response(URL = server + "data/templates", 
+
+    response = get_response(URL = server + "data/templates",
                             method = 'get',
                             params = params,
                             data = None,
@@ -393,8 +391,8 @@ def create(TYPE = None, FIELDSADDED = None, TESTING = "false"):
     for i in range(len(TEMPLATE_KEYS)):
         if TEMPLATE_KEYS[i][u"name"] == TYPE:
             key = TEMPLATE_KEYS[i][u"key"]
-        
-    response = get_response(URL = server + "data/templates/{}/new".format(key), 
+
+    response = get_response(URL = server + "data/templates/{}/new".format(key),
                             method = 'get',
                             params = params,
                             data = None,
@@ -404,7 +402,7 @@ def create(TYPE = None, FIELDSADDED = None, TESTING = "false"):
                             )
 
     TEMPLATE = json.loads(response.text)
-    for item in FIELDSADDED:
+    for item in fieldsadded:
         tmp = update_template(TEMPLATE, item)
     data = json.dumps(tmp)
 
@@ -420,20 +418,20 @@ def create(TYPE = None, FIELDSADDED = None, TESTING = "false"):
         return response, json.loads(data)
     else:
         return response
-        
-def update(VALUE = None, KEY = None,
-           NEWVALUES = None,
+
+def update(value = None, key = None,
+           newvalues = None,
            TESTING = "false"):
 
         """
         Arguments:
-        :VALUE: The type of entity being requested
-        :KEY: The specific entity key
-        :NEWVALUES: The fields that require updating, only key required if it is 
-        present in the first or second nest, else provide an entire path to ensure 
+        :value: The type of entity being requested
+        :key: The specific entity key
+        :newvalues: The fields that require updating, only key required if it is
+        present in the first or second nest, else provide an entire path to ensure
         repeating keys are not confused
         """
-        if (VALUE or KEY or NEWVALUES) == None:
+        if (value or key or newvalues) == None:
             raise ValueError("Make sure no input parameters are None and retry")
 
         serverobj = CoalesceServer()
@@ -443,7 +441,7 @@ def update(VALUE = None, KEY = None,
                 "content-type" : u"application/json; charset=utf-8"
                 }
         read_payload = {
-            'values': VALUE, 'entityKey': KEY} #Please enter your specific entity key
+            'values': value, 'entityKey': key} #Please enter your specific entity key
         params = None
         operation = u"update"
         method = OPERATIONS[operation][1]
@@ -455,30 +453,119 @@ def update(VALUE = None, KEY = None,
                                 delay = 1,
                                 max_attempts = 2
                                 )
-        
         TEMPLATE = json.loads(response.text)
 
-        if len(NEWVALUES) > 0:
-            for item in NEWVALUES:
+        if len(newvalues) > 0:
+            for item in newvalues:
                 tmp = update_template(TEMPLATE, item)
             data = tmp
 
-        elif len(NEWVALUES) == 0:
+        elif len(newvalues) == 0:
             data = TEMPLATE
 
-        elif len(NEWVALUES) < 0:
+        elif len(newvalues) < 0:
             raise ValueError("HOW?")
 
-        response = get_response(URL = server + OPERATIONS[operation][0] +
-                                read_payload['entityKey'],
-                                method = method,
-                                params = params,
-                                data = json.dumps(data),
-                                headers = headers,
-                                delay = 1,
-                                max_attempts = 2)
+        response = get_response(URL=server + OPERATIONS[operation][0] +
+                                    read_payload['entityKey'],
+                                method=method,
+                                params=params,
+                                data=json.dumps(data),
+                                headers=headers,
+                                delay=1,
+                                max_attempts=2)
 
         if TESTING == "true":
             return response, data
 
         return response
+
+def get_links(GUID):
+    #Not functional yet
+    pass
+
+class CoalesceEntity(GUID=None, entity_type = None, template=None, records={},
+                     links=[], server=CoalesceServer(), created = False):
+
+    def __init__(self, GUID, server, entity_type, created):
+        if (GUID and entity_type) == None:
+            raise ValueError("The GUID and entity type can not be equal to none.\n"
+                             "If a new entity needs to be created,c leave created as its default.")
+        elif created == True:
+            self = read(key = GUID, value = entity_type)
+
+        elif created == False:
+           self.response = create(TYPE=entity_type, links = [])
+
+        self.data = json.loads(self.text)
+        self.URL = server.URL
+
+    def add_data(self,data, values=[], open_as_file = "false"):
+        if open_as_file == "true":
+            with open("data.txt", "w") as file:
+                raw_input("Please press a key once done editing template in data.txt")
+        if len(values) > 0:
+            self.data = update_template(data, values)
+        if len(values) == 0:
+            pass
+
+    def delete(self, GUID, entity_type):
+        self.response = delete(type = entity_type, key = GUID)
+
+    def update(records={}, record_keys=True):
+        if record_keys and not have_keys:
+            self.data = self.read()
+
+        < Create / modify
+        data
+        object >
+
+
+    def create_link():
+        < Create / modify
+        links
+        object >
+
+
+    def get_links():
+        < Parse
+        the
+        data
+        object >
+
+
+    def delete_links():
+        < Send
+        request >
+
+
+def send():
+    if not create:
+
+        < Send
+        create
+        request
+        with the object >
+
+        created = True
+
+    else:
+
+        < Send
+        update
+        request
+        with the object >
+
+    < Send
+    create
+    links
+    request >
+
+
+
+
+
+
+
+
+
