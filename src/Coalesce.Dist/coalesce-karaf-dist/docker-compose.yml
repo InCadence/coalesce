@@ -47,7 +47,7 @@ services:
             - network.publish_host=0.0.0.0
             - transport.tcp.port=9300
             - discovery.type=single-node
-            - xpack.security.enabled=true
+            - xpack.security.enabled=false
         ports:
             - "9200:9200"
             - "9300:9300"
@@ -63,9 +63,11 @@ services:
         - "elasticsearch5"
       restart: unless-stopped
     karaf:
-      image: 192.168.11.86:8082/docker-coalesce-karaf
+      image: 192.168.11.86:8082/coalesce
       container_name: coalesce
       ports:
         - "8181:8181"
         - "8101:8101"
       restart: unless-stopped
+      links:
+        -
