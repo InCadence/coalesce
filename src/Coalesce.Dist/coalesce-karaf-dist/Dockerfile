@@ -1,7 +1,7 @@
 FROM openjdk:8u171-jdk-alpine3.8
 
 
-ARG TARBALL=coalesce-karaf-dist-0.0.*-SNAPSHOT.tar.gz
+ARG TARBALL=*.tar.gz
 ARG TAR_PATH=./target/$TARBALL
 
 
