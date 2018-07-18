@@ -9,21 +9,7 @@ networks:
     driver: bridge
 
 services:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 5e72ba2... Docker tarball change
-    coalesce:
-      # build: .
-      image: 192.168.11.86:8082/coalesce
-      ports:
-        - "8181:8181"
-        - "8101:8101"
-<<<<<<< HEAD
->>>>>>> 1f55fc2... Docker tarball change and docker compose
-=======
->>>>>>> 5e72ba2... Docker tarball change
+
     db:
       image: kartoza/postgis:10.0-2.4
       hostname: postgis
@@ -76,8 +62,6 @@ services:
       depends_on:
         - "elasticsearch5"
       restart: unless-stopped
-<<<<<<< HEAD
-<<<<<<< HEAD
     karaf:
       image: coalesce
       container_name: coalesce
@@ -85,7 +69,3 @@ services:
         - "8181:8181"
         - "8101:8101"
       restart: unless-stopped
-=======
->>>>>>> 1f55fc2... Docker tarball change and docker compose
-=======
->>>>>>> 5e72ba2... Docker tarball change
