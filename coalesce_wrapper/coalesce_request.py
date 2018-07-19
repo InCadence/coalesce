@@ -490,7 +490,7 @@ class CoalesceEntity(GUID=None, entity_type = None, template=None, records={},
     def __init__(self, GUID, server, entity_type, created):
         if (GUID and entity_type) == None:
             raise ValueError("The GUID and entity type can not be equal to none.\n"
-                             "If a new entity needs to be created,c leave created as its default.")
+                             "If a new entity needs to be created, leave created as its default.")
         elif created == True:
             self = read(key = GUID, value = entity_type)
 
@@ -528,10 +528,7 @@ class CoalesceEntity(GUID=None, entity_type = None, template=None, records={},
 
 
     def get_links():
-        < Parse
-        the
-        data
-        object >
+        < Get the data links in the object by using the imported TEMPLATE in read>
 
 
     def delete_links():
@@ -539,27 +536,14 @@ class CoalesceEntity(GUID=None, entity_type = None, template=None, records={},
         request >
 
 
-def send():
-    if not create:
-
-        < Send
-        create
-        request
-        with the object >
-
+def send(created == "false"):
+    if created == "true":
+        <Send API request defined in update>
         created = True
 
     else:
+        <Send API request method used in create>
 
-        < Send
-        update
-        request
-        with the object >
-
-    < Send
-    create
-    links
-    request >
 
 
 

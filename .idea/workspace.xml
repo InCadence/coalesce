@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="be2e82be-f551-461f-ba18-0ed2a388311f" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/coalesce_wrapper/coalesce_request.py" beforeDir="false" afterPath="$PROJECT_DIR$/coalesce_wrapper/coalesce_request.py" afterDir="false" />
     </list>
@@ -23,8 +22,8 @@
           <file leaf-file-name="coalesce_request.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/coalesce_wrapper/coalesce_request.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="356">
-                  <caret line="522" lean-forward="true" selection-start-line="522" selection-end-line="522" />
+                <state relative-caret-position="-260">
+                  <caret line="499" column="37" lean-forward="true" selection-start-line="499" selection-start-column="37" selection-end-line="499" selection-end-column="37" />
                   <folding>
                     <element signature="e#50#79#0" expanded="true" />
                   </folding>
@@ -36,7 +35,7 @@
             <entry file="file://$PROJECT_DIR$/.gitignore">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="80">
-                  <caret line="4" column="18" lean-forward="true" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
+                  <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
                 </state>
               </provider>
             </entry>
@@ -44,8 +43,8 @@
           <file leaf-file-name="tests_coalesce_request.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-100">
-                  <caret line="17" column="3" lean-forward="true" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
+                <state relative-caret-position="260">
+                  <caret line="17" column="3" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
                   <folding>
                     <element signature="e#24#85#1" />
                     <element signature="e#629#644#0" expanded="true" />
@@ -56,9 +55,7 @@
           </file>
           <file leaf-file-name="API_request.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/coalesce_wrapper/utilities/API_request.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-973" />
-              </provider>
+              <provider selected="true" editor-type-id="text-editor" />
             </entry>
           </file>
           <file leaf-file-name="wrapper_runner.py" pinned="false" current-in-tab="false">
@@ -82,14 +79,19 @@
         </leaf>
       </split-first>
       <split-second>
-        <leaf>
-          <file leaf-file-name="Wrapper_skeleton.txt" pinned="false" current-in-tab="true">
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="Wrapper_skeleton.txt" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Wrapper_skeleton.txt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-1120">
-                  <caret line="7" column="13" lean-forward="true" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+                <state relative-caret-position="140">
+                  <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
                 </state>
               </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="runMinHashExample.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/../MinHash/runMinHashExample.py">
+              <provider selected="true" editor-type-id="text-editor" />
             </entry>
           </file>
         </leaf>
@@ -151,8 +153,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="154" />
-    <option name="y" value="-8" />
+    <option name="x" value="109" />
+    <option name="y" value="15" />
     <option name="width" value="1399" />
     <option name="height" value="820" />
   </component>
@@ -434,24 +436,24 @@
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49141964" visible="true" weight="0.18701799" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4899846" visible="true" weight="0.16323908" />
       <window_info anchor="bottom" id="TODO" order="15" weight="0.32795697" />
       <window_info anchor="right" id="R Packages" order="6" />
       <window_info anchor="right" id="R Graphics" order="5" />
       <window_info anchor="bottom" id="Event Log" order="17" side_tool="true" weight="0.3293011" />
       <window_info anchor="bottom" id="Version Control" order="16" weight="0.32258064" />
-      <window_info anchor="bottom" id="Python Console" order="19" visible="true" weight="0.13844086" />
+      <window_info anchor="bottom" id="Python Console" order="19" visible="true" weight="0.12768817" />
       <window_info anchor="bottom" id="Run" order="6" weight="0.3266129" />
-      <window_info id="Structure" order="1" sideWeight="0.5085803" side_tool="true" visible="true" weight="0.18701799" />
+      <window_info id="Structure" order="1" sideWeight="0.5100154" side_tool="true" visible="true" weight="0.16323908" />
       <window_info anchor="bottom" id="Terminal" order="18" weight="0.34811828" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="9" weight="0.39919356" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="14" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Inspection Results" order="0" weight="0.3293011" />
       <window_info anchor="bottom" id="Message" order="1" />
-      <window_info anchor="bottom" id="Inspection" order="14" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="13" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="5" weight="0.31048387" />
     </layout>
@@ -500,6 +502,17 @@
               <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
                 <collection />
               </option>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="working" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
               <option name="COLUMN_ORDER">
                 <list>
                   <option value="0" />
@@ -547,27 +560,54 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+        <state relative-caret-position="80">
+          <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py">
+    <entry file="file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1904">
-          <caret line="112" column="24" selection-start-line="112" selection-start-column="24" selection-end-line="112" selection-end-column="24" />
+        <state relative-caret-position="260">
+          <caret line="17" column="3" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
+          <folding>
+            <element signature="e#24#85#1" />
+            <element signature="e#629#644#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wrapper/utilities/API_request.py">
+    <entry file="file://$PROJECT_DIR$/wrapper_runner.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="18" selection-start-line="18" selection-end-line="18" />
+        <state>
+          <caret column="20" selection-start-column="20" selection-end-column="20" />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Wrapper_skeleton.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="20">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../MinHash/runMinHashExample.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/coalesce_wrapper/coalesce_request.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="524" column="25" lean-forward="true" selection-start-line="524" selection-start-column="25" selection-end-line="524" selection-end-column="25" />
+          <folding>
+            <element signature="e#50#79#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
+    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
+    <entry file="file://$PROJECT_DIR$/wrapper/utilities/API_request.py" />
     <entry file="file://$PROJECT_DIR$/wrapper_runner.py" />
     <entry file="file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -581,13 +621,7 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/unit_testing/config.ini" />
-    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="20" lean-forward="true" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
     <entry file="file://$PROJECT_DIR$/wrapper/API/API_request.py" />
     <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/1519436151/__builtin__.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -596,22 +630,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
     <entry file="file://$PROJECT_DIR$/tester.py" />
     <entry file="file://$PROJECT_DIR$/wrapper/API/API_request.py" />
-    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="5" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
@@ -623,48 +645,18 @@
     <entry file="file://$PROJECT_DIR$/tester.py" />
     <entry file="file://$PROJECT_DIR$/wrapper/API/API_request.py" />
     <entry file="file://$PROJECT_DIR$/__init__.py" />
-    <entry file="file://$PROJECT_DIR$/wrapper/search/search_parser.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-459" />
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/wrapper/search/search_parser.py" />
     <entry file="file://$PROJECT_DIR$/wrapper/API/__init__.py" />
     <entry file="file://$PROJECT_DIR$/.Rhistory">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/wrapper_executable.py" />
     <entry file="file://$PROJECT_DIR$/wrapper/API/API_request.py" />
-    <entry file="file://C:/Python27/Lib/unittest/case.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3766">
-          <caret line="230" column="8" selection-start-line="230" selection-start-column="8" selection-end-line="230" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wrapper/utilities/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wrapper/search/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wrapper/utilities/logger.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="25" selection-start-line="6" selection-start-column="25" selection-end-line="6" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wrapper/utilities/API_request.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" selection-start-line="18" selection-end-line="18" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://C:/Python27/Lib/unittest/case.py" />
+    <entry file="file://$PROJECT_DIR$/wrapper/utilities/__init__.py" />
+    <entry file="file://$PROJECT_DIR$/wrapper/search/__init__.py" />
+    <entry file="file://$PROJECT_DIR$/wrapper/utilities/logger.py" />
+    <entry file="file://$PROJECT_DIR$/wrapper/utilities/API_request.py" />
     <entry file="file://$PROJECT_DIR$/unit_testing/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
@@ -689,9 +681,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wrapper/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/wrapper/__init__.py" />
     <entry file="file://$PROJECT_DIR$/LICENSE.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="20">
@@ -717,13 +707,7 @@
       </provider>
     </entry>
     <entry file="file://C:/ProgramData/Anaconda2/Lib/site-packages/wrapper/__init__.py" />
-    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="20">
-          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
     <entry file="file://$PROJECT_DIR$/setup.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="380">
@@ -732,21 +716,19 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/coalesce_wrapper/utilities/API_request.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-973" />
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="80">
-          <caret line="4" column="18" lean-forward="true" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
+          <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-100">
-          <caret line="17" column="3" lean-forward="true" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
+        <state relative-caret-position="260">
+          <caret line="17" column="3" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
           <folding>
             <element signature="e#24#85#1" />
             <element signature="e#629#644#0" expanded="true" />
@@ -763,15 +745,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Wrapper_skeleton.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1120">
-          <caret line="7" column="13" lean-forward="true" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        <state relative-caret-position="140">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/coalesce_wrapper/coalesce_request.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="356">
-          <caret line="522" lean-forward="true" selection-start-line="522" selection-end-line="522" />
+        <state relative-caret-position="-260">
+          <caret line="499" column="37" lean-forward="true" selection-start-line="499" selection-start-column="37" selection-end-line="499" selection-end-column="37" />
           <folding>
             <element signature="e#50#79#0" expanded="true" />
           </folding>
