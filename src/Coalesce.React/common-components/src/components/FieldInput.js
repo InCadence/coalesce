@@ -1,12 +1,12 @@
 import React from 'react';
-import Checkbox from 'material-ui/Checkbox';
-import TextField from 'material-ui/TextField';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import DatePicker from 'material-ui/DatePicker';
-import TimePicker from 'material-ui/TimePicker';
+import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+//import DatePicker from '@material-ui/core/DatePicker';
+//import TimePicker from '@material-ui/core/TimePicker';
 import { IconButton } from 'common-components/lib/components'
-import muiThemeable from 'material-ui/styles/muiThemeable';
+import { withTheme } from '@material-ui/core/styles';
 
 import { Row, Col } from 'react-bootstrap';
 
@@ -101,10 +101,10 @@ export class FieldInput extends React.Component {
     switch (type) {
       case 'ENUMERATION_LIST_TYPE':
         view = (
-          <SelectField
+          <Select
             id={field.key}
             fullWidth={true}
-            floatingLabelText={label}
+            label={label}
             underlineShow={this.props.showLabels}
             multiple={true}
             value={field[attr] ? field[attr] : null}
@@ -121,15 +121,15 @@ export class FieldInput extends React.Component {
             onKeyDown={this.props.onKeyDown}
           >
             {options}
-          </SelectField>
+          </Select>
         )
         break;
       case 'ENUMERATION_TYPE':
         view = (
-            <SelectField
+            <Select
               id={field.key}
               fullWidth={true}
-              floatingLabelText={label}
+              label={label}
               underlineShow={this.props.showLabels}
               style={style.root}
               labelStyle={style.root}
@@ -145,7 +145,7 @@ export class FieldInput extends React.Component {
               onKeyDown={this.props.onKeyDown}
             >
               {options}
-            </SelectField>
+            </Select>
         )
         break;
       case 'URI_TYPE':
@@ -179,7 +179,7 @@ export class FieldInput extends React.Component {
           <TextField
               id={field.key}
               fullWidth={true}
-              floatingLabelText={label}
+              label={label}
               hintText={`(CSV) ${this.props.hint ? this.props.hint : ""}`}
               underlineShow={this.props.showLabels}
               style={style.root}
@@ -202,7 +202,7 @@ export class FieldInput extends React.Component {
             type='number'
             step='0.01'
             fullWidth={true}
-            floatingLabelText={label}
+            label={label}
             underlineShow={this.props.showLabels}
             style={style.root}
             hintText={this.props.hint ? this.props.hint : ""}
@@ -224,7 +224,7 @@ export class FieldInput extends React.Component {
             id={field.key}
             type='number'
             fullWidth={true}
-            floatingLabelText={label}
+            label={label}
             underlineShow={this.props.showLabels}
             style={style.root}
             hintText={this.props.hint ? this.props.hint : ""}
@@ -253,6 +253,7 @@ export class FieldInput extends React.Component {
           />
         );
         break;
+        /*
       case 'DATE_TIME_TYPE':
 
         var dateTime
@@ -268,7 +269,7 @@ export class FieldInput extends React.Component {
             <Col xs={6}>
               <DatePicker
                 id={field.key + 'date'}
-                floatingLabelText={this.props.showLabels ? label + " Date" : null}
+                label={this.props.showLabels ? label + " Date" : null}
                 hintText={this.props.hint ? this.props.hint : ""}
                 floatingLabelStyle={style.floatingLabel}
                 floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -291,7 +292,7 @@ export class FieldInput extends React.Component {
             <Col xs={6}>
               <TimePicker
                 id={field.key + 'time'}
-                floatingLabelText={this.props.showLabels ? "Time" : null}
+                label={this.props.showLabels ? "Time" : null}
                 hintText={this.props.hint ? this.props.hint : ""}
                 floatingLabelStyle={style.floatingLabel}
                 floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -313,6 +314,7 @@ export class FieldInput extends React.Component {
         </Row>
         );
         break;
+        */
       case 'BINARY_TYPE':
       case 'FILE_TYPE':
         return (
@@ -332,7 +334,7 @@ export class FieldInput extends React.Component {
             <TextField
               id={field.key}
               fullWidth={true}
-              floatingLabelText={label + " - LINESTRING (x1 y1 z1, x2 y2 z2, ...)"}
+              label={label + " - LINESTRING (x1 y1 z1, x2 y2 z2, ...)"}
               hintText={this.props.hint ? this.props.hint : ""}
               floatingLabelStyle={style.floatingLabel}
               floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -351,7 +353,7 @@ export class FieldInput extends React.Component {
             <TextField
               id={field.key}
               fullWidth={true}
-              floatingLabelText={label + " - POLYGON ((x1 y1 z1, x2 y2 z2, ...))"}
+              label={label + " - POLYGON ((x1 y1 z1, x2 y2 z2, ...))"}
               hintText={this.props.hint ? this.props.hint : ""}
               floatingLabelStyle={style.floatingLabel}
               floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -370,7 +372,7 @@ export class FieldInput extends React.Component {
             <TextField
               id={field.key}
               fullWidth={true}
-              floatingLabelText={label + " - MULTIPOINT (x1 y1 z1, x2 y2 z2, ...)"}
+              label={label + " - MULTIPOINT (x1 y1 z1, x2 y2 z2, ...)"}
               hintText={this.props.hint ? this.props.hint : ""}
               floatingLabelStyle={style.floatingLabel}
               floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -405,7 +407,7 @@ export class FieldInput extends React.Component {
                   id={field.key + 'x'}
                   type='number'
                   step='0.01'
-                  floatingLabelText={this.props.showLabels ? label + " Longitude" : null}
+                  label={this.props.showLabels ? label + " Longitude" : null}
                   hintText={this.props.hint ? this.props.hint : ""}
                   floatingLabelStyle={style.floatingLabel}
                   floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -423,7 +425,7 @@ export class FieldInput extends React.Component {
                   id={field.key + 'y'}
                   type='number'
                   step='0.01'
-                  floatingLabelText={this.props.showLabels ? "Latitude" : null}
+                  label={this.props.showLabels ? "Latitude" : null}
                   hintText={this.props.hint ? this.props.hint : ""}
                   floatingLabelStyle={style.floatingLabel}
                   floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -441,7 +443,7 @@ export class FieldInput extends React.Component {
                   id={field.key + 'z'}
                   type='number'
                   step='0.01'
-                  floatingLabelText={this.props.showLabels ? "Attitude" : null}
+                  label={this.props.showLabels ? "Attitude" : null}
                   hintText={this.props.hint ? this.props.hint : ""}
                   floatingLabelStyle={style.floatingLabel}
                   floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -474,7 +476,7 @@ export class FieldInput extends React.Component {
                 id={field.key + 'x'}
                 type='number'
                 step='0.01'
-                floatingLabelText={this.props.showLabels ? label + " Longitude" : null}
+                label={this.props.showLabels ? label + " Longitude" : null}
                 hintText={this.props.hint ? this.props.hint : ""}
                 floatingLabelStyle={style.floatingLabel}
                 floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -492,7 +494,7 @@ export class FieldInput extends React.Component {
                 id={field.key + 'y'}
                 type='number'
                 step='0.01'
-                floatingLabelText={this.props.showLabels ? "Latitude" : null}
+                label={this.props.showLabels ? "Latitude" : null}
                 hintText={this.props.hint ? this.props.hint : ""}
                 floatingLabelStyle={style.floatingLabel}
                 floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -510,7 +512,7 @@ export class FieldInput extends React.Component {
                 id={field.key + 'z'}
                 type='number'
                 step='0.01'
-                floatingLabelText={this.props.showLabels ? "Attitude" : null}
+                label={this.props.showLabels ? "Attitude" : null}
                 hintText={this.props.hint ? this.props.hint : ""}
                 floatingLabelStyle={style.floatingLabel}
                 floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -529,7 +531,7 @@ export class FieldInput extends React.Component {
                 type='number'
                 step='0.01'
                 value={field.radius}
-                floatingLabelText={this.props.showLabels ? "Radius" : null}
+                label={this.props.showLabels ? "Radius" : null}
                 hintText={this.props.hint ? this.props.hint : ""}
                 floatingLabelStyle={style.floatingLabel}
                 floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -549,7 +551,7 @@ export class FieldInput extends React.Component {
           <TextField
             id={field.key}
             fullWidth={true}
-            floatingLabelText={label}
+            label={label}
             hintText={this.props.hint ? this.props.hint : ""}
             floatingLabelStyle={style.floatingLabel}
             floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -569,7 +571,7 @@ export class FieldInput extends React.Component {
           <TextField
             id={field.key}
             fullWidth={true}
-            floatingLabelText={label + " (UI Not Implemented)"}
+            label={label + " (UI Not Implemented)"}
             hintText={this.props.hint ? this.props.hint : ""}
             floatingLabelStyle={style.floatingLabel}
             floatingLabelFocusStyle={style.floatingLabelFocus}
@@ -631,4 +633,4 @@ FieldInput.defaultProps = {
   showLabels: true
 }
 
-export default muiThemeable()(FieldInput);
+export default withTheme()(FieldInput);

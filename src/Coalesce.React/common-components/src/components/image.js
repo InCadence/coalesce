@@ -19,7 +19,7 @@ export class Image extends React.PureComponent {
     var isSvg = this.props.icon.endsWith("svg");
     var view;
 
-    if (this.props.theme && isSvg ) {//&& window.location.port != 3000) {
+    if (this.props.theme && isSvg && window.location.port != 3000) {
       // SVG Does not work with CORS
       view = (
           <svg

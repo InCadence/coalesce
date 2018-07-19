@@ -8,18 +8,24 @@ require('common-components/bootstrap/css/bootstrap.min.css');
 
 export class Menu extends React.PureComponent {
 
+  constructor(props) {
+    super(props);
+
+    this.renderNavItem = this.renderNavItem.bind(this);
+  }
+
   renderNavItem(item) {
     if (this.props.isTextOnly) {
 
       if (item.onClick != null) {
         return (
-            <NavItem eventKey={item.id} href="#">
+            <NavItem key={item.id} eventKey={item.id} href="#">
               <div onClick={item.onClick}>{item.name}</div>
             </NavItem>
           )
       } else {
         return (
-            <NavItem eventKey={item.id} href={item.url}>
+            <NavItem key={item.id} eventKey={item.id} href={item.url}>
               <div>{item.name}</div>
             </NavItem>
           )
@@ -29,13 +35,13 @@ export class Menu extends React.PureComponent {
 
       if (item.onClick != null) {
         return (
-            <NavItem eventKey={item.id} href="#">
+            <NavItem key={item.id} eventKey={item.id} href="#">
               <IconButton icon={item.img} title={item.name} onClick={item.onClick} size={40} />
             </NavItem>
           )
       } else {
         return (
-            <NavItem eventKey={item.id} href={item.url}>
+            <NavItem key={item.id} eventKey={item.id} href={item.url}>
               <IconButton icon={item.img} title={item.name} size={40} />
             </NavItem>
           )
@@ -79,7 +85,7 @@ export class Menu extends React.PureComponent {
         <Navbar.Collapse>
           <Nav pullRight>
             {home}
-            {this.props.items.map(this.renderNavItem.bind(this))}
+            {this.props.items.map(this.renderNavItem)}
           </Nav>
         </Navbar.Collapse>
       </Navbar>
