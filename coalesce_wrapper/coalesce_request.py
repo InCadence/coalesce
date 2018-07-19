@@ -353,6 +353,52 @@ def search(params = None, operation = u"search",
 
 def create(TYPE = None, fieldsadded = None, TESTING = "false"):
 
+<<<<<<< Updated upstream
+=======
+    serverobj = CoalesceServer()
+    server = serverobj.URL
+    headers = {
+            "Connection" : u"keep-alive",
+            "content-type" : u"application/json; charset=utf-8" #come back to this to find the bug
+        }
+    data = {'values': TYPE, 'entityKey': KEY}
+    operation = u"delete"
+    method = OPERATIONS[operation][1]
+    params = None
+                  
+    response = get_response(URL = server + OPERATIONS[operation][0] + data[u'entityKey'],
+                            method = method,
+                            params = params,
+                            data = data,
+                            headers = headers,
+                            delay = 1,
+                            max_attempts = 2)
+    if TESTING == "true":
+        return response, data
+    return response
+
+def update_template(orignal, change):
+    for key, value in change.iteritems():
+        if isinstance(value, collections.Mapping):
+            placeholder = update_template(orignal.get(key), value)
+            orignal[key] = placeholder
+        elif isinstance(value, list):
+            for key1 in value:
+                index = value.index(key1)
+                change[key] = value[index]
+                placeholder = [update_template(orignal[key][index], change[key])]
+                orignal[key] = placeholder
+        else:
+            orignal[key] = change[key]
+    return  orignal
+
+def linkage_creator():
+    #Not set up yet
+    pass
+
+def create(TYPE = None, FIELDSADDED = None, TESTING = "false"):
+    
+>>>>>>> Stashed changes
     """
     Arguments:
     :TYPE: The type of artifact being looked for

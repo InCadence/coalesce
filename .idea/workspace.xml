@@ -16,6 +16,7 @@
     <favorites_list name="pyCoalesce" />
   </component>
   <component name="FileEditorManager">
+<<<<<<< Updated upstream
     <splitter split-orientation="horizontal" split-proportion="0.6973008">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
@@ -97,6 +98,68 @@
         </leaf>
       </split-second>
     </splitter>
+=======
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="coalesce_request.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/coalesce_wrapper/coalesce_request.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="424">
+              <caret line="356" lean-forward="true" selection-start-line="356" selection-end-line="356" />
+              <folding>
+                <element signature="e#50#79#0" expanded="true" />
+                <marker date="1532013571284" expanded="true" signature="13959:13961" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="80">
+              <caret line="4" selection-start-line="4" selection-end-line="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tests_coalesce_request.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="260">
+              <caret line="17" column="3" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
+              <folding>
+                <element signature="e#24#85#1" />
+                <element signature="e#629#644#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="API_request.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/coalesce_wrapper/utilities/API_request.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file leaf-file-name="wrapper_runner.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wrapper_runner.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="20" selection-start-column="20" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="380">
+              <caret line="19" column="6" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+>>>>>>> Stashed changes
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -146,8 +209,11 @@
         <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/wrapper/__init__.py" />
         <option value="$PROJECT_DIR$/wrapper_runner.py" />
+<<<<<<< Updated upstream
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/Wrapper_skeleton.txt" />
+=======
+>>>>>>> Stashed changes
         <option value="$PROJECT_DIR$/coalesce_wrapper/coalesce_request.py" />
       </list>
     </option>
@@ -183,7 +249,15 @@
             </path>
             <path>
               <item name="pyCoalesce" type="b2602c69:ProjectViewProjectNode" />
+<<<<<<< Updated upstream
+=======
               <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="pyCoalesce" type="b2602c69:ProjectViewProjectNode" />
+>>>>>>> Stashed changes
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 2.7 virtualenv at C:\Users\dvenkat\Desktop\Projects\pyCoalesce\venv &gt;" type="70bed36:NamedLibraryElementNode" />
             </path>
             <path>
               <item name="pyCoalesce" type="b2602c69:ProjectViewProjectNode" />
@@ -436,31 +510,61 @@
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
     <editor active="true" />
     <layout>
+<<<<<<< Updated upstream
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4899846" visible="true" weight="0.16323908" />
+=======
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49007937" visible="true" weight="0.16323908" />
+>>>>>>> Stashed changes
       <window_info anchor="bottom" id="TODO" order="15" weight="0.32795697" />
       <window_info anchor="right" id="R Packages" order="6" />
       <window_info anchor="right" id="R Graphics" order="5" />
       <window_info anchor="bottom" id="Event Log" order="17" side_tool="true" weight="0.3293011" />
+<<<<<<< Updated upstream
       <window_info anchor="bottom" id="Version Control" order="16" weight="0.32258064" />
       <window_info anchor="bottom" id="Python Console" order="19" visible="true" weight="0.12768817" />
       <window_info anchor="bottom" id="Run" order="6" weight="0.3266129" />
       <window_info id="Structure" order="1" sideWeight="0.5100154" side_tool="true" visible="true" weight="0.16323908" />
+=======
+      <window_info active="true" anchor="bottom" id="Version Control" order="16" visible="true" weight="0.32258064" />
+      <window_info anchor="bottom" id="Python Console" order="19" weight="0.12768817" />
+      <window_info anchor="bottom" id="Run" order="6" weight="0.3266129" />
+      <window_info id="Structure" order="1" sideWeight="0.50992066" side_tool="true" visible="true" weight="0.16323908" />
+>>>>>>> Stashed changes
       <window_info anchor="bottom" id="Terminal" order="18" weight="0.34811828" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="9" weight="0.39919356" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="16" visible="true" weight="0.32258064" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="14" weight="0.4" />
+<<<<<<< Updated upstream
+=======
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4940476" visible="true" weight="0.13753213" />
+      <window_info id="Structure" order="1" sideWeight="0.50595236" side_tool="true" visible="true" weight="0.13753213" />
+>>>>>>> Stashed changes
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="15" weight="0.32795697" />
+      <window_info anchor="right" id="R Graphics" order="5" />
+      <window_info anchor="bottom" id="Run" order="6" weight="0.3266129" />
       <window_info anchor="bottom" id="Inspection Results" order="0" weight="0.3293011" />
+      <window_info anchor="right" id="R Packages" order="6" />
+      <window_info anchor="bottom" id="Debug" order="9" weight="0.39919356" />
       <window_info anchor="bottom" id="Message" order="1" />
+<<<<<<< Updated upstream
+=======
+      <window_info anchor="bottom" id="Event Log" order="17" side_tool="true" weight="0.3293011" />
+>>>>>>> Stashed changes
       <window_info anchor="bottom" id="Cvs" order="13" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="5" weight="0.31048387" />
+      <window_info anchor="bottom" id="Terminal" order="18" weight="0.34811828" />
+      <window_info anchor="bottom" id="Python Console" order="19" weight="0.32258064" />
     </layout>
     <layout-to-restore>
-      <window_info anchor="bottom" id="Version Control" order="8" weight="0.3252688" />
+      <window_info anchor="bottom" id="Find" order="2" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Run" order="3" weight="0.3292517" />
+      <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11953727" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -469,15 +573,14 @@
       <window_info anchor="right" id="R Graphics" order="3" />
       <window_info anchor="bottom" id="Inspection Results" order="0" weight="0.3293011" />
       <window_info anchor="right" id="R Packages" order="4" />
-      <window_info anchor="bottom" id="Message" order="1" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="11" visible="true" weight="0.3252688" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3293011" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" weight="0.3293011" />
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.3252688" />
+      <window_info anchor="bottom" id="Message" order="1" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Find" order="2" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="11" visible="true" weight="0.3252688" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -560,6 +663,7 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="80">
@@ -609,6 +713,78 @@
     <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
     <entry file="file://$PROJECT_DIR$/wrapper/utilities/API_request.py" />
     <entry file="file://$PROJECT_DIR$/wrapper_runner.py" />
+=======
+    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="19" column="6" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/coalesce_wrapper/utilities/API_request.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+>>>>>>> Stashed changes
+    <entry file="file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="17" column="3" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
+          <folding>
+            <element signature="e#24#85#1" />
+            <element signature="e#629#644#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+<<<<<<< Updated upstream
+    <entry file="file://$PROJECT_DIR$/unit_testing/config.ini" />
+    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
+    <entry file="file://$PROJECT_DIR$/wrapper/API/API_request.py" />
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/1519436151/__builtin__.py">
+=======
+    <entry file="file://$PROJECT_DIR$/wrapper_runner.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="20" selection-start-column="20" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Wrapper_skeleton.txt">
+>>>>>>> Stashed changes
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+<<<<<<< Updated upstream
+    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
+    <entry file="file://$PROJECT_DIR$/tester.py" />
+    <entry file="file://$PROJECT_DIR$/wrapper/API/API_request.py" />
+=======
+    <entry file="file://$PROJECT_DIR$/coalesce_wrapper/coalesce_request.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-260">
+          <caret line="499" column="37" lean-forward="true" selection-start-line="499" selection-start-column="37" selection-end-line="499" selection-end-column="37" />
+          <folding>
+            <element signature="e#50#79#0" expanded="true" />
+            <marker date="1532013571284" expanded="true" signature="13959:13961" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
+    <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
+    <entry file="file://$PROJECT_DIR$/wrapper/utilities/API_request.py" />
+    <entry file="file://$PROJECT_DIR$/wrapper_runner.py" />
     <entry file="file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
@@ -633,6 +809,7 @@
     <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
     <entry file="file://$PROJECT_DIR$/tester.py" />
     <entry file="file://$PROJECT_DIR$/wrapper/API/API_request.py" />
+>>>>>>> Stashed changes
     <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
@@ -673,6 +850,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tester.py" />
     <entry file="file://$PROJECT_DIR$/unit_testing/config.ini" />
+<<<<<<< Updated upstream
+=======
+    <entry file="file://$PROJECT_DIR$/unit_testing/tests_coalesce_request.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="17" column="3" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
+          <folding>
+            <element signature="e#24#85#1" />
+            <element signature="e#629#644#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+>>>>>>> Stashed changes
     <entry file="file://$PROJECT_DIR$/unit_testing/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
@@ -709,6 +900,7 @@
     <entry file="file://C:/ProgramData/Anaconda2/Lib/site-packages/wrapper/__init__.py" />
     <entry file="file://$PROJECT_DIR$/wrapper/coalesce_request.py" />
     <entry file="file://$PROJECT_DIR$/setup.py">
+<<<<<<< Updated upstream
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="380">
           <caret line="19" column="6" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
@@ -719,6 +911,8 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
+=======
+>>>>>>> Stashed changes
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="80">
           <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
@@ -740,6 +934,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <caret column="20" selection-start-column="20" selection-end-column="20" />
+<<<<<<< Updated upstream
         </state>
       </provider>
     </entry>
@@ -747,15 +942,28 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="140">
           <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+=======
+>>>>>>> Stashed changes
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../MinHash/runMinHashExample.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/coalesce_wrapper/coalesce_request.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
         <state relative-caret-position="-260">
           <caret line="499" column="37" lean-forward="true" selection-start-line="499" selection-start-column="37" selection-end-line="499" selection-end-column="37" />
           <folding>
             <element signature="e#50#79#0" expanded="true" />
+=======
+        <state relative-caret-position="424">
+          <caret line="356" lean-forward="true" selection-start-line="356" selection-end-line="356" />
+          <folding>
+            <element signature="e#50#79#0" expanded="true" />
+            <marker date="1532013571284" expanded="true" signature="13959:13961" ph="..." />
+>>>>>>> Stashed changes
           </folding>
         </state>
       </provider>
