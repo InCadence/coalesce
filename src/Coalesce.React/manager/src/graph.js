@@ -3,6 +3,7 @@ import { Graph } from 'react-d3-graph';
 import Paper from 'material-ui/Paper';
 import { DialogMessage } from 'common-components/lib/components/dialogs'
 import ReactTable from 'react-table'
+import ReactJson from 'react-json-view'
 //import Checkbox from 'material-ui/Checkbox';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -17,13 +18,21 @@ export class GraphView extends React.Component {
     props.config.staticGraph = true;
 
     this.state = {
+      actions: 'edit',
       data: props.data,
-      config: props.config
+      config: props.config,
     };
+
 
     this.toggleStatic = this.toggleStatic.bind(this);
     this.handleSelectNode = this.handleSelectNode.bind(this);
     this.onClickNode = this.onClickNode.bind(this);
+    this.onEditToggle = this.onEditToggle.bind(this)
+    this.onEditCancel = this.onEditCancel.bind(this)
+    this.onEditJson = this.onEditJson.bind(this)
+    this.onAddJson = this.onAddJson.bind(this)
+    this.onClose = this.onClose.bind(this)
+
   }
 
   handleResize(that) {
@@ -126,7 +135,6 @@ export class GraphView extends React.Component {
 
   // Graph event callbacks
   onClickNode = function(nodeId) {
-
     const {data} = this.state;
     const that = this;
 
@@ -150,20 +158,101 @@ export class GraphView extends React.Component {
        //window.alert(`Clicked link between ${source} and ${target}`);
   };
 
+  onClose() {
+
+    //fetch post
+    if(this.state.jsonChanged) {
+
+      var updatedJson = Object.assign({}, this.state.jsonValue, this.state.filtered)
+
+      var selectedId = this.state.selected.id
+      var nodes = this.state.data.nodes
+
+      for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i]
+        if (node.id === selectedId) {
+          nodes[i] = updatedJson
+          this.setState({
+            data: this.state.data,
+            actions: 'edit',
+            jsonValue: null,
+            jsonChanged: false,
+            filtered: null,
+            selected: null,
+            editing: false,
+          })
+          this.props.handleDataChange(this.state.data)
+        }
+
+      }
+
+    }
+    else {
+      this.setState({
+        actions: 'edit',
+        jsonValue: null,
+        jsonChanged: false,
+        filtered: null,
+        selected: null,
+        editing: false,
+      })
+    }
+  }
+
+  onEditToggle(selected, filtered) {
+
+    this.setState({
+      jsonValue: JSON.parse(JSON.stringify(selected)),
+      editing: true,
+      filtered: filtered,
+    })
+  }
+
+  onEditJson(update) {
+    this.setState({
+      actions: 'edited',
+      jsonChanged: true,
+      jsonValue: update.updated_src,
+    })
+  }
+
+  onEditCancel() {
+    console.log('Changes disregarded!');
+    this.setState({
+      actions: 'edit',
+      selected: null,
+      editing: false,
+      jsonChanged: false,
+      jsonValue: null,
+    })
+
+  }
+
+  onAddJson(update) {
+    this.setState({
+      actions: 'edited',
+      jsonChanged: true,
+      jsonValue: update.updated_src,
+    })
+  }
+
   render() {
 
-    const {data, selected, config} = this.state;
+    const {data, selected, config, editing} = this.state;
 
     var details = [];
-
+    var filtered = {}
     if (selected != null) {
       Object.keys(selected).forEach((e) => {
-          if (e !== 'x' && e !== 'y' && e !== 'symbolType' && e !== 'strokeColor' && e !== 'strokeWidth' && e !== 'size' && e !== 'color') {
-            details.push({key: e, value: selected[e]});
-          }
+        if (e !== 'x' && e !== 'y' && e !== 'symbolType' && e !== 'strokeColor' && e !== 'strokeWidth' && e !== 'size' && e !== 'color') {
+          details.push({key: e, value: selected[e]});
         }
-      );
+        else {
+          filtered[e] = selected[e]
+        }
+      });
     }
+
 /*
 <Checkbox
   label="Static"
@@ -199,8 +288,10 @@ export class GraphView extends React.Component {
              <DialogMessage
                title="Details"
                opened={selected != null}
+               actions={this.state.actions}
                message={
-                 (
+
+                 (!editing &&
                    <ReactTable
                       data={details}
                       columns={[
@@ -226,8 +317,16 @@ export class GraphView extends React.Component {
                       className="-striped -highlight"
                     />
                   )
+                    ||
+                  (editing &&
+                    <ReactJson src={this.state.jsonValue} collapsed='2' onAdd={this.onAddJson} onEdit={this.onEditJson} iconStyle="square"/>
+                  )
+
                 }
-               onClose={() => {this.setState({selected: null})}}
+
+               onClose={this.onClose}
+               onEditToggle={() => this.onEditToggle(selected, filtered)}
+               onCancel={this.onEditCancel}
              />
          </Paper>
     )

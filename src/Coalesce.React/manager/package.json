@@ -9,12 +9,14 @@
   "private": true,
   "homepage": "/manager",
   "dependencies": {
+    "@material-ui/core": "^1.4.0",
     "common-components": "file:../common-components",
     "material-ui": "^0.20.0",
     "react": "^16.0.0",
     "react-bootstrap": "^0.32.1",
     "react-d3-graph": "^0.4.0",
     "react-dom": "^16.0.0",
+    "react-json-view": "^1.19.0",
     "react-table": "^6.8.2"
   },
   "devDependencies": {

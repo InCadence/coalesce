@@ -15,6 +15,8 @@ export class App extends React.Component {
     this.state = {
       data: null
     };
+
+    this.handleDataChange = this.handleDataChange.bind(this)
   }
 
   componentDidMount() {
@@ -26,7 +28,7 @@ export class App extends React.Component {
         theme: getMuiTheme(value)
       })
     }).catch((err) => {
-      console.log("Loading Theme: " + err);
+      console.log("Error Loading Theme: " + err);
     })
 
     this.loadBlueprint("rest-blueprint.xml");
@@ -61,7 +63,7 @@ export class App extends React.Component {
             }
           }]}/>
           { data != null &&
-            <GraphView data={data} title={selected} theme={theme} />
+            <GraphView handleDataChange={this.handleDataChange} data={data} title={selected} theme={theme} />
           }
           <DialogMessage
             title="Error"
@@ -73,7 +75,7 @@ export class App extends React.Component {
             <DialogOptions
               title="Selection"
               open={data == null && this.state.error == null}
-              onClose={() => {this.loadBlueprint(selected)}}
+              onClose={() => {this.loadBlueprint(selected);}}
               // TODO These options should be pulled from a configuration file
               options={blueprints.map((blueprint) => {
                 return {
@@ -87,6 +89,10 @@ export class App extends React.Component {
           }
         </MuiThemeProvider>
     )
+  }
+
+  handleDataChange(data) {
+    this.setState({data: data})
   }
 
   loadNetwork() {
@@ -162,6 +168,7 @@ export class App extends React.Component {
     var counts = {};
     var col = 1;
 
+    //implement tree
     Object.keys(totals).forEach(function(key) {
       if (totals[key] > 0) {
         counts[key] = {
@@ -240,7 +247,6 @@ export class App extends React.Component {
 function getBlueprintOptions() {
 
   var karafRootAddr = getRootKarafUrl();
-
   return fetch(`${karafRootAddr}/blueprints`)
     .then(res => {
       if (!res.ok)
