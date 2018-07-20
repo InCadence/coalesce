@@ -125,7 +125,7 @@ public class BlueprintController implements IBlueprintController {
 
         //convert changes to XML
         JSONObject json = new JSONObject(changes);
-        String new_xml = XML.toString(json);
+        changes =((String) json.get("xml"));
 
         //find ID within new changes
         String changeID = findBeanID(pattern, changes);
@@ -143,7 +143,7 @@ public class BlueprintController implements IBlueprintController {
 
         if(oldBean.equals("")) {
             //append if no matching ID
-            appendStrToFile(filename.toString(), new_xml);
+            appendStrToFile(filename.toString(), changes);
         }
         else {
             //write over old bean
