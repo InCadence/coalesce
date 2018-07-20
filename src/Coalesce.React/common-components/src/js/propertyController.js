@@ -78,6 +78,24 @@ export function loadProperties(properties)
     });
 }
 
+export function loadAllProperties()
+{
+  return fetch(`${karafRootAddr}/property`, {
+      method: "GET",
+      headers: new Headers({
+        'content-type': 'application/json; charset=utf-8'
+      }),
+    }).then(res => {
+      if (!res.ok)
+      {
+        throw Error(res.statusText);
+      }
+      return res.json();
+    }).catch(function(error) {
+      throw Error(error);
+    });
+}
+
 // Properties is a Map<String, String>
 export function saveProperties(properties)
 {

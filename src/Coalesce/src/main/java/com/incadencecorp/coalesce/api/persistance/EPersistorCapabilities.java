@@ -49,13 +49,21 @@ public enum EPersistorCapabilities
      */
     DELETE,
     /**
-     * Whether or not this persistor can search for entities.
-     */
-    SEARCH,
-    /**
      * Whether or not this persistor can store binary large objects (BLOB).
      */
     SUPPORTS_BLOB,
+    /**
+     * Whether or not this persistor can index fields.
+     */
+    INDEX_FIELDS,
+    /**
+     * Whether or not this persistor supports binary data.
+     */
+    BINARY,
+    /**
+     * Whether or not this persistor can search for entities.
+     */
+    SEARCH,
     /**
      * Whether or not this persistor can support case insensitive search.
      */
@@ -73,11 +81,7 @@ public enum EPersistorCapabilities
      */
     LIST_SEARCH,
     /**
-     * Whether or not this persistor can index fields.
+     * Whether or not this persistor supports lucene syntax.
      */
-    INDEX_FIELDS,
-    /**
-     * Whether ot not this persistor supports binary data.
-     */
-    BINARY
+    LUCENE_SYNTAX
 }

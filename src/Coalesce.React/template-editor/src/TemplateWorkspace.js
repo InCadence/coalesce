@@ -3,19 +3,18 @@ import React, { Component } from 'react';
 import TemplateGraph from './TemplateGraph.js';
 import TemplateEditor from './TemplateEditor.js';
 import { Template } from './TemplateObjects.js';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { getDefaultTheme } from 'common-components/lib/js/theme'
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import uuid from 'uuid';
 
-import { loadTemplates, loadTemplate, saveTemplate,registerTemplate } from 'common-components/lib/js/templateController.js';
+import { loadTemplates, loadTemplate, saveTemplate,registerTemplate, loadTemplateAsXML } from 'common-components/lib/js/templateController';
+import { saveFile } from 'common-components/lib/js/common';
+
 import { loadJSON } from 'common-components/lib/js/propertyController';
-import {Menu} from 'common-components/lib/index.js';
+import {Menu} from 'common-components/lib/index';
 
 import { DialogMessage, DialogLoader, DialogTemplateSelection} from 'common-components/lib/components/dialogs';
 import RGL,{WidthProvider} from 'react-grid-layout';
-
-import { getRootKarafUrl } from 'common-components/lib/js/common';
 
 var pjson = require('../package.json');
 const ReactGridLayout = WidthProvider(RGL);
@@ -44,7 +43,7 @@ class TemplateWorkspace extends Component {
       removedItems: [],
       removedCount: 0,
       scaling: [1,2,3,4],
-      theme: getDefaultTheme()
+      theme: createMuiTheme(getDefaultTheme())
     }
 
     this.handlePromptTemplate = this.handlePromptTemplate.bind(this);
@@ -64,7 +63,7 @@ class TemplateWorkspace extends Component {
     var that = this;
     loadJSON('theme').then((value) => {
       that.setState({
-        theme: getMuiTheme(value)
+        theme: createMuiTheme(value)
       })
     }).catch((err) => {
       console.log("Loading Theme: " + err);
@@ -99,7 +98,14 @@ class TemplateWorkspace extends Component {
           h: 15,
           static: false,
           widgetType: "template",
-          template: {key: uuid.v4(), sectionsAsList: []},
+          template: {
+            className: "",
+            key: uuid.v4(),
+            name: "",
+            source: "",
+            version: "",
+            sectionsAsList: []
+          },
         }),
         // Increment the counter to ensure key is always unique.
         newCounter: this.state.newCounter + 1,
@@ -157,6 +163,8 @@ class TemplateWorkspace extends Component {
     var that = this;
     var oldI, oldX, oldY;
     var index = -1;
+
+    console.log('Loading');
     // Load Template
     loadTemplate(key).then (function(template) {
       //Check to see if template with desired key already exists
@@ -419,10 +427,11 @@ class TemplateWorkspace extends Component {
   }
 
   handleTemplateDownload(){
-      var karafRootAddr = getRootKarafUrl();
-      for(var ii = 0; ii < this.state.items.length; ii++){
-        window.open(`${karafRootAddr}` + '/templates/' + this.state.items[ii].template.key + '.xml', '_blank');
-      }
+      this.state.items.forEach(function (item) {
+        loadTemplateAsXML(item.template.key).then((xml) => {
+          saveFile(new Blob([xml]), item.template.key + ".xml");
+        })
+      })
   }
 
   handleGraphAdd() {
@@ -485,7 +494,7 @@ class TemplateWorkspace extends Component {
   render() {
 
     return (
-      <div>
+      <MuiThemeProvider theme={this.state.theme}>
         <Menu logoSrc={pjson.icon} title={pjson.title} homeEnabled={false} items={[
           {
             id: 'home',
@@ -531,7 +540,6 @@ class TemplateWorkspace extends Component {
             onClick: () => {this.handleTemplateRegister()}
           }
         ]}/>
-        <MuiThemeProvider muiTheme={this.state.theme}>
           <div>
           <ReactGridLayout className="layout" layout={this.state.items} rowHeight={this.state.rowHeight} cols= {this.state.cols} draggableCancel="input,textarea">
             {this.state.items.map((item) => this.createElement(item))}
@@ -561,8 +569,7 @@ class TemplateWorkspace extends Component {
             onClick={this.handleTemplateLoad}
           />
           </div>
-        </MuiThemeProvider>
-      </div>
+      </MuiThemeProvider>
     );
 
   }

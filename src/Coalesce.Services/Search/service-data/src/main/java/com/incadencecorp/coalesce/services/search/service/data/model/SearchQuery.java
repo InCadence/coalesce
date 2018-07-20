@@ -1,8 +1,10 @@
 package com.incadencecorp.coalesce.services.search.service.data.model;
 
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.services.api.search.SortByType;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class SearchQuery {
@@ -12,6 +14,7 @@ public class SearchQuery {
     private int pageNumber;
     private List<SortByType> sortBy;
     private List<String> propertyNames;
+    private final EnumSet<EPersistorCapabilities> capabilities = EnumSet.of(EPersistorCapabilities.SEARCH);
 
     public SearchGroup getGroup()
     {
@@ -45,7 +48,7 @@ public class SearchQuery {
 
     public List<SortByType> getSortBy()
     {
-        return sortBy!= null ? sortBy : new ArrayList<SortByType>();
+        return sortBy != null ? sortBy : new ArrayList<SortByType>();
     }
 
     public void setSortBy(List<SortByType> sortBy)
@@ -55,11 +58,23 @@ public class SearchQuery {
 
     public List<String> getPropertyNames()
     {
-        return propertyNames!= null ? propertyNames : new ArrayList<String>();
+        return propertyNames != null ? propertyNames : new ArrayList<String>();
     }
 
     public void setPropertyNames(List<String> propertyNames)
     {
         this.propertyNames = propertyNames;
     }
+
+    public EnumSet<EPersistorCapabilities> getCapabilities()
+    {
+        return capabilities;
+    }
+
+    public void setCapabilities(EnumSet<EPersistorCapabilities> values)
+    {
+        this.capabilities.clear();
+        this.capabilities.addAll(values);
+    }
+
 }
