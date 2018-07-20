@@ -12,19 +12,28 @@ import com.incadencecorp.coalesce.services.common.api.IBlueprintController;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.EGraphNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import org.json.JSONObject;
+import org.json.XML;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.Scanner;
 
 /**
  * This controller exposes the underlying blueprints of a Karaf container.
@@ -108,6 +117,104 @@ public class BlueprintController implements IBlueprintController {
         }
 
         return result;
+    }
+
+    @Override
+    public void editBlueprint(String name, String changes) throws Exception {
+        Pattern pattern = Pattern.compile("id=\".*\"");
+
+        //convert changes to XML
+        JSONObject json = new JSONObject(changes);
+        String new_xml = XML.toString(json);
+
+        //find ID within new changes
+        String changeID = findBeanID(pattern, changes);
+
+        //convert string to file
+        Path filename = root.resolve(name);
+        File file;
+        try {
+            file = filename.toFile();
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        String oldBean = findFileBean(file, pattern, changeID);
+
+        if(oldBean.equals("")) {
+            //append if no matching ID
+            appendStrToFile(filename.toString(), new_xml);
+        }
+        else {
+            //write over old bean
+            overwriteXML(changes, oldBean, file);
+        }
+    }
+
+    /**
+     * find Bean insde of xml file
+     * @param name blueprint xml file
+     * @param id bean id
+     * @return entire bean with matching ID
+     */
+    private String findFileBean(File name, Pattern p, String id) throws Exception{
+        String bean = "";
+        try{
+            Scanner scan = new Scanner(name);
+            while (scan.hasNext(p)) {
+                String grab = scan.nextLine();
+                if (grab.contains(id)) {
+                    bean += grab;
+                    while (scan.hasNextLine()) {
+                        grab = scan.nextLine();
+                        bean += grab;
+                        if (grab.contains("<bean/>")) {
+                            break;
+                        }
+                    }
+                }
+            }
+            scan.close();
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        return bean;
+    }
+
+    private String findBeanID(Pattern p, String changes) {
+        String id = "";
+        Matcher m = p.matcher(changes);
+        while (m.find()) {
+            id = m.group();
+        }
+        return id;
+    }
+
+    private void overwriteXML(String changes, String oldBean, File file) throws Exception {
+        try {
+            String fileContext = FileUtils.readFileToString(file);
+            fileContext = fileContext.replaceAll(oldBean, changes);
+            FileUtils.write(file, fileContext);
+        }
+        catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public static void appendStrToFile(String fileName, String str)
+    {
+        try {
+
+            // Open given file in append mode.
+            BufferedWriter out = new BufferedWriter(
+                    new FileWriter(fileName, true));
+            out.write(str);
+            out.close();
+        }
+        catch (IOException e) {
+            System.out.println("exception occoured" + e);
+        }
     }
 
     private Collection<Edge> linkServices(Vertex parent, Element server)

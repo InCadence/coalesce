@@ -40,4 +40,9 @@ public interface IBlueprintController {
      */
     Graph getBlueprint(String name) throws RemoteException;
 
+    /**
+     * @param name filename to edit
+     * @param changes changes to be written to file
+     */
+    void editBlueprint(String name, String changes) throws Exception;
 }
