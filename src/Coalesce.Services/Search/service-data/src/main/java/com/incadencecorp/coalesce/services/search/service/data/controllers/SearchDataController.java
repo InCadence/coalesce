@@ -368,6 +368,7 @@ public class SearchDataController {
         }
 
         LOGGER.debug("Criteria:");
+        Filter criteriaFilter;
 
         for (SearchCriteria criteria : group.getCriteria())
         {
@@ -379,30 +380,32 @@ public class SearchDataController {
                          criteria.getOperator(),
                          criteria.getValue());
 
+            criteriaFilter = null;
+
             switch (criteria.getOperator())
             {
             case "=": // TODO Remove this legacy support
             case PropertyIsEqualTo.NAME:
-                filters.add(ff.equal(property, ff.literal(criteria.getValue()), criteria.isMatchCase()));
+                criteriaFilter = ff.equal(property, ff.literal(criteria.getValue()), criteria.isMatchCase());
                 break;
             case PropertyIsGreaterThan.NAME:
-                filters.add(ff.greater(property, ff.literal(criteria.getValue()), criteria.isMatchCase()));
+                criteriaFilter = ff.greater(property, ff.literal(criteria.getValue()), criteria.isMatchCase());
                 break;
             case PropertyIsGreaterThanOrEqualTo.NAME:
-                filters.add(ff.greaterOrEqual(property, ff.literal(criteria.getValue()), criteria.isMatchCase()));
+                criteriaFilter = ff.greaterOrEqual(property, ff.literal(criteria.getValue()), criteria.isMatchCase());
                 break;
             case PropertyIsLessThan.NAME:
-                filters.add(ff.less(property, ff.literal(criteria.getValue()), criteria.isMatchCase()));
+                criteriaFilter = ff.less(property, ff.literal(criteria.getValue()), criteria.isMatchCase());
                 break;
             case PropertyIsLessThanOrEqualTo.NAME:
-                filters.add(ff.lessOrEqual(property, ff.literal(criteria.getValue()), criteria.isMatchCase()));
+                criteriaFilter = ff.lessOrEqual(property, ff.literal(criteria.getValue()), criteria.isMatchCase());
                 break;
             case "!=": // TODO Remove this legacy support
             case PropertyIsNotEqualTo.NAME:
-                filters.add(ff.notEqual(property, ff.literal(criteria.getValue()), criteria.isMatchCase()));
+                criteriaFilter = ff.notEqual(property, ff.literal(criteria.getValue()), criteria.isMatchCase());
                 break;
             case PropertyIsLike.NAME:
-                filters.add(ff.like(property, criteria.getValue()));
+                criteriaFilter = ff.like(property, criteria.getValue());
                 break;
             case PropertyIsBetween.NAME:
                 String[] values = criteria.getValue().split(" ");
@@ -411,7 +414,7 @@ public class SearchDataController {
                     throw new CoalesceException(
                             "Expected two values space separated '<from> <to>'; Actual: " + criteria.getValue());
                 }
-                filters.add(ff.between(property, ff.literal(values[0]), ff.literal(values[1])));
+                criteriaFilter = ff.between(property, ff.literal(values[0]), ff.literal(values[1]));
                 break;
             case During.NAME:
                 String[] times = criteria.getValue().split(" ");
@@ -427,17 +430,17 @@ public class SearchDataController {
                 Instant start = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(times[0]).toDate()));
                 Instant end = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(times[1]).toDate()));
 
-                filters.add(ff.during(property, ff.literal(new DefaultPeriod(start, end))));
+                criteriaFilter = ff.during(property, ff.literal(new DefaultPeriod(start, end)));
                 break;
             case After.NAME:
                 DefaultInstant after = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(criteria.getValue()).toDate()));
 
-                filters.add(ff.after(CoalescePropertyFactory.getLastModified(), ff.literal(after)));
+                criteriaFilter = ff.after(property, ff.literal(after));
                 break;
             case Before.NAME:
                 DefaultInstant before = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(criteria.getValue()).toDate()));
 
-                filters.add(ff.before(CoalescePropertyFactory.getLastModified(), ff.literal(before)));
+                criteriaFilter = ff.before(property, ff.literal(before));
                 break;
             case BBOX.NAME:
                 try
@@ -445,13 +448,28 @@ public class SearchDataController {
                     WKTReader2 reader = new WKTReader2();
                     ReferencedEnvelope bbox = new ReferencedEnvelope(reader.read(criteria.getValue()).getEnvelopeInternal(),
                                                                      crs);
-                    filters.add(ff.bbox(property, bbox));
+                    criteriaFilter = ff.bbox(property, bbox);
                 }
                 catch (ParseException e)
                 {
                     throw new CoalesceException(e);
                 }
                 break;
+            case PropertyIsNull.NAME:
+                criteriaFilter = ff.isNull(property);
+                break;
+            }
+
+            if (criteriaFilter != null)
+            {
+                if (criteria.isNot())
+                {
+                    filters.add(ff.not(criteriaFilter));
+                }
+                else
+                {
+                    filters.add(criteriaFilter);
+                }
             }
         }
 

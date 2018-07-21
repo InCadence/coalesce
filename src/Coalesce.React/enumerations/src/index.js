@@ -51,8 +51,8 @@ function loadEnumerations(theme) {
         },{
           'recordset': 'metadata',
           'field': 'enumname',
-          'operator': 'NotEqualTo',
-          'value': ''
+          'operator': 'NullCheck',
+          'not': true
         }]
       },
       "sortBy": [

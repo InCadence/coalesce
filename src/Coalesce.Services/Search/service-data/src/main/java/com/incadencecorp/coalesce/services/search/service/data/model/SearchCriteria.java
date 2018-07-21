@@ -25,6 +25,7 @@ public class SearchCriteria {
     private String field;
     private String operator;
     private String value;
+    private boolean isNot;
     private boolean matchCase;
     
     public String getKey()
@@ -86,6 +87,14 @@ public class SearchCriteria {
     {
         this.matchCase = matchCase;
     }
-    
-    
+
+    public boolean isNot()
+    {
+        return isNot;
+    }
+
+    public void setNot(boolean not)
+    {
+        isNot = not;
+    }
 }
