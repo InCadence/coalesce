@@ -1,5 +1,3 @@
-import "babel-polyfill";
-
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { searchComplex } from 'common-components/lib/js/searchController';
@@ -9,7 +7,6 @@ import { createMuiTheme } from '@material-ui/core/styles'
 import { loadJSON } from 'common-components/lib/js/propertyController'
 
 import 'common-components/bootstrap/css/bootstrap.min.css'
-
 import 'common-components/css/coalesce.css'
 
 var pjson = require('../package.json');

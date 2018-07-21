@@ -54,6 +54,7 @@ class TemplateWorkspace extends Component {
     this.handleTemplateRemove = this.handleTemplateRemove.bind(this);
     this.handleTemplateRegister = this.handleTemplateRegister.bind(this);
     this.handleTemplateClear = this.handleTemplateClear.bind(this);
+    this.handleTemplateDownload = this.handleTemplateDownload.bind(this);
     this.handleGraphAdd = this.handleGraphAdd.bind(this);
     this.handleEditModalToggle = this.handleEditModalToggle.bind(this);
   }

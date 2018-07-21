@@ -1,6 +1,6 @@
 import React from 'react'
-import {SearchResults} from './results.js'
-import {IconButton} from 'common-components/lib/components'
+import { SearchResults } from './results.js'
+import IconButton from 'common-components/lib/components/IconButton'
 
 export class Enums extends React.Component {
 

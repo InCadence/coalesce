@@ -3,7 +3,7 @@ import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
 import {Toggle} from 'common-components/lib/toggle.js'
 import {Collapse} from 'react-collapse';
-import {IconButton} from 'common-components/lib/components/IconButton.js'
+import IconButton from 'common-components/lib/components/IconButton'
 import {FilterGroup} from './filtergroup'
 import 'react-table/react-table.css'
 

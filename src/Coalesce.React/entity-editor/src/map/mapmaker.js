@@ -1,22 +1,8 @@
 import 'ol/ol.css';
 import Map from 'ol/Map';
-import VectorSource from 'ol/source/Vector';
-import Collection from 'ol/Collection';
-import Point from 'ol/geom/Point';
-import Feature from 'ol/Feature';
-import Style from 'ol/style/Style';
-import Icon from 'ol/style/Icon';
-import toStringHDMS from 'ol/coordinate';
-import VectorLayer from 'ol/layer/Vector';
 import TileLayer from 'ol/layer/Tile';
-import Overlay from 'ol/Overlay';
 import OSM from 'ol/source/OSM';
-import Draw from 'ol/interaction/Draw';
-import Modify from 'ol/interaction/Modify';
-import WKT from 'ol/format/WKT';
 import View from 'ol/View';
-import Circle from 'ol/geom/Circle';
-import {defaults as defaultControls, Control} from 'ol/control'
 import ScaleLine from 'ol/control/ScaleLine';
 import Zoom from 'ol/control/Zoom';
 import Rotate from 'ol/control/Rotate';

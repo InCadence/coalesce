@@ -1,10 +1,11 @@
 import React from 'react'
-import {Menu} from 'common-components/lib/index.js'
+import Menu from 'common-components/lib/components/Menu'
 import { loadTemplates, loadTemplate } from 'common-components/lib/js/templateController.js';
 import { DialogMessage, DialogLoader, DialogTemplateSelection } from 'common-components/lib/components/dialogs'
 
 // Theme Imports
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'; // v1.x
+import { MuiThemeProvider as V0MuiThemeProvider} from 'material-ui';
 import { getDefaultTheme } from 'common-components/lib/js/theme'
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { loadJSON } from 'common-components/lib/js/propertyController'
@@ -157,6 +158,8 @@ export class App extends React.Component {
 
     return (
       <div>
+        <MuiThemeProvider theme={createMuiTheme(this.state.theme)}>
+          <V0MuiThemeProvider muiTheme={this.state.theme}>
         <Menu logoSrc={this.props.pjson.icon} title={this.props.pjson.title} items={[
           {
             id: 'select',
@@ -200,7 +203,6 @@ export class App extends React.Component {
             }
           }
         ]}/>
-        <MuiThemeProvider muiTheme={this.state.theme}>
           <div>
             { cache[key] != null &&
             <FilterCreator
@@ -233,6 +235,7 @@ export class App extends React.Component {
               onClick={this.handleTemplateLoad}
             />
             </div>
+          </V0MuiThemeProvider>
           </MuiThemeProvider>
 
       </div>

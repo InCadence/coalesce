@@ -5,7 +5,6 @@ import { IconButton } from 'common-components/lib/components'
 import { DialogMessage, DialogPrompt } from 'common-components/lib/components/dialogs'
 import { loadEntity } from 'common-components/lib/js/entityController'
 
-import Checkbox from 'material-ui/Checkbox';
 import uuid from 'uuid';
 import { FieldInput } from './FieldInput'
 
@@ -17,7 +16,9 @@ export class LinkageView extends React.Component
   constructor(props) {
     super(props);
     this.state = {
-      linkages: props.linkages
+      linkages: props.linkages,
+      prompt: null,
+      error: null
     };
 
     this.handleLink = this.handleLink.bind(this);
@@ -69,7 +70,7 @@ export class LinkageView extends React.Component
   }
 
   render() {
-    const {linkages, showAll} = this.state;
+    const {linkages} = this.state;
 
     var columns = [
       {Header: 'Key', accessor: 'linkage.key', show: false, 'sortable': false},
@@ -91,8 +92,8 @@ export class LinkageView extends React.Component
     var buttons = {};
     buttons['Header'] = '';
     buttons['accessor'] = 'linkage.entity2Key';
-    buttons['sortable'] = 'false';
-    buttons['resizable'] = 'false';
+    buttons['sortable'] = false;
+    buttons['resizable'] = false;
     buttons['width'] = 34;
     buttons['Cell'] = (cell) => (
       <IconButton
@@ -129,19 +130,23 @@ export class LinkageView extends React.Component
           <label>Show All</label>
           <IconButton icon="/images/svg/add.svg" title="Add Record" onClick={() => {this.setState({prompt: true})}}/>
         </div>
-        <DialogPrompt
-          title="Enter Entity Key"
-          value=''
-          opened={this.state.prompt}
-          onClose={() => {this.setState({prompt: false})}}
-          onSubmit={this.handleLink}
-        />
-        <DialogMessage
-          title="Error"
-          opened={this.state.error != null}
-          message={this.state.error}
-          onClose={() => {this.setState({error: null})}}
-        />
+        {this.state.prompt &&
+          <DialogPrompt
+            title="Enter Entity Key"
+            value=''
+            opened={true}
+            onClose={() => {this.setState({prompt: false})}}
+            onSubmit={this.handleLink}
+          />
+        }
+        {this.state.error &&
+          <DialogMessage
+            title="Error"
+            opened={true}
+            message={this.state.error}
+            onClose={() => {this.setState({error: null})}}
+          />
+        }
       </div>
 
     )

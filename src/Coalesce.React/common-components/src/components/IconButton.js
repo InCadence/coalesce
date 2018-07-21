@@ -1,7 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withTheme } from '@material-ui/core/styles';
-import { Image } from 'common-components/lib/components/image'
+import Image from 'common-components/lib/components/image'
 
 export class IconButton extends React.PureComponent {
 
@@ -11,19 +10,32 @@ export class IconButton extends React.PureComponent {
       display = this.props.visibility
     }
 
+    var palette;
+
+    if (this.props.theme) {
+      palette = this.props.theme.palette.icons ? this.props.theme.palette.icons : this.props.theme.palette.primary
+    } else {
+      palette = {
+        contract: null,
+        main: null,
+        dark: null,
+        light: null
+      }
+    }
+
     return (
       <Image
         icon={this.props.icon}
         title={this.props.title}
         size={this.props.size}
         style={{
-          backgroundColor: this.props.theme ? this.props.theme.palette.primary.dark : null,
-          borderColor: this.props.theme ? this.props.theme.palette.primary.light : null,
+          backgroundColor: palette.dark,
+          borderColor: palette.light,
           display: display
         }}
         class={(this.props.enabled === true) ? "coalesce-img-button enabled" : "coalesce-img-button"}
         onClick={(this.props.enabled === true) ? this.props.onClick : ''}
-        theme={this.props.theme}
+        palette={palette}
       />
     )
   }

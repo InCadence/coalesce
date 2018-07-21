@@ -5,8 +5,7 @@ import { withTheme, createMuiTheme, MuiThemeProvider } from '@material-ui/core/s
 
 import { loadJSON } from 'common-components/lib/js/propertyController';
 import { getRootKarafUrl } from 'common-components/lib/js/common';
-
-import { Image } from 'common-components/lib/components/image'
+import Image from 'common-components/lib/components/image'
 
 import 'common-components/css/coalesce.css'
 
@@ -42,21 +41,25 @@ class Main extends React.PureComponent {
   }
 
   renderCard(card) {
+
+    const palette = this.props.theme.palette.primary;
+    const iconPalette = this.props.theme.palette.icons ? this.props.theme.palette.icons : palette
+
     return (
         <a href={card.url} key={card.name}>
           <div className='card' style={{
-            backgroundColor: this.props.theme.palette.primary.dark,
-            borderColor: this.props.theme.palette.primary.light
+            backgroundColor: palette.dark,
+            borderColor: palette.light
           }}>
             <div >
-              <Image icon={card.img} size={64} class="shadow"/>
+              <Image icon={card.img} size={64} palette={iconPalette} class="shadow"/>
             </div>
-            <div style={{color: this.props.theme.palette.primary.contrastText}}>
+            <div style={{color: palette.contrastText}}>
               {card.name}
             </div>
             <div>
               <div className="scroll-box">
-                <p style={{color: this.props.theme.palette.primary.contrastText}}>{card.desc}</p>
+                <p style={{color: palette.contrastText}}>{card.desc}</p>
               </div>
             </div>
           </div>

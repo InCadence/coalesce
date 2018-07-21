@@ -1,12 +1,12 @@
 import React from 'react';
 import { Navbar, NavItem, Nav } from 'react-bootstrap';
 import { withTheme } from '@material-ui/core/styles';
-import { IconButton } from 'common-components/lib/components';
-import { Image } from 'common-components/lib/components/image'
+import IconButton from 'common-components/lib/components/IconButton';
+import Image from 'common-components/lib/components/image'
 
 require('common-components/bootstrap/css/bootstrap.min.css');
 
-export class Menu extends React.PureComponent {
+class Menu extends React.PureComponent {
 
   constructor(props) {
     super(props);
@@ -73,7 +73,7 @@ export class Menu extends React.PureComponent {
               icon={this.props.logoSrc}
               title="logo"
               size={40}
-              theme={this.props.theme}
+              palette={this.props.theme.palette.primary}
               style={{float: "left"}}
             />
           </Navbar.Brand>

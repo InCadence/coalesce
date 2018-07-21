@@ -1,13 +1,13 @@
 import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
-import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
 
 /**
- * Dialog to display error messages.
+ * Dialog to display messages.
  */
 export class DialogMessage extends React.PureComponent {
 
@@ -19,7 +19,7 @@ export class DialogMessage extends React.PureComponent {
         onClose={this.props.onClose}
         scroll="paper"
         aria-labelledby="scroll-dialog-title"
-        style={{width: '100%'}}
+        PaperProps={{style: {width: '100%'}}}
       >
         <DialogTitle id="scroll-dialog-title">{this.props.title}</DialogTitle>
         <DialogContent>
@@ -41,4 +41,13 @@ export class DialogMessage extends React.PureComponent {
       </Dialog>
     );
   }
+}
+
+DialogMessage.defaultProps = {
+  opened: true,
+  confirmation: false,
+  title: null,
+  message: null,
+  onClose: undefined,
+  onClick: undefined
 }

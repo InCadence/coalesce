@@ -1,16 +1,18 @@
 import React from 'react';
-import Checkbox from 'material-ui/Checkbox';
-import TextField from 'material-ui/TextField';
-import DatePicker from 'material-ui/DatePicker';
-import TimePicker from 'material-ui/TimePicker';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
 import { Row, Col } from 'react-bootstrap';
-import { IconButton } from 'common-components/lib/components/IconButton.js'
+import { IconButton } from 'common-components/lib/components'
 import Enumeration from './field-inputs/Enumeration.js'
 import Point from './field-inputs/geo/Point.js'
 import Multipoint from './field-inputs/geo/Multipoint.js';
 import Shape from './field-inputs/shape/Shape.js'
+import { withTheme } from '@material-ui/core/styles';
 
-var parse = require('wellknown');
+// TODO Replace Date / Time Pickers
+import DatePicker from 'material-ui/DatePicker';
+import TimePicker from 'material-ui/TimePicker';
 
 export class FieldInput extends React.Component {
 
@@ -24,6 +26,15 @@ export class FieldInput extends React.Component {
         root: {
         },
         none: {
+        },
+        floatingLabel: {
+          color: 'rgba(0,0,0,0.5)'
+        },
+        floatingLabelFocus: {
+          color: props.muiTheme ? props.muiTheme.textField.focusColor : 'rgba(0,0,0,0.5)'
+        },
+        underline: {
+          borderColor: 'rgba(0,0,0,0.5)'
         }
       }
     } else {
@@ -38,6 +49,12 @@ export class FieldInput extends React.Component {
         },
         none: {
           'display': 'none'
+        },
+        floatingLabel: {
+        },
+        floatingLabelFocus: {
+        },
+        underline: {
         }
 
       }
@@ -45,9 +62,8 @@ export class FieldInput extends React.Component {
 
     this.state = {
       field: props.field,
-      style: style
+      style: style,
     };
-
 
     this.handleOnChange = this.handleOnChange.bind(this);
   }
@@ -59,6 +75,9 @@ export class FieldInput extends React.Component {
     //console.log(`${attr}=${value}`);
     this.setState(field);
 
+    if (this.props.onChange) {
+      this.props.onChange(value);
+    }
   }
 
   render() {
@@ -67,16 +86,20 @@ export class FieldInput extends React.Component {
 
     var type = (this.props.dataType != null) ? this.props.dataType : field.dataType;
     var attr = (this.props.attr != null) ? this.props.attr : 'value';
-    var label = this.props.showLabels ? (field.label != null && field.label.length > 0 ? field.label : field.name) : null;
+    var label = this.props.showLabels ? this.props.label ? this.props.label : (field.label != null && field.label.length > 0 ? field.label : field.name) : undefined;
+    var defaultValue = (this.props.defaultValue != null) ? this.props.defaultValue : field.defaultValue;
+    var view;
+
     var opts = {
       label: label,
       attr: attr,
       field: field,
       style: style,
     }
+
     switch (type) {
       case 'ENUMERATION_LIST_TYPE':
-        return (
+        view = (
           <Enumeration
             list={true}
             field={field}
@@ -85,33 +108,46 @@ export class FieldInput extends React.Component {
             showLabels={this.props.showLabels}
             attr={attr}
             options={this.props.options}
-            handleOnChange={this.handleOnChange}/>
-        )
+            onChange={this.handleOnChange}
+            onKeyDown={this.props.onKeyDown}
+          />
+        );
+        break;
+
       case 'ENUMERATION_TYPE':
-        return (
+        view = (
           <Enumeration
             list={false}
             field={field}
+            dense
             style={style}
             label={label}
             showLabels={this.props.showLabels}
             attr={attr}
-            handleOnChange={this.handleOnChange}/>
-        );
-      case 'URI_TYPE':
-      case 'STRING_TYPE':
-        return (
-          <TextField
-            id={field.key}
-            fullWidth={true}
-            floatingLabelText={label}
-            underlineShow={this.props.showLabels}
-            style={style.root}
-            value={field[attr]}
-            defaultValue={field.defaultValue}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
+            options={this.props.options}
+            onChange={this.handleOnChange}
+            onKeyDown={this.props.onKeyDown}
           />
         );
+        break;
+
+      case 'URI_TYPE':
+      case 'STRING_TYPE':
+        view = (
+          <TextField
+            id={field.key}
+            fullWidth
+            label={label}
+            style={style.root}
+            hintText={this.props.hint ? this.props.hint : ""}
+            value={field[attr]}
+            defaultValue={field.defaultValue}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
+            onKeyDown={this.props.onKeyDown}
+          />
+        );
+        break;
+
       case 'BOOLEAN_LIST_TYPE':
       case 'GUID_LIST_TYPE':
       case 'FLOAT_LIST_TYPE':
@@ -119,62 +155,81 @@ export class FieldInput extends React.Component {
       case 'LONG_LIST_TYPE':
       case 'INTEGER_LIST_TYPE':
       case 'STRING_LIST_TYPE':
-        return (
+        view = (
           <TextField
               id={field.key}
-              fullWidth={true}
-              floatingLabelText={this.props.showLabels ? label + " (CSV)" : label}
-              underlineShow={this.props.showLabels}
-              style={style.root}
+              fullWidth
+              label={label}
+              hintText={`(CSV) ${this.props.hint ? this.props.hint : ""}`}
+              style={style}
               value={field[attr]}
               defaultValue={field.defaultValue}
-              onChange={(event, value) => {this.handleOnChange(attr, value)}}
+              onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
+              onKeyDown={this.props.onKeyDown}
             />
           );
+          break;
+
       case 'FLOAT_TYPE':
       case 'DOUBLE_TYPE':
       case 'LONG_TYPE':
-        return (
+        view = (
           //pass these a "step" prop (.01 or 1)
           <TextField
             id={field.key}
             type='number'
-            step='0.01'
-            fullWidth={true}
-            floatingLabelText={label}
+            inputProps={{step: 0.01}}
+            fullWidth
+            label={label}
+            hintText={this.props.hint ? this.props.hint : ""}
             underlineShow={this.props.showLabels}
             style={style.root}
             value={field[attr]}
             defaultValue={field.defaultValue}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
+            onKeyDown={this.props.onKeyDown}
           />
         );
+        break;
+
       case 'INTEGER_TYPE':
-        return (
+        view = (
           <TextField
             id={field.key}
             type='number'
-            step='1'
-            fullWidth={true}
-            floatingLabelText={label}
+            inputProps={{step: 1}}
+            fullWidth
+            label={label}
+            inputProps={{style: style.root}}
+            hintText={this.props.hint ? this.props.hint : ""}
             underlineShow={this.props.showLabels}
             style={style.root}
             value={field[attr]}
             defaultValue={field.defaultValue}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
+            onKeyDown={this.props.onKeyDown}
           />
         );
+        break;
+
       case 'BOOLEAN_TYPE':
-        return (
-          <Checkbox
-            id={field.key}
-            label={label}
-            style={style.root}
-            checked={field[attr]}
-            defaultChecked={field.defaultValue}
-            onCheck={(event, checked) => {this.handleOnChange(attr, checked)}}
+      console.log(field[attr]);
+        view = (
+          <FormControlLabel label={label} control={
+              <Checkbox
+                id={field.key}
+                checked={field[attr] === true}
+                style={style}
+                disableRipple
+                defaultChecked={defaultValue}
+                onChange={(event) => {this.handleOnChange(attr, event.target.checked)}}
+                onKeyDown={this.props.onKeyDown}
+              />
+            }
           />
         );
+        break;
+
       case 'DATE_TIME_TYPE':
 
         var dateTime
@@ -185,7 +240,7 @@ export class FieldInput extends React.Component {
           dateTime = new Date(field.value);
         }
 
-        return (
+        view = (
           <Row>
             <Col xs={6}>
               <DatePicker
@@ -222,6 +277,8 @@ export class FieldInput extends React.Component {
             </Col>
         </Row>
         );
+        break;
+
       case 'BINARY_TYPE':
       case 'FILE_TYPE':
         return (
@@ -235,9 +292,10 @@ export class FieldInput extends React.Component {
             {this.props.showLabel ? <label>Download {label}</label> : null}
           </div>
         );
+        break;
 
       case 'LINE_STRING_TYPE':
-          return (
+          view = (
             <Shape
               shape='LineString'
               opts={opts}
@@ -246,8 +304,10 @@ export class FieldInput extends React.Component {
               handleOnChange={this.handleOnChange}
             />
           );
+          break;
+
       case 'POLYGON_TYPE':
-          return (
+          view = (
             <Shape
               shape='Polygon'
               opts={opts}
@@ -256,26 +316,29 @@ export class FieldInput extends React.Component {
               handleOnChange={this.handleOnChange}
             />
           );
+          break;
       case 'GEOCOORDINATE_LIST_TYPE':
-        return (
+        view = (
           <Multipoint
             opts={opts}
             showLabels={this.props.showLabels}
             handleOnChange={this.handleOnChange}
           />
         );
+        break;
       case 'GEOCOORDINATE_TYPE':
-        return (
+        view = (
           <Point
             opts={opts}
             showLabels={this.props.showLabels}
             handleOnChange={this.handleOnChange}
           />
         );
+        break;
 
       case 'CIRCLE_TYPE':
 
-        return (
+        view = (
           <Shape
             shape="Circle"
             opts={opts}
@@ -283,40 +346,71 @@ export class FieldInput extends React.Component {
             multi={false}
             handleOnChange={this.handleOnChange}
           />
-      );
+        );
+        break;
       case 'GUID_TYPE':
-        return (
+        view = (
           <TextField
             id={field.key}
-            fullWidth={true}
-            floatingLabelText={label}
+            fullWidth
+            label={label}
+            hintText={this.props.hint ? this.props.hint : ""}
             underlineShow={this.props.showLabels}
             //inputProps={{ pattern: "[a-z]" }}
             style={style.root}
             value={field[attr]}
             defaultValue={field.defaultValue}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
+            onKeyDown={this.props.onKeyDown}
           />
         );
+        break;
       default:
-        return (
+        view = (
           <TextField
             id={field.key}
             fullWidth={true}
-            floatingLabelText={label + " (UI Not Implemented)"}
+            label={label + " (UI Not Implemented)"}
+            hintText={this.props.hint ? this.props.hint : ""}
+            style={style}
             underlineShow={this.props.showLabels}
-            style={style.root}
             disabled
             value={field[attr]}
             defaultValue={field.defaultValue}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
           />
         );
+        break;
     }
 
+    if (this.props.isNullable) {
+      return (
+        <table className={this.props.css}>
+          <tbody>
+            <tr>
+              <td width="100%">
+                {view}
+              </td>
+              <td width="30px">
+                <IconButton
+                  id={field.key}
+                  icon="/images/svg/clear.svg"
+                  title={"Clear " + label}
+                  onClick={() => this.handleOnChange(attr, "")}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      )
+    } else {
+      return view;
+    }
   }
 }
 
 FieldInput.defaultProps = {
   showLabels: true
 }
+
+export default withTheme()(FieldInput);

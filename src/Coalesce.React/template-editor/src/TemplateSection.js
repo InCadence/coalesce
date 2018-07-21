@@ -205,7 +205,8 @@ export class Section extends React.Component {
           indicatorColor="primary"
           textColor="primary"
           scrollable
-          scrollButtons="auto"
+          scrollButtons="on"
+          ScrollButtonComponent="test"
           style={{
             overflowX: "hidden"
           }}
@@ -213,7 +214,7 @@ export class Section extends React.Component {
           {section.sectionsAsList != null && section.sectionsAsList.map((item) => {return (
               <Tab
                 key={item.key}
-                style={{backgroundColor: '#6666'}}
+                style={{backgroundColor: '#AAAAFF'}}
                 label={
                   <TabTextField
                     item={item}

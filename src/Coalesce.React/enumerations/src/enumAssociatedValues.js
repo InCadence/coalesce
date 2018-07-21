@@ -1,5 +1,5 @@
 import React from 'react'
-import {IconButton} from 'common-components/lib/components'
+import IconButton from 'common-components/lib/components/IconButton'
 import ReactTable from 'react-table'
 
 export class EnumAssociatedValues extends React.PureComponent {

@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React from 'react';
 
-export class KeyPress extends Component {
+export class KeyPress extends React.Component {
 
   constructor(props){
     super(props);

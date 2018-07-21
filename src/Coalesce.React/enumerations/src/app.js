@@ -1,6 +1,6 @@
 import React from 'react'
 import { MuiThemeProvider } from '@material-ui/core/styles'
-import {Menu} from 'common-components/lib/index.js'
+import Menu from 'common-components/lib/components/menu'
 import { getEnumerationValues } from 'common-components/lib/js/enumerationController';
 import { Enums } from './enums'
 import { EnumValues } from './enumValues'

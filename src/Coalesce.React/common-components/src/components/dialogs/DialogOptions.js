@@ -8,8 +8,11 @@ import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { withTheme } from '@material-ui/core/styles'
+import ListItemExpandable from '../ListItemExpandable';
 
+/**
+ * Dialog to display selections.
+ */
 export class DialogOptions extends React.Component {
 
   render() {
@@ -20,30 +23,19 @@ export class DialogOptions extends React.Component {
         scroll="paper"
         onClose={this.props.onClose}
         aria-labelledby="scroll-dialog-title"
-        style={{width: '100%'}}
+        PaperProps={{style: {width: '100%'}}}
       >
         <DialogTitle id="scroll-dialog-title">{this.props.title}</DialogTitle>
         <DialogContent>
-          <List fullWidth>
+          <List dense>
             {this.props.options && this.props.options.map((item) => {return (
-              <ListItem
+              <ListItemExpandable
                 key={item.key}
-                id={item.key}
-                fullWidth
-                button
+                primary={item.name}
+                //secondary={}
+                details={item.description}
                 onClick={item.onClick ? item.onClick : () => this.props.onClick(item.key)}
-                /*
-                nestedItems={item.description ? [
-                  <ListItem
-                    key={item.key + "_description"}
-                    primary={item.description}
-                    onClick={(event) => this.props.onClick(item)}
-                  />
-                  ] : undefined}
-                  */
-              >
-                <ListItemText primary={item.name} />
-              </ListItem>
+              />
             )})}
             {this.props.children}
           </List>
@@ -60,6 +52,13 @@ export class DialogOptions extends React.Component {
     )
   }
 
+}
+
+DialogOptions.defaultProps = {
+  open: true,
+  title: null,
+  options: [],
+  onClose: undefined
 }
 
 export default DialogOptions;

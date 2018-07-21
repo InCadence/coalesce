@@ -4,7 +4,7 @@ import { getRootKarafUrl } from 'common-components/lib/js/common';
 
 var rootUrl = getRootKarafUrl("") + '..';
 
-export class Image extends React.PureComponent {
+class Image extends React.PureComponent {
 
   render() {
     var { style } = this.props;
@@ -19,7 +19,10 @@ export class Image extends React.PureComponent {
     var isSvg = this.props.icon.endsWith("svg");
     var view;
 
-    if (this.props.theme && isSvg && window.location.port != 3000) {
+    const palette = this.props.palette ? this.props.palette : this.props.theme.palette.main;
+
+    if (palette.main && isSvg && window.location.port != 3000) {
+
       // SVG Does not work with CORS
       view = (
           <svg
@@ -30,8 +33,8 @@ export class Image extends React.PureComponent {
             >
               <use
                 xlinkHref={`${rootUrl}${this.props.icon}#Selection`}
-                fill={this.props.theme.palette.iconColor}
-                stroke={this.props.theme.palette.iconBorderColor}
+                fill={palette.main}
+                stroke={palette.light}
                 strokeWidth="1"
               />
           </svg>

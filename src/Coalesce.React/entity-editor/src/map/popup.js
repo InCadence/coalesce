@@ -2,12 +2,6 @@ import React from 'react'
 
 export default class Popup extends React.Component {
 
-  constructor(props) {
-    super(props)
-  }
-
-  componentWillUnmount() {
-  }
   render() {
     return (
       <div id={"popup" + this.props.uniqueID} className="ol-popup">

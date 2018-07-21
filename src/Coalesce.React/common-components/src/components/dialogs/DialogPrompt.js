@@ -7,10 +7,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { DialogMessage } from './DialogMessage'
-import FieldInput from '../FieldInput'
 
 /**
- * Dialog to display error messages.
+ * Dialog to prompt a user
  */
 export class DialogPrompt extends React.Component {
 

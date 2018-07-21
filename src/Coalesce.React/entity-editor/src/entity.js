@@ -4,11 +4,8 @@ import {RecordsetView} from './recordset'
 import {RecordView} from './record'
 import {Row, Col} from 'react-bootstrap'
 import {Tabs, Tab} from 'material-ui/Tabs';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {FieldInput} from './FieldInput.js'
 
-import './index.css'
-import 'react-table/react-table.css'
 
 export class EntityView extends React.Component {
 

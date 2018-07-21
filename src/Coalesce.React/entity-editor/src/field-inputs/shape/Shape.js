@@ -4,23 +4,16 @@ import 'ol/ol.css';
 import { DialogMap } from '../../map/dialogmap.js'
 import MapMaker from '../../map/mapmaker.js';
 import VectorSource from 'ol/source/Vector';
-import Collection from 'ol/Collection';
-import Point from 'ol/geom/Point';
 import Feature from 'ol/Feature';
-import Style from 'ol/style/Style';
-import Icon from 'ol/style/Icon';
 import {toStringHDMS} from 'ol/coordinate';
 import VectorLayer from 'ol/layer/Vector';
 import TileLayer from 'ol/layer/Tile';
-import Overlay from 'ol/Overlay';
 import OSM from 'ol/source/OSM';
 import Draw from 'ol/interaction/Draw';
 import Modify from 'ol/interaction/Modify';
 import WKT from 'ol/format/WKT';
 import Circle from 'ol/geom/Circle';
-import Snap from 'ol/interaction/Snap';
 import HashMap from 'hashmap/hashmap'
-import { IconButton } from 'common-components/lib/components/IconButton.js'
 
 var mgrs = require('mgrs');
 
@@ -49,9 +42,9 @@ export default class Shape extends React.Component {
         wkt: this.stripZAxis(this.field[this.attr]),
         fullWKT: this.field[this.attr],
         radius: this.field['radius'],
-        coordsHashmap: new HashMap(),
+        coordsHashmap: this.coordsHashmap
       };
-      this.state.coordsHashmap = this.coordsHashmap
+      //this.state.coordsHashmap = this.coordsHashmap
     }
     else {
       this.state = {
@@ -523,49 +516,52 @@ export default class Shape extends React.Component {
     var self = this;
 
     return (
-      <div>
-      <TextField
-        id={this.field.key}
-        fullWidth={true}
-        floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
-        underlineShow={this.props.showLabels}
-        style={style.root}
-        value={this.state.fullWKT}
-        disabled
-        defaultValue={this.field.defaultValue}></TextField>
+      <table width="100%" className={this.props.css}>
+        <tbody>
+          <tr>
+            <td width="100%">
+              <TextField
+                id={this.field.key}
+                fullWidth={true}
+                floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
+                underlineShow={this.props.showLabels}
+                style={style.root}
+                value={this.state.fullWKT}
+                disabled
+                defaultValue={this.field.defaultValue}
+              />
+            </td>
+            <td width="30px">
+              <DialogMap
+                feature={this.state.vectorSource.getFeatures()[0] || this.getFeature()}
+                configureMap={this.configureMap}
+                uniqueID={this.props.uniqueID}
+                shape={this.props.shape}
+                handleHashmap={this.handleHashmap}
+                updateFeature={this.updateFeature}
+                coordsHashmap={this.state.coordsHashmap}
+                textStyle={style.root}
+                textInput={
+                  (this.props.shape == 'Circle' &&
+                      <TextField
+                        id={'radius' + this.props.uniqueID}
+                        fullWidth={true}
+                        floatingLabelText={"Circle - RADIUS"}
+                        underlineShow={this.props.showLabels}
+                        style={style.root}
+                        value={this.state.radius}
+                        defaultValue={field.defaultValue}
+                        onFocus={this.handleInputFocus}
+                        onChange={(e) => this.handleInputChange(e, 'radius')}
+                        onBlur={this.handleInputBlur}
+                      />
+                    )
 
-        <IconButton icon='/images/svg/erase.svg' id={'button' + this.field.key} onClick={this.deleteFeatures}/>
-
-        <DialogMap
-          feature={this.state.vectorSource.getFeatures()[0] || this.getFeature()}
-          configureMap={this.configureMap}
-          uniqueID={this.props.uniqueID}
-          shape={this.props.shape}
-          handleHashmap={this.handleHashmap}
-          updateFeature={this.updateFeature}
-          coordsHashmap={this.state.coordsHashmap}
-          textStyle={style.root}
-          textInput={
-            (this.props.shape == 'Circle' &&
-              <div>
-
-                <TextField
-                  id={'radius' + this.props.uniqueID}
-                  fullWidth={true}
-                  floatingLabelText={"Circle - RADIUS"}
-                  underlineShow={this.props.showLabels}
-                  style={style.root}
-                  value={this.state.radius}
-                  defaultValue={field.defaultValue}
-                  onFocus={this.handleInputFocus}
-                  onChange={(e) => this.handleInputChange(e, 'radius')}
-                  onBlur={this.handleInputBlur}
-                />
-              </div>)
-
-
-        }/>
-      </div>
+              }/>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     );
   }
   //  // text input for editing wkt, removed from all map fields

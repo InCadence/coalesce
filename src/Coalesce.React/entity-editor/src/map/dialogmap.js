@@ -1,16 +1,10 @@
 import * as React from "react";
 import MapView from './mapview.js'
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog'
-import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
 import {Control} from 'ol/control';
 import {inherits} from 'ol/index.js';
 import PointsTable from './pointstable.js'
-import { IconButton } from 'common-components/lib/components/IconButton.js'
+import { IconButton } from 'common-components/lib/components'
 
 import 'common-components/css/mapping.css'
 
@@ -62,7 +56,7 @@ export class DialogMap extends React.Component {
     this.setState({
       open: false
     });
-    
+
     // this.setState({multipoint: this.getWKT(this.state.value)});
   }
 
@@ -83,7 +77,7 @@ export class DialogMap extends React.Component {
         fullScreen
         >
 
-        {value == 0 && <div>
+        {value === 0 && <div>
             <MapView
               opt_options={this.opt_options}
               configureMap={this.props.configureMap}
@@ -93,7 +87,7 @@ export class DialogMap extends React.Component {
               shape={this.props.shape}/>
           </div>}
 
-        {value == 1 &&
+        {value === 1 &&
         <div>
           <button type='button' onClick={() => this.handleChange(0)}>Back to Map</button>
           {this.props.textInput}

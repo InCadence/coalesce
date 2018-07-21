@@ -1,14 +1,17 @@
 import React from 'react';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-//import DatePicker from '@material-ui/core/DatePicker';
-//import TimePicker from '@material-ui/core/TimePicker';
-import { IconButton } from 'common-components/lib/components'
+import Enumeration from 'common-components/lib/components/fieldInputs/Enumeration'
+import IconButton from 'common-components/lib/components/IconButton'
 import { withTheme } from '@material-ui/core/styles';
-
 import { Row, Col } from 'react-bootstrap';
+
+// TODO Replace Date / Time Pickers
+//import DatePicker from 'material-ui/DatePicker';
+//import TimePicker from 'material-ui/TimePicker';
 
 var parse = require('wellknown');
 
@@ -101,69 +104,49 @@ export class FieldInput extends React.Component {
     switch (type) {
       case 'ENUMERATION_LIST_TYPE':
         view = (
-          <Select
-            id={field.key}
-            fullWidth={true}
+          <Enumeration
+            list={true}
+            field={field}
+            style={style}
             label={label}
-            underlineShow={this.props.showLabels}
-            multiple={true}
-            value={field[attr] ? field[attr] : null}
-            style={style.root}
-            labelStyle={style.root}
-            iconStyle={style.none}
-            hintStyle={style.none}
-            hintText={this.props.hint ? this.props.hint : ""}
-            floatingLabelStyle={style.floatingLabel}
-            floatingLabelFocusStyle={style.floatingLabelFocus}
-            underlineStyle={style.underline}
-            errorStyle={style.none}
-            onChange={(event, index, values) => {this.handleOnChange(attr, values)}}
+            showLabels={this.props.showLabels}
+            attr={attr}
+            options={this.props.options}
+            onChange={this.handleOnChange}
             onKeyDown={this.props.onKeyDown}
-          >
-            {options}
-          </Select>
-        )
+          />
+        );
         break;
+
       case 'ENUMERATION_TYPE':
         view = (
-            <Select
-              id={field.key}
-              fullWidth={true}
-              label={label}
-              underlineShow={this.props.showLabels}
-              style={style.root}
-              labelStyle={style.root}
-              iconStyle={style.none}
-              hintStyle={style.none}
-              hintText={this.props.hint ? this.props.hint : ""}
-              floatingLabelStyle={style.floatingLabel}
-              floatingLabelFocusStyle={style.floatingLabelFocus}
-              underlineStyle={style.underline}
-              errorStyle={style.none}
-              value={field[attr] ? field[attr] : null}
-              onChange={(event, value) => {this.handleOnChange(attr, this.props.options[value].enum)}}
-              onKeyDown={this.props.onKeyDown}
-            >
-              {options}
-            </Select>
-        )
+          <Enumeration
+            list={false}
+            field={field}
+            dense
+            style={style}
+            label={label}
+            showLabels={this.props.showLabels}
+            attr={attr}
+            options={this.props.options}
+            onChange={this.handleOnChange}
+            onKeyDown={this.props.onKeyDown}
+          />
+        );
         break;
+
       case 'URI_TYPE':
       case 'STRING_TYPE':
         view = (
           <TextField
             id={field.key}
-            fullWidth={true}
-            underlineShow={this.props.showLabels}
+            fullWidth
+            label={label}
             style={style.root}
             hintText={this.props.hint ? this.props.hint : ""}
-            floatingLabelStyle={style.floatingLabel}
-            floatingLabelFocusStyle={style.floatingLabelFocus}
-            underlineStyle={style.underline}
-            underlineStyle={style.underline}
             value={field[attr]}
-            defaultValue={defaultValue}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
+            defaultValue={field.defaultValue}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
             onKeyDown={this.props.onKeyDown}
           />
         );
@@ -178,17 +161,14 @@ export class FieldInput extends React.Component {
         view = (
           <TextField
               id={field.key}
-              fullWidth={true}
+              fullWidth
               label={label}
               hintText={`(CSV) ${this.props.hint ? this.props.hint : ""}`}
-              underlineShow={this.props.showLabels}
-              style={style.root}
-              floatingLabelStyle={style.floatingLabel}
-              floatingLabelFocusStyle={style.floatingLabelFocus}
-              underlineStyle={style.underline}
+              style={style}
+              value={field[attr]}
+              defaultValue={field.defaultValue}
               value={field[attr] ? field[attr].join() : ""}
-              defaultValue={defaultValue}
-              onChange={(event, value) => {this.handleOnChange(attr, value.split(","))}}
+              onChange={(event) => {this.handleOnChange(attr, event.target.value.split(","))}}
               onKeyDown={this.props.onKeyDown}
             />
           );
@@ -197,23 +177,19 @@ export class FieldInput extends React.Component {
       case 'DOUBLE_TYPE':
       case 'LONG_TYPE':
         view = (
+          //pass these a "step" prop (.01 or 1)
           <TextField
             id={field.key}
             type='number'
-            step='0.01'
-            fullWidth={true}
+            inputProps={{step: 0.01}}
+            fullWidth
             label={label}
+            hintText={this.props.hint ? this.props.hint : ""}
             underlineShow={this.props.showLabels}
             style={style.root}
-            hintText={this.props.hint ? this.props.hint : ""}
-            floatingLabelStyle={style.floatingLabel}
-            floatingLabelFocusStyle={style.floatingLabelFocus}
-            underlineStyle={style.underline}
             value={field[attr]}
-            defaultValue={{
-              defaultValue
-            }}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
+            defaultValue={field.defaultValue}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
             onKeyDown={this.props.onKeyDown}
           />
         );
@@ -223,98 +199,37 @@ export class FieldInput extends React.Component {
           <TextField
             id={field.key}
             type='number'
-            fullWidth={true}
+            inputProps={{step: 1}}
+            fullWidth
             label={label}
+            inputProps={{style: style.root}}
+            hintText={this.props.hint ? this.props.hint : ""}
             underlineShow={this.props.showLabels}
             style={style.root}
-            hintText={this.props.hint ? this.props.hint : ""}
-            floatingLabelStyle={style.floatingLabel}
-            floatingLabelFocusStyle={style.floatingLabelFocus}
-            underlineStyle={style.underline}
             value={field[attr]}
-            defaultValue={defaultValue}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
+            defaultValue={field.defaultValue}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
             onKeyDown={this.props.onKeyDown}
           />
         );
         break;
       case 'BOOLEAN_TYPE':
-      console.log(field);
-        console.log(field[attr]);
         view = (
-          <Checkbox
-            id={field.key}
-            label={label}
-            style={style.root}
-            checked={field[attr]}
-            defaultChecked={defaultValue}
-            onCheck={(event, checked) => {this.handleOnChange(attr, checked)}}
-            onKeyDown={this.props.onKeyDown}
+          <FormControlLabel label={label} control={
+              <Checkbox
+                id={field.key}
+                checked={field[attr] === true}
+                style={style}
+                disableRipple
+                defaultChecked={defaultValue}
+                onChange={(event) => {this.handleOnChange(attr, event.target.checked)}}
+                onKeyDown={this.props.onKeyDown}
+              />
+            }
           />
         );
         break;
-        /*
-      case 'DATE_TIME_TYPE':
 
-        var dateTime
-
-        if (field[attr] == null || field[attr] === "") {
-          dateTime = null;
-        } else {
-          dateTime = new Date(field[attr]);
-        }
-
-        view = (
-          <Row>
-            <Col xs={6}>
-              <DatePicker
-                id={field.key + 'date'}
-                label={this.props.showLabels ? label + " Date" : null}
-                hintText={this.props.hint ? this.props.hint : ""}
-                floatingLabelStyle={style.floatingLabel}
-                floatingLabelFocusStyle={style.floatingLabelFocus}
-                underlineStyle={style.underline}
-                underlineShow={this.props.showLabels}
-                fullWidth={true}
-                style={style.root}
-                mode="landscape"
-                value={dateTime}
-                onChange={(tmp, date) => {
-                  var newDateTime = dateTime != null ? dateTime : new Date();
-                  newDateTime.setFullYear(date.getFullYear());
-                  newDateTime.setMonth(date.getMonth());
-                  newDateTime.setDate(date.getDate());
-                  this.handleOnChange(attr, newDateTime.toISOString());
-                }}
-                onKeyDown={this.props.onKeyDown}
-              />
-            </Col>
-            <Col xs={6}>
-              <TimePicker
-                id={field.key + 'time'}
-                label={this.props.showLabels ? "Time" : null}
-                hintText={this.props.hint ? this.props.hint : ""}
-                floatingLabelStyle={style.floatingLabel}
-                floatingLabelFocusStyle={style.floatingLabelFocus}
-                underlineStyle={style.underline}
-                underlineShow={this.props.showLabels}
-                fullWidth={true}
-                style={style.root}
-                value={dateTime}
-                format="24hr"
-                onChange={(tmp, date) => {
-                  var newDateTime = dateTime != null ? dateTime : new Date();
-                  newDateTime.setHours(date.getHours());
-                  newDateTime.setMinutes(date.getMinutes());
-                  this.handleOnChange(attr, newDateTime.toISOString());
-                }}
-                onKeyDown={this.props.onKeyDown}
-              />
-            </Col>
-        </Row>
-        );
-        break;
-        */
       case 'BINARY_TYPE':
       case 'FILE_TYPE':
         return (
@@ -566,6 +481,18 @@ export class FieldInput extends React.Component {
           />
         );
         break;
+      case "LABEL":
+        view = (
+          <TextField
+            id={field.key}
+            fullWidth={true}
+            label={label}
+            style={style}
+            inputProps={{style: { 'borderBottom': '1px solid rgba(0, 0, 0, 0.5)' }}}
+            disabled
+          />
+        );
+        break;
       default:
         view = (
           <TextField
@@ -573,18 +500,15 @@ export class FieldInput extends React.Component {
             fullWidth={true}
             label={label + " (UI Not Implemented)"}
             hintText={this.props.hint ? this.props.hint : ""}
-            floatingLabelStyle={style.floatingLabel}
-            floatingLabelFocusStyle={style.floatingLabelFocus}
-            underlineStyle={style.underline}
+            style={style}
             underlineShow={this.props.showLabels}
-            style={style.root}
+            inputProps={this.props.inputProps}
             disabled
             value={field[attr]}
-            defaultValue={defaultValue}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
-            onKeyDown={this.props.onKeyDown}
+            defaultValue={field.defaultValue}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
           />
-        )
+        );
         break;
     }
 
@@ -608,21 +532,6 @@ export class FieldInput extends React.Component {
           </tbody>
         </table>
       )
-      /*
-      return (<Row>
-        <Col xs={10}>
-          {view}
-        </Col>
-        <Col xs={2} style={{'marginTop': '30px'}}>
-          <IconButton
-            id={field.key}
-            icon="/images/svg/clear.svg"
-            title={"Clear " + label}
-            onClick={() => this.handleOnChange(attr, "")}
-          />
-        </Col>
-      </Row>
-    )*/
     } else {
       return view;
     }

@@ -13,22 +13,21 @@
     "@material-ui/icons": "1.1.0",
     "common-components": "file:../common-components",
     "hashmap": "^2.3.0",
-    "material-ui": "^0.20.0",
+    "material-ui": "0.20.0",
     "mgrs": "^1.0.0",
-    "ol": "^5.0.2",
+    "ol": "^5.1.3",
     "prop-types": "^15.6.0",
-    "react": "^16.0.0",
+    "react": "16.3.0",
     "react-bootstrap": "^0.32.1",
-    "react-dom": "^16.0.0",
+    "react-dom": "16.3.0",
     "react-motion": "^0.5.2",
-    "react-popup": "^0.9.3",
     "react-responsive-modal": "^3.0.3",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-table": "^6.6.0",
     "react-transition-group": "^1.2.1",
-    "uuid": "^3.2.1",
-    "wellknown": "^0.5.0"
+    "uuid": "3.2.1",
+    "wellknown": "0.5.0"
   },
   "devDependencies": {
     "babel-polyfill": "^6.26.0",
@@ -39,15 +38,16 @@
     "babel-preset-env": "^1.6.1",
     "eslint": "^4.1.1",
     "npm-run-all": "^4.1.1",
-    "react-scripts": "1.0.14",
+    "react-scripts": "1.1.4",
     "webpack": "^3.1.0"
   },
   "scripts": {
     "preinstall": "npm install ../common-components/",
     "start": "react-scripts start",
-    "build-all": "react-scripts build",
-    "build:node": "babel src --out-dir lib --source-maps inline",
-    "build": "npm-run-all build:*"
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "production": "webpack -p"
   },
   "babel": {
     "presets": [

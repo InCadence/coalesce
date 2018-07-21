@@ -1,12 +1,9 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
-import Dialog from 'material-ui/Dialog';
-import Modal from 'react-responsive-modal';
 import 'common-components/css/map_popup.css'
 import 'common-components/css/ol.css';
 import { DialogMap } from '../../map/dialogmap.js'
 import MapMaker from '../../map/mapmaker.js';
-import Popup from '../../map/popup.js';
 import VectorSource from 'ol/source/Vector';
 import Collection from 'ol/Collection';
 import Point from 'ol/geom/Point';
@@ -19,9 +16,7 @@ import TileLayer from 'ol/layer/Tile';
 import Overlay from 'ol/Overlay';
 import OSM from 'ol/source/OSM';
 import HashMap from 'hashmap/hashmap'
-import MultiPoint from 'ol/geom/MultiPoint';
 import WKT from 'ol/format/WKT';
-import { IconButton } from 'common-components/lib/components/IconButton.js'
 
 var mgrs = require('mgrs');
 
@@ -293,8 +288,10 @@ export default class MapPoint extends React.Component {
       var xy = oldFeatureCoordinates[indexNum]
       var newZ = newXYZCoordsDict[index]
       var newCoordsHashmap = this.state.coordsHashmap.set(xy, newZ)
-      this.setState({coordsHashmap: newCoordsHashmap})
-      this.state.fullWKT = this.getFullWKT(this.props.wkt)
+      this.setState({
+        coordsHashmap: newCoordsHashmap,
+        fullWKT: this.getFullWKT(this.props.wkt)
+      })
     }
     else {
       //keep old xy
@@ -344,33 +341,35 @@ export default class MapPoint extends React.Component {
     }
 
     return (
-      <div>
-      <div id={"div" + this.field.key}/>
-      <TextField
-        id={this.field.key}
-        fullWidth={true}
-        floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
-        underlineShow={this.props.showLabels}
-        style={style.root}
-        value={this.props.fullWKT}
-        disabled
-        defaultValue={this.field.defaultValue}></TextField>
-
-        <IconButton icon='/images/svg/erase.svg' id={'button' + this.field.key} onClick={this.deleteFeatures}/>
-
-
-        <DialogMap
-          feature={feature}
-          configureMap={this.configureMap}
-          uniqueID={this.field.key}
-          shape={this.props.shape}
-          updateFeature={this.updateFeature}
-          deleteFeature={this.deleteFeature}
-          coordsHashmap={this.state.coordsHashmap}
-          convertCoordinates={this.state.coords}
-        />
-
-      </div>
+      <table width="100%" className={this.props.css}>
+        <tbody>
+          <tr>
+            <td width="100%">
+              <TextField
+                id={this.field.key}
+                fullWidth={true}
+                floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
+                underlineShow={this.props.showLabels}
+                style={style.root}
+                value={this.props.fullWKT}
+                disabled
+                defaultValue={this.field.defaultValue}></TextField>
+              </td>
+              <td width="30px">
+                <DialogMap
+                  feature={feature}
+                  configureMap={this.configureMap}
+                  uniqueID={this.field.key}
+                  shape={this.props.shape}
+                  updateFeature={this.updateFeature}
+                  deleteFeature={this.deleteFeature}
+                  coordsHashmap={this.state.coordsHashmap}
+                  convertCoordinates={this.state.coords}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
     );
   }
   // text input for editing wkt, removed from all map fields
