@@ -2,16 +2,21 @@ import * as React from "react";
 import { Graph } from 'react-d3-graph';
 import Paper from '@material-ui/core/Paper';
 import { DialogMessage } from 'common-components/lib/components/dialogs'
+import { getRootKarafUrl } from 'common-components/lib/js/common'
 import ReactTable from 'react-table'
 import ReactJson from 'react-json-view'
 //import Checkbox from 'material-ui/Checkbox';
+import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import NavigationClose from '@material-ui/icons/Close';
 import Input from '@material-ui/core/Input';
+import TextField from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
+
+var parseString = require('xml2js').parseString
 
 export class GraphView extends React.Component {
 
@@ -21,12 +26,14 @@ export class GraphView extends React.Component {
     props.config.staticGraph = true;
 
     this.state = {
-      actions: 'edit',
+      actions: 'base',
       data: props.data,
       config: props.config,
       selectedNode: "",
     };
 
+
+    this.addNodeURL = getRootKarafUrl() + '/blueprints/edit/' + this.props.title
 
     this.toggleStatic = this.toggleStatic.bind(this);
     this.handleSelectNode = this.handleSelectNode.bind(this);
@@ -34,9 +41,28 @@ export class GraphView extends React.Component {
     this.onEditToggle = this.onEditToggle.bind(this)
     this.onEditCancel = this.onEditCancel.bind(this)
     this.onEditJson = this.onEditJson.bind(this)
-    this.onAddJson = this.onAddJson.bind(this)
+    this.onAddToggle = this.onAddToggle.bind(this)
+    this.onAddChange = this.onAddChange.bind(this)
     this.onClose = this.onClose.bind(this)
 
+  }
+
+  postNode(nodeJson) {
+
+    fetch(this.addNodeURL, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: nodeJson,
+    })
+    .then((response) => {
+      console.log(response.json())
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }
 
   handleResize(that) {
@@ -157,10 +183,11 @@ export class GraphView extends React.Component {
   onClose() {
 
     //fetch post
-    if(this.state.jsonChanged) {
+    this.setState({selected: null, actions: null})
+    if (this.state.actions === 'edited') {
+      var updatedJson = Object.assign({}, this.state.value, this.state.filtered)
 
-      var updatedJson = Object.assign({}, this.state.jsonValue, this.state.filtered)
-
+      this.postNode(updatedJson)
       var selectedId = this.state.selected.id
       var nodes = this.state.data.nodes
 
@@ -168,77 +195,91 @@ export class GraphView extends React.Component {
         var node = nodes[i]
         if (node.id === selectedId) {
           nodes[i] = updatedJson
-          this.setState({
-            data: this.state.data,
-            actions: 'edit',
-            jsonValue: null,
-            jsonChanged: false,
-            filtered: null,
-            selected: null,
-            editing: false,
-          })
-          this.props.handleDataChange(this.state.data)
+          //this.props.handleDataChange(this.state.data)
         }
-
       }
+    }
+    else if (this.state.actions === 'adding' && this.state.value.length > 0) {
 
-    }
-    else {
-      this.setState({
-        actions: 'edit',
-        jsonValue: null,
-        jsonChanged: false,
-        filtered: null,
-        selected: null,
-        editing: false,
+      var xmlString = this.state.value
+      var xmlObject = null
+
+      parseString(xmlString, function (err, result) {
+        xmlObject = result
       })
+
+      var xmlJson = JSON.stringify(xmlObject)
+
+      this.postNode(xmlJson)
     }
+    this.setState({
+      data: this.state.data,
+      value: null,
+      filtered: null,
+      selected: null,
+      actions: 'base',
+    })
   }
 
   onEditToggle(selected, filtered) {
 
     this.setState({
-      jsonValue: JSON.parse(JSON.stringify(selected)),
-      editing: true,
+      value: JSON.parse(JSON.stringify(selected)),
       filtered: filtered,
+      actions: 'editing',
     })
   }
 
   onEditJson(update) {
     this.setState({
       actions: 'edited',
-      jsonChanged: true,
-      jsonValue: update.updated_src,
+      value: update.updated_src,
     })
   }
+
 
   onEditCancel() {
-    console.log('Changes disregarded!');
+    console.log('cancel back to base');
     this.setState({
-      actions: 'edit',
-      selected: null,
-      editing: false,
-      jsonChanged: false,
-      jsonValue: null,
+      value: null,
+      actions: 'base',
     })
 
   }
 
-  onAddJson(update) {
+  onAddToggle() {
+    console.log('add toggle');
     this.setState({
-      actions: 'edited',
-      jsonChanged: true,
-      jsonValue: update.updated_src,
+      actions: 'adding',
     })
+  }
+
+  onAddChange(event) {
+    var newValue = event.target.value
+    this.setState({value: newValue})
   }
 
   render() {
 
-    const {data, selected, config, editing} = this.state;
+    const {data, selected, config, actions} = this.state;
+    var editable = true
+
+    var base = null
+    var editing = null
+    var edited = null
+    var adding = null
 
     var details = [];
     var filtered = {}
+
+
+
     if (selected != null) {
+
+      if (selected.label === 'BlueprintControllerJaxRS') {
+        editable = false
+      }
+
       Object.keys(selected).forEach((e) => {
         if (e !== 'x' && e !== 'y' && e !== 'symbolType' && e !== 'strokeColor' && e !== 'strokeWidth' && e !== 'size' && e !== 'color') {
           details.push({key: e, value: selected[e]});
@@ -247,6 +288,33 @@ export class GraphView extends React.Component {
           filtered[e] = selected[e]
         }
       });
+    }
+
+    base = actions === 'base'
+    editing = actions === 'editing'
+    edited = actions === 'edited'
+    adding = actions === 'adding'
+
+
+    console.log(selected != null);
+    console.log(adding);
+    var onSecondary = console.log
+    var onPrimary = console.log
+    if (base) {
+      onSecondary =  (() => this.onEditToggle(selected, filtered))
+      onPrimary = this.onClose
+    }
+    else if (editing) {
+      onSecondary = (() => {this.setState({actions: 'base'})})
+      onPrimary = this.onClose
+    }
+    else if (edited) {
+      onSecondary = this.onEditCancel
+      onPrimary = this.onClose
+    }
+    else if (adding) {
+      onSecondary = this.onAddCancel
+      onPrimary = this.onClose
     }
 
 /*
@@ -261,8 +329,8 @@ export class GraphView extends React.Component {
         <Paper style={{padding: '5px', margin: '10px'}}>
           <table>
             <tbody>
-            <tr>
-              <td width="100%">
+            <tr width="100%">
+              <td width="75%">
                 <FormControl style={{width: "100%"}}>
                   <InputLabel htmlFor="node-selection-helper">Node Selection</InputLabel>
                   <Select
@@ -277,13 +345,20 @@ export class GraphView extends React.Component {
                         })
                       }
                   </Select>
-                  
                 </FormControl>
+
               </td>
               <td width="30px">
                 <IconButton tooltip="SVG Icon" onClick={this.handleSelectNode}>
                   <NavigationClose />
                 </IconButton>
+              </td>
+              <td>
+                <Button
+                  label="Add Node"
+                  style={{width: "50%"}}
+                  color="primary"
+                  onClick={this.onAddToggle}>Add Node</Button>
               </td>
             </tr>
             </tbody>
@@ -298,19 +373,25 @@ export class GraphView extends React.Component {
                onMouseOutNode={this.onMouseOutNode} />
              <DialogMessage
                title="Details"
-               opened={selected != null}
+               opened={selected != null || adding}
                actions={this.state.actions}
+               editable={editable}
                message={
-
-                 (!editing &&
+                 //if the user is not editing or its not editable
+                 //checking against boolean values because !editing is true (same as !null if not defined yet)
+                 (base && selected != null &&
                    <ReactTable
+                   width="100%"
+                      resizable={true}
                       data={details}
                       columns={[
                           {
+                            minWidth: 300,
                             Header: "Key",
                             id: "key",
                             accessor: "key"
                           },{
+                            minWidth: 300,
                             Header: "Value",
                             id: "value",
                             accessor: "value"
@@ -329,15 +410,32 @@ export class GraphView extends React.Component {
                     />
                   )
                     ||
-                  (editing &&
-                    <ReactJson src={this.state.jsonValue} collapsed='2' onAdd={this.onAddJson} onEdit={this.onEditJson} iconStyle="square"/>
+
+                  //if the user is editing or its editable
+                  ((editing || edited ) && editable &&
+                    <ReactJson src={this.state.value} collapsed='2' onAdd={this.onEditJson} onEdit={this.onEditJson} iconStyle="square"/>
+                  )
+
+                    ||
+
+                  (adding &&
+                    <TextField
+                      label="Insert XML"
+                      id="nodeaddtextfield"
+                      multiline={true}
+                      fullWidth={true}
+                      rows="20"
+                      helperText="Insert XML for 'bean' here"
+                      onChange={this.onAddChange}
+                      value={this.state.value}
+                    />
                   )
 
                 }
 
+               onSecondary={onSecondary}
+               onPrimary={onPrimary}
                onClose={this.onClose}
-               onEditToggle={() => this.onEditToggle(selected, filtered)}
-               onCancel={this.onEditCancel}
              />
          </Paper>
     )

@@ -18,48 +18,81 @@ export class DialogMessage extends React.PureComponent {
 
     var actions = [];
     //actions prop will be used to decide if user needs to make decision
-
-    if (this.props.actions === 'edit') {
+    if (this.props.editable && this.props.actions === 'base') {
       actions = [
         <Button
           label="Edit"
-          secondary={true}
-          onClick={this.props.onEditToggle}>Edit</Button>,
+          color='secondary'
+          onClick={this.props.onSecondary}>Edit</Button>,
         <Button
           label="OK"
-          primary={true}
-          onClick={this.props.onClose}>OK</Button>,
+          color='primary'
+          onClick={this.props.onPrimary}>OK</Button>,
+      ];
+    }
+    else if (!this.props.editable && this.props.actions === 'base') {
+      actions = [
+        <Button
+          label="OK"
+          color='primary'
+          onClick={this.props.onPrimary}>OK</Button>,
+      ];
+    }
+    else if (this.props.actions === 'editing') {
+      actions = [
+        <Button
+          label="Cancel"
+          color='secondary'
+          onClick={this.props.onSecondary}>Cancel</Button>,
+        <Button
+          label="OK"
+          color='primary'
+          onClick={this.props.onPrimary}>OK</Button>,
       ];
     }
     else if (this.props.actions === 'edited') {
       actions = [
         <Button
           label="Cancel"
-          secondary={true}
-          onClick={this.props.onCancel}>Cancel</Button>,
+          color='secondary'
+          onClick={this.props.onSecondary}>Cancel</Button>,
         <Button
           label="OK"
-          primary={true}
-          onClick={this.props.onClose}>OK</Button>,
+          color='primary'
+          onClick={this.props.onPrimary}>OK</Button>,
+      ];
+    }
+    else if (this.props.actions === 'adding') {
+      actions = [
+        <Button
+          label="Cancel"
+          color='secondary'
+          onClick={this.props.onSecondary}>Cancel</Button>,
+        <Button
+          label="Add"
+          color='primary'
+          onClick={this.props.onPrimary}>Add</Button>,
       ];
     }
     else {
     //If actions is not set, this renders a simple message, one ok button input from user
       actions = [
         <Button
-          label="OK"
-          primary={true}
-          onClick={this.props.onClose}>OK</Button>
+          label="Unknown Action"
+          color='primary'
+          onClick={this.props.onPrimary}>Unknown Action</Button>
       ];
     }
 
     return (
+      (this.props.opened &&
       <Dialog
         open={this.props.opened}
         onClose={this.props.onClose}
         scroll="paper"
         aria-labelledby="scroll-dialog-title"
         style={{width: '100%'}}
+        fullWidth={true}
       >
         <DialogTitle id="scroll-dialog-title">{this.props.title}</DialogTitle>
         <DialogContent>
@@ -72,6 +105,7 @@ export class DialogMessage extends React.PureComponent {
           {actions}
         </DialogActions>
       </Dialog>
+    )
     );
   }
 }
