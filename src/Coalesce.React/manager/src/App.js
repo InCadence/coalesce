@@ -29,7 +29,6 @@ export class App extends React.Component {
 
     const { data, selected, error, theme, blueprints } = this.state;
     const that = this;
-
     return (
       <MuiThemeProvider theme={this.props.theme}>
         <Menu logoSrc={this.props.icon} title={`${this.props.title} / ${selected}`} items={[
@@ -102,11 +101,10 @@ export class App extends React.Component {
   loadBlueprint(blueprint) {
 
     getBlueprint(blueprint).then((value) => {
-
       this.setState({
         selected: blueprint,
         data: this.formatData(value)
-      })
+      });
 
     }).catch((err) => {
       this.setState({error: `Loading ${blueprint}: ${err}`})
@@ -230,7 +228,6 @@ export class App extends React.Component {
       }
 
     })
-
     return data;
   }
 }
