@@ -103,7 +103,8 @@ ENDPOINTS = {
         u"search" : u"data/search/complex", 
         u"CRUD" : u"data/entity/", 
         u"templates" : u"templates", 
-        u"property" : u"property"
+        u"property" : u"property",
+        u"linkages" : TBD
     } 
 OPERATIONS = {
         u"search" : (ENDPOINTS[u"search"], u"post"),
@@ -212,7 +213,7 @@ def delete(type = None, key = None, TESTING = "false"):
                             headers = headers,
                             delay = 1,
                             max_attempts = 2)
-    if TESTING == "true":
+    if TESTING == ("true" or "True" or "TRUE"):
         return response, data
     return response
 
@@ -234,13 +235,17 @@ def update_template(orignal, change):
 def search(params = None, operation = u"search",
            SUB_OPERATIONS = u"simple", OPERATOR = "AND", operators = ["Like", "Like"],
            values = ["hello", "max"], fields = ["name", "objectkey"],
-           query = [{"test": "test"}, {"NAME": "NAME"}], TESTING = "false"):
+           propertynames = ["coalesceentity", "coalesceentity"],
+           query = [{"key":0,"recordset":"coalesceentity","field":"objectkey",
+                     "operator":"EqualTo","value":"","matchCase":"false"}],
+           TESTING = "false", page_size = 200, page_number = 1):
 
     """
     Arguments:
     :param operation: the operation to be preformed on the database
-    :param method: the operation used to recieve data(GET, POST, etc)
-    :param SUB_OPERATIONS: the type of search to be preformed(ie. simple, complex, custom?)
+    :param SUB_OPERATIONS: the type of search to be preformed(ie. simple, complex)
+    The simple takes all the queries specified above. Only the query is needed for
+    complex search
     :param OPERATOR: only applies to a complex search, ties together
         multiple searches in the type of results desired back: AND or OR are valid
     :param operators: the type of operation preformed on each individual value
@@ -248,7 +253,7 @@ def search(params = None, operation = u"search",
         "=", "!=", "Like", more on the github documentation
     :param fields: the type of value that is passed through
     :param values: the search value
-    :param query: for complex search only, input custom data for querty,
+    :param query: for complex search only, input custom data for query,
     if multiple values are desired, follow data format from simple
     """
 
@@ -268,7 +273,7 @@ def search(params = None, operation = u"search",
             CRITERIA = []
             PROPERTYNAMES = []
 
-            if len(fields) == len(values):
+            if len(fields) == len(values) == len(propertynames):
                 for i in range(len(fields)):
                     """
                     Setting the data payload format
@@ -276,24 +281,28 @@ def search(params = None, operation = u"search",
                     CRITERIA.append(
                             {
                                     "key": i,
-                                    "recordset": "CoalesceEntity",
+                                    "recordset": propertynames[i],
                                     "field": fields[i],
                                     "operator": operators[i],
                                     "value": values[i],
                                     "matchCase": "false"
                                     })
 
-                for i in range(len(fields)):
-                    PROPERTYNAMES.append("CoalesceEntity" + "." + fields[i])
+                if len(fields) == len(propertynames):
+                    for x, y in zip(fields, propertynames):
+                        PROPERTYNAMES.append(y + "." + x)
+                else:
+                    raise ValueError("You do not have the same number of inputted properties and values")
+
                 data = {
-                            "pageSize":200,"pageNumber":1,
+                            "pageSize":page_size,"pageNumber":page_number,
                             "propertyNames": PROPERTYNAMES,
                             "group":{"operator": OPERATOR,
                                      "criteria": CRITERIA
                                      }}
                 data = json.dumps(data)
 
-                response = get_response(URL = server + OPERATIONS[operation][0],
+                response=get_response(URL = server + OPERATIONS[operation][0],
                                     method = method,
                                     params = params,
                                     data = data,
@@ -302,25 +311,22 @@ def search(params = None, operation = u"search",
                                     max_attempts = 2)
                 if TESTING == "true":
                     return response.text, data
-                return response.text
+                return json.loads(response.text)
 
             else:
                 raise ValueError("You're inputted criteria are not in sync." 
-                                 "\n Check individual fields to make sure"
+                                 "\nCheck individual fields to make sure"
                                  "\nthere are an equal number in each")
 
-
-    if SUB_OPERATIONS == u"complex":
-        #Add a check on the searh fuction to see what the user passes through
+    elif SUB_OPERATIONS == u"complex":
             """
             Type of search involving multiple fields
             Has multiple type of operators as well
             Can be found in the search_parser.py file
             """
+
             GROUP = query
-            PROPERTYNAMES = []
-            for i in range(len(fields)):
-                PROPERTYNAMES.append("CoalesceEntity" + "." + fields[i])
+
             server = server.URL
             headers = {
                     "Connection" : u"keep-alive",
@@ -328,13 +334,12 @@ def search(params = None, operation = u"search",
                     }
 
             data = {
-                "pageSize": 200, "pageNumber": 1,
-                "propertyNames": PROPERTYNAMES,
-                "group": {"operator": OPERATOR, "criteria": GROUP}}
+                "pageSize": page_number, "pageNumber": page_number,
+                "group": {"criteria": GROUP}}
 
             data = json.dumps(data, indent = 4, sort_keys = True)
 
-            if type(query) == str:
+            if isinstance(query, basestring):
                 raise ValueError("Please enter your query as a dictionary")
 
             data = json.dumps(json.loads(data))
@@ -346,36 +351,15 @@ def search(params = None, operation = u"search",
                                     headers = headers,
                                     delay = 1,
                                     max_attempts = 2)
+
             if TESTING == "true":
                 return response, data
             else:
-                return response
+                return json.loads(response.text)
 
-def create(TYPE = None, fieldsadded = None, TESTING = "false"):
-
-<<<<<<< Updated upstream
-=======
-    serverobj = CoalesceServer()
-    server = serverobj.URL
-    headers = {
-            "Connection" : u"keep-alive",
-            "content-type" : u"application/json; charset=utf-8" #come back to this to find the bug
-        }
-    data = {'values': TYPE, 'entityKey': KEY}
-    operation = u"delete"
-    method = OPERATIONS[operation][1]
-    params = None
-                  
-    response = get_response(URL = server + OPERATIONS[operation][0] + data[u'entityKey'],
-                            method = method,
-                            params = params,
-                            data = data,
-                            headers = headers,
-                            delay = 1,
-                            max_attempts = 2)
-    if TESTING == "true":
-        return response, data
-    return response
+    else:
+        raise ValueError("The value entered for the SUB_OPERATION (type of search) must either be: "
+                         "\n 'simple' or 'complex' ")
 
 def update_template(orignal, change):
     for key, value in change.iteritems():
@@ -392,13 +376,8 @@ def update_template(orignal, change):
             orignal[key] = change[key]
     return  orignal
 
-def linkage_creator():
-    #Not set up yet
-    pass
-
 def create(TYPE = None, FIELDSADDED = None, TESTING = "false"):
-    
->>>>>>> Stashed changes
+
     """
     Arguments:
     :TYPE: The type of artifact being looked for
@@ -448,7 +427,7 @@ def create(TYPE = None, FIELDSADDED = None, TESTING = "false"):
                             )
 
     TEMPLATE = json.loads(response.text)
-    for item in fieldsadded:
+    for item in FIELDSADDED:
         tmp = update_template(TEMPLATE, item)
     data = json.dumps(tmp)
 
@@ -526,10 +505,6 @@ def update(value = None, key = None,
 
         return response
 
-def get_links(GUID):
-    #Not functional yet
-    pass
-
 class CoalesceEntity(GUID=None, entity_type = None, template=None, records={},
                      links=[], server=CoalesceServer(), created = False):
 
@@ -538,13 +513,17 @@ class CoalesceEntity(GUID=None, entity_type = None, template=None, records={},
             raise ValueError("The GUID and entity type can not be equal to none.\n"
                              "If a new entity needs to be created, leave created as its default.")
         elif created == True:
-            self = read(key = GUID, value = entity_type)
+            self.text = read(key = GUID, value = entity_type)
+            self.key = GUID
 
         elif created == False:
-           self.response = create(TYPE=entity_type, links = [])
+            self.response = create(TYPE=entity_type, links = [], TESTING="true")
+            self.text = self.response[1]
+            self.key = self.text["key"]
 
         self.data = json.loads(self.text)
         self.URL = server.URL
+        self.headers = server.base_headers
 
     def add_data(self,data, values=[], open_as_file = "false"):
         if open_as_file == "true":
@@ -558,38 +537,60 @@ class CoalesceEntity(GUID=None, entity_type = None, template=None, records={},
     def delete(self, GUID, entity_type):
         self.response = delete(type = entity_type, key = GUID)
 
-    def update(records={}, record_keys=True):
+    def get_links(self, GUID):
+        data =
+        links = get_response(URL= self.URL + ENDPOINTS["linkages"] +
+                                    self.key,
+                                method="get",
+                                params=params,
+                                data=json.dumps(data),
+                                headers=headers,
+                                delay=1,
+                                max_attempts=2)
+        return links
+
+    def update_record(records=[{}], record_keys=True, linkage_present = "false"):
+        if linkage_present == "true":
+            for item in records:
+                try:
+                    get_links(item)
+                except:
+                    create_link(item)
+
         if record_keys and not have_keys:
             self.data = self.read()
 
-        < Create / modify
-        data
-        object >
-
+        update_template(self.data, records)
 
     def create_link():
-        < Create / modify
-        links
-        object >
-
-
-    def get_links():
-        < Get the data links in the object by using the imported TEMPLATE in read>
-
+        for i in links:
+            payload = {
+                "Something": i
+            }
+            get_response(URL = ?,
+                        method =?,
+                        params=None,
+                        data = payload,
+                        headers = headers,
+                        delay = 1
+                        max_attempts = 1)
 
     def delete_links():
-        < Send
-        request >
+        for i in links:
+            payload = {
+                "Something": i
+            }
+            get_response(URL = ?,
+                        method =?,
+                        params=None,
+                        data = payload,
+                        headers = headers,
+                        delay = 1
+                        max_attempts = 1)
 
 
-def send(created == "false"):
-    if created == "true":
-        <Send API request defined in update>
-        created = True
-
-    else:
-        <Send API request method used in create>
-
+    def send():
+        response = update(key = GUID, value=entity_type)
 
 
 
