@@ -4,12 +4,15 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
+import com.incadencecorp.coalesce.framework.exim.impl.JsonEximImpl;
 import com.incadencecorp.coalesce.services.api.datamodel.graphson.Edge;
 import com.incadencecorp.coalesce.services.api.datamodel.graphson.Graph;
 import com.incadencecorp.coalesce.services.api.datamodel.graphson.Vertex;
 import com.incadencecorp.coalesce.services.api.mappers.CoalesceMapper;
 import com.incadencecorp.coalesce.services.common.api.IBlueprintController;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.EGraphNodeType;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.io.FileUtils;
@@ -123,7 +126,8 @@ public class BlueprintController implements IBlueprintController {
 
         //convert changes to XML
         JSONObject json = new JSONObject(changes);
-        changes =((String) json.get("xml"));
+        changes = jsonToString(json);
+
 
         //find ID within new changes
         String changeID = findBeanID(pattern, changes);
@@ -145,13 +149,77 @@ public class BlueprintController implements IBlueprintController {
         }
     }
 
+    private String jsonToString(JSONObject json) {
+        String xml = "";
+        Iterator<String> keys = json.keys();
+
+        JSONObject root = null;
+        Object [] rootKeys = null;
+        String rootString = "";
+        if ( keys.hasNext() ) {
+            rootString = keys.next();
+
+            root = json.getJSONObject(rootString);
+
+            rootKeys = root.keySet().toArray();
+
+        }
+
+        if(!root.has("$")) {
+            xml += "<" + rootString + ">";
+        }
+        else {
+            JSONObject attributes = root.getJSONObject("$");
+
+            xml += "<" + rootString;
+
+            Iterator<String> allAttributes = attributes.keys();
+
+            while (allAttributes.hasNext()) {
+                String k = allAttributes.next();
+
+                xml +=" " + k + "=\"" + attributes.get(k) + "\"";
+            }
+            xml += ">\n";
+        }
+
+
+        for (int i = 0; i < rootKeys.length; i++) {
+            String key = rootKeys[i].toString();
+            String className = root.get(key).getClass().getSimpleName();
+            if(key.equals("$")) {
+                continue;
+            }
+            switch(className) {
+                case "String":
+                    break;
+                case "JSONArray":
+                    JSONArray jArray = root.getJSONArray(key);
+                    for ( int ii = 0; ii < jArray.length(); ii++) {
+                        JSONObject oneLine = jArray.getJSONObject(ii);
+                        JSONObject newJson = new JSONObject();
+                        newJson.put(key, oneLine);
+                        xml += jsonToString(newJson);
+                    }
+                    break;
+                case "JSONObject":
+                    JSONObject newJson = new JSONObject();
+                    newJson.put(key, root.getJSONObject(key));
+                    xml += jsonToString(newJson);
+                    break;
+            }
+
+        }
+
+        return xml + "</" + rootString + ">";
+    }
+
     /**
      * find Bean insde of xml file
      * @param name blueprint xml file
-     * @param id bean id
      * @return entire bean with matching ID
      */
-    public File findFile(String name) throws Exception{
+    private File findFile(String name) throws Exception{
         Path filename = root.resolve(name);
         File file;
         try {
@@ -168,7 +236,7 @@ public class BlueprintController implements IBlueprintController {
         return file;
     }
 
-    public String findFileBean(File name, String id) throws Exception {
+    private String findFileBean(File name, String id) throws Exception {
        List <String> beans = new ArrayList<>();
        String bean = "";
        try {
@@ -215,7 +283,7 @@ public class BlueprintController implements IBlueprintController {
        return bean;
     }
 
-    public String findBeanID(Pattern p, String changes) {
+    private String findBeanID(Pattern p, String changes) {
         String id = "";
         Matcher m = p.matcher(changes);
         while (m.find()) {
@@ -224,11 +292,10 @@ public class BlueprintController implements IBlueprintController {
         return id.substring(4, id.length() - 1);
     }
 
-    public void overwriteXML(String changes, String oldBean, File file) throws Exception {
+    private void overwriteXML(String changes, String oldBean, File file) throws Exception {
         try {
             String fileContext = FileUtils.readFileToString(file);
             fileContext = fileContext.replace(oldBean, changes);
-            System.out.println(fileContext);
             FileUtils.write(file, fileContext);
         }
         catch (Exception e) {
@@ -236,7 +303,7 @@ public class BlueprintController implements IBlueprintController {
         }
     }
 
-    public static void appendStrToFile(File fileName, String str)
+    private static void appendStrToFile(File fileName, String str)
     {
         try {
             RandomAccessFile f = new RandomAccessFile( fileName , "rw");

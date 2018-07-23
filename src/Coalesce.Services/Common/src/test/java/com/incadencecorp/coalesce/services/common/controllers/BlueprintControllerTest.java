@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.incadencecorp.coalesce.services.api.datamodel.graphson.Graph;
 import com.incadencecorp.coalesce.services.api.datamodel.graphson.Vertex;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.Assert;
 
@@ -53,24 +54,12 @@ public class BlueprintControllerTest {
         BlueprintController controller = new BlueprintController();
         controller.setDirectory(Paths.get("src", "test", "resources").toString());
 
-        Pattern pattern = Pattern.compile("id=\".*\"");
-        String changes = "   id=\"joe\"";
-        String found = controller.findBeanID(pattern, changes);
-        Assert.assertEquals("joe", found);
+        String string = "{ \"bean\": { \"$\": { \"id\": \"persister\", \"class\": \"com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch\" }, \"argument\": { \"map\": { \"entry\": [ { \"$\": { \"key\": \"elastic.isAuthoritative\", \"value\": \"true\" } }, { \"$\": { \"key\": \"elastic.clustername\", \"value\": \"elasticsearch\" } }, { \"$\": { \"key\": \"elastic.hosts\", \"value\": \"localhost:9300\" } }, { \"$\": { \"key\": \"elastic.http.host\", \"value\": \"localhost\" } }, { \"$\": { \"key\": \"elastic.http.port\", \"value\": \"9200\" } }, { \"$\": { \"key\": \"ssl.enabled\", \"value\": \"false\" } }, { \"$\": { \"key\": \"ssl.reject_unauthorized\", \"value\": \"true\" } } ] } } } }";
+        JSONObject json = new JSONObject(string);
 
-
-        File file = controller.findFile("rest-blueprint.xml");
-        System.out.print("Start test \n\n\n\n");
-        //Pattern test = Pattern.compile("<beanid.*<\\\\bean>");
-        String oldBean = controller.findFileBean(file,"test");
-
-        Assert.assertEquals("", oldBean);
-
-        String newBean = controller.findFileBean(file, "template");
-        Assert.assertNotNull(newBean);
-        System.out.println(newBean);
-
-        controller.overwriteXML("test", newBean, file);
+        System.out.println("\n\n\n\n\n\n\n\"");
+        System.out.print(controller.jsonToString(json));
+        Assert.assertNotNull(json);
     }
 
 }
