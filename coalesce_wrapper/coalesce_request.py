@@ -114,7 +114,6 @@ OPERATIONS = {
         u"delete" : (ENDPOINTS[u"CRUD"], u"delete")
     }
 FORMATS = (u"XML", u"JSON", u"python_dict")
-
     
 # Convert a server URL to a CoalesceServer object. This also serves as a check 
 # for a properly formed URL.   
@@ -216,21 +215,6 @@ def delete(type = None, key = None, TESTING = "false"):
     if TESTING == ("true" or "True" or "TRUE"):
         return response, data
     return response
-
-def update_template(orignal, change):
-    for key, value in change.iteritems():
-        if isinstance(value, collections.Mapping):
-            placeholder = update_template(orignal.get(key), value)
-            orignal[key] = placeholder
-        elif isinstance(value, list):
-            for key1 in value:
-                index = value.index(key1)
-                change[key] = value[index]
-                placeholder = [update_template(orignal[key][index], change[key])]
-                orignal[key] = placeholder
-        else:
-            orignal[key] = change[key]
-    return  orignal
 
 def search(params = None, operation = u"search",
            SUB_OPERATIONS = u"simple", OPERATOR = "AND", operators = ["Like", "Like"],
