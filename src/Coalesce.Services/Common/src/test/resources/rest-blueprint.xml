@@ -130,9 +130,7 @@
  		class="com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor">
  	</bean>
 
-	<bean id="template"
-		class="com.incadencecorp.coalesce.framework.persistance.FilePersistorImpl">
-	</bean>
+test
 
 	<!-- ========================== -->
 	<!-- Framework -->

@@ -19,13 +19,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import org.json.JSONObject;
-import org.json.XML;
 
 import java.io.File;
+import java.io.RandomAccessFile;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -131,19 +129,15 @@ public class BlueprintController implements IBlueprintController {
         String changeID = findBeanID(pattern, changes);
 
         //convert string to file
-        Path filename = root.resolve(name);
-        File file;
-        try {
-            file = filename.toFile();
-        }
-        catch (Exception e) {
-            throw e;
-        }
-        String oldBean = findFileBean(file, pattern, changeID);
+        File file = findFile(name);
 
+        String oldBean = findFileBean(file, changeID);
+
+        Path filename = root.resolve(name);
         if(oldBean.equals("")) {
             //append if no matching ID
-            appendStrToFile(filename.toString(), changes);
+            appendStrToFile(file, changes);
+
         }
         else {
             //write over old bean
@@ -157,44 +151,84 @@ public class BlueprintController implements IBlueprintController {
      * @param id bean id
      * @return entire bean with matching ID
      */
-    private String findFileBean(File name, Pattern p, String id) throws Exception{
-        String bean = "";
-        try{
-            Scanner scan = new Scanner(name);
-            while (scan.hasNext(p)) {
-                String grab = scan.nextLine();
-                if (grab.contains(id)) {
-                    bean += grab;
-                    while (scan.hasNextLine()) {
-                        grab = scan.nextLine();
-                        bean += grab;
-                        if (grab.contains("<bean/>")) {
-                            break;
-                        }
-                    }
-                }
+    public File findFile(String name) throws Exception{
+        Path filename = root.resolve(name);
+        File file;
+        try {
+            if ( Files.exists(filename) ) {
+                file = filename.toFile();
             }
-            scan.close();
+            else {
+                throw new Exception();
+            }
         }
         catch (Exception e) {
             throw e;
         }
-        return bean;
+        return file;
     }
 
-    private String findBeanID(Pattern p, String changes) {
+    public String findFileBean(File name, String id) throws Exception {
+       List <String> beans = new ArrayList<>();
+       String bean = "";
+       try {
+           Scanner scan = new Scanner(name);
+           String scanned = "";
+
+           while ( scan.hasNextLine() ) {
+               String grab = scan.nextLine();
+               if (grab.contains("<bean")) {
+                   scanned += grab;
+                   while ( (! scanned.contains("</bean>")) && scan.hasNextLine()) {
+                       scanned += "\n" + scan.nextLine();
+                   }
+                   beans.add(scanned);
+                   scanned = "";
+               }
+           }
+
+
+//           while ( scan.hasNext() ) {
+//               scanned += scan.next();
+//               if ( scanned.contains("<bean") ) {
+//                   scanned = scanned.substring(scanned.length() - 5);
+//                   while ( scan.hasNext() && ( ! scanned.contains("</bean>") )) {
+//                       scanned += scan.next();
+//                   }
+//                   beans.add(scanned);
+//                   scanned = "";
+//               }
+//           }
+           scan.close();
+       }
+       catch ( Exception e ) {
+           throw e;
+       }
+
+       for (int i = 0; i < beans.size(); i++) {
+           String testBean = beans.get(i);
+           String findID = "bean id=\"" + id;
+           if (testBean.contains(findID)) {
+               bean = testBean;
+           }
+       }
+       return bean;
+    }
+
+    public String findBeanID(Pattern p, String changes) {
         String id = "";
         Matcher m = p.matcher(changes);
         while (m.find()) {
             id = m.group();
         }
-        return id;
+        return id.substring(4, id.length() - 1);
     }
 
-    private void overwriteXML(String changes, String oldBean, File file) throws Exception {
+    public void overwriteXML(String changes, String oldBean, File file) throws Exception {
         try {
             String fileContext = FileUtils.readFileToString(file);
-            fileContext = fileContext.replaceAll(oldBean, changes);
+            fileContext = fileContext.replace(oldBean, changes);
+            System.out.println(fileContext);
             FileUtils.write(file, fileContext);
         }
         catch (Exception e) {
@@ -202,18 +236,17 @@ public class BlueprintController implements IBlueprintController {
         }
     }
 
-    public static void appendStrToFile(String fileName, String str)
+    public static void appendStrToFile(File fileName, String str)
     {
         try {
-
-            // Open given file in append mode.
-            BufferedWriter out = new BufferedWriter(
-                    new FileWriter(fileName, true));
-            out.write(str);
-            out.close();
+            RandomAccessFile f = new RandomAccessFile( fileName , "rw");
+            long aPositionWhereIWantToGo = f.length() - 13;
+            f.seek(aPositionWhereIWantToGo); // this basically reads n bytes in the file
+            f.writeChars(str + " </blueprint>");
+            f.close();
         }
         catch (IOException e) {
-            System.out.println("exception occoured" + e);
+            System.out.println("exception occured " + e);
         }
     }
 
