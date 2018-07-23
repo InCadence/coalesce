@@ -15,7 +15,7 @@ import Input from '@material-ui/core/Input';
 import TextField from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-
+const util = require('util');
 var parseString = require('xml2js').parseString
 
 export class GraphView extends React.Component {
@@ -185,9 +185,9 @@ export class GraphView extends React.Component {
     //fetch post
     this.setState({selected: null, actions: null})
     if (this.state.actions === 'edited') {
-      var updatedJson = Object.assign({}, this.state.value, this.state.filtered)
 
-      this.postNode(updatedJson)
+      var updatedJson = this.state.value
+            this.postNode(updatedJson)
       var selectedId = this.state.selected.id
       var nodes = this.state.data.nodes
 
@@ -195,7 +195,7 @@ export class GraphView extends React.Component {
         var node = nodes[i]
         if (node.id === selectedId) {
           nodes[i] = updatedJson
-          //this.props.handleDataChange(this.state.data)
+          this.props.handleDataChange(this.state.data)
         }
       }
     }
@@ -204,12 +204,12 @@ export class GraphView extends React.Component {
       var xmlString = this.state.value
       var xmlObject = null
 
-      parseString(xmlString, function (err, result) {
+      parseString(xmlString, {explicitArray: false}, function (err, result) {
         xmlObject = result
       })
 
       var xmlJson = JSON.stringify(xmlObject)
-
+      console.log(util.inspect(xmlObject, false, null))
       this.postNode(xmlJson)
     }
     this.setState({
@@ -239,7 +239,6 @@ export class GraphView extends React.Component {
 
 
   onEditCancel() {
-    console.log('cancel back to base');
     this.setState({
       value: null,
       actions: 'base',
@@ -248,7 +247,7 @@ export class GraphView extends React.Component {
   }
 
   onAddToggle() {
-    console.log('add toggle');
+
     this.setState({
       actions: 'adding',
     })
@@ -296,8 +295,6 @@ export class GraphView extends React.Component {
     adding = actions === 'adding'
 
 
-    console.log(selected != null);
-    console.log(adding);
     var onSecondary = console.log
     var onPrimary = console.log
     if (base) {

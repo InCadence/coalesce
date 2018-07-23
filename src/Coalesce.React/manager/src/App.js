@@ -128,7 +128,6 @@ export class App extends React.Component {
 
 
     data.nodes.forEach(function(node) {
-
       // Consolidate Node Types
       if (node.type === 'CONTROLLER') {
           node.type = "ENDPOINT";
@@ -168,7 +167,6 @@ export class App extends React.Component {
     });
 
     data.nodes.forEach(function(node) {
-
       node.x=counts[node.type].x;
       node.y=counts[node.type].y++ * rowWidth;
 
