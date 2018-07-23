@@ -174,25 +174,40 @@ public class BlueprintController implements IBlueprintController {
        try {
            Scanner scan = new Scanner(name);
            String scanned = "";
-           while ( scan.hasNext() ) {
-               scanned += scan.next();
-               if ( scanned.contains("<bean") ) {
-                   scanned = scanned.substring(scanned.length() - 5);
-                   while ( scan.hasNext() && ( ! scanned.contains("</bean>") )) {
-                       scanned += scan.next();
+
+           while ( scan.hasNextLine() ) {
+               String grab = scan.nextLine();
+               if (grab.contains("<bean")) {
+                   scanned += grab;
+                   while ( (! scanned.contains("</bean>")) && scan.hasNextLine()) {
+                       scanned += "\n" + scan.nextLine();
                    }
                    beans.add(scanned);
                    scanned = "";
                }
            }
+
+
+//           while ( scan.hasNext() ) {
+//               scanned += scan.next();
+//               if ( scanned.contains("<bean") ) {
+//                   scanned = scanned.substring(scanned.length() - 5);
+//                   while ( scan.hasNext() && ( ! scanned.contains("</bean>") )) {
+//                       scanned += scan.next();
+//                   }
+//                   beans.add(scanned);
+//                   scanned = "";
+//               }
+//           }
            scan.close();
        }
        catch ( Exception e ) {
            throw e;
        }
+
        for (int i = 0; i < beans.size(); i++) {
            String testBean = beans.get(i);
-           String findID = "beanid=\"" + id;
+           String findID = "bean id=\"" + id;
            if (testBean.contains(findID)) {
                bean = testBean;
            }
@@ -213,6 +228,7 @@ public class BlueprintController implements IBlueprintController {
         try {
             String fileContext = FileUtils.readFileToString(file);
             fileContext = fileContext.replace(oldBean, changes);
+            System.out.println(fileContext);
             FileUtils.write(file, fileContext);
         }
         catch (Exception e) {

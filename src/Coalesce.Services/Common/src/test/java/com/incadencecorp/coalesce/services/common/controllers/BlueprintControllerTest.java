@@ -6,9 +6,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.incadencecorp.coalesce.services.api.datamodel.graphson.Graph;
 import com.incadencecorp.coalesce.services.api.datamodel.graphson.Vertex;
 import org.junit.Test;
+import org.junit.Assert;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class BlueprintControllerTest {
 
@@ -43,6 +47,30 @@ public class BlueprintControllerTest {
             }
         }
 
+    }
+
+    @Test public void testEditBlueprint() throws Exception {
+        BlueprintController controller = new BlueprintController();
+        controller.setDirectory(Paths.get("src", "test", "resources").toString());
+
+        Pattern pattern = Pattern.compile("id=\".*\"");
+        String changes = "   id=\"joe\"";
+        String found = controller.findBeanID(pattern, changes);
+        Assert.assertEquals("joe", found);
+
+
+        File file = controller.findFile("rest-blueprint.xml");
+        System.out.print("Start test \n\n\n\n");
+        //Pattern test = Pattern.compile("<beanid.*<\\\\bean>");
+        String oldBean = controller.findFileBean(file,"test");
+
+        Assert.assertEquals("", oldBean);
+
+        String newBean = controller.findFileBean(file, "template");
+        Assert.assertNotNull(newBean);
+        System.out.println(newBean);
+
+        controller.overwriteXML("test", newBean, file);
     }
 
 }
