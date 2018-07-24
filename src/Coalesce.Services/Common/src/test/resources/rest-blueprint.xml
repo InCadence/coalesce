@@ -129,9 +129,6 @@
 	<bean id="persister"
  		class="com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor">
  	</bean>
-
-test
-
 	<!-- ========================== -->
 	<!-- Framework -->
 	<!-- ========================== -->
