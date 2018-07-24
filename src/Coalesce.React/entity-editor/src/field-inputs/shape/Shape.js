@@ -542,7 +542,7 @@ export default class Shape extends React.Component {
                 coordsHashmap={this.state.coordsHashmap}
                 textStyle={style.root}
                 textInput={
-                  (this.props.shape == 'Circle' &&
+                  (this.props.shape === 'Circle' &&
                       <TextField
                         id={'radius' + this.props.uniqueID}
                         fullWidth={true}

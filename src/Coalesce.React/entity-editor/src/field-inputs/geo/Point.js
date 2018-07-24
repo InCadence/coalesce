@@ -111,9 +111,9 @@ export default class Point extends React.Component {
       var lonLat = features[0].getGeometry().getCoordinates()
       //var coordinates = that.convertCoordinates(lonLat)
       features[0].setId('clicked')
-
-      that.map.getOverlays().item(0).setElement(document.getElementById('popup' + that.field.key))
-      this.props.uniqueIDg(that.map.getOverlays().item(0));
+      that.convertCoordinates(lonLat)
+      //that.map.getOverlays().item(0).setElement(document.getElementById('popup' + that.field.key))
+      //this.props.uniqueID(that.map.getOverlays().item(0));
       that.map.getOverlays().item(0).setPosition(lonLat);
     }
     else if (features.length === 0)

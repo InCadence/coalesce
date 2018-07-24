@@ -292,7 +292,7 @@ export class FieldInput extends React.Component {
             {this.props.showLabel ? <label>Download {label}</label> : null}
           </div>
         );
-        break;
+        //break;    <- unreachable
 
       case 'LINE_STRING_TYPE':
           view = (

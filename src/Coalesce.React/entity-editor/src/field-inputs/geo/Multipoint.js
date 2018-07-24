@@ -82,7 +82,8 @@ export default class Multipoint extends React.Component {
       var lonLat = features[0].getGeometry().getCoordinates()
       //var coordinates = that.convertCoordinates(lonLat)
       features[0].setId('clicked')
-      that.setState({visibility: "inline-block"})
+      //that.setState({visibility: "inline-block"})
+      that.convertCoordinates(lonLat)
       that.map.getOverlays().item(0).setPosition(lonLat);
     }
     else if (features.length === 0)

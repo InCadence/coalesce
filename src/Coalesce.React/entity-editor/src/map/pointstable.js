@@ -80,7 +80,7 @@ export default class PointsTable extends React.Component {
 
     var tables = []
     tables.push(
-      <ExpansionPanel>
+      <ExpansionPanel defaultExpanded={true}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
           <Typography>Feature Coordinates</Typography>
         </ExpansionPanelSummary>

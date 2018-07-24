@@ -157,7 +157,7 @@ var deletePointControl = function(opt_options) {
   const button = document.createElement('button');
   button.innerHTML = 'D';
   button.type = 'button';
-  button.title = 'WKT/Points'
+  button.title = 'Delete chosen point'
 
   button.onclick = () => options['function']();
 
