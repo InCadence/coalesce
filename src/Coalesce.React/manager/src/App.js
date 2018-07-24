@@ -18,7 +18,7 @@ export class App extends React.Component {
       data: null
     };
 
-    this.handleDataChange = this.handleDataChange.bind(this)
+    this.setState = this.setState.bind(this)
   }
 
   componentDidMount() {
@@ -51,9 +51,17 @@ export class App extends React.Component {
                 that.setState({error: `Loading Blueprint: ${error}`});
               });
             }
-          }]}/>
+          },
+          {
+            id: 'add',
+            name: 'Add',
+            img: "/images/svg/add.svg",
+            title: 'Add Entity',
+            onClick: () => this.setState({actions: 'adding'})
+          }
+          ]}/>
           { data != null &&
-            <GraphView handleDataChange={this.handleDataChange} data={data} title={selected} theme={theme} />
+            <GraphView actions={this.state.actions} data={data} title={selected} theme={theme} />
           }
           <DialogMessage
             title="Error"
@@ -79,10 +87,6 @@ export class App extends React.Component {
           }
         </MuiThemeProvider>
     )
-  }
-
-  handleDataChange(data) {
-    this.setState({data: data})
   }
 
   loadNetwork() {
@@ -230,7 +234,7 @@ export class App extends React.Component {
   }
 }
 
-function getBlueprintOptions() {
+function getBlueprintOptions () {
 
   var karafRootAddr = getRootKarafUrl();
   return fetch(`${karafRootAddr}/blueprints`)

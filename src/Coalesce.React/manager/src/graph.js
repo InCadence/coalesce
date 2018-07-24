@@ -4,7 +4,6 @@ import Paper from '@material-ui/core/Paper';
 import { DialogMessage } from 'common-components/lib/components/dialogs'
 import { getRootKarafUrl } from 'common-components/lib/js/common'
 import ReactTable from 'react-table'
-import ReactJson from 'react-json-view'
 //import Checkbox from 'material-ui/Checkbox';
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
@@ -15,7 +14,8 @@ import Input from '@material-ui/core/Input';
 import TextField from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-var parseString = require('xml2js').parseString
+
+var parser = require('fast-xml-parser');
 
 export class GraphView extends React.Component {
 
@@ -23,9 +23,8 @@ export class GraphView extends React.Component {
     super(props);
 
     props.config.staticGraph = true;
-
     this.state = {
-      actions: 'base',
+      actions: this.props.actions || 'base',
       data: props.data,
       config: props.config,
       selectedNode: "",
@@ -79,6 +78,7 @@ export class GraphView extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       data: nextProps.data,
+      actions: nextProps.actions
     });
   }
 
@@ -184,35 +184,32 @@ export class GraphView extends React.Component {
 
     //fetch post
     this.setState({selected: null, actions: null})
-    if (this.state.actions === 'edited') {
+    var xmlString = ''
+    var xmlWithoutNewLines = ''
+    var jsonString = ''
+    if (this.state.actions === 'editing' && this.state.value.length > 0) {
+      xmlString = this.state.value
+      xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
 
-      var updatedJson = this.state.value
-            this.postNode(updatedJson)
-      var selectedId = this.state.selected.id
-      var nodes = this.state.data.nodes
-
-      for (var i = 0; i < nodes.length; i++) {
-        var node = nodes[i]
-        if (node.id === selectedId) {
-          nodes[i] = updatedJson
-          this.props.handleDataChange(this.state.data)
-        }
+      if(parser.validate(xmlString) === true) {
+        jsonString = this.createXmlJson(xmlWithoutNewLines)
+        this.postNode(jsonString)
+      }
+      else {
+        this.xmlValidationError();
       }
     }
-    else if (this.state.value && this.state.actions === 'adding' && this.state.value.length > 0) {
+    else if (this.state.actions === 'adding' && this.state.value.length > 0) {
+      xmlString = this.state.value
+      xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
 
-      var xmlString = this.state.value
-      var xmlObject = null
-
-      parseString(xmlString, {explicitArray: false}, function (err, result) {
-        xmlObject = result
-      })
-
-      var xmlJson = JSON.stringify(xmlObject)
-      var jsonWithoutNewLines = xmlJson.replace(/(\r\n|\n|\r)/gm,"");
-
-      console.log(jsonWithoutNewLines)
-      this.postNode(jsonWithoutNewLines)
+      if(parser.validate(xmlString) === true) { //returns true if valid
+        jsonString = this.createXmlJson(xmlWithoutNewLines)
+        this.postNode(jsonString)
+      }
+      else {
+        this.xmlValidationError();
+      }
     }
     this.setState({
       data: this.state.data,
@@ -223,19 +220,15 @@ export class GraphView extends React.Component {
     })
   }
 
-  onEditToggle(selected, filtered) {
-
+  onEditToggle(selected) {
     this.setState({
-      value: JSON.parse(JSON.stringify(selected)),
-      filtered: filtered,
       actions: 'editing',
     })
   }
 
-  onEditJson(update) {
+  onEditJson(event) {
     this.setState({
-      actions: 'edited',
-      value: update.updated_src,
+      value: event.target.value,
     })
   }
 
@@ -264,6 +257,20 @@ export class GraphView extends React.Component {
     this.onEditCancel();
   }
 
+  xmlValidationError() {
+    alert("Please ensure the xml is valid!")
+  }
+
+  createXmlJson(xml) {
+
+    var jsonObject= {}
+    jsonObject.xml = xml;
+
+    var jsonString = JSON.stringify(jsonObject)
+    console.log(jsonString)
+    return jsonString
+  }
+
   render() {
 
     const {data, selected, config, actions} = this.state;
@@ -271,12 +278,10 @@ export class GraphView extends React.Component {
 
     var base = null
     var editing = null
-    var edited = null
     var adding = null
 
     var details = [];
     var filtered = {}
-
 
 
     if (selected != null) {
@@ -297,21 +302,16 @@ export class GraphView extends React.Component {
 
     base = actions === 'base'
     editing = actions === 'editing'
-    edited = actions === 'edited'
     adding = actions === 'adding'
 
 
     var onSecondary = console.log
     var onPrimary = console.log
     if (base) {
-      onSecondary =  (() => this.onEditToggle(selected, filtered))
+      onSecondary =  (() => this.onEditToggle(selected))
       onPrimary = this.onClose
     }
     else if (editing) {
-      onSecondary = (() => {this.setState({actions: 'base'})})
-      onPrimary = this.onClose
-    }
-    else if (edited) {
       onSecondary = this.onEditCancel
       onPrimary = this.onClose
     }
@@ -415,9 +415,19 @@ export class GraphView extends React.Component {
                     ||
 
                   //if the user is editing or its editable
-                  ((editing || edited ) && editable &&
-                    <ReactJson src={this.state.value} collapsed='2' onAdd={this.onEditJson} onEdit={this.onEditJson} iconStyle="square"/>
+                  (editing && editable &&
+
+                    <TextField
+                      label="Insert XML"
+                      id="nodeedittextfield"
+                      multiline={true}
+                      fullWidth={true}
+                      rows="20"
+                      onChange={this.onEditJson}
+                      value={this.state.value || ''}
+                    />
                   )
+
 
                     ||
 
@@ -429,7 +439,7 @@ export class GraphView extends React.Component {
                       fullWidth={true}
                       rows="20"
                       onChange={this.onAddChange}
-                      value={this.state.value}
+                      value={this.state.value || ''}
                     />
                   )
 
