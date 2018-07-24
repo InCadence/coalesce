@@ -4,7 +4,6 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
-import com.incadencecorp.coalesce.framework.exim.impl.JsonEximImpl;
 import com.incadencecorp.coalesce.services.api.datamodel.graphson.Edge;
 import com.incadencecorp.coalesce.services.api.datamodel.graphson.Graph;
 import com.incadencecorp.coalesce.services.api.datamodel.graphson.Vertex;
@@ -12,19 +11,21 @@ import com.incadencecorp.coalesce.services.api.mappers.CoalesceMapper;
 import com.incadencecorp.coalesce.services.common.api.IBlueprintController;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.EGraphNodeType;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.io.FileUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import org.json.JSONObject;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
-import java.io.RandomAccessFile;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,9 +33,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.Scanner;
 
 /**
  * This controller exposes the underlying blueprints of a Karaf container.
@@ -121,94 +119,115 @@ public class BlueprintController implements IBlueprintController {
     }
 
     @Override
-    public void editBlueprint(String name, String changes) throws Exception {
-        Pattern pattern = Pattern.compile("id=\".*\"");
+    public void editBlueprint(String name, String changes) throws Exception
+    {
 
         //convert changes to XML
+
         JSONObject json = new JSONObject(changes);
-        changes = jsonToString(json);
-        System.out.println(changes);
+        changes = jsonToXML(json);
+        Document new_xml = XmlHelper.loadXmlFrom(changes);
+        Document old_xml = loadBlueprint(name);
 
-        //find ID within new changes
-        String changeID = findBeanID(changes);
-        System.out.println(changeID);
+        Node bean = new_xml.getFirstChild();
+        NamedNodeMap attributes = bean.getAttributes();
+        String id = attributes.getNamedItem("id").getTextContent();
 
-        //convert string to file
-        File file = findFile(name);
+        Node oldBean = null;
+        NodeList beans = old_xml.getElementsByTagName("bean");
+        for (int i = 0; i < beans.getLength(); i++)
+        {
+            Node child = beans.item(i);
+            NamedNodeMap atrbs = child.getAttributes();
+            Node beanAttrib = atrbs.getNamedItem("id");
+            String beanId = null;
+            if (beanAttrib != null)
+            {
+                beanId = beanAttrib.getTextContent();
+                if (beanId.equals(id))
+                {
+                    oldBean = child;
+                }
+            }
+        }
 
-        String oldBean = findFileBean(file, changeID);
-        //System.out.println("Oldbean : " + oldBean);
+        Node importBean = old_xml.importNode(bean, true);
+        Element doc = old_xml.getDocumentElement();
+
+        if (oldBean != null)
+        {
+            doc.replaceChild(importBean, oldBean);
+        }
+        else
+        {
+            doc.appendChild(importBean);
+        }
 
         Path filename = root.resolve(name);
-        if(oldBean.equals("")) {
-            //append if no matching ID
-            appendStrToFile(file, changes);
-
-        }
-        else {
-            //write over old bean
-            overwriteXML(changes, oldBean, file);
-        }
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Result output = new StreamResult(new File(filename.toString()));
+        Source input = new DOMSource(old_xml);
+        transformer.transform(input, output);
     }
 
-    public String jsonToString(JSONObject json) {
+    public String jsonToXML(JSONObject json)
+    {
         String xml = "";
         Iterator<String> keys = json.keys();
-
         JSONObject root = null;
-        Object [] rootKeys = null;
+        Object[] rootKeys = null;
         String rootString = "";
-        if ( keys.hasNext() ) {
+        if (keys.hasNext())
+        {
             rootString = keys.next();
-
             root = json.getJSONObject(rootString);
-
             rootKeys = root.keySet().toArray();
-
         }
 
-        if(!root.has("$")) {
+        if (!root.has("$"))
+        {
             xml += "<" + rootString + ">";
         }
-        else {
+        else
+        {
             JSONObject attributes = root.getJSONObject("$");
-
             xml += "<" + rootString;
-
             Iterator<String> allAttributes = attributes.keys();
-
-            while (allAttributes.hasNext()) {
+            while (allAttributes.hasNext())
+            {
                 String k = allAttributes.next();
-
-                xml +=" " + k + "=\"" + attributes.get(k) + "\"";
+                xml += " " + k + "=\"" + attributes.get(k) + "\"";
             }
             xml += ">\n";
         }
 
-
-        for (int i = 0; i < rootKeys.length; i++) {
+        for (int i = 0; i < rootKeys.length; i++)
+        {
             String key = rootKeys[i].toString();
             String className = root.get(key).getClass().getSimpleName();
-            if(key.equals("$")) {
+            if (key.equals("$"))
+            {
                 continue;
             }
-            switch(className) {
-                case "String":
-                    break;
-                case "JSONArray":
-                    JSONArray jArray = root.getJSONArray(key);
-                    for ( int ii = 0; ii < jArray.length(); ii++) {
-                        JSONObject oneLine = jArray.getJSONObject(ii);
-                        JSONObject newJson = new JSONObject();
-                        newJson.put(key, oneLine);
-                        xml += jsonToString(newJson);
-                    }
-                    break;
-                case "JSONObject":
+            switch (className)
+            {
+            case "String":
+                break;
+            case "JSONArray":
+                JSONArray jArray = root.getJSONArray(key);
+                for (int ii = 0; ii < jArray.length(); ii++)
+                {
+                    JSONObject oneLine = jArray.getJSONObject(ii);
                     JSONObject newJson = new JSONObject();
-                    newJson.put(key, root.getJSONObject(key));
-                    xml += jsonToString(newJson);
-                    break;
+                    newJson.put(key, oneLine);
+                    xml += jsonToXML(newJson);
+                }
+                break;
+            case "JSONObject":
+                JSONObject newJson = new JSONObject();
+                newJson.put(key, root.getJSONObject(key));
+                xml += jsonToXML(newJson);
+                break;
             }
 
         }
@@ -216,98 +235,17 @@ public class BlueprintController implements IBlueprintController {
         return xml + "</" + rootString + ">";
     }
 
-    /**
-     * find Bean insde of xml file
-     * @param name blueprint xml file
-     * @return entire bean with matching ID
-     */
-    private File findFile(String name) throws Exception{
-        Path filename = root.resolve(name);
-        File file;
-        try {
-            if ( Files.exists(filename) ) {
-                file = filename.toFile();
-            }
-            else {
-                throw new Exception();
-            }
-        }
-        catch (Exception e) {
-            throw e;
-        }
-        return file;
-    }
-
-    private String findFileBean(File name, String id) throws Exception {
-       List <String> beans = new ArrayList<>();
-       String bean = "";
-       try {
-           Scanner scan = new Scanner(name);
-           String scanned = "";
-
-           while ( scan.hasNextLine() ) {
-               String grab = scan.nextLine();
-               if (grab.contains("--")){
-               }
-               else if (grab.contains("<bean")) {
-                   scanned += grab;
-                   while ( (! scanned.contains("</bean>")) && scan.hasNextLine()) {
-                       scanned += "\n" + scan.nextLine();
-                   }
-                   beans.add(scanned);
-                   scanned = "";
-               }
-           }
-           scan.close();
-       }
-       catch ( Exception e ) {
-           throw e;
-       }
-
-       for (int i = 0; i < beans.size(); i++) {
-           String testBean = beans.get(i);
-           String findID = "bean id=\"" + id;
-           if (testBean.contains(findID)) {
-               bean = testBean;
-           }
-       }
-       System.out.println(bean);
-       return bean;
-    }
-
-    private String findBeanID(String changes) {
-        if (changes.contains("id=")) {
-            int index = changes.indexOf("id=\"") + 4;
-            changes = changes.substring(index);
-            index = changes.indexOf("\"");
-            changes = changes.substring(0, index);
-            return changes;
-        }
-        return "";
-    }
-
-    private void overwriteXML(String changes, String oldBean, File file) throws Exception {
-        try {
+    private void overwriteXML(String changes, String oldBean, File file) throws Exception
+    {
+        try
+        {
             String fileContext = FileUtils.readFileToString(file);
             fileContext = fileContext.replace(oldBean, changes);
             FileUtils.writeStringToFile(file, fileContext, "UTF-8");
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             throw e;
-        }
-    }
-
-    private static void appendStrToFile(File fileName, String str)
-    {
-        try {
-            RandomAccessFile f = new RandomAccessFile( fileName , "rw");
-            long aPositionWhereIWantToGo = f.length() - 13;
-            f.seek(aPositionWhereIWantToGo); // this basically reads n bytes in the file
-            f.writeUTF(str + " </blueprint>");
-            f.close();
-        }
-        catch (IOException e) {
-            System.out.println("exception occured " + e);
         }
     }
 

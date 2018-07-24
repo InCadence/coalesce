@@ -55,9 +55,9 @@ public class BlueprintControllerTest {
         controller.setDirectory(Paths.get("src", "test", "resources").toString());
 
 
-        String string = "{ \"bean\": { \"$\": { \"id\": \"test\", \"class\": \"com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch\" }, \"argument\": { \"map\": { \"entry\": [ { \"$\": { \"key\": \"elastic.isAuthoritative\", \"value\": \"true\" } }, { \"$\": { \"key\": \"elastic.clustername\", \"value\": \"elasticsearch\" } }, { \"$\": { \"key\": \"elastic.hosts\", \"value\": \"localhost:9300\" } }, { \"$\": { \"key\": \"elastic.http.host\", \"value\": \"localhost\" } }, { \"$\": { \"key\": \"elastic.http.port\", \"value\": \"9200\" } }, { \"$\": { \"key\": \"ssl.enabled\", \"value\": \"false\" } }, { \"$\": { \"key\": \"ssl.reject_unauthorized\", \"value\": \"true\" } } ] } } } }";
+        String string = "{ \"bean\": { \"$\": { \"id\": \"test\", \"class\": \"com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersiseter\" }, \"argument\": { \"map\": { \"entry\": [ { \"$\": { \"key\": \"elastic.isAuthoritative\", \"value\": \"true\" } }, { \"$\": { \"key\": \"elastic.clustername\", \"value\": \"elasticsearch\" } }, { \"$\": { \"key\": \"elastic.hosts\", \"value\": \"localhost:9300\" } }, { \"$\": { \"key\": \"elastic.http.host\", \"value\": \"localhost\" } }, { \"$\": { \"key\": \"elastic.http.port\", \"value\": \"9200\" } }, { \"$\": { \"key\": \"ssl.enabled\", \"value\": \"false\" } }, { \"$\": { \"key\": \"ssl.reject_unauthorized\", \"value\": \"true\" } } ] } } } }";
         JSONObject json = new JSONObject(string);
-        String word =controller.jsonToString(json);
+        String word =controller.jsonToXML(json);
         controller.editBlueprint("service-blueprint.xml", string);
 
     }
