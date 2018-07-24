@@ -121,11 +121,8 @@ public class BlueprintController implements IBlueprintController {
     @Override
     public void editBlueprint(String name, String changes) throws Exception
     {
-
-        //convert changes to XML
-
         JSONObject json = new JSONObject(changes);
-        changes = jsonToXML(json);
+        changes = json.get("xml").toString();
         Document new_xml = XmlHelper.loadXmlFrom(changes);
         Document old_xml = loadBlueprint(name);
 
