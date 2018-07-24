@@ -55,7 +55,7 @@ public class BlueprintControllerTest {
         controller.setDirectory(Paths.get("src", "test", "resources").toString());
 
 
-        String string = "";
+        String string = "\"<bean id=\"persister\\\" class=\\\"com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch\\\"> <argument> <map> <entry key=\\\"elastic.isAuthoritative\\\" value=\\\"true\\\"/> <entry key=\\\"elastic.clustername\\\" value=\\\"elasticsearch\\\"/> <entry key=\\\"elastic.hosts\\\" value=\\\"localhost:9300\\\"/> <entry key=\\\"elastic.http.host\\\" value=\\\"localhost\\\"/> <entry key=\\\"elastic.http.port\\\" value=\\\"9200\\\"/> <entry key=\\\"ssl.enabled\\\" value=\\\"false\\\"/> <entry key=\\\"ssl.reject_unauthorized\\\" value=\\\"true\\\"/> </map> </argument></bean>\"";
         JSONObject json = new JSONObject(string);
         String word =controller.jsonToXML(json);
         controller.editBlueprint("service-blueprint.xml", string);
@@ -63,3 +63,5 @@ public class BlueprintControllerTest {
     }
 
 }
+
+
