@@ -127,15 +127,17 @@ public class BlueprintController implements IBlueprintController {
         //convert changes to XML
         JSONObject json = new JSONObject(changes);
         changes = jsonToString(json);
-
+        System.out.println(changes);
 
         //find ID within new changes
-        String changeID = findBeanID(pattern, changes);
+        String changeID = findBeanID(changes);
+        System.out.println(changeID);
 
         //convert string to file
         File file = findFile(name);
 
         String oldBean = findFileBean(file, changeID);
+        //System.out.println("Oldbean : " + oldBean);
 
         Path filename = root.resolve(name);
         if(oldBean.equals("")) {
@@ -149,7 +151,7 @@ public class BlueprintController implements IBlueprintController {
         }
     }
 
-    private String jsonToString(JSONObject json) {
+    public String jsonToString(JSONObject json) {
         String xml = "";
         Iterator<String> keys = json.keys();
 
@@ -245,7 +247,9 @@ public class BlueprintController implements IBlueprintController {
 
            while ( scan.hasNextLine() ) {
                String grab = scan.nextLine();
-               if (grab.contains("<bean")) {
+               if (grab.contains("--")){
+               }
+               else if (grab.contains("<bean")) {
                    scanned += grab;
                    while ( (! scanned.contains("</bean>")) && scan.hasNextLine()) {
                        scanned += "\n" + scan.nextLine();
@@ -254,19 +258,6 @@ public class BlueprintController implements IBlueprintController {
                    scanned = "";
                }
            }
-
-
-//           while ( scan.hasNext() ) {
-//               scanned += scan.next();
-//               if ( scanned.contains("<bean") ) {
-//                   scanned = scanned.substring(scanned.length() - 5);
-//                   while ( scan.hasNext() && ( ! scanned.contains("</bean>") )) {
-//                       scanned += scan.next();
-//                   }
-//                   beans.add(scanned);
-//                   scanned = "";
-//               }
-//           }
            scan.close();
        }
        catch ( Exception e ) {
@@ -280,23 +271,26 @@ public class BlueprintController implements IBlueprintController {
                bean = testBean;
            }
        }
+       System.out.println(bean);
        return bean;
     }
 
-    private String findBeanID(Pattern p, String changes) {
-        String id = "";
-        Matcher m = p.matcher(changes);
-        while (m.find()) {
-            id = m.group();
+    private String findBeanID(String changes) {
+        if (changes.contains("id=")) {
+            int index = changes.indexOf("id=\"") + 4;
+            changes = changes.substring(index);
+            index = changes.indexOf("\"");
+            changes = changes.substring(0, index);
+            return changes;
         }
-        return id.substring(4, id.length() - 1);
+        return "";
     }
 
     private void overwriteXML(String changes, String oldBean, File file) throws Exception {
         try {
             String fileContext = FileUtils.readFileToString(file);
             fileContext = fileContext.replace(oldBean, changes);
-            FileUtils.write(file, fileContext);
+            FileUtils.writeStringToFile(file, fileContext, "UTF-8");
         }
         catch (Exception e) {
             throw e;
@@ -309,7 +303,7 @@ public class BlueprintController implements IBlueprintController {
             RandomAccessFile f = new RandomAccessFile( fileName , "rw");
             long aPositionWhereIWantToGo = f.length() - 13;
             f.seek(aPositionWhereIWantToGo); // this basically reads n bytes in the file
-            f.writeChars(str + " </blueprint>");
+            f.writeUTF(str + " </blueprint>");
             f.close();
         }
         catch (IOException e) {
