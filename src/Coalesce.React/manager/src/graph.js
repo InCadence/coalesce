@@ -15,7 +15,6 @@ import Input from '@material-ui/core/Input';
 import TextField from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-const util = require('util');
 var parseString = require('xml2js').parseString
 
 export class GraphView extends React.Component {
@@ -43,6 +42,7 @@ export class GraphView extends React.Component {
     this.onEditJson = this.onEditJson.bind(this)
     this.onAddToggle = this.onAddToggle.bind(this)
     this.onAddChange = this.onAddChange.bind(this)
+    this.onAddCancel = this.onAddCancel.bind(this)
     this.onClose = this.onClose.bind(this)
 
   }
@@ -199,7 +199,7 @@ export class GraphView extends React.Component {
         }
       }
     }
-    else if (this.state.actions === 'adding' && this.state.value.length > 0) {
+    else if (this.state.value && this.state.actions === 'adding' && this.state.value.length > 0) {
 
       var xmlString = this.state.value
       var xmlObject = null
@@ -209,8 +209,10 @@ export class GraphView extends React.Component {
       })
 
       var xmlJson = JSON.stringify(xmlObject)
-      console.log(util.inspect(xmlObject, false, null))
-      this.postNode(xmlJson)
+      var jsonWithoutNewLines = xmlJson.replace(/(\r\n|\n|\r)/gm,"");
+
+      console.log(jsonWithoutNewLines)
+      this.postNode(jsonWithoutNewLines)
     }
     this.setState({
       data: this.state.data,
@@ -256,6 +258,10 @@ export class GraphView extends React.Component {
   onAddChange(event) {
     var newValue = event.target.value
     this.setState({value: newValue})
+  }
+
+  onAddCancel() {
+    this.onEditCancel();
   }
 
   render() {
@@ -422,7 +428,6 @@ export class GraphView extends React.Component {
                       multiline={true}
                       fullWidth={true}
                       rows="20"
-                      helperText="Insert XML for 'bean' here"
                       onChange={this.onAddChange}
                       value={this.state.value}
                     />
