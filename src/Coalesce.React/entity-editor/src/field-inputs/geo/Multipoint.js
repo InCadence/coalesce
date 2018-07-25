@@ -16,7 +16,7 @@ export default class Multipoint extends React.Component {
     this.attr = this.opts['attr'];
     this.field = this.opts['field'];
 
-    if(this.field[this.attr]) {
+    if(this.field[this.attr] && this.field[this.attr] !== '') {
 
       this.state = {
         wkt: this.stripZAxis(this.field[this.attr]),
@@ -32,7 +32,31 @@ export default class Multipoint extends React.Component {
     }
 
     this.multipoint = new WKT().readFeature(this.state.wkt).getGeometry();
+    console.log('hello');
+    console.log(this.state.wkt);
+  }
 
+  componentWillReceiveProps(newProps) {
+    this.opts = newProps.opts;
+    this.attr = this.opts['attr'];
+    this.field = this.opts['field'];
+
+    if(this.field[this.attr] && this.field[this.attr] !== '') {
+
+      this.setState({
+        wkt: this.stripZAxis(this.field[this.attr]),
+        fullWKT: this.field[this.attr]
+      });
+
+    }
+    else {
+      this.setState({
+        wkt: this.wktEmpty,
+        fullWKT: this.wktEmpty
+      });
+    }
+    this.multipoint = new WKT().readFeature(this.state.wkt).getGeometry();
+    console.log(this.multipoint);
   }
 
   stripZAxis (fullWKT) {
@@ -61,7 +85,6 @@ export default class Multipoint extends React.Component {
       }
     }
     wkt += ')'
-    console.log(wkt);
     return wkt
 
   }

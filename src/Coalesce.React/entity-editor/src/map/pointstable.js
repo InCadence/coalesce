@@ -110,7 +110,6 @@ export default class PointsTable extends React.Component {
     if(!feature) {
       return null;
     }
-    console.log(feature.getGeometry().getCoordinates());
 
     var rows = [];
 

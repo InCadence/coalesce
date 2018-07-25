@@ -169,7 +169,7 @@ export class App extends React.Component {
               onClick: () => {that.handleSaveEntity();}
           }
         ]}/>
-        <Paper zDepth={1} style={{padding: '5px', margin: '10px'}}>
+        <Paper style={{padding: '5px', margin: '10px'}}>
           <EntityView data={entity} template={template} isNew={isNew} />
           <DialogPrompt
             title="Enter Entity Key"

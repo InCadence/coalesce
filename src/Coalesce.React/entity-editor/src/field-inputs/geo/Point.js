@@ -30,6 +30,27 @@ export default class Point extends React.Component {
     }
   }
 
+  componentWillReceiveProps(newProps) {
+    this.opts = newProps.opts;
+    this.attr = this.opts['attr'];
+    this.field = this.opts['field'];
+
+    if(this.field[this.attr]) {
+
+      this.setState({
+        wkt: this.stripZAxis(this.field[this.attr]),
+        fullWKT: this.field[this.attr]
+      });
+
+    }
+    else {
+      this.setState({
+        wkt: this.wktEmpty,
+        fullWKT: this.wktEmpty
+      });
+    }
+  }
+
   stripZAxis(fullWKT) {
     var pattern = / ?-?[0-9]\d*(\.\d+)?/g //matches the point's 3 values
     var coords = fullWKT.match(pattern) //[x, y, z]

@@ -54,6 +54,7 @@ export default class Shape extends React.Component {
         radius: '0',
         coordsHashmap: new HashMap(),
       };
+
     }
 
 
@@ -65,6 +66,35 @@ export default class Shape extends React.Component {
     this.handleHashmap = this.handleHashmap.bind(this)
     this.updateFeature = this.updateFeature.bind(this)
     this.deleteFeatures = this.deleteFeatures.bind(this)
+  }
+
+  componentWillReceiveProps(newProps) {
+    this.opts = newProps.opts;
+    this.attr = this.opts['attr'];
+    this.field = this.opts['field'];
+
+
+    if(this.field[this.attr] && this.field[this.attr] !== '') {
+
+      this.setState({
+        wkt: this.stripZAxis(this.field[this.attr]),
+        fullWKT: this.field[this.attr],
+        radius: this.field['radius'],
+        coordsHashmap: this.coordsHashmap,
+      });
+      //this.state.coordsHashmap = this.coordsHashmap
+    }
+    else {
+      this.clearFeatures(this.state.vectorSource)
+      this.setState({
+        wkt: this.wktEmpty,
+        fullWKT: this.wktEmpty,
+        radius: '0',
+        coordsHashmap: new HashMap(),
+      });
+      console.log('else');
+      console.log(this.state.vectorSource.getFeatures());
+    }
   }
 
   stripZAxis(fullWKT) {
@@ -119,8 +149,10 @@ export default class Shape extends React.Component {
 
     this.state.vectorSource.clear()
 
-    if (this.state.wkt != this.wktEmpty)
+    console.log('cleared');
+    if (this.state.wkt !== this.wktEmpty)
     {
+      console.log(this.state.wkt);
       var feature = new WKT().readFeature(this.state.wkt)
 
       if (this.props.shape === 'Circle') {
@@ -179,8 +211,7 @@ export default class Shape extends React.Component {
     this.map.addInteraction(drawInteraction)
     this.map.addInteraction(modifyInteraction)
 
-
-
+    console.log(this.state.wkt);
     return this.map;
 
   }
@@ -324,7 +355,7 @@ export default class Shape extends React.Component {
 
   clearFeatures(vectorSource) {
     vectorSource.clear()
-    }
+  }
 
   updateFeature(newXYZCoordsDict, coordsHashmap, index) {
     //function updates the hashmap so it can be passed in again to PointsTable
@@ -353,7 +384,6 @@ export default class Shape extends React.Component {
       var xy = oldFeatureCoordinates[indexNum]
 
       //set() returns the hashmap so programmers can chain functions
-      console.log(xy);
       var newCoordsHashmap = coordsHashmap.set(xy, newXYZCoordsDict[index])
 
       this.setState({
@@ -484,16 +514,6 @@ export default class Shape extends React.Component {
     return format;
   }
 
-  getFeature() {
-    // var feature = new WKT().readFeature(this.state.wkt)
-    // if (this.props.shape === 'Circle') {
-    //   feature = new Feature({
-    //     geometry: new Circle(feature.getGeometry().getCoordinates(), this.state.radius)
-    //   })
-    // }
-    // return feature;
-  }
-
   deleteFeatures() {
     if(this.map) {
       this.state.vectorSource.clear()
@@ -515,6 +535,9 @@ export default class Shape extends React.Component {
 
     var self = this;
 
+    var feature = this.state.vectorSource.getFeatures()[0]
+    console.log(feature);
+
     return (
       <table width="100%" className={this.props.css}>
         <tbody>
@@ -526,14 +549,14 @@ export default class Shape extends React.Component {
                 floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
                 underlineShow={this.props.showLabels}
                 style={style.root}
-                value={this.state.fullWKT}
+                value={this.field[this.attr]}
                 disabled
                 defaultValue={this.field.defaultValue}
               />
             </td>
             <td width="30px">
               <DialogMap
-                feature={this.state.vectorSource.getFeatures()[0] || this.getFeature()}
+                feature={feature}
                 configureMap={this.configureMap}
                 uniqueID={this.props.uniqueID}
                 shape={this.props.shape}

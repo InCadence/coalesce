@@ -96,9 +96,6 @@ export default class MapPoint extends React.Component {
 
   }
 
-
-
-
   deleteFeatures() {
 
     if(this.map) {
@@ -116,10 +113,7 @@ export default class MapPoint extends React.Component {
       // }
     }
 
-
-
   }
-
 
   convertCoordinates(coords) {
     //coords are lonlat
@@ -163,7 +157,6 @@ export default class MapPoint extends React.Component {
       this.props.parent.setState({wkt: this.wktSafe})
     }
   }
-
 
   configureMap(opt_options) {
     this.state.vectorSource.clear()

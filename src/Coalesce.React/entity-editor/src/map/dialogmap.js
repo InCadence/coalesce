@@ -40,10 +40,6 @@ export class DialogMap extends React.Component {
     }
   }
 
-  componentDidMount() {
-
-  }
-
   handleOpen() {
 
     this.setState({
