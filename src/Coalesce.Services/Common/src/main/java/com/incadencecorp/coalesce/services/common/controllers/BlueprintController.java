@@ -140,7 +140,7 @@ public class BlueprintController implements IBlueprintController {
     {
         //Pull xml and old ID from JSON
         JSONObject json = new JSONObject(changes);
-        changes = json.get("xml").toString();
+        changes = json.getJSONArray("xml").get(0).toString();
         String id = json.get("oldId").toString();
 
         //Build both documents
