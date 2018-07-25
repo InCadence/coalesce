@@ -32,7 +32,7 @@ export class GraphView extends React.Component {
 
 
     this.addNodeURL = getRootKarafUrl() + '/blueprints/edit/' + this.props.title
-
+    console.log(this.addNodeURL);
     this.toggleStatic = this.toggleStatic.bind(this);
     this.handleSelectNode = this.handleSelectNode.bind(this);
     this.onClickNode = this.onClickNode.bind(this);
@@ -55,10 +55,7 @@ export class GraphView extends React.Component {
         'Content-Type': 'application/json',
       },
       body: nodeJson,
-    })
-    .then((response) => {
-      console.log(response.json())
-    })
+    })  
     .catch((error) => {
       console.log(error);
     });
