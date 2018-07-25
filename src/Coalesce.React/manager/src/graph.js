@@ -238,6 +238,7 @@ export class GraphView extends React.Component {
 
   onClose() {
 
+    const {selected} = this.state
     //fetch post
     this.setState({selected: null, actions: null})
     var xmlString = ''
@@ -248,7 +249,7 @@ export class GraphView extends React.Component {
       xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
 
       if(parser.validate(xmlString) === true) {
-        jsonString = this.createXmlJson(xmlWithoutNewLines)
+        jsonString = this.createXmlJson(xmlWithoutNewLines, selected.id)
         this.postNodeXml(jsonString)
         this.props.reloadBlueprint();
       }
@@ -261,7 +262,7 @@ export class GraphView extends React.Component {
       xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
 
       if(parser.validate(xmlString) === true) { //returns true if valid
-        jsonString = this.createXmlJson(xmlWithoutNewLines)
+        jsonString = this.createXmlJson(xmlWithoutNewLines, '')
         this.postNodeXml(jsonString)
         this.props.reloadBlueprint();
       }
@@ -318,11 +319,11 @@ export class GraphView extends React.Component {
     alert("Please ensure the xml is valid!")
   }
 
-  createXmlJson(xml) {
+  createXmlJson(xml, id) {
 
     var jsonObject= {}
     jsonObject.xml = xml;
-
+    jsonObject.oldId = id
     var jsonString = JSON.stringify(jsonObject)
     console.log(jsonString)
     return jsonString
