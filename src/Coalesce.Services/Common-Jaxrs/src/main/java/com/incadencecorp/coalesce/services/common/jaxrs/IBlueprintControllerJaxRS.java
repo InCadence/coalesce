@@ -38,6 +38,11 @@ interface IBlueprintControllerJaxRS extends IBlueprintController {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     List<String> getBlueprints();
+
+    @GET
+    @Path("get/{name}/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    String getXML(@PathParam("name") String filename, @PathParam("id") String id) throws Exception;
     
     @POST
     @Path("edit/{name}/")
@@ -48,5 +53,7 @@ interface IBlueprintControllerJaxRS extends IBlueprintController {
     @Path("/{name}")
     @Produces(MediaType.APPLICATION_JSON)
     Graph getBlueprint(@PathParam("name") String name) throws RemoteException;
+
+
 
 }

@@ -10,24 +10,20 @@ import com.incadencecorp.coalesce.services.api.datamodel.graphson.Vertex;
 import com.incadencecorp.coalesce.services.api.mappers.CoalesceMapper;
 import com.incadencecorp.coalesce.services.common.api.IBlueprintController;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.EGraphNodeType;
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.io.FileUtils;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import org.json.JSONObject;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -119,17 +115,86 @@ public class BlueprintController implements IBlueprintController {
     }
 
     @Override
+    public String getXML(String filename, String id) throws Exception{
+        String xml;
+        try {
+            Document doc = loadBlueprint(filename);
+            Node bean = findBeanWithID(id, doc);
+            if (bean == null) {
+                LOGGER.debug("No matching node with ID : " + id);
+                throw new Exception();
+            }
+            xml = nodeToString(bean);
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        System.out.println(xml);
+        JSONObject json = new JSONObject();
+        json.append("xml", xml);
+        return json.toString();
+    }
+
+    @Override
     public void editBlueprint(String name, String changes) throws Exception
     {
+        //Pull xml and old ID from JSON
         JSONObject json = new JSONObject(changes);
         changes = json.get("xml").toString();
+        String id = json.get("oldId").toString();
+
+        //Build both documents
         Document new_xml = XmlHelper.loadXmlFrom(changes);
         Document old_xml = loadBlueprint(name);
 
+
+        //Create node of new xml
         Node bean = new_xml.getFirstChild();
         NamedNodeMap attributes = bean.getAttributes();
-        String id = attributes.getNamedItem("id").getTextContent();
 
+        //If editing existing node, ensure that ID is not changed
+        if ( id != "" ) {
+            attributes.getNamedItem("id").setNodeValue(id);
+        }
+
+        //Find oldBean within old_xml
+        Node oldBean = findBeanWithID(id, old_xml);
+
+        //Add oldBean to old_xml to be inserted
+        Node importBean = old_xml.importNode(bean, true);
+        Element doc = old_xml.getDocumentElement();
+
+        if (oldBean != null)
+        {
+            doc.replaceChild(importBean, oldBean);
+        }
+        else
+        {
+            doc.appendChild(importBean);
+        }
+
+        //Write changed document to file
+        Path filename = root.resolve(name);
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Result output = new StreamResult(new File(filename.toString()));
+        Source input = new DOMSource(old_xml);
+        transformer.transform(input, output);
+    }
+
+    private  String nodeToString(Node node) {
+        StringWriter sw = new StringWriter();
+        try {
+            Transformer t = TransformerFactory.newInstance().newTransformer();
+            t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            t.setOutputProperty(OutputKeys.INDENT, "yes");
+            t.transform(new DOMSource(node), new StreamResult(sw));
+        } catch (TransformerException te) {
+            System.out.println("nodeToString Transformer Exception");
+        }
+        return sw.toString();
+    }
+
+    private Node findBeanWithID(String id, Document old_xml) {
         Node oldBean = null;
         NodeList beans = old_xml.getElementsByTagName("bean");
         for (int i = 0; i < beans.getLength(); i++)
@@ -147,104 +212,9 @@ public class BlueprintController implements IBlueprintController {
                 }
             }
         }
-
-        Node importBean = old_xml.importNode(bean, true);
-        Element doc = old_xml.getDocumentElement();
-
-        if (oldBean != null)
-        {
-            doc.replaceChild(importBean, oldBean);
-        }
-        else
-        {
-            doc.appendChild(importBean);
-        }
-
-        Path filename = root.resolve(name);
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        Result output = new StreamResult(new File(filename.toString()));
-        Source input = new DOMSource(old_xml);
-        transformer.transform(input, output);
+        return oldBean;
     }
 
-    public String jsonToXML(JSONObject json)
-    {
-        String xml = "";
-        Iterator<String> keys = json.keys();
-        JSONObject root = null;
-        Object[] rootKeys = null;
-        String rootString = "";
-        if (keys.hasNext())
-        {
-            rootString = keys.next();
-            root = json.getJSONObject(rootString);
-            rootKeys = root.keySet().toArray();
-        }
-
-        if (!root.has("$"))
-        {
-            xml += "<" + rootString + ">";
-        }
-        else
-        {
-            JSONObject attributes = root.getJSONObject("$");
-            xml += "<" + rootString;
-            Iterator<String> allAttributes = attributes.keys();
-            while (allAttributes.hasNext())
-            {
-                String k = allAttributes.next();
-                xml += " " + k + "=\"" + attributes.get(k) + "\"";
-            }
-            xml += ">\n";
-        }
-
-        for (int i = 0; i < rootKeys.length; i++)
-        {
-            String key = rootKeys[i].toString();
-            String className = root.get(key).getClass().getSimpleName();
-            if (key.equals("$"))
-            {
-                continue;
-            }
-            switch (className)
-            {
-            case "String":
-                break;
-            case "JSONArray":
-                JSONArray jArray = root.getJSONArray(key);
-                for (int ii = 0; ii < jArray.length(); ii++)
-                {
-                    JSONObject oneLine = jArray.getJSONObject(ii);
-                    JSONObject newJson = new JSONObject();
-                    newJson.put(key, oneLine);
-                    xml += jsonToXML(newJson);
-                }
-                break;
-            case "JSONObject":
-                JSONObject newJson = new JSONObject();
-                newJson.put(key, root.getJSONObject(key));
-                xml += jsonToXML(newJson);
-                break;
-            }
-
-        }
-
-        return xml + "</" + rootString + ">";
-    }
-
-    private void overwriteXML(String changes, String oldBean, File file) throws Exception
-    {
-        try
-        {
-            String fileContext = FileUtils.readFileToString(file);
-            fileContext = fileContext.replace(oldBean, changes);
-            FileUtils.writeStringToFile(file, fileContext, "UTF-8");
-        }
-        catch (Exception e)
-        {
-            throw e;
-        }
-    }
 
     private Collection<Edge> linkServices(Vertex parent, Element server)
     {

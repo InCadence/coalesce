@@ -50,16 +50,25 @@ public class BlueprintControllerTest {
 
     }
 
-    @Test public void testEditBlueprint() throws Exception {
+//    @Test public void testEditBlueprint() throws Exception {
 //        BlueprintController controller = new BlueprintController();
 //        controller.setDirectory(Paths.get("src", "test", "resources").toString());
-
-
+//
+//
 //        String string = "{"
-//                + "\t\"xml\":\"<bean id=\\\"persister\\\" class=\\\"com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch\\\"> <argument> <map> <entry key=\\\"elastic.isAuthoritative\\\" value=\\\"true\\\"/> <entry key=\\\"elastic.clustername\\\" value=\\\"elasticsearch\\\"/> <entry key=\\\"elastic.hosts\\\" value=\\\"localhost:9300\\\"/> <entry key=\\\"elastic.http.host\\\" value=\\\"localhost\\\"/> <entry key=\\\"elastic.http.port\\\" value=\\\"9200\\\"/> <entry key=\\\"ssl.enabled\\\" value=\\\"false\\\"/> <entry key=\\\"ssl.reject_unauthorized\\\" value=\\\"true\\\"/> </map> </argument></bean>\""
+//                + "\t\"xml\":\"<bean id=\\\"persister\\\" class=\\\"com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch\\\"> <argument> <map> <entry key=\\\"elastic.isAuthoritative\\\" value=\\\"true\\\"/> <entry key=\\\"elastic.clustername\\\" value=\\\"elasticsearch\\\"/> <entry key=\\\"elastic.hosts\\\" value=\\\"localhost:9300\\\"/> <entry key=\\\"elastic.http.host\\\" value=\\\"localhost\\\"/> <entry key=\\\"elastic.http.port\\\" value=\\\"9200\\\"/> <entry key=\\\"ssl.enabled\\\" value=\\\"false\\\"/> <entry key=\\\"ssl.reject_unauthorized\\\" value=\\\"true\\\"/> </map> </argument></bean>\","
+//                + "\t\"oldId\":\"persister\""
 //                + "}";
 //        controller.editBlueprint("rest-blueprint.xml", string);
-    }
+//    }
+//
+//    @Test public void testGetXML() throws Exception {
+//        BlueprintController controller = new BlueprintController();
+//        controller.setDirectory(Paths.get("src", "test", "resources").toString());
+//
+//        String xml = controller.getXML("rest-blueprint.xml", "framework");
+//        System.out.println(xml);
+//    }
 
 }
 
