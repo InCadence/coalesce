@@ -237,6 +237,7 @@ export class App extends React.Component {
 function getBlueprintOptions () {
 
   var karafRootAddr = getRootKarafUrl();
+  var addr = 'localhost:8181/cxf/core'
   return fetch(`${karafRootAddr}/blueprints`)
     .then(res => {
       if (!res.ok)
