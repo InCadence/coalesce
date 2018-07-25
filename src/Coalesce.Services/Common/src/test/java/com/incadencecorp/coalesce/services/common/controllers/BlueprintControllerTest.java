@@ -51,8 +51,8 @@ public class BlueprintControllerTest {
     }
 
     @Test public void testEditBlueprint() throws Exception {
-        BlueprintController controller = new BlueprintController();
-        controller.setDirectory(Paths.get("src", "test", "resources").toString());
+//        BlueprintController controller = new BlueprintController();
+//        controller.setDirectory(Paths.get("src", "test", "resources").toString());
 
 
 //        String string = "{"
