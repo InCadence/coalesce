@@ -10,7 +10,7 @@ import { getDefaultTheme } from 'common-components/lib/js/theme'
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { loadJSON } from 'common-components/lib/js/propertyController'
 
-import {FilterCreator} from './filtercreator.js'
+import {SearchCreator} from './searchcreator.js'
 import {SearchResults} from './results.js'
 
 // TODO Refactor this out
@@ -33,8 +33,11 @@ export class App extends React.Component {
       cache: [],
       key: null,
       results: null,
-      query: null,
-      properties: null
+      properties: null,
+      filterCriterias: [],
+      filterkey: 0,
+      criteriaKey: 0,
+      //groups: []
     }
 
   }
@@ -48,7 +51,7 @@ export class App extends React.Component {
         theme: getMuiTheme(value)
       })
     }).catch((err) => {
-      console.log("Loading Theme: " + err);
+      //console.log("Loading Theme: " + err);
     })
 
     fetch(karafRootAddr + '/cxf/data/templates/998b040b-2c39-4c98-9a9d-61d565b46e28/recordsets/CoalesceEntity/fields')
@@ -68,14 +71,16 @@ export class App extends React.Component {
         this.setState({
           key: 'CoalesceEntity',
           cache: cache,
-          query: [{
-            key: 0,
-            recordset: 'CoalesceEntity',
-            field: 'name',
-            operator: 'EqualTo',
-            value: '',
-            matchCase: false
-          }]
+           groupData: {
+                        operator: '!=',
+                        criteria: [{
+                           key: 'CoalesceEntity',
+                           recordset: 'CoalesceEntity',
+                           field: 'name',
+                           operator: '!=',
+                           value: '',
+                           matchCase: false}]
+                       }
         });
 
     }).catch(function(error) {
@@ -118,17 +123,20 @@ export class App extends React.Component {
           name: template.name
         };
 
-        console.log(JSON.stringify(recordsets));
+        console.log("APP Loading Template", recordsets);
 
         that.setState({
           key: key,
-          query: [{
-              recordset: 'CoalesceEntity',
-              field: 'name',
-              operator: '=',
-              value: cache[key].name,
-              matchCase: true
-            }]
+          groupData: {
+              operator: '!=',
+              criteria: [{
+                 key: key,
+                 recordset: 'CoalesceEntity',
+                 field: 'name',
+                 operator: '!=',
+                 value: cache[key].name,
+                 matchCase: false}]
+             }
           });
 
         }).catch((err) => {
@@ -141,21 +149,14 @@ export class App extends React.Component {
 
       that.setState({
         key: key,
-        query: [{
-            recordset: 'CoalesceEntity',
-            field: 'name',
-            operator: '=',
-            value: cache[key].name,
-            matchCase: true
-          }]
         });
     }
   }
 
   render() {
 
-    const { cache, key, results, query, properties } = this.state;
-
+    const { cache, key, results, properties } = this.state;
+   // console.log("App creating new filter creator", cache, key);
     return (
       <div>
         <MuiThemeProvider theme={createMuiTheme(this.state.theme)}>
@@ -191,7 +192,7 @@ export class App extends React.Component {
             img: "/images/svg/erase.svg",
             title: 'Reset Criteria',
             onClick: () => {
-              this.setState({
+              /*this.setState({
                 query: [{
                     recordset: 'CoalesceEntity',
                     field: 'name',
@@ -199,17 +200,21 @@ export class App extends React.Component {
                     value: cache[key].name,
                     matchCase: true
                   }]
-              })
+              })*/
+              console.log("Reset Criteria");
             }
           }
         ]}/>
           <div>
             { cache[key] != null &&
-            <FilterCreator
-              recordsets={cache[key].recordsets}
-              onSearch={this.props.onSearch}
-              tabledata={query}
-              />
+                        <SearchCreator
+                          recordsets={cache[key].recordsets}
+                          onSearch={this.props.onSearch}
+                          groupRecordSet = 'CoalesceEntity'
+                          currentkey = {0}
+                          criteriaKey = {0}
+                          groupData = {this.state.groupData}
+                          />
             }
             { results != null &&
               <SearchResults
@@ -258,3 +263,4 @@ function getRecordsets(section) {
 
   return results;
 }
+

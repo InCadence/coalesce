@@ -19,18 +19,28 @@ export class FilterGroup extends React.Component {
   constructor(props) {
     super(props);
 
-    console.log(JSON.stringify(props.recordsets));
+
 
     this.state = {
       data: props.data
+      //recordsets: props.recordsets
     }
+  }
+
+  addField(){
+    console.log("Adding field");
+    //this.state.data.criteria.push()
+  }
+
+  addGroup(){
+    console.log("Adding group");
   }
 
   render() {
 
     const { data } = this.state;
 
-    console.log(JSON.stringify(data));
+    console.log("FilterGroup", this.props.recordsets);
 
     return (
       <Card>
@@ -41,7 +51,7 @@ export class FilterGroup extends React.Component {
               dataType="ENUMERATION_TYPE"
               attr="operator"
               options={operator_enum}
-              showLabels={false}
+              showLabels={true}
             />
           }
           actAsExpander={false}
@@ -50,16 +60,18 @@ export class FilterGroup extends React.Component {
         <CardText expandable={false}>
           <List>
             {data.criteria != null && data.criteria.map((item) => {
+              //console.log("filter group data.criteria", JSON.stringify(item));
               return (<FilterCriteria criteria={item} recordsets={this.props.recordsets}/>)
             })}
           </List>
-          {data.group != null && data.group.map((item) => {
+          {data.groups != null && data.groups.map((item) => {
+            //console.log("filter group data.groups", JSON.stringify(item));
             return (<FilterGroup data={item} recordsets={this.props.recordsets}/>)
           })}
         </CardText>
         <CardActions>
-          <FlatButton label="Add Field" />
-          <FlatButton label="Add Group" />
+          <FlatButton label="Add Field" onClick={this.addField.bind(this)}/>
+          <FlatButton label="Add Group" onClick={this.addGroup.bind(this)}/>
         </CardActions>
       </Card>
     )

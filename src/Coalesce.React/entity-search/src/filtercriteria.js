@@ -13,7 +13,7 @@ export class FilterCriteria extends React.Component {
   constructor(props) {
     super(props);
 
-    console.log(JSON.stringify(props.criteria));
+    //console.log("Filter Criteria",JSON.stringify(props.criteria), JSON.stringify(props.recordsets));
 
     this.state = {
       criteria: props.criteria
@@ -24,14 +24,16 @@ export class FilterCriteria extends React.Component {
 
     const { criteria } = this.state;
     var recordset;
-
+    //console.log("FilterCriteria criteria.recordset", criteria.recordset);
     for (var ii=0; ii<this.props.recordsets.length; ii++) {
       if (criteria.recordset === this.props.recordsets[ii].name) {
         recordset = this.props.recordsets[ii];
+        console.log("FilterCriteria name",this.props.recordsets[ii].name, recordset);
         break;
       }
     };
-
+    //console.log("FilterCriteria recordsets", JSON.stringify(this.props.recordsets));
+    //console.log("FilterCriteria definitions", JSON.stringify(this.props.recordsets.definition));
     return (
       <Row>
         <Col xs={3}>
