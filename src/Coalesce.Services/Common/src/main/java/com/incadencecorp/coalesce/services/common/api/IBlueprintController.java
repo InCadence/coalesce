@@ -45,4 +45,11 @@ public interface IBlueprintController {
      * @param changes changes to be written to file
      */
     void editBlueprint(String name, String changes) throws Exception;
+
+    /**
+     * Return raw XML from rest-blueprints.xml
+     * @param id ID of xml NODE to returned
+     * @return
+     */
+    String getXML(String filename, String id) throws Exception;
 }
