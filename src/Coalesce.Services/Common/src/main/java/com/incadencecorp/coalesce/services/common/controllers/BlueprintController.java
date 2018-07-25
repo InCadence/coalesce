@@ -129,8 +129,10 @@ public class BlueprintController implements IBlueprintController {
         catch (Exception e) {
             throw e;
         }
-        //xml += "{\n\t\"xml\":\"" + xml + "\"\n}";
-        return xml;
+        System.out.println(xml);
+        JSONObject json = new JSONObject();
+        json.append("xml", xml);
+        return json.toString();
     }
 
     @Override
