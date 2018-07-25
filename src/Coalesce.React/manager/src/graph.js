@@ -32,7 +32,7 @@ export class GraphView extends React.Component {
 
 
     this.addNodeURL = getRootKarafUrl() + '/blueprints/edit/' + this.props.title
-    this.getNodeURL = getRootKarafUrl() + '/get/' + this.props.title
+    this.getNodeURL = getRootKarafUrl() + '/blueprints/get/' + this.props.title + '/'
     this.guidRegex = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
 
     this.toggleStatic = this.toggleStatic.bind(this);
@@ -215,10 +215,11 @@ export class GraphView extends React.Component {
     })
 
     var nonGuid = this.getNonGuid(nodeId)
-    console.log('nonguid ' + nonGuid);
+    var xml = that.getNodeXml(nonGuid)
+    console.log(xml);
     that.setState({
       selected: nodeSelected,
-      value: that.getNodeXml(nonGuid)
+      value: xml,
     });
 
     return null
