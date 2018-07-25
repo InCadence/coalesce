@@ -22,7 +22,7 @@ export class App extends React.Component {
   }
 
   componentDidMount() {
-    this.loadBlueprint("rest-blueprint.xml");
+    this.loadBlueprint("core-blueprint.xml");
   }
 
   render() {
