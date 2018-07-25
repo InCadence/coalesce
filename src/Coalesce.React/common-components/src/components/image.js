@@ -67,4 +67,8 @@ class Image extends React.PureComponent {
 
 }
 
+Image.defaultProps = {
+  size: '30px'
+}
+
 export default withTheme()(Image);

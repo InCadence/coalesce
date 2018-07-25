@@ -32,6 +32,7 @@ export class ListItemExpandable extends React.Component {
           disableRipple
           key={this.key}
           button
+          onClick={!this.props.details ? this.props.onClick : undefined}
         >
           {this.props.icon}
           <ListItemText
@@ -42,7 +43,7 @@ export class ListItemExpandable extends React.Component {
 
           {this.props.details &&
             <IconButton
-              style={this.props.secondary ? {} : {width: '24px', height: '24px'}} 
+              style={this.props.secondary ? {} : {width: '24px', height: '24px'}}
               onClick={this.handleToggleExpand}>
               {this.state.expanded ? <ExpandLess /> : <ExpandMore />}
             </IconButton>

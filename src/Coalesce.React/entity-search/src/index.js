@@ -1,101 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Popup from 'react-popup';
-import {SearchResults} from './results.js'
-import {registerLoader, registerErrorPrompt} from 'common-components/lib/register.js'
-import { searchComplex } from 'common-components/lib/js/searchController.js';
 import { App } from './app'
+import { loadJSON } from 'common-components/lib/js/propertyController';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'; // v1.x
 
 import 'common-components/bootstrap/css/bootstrap.min.css'
-
 import 'common-components/css/coalesce.css'
-import 'common-components/css/popup.css'
-import './index.css'
+import 'react-table/react-table.css'
 
 var pjson = require('../package.json');
 document.title = pjson.title;
 
-var karafRootAddr;
-
-if (window.location.port == 3000) {
-  karafRootAddr  = 'http://' + window.location.hostname + ':8181';
-} else {
-  karafRootAddr  = '';
-}
-
-registerErrorPrompt(Popup);
-
-//var cache = {};
-//var template = 'CoalesceEntity';
-
-// Prompt user for template to populate the criteria controls
-/*
-function promptForTemplate() {
-
-  Popup.plugins().promptTemplate('load', 'Enumeration', function (value) {
-
-    ReactDOM.unmountComponentAtNode(document.getElementById('main'));
-
-    if (cache[value] == null)
-    {
-      loadTemplate(value).then(template => {
-
-            var recordsets = [].concat(cache['CoalesceEntity']);
-
-            // Get Other Recordsets
-            template.sectionsAsList.forEach(function(section) {
-              recordsets = recordsets.concat(getRecordsets(section));
-            });
-
-            cache[value] = {
-              recordsets: recordsets,
-              name: template.name
-            };
-
-            console.log('Size of client cache: ' + memorySizeOf(cache));
-
-            // Add CoalesceEntity attributes as a recordset
-            ReactDOM.render(
-                <FilterCreator
-                  recordsets={recordsets}
-                  onSearch={searchComplex}
-                  tabledata={[{
-                    recordset: 'CoalesceEntity',
-                    field: 'name',
-                    operator: '=',
-                    value: template.name,
-                    matchCase: true
-                  }]}
-                />,
-                document.getElementById('main')
-            );
-
-          })
-    } else {
-      ReactDOM.render(
-          <FilterCreator
-            recordsets={cache[value].recordsets}
-            onSearch={searchComplex}
-            tabledata={[{
-              recordset: 'CoalesceEntity',
-              field: 'name',
-              operator: '=',
-              value: cache[value].name,
-              matchCase: true
-            }]}
-          />,
-          document.getElementById('main')
-      );
-    }
-
-    template = value;
-
-  });
-
-}
-*/
-
 // TODO This is test code for logging the size of an object
+/*
 function memorySizeOf(obj) {
     var bytes = 0;
 
@@ -136,161 +53,26 @@ function memorySizeOf(obj) {
 
     return formatByteSize(sizeOf(obj));
 };
-
-// Recursive (nested sections) method to pull recordsets from a section
-function getRecordsets(section) {
-
-  var results = [];
-
-  section.sectionsAsList.forEach(function(section) {
-    results = results.concat(getRecordsets(section));
-  });
-
-  // Render Recordsets
-  section.recordsetsAsList.forEach(function(recordset) {
-    results.push({name: recordset.name, definition: recordset.fieldDefinitions});
-  });
-
-  return results;
-}
-
-// Submits the user's selected criteria.
-function search(data, e) {
-
-  // Create Query
-  var query = {
-    "pageSize": 200,
-    "pageNumber": 1,
-    "propertyNames": [],
-    "group": data
-  };
-  console.log("Index search", data);
-  // Get additional columns
-  data.criteria.forEach(function (criteria) {
-    query.propertyNames.push(criteria.recordset + "." + criteria.field);
-    console.log("Index search", query.propertyNames);
-  });
-
-  // Display Spinner
-  Popup.plugins().loader('Searching...');
-
-
-  // Submit Query
-  searchComplex(query).then(response => {
-      renderResults(response, query.propertyNames);
-  }).catch(function(error) {
-      Popup.plugins().promptError("Executing Search: " + error);
-  });
-}
-
-function renderResults(data, properties) {
-  Popup.close();
-    ReactDOM.render(
-            <SearchResults
-              data={data}
-              properties={properties}
-              url={karafRootAddr}
-            />,
-    document.getElementById('results'));
-}
-
-ReactDOM.render(
-    <Popup />,
-    document.getElementById('popupContainer')
-);
-
-registerLoader(Popup);
-
-/*
-loadTemplates().then((data) => {
-    registerTemplatePrompt(Popup, karafRootAddr, data);
-
-    ReactDOM.render(
-        <Menu logoSrc={pjson.icon} title={pjson.title} items={[
-          {
-            id: 'select',
-            name: 'Select',
-            img: "/images/svg/template.svg",
-            title: 'Select Template',
-            onClick: promptForTemplate
-          }, {
-            id: 'load',
-            name: 'Load',
-            img: "/images/svg/load.svg",
-            title: 'Load Saved Criteria Selection',
-            onClick: () => {
-              Popup.plugins().promptError("(Comming Soon!!!) This will allow you to load previously saved criteria.")
-            }
-          }, {
-            id: 'save',
-            name: 'Save',
-            img: "/images/svg/save.svg",
-            title: 'Save Criteria Selection',
-            onClick: () => {
-              Popup.plugins().promptError("(Comming Soon!!!) This will allow you to save criteria.")
-            }
-          }, {
-            id: 'reset',
-            name: 'Reset',
-            img: "/images/svg/erase.svg",
-            title: 'Reset Criteria',
-            onClick: () => {
-
-              ReactDOM.unmountComponentAtNode(document.getElementById('main'));
-
-              ReactDOM.render(
-                  <FilterCreator
-                    recordsets={cache[template]}
-                    onSearch={searchComplex}
-                    />,
-                  document.getElementById('main')
-              );
-            }
-          }
-        ]}/>,
-        document.getElementById('myNavbar')
-    );
-
-}).catch(function(error) {
-    ReactDOM.render(
-        <Menu logoSrc={pjson.icon} title={pjson.title} items={[]}/>,
-        document.getElementById('myNavbar')
-    );
-
-    Popup.plugins().promptError("Loading Templates: " + error);
-});
 */
 
-/*
-// Populate w/ Base fields that a common to all templates
-// Because its common fields the GUID can be random (or hard coded)
-fetch(karafRootAddr + '/cxf/data/templates/998b040b-2c39-4c98-9a9d-61d565b46e28/recordsets/CoalesceEntity/fields')
-  .then(res => res.json())
-  .then(definition => {
-
-    var recordsets = [];
-    recordsets.push({name: 'CoalesceEntity', definition: definition});
-
-    cache['CoalesceEntity'] = recordsets;
-
+loadJSON('theme').then((theme) => {
     ReactDOM.render(
-        <FilterCreator
-          recordsets={recordsets}
-          onSearch={searchComplex}
-        />,
-        document.getElementById('main')
+      <MuiThemeProvider theme={createMuiTheme(theme)}>
+        <App pjson={pjson} />
+      </MuiThemeProvider>,
+      document.getElementById('main')
     );
+}).catch((err) => {
+  console.log("(FAILED) Loading Configuration");
+  ReactDOM.render(
+    <MuiThemeProvider theme={createMuiTheme({})}>
+      <App icon={pjson} />
+    </MuiThemeProvider>,
+    document.getElementById('main')
+  );
+})
 
-}).catch(function(error) {
-    Popup.plugins().promptError("Loading Common Fields: " + error);
-});
-*/
-ReactDOM.render(
-  <App pjson={pjson} onSearch={search}/>,
-  document.getElementById('main')
-);
-
-// TODO Remove this code (Its an example of how to submit a OGC filter as XML)
+/* TODO Remove this code (Its an example of how to submit a OGC filter as XML)
 function searchOGC(data, e) {
 
   var properties = [];
@@ -362,3 +144,4 @@ function searchOGC(data, e) {
       Popup.plugins().promptError("Executing Search: " + error);
   });
 }
+//*/
