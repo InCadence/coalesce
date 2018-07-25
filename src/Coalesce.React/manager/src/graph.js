@@ -32,7 +32,9 @@ export class GraphView extends React.Component {
 
 
     this.addNodeURL = getRootKarafUrl() + '/blueprints/edit/' + this.props.title
-    console.log(this.addNodeURL);
+    this.getNodeURL = getRootKarafUrl() + '/get/' + this.props.title
+    this.guidRegex = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
+
     this.toggleStatic = this.toggleStatic.bind(this);
     this.handleSelectNode = this.handleSelectNode.bind(this);
     this.onClickNode = this.onClickNode.bind(this);
@@ -43,10 +45,10 @@ export class GraphView extends React.Component {
     this.onAddChange = this.onAddChange.bind(this)
     this.onAddCancel = this.onAddCancel.bind(this)
     this.onClose = this.onClose.bind(this)
-
+    this.getNonGuid = this.getNonGuid.bind(this)
   }
 
-  postNode(nodeJson) {
+  postNodeXml(nodeJson) {
 
     fetch(this.addNodeURL, {
       method: 'POST',
@@ -55,10 +57,56 @@ export class GraphView extends React.Component {
         'Content-Type': 'application/json',
       },
       body: nodeJson,
-    })  
+    })
     .catch((error) => {
       console.log(error);
     });
+  }
+
+  getNodeXml(id) {
+    //fetches the xml
+
+    fetch(this.getNodeURL+id, {
+      method: 'GET',
+
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => {
+      response.json()
+    })
+    .then((responseJson) => {
+      return (responseJson.xml)[0]
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
+  getNonGuid(id) {
+    const that = this
+    console.log('self' + id);
+    if(id.search(this.guidRegex) ) { //search returns -1 if a match isnt found, if found returns the index
+      console.log('nonguid ' + id);
+      return id
+    }
+    else {
+      var links = this.state.data.links
+      var parentId = ''
+      for(let i = 0; i < links.length; i++) {
+        var link = links[i]
+        if(link.target === id) {
+          //if this id is being the target, return the parent's nonGuid
+          console.log('parent' + link.source);
+          parentId = link.source
+          break;
+        }
+      }
+
+      return that.getNonGuid(parentId);
+    }
   }
 
   handleResize(that) {
@@ -103,11 +151,11 @@ export class GraphView extends React.Component {
   }
 
   handleSelectNode(event) {
-
+    //for the dropdown selector
     const that = this;
     const { data } = this.props;
     const { config } = this.state;
-
+    console.log('selectNode');
     if (event.target.value != null)
     {
       config.staticGraph = false;
@@ -157,12 +205,23 @@ export class GraphView extends React.Component {
     const {data} = this.state;
     const that = this;
 
+    var nodeSelected = null
+
     data.nodes.forEach(function (node) {
       if (node.id === nodeId) {
-        that.setState({selected: node});
+        nodeSelected = node
+        console.log(node);
       }
     })
 
+    var nonGuid = this.getNonGuid(nodeId)
+    console.log('nonguid ' + nonGuid);
+    that.setState({
+      selected: nodeSelected,
+      value: that.getNodeXml(nonGuid)
+    });
+
+    return null
   };
 
   onMouseOverNode = function(nodeId) {
@@ -190,7 +249,8 @@ export class GraphView extends React.Component {
 
       if(parser.validate(xmlString) === true) {
         jsonString = this.createXmlJson(xmlWithoutNewLines)
-        this.postNode(jsonString)
+        this.postNodeXml(jsonString)
+        this.props.reloadBlueprint();
       }
       else {
         this.xmlValidationError();
@@ -202,7 +262,8 @@ export class GraphView extends React.Component {
 
       if(parser.validate(xmlString) === true) { //returns true if valid
         jsonString = this.createXmlJson(xmlWithoutNewLines)
-        this.postNode(jsonString)
+        this.postNodeXml(jsonString)
+        this.props.reloadBlueprint();
       }
       else {
         this.xmlValidationError();
@@ -228,7 +289,6 @@ export class GraphView extends React.Component {
       value: event.target.value,
     })
   }
-
 
   onEditCancel() {
     this.setState({

@@ -19,6 +19,7 @@ export class App extends React.Component {
     };
 
     this.setState = this.setState.bind(this)
+    this.reloadBlueprint = this.reloadBlueprint.bind(this)
   }
 
   componentDidMount() {
@@ -61,7 +62,7 @@ export class App extends React.Component {
           }
           ]}/>
           { data != null &&
-            <GraphView actions={this.state.actions} data={data} title={selected} theme={theme} />
+            <GraphView reloadBlueprint={this.reloadBlueprint} actions={this.state.actions} data={data} title={selected} theme={theme} />
           }
           <DialogMessage
             title="Error"
@@ -114,6 +115,10 @@ export class App extends React.Component {
       this.setState({error: `Loading ${blueprint}: ${err}`})
     })
 
+  }
+
+  reloadBlueprint() {
+    this.setState({selected: this.state.selected})
   }
 
   formatData(data) {
