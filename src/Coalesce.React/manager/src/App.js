@@ -117,7 +117,6 @@ export class App extends React.Component {
   }
 
   reloadBlueprint() {
-    console.log('df');
     this.setState({
       data: null,
       actions: 'base'
