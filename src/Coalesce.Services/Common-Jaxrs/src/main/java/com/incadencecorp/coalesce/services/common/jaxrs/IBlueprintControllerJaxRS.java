@@ -59,4 +59,8 @@ interface IBlueprintControllerJaxRS extends IBlueprintController {
     @Produces(MediaType.APPLICATION_JSON)
     Graph getBlueprint(@PathParam("name") String name) throws RemoteException;
 
+    @GET
+    @Path("/undo/{name}")
+    void undo(@PathParam("name") String filename) throws Exception;
+
 }

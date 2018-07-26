@@ -90,6 +90,21 @@ public class BlueprintControllerTest {
 
         controller.removeBean(filename, remove.toString());
       }
+
+    @Test public void testUndo() throws Exception
+    {
+        BlueprintController controller = new BlueprintController();
+        controller.setDirectory(Paths.get("src", "test", "resources").toString());
+        String rem = "";
+        String id = "framework";
+        JSONObject remove = new JSONObject();
+        remove.append("xml", rem);
+        remove.accumulate("oldId", id);
+        controller.removeBean("rest-blueprint.xml", remove.toString());
+        //System.out.println(controller.getXML("rest-blueprint.xml", "persister"));
+        controller.undo("rest-blueprint.xml");
+        System.out.println(controller.getXML("rest-blueprint.xml", id));
+    }
 }
 
 
