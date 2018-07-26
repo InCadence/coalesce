@@ -92,7 +92,7 @@ export class GraphView extends React.Component {
       },
       body: this.createXmlJson('', id)
     })
-    .then(() => this.reloadBlueprint());
+    .then(() => this.props.reloadBlueprint());
   }
 
   getParent(id) {

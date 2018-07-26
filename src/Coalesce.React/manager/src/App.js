@@ -18,7 +18,6 @@ export class App extends React.Component {
       data: null
     };
 
-    this.setState = this.setState.bind(this)
     this.reloadBlueprint = this.reloadBlueprint.bind(this)
   }
 
@@ -118,11 +117,9 @@ export class App extends React.Component {
   }
 
   reloadBlueprint() {
-    console.log('reloadBlueprint');
-    this.setState({
-      selected: this.state.selected,
-      actions: 'base'
-    })
+    console.log('df');
+    this.setState({data: null})
+    //this.loadBlueprint(this.state.selected)
   }
 
   formatData(data) {
