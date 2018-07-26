@@ -5,7 +5,6 @@ import { DialogMessage } from 'common-components/lib/components/dialogs'
 import { getRootKarafUrl } from 'common-components/lib/js/common'
 import ReactTable from 'react-table'
 //import Checkbox from 'material-ui/Checkbox';
-import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
@@ -33,6 +32,8 @@ export class GraphView extends React.Component {
 
     this.addNodeURL = getRootKarafUrl() + '/blueprints/edit/' + this.props.title
     this.getNodeURL = getRootKarafUrl() + '/blueprints/get/' + this.props.title + '/'
+    this.removeNodeURL = getRootKarafUrl() + '/blueprints/remove/' + this.props.title
+
     this.guidRegex = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
 
     this.toggleStatic = this.toggleStatic.bind(this);
@@ -49,7 +50,6 @@ export class GraphView extends React.Component {
   }
 
   postNodeXml(nodeJson) {
-
     fetch(this.addNodeURL, {
       method: 'POST',
       headers: {
@@ -58,6 +58,7 @@ export class GraphView extends React.Component {
       },
       body: nodeJson,
     })
+    .then(() => this.props.reloadBlueprint())
     .catch((error) => {
       console.log(error);
     });
@@ -75,33 +76,57 @@ export class GraphView extends React.Component {
       },
     })
     .then((response) => response.json())
-    .then((responseJson) => {this.setState({value: responseJson.xml[0]})} )
+    .then((responseJson) => {this.setState({originalXml:responseJson.xml[0], value: responseJson.xml[0]})} )
     .catch((error) => console.log(error));
 
   }
 
+  removeOrphanNode(id) {
+    //removes xml based on id
+
+    return fetch(this.removeNodeURL, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'applicaion/json',
+      },
+      body: this.createXmlJson('', id)
+    })
+    .then(() => this.reloadBlueprint());
+  }
+
+  getParent(id) {
+    var links = this.state.data.links
+    var parentId = null
+    for(let i = 0; i < links.length; i++) {
+      var link = links[i]
+      if(link.target === id) {
+        //if this id is being the target, return the parent's nonGuid
+        parentId = link.source
+        break;
+      }
+    }
+    //return null if no parent exists, return parent id otherwise
+    return parentId
+  }
+
   getNonGuid(id) {
     const that = this
-    console.log('self' + id);
+
     if(id.search(this.guidRegex) ) { //search returns -1 if a match isnt found, if found returns the index
-      console.log('nonguid ' + id);
       return id
     }
     else {
-      var links = this.state.data.links
-      var parentId = ''
-      for(let i = 0; i < links.length; i++) {
-        var link = links[i]
-        if(link.target === id) {
-          //if this id is being the target, return the parent's nonGuid
-          console.log('parent' + link.source);
-          parentId = link.source
-          break;
-        }
-      }
+      var parentId = this.getParent(id)
 
       return that.getNonGuid(parentId);
     }
+  }
+
+  isOrphan(id) {
+    //returns true if the node with given id is an orphan
+    var isOrphan = this.getParent(id) === null
+    return isOrphan
   }
 
   handleResize(that) {
@@ -118,7 +143,7 @@ export class GraphView extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       data: nextProps.data,
-      actions: nextProps.actions
+      actions: nextProps.actions || 'base'
     });
   }
 
@@ -150,7 +175,6 @@ export class GraphView extends React.Component {
     const that = this;
     const { data } = this.props;
     const { config } = this.state;
-    console.log('selectNode');
     if (event.target.value != null)
     {
       config.staticGraph = false;
@@ -205,7 +229,6 @@ export class GraphView extends React.Component {
     data.nodes.forEach(function (node) {
       if (node.id === nodeId) {
         nodeSelected = node
-        console.log(node);
       }
     })
 
@@ -231,48 +254,65 @@ export class GraphView extends React.Component {
   };
 
   onClose() {
-
-    const {selected} = this.state
+    const {actions, selected, originalXml, value} = this.state
     //fetch post
-    this.setState({selected: null, actions: null})
+    this.setState({selected: null})
     var xmlString = ''
     var xmlWithoutNewLines = ''
     var jsonString = ''
-    if (this.state.value && this.state.actions === 'editing' && this.state.value.length > 0) {
-      xmlString = this.state.value
-      xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
+    var closeDialog = false
+    var nonGuid = ''
 
+    if (value !== null && actions === 'editing' && value !== originalXml) {
+      xmlString = this.state.value
+      xmlWithoutNewLines = xmlString
+      //xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
+      nonGuid = this.getNonGuid(selected.id)
       if(parser.validate(xmlString) === true) {
-        jsonString = this.createXmlJson(xmlWithoutNewLines, selected.id)
+        jsonString = this.createXmlJson(xmlWithoutNewLines, nonGuid)
         this.postNodeXml(jsonString)
-        this.props.reloadBlueprint();
+
+        closeDialog = true
+      }
+      else if(xmlString.trim() === "") {
+        if(this.isOrphan(nonGuid)) {
+          //remove node nonGuid
+          this.removeOrphanNode(nonGuid)
+        }
+        else {
+          var error = `This node has links to other nodes, remove the node from ${this.props.title} and fix any appropriate references!`
+          alert(error)
+        }
+        closeDialog = true
       }
       else {
         this.xmlValidationError();
       }
     }
-    else if (this.state.value && this.state.actions === 'adding' && this.state.value.length > 0) {
+    else if (this.state.value && this.state.actions === 'adding') {
       xmlString = this.state.value
-      xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
+      xmlWithoutNewLines = xmlString;
+      //xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
 
       if(parser.validate(xmlString) === true) { //returns true if valid
         jsonString = this.createXmlJson(xmlWithoutNewLines, '')
         this.postNodeXml(jsonString)
-        this.props.reloadBlueprint();
+        closeDialog = true
       }
       else {
         this.xmlValidationError();
       }
     }
-    this.setState({
-      data: this.state.data,
-      value: null,
-      filtered: null,
-      selected: null,
-      actions: 'base',
-    })
+    if(closeDialog) {
+      this.setState({
+        data: this.state.data,
+        value: null,
+        filtered: null,
+        selected: null,
+        actions: 'base',
+      })
+    }
   }
-
   onEditToggle(selected) {
     this.setState({
       actions: 'editing',
@@ -290,7 +330,6 @@ export class GraphView extends React.Component {
       value: null,
       actions: 'base',
     })
-
   }
 
   onAddToggle() {
@@ -316,10 +355,9 @@ export class GraphView extends React.Component {
   createXmlJson(xml, id) {
 
     var jsonObject= {}
-    jsonObject.xml = xml;
+    jsonObject.xml = [xml];
     jsonObject.oldId = id
     var jsonString = JSON.stringify(jsonObject)
-    console.log(jsonString)
     return jsonString
   }
 
@@ -371,7 +409,6 @@ export class GraphView extends React.Component {
       onSecondary = this.onAddCancel
       onPrimary = this.onClose
     }
-
 /*
 <Checkbox
   label="Static"
@@ -385,7 +422,7 @@ export class GraphView extends React.Component {
           <table>
             <tbody>
             <tr width="100%">
-              <td width="75%">
+              <td width="100%">
                 <FormControl style={{width: "100%"}}>
                   <InputLabel htmlFor="node-selection-helper">Node Selection</InputLabel>
                   <Select
@@ -407,13 +444,6 @@ export class GraphView extends React.Component {
                 <IconButton tooltip="SVG Icon" onClick={this.handleSelectNode}>
                   <NavigationClose />
                 </IconButton>
-              </td>
-              <td>
-                <Button
-                  label="Add Node"
-                  style={{width: "50%"}}
-                  color="primary"
-                  onClick={this.onAddToggle}>Add Node</Button>
               </td>
             </tr>
             </tbody>

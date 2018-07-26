@@ -118,7 +118,11 @@ export class App extends React.Component {
   }
 
   reloadBlueprint() {
-    this.setState({selected: this.state.selected})
+    console.log('reloadBlueprint');
+    this.setState({
+      selected: this.state.selected,
+      actions: 'base'
+    })
   }
 
   formatData(data) {

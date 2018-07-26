@@ -78,9 +78,9 @@ export class DialogMessage extends React.PureComponent {
     //If actions is not set, this renders a simple message, one ok button input from user
       actions = [
         <Button
-          label="Unknown Action"
+          label="Error"
           color='primary'
-          onClick={this.props.onPrimary}>Unknown Action</Button>
+          onClick={this.props.onPrimary}>Error</Button>
       ];
     }
 
