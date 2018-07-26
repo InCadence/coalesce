@@ -14,8 +14,8 @@ export class DialogMessage extends React.PureComponent {
   constructor(props) {
     super(props)
   }
+  
   render() {
-
     var actions = [];
     //actions prop will be used to decide if user needs to make decision
     if (this.props.editable && this.props.actions === 'base') {
@@ -25,17 +25,17 @@ export class DialogMessage extends React.PureComponent {
           color='secondary'
           onClick={this.props.onSecondary}>Edit</Button>,
         <Button
-          label="OK"
+          label="Save"
           color='primary'
-          onClick={this.props.onPrimary}>OK</Button>,
+          onClick={this.props.onPrimary}>Save</Button>,
       ];
     }
     else if (!this.props.editable && this.props.actions === 'base') {
       actions = [
         <Button
-          label="OK"
+          label="Close"
           color='primary'
-          onClick={this.props.onPrimary}>OK</Button>,
+          onClick={this.props.onPrimary}>Close</Button>,
       ];
     }
     else if (this.props.actions === 'editing') {
@@ -45,9 +45,9 @@ export class DialogMessage extends React.PureComponent {
           color='secondary'
           onClick={this.props.onSecondary}>Cancel</Button>,
         <Button
-          label="OK"
+          label="Save"
           color='primary'
-          onClick={this.props.onPrimary}>OK</Button>,
+          onClick={this.props.onPrimary}>Save</Button>,
       ];
     }
     else if (this.props.actions === 'edited') {
@@ -57,9 +57,9 @@ export class DialogMessage extends React.PureComponent {
           color='secondary'
           onClick={this.props.onSecondary}>Cancel</Button>,
         <Button
-          label="OK"
+          label="Save"
           color='primary'
-          onClick={this.props.onPrimary}>OK</Button>,
+          onClick={this.props.onPrimary}>Save</Button>,
       ];
     }
     else if (this.props.actions === 'adding') {
@@ -73,6 +73,18 @@ export class DialogMessage extends React.PureComponent {
           color='primary'
           onClick={this.props.onPrimary}>Add</Button>,
       ];
+    }
+    else if (this.props.actions === 'reverting') {
+      actions = [
+        <Button
+        label="Cancel"
+        color='secondary'
+        onClick={this.props.onSecondary}>Cancel</Button>,
+        <Button
+          label="REVERT"
+          color='primary'
+          onClick={this.props.onPrimary}>REVERT</Button>,
+      ]
     }
     else {
     //If actions is not set, this renders a simple message, one ok button input from user

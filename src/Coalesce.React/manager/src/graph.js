@@ -27,12 +27,14 @@ export class GraphView extends React.Component {
       data: props.data,
       config: props.config,
       selectedNode: "",
+      isValid: this.isValidGraph(props.data)
     };
 
 
     this.addNodeURL = getRootKarafUrl() + '/blueprints/edit/' + this.props.title
     this.getNodeURL = getRootKarafUrl() + '/blueprints/get/' + this.props.title + '/'
     this.removeNodeURL = getRootKarafUrl() + '/blueprints/remove/' + this.props.title
+    this.revertURL = getRootKarafUrl() + '/blueprints/undo/' + this.props.title
 
     this.guidRegex = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
 
@@ -47,6 +49,7 @@ export class GraphView extends React.Component {
     this.onAddCancel = this.onAddCancel.bind(this)
     this.onClose = this.onClose.bind(this)
     this.getNonGuid = this.getNonGuid.bind(this)
+    this.attemptRevert = this.attemptRevert.bind(this)
   }
 
   postNodeXml(nodeJson) {
@@ -93,6 +96,16 @@ export class GraphView extends React.Component {
       body: this.createXmlJson('', id)
     })
     .then(() => this.props.reloadBlueprint());
+  }
+
+  attemptRevert() {
+    return fetch(this.revertUrl, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then(() => this.props.reloadBlueprint());
   }
 
   getParent(id) {
@@ -363,6 +376,24 @@ export class GraphView extends React.Component {
     return jsonString
   }
 
+  isValidGraph(data) {
+    var isValid = true
+    for(var i = 0; i < data.links.length; i++) {
+      var link = data.links[i]
+      if (!data.nodes.find(function (n) {
+        return n.id === link.source;
+      })) {
+        isValid = false
+      }
+      if (!data.nodes.find(function (n) {
+        return n.id === link.target;
+      })) {
+        isValid = false;
+      }
+    };
+    return isValid
+  }
+
   render() {
 
     const {data, selected, config, actions} = this.state;
@@ -375,7 +406,9 @@ export class GraphView extends React.Component {
     var details = [];
     var filtered = {}
 
-
+    if(this.props.title === 'core-blueprint.xml') {
+      editable = false;
+    }
     if (selected != null) {
 
       if (selected.label === 'BlueprintControllerJaxRS') {
@@ -392,6 +425,7 @@ export class GraphView extends React.Component {
       });
     }
 
+
     base = actions === 'base'
     editing = actions === 'editing'
     adding = actions === 'adding'
@@ -399,7 +433,11 @@ export class GraphView extends React.Component {
 
     var onSecondary = console.log
     var onPrimary = console.log
-    if (base) {
+    if (!this.state.isValid) {
+      onSecondary = (() => this.setState({isValid: true}))
+      onPrimary = this.attemptRevert
+    }
+    else if (base) {
       onSecondary =  (() => this.onEditToggle(selected))
       onPrimary = this.onClose
     }
@@ -418,122 +456,136 @@ export class GraphView extends React.Component {
   onCheck={this.toggleStatic}
 />
 */
-
-    return (
+    if(this.state.isValid) {
+      return (
         <Paper style={{padding: '5px', margin: '10px'}}>
           <table>
             <tbody>
-            <tr width="100%">
-              <td width="100%">
-                <FormControl style={{width: "100%"}}>
-                  <InputLabel htmlFor="node-selection-helper">Node Selection</InputLabel>
-                  <Select
-                      input={<Input name="nodeSelection" id="node-selection-helper" />}
-                      style={{width: "100%"}}
-                      value={this.state.selectedNode}
-                      onChange={this.handleSelectNode}
+              <tr width="100%">
+                <td width="100%">
+                  <FormControl style={{width: "100%"}}>
+                    <InputLabel htmlFor="node-selection-helper">Node Selection</InputLabel>
+                    <Select
+                    input={<Input name="nodeSelection" id="node-selection-helper" />}
+                    style={{width: "100%"}}
+                    value={this.state.selectedNode}
+                    onChange={this.handleSelectNode}
                     >
-                      {
-                        this.props.data.nodes.map((item) => {
-                          return (<MenuItem value={item.id} key={item.id}>{item.label != null ? item.label : item.id}</MenuItem>);
-                        })
-                      }
-                  </Select>
-                </FormControl>
-
-              </td>
-              <td width="30px">
-                <IconButton tooltip="SVG Icon" onClick={this.handleSelectNode}>
-                  <NavigationClose />
-                </IconButton>
-              </td>
-            </tr>
+                    {
+                      this.props.data.nodes.map((item) => {
+                        return (<MenuItem value={item.id} key={item.id}>{item.label != null ? item.label : item.id}</MenuItem>);
+                      })
+                    }
+                    </Select>
+                  </FormControl>
+                </td>
+                <td width="30px">
+                  <IconButton tooltip="SVG Icon" onClick={this.handleSelectNode}>
+                    <NavigationClose />
+                  </IconButton>
+                </td>
+              </tr>
             </tbody>
-            </table>
-            <Graph
-               id='graph-id' // id is mandatory, if no id is defined rd3g will throw an error
-               data={data}
-               config={config}
-               onClickNode={this.onClickNode}
-               onClickLink={this.onClickLink}
-               onMouseOverNode={this.onMouseOverNode}
-               onMouseOutNode={this.onMouseOutNode} />
-             <DialogMessage
-               title="Details"
-               opened={selected != null || adding}
-               actions={this.state.actions}
-               editable={editable}
-               message={
-                 //if the user is not editing or its not editable
-                 //checking against boolean values because !editing is true (same as !null if not defined yet)
-                 (base && selected != null &&
-                   <ReactTable
-                   width="100%"
-                      resizable={true}
-                      data={details}
-                      columns={[
-                          {
-                            minWidth: 300,
-                            Header: "Key",
-                            id: "key",
-                            accessor: "key"
-                          },{
-                            minWidth: 300,
-                            Header: "Value",
-                            id: "value",
-                            accessor: "value"
-                          }
-                        ]
-                      }
-                      defaultSorted={[
-                        {
-                          id: "key",
-                          desc: false
-                        }
-                      ]}
-                      showPageSizeOptions={false}
-                      defaultPageSize={10}
-                      className="-striped -highlight"
-                    />
-                  )
-                    ||
+          </table>
 
-                  //if the user is editing or its editable
-                  (editing && editable &&
+          <Graph
+            id='graph-id' // id is mandatory, if no id is defined rd3g will throw an error
+            data={data}
+            config={config}
+            onClickNode={this.onClickNode}
+            onClickLink={this.onClickLink}
+            onMouseOverNode={this.onMouseOverNode}
+            onMouseOutNode={this.onMouseOutNode} />
 
-                    <TextField
-                      label="Insert XML"
-                      id="nodeedittextfield"
-                      multiline={true}
-                      fullWidth={true}
-                      rows="20"
-                      onChange={this.onEditJson}
-                      value={this.state.value || ''}
-                    />
-                  )
-
-
-                    ||
-
-                  (adding &&
-                    <TextField
-                      label="Insert XML"
-                      id="nodeaddtextfield"
-                      multiline={true}
-                      fullWidth={true}
-                      rows="20"
-                      onChange={this.onAddChange}
-                      value={this.state.value || ''}
-                    />
-                  )
-
+          <DialogMessage
+            title="Details"
+            opened={selected != null || adding}
+            actions={this.state.actions}
+            editable={editable}
+            message={
+              //if the user is not editing or its not editable
+              //checking against boolean values because !editing is true (same as !null if not defined yet)
+              (base && selected != null &&
+                <ReactTable
+                width="100%"
+                resizable={true}
+                data={details}
+                columns={[
+                  {
+                    minWidth: 300,
+                    Header: "Key",
+                    id: "key",
+                    accessor: "key"
+                  },{
+                    minWidth: 300,
+                    Header: "Value",
+                    id: "value",
+                    accessor: "value"
+                  }
+                ]
+              }
+              defaultSorted={[
+                {
+                  id: "key",
+                  desc: false
                 }
+              ]}
+              showPageSizeOptions={false}
+              defaultPageSize={10}
+              className="-striped -highlight"
+              />
+            )
+            ||
 
-               onSecondary={onSecondary}
-               onPrimary={onPrimary}
-               onClose={this.onClose}
-             />
-         </Paper>
+            //if the user is editing or its editable
+            (editing && editable &&
+
+              <TextField
+              label="Insert XML"
+              id="nodeedittextfield"
+              multiline={true}
+              fullWidth={true}
+              rows="20"
+              onChange={this.onEditJson}
+              value={this.state.value || ''}
+              />
+            )
+
+            ||
+
+            (adding &&
+              <TextField
+              label="Insert XML"
+              id="nodeaddtextfield"
+              multiline={true}
+              fullWidth={true}
+              rows="20"
+              onChange={this.onAddChange}
+              value={this.state.value || ''}
+              />)
+            }
+
+            onSecondary={onSecondary}
+            onPrimary={onPrimary}
+            onClose={this.onClose}
+          />
+        </Paper>
+      )
+
+    }
+    return (
+      <Paper style={{padding: '5px', margin: '10px'}}>
+        <DialogMessage
+          title="Details"
+          opened={!this.state.isValid}
+          actions={'reverting'}
+          onPrimary={onPrimary}
+          >
+            The file {this.props.itle} is broken and cannot be loaded.
+              You can try and use the revert button, but if it is not able
+              to revert, someone must manually fix the file on the system.
+          </DialogMessage>
+      </Paper>
     )
   }
 
