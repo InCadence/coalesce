@@ -190,7 +190,7 @@ public class BlueprintController implements IBlueprintController {
 
     @Override
     public void undo(String filename) throws Exception {
-        if (this.version > 0 ) {
+        if (this.version > 1 ) {
             String backup = filename + ".backup" + (this.version - 1);
             Document old = loadBlueprint(backup);
             String remove = filename + ".backup" + (this.version);
