@@ -204,7 +204,6 @@ public class BlueprintController implements IBlueprintController {
             Node child = children.item(j);
             String tag = child.getLocalName();
             String word = child.getNodeName();
-            System.out.println(word);
             if ( tag != null ) {
                 NodeList beans = old_xml.getElementsByTagName(word);
                 for (int i = 0; i < beans.getLength(); i++)
