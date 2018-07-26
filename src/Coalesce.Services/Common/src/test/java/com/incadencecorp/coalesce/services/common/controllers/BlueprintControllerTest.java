@@ -51,57 +51,45 @@ public class BlueprintControllerTest {
 
     }
 
-//    @Test public void testEditBlueprint() throws Exception {
-//        BlueprintController controller = new BlueprintController();
-//        controller.setDirectory(Paths.get("src", "test", "resources").toString());
-//
-//
-//        String string = "{"
-//                + "\t\"xml\":\"<bean id=\\\"persister\\\" class=\\\"com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch\\\"> <argument> <map> <entry key=\\\"elastic.isAuthoritative\\\" value=\\\"true\\\"/> <entry key=\\\"elastic.clustername\\\" value=\\\"elasticsearch\\\"/> <entry key=\\\"elastic.hosts\\\" value=\\\"localhost:9300\\\"/> <entry key=\\\"elastic.http.host\\\" value=\\\"localhost\\\"/> <entry key=\\\"elastic.http.port\\\" value=\\\"9200\\\"/> <entry key=\\\"ssl.enabled\\\" value=\\\"false\\\"/> <entry key=\\\"ssl.reject_unauthorized\\\" value=\\\"true\\\"/> </map> </argument></bean>\","
-//                + "\t\"oldId\":\"persister\""
-//                + "}";
-//        controller.editBlueprint("rest-blueprint.xml", string);
-//    }
-//
-//    @Test public void testGetXML() throws Exception {
-//        BlueprintController controller = new BlueprintController();
-//        controller.setDirectory(Paths.get("src", "test", "resources").toString());
-//
-//        String xml = controller.getXML("rest-blueprint.xml", "framework");
-//        System.out.println(xml);
-//    }
+    @Test public void testGetXML() throws Exception {
+        BlueprintController controller = new BlueprintController();
+        controller.setDirectory(Paths.get("src", "test", "resources").toString());
 
-//      @Test public void testRemoveBean() throws Exception {
-//        BlueprintController controller = new BlueprintController();
-//        controller.setDirectory(Paths.get("src", "test", "resources").toString());
-//
-//        JSONObject json = new JSONObject();
-//        String xml = "<bean id=\"test\" class=\"com.incadencecorp.coalesce.framework.persistance.elasticsearch.Tester\">\n"
-//                + "<argument>\n" + "<map>\n" + "<entry key=\"elastic.isAuthoritative\" value=\"true\"/>\n"
-//                + "<entry key=\"elastic.clustername\" value=\"elasticsearch\"/>\n"
-//                + "<entry key=\"elastic.hosts\" value=\"localhost:9300\"/>\n"
-//                + "<entry key=\"elastic.http.host\" value=\"localhost\"/>\n"
-//                + "<entry key=\"elastic.http.port\" value=\"9200\"/>\n"
-//                + "<entry key=\"elastic.datastore.cache.enabled\" value=\"false\"/>\n"
-//                + "<entry key=\"ssl.enabled\" value=\"false\"/>\n"
-//                + "<entry key=\"ssl.reject_unauthorized\" value=\"true\"/>\n" + "</map>\n" + "</argument>\n" + "</bean>";
-//        json.append("xml", xml);
-//        String help = "";
-//        json.accumulate("oldId", help);
-//
-//        String filename = "rest-blueprint.xml";
-//        controller.editBlueprint(filename, json.toString());
-//
-//        //Remove node with no "links"
-//        String rem = "";
-//        String id = "test";
-//        JSONObject remove = new JSONObject();
-//        remove.append("xml", rem);
-//        remove.accumulate("oldId", id);
-//        System.out.println(remove.toString());
-//
-//        controller.removeBean(filename, remove.toString());
-//      }
+        String xml = controller.getXML("rest-blueprint.xml", "someRestService");
+        System.out.println(xml);
+        Assert.assertNotNull(xml);
+    }
+
+      @Test public void testRemoveBean() throws Exception {
+        BlueprintController controller = new BlueprintController();
+        controller.setDirectory(Paths.get("src", "test", "resources").toString());
+
+        JSONObject json = new JSONObject();
+        String xml = "<bean id=\"test\" class=\"com.incadencecorp.coalesce.framework.persistance.elasticsearch.Tester\">\n"
+                + "<argument>\n" + "<map>\n" + "<entry key=\"elastic.isAuthoritative\" value=\"true\"/>\n"
+                + "<entry key=\"elastic.clustername\" value=\"elasticsearch\"/>\n"
+                + "<entry key=\"elastic.hosts\" value=\"localhost:9300\"/>\n"
+                + "<entry key=\"elastic.http.host\" value=\"localhost\"/>\n"
+                + "<entry key=\"elastic.http.port\" value=\"9200\"/>\n"
+                + "<entry key=\"elastic.datastore.cache.enabled\" value=\"false\"/>\n"
+                + "<entry key=\"ssl.enabled\" value=\"false\"/>\n"
+                + "<entry key=\"ssl.reject_unauthorized\" value=\"true\"/>\n" + "</map>\n" + "</argument>\n" + "</bean>";
+        json.append("xml", xml);
+        String help = "";
+        json.accumulate("oldId", help);
+
+        String filename = "rest-blueprint.xml";
+        controller.editBlueprint(filename, json.toString());
+
+        //Remove node with no "links"
+        String rem = "";
+        String id = "test";
+        JSONObject remove = new JSONObject();
+        remove.append("xml", rem);
+        remove.accumulate("oldId", id);
+
+        controller.removeBean(filename, remove.toString());
+      }
 }
 
 

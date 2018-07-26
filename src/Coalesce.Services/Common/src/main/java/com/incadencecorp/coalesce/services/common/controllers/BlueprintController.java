@@ -199,19 +199,28 @@ public class BlueprintController implements IBlueprintController {
 
     private Node findBeanWithID(String id, Document old_xml) {
         Node oldBean = null;
-        NodeList beans = old_xml.getElementsByTagName("bean");
-        for (int i = 0; i < beans.getLength(); i++)
-        {
-            Node child = beans.item(i);
-            NamedNodeMap atrbs = child.getAttributes();
-            Node beanAttrib = atrbs.getNamedItem("id");
-            String beanId = null;
-            if (beanAttrib != null)
-            {
-                beanId = beanAttrib.getTextContent();
-                if (beanId.equals(id))
+        NodeList children = old_xml.getLastChild().getChildNodes();
+        for ( int j = 0; j < children.getLength(); j++ ) {
+            Node child = children.item(j);
+            String tag = child.getLocalName();
+            String word = child.getNodeName();
+            System.out.println(word);
+            if ( tag != null ) {
+                NodeList beans = old_xml.getElementsByTagName(word);
+                for (int i = 0; i < beans.getLength(); i++)
                 {
-                    oldBean = child;
+                    Node newChild = beans.item(i);
+                    NamedNodeMap atrbs = newChild.getAttributes();
+                    Node beanAttrib = atrbs.getNamedItem("id");
+                    String beanId;
+                    if (beanAttrib != null)
+                    {
+                        beanId = beanAttrib.getTextContent();
+                        if (beanId.equals(id))
+                        {
+                            return newChild;
+                        }
+                    }
                 }
             }
         }
