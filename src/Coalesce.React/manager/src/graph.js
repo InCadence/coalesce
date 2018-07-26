@@ -88,7 +88,7 @@ export class GraphView extends React.Component {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'applicaion/json',
+        'Content-Type': 'application/json',
       },
       body: this.createXmlJson('', id)
     })
