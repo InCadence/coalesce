@@ -49,11 +49,14 @@ interface IBlueprintControllerJaxRS extends IBlueprintController {
     @Consumes(MediaType.APPLICATION_JSON)
     void editBlueprint(@PathParam("name") String name, String changes) throws Exception;
 
+    @POST
+    @Path("remove/{name}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    void removeBean(@PathParam("name") String name, String json) throws Exception;
+
     @GET
     @Path("/{name}")
     @Produces(MediaType.APPLICATION_JSON)
     Graph getBlueprint(@PathParam("name") String name) throws RemoteException;
-
-
 
 }

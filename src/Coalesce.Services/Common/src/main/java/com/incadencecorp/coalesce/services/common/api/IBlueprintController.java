@@ -52,4 +52,12 @@ public interface IBlueprintController {
      * @return
      */
     String getXML(String filename, String id) throws Exception;
+
+    /**
+     * remove bean from XML file
+     * @param json JSON of id key
+     * @param name filename
+     * @throws Exception
+     */
+    void removeBean(String name, String json) throws Exception;
 }

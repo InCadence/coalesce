@@ -10,6 +10,7 @@ import com.incadencecorp.coalesce.services.api.datamodel.graphson.Vertex;
 import com.incadencecorp.coalesce.services.api.mappers.CoalesceMapper;
 import com.incadencecorp.coalesce.services.common.api.IBlueprintController;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.EGraphNodeType;
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
@@ -17,6 +18,7 @@ import org.xml.sax.SAXException;
 
 import org.json.JSONObject;
 
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -129,7 +131,6 @@ public class BlueprintController implements IBlueprintController {
         catch (Exception e) {
             throw e;
         }
-        System.out.println(xml);
         JSONObject json = new JSONObject();
         json.append("xml", xml);
         return json.toString();
@@ -142,28 +143,25 @@ public class BlueprintController implements IBlueprintController {
         JSONObject json = new JSONObject(changes);
         changes = json.getJSONArray("xml").get(0).toString();
         String id = json.get("oldId").toString();
-
-        //Build both documents
-        Document new_xml = XmlHelper.loadXmlFrom(changes);
         Document old_xml = loadBlueprint(name);
 
+        Node bean = old_xml.createTextNode("");
+        //Build both documents
+        if ( ! changes.equals("") ) {
+            Document new_xml = XmlHelper.loadXmlFrom(changes);
+            bean = new_xml.getFirstChild();
+            NamedNodeMap attributes = bean.getAttributes();
 
-        //Create node of new xml
-        Node bean = new_xml.getFirstChild();
-        NamedNodeMap attributes = bean.getAttributes();
-
-        //If editing existing node, ensure that ID is not changed
-        if ( id != "" ) {
-            attributes.getNamedItem("id").setNodeValue(id);
+            //If editing existing node, ensure that ID is not changed
+            if ( ! id.equals("") ) {
+                attributes.getNamedItem("id").setNodeValue(id);
+            }
         }
 
         //Find oldBean within old_xml
         Node oldBean = findBeanWithID(id, old_xml);
-
-        //Add oldBean to old_xml to be inserted
         Node importBean = old_xml.importNode(bean, true);
         Element doc = old_xml.getDocumentElement();
-
         if (oldBean != null)
         {
             doc.replaceChild(importBean, oldBean);
@@ -179,6 +177,11 @@ public class BlueprintController implements IBlueprintController {
         Result output = new StreamResult(new File(filename.toString()));
         Source input = new DOMSource(old_xml);
         transformer.transform(input, output);
+    }
+
+    @Override
+    public void removeBean(String name, String json) throws Exception {
+        this.editBlueprint(name, json);
     }
 
     private  String nodeToString(Node node) {
