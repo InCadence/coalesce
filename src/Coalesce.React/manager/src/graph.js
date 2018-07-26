@@ -296,11 +296,13 @@ export class GraphView extends React.Component {
 
       if(parser.validate(xmlString) === true) { //returns true if valid
         jsonString = this.createXmlJson(xmlWithoutNewLines, '')
+        this.setState({actions: 'base'})
         this.postNodeXml(jsonString)
         closeDialog = true
       }
       else {
         this.xmlValidationError();
+        closeDialog = false
       }
     }
     if(closeDialog) {

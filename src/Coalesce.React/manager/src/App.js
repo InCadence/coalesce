@@ -22,7 +22,7 @@ export class App extends React.Component {
   }
 
   componentDidMount() {
-    this.loadBlueprint("core-blueprint.xml");
+    this.loadBlueprint("rest-blueprint.xml");
   }
 
   render() {
@@ -67,7 +67,7 @@ export class App extends React.Component {
             title="Error"
             opened={error != null}
             message={error}
-            onClose={() => {this.setState({error: null})}}
+            onPrimary={() => {this.setState({error: null})}}
           />
           {blueprints != null &&
             <DialogOptions
@@ -117,9 +117,12 @@ export class App extends React.Component {
   }
 
   reloadBlueprint() {
-    console.log('df');
-    this.setState({data: null})
-    //this.loadBlueprint(this.state.selected)
+    this.setState({
+      data: null,
+      actions: 'base'
+    })
+    this.loadBlueprint(this.state.selected)
+
   }
 
   formatData(data) {
@@ -258,7 +261,6 @@ function getBlueprintOptions () {
 function getBlueprint(filename) {
 
   var karafRootAddr = getRootKarafUrl();
-  console.log(karafRootAddr);
   return fetch(`${karafRootAddr}/blueprints/${filename}`)
     .then(res => {
       if (!res.ok)
