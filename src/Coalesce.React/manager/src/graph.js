@@ -296,11 +296,14 @@ export class GraphView extends React.Component {
 
       if(parser.validate(xmlString) === true) { //returns true if valid
         jsonString = this.createXmlJson(xmlWithoutNewLines, '')
+        this.setState({actions: 'base'})
         this.postNodeXml(jsonString)
+        console.log(this.state.actions);
         closeDialog = true
       }
       else {
         this.xmlValidationError();
+        closeDialog = false
       }
     }
     if(closeDialog) {
@@ -312,6 +315,7 @@ export class GraphView extends React.Component {
         actions: 'base',
       })
     }
+    console.log(this.state.actions);
   }
   onEditToggle(selected) {
     this.setState({
@@ -409,6 +413,7 @@ export class GraphView extends React.Component {
       onSecondary = this.onAddCancel
       onPrimary = this.onClose
     }
+    console.log(actions);
 /*
 <Checkbox
   label="Static"
