@@ -60,4 +60,11 @@ public interface IBlueprintController {
      * @throws Exception
      */
     void removeBean(String name, String json) throws Exception;
+
+    /**
+     * Changes file back to previous version
+     * @param filename name of file to be rolledback
+     * @throws Exception
+     */
+    void undo(String filename) throws Exception;
 }
