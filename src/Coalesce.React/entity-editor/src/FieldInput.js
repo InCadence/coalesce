@@ -2,13 +2,14 @@ import React from 'react';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
-import { Row, Col } from 'react-bootstrap';
-import { IconButton } from 'common-components/lib/components'
-import Enumeration from './field-inputs/Enumeration.js'
 import Point from './field-inputs/geo/Point.js'
 import Multipoint from './field-inputs/geo/Multipoint.js';
 import Shape from './field-inputs/shape/Shape.js'
+import Enumeration from 'common-components/lib/components/fieldInputs/Enumeration'
+import IconButton from 'common-components/lib/components/IconButton'
+import InputAdornment from '@material-ui/core/InputAdornment'
 import { withTheme } from '@material-ui/core/styles';
+import { Row, Col } from 'react-bootstrap';
 
 // TODO Replace Date / Time Pickers
 import DatePicker from 'material-ui/DatePicker';
@@ -86,7 +87,7 @@ export class FieldInput extends React.Component {
 
     var type = (this.props.dataType != null) ? this.props.dataType : field.dataType;
     var attr = (this.props.attr != null) ? this.props.attr : 'value';
-    var label = this.props.showLabels ? this.props.label ? this.props.label : (field.label != null && field.label.length > 0 ? field.label : field.name) : undefined;
+    var label = this.props.showLabels ? this.props.label ? this.props.label : (field.label != null && field.label.length > 0 ? field.label : field.name) : null;
     var defaultValue = (this.props.defaultValue != null) ? this.props.defaultValue : field.defaultValue;
     var view;
 
@@ -139,7 +140,7 @@ export class FieldInput extends React.Component {
             fullWidth
             label={label}
             style={style.root}
-            hintText={this.props.hint ? this.props.hint : ""}
+            helperText={this.props.hint}
             value={field[attr]}
             defaultValue={field.defaultValue}
             onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
@@ -147,7 +148,6 @@ export class FieldInput extends React.Component {
           />
         );
         break;
-
       case 'BOOLEAN_LIST_TYPE':
       case 'GUID_LIST_TYPE':
       case 'FLOAT_LIST_TYPE':
@@ -160,7 +160,10 @@ export class FieldInput extends React.Component {
               id={field.key}
               fullWidth
               label={label}
-              hintText={`(CSV) ${this.props.hint ? this.props.hint : ""}`}
+              helperText={this.props.hint}
+              InputProps={{
+                  startAdornment: <InputAdornment position="start">(CSV)</InputAdornment>,
+                }}
               style={style}
               value={field[attr]}
               defaultValue={field.defaultValue}
@@ -169,7 +172,6 @@ export class FieldInput extends React.Component {
             />
           );
           break;
-
       case 'FLOAT_TYPE':
       case 'DOUBLE_TYPE':
       case 'LONG_TYPE':
@@ -178,11 +180,10 @@ export class FieldInput extends React.Component {
           <TextField
             id={field.key}
             type='number'
-            inputProps={{step: 0.01}}
+            inputProps={{step: 0.01, style: style.root}}
             fullWidth
             label={label}
-            hintText={this.props.hint ? this.props.hint : ""}
-            underlineShow={this.props.showLabels}
+            helperText={this.props.hint}
             style={style.root}
             value={field[attr]}
             defaultValue={field.defaultValue}
@@ -191,18 +192,15 @@ export class FieldInput extends React.Component {
           />
         );
         break;
-
       case 'INTEGER_TYPE':
         view = (
           <TextField
             id={field.key}
             type='number'
-            inputProps={{step: 1}}
+            inputProps={{step: 1, style: style.root}}
             fullWidth
             label={label}
-            inputProps={{style: style.root}}
-            hintText={this.props.hint ? this.props.hint : ""}
-            underlineShow={this.props.showLabels}
+            helperText={this.props.hint}
             style={style.root}
             value={field[attr]}
             defaultValue={field.defaultValue}
@@ -211,9 +209,7 @@ export class FieldInput extends React.Component {
           />
         );
         break;
-
       case 'BOOLEAN_TYPE':
-      console.log(field[attr]);
         view = (
           <FormControlLabel label={label} control={
               <Checkbox
@@ -245,6 +241,7 @@ export class FieldInput extends React.Component {
             <Col xs={6}>
               <DatePicker
                 id={field.key + 'date'}
+                fullWidth
                 floatingLabelText={this.props.showLabels ? label + " Date" : null}
                 underlineShow={this.props.showLabels}
                 style={style.root}
@@ -262,6 +259,7 @@ export class FieldInput extends React.Component {
             <Col xs={6}>
               <TimePicker
                 id={field.key + 'time'}
+                fullWidth
                 floatingLabelText={this.props.showLabels ? "Time" : null}
                 underlineShow={this.props.showLabels}
                 style={style.root}
@@ -305,7 +303,6 @@ export class FieldInput extends React.Component {
             />
           );
           break;
-
       case 'POLYGON_TYPE':
           view = (
             <Shape
@@ -318,21 +315,21 @@ export class FieldInput extends React.Component {
           );
           break;
       case 'GEOCOORDINATE_LIST_TYPE':
-        view = (
+          view = (
           <Multipoint
             opts={opts}
             showLabels={this.props.showLabels}
             handleOnChange={this.handleOnChange}
-          />
-        );
-        break;
+            />
+          );
+          break;
       case 'GEOCOORDINATE_TYPE':
         view = (
           <Point
             opts={opts}
             showLabels={this.props.showLabels}
             handleOnChange={this.handleOnChange}
-          />
+                />
         );
         break;
 
@@ -345,23 +342,34 @@ export class FieldInput extends React.Component {
             showLabels={this.props.showLabels}
             multi={false}
             handleOnChange={this.handleOnChange}
-          />
-        );
-        break;
+              />
+      );
+      break;
       case 'GUID_TYPE':
         view = (
           <TextField
             id={field.key}
-            fullWidth
+            fullWidth={true}
             label={label}
-            hintText={this.props.hint ? this.props.hint : ""}
-            underlineShow={this.props.showLabels}
+            helperText={this.props.hint}
             //inputProps={{ pattern: "[a-z]" }}
             style={style.root}
             value={field[attr]}
-            defaultValue={field.defaultValue}
-            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
+            defaultValue={defaultValue}
+            onChange={(event, value) => {this.handleOnChange(attr, value)}}
             onKeyDown={this.props.onKeyDown}
+          />
+        );
+        break;
+      case "LABEL":
+        view = (
+          <TextField
+            id={field.key}
+            fullWidth={true}
+            label={label}
+            style={style}
+            inputProps={{style: { 'borderBottom': '1px solid rgba(0, 0, 0, 0.5)' }}}
+            disabled
           />
         );
         break;
@@ -371,9 +379,9 @@ export class FieldInput extends React.Component {
             id={field.key}
             fullWidth={true}
             label={label + " (UI Not Implemented)"}
-            hintText={this.props.hint ? this.props.hint : ""}
+            helperText={this.props.hint}
             style={style}
-            underlineShow={this.props.showLabels}
+            inputProps={this.props.inputProps}
             disabled
             value={field[attr]}
             defaultValue={field.defaultValue}

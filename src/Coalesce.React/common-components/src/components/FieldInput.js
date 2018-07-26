@@ -2,10 +2,9 @@ import React from 'react';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
 import Enumeration from 'common-components/lib/components/fieldInputs/Enumeration'
 import IconButton from 'common-components/lib/components/IconButton'
+import InputAdornment from '@material-ui/core/InputAdornment'
 import { withTheme } from '@material-ui/core/styles';
 import { Row, Col } from 'react-bootstrap';
 
@@ -85,16 +84,6 @@ export class FieldInput extends React.Component {
 
     const {field, style} = this.state;
 
-    var options = [];
-
-    if (this.props.options) {
-      options = this.props.options.map((item) => {
-        return (
-          <MenuItem key={item.enum} value={item.enum} primaryText={item.label} />
-        )
-      })
-    }
-
     var type = (this.props.dataType != null) ? this.props.dataType : field.dataType;
     var attr = (this.props.attr != null) ? this.props.attr : 'value';
     var label = this.props.showLabels ? this.props.label ? this.props.label : (field.label != null && field.label.length > 0 ? field.label : field.name) : null;
@@ -143,7 +132,7 @@ export class FieldInput extends React.Component {
             fullWidth
             label={label}
             style={style.root}
-            hintText={this.props.hint ? this.props.hint : ""}
+            helperText={this.props.hint}
             value={field[attr]}
             defaultValue={field.defaultValue}
             onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
@@ -163,7 +152,10 @@ export class FieldInput extends React.Component {
               id={field.key}
               fullWidth
               label={label}
-              hintText={`(CSV) ${this.props.hint ? this.props.hint : ""}`}
+              helperText={this.props.hint}
+              InputProps={{
+                  startAdornment: <InputAdornment position="start">(CSV)</InputAdornment>,
+                }}
               style={style}
               value={field[attr]}
               defaultValue={field.defaultValue}
@@ -181,11 +173,10 @@ export class FieldInput extends React.Component {
           <TextField
             id={field.key}
             type='number'
-            inputProps={{step: 0.01}}
+            inputProps={{step: 0.01, style: style.root}}
             fullWidth
             label={label}
-            hintText={this.props.hint ? this.props.hint : ""}
-            underlineShow={this.props.showLabels}
+            helperText={this.props.hint}
             style={style.root}
             value={field[attr]}
             defaultValue={field.defaultValue}
@@ -199,12 +190,10 @@ export class FieldInput extends React.Component {
           <TextField
             id={field.key}
             type='number'
-            inputProps={{step: 1}}
+            inputProps={{step: 1, style: style.root}}
             fullWidth
             label={label}
-            inputProps={{style: style.root}}
-            hintText={this.props.hint ? this.props.hint : ""}
-            underlineShow={this.props.showLabels}
+            helperText={this.props.hint}
             style={style.root}
             value={field[attr]}
             defaultValue={field.defaultValue}
@@ -250,11 +239,7 @@ export class FieldInput extends React.Component {
               id={field.key}
               fullWidth={true}
               label={label + " - LINESTRING (x1 y1 z1, x2 y2 z2, ...)"}
-              hintText={this.props.hint ? this.props.hint : ""}
-              floatingLabelStyle={style.floatingLabel}
-              floatingLabelFocusStyle={style.floatingLabelFocus}
-              underlineStyle={style.underline}
-              underlineShow={this.props.showLabels}
+              helperText={this.props.hint}
               style={style.root}
               value={field[attr]}
               defaultValue={defaultValue}
@@ -269,11 +254,7 @@ export class FieldInput extends React.Component {
               id={field.key}
               fullWidth={true}
               label={label + " - POLYGON ((x1 y1 z1, x2 y2 z2, ...))"}
-              hintText={this.props.hint ? this.props.hint : ""}
-              floatingLabelStyle={style.floatingLabel}
-              floatingLabelFocusStyle={style.floatingLabelFocus}
-              underlineStyle={style.underline}
-              underlineShow={this.props.showLabels}
+              helperText={this.props.hint}
               style={style.root}
               value={field[attr]}
               defaultValue={defaultValue}
@@ -288,11 +269,7 @@ export class FieldInput extends React.Component {
               id={field.key}
               fullWidth={true}
               label={label + " - MULTIPOINT (x1 y1 z1, x2 y2 z2, ...)"}
-              hintText={this.props.hint ? this.props.hint : ""}
-              floatingLabelStyle={style.floatingLabel}
-              floatingLabelFocusStyle={style.floatingLabelFocus}
-              underlineStyle={style.underline}
-              underlineShow={this.props.showLabels}
+              helperText={this.props.hint}
               style={style.root}
               value={field[attr]}
               defaultValue={defaultValue}
@@ -323,11 +300,7 @@ export class FieldInput extends React.Component {
                   type='number'
                   step='0.01'
                   label={this.props.showLabels ? label + " Longitude" : null}
-                  hintText={this.props.hint ? this.props.hint : ""}
-                  floatingLabelStyle={style.floatingLabel}
-                  floatingLabelFocusStyle={style.floatingLabelFocus}
-                  underlineStyle={style.underline}
-                  underlineShow={this.props.showLabels}
+                  helperText={this.props.hint}
                   style={style.root}
                   fullWidth={true}
                   value={geo.coordinates[0]}
@@ -341,11 +314,7 @@ export class FieldInput extends React.Component {
                   type='number'
                   step='0.01'
                   label={this.props.showLabels ? "Latitude" : null}
-                  hintText={this.props.hint ? this.props.hint : ""}
-                  floatingLabelStyle={style.floatingLabel}
-                  floatingLabelFocusStyle={style.floatingLabelFocus}
-                  underlineStyle={style.underline}
-                  underlineShow={this.props.showLabels}
+                  helperText={this.props.hint}
                   style={style.root}
                   fullWidth={true}
                   value={geo.coordinates[1]}
@@ -359,11 +328,7 @@ export class FieldInput extends React.Component {
                   type='number'
                   step='0.01'
                   label={this.props.showLabels ? "Attitude" : null}
-                  hintText={this.props.hint ? this.props.hint : ""}
-                  floatingLabelStyle={style.floatingLabel}
-                  floatingLabelFocusStyle={style.floatingLabelFocus}
-                  underlineStyle={style.underline}
-                  underlineShow={this.props.showLabels}
+                  helperText={this.props.hint}
                   style={style.root}
                   fullWidth={true}
                   value={geo.coordinates[2]}
@@ -392,11 +357,7 @@ export class FieldInput extends React.Component {
                 type='number'
                 step='0.01'
                 label={this.props.showLabels ? label + " Longitude" : null}
-                hintText={this.props.hint ? this.props.hint : ""}
-                floatingLabelStyle={style.floatingLabel}
-                floatingLabelFocusStyle={style.floatingLabelFocus}
-                underlineStyle={style.underline}
-                underlineShow={this.props.showLabels}
+                helperText={this.props.hint}
                 style={style.root}
                 fullWidth={true}
                 value={center.coordinates[0]}
@@ -410,11 +371,7 @@ export class FieldInput extends React.Component {
                 type='number'
                 step='0.01'
                 label={this.props.showLabels ? "Latitude" : null}
-                hintText={this.props.hint ? this.props.hint : ""}
-                floatingLabelStyle={style.floatingLabel}
-                floatingLabelFocusStyle={style.floatingLabelFocus}
-                underlineStyle={style.underline}
-                underlineShow={this.props.showLabels}
+                helperText={this.props.hint}
                 style={style.root}
                 fullWidth={true}
                 value={center.coordinates[1]}
@@ -428,11 +385,7 @@ export class FieldInput extends React.Component {
                 type='number'
                 step='0.01'
                 label={this.props.showLabels ? "Attitude" : null}
-                hintText={this.props.hint ? this.props.hint : ""}
-                floatingLabelStyle={style.floatingLabel}
-                floatingLabelFocusStyle={style.floatingLabelFocus}
-                underlineStyle={style.underline}
-                underlineShow={this.props.showLabels}
+                helperText={this.props.hint}
                 style={style.root}
                 fullWidth={true}
                 value={center.coordinates[2]}
@@ -447,11 +400,7 @@ export class FieldInput extends React.Component {
                 step='0.01'
                 value={field.radius}
                 label={this.props.showLabels ? "Radius" : null}
-                hintText={this.props.hint ? this.props.hint : ""}
-                floatingLabelStyle={style.floatingLabel}
-                floatingLabelFocusStyle={style.floatingLabelFocus}
-                underlineStyle={style.underline}
-                underlineShow={this.props.showLabels}
+                helperText={this.props.hint}
                 style={style.root}
                 fullWidth={true}
                 onChange={(event, value) => {this.handleOnChange('radius', value)}}
@@ -467,11 +416,7 @@ export class FieldInput extends React.Component {
             id={field.key}
             fullWidth={true}
             label={label}
-            hintText={this.props.hint ? this.props.hint : ""}
-            floatingLabelStyle={style.floatingLabel}
-            floatingLabelFocusStyle={style.floatingLabelFocus}
-            underlineStyle={style.underline}
-            underlineShow={this.props.showLabels}
+            helperText={this.props.hint}
             //inputProps={{ pattern: "[a-z]" }}
             style={style.root}
             value={field[attr]}
@@ -499,9 +444,8 @@ export class FieldInput extends React.Component {
             id={field.key}
             fullWidth={true}
             label={label + " (UI Not Implemented)"}
-            hintText={this.props.hint ? this.props.hint : ""}
+            helperText={this.props.hint}
             style={style}
-            underlineShow={this.props.showLabels}
             inputProps={this.props.inputProps}
             disabled
             value={field[attr]}
