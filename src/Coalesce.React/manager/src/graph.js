@@ -66,7 +66,7 @@ export class GraphView extends React.Component {
   getNodeXml(id) {
     //fetches the xml
 
-    fetch(this.getNodeURL+id, {
+    return fetch(this.getNodeURL+id, {
       method: 'GET',
 
       headers: {
@@ -74,15 +74,10 @@ export class GraphView extends React.Component {
         'Content-Type': 'application/json',
       },
     })
-    .then((response) => {
-      response.json()
-    })
-    .then((responseJson) => {
-      return (responseJson.xml)[0]
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    .then((response) => response.json())
+    .then((responseJson) => {this.setState({value: responseJson.xml[0]})} )
+    .catch((error) => console.log(error));
+
   }
 
   getNonGuid(id) {
@@ -215,11 +210,9 @@ export class GraphView extends React.Component {
     })
 
     var nonGuid = this.getNonGuid(nodeId)
-    var xml = that.getNodeXml(nonGuid)
-    console.log(xml);
+    that.getNodeXml(nonGuid) //gets and sets the value to xml
     that.setState({
       selected: nodeSelected,
-      value: xml,
     });
 
     return null
@@ -245,7 +238,7 @@ export class GraphView extends React.Component {
     var xmlString = ''
     var xmlWithoutNewLines = ''
     var jsonString = ''
-    if (this.state.actions === 'editing' && this.state.value.length > 0) {
+    if (this.state.value && this.state.actions === 'editing' && this.state.value.length > 0) {
       xmlString = this.state.value
       xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
 
@@ -258,7 +251,7 @@ export class GraphView extends React.Component {
         this.xmlValidationError();
       }
     }
-    else if (this.state.actions === 'adding' && this.state.value.length > 0) {
+    else if (this.state.value && this.state.actions === 'adding' && this.state.value.length > 0) {
       xmlString = this.state.value
       xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
 
