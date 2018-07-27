@@ -31,11 +31,11 @@ export class GraphView extends React.Component {
       isValid: this.isValidGraph(props.data)
     };
 
-
-    this.addNodeURL = getRootKarafUrl() + '/blueprints/edit/' + this.props.title
-    this.getNodeURL = getRootKarafUrl() + '/blueprints/get/' + this.props.title + '/'
-    this.removeNodeURL = getRootKarafUrl() + '/blueprints/remove/' + this.props.title
-    this.revertURL = getRootKarafUrl() + '/blueprints/undo/' + this.props.title
+    this.rootKarafUrl = getRootKarafUrl('core')
+    this.addNodeURL = this.rootKarafUrl + '/blueprints/edit/' + this.props.title
+    this.getNodeURL = this.rootKarafUrl + '/blueprints/get/' + this.props.title + '/'
+    this.removeNodeURL = this.rootKarafUrl + '/blueprints/remove/' + this.props.title
+    this.revertURL = this.rootKarafUrl + '/blueprints/undo/' + this.props.title
     console.log(this.revertURL);
 
     this.guidRegex = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/

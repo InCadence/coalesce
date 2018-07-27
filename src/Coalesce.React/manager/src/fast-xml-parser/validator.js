@@ -140,11 +140,11 @@ exports.validate = function(xmlData, options) {
 function readPI(xmlData, i) {
     var start = i;
     for (; i < xmlData.length; i++) {
-        if (xmlData[i] == "?" || xmlData[i] == " ") {//tagname
+        if (xmlData[i] === "?" || xmlData[i] === " ") {//tagname
             var tagname = xmlData.substr(start, i - start);
             if (i > 5 && tagname === "xml") {
                 return {err: {code: "InvalidXml", msg: "XML declaration allowed only at the start of the document."}};
-            } else if (xmlData[i] == "?" && xmlData[i + 1] == ">") {
+            } else if (xmlData[i] === "?" && xmlData[i + 1] === ">") {
                 //check if valid attribut string
                 i++;
                 break;

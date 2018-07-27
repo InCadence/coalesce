@@ -2,7 +2,7 @@ export function getRootKarafUrl(path) {
   var karafRootAddr;
 
   if (path == null) {
-    path = 'core';
+    path = 'data';
   }
 
   if (window.location.port == 3000) {
