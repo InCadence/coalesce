@@ -14,7 +14,8 @@ import TextField from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 
-var parser = require('fast-xml-parser');
+import { validate } from './fast-xml-parser/validator'
+//var parser = require('fast-xml-parser');
 
 export class GraphView extends React.Component {
 
@@ -277,7 +278,7 @@ export class GraphView extends React.Component {
       xmlWithoutNewLines = xmlString
       //xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
       nonGuid = this.getNonGuid(selected.id)
-      if(parser.validate(xmlString) === true) {
+      if(validate(xmlString) === true) {
         jsonString = this.createXmlJson(xmlWithoutNewLines, nonGuid)
         this.postNodeXml(jsonString)
 
@@ -307,7 +308,7 @@ export class GraphView extends React.Component {
       if(xmlString.trim() === "") {
         closeDialog = true
       }
-      else if(parser.validate(xmlString) === true) { //returns true if valid
+      else if(validate(xmlString) === true) { //returns true if valid
         jsonString = this.createXmlJson(xmlWithoutNewLines, '')
         this.setState({actions: 'base'})
         this.postNodeXml(jsonString)
