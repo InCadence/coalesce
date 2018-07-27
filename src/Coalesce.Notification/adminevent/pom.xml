@@ -15,6 +15,7 @@
 
 	<modules>
 		<module>adminevent-impl</module>
+		<module>feature</module>
 	</modules>
 
 </project>
