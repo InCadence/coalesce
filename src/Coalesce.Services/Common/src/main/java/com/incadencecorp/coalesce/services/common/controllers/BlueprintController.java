@@ -147,6 +147,9 @@ public class BlueprintController implements IBlueprintController {
         String id = json.get("oldId").toString();
         Document old_xml = loadBlueprint(name);
 
+
+        id ="";
+
         //Write Changes to backup
         String backup = name + ".backup" + this.version;
 
@@ -162,6 +165,9 @@ public class BlueprintController implements IBlueprintController {
             //If editing existing node, ensure that ID is not changed
             if ( ! id.equals("") ) {
                 attributes.getNamedItem("id").setNodeValue(id);
+            }
+            else {
+                id = attributes.getNamedItem("id").getTextContent();
             }
         }
         //Find oldBean within old_xml
