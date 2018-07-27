@@ -281,7 +281,7 @@ export class GraphView extends React.Component {
         xmlWithoutNewLines = xmlString
         //xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
         nonGuid = this.getNonGuid(selected.id)
-        if(parser.validate(xmlString) === true) {
+        if(validate(xmlString) === true) {
           jsonString = this.createXmlJson(xmlWithoutNewLines, nonGuid)
           this.postNodeXml(jsonString)
 
