@@ -17,6 +17,8 @@ export class App extends React.Component {
     this.state = {
       data: null
     };
+
+    this.reloadBlueprint = this.reloadBlueprint.bind(this)
   }
 
   componentDidMount() {
@@ -27,7 +29,6 @@ export class App extends React.Component {
 
     const { data, selected, error, theme, blueprints } = this.state;
     const that = this;
-
     return (
       <MuiThemeProvider theme={this.props.theme}>
         <Menu logoSrc={this.props.icon} title={`${this.props.title} / ${selected}`} items={[
@@ -50,15 +51,23 @@ export class App extends React.Component {
                 that.setState({error: `Loading Blueprint: ${error}`});
               });
             }
-          }]}/>
+          },
+          {
+            id: 'add',
+            name: 'Add',
+            img: "/images/svg/add.svg",
+            title: 'Add Entity',
+            onClick: () => this.setState({actions: 'adding'})
+          }
+          ]}/>
           { data != null &&
-            <GraphView data={data} title={selected} theme={theme} />
+            <GraphView reloadBlueprint={this.reloadBlueprint} actions={this.state.actions} data={data} title={selected} theme={theme} />
           }
           <DialogMessage
             title="Error"
             opened={error != null}
             message={error}
-            onClose={() => {this.setState({error: null})}}
+            onPrimary={() => {this.setState({error: null})}}
           />
           {blueprints != null &&
             <DialogOptions
@@ -96,15 +105,23 @@ export class App extends React.Component {
   loadBlueprint(blueprint) {
 
     getBlueprint(blueprint).then((value) => {
-
       this.setState({
         selected: blueprint,
         data: this.formatData(value)
-      })
+      });
 
     }).catch((err) => {
       this.setState({error: `Loading ${blueprint}: ${err}`})
     })
+
+  }
+
+  reloadBlueprint() {
+    this.setState({
+      data: null,
+      actions: 'base'
+    })
+    this.loadBlueprint(this.state.selected)
 
   }
 
@@ -124,7 +141,6 @@ export class App extends React.Component {
 
 
     data.nodes.forEach(function(node) {
-
       // Consolidate Node Types
       if (node.type === 'CONTROLLER') {
           node.type = "ENDPOINT";
@@ -153,6 +169,7 @@ export class App extends React.Component {
     var counts = {};
     var col = 1;
 
+    //implement tree
     Object.keys(totals).forEach(function(key) {
       if (totals[key] > 0) {
         counts[key] = {
@@ -163,7 +180,6 @@ export class App extends React.Component {
     });
 
     data.nodes.forEach(function(node) {
-
       node.x=counts[node.type].x;
       node.y=counts[node.type].y++ * rowWidth;
 
@@ -223,15 +239,13 @@ export class App extends React.Component {
       }
 
     })
-
     return data;
   }
 }
 
-function getBlueprintOptions() {
+function getBlueprintOptions () {
 
   var karafRootAddr = getRootKarafUrl();
-
   return fetch(`${karafRootAddr}/blueprints`)
     .then(res => {
       if (!res.ok)
@@ -247,7 +261,6 @@ function getBlueprintOptions() {
 function getBlueprint(filename) {
 
   var karafRootAddr = getRootKarafUrl();
-
   return fetch(`${karafRootAddr}/blueprints/${filename}`)
     .then(res => {
       if (!res.ok)

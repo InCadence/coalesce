@@ -20,11 +20,9 @@ package com.incadencecorp.coalesce.services.common.jaxrs;
 import com.incadencecorp.coalesce.services.api.datamodel.graphson.Graph;
 import com.incadencecorp.coalesce.services.common.api.IBlueprintController;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.awt.*;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -42,7 +40,27 @@ interface IBlueprintControllerJaxRS extends IBlueprintController {
     List<String> getBlueprints();
 
     @GET
+    @Path("get/{name}/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    String getXML(@PathParam("name") String filename, @PathParam("id") String id) throws Exception;
+    
+    @POST
+    @Path("edit/{name}/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    void editBlueprint(@PathParam("name") String name, String changes) throws Exception;
+
+    @POST
+    @Path("remove/{name}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    void removeBean(@PathParam("name") String name, String json) throws Exception;
+
+    @GET
     @Path("/{name}")
     @Produces(MediaType.APPLICATION_JSON)
     Graph getBlueprint(@PathParam("name") String name) throws RemoteException;
+
+    @GET
+    @Path("/undo/{name}")
+    void undo(@PathParam("name") String filename) throws Exception;
+
 }

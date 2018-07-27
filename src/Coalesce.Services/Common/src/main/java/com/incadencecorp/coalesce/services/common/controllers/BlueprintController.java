@@ -10,16 +10,22 @@ import com.incadencecorp.coalesce.services.api.datamodel.graphson.Vertex;
 import com.incadencecorp.coalesce.services.api.mappers.CoalesceMapper;
 import com.incadencecorp.coalesce.services.common.api.IBlueprintController;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.EGraphNodeType;
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+import org.json.JSONObject;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,6 +42,8 @@ public class BlueprintController implements IBlueprintController {
     private static final Logger LOGGER = LoggerFactory.getLogger(BlueprintController.class);
     private static final List<String> IGNORE_LIST = Arrays.asList(CoalesceThreadFactoryImpl.class.getSimpleName(),
                                                                   CoalesceMapper.class.getSimpleName());
+
+    private int version = 1;
 
     // Default Directory
     private Path root = Paths.get("deploy");
@@ -109,6 +117,150 @@ public class BlueprintController implements IBlueprintController {
 
         return result;
     }
+
+    @Override
+    public String getXML(String filename, String id) throws Exception{
+        String xml;
+        try {
+            Document doc = loadBlueprint(filename);
+            Node bean = findBeanWithID(id, doc);
+            if (bean == null) {
+                LOGGER.debug("No matching node with ID : " + id);
+                throw new Exception();
+            }
+            xml = nodeToString(bean);
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        JSONObject json = new JSONObject();
+        json.append("xml", xml);
+        return json.toString();
+    }
+
+    @Override
+    public void editBlueprint(String name, String changes) throws Exception
+    {
+        //Pull xml and old ID from JSON
+        JSONObject json = new JSONObject(changes);
+        changes = json.getJSONArray("xml").get(0).toString();
+        String id = json.get("oldId").toString();
+        Document old_xml = loadBlueprint(name);
+
+
+        id ="";
+
+        //Write Changes to backup
+        String backup = name + ".backup" + this.version;
+
+        writeToFile(backup, old_xml);
+
+        Node bean = old_xml.createTextNode("");
+        //Build both documents
+        if ( ! changes.equals("") ) {
+            Document new_xml = XmlHelper.loadXmlFrom(changes);
+            bean = new_xml.getFirstChild();
+            NamedNodeMap attributes = bean.getAttributes();
+
+            //If editing existing node, ensure that ID is not changed
+            if ( ! id.equals("") ) {
+                attributes.getNamedItem("id").setNodeValue(id);
+            }
+            else {
+                id = attributes.getNamedItem("id").getTextContent();
+            }
+        }
+        //Find oldBean within old_xml
+        Node oldBean = findBeanWithID(id, old_xml);
+        Node importBean = old_xml.importNode(bean, true);
+        Element doc = old_xml.getDocumentElement();
+        if (oldBean != null)
+        {
+            doc.replaceChild(importBean, oldBean);
+        }
+        else
+        {
+            doc.appendChild(importBean);
+        }
+
+        //Write changed document to file: Current
+        writeToFile(name, old_xml);
+
+        this.version++;
+    }
+
+    @Override
+    public void removeBean(String name, String json) throws Exception {
+        this.editBlueprint(name, json);
+    }
+
+    @Override
+    public void undo(String filename) throws Exception {
+        if (this.version > 1 ) {
+            String backup = filename + ".backup" + (this.version - 1);
+            Document old = loadBlueprint(backup);
+            String remove = filename + ".backup" + (this.version);
+            Path path = root.resolve(remove);
+            File file = path.toFile();
+            file.delete();
+            writeToFile(filename, old);
+            this.version --;
+        }
+        else {
+            LOGGER.debug("No more backups available");
+        }
+    }
+
+    private void writeToFile(String name, Document doc) throws Exception{
+        Path filename = root.resolve(name);
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Result output = new StreamResult(new File(filename.toString()));
+        Source input = new DOMSource(doc);
+        transformer.transform(input, output);
+    }
+
+    private  String nodeToString(Node node) {
+        StringWriter sw = new StringWriter();
+        try {
+            Transformer t = TransformerFactory.newInstance().newTransformer();
+            t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            t.setOutputProperty(OutputKeys.INDENT, "yes");
+            t.transform(new DOMSource(node), new StreamResult(sw));
+        } catch (TransformerException te) {
+            System.out.println("nodeToString Transformer Exception");
+        }
+        return sw.toString();
+    }
+
+    private Node findBeanWithID(String id, Document old_xml) {
+        Node oldBean = null;
+        NodeList children = old_xml.getLastChild().getChildNodes();
+        for ( int j = 0; j < children.getLength(); j++ ) {
+            Node child = children.item(j);
+            String tag = child.getLocalName();
+            String word = child.getNodeName();
+            if ( tag != null ) {
+                NodeList beans = old_xml.getElementsByTagName(word);
+                for (int i = 0; i < beans.getLength(); i++)
+                {
+                    Node newChild = beans.item(i);
+                    NamedNodeMap atrbs = newChild.getAttributes();
+                    Node beanAttrib = atrbs.getNamedItem("id");
+                    String beanId;
+                    if (beanAttrib != null)
+                    {
+                        beanId = beanAttrib.getTextContent();
+                        if (beanId.equals(id))
+                        {
+                            return newChild;
+                        }
+                    }
+                }
+            }
+        }
+        return oldBean;
+    }
+
 
     private Collection<Edge> linkServices(Vertex parent, Element server)
     {

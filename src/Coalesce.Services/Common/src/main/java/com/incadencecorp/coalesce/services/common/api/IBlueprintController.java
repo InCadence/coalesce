@@ -40,4 +40,31 @@ public interface IBlueprintController {
      */
     Graph getBlueprint(String name) throws RemoteException;
 
+    /**
+     * @param name filename to edit
+     * @param changes changes to be written to file
+     */
+    void editBlueprint(String name, String changes) throws Exception;
+
+    /**
+     * Return raw XML from rest-blueprints.xml
+     * @param id ID of xml NODE to returned
+     * @return
+     */
+    String getXML(String filename, String id) throws Exception;
+
+    /**
+     * remove bean from XML file
+     * @param json JSON of id key
+     * @param name filename
+     * @throws Exception
+     */
+    void removeBean(String name, String json) throws Exception;
+
+    /**
+     * Changes file back to previous version
+     * @param filename name of file to be rolledback
+     * @throws Exception
+     */
+    void undo(String filename) throws Exception;
 }
