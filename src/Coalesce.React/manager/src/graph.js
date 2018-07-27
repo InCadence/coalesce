@@ -35,6 +35,7 @@ export class GraphView extends React.Component {
     this.getNodeURL = getRootKarafUrl() + '/blueprints/get/' + this.props.title + '/'
     this.removeNodeURL = getRootKarafUrl() + '/blueprints/remove/' + this.props.title
     this.revertURL = getRootKarafUrl() + '/blueprints/undo/' + this.props.title
+    console.log(this.revertURL);
 
     this.guidRegex = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
 
@@ -99,13 +100,7 @@ export class GraphView extends React.Component {
   }
 
   attemptRevert() {
-    return fetch(this.revertUrl, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    }).then(() => this.props.reloadBlueprint());
+    return fetch(this.revertUrl).then(() => this.props.reloadBlueprint());
   }
 
   getParent(id) {
@@ -268,8 +263,8 @@ export class GraphView extends React.Component {
 
   onClose() {
     const {actions, selected, originalXml, value} = this.state
-    //fetch post
-    this.setState({selected: null})
+    console.log('onClose');
+    this.setState({selected: null, })
     var xmlString = ''
     var xmlWithoutNewLines = ''
     var jsonString = ''
@@ -291,23 +286,27 @@ export class GraphView extends React.Component {
         if(this.isOrphan(nonGuid)) {
           //remove node nonGuid
           this.removeOrphanNode(nonGuid)
+          closeDialog = true
         }
         else {
           var error = `This node has links to other nodes, remove the node from ${this.props.title} and fix any appropriate references!`
           alert(error)
+          closeDialog = false;
         }
-        closeDialog = true
       }
       else {
         this.xmlValidationError();
+        closeDialog = false;
       }
     }
     else if (this.state.value && this.state.actions === 'adding') {
       xmlString = this.state.value
       xmlWithoutNewLines = xmlString;
       //xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
-
-      if(parser.validate(xmlString) === true) { //returns true if valid
+      if(xmlString.trim() === "") {
+        closeDialog = true
+      }
+      else if(parser.validate(xmlString) === true) { //returns true if valid
         jsonString = this.createXmlJson(xmlWithoutNewLines, '')
         this.setState({actions: 'base'})
         this.postNodeXml(jsonString)
@@ -328,6 +327,7 @@ export class GraphView extends React.Component {
       })
     }
   }
+
   onEditToggle(selected) {
     this.setState({
       actions: 'editing',
