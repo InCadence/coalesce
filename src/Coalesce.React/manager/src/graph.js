@@ -154,6 +154,10 @@ export class GraphView extends React.Component {
       data: nextProps.data,
       actions: nextProps.actions || 'base'
     });
+
+    if(nextProps.actions === 'reverting') {
+      this.attemptRevert()
+    }
   }
 
   componentDidMount() {
@@ -264,8 +268,6 @@ export class GraphView extends React.Component {
 
   onClose() {
     const {actions, selected, originalXml, value} = this.state
-    console.log('onClose');
-    console.log(value);
     this.setState({selected: null, })
     var xmlString = ''
     var xmlWithoutNewLines = ''
@@ -273,39 +275,45 @@ export class GraphView extends React.Component {
     var closeDialog = false
     var nonGuid = ''
 
-    if (value !== null && actions === 'editing' && value !== originalXml) {
-      xmlString = this.state.value
-      xmlWithoutNewLines = xmlString
-      //xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
-      nonGuid = this.getNonGuid(selected.id)
-      if(validate(xmlString) === true) {
-        jsonString = this.createXmlJson(xmlWithoutNewLines, nonGuid)
-        this.postNodeXml(jsonString)
+    if (value != null && actions === 'editing') {
+      if (value !== originalXml) {
+        xmlString = this.state.value
+        xmlWithoutNewLines = xmlString
+        //xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
+        nonGuid = this.getNonGuid(selected.id)
+        if(parser.validate(xmlString) === true) {
+          jsonString = this.createXmlJson(xmlWithoutNewLines, nonGuid)
+          this.postNodeXml(jsonString)
 
-        closeDialog = true
-      }
-      else if(xmlString.trim() === "") {
-        if(this.isOrphan(nonGuid)) {
-          //remove node nonGuid
-          this.removeOrphanNode(nonGuid)
           closeDialog = true
         }
+        else if(xmlString.trim() === "") {
+          if(this.isOrphan(nonGuid)) {
+            //remove node nonGuid
+            this.removeOrphanNode(nonGuid)
+            closeDialog = true
+          }
+          else {
+            var error = `This node has links to other nodes, remove the node from ${this.props.title} and fix any appropriate references!`
+            alert(error)
+            closeDialog = false;
+          }
+        }
         else {
-          var error = `This node has links to other nodes, remove the node from ${this.props.title} and fix any appropriate references!`
-          alert(error)
+          this.xmlValidationError();
           closeDialog = false;
         }
       }
       else {
-        this.xmlValidationError();
-        closeDialog = false;
+        closeDialog = true;
       }
+
     }
-    else if (this.state.value && this.state.actions === 'adding') {
+    else if (this.state.actions === 'adding') {
       xmlString = this.state.value
       xmlWithoutNewLines = xmlString;
       //xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
-      if(xmlString.trim() === "") {
+      if(value == null || xmlString.trim() === "") {
         closeDialog = true
       }
       else if(validate(xmlString) === true) { //returns true if valid
@@ -353,6 +361,7 @@ export class GraphView extends React.Component {
 
     this.setState({
       actions: 'adding',
+      value: null,
     })
   }
 

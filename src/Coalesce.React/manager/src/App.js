@@ -58,7 +58,14 @@ export class App extends React.Component {
             img: "/images/svg/add.svg",
             title: 'Add Entity',
             onClick: () => this.setState({actions: 'adding'})
-          }
+          },
+          {
+            id: 'undo',
+            name: 'Undo',
+            img: "/images/svg/back.svg",
+            title: 'Revert Blueprint',
+            onClick: () => this.setState({actions: 'reverting'})
+          },
           ]}/>
           { data != null &&
             <GraphView reloadBlueprint={this.reloadBlueprint} actions={this.state.actions} data={data} title={selected} theme={theme} />
@@ -67,6 +74,7 @@ export class App extends React.Component {
             title="Error"
             opened={error != null}
             message={error}
+            actions={'error'}
             onPrimary={() => {this.setState({error: null})}}
           />
           {blueprints != null &&
