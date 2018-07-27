@@ -264,7 +264,7 @@ export class GraphView extends React.Component {
   onClose() {
     const {actions, selected, originalXml, value} = this.state
     console.log('onClose');
-    console.log(values);
+    console.log(value);
     this.setState({selected: null, })
     var xmlString = ''
     var xmlWithoutNewLines = ''
