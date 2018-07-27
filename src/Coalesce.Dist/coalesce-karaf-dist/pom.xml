@@ -128,6 +128,27 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+              <groupId>com.spotify</groupId>
+              <artifactId>dockerfile-maven-plugin</artifactId>
+              <version>1.4.3</version>
+              <executions>
+                <execution>
+                  <id>default</id>
+                  <goals>
+                    <goal>build</goal>
+                    <goal>push</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <configuration>
+                <repository>192.168.11.86:8083/coalesce-karaf</repository>
+                <buildArgs>
+                  <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                </buildArgs>
+                <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+              </configuration>
+            </plugin>
         </plugins>
     </build>
 

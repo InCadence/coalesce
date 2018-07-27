@@ -1,18 +1,17 @@
-FROM java:8-jdk
-ENV tarball=coalesce-karaf-dist-*.tar.gz
+FROM openjdk:8u171-jdk-alpine3.8
 
-RUN apt-get update \
-  && apt-get -y install maven \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN mkdir /tmp/install
-COPY target/${tarball} /tmp/install
+ARG TARBALL=*.tar.gz
+ARG TAR_PATH=./target/$TARBALL
 
-RUN mkdir /opt/karaf
-RUN tar -xzvf /tmp/install/${tarball} -C /opt/karaf/
-RUN rm -rf /tmp/install/${tarball}
 
-EXPOSE 1099 8101 44444 8181
+RUN mkdir -p /opt/karaf
+ADD $TAR_PATH /opt/karaf
 
-ENTRYPOINT ["/opt/karaf/bin/karaf"]
+
+RUN apk add --no-cache bash
+
+EXPOSE 8101
+EXPOSE 8181
+
+ENTRYPOINT ["bash", "-c", "/opt/karaf/bin/karaf"]
