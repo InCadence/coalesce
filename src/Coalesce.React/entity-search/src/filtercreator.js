@@ -1,15 +1,14 @@
 import React from 'react';
 import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
-import {Toggle} from 'common-components/lib/toggle.js'
-import {Collapse} from 'react-collapse';
-import {IconButton} from 'common-components/lib/components/IconButton.js'
-import {FilterGroup} from './filtergroup'
-import 'react-table/react-table.css'
-
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import { getDefaultTheme } from 'common-components/lib/js/theme'
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import IconButton from 'common-components/lib/components/IconButton'
+import FieldInput from 'common-components/lib/components/FieldInput'
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
 
 Object.assign(ReactTableDefaults, {
   defaultPageSize: 5,
@@ -17,100 +16,116 @@ Object.assign(ReactTableDefaults, {
   // etc...
 })
 
-const example = {
-    "pageSize":200,
-    "pageNumber":1,
-    "propertyNames":["CoalesceEntity.objectkey"],
-    "group":{
-      "operator":"AND",
-      "criteria":[
-          {
-            "key":0,
-            "recordset":"CoalesceEntity",
-            "field":"objectkey",
-            "operator":"PropertyIsNotEqualTo",
-            "value":"aa",
-            "matchCase":false
-          },
-        ],
-        /*
-        "group":[{
-          "operator":"AND",
-          "criteria":[
-              {
-                "key":0,
-                "recordset":"CoalesceEntity",
-                "field":"name",
-                "operator":"!=",
-                "value":"aa",
-                "matchCase":false
-              },
-            ]
-          }
-        ]
-        */
-      }
-    }
+const options = [
+  {
+    enum: "AND",
+    label: "AND"
+  },{
+    enum: "OR",
+    label: "OR"
+  }
+]
 
-export class FilterCreator extends React.Component {
+class FilterCreator extends React.Component {
 
   constructor(props) {
     super(props);
 
-    if (props.tabledata != null) {
-      for (var ii=0; ii<props.tabledata.length; ii++) {
-        props.tabledata[ii].key = ii;
-      }
+    this.state = {
+      data: props.data,
+      isOpened: true,
+      currentkey: 0
     }
 
-    this.state = props;
+    this.handleUpdate = this.handleUpdate.bind(this);
+    this.handleAddCriteria = this.handleAddCriteria.bind(this);
+    this.handleAddGroup = this.handleAddGroup.bind(this);
+    this.handleRemoveGroup = this.handleRemoveGroup.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.state = nextProps;
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.props.data !== nextProps.data) {
+      nextState.data = nextProps.data;
+    }
+
+    return true;
   }
 
   render() {
+    const { data } = this.state;
 
-    const {recordsets, tabledata, isOpened} = this.state;
+    var that = this;
 
     return (
-      <div className="ui-widget">
-        <Toggle
-          ontext="Search Criteria"
-          offtext="Search Criteria"
-          isToggleOn={true}
-          onToggle={(value) => {
-            this.setState({isOpened: value});
-          }}
-          />
-          <Collapse isOpened={isOpened}>
-            <div className="ui-widget-content">
-              <ReactTable
-                pageSize={this.props.maxRows}
-                data={tabledata}
-                showPagination={false}
-                columns={createColumns(this, recordsets)}
+        <ExpansionPanel  defaultExpanded>
+           <ExpansionPanelSummary style={{padding: '5px', height: '32px'}} expandIcon={<ExpandMoreIcon />}>
+             <Typography variant="headline">
+               {this.props.label} Criteria
+             </Typography>
+           </ExpansionPanelSummary>
+           <div style={{padding: '5px'}}>
+              <FieldInput
+                label="Operator"
+                field={data}
+                attr="operator"
+                dataType="ENUMERATION_TYPE"
+                options={options}
+                onChange={(value) => {
+                  const { data } = this.state;
+
+                  data.operator = value;
+
+                  this.handleUpdate(data);
+                }}
               />
-              <div className="form-buttons">
-                <IconButton icon="/images/svg/add.svg" title="Add Criteria" onClick={this.addRow.bind(this)} />
-                <IconButton icon="/images/svg/search.svg" title="Execute Query" onClick={this.props.onSearch.bind(this, this.state.tabledata)} />
+               <ReactTable
+                 style={{width: '100%'}}
+                 pageSize={this.props.maxRows}
+                 data={data.criteria}
+                 showPagination={false}
+                 columns={createColumns(this, this.props.recordsets, this.state.currentkey)}
+               />
+               <div style={{padding: '5px', backgroundColor: "#CCCCCC"}}>
+              {
+                data.groups.map(function(group) { return(
+                  <FilterCreator
+                    maxRows={that.props.maxRows}
+                    recordsets={that.props.recordsets}
+                    data={group}
+                    handleRemoveGroup={that.props.handleRemoveGroup}
+                    handleError={that.props.handleError}
+                  />
+                )})
+              }
               </div>
             </div>
-          </Collapse>
-      </div>
+            <Divider />
+            <ExpansionPanelActions  style={{padding: '5px'}}>
+              <IconButton icon="/images/svg/add.svg" title="Add Criteria" onClick={this.handleAddCriteria} />
+              <IconButton icon="/images/svg/new.svg" title="Add SubGroup" onClick={this.handleAddGroup}/>
+              <IconButton icon="/images/svg/remove.svg" title="Add Criteria" onClick={this.handleRemoveGroup} />
+            </ExpansionPanelActions>
+         </ExpansionPanel>
     )
   }
 
-  onRecordsetChange(key, e) {
+  handleUpdate(data) {
+      this.setState({data: data});
 
-    const {tabledata, recordsets} = this.state;
-    var row = this.getRow(tabledata, key);
+      if (this.props.handleUpdate) {
+        this.props.handleUpdate(data);
+      }
+  }
+
+  onRecordsetChange(key, e) {
+    //console.log("On record set change key is", key, "e is", e);
+    const { data } = this.state;
+    var row = this.getRow(data.criteria, key);
     var defaultField;
 
-    for (var ii=0; ii<recordsets.length; ii++) {
-      if (recordsets[ii].name === e.target.value) {
-        defaultField = recordsets[ii].definition[0].name;
+    for (var ii=0; ii<this.props.recordsets.length; ii++) {
+      if (this.props.recordsets[ii].name === e.target.value) {
+        defaultField = this.props.recordsets[ii].definition[0].name;
         break;
       }
     };
@@ -120,84 +135,110 @@ export class FilterCreator extends React.Component {
     row.operator = 'EqualTo';
     row.value = '';
 
-    this.setState({tabledata: tabledata});
+    this.handleUpdate(data)
   }
 
   onFieldChange(key, e) {
-    const {tabledata} = this.state;
-    var row = this.getRow(tabledata, key);
+    const {data} = this.state;
+    var row = this.getRow(data.criteria, key);
 
     row.field = e.target.value;
     row.operator = 'EqualTo';
     row.value = '';
 
-    this.setState({tabledata: tabledata});
+    this.handleUpdate(data)
   }
 
   onOperatorChange(key, e) {
-    const {tabledata} = this.state;
-    var row = this.getRow(tabledata, key);
+    const {data} = this.state;
+    var row = this.getRow(data.criteria, key);
 
     row.operator = e.target.value;
 
-    this.setState({tabledata: tabledata});
+    this.handleUpdate(data)
   }
 
   onValueChange(key, e) {
-    const {tabledata} = this.state;
-    var row = this.getRow(tabledata, key);
+    const {data} = this.state;
+    var row = this.getRow(data.criteria, key);
 
     row.value = e.target.value;
 
-    this.setState({tabledata: tabledata});
+    this.handleUpdate(data)
   }
 
   onMatchCaseChange(key, e) {
-    const {tabledata} = this.state;
-    var row = this.getRow(tabledata, key);
+    const {data} = this.state;
+    var row = this.getRow(data.criteria, key);
 
     row.matchCase = e.target.checked;
 
-    this.setState({tabledata: tabledata});
+    this.handleUpdate(data)
   }
 
-  deleteRow(key, e) {
+  onAndOrChange(e) {
+    const { data } = this.state;
 
-    const {tabledata} = this.state;
+    data.operator = e.target.value;
+    //Want to set the props to
+    this.handleUpdate(data);
+  }
 
+  handleRemoveCriteria(key, e) {
+
+    const { data } = this.state;
     // Delete Row
-    for (var ii=0; ii<tabledata.length; ii++) {
-      if (tabledata[ii].key === key) {
-          tabledata.splice(ii, 1);
+    for (var ii=0; ii<data.criteria.length; ii++) {
+      if (data.criteria[ii].key === key) {
+          data.criteria.splice(ii, 1);
           break;
       }
     }
 
     // Save State
-    this.setState({tabledata: tabledata});
+    this.handleUpdate(data)
   }
 
-  addRow(e) {
-    const {tabledata, currentkey, recordsets} = this.state;
+  handleAddGroup(){
+    const { data } = this.state;
+    var tempTable = {
+                     operator:'AND',
+                     criteria: [{key:0,
+                     recordset: 'CoalesceEntity',
+                     field: 'name',
+                     operator: 'EqualTo',
+                     value: '',
+                     matchCase: false}],
+                     groups:[]
+                    };
+    data.groups.push(tempTable);
 
+    this.handleUpdate(data)
+  }
+
+  handleRemoveGroup() {
+    this.props.handleError("(Coming Soon!!!) This will allow you to remove a criteria group.");
+  }
+
+  handleAddCriteria(e) {
+    const {currentkey, data} = this.state;
     var keyvalue = currentkey + 1;
 
-    if (tabledata.length < this.props.maxRows) {
+    if (data.criteria.length < this.props.maxRows) {
       // Create New Data Row
-      tabledata.push({
+      data.criteria.push({
         key: keyvalue,
-        recordset: recordsets[0].name,
-        field: recordsets[0].definition[0].name,
+        recordset: this.props.recordsets[0].name, //Assuming we always start with an existing recordset when we instantiate a filtercreator, always match with that
+        field: this.props.recordsets[0].definition[0].name,
         operator: 'EqualTo',
         value: '',
         matchCase: false
       });
 
       // Save State
-      this.setState({
-        tabledata: tabledata,
-        currentkey: keyvalue
-      });
+      this.setState({currentkey: keyvalue });
+
+      this.handleUpdate(data)
     } else {
       alert("Row limit reached");
     }
@@ -219,10 +260,9 @@ export class FilterCreator extends React.Component {
 
 
 
-function createColumns(that, recordsets) {
+function createColumns(that, recordsets, key) {
 
   var columns = [{Header: 'key', accessor: 'key', show: false}];
-
   if (recordsets != null) {
     columns.push({
       Header: '',
@@ -231,7 +271,11 @@ function createColumns(that, recordsets) {
       sortable: false,
       width: 50,
       Cell: (cell) => (
-        <IconButton icon={"/images/svg/remove.svg"} title="Remove Criteria" onClick={that.deleteRow.bind(that, cell.row.key)} enabled={true} />
+        <IconButton
+          icon={"/images/svg/remove.svg"}
+          title="Remove Criteria"
+          onClick={that.handleRemoveCriteria.bind(that, cell.row.key)}
+        />
       )
     });
 
@@ -257,7 +301,6 @@ function createColumns(that, recordsets) {
       sortable: false,
       Cell: (cell) => {
         var options = [];
-
         for (var ii=0; ii<recordsets.length; ii++) {
           if (cell.row._original.recordset === recordsets[ii].name) {
             recordsets[ii].definition.forEach(function (field) {
@@ -320,13 +363,22 @@ function createColumns(that, recordsets) {
         <input type="checkbox" className="form-control" title="Match Case" checked={cell.row.matchCase} onChange={that.onMatchCaseChange.bind(that, cell.row.key)}/>
       )
     });
+
+    /*columns.push({
+      Header: 'AndOr',
+      accessor: 'andor',
+      resizable: false,
+      sortable: false,
+      width: 100,
+      Cell: (cell) => (
+        <select className="form-control" value={//need an array of and/or for each criteria.andor} onChange={that.onAndOrChange.bind(that, cell.row.key)}>
+          <option>AND</option>
+          <option>OR</option>
+        </select>
+      )
+    });*/
   }
   return columns;
 }
 
-FilterCreator.defaultProps = {
-  maxRows: 10,
-  isOpened: true,
-  tabledata: [],
-  currentkey: 0
-}
+export default FilterCreator;

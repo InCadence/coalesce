@@ -3,6 +3,11 @@ import * as ol from 'openlayers';
 import {FeatureSelection} from './featureselection.js'
 import SlidingPane from 'react-sliding-pane';
 import 'react-sliding-pane/dist/react-sliding-pane.css';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Checkbox from '@material-ui/core/Checkbox';
 
 // Map Controls
 import 'openlayers/css/ol.css';
@@ -215,20 +220,30 @@ export class MapView extends React.Component {
               moveLayer={(feature, up, idx) => this.moveLayerCallBack(feature, up, idx)}
               availableLayers={this.state.availableLayers}
               styles={this.state.styles}
-              selectedLayers={this.state.selectedLayers}/>
+              selectedLayers={this.state.selectedLayers}
+              onError={this.props.onError}
+            />
             <div className="ui-widget">
               <div className="ui-widget-header">
                 <label>Misc</label>
               </div>
               <div className="ui-widget-content">
-                <div className="row">
-                  <div className="col-sm-2">
-                    <input type="checkbox" className="form-control"  onChange={this.onWMSLayerChange.bind(this)} checked={this.state.singleWMSLayer.enabled} disabled/>
-                  </div>
-                  <div className="col-sm-10">
-                    <label>Single WMS Layer</label>
-                  </div>
-                </div>
+                <List>
+                  <ListItem
+                    key="singleWMS"
+                    dense
+                    role={undefined}
+                  >
+                    <Checkbox
+                      checked={this.state.singleWMSLayer.enabled}
+                      onChange={this.onWMSLayerChange.bind(this)}
+                      tabIndex={-1}
+                      disableRipple
+                      disabled
+                    />
+                    <ListItemText primary="Single WMS Layer" />
+                  </ListItem>
+                </List>
               </div>
             </div>
         </SlidingPane>

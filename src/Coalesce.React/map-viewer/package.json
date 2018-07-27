@@ -8,14 +8,14 @@
   "private": true,
   "homepage": "/map",
   "dependencies": {
+    "@material-ui/core": "1.4.0",
+    "@material-ui/icons": "1.1.0",
     "common-components": "file:../common-components",
-    "eslint": "^4.10.0",
     "openlayers": "^4.4.2",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
+    "react": "16.3.0",
+    "react-dom": "16.3.0",
     "react-openlayers": "^0.2.1",
     "react-popup": "^0.8.0",
-    "react-scripts": "^1.0.16",
     "react-select": "^1.0.0-rc.10",
     "react-sliding-pane": "^2.0.1"
   },
@@ -28,6 +28,6 @@
     "production": "webpack -p"
   },
   "devDependencies": {
-    "react-scripts": "^1.0.14"
+    "react-scripts": "1.1.4"
   }
 }

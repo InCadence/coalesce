@@ -1,13 +1,16 @@
 import React from 'react';
-import Checkbox from 'material-ui/Checkbox';
-import TextField from 'material-ui/TextField';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import DatePicker from 'material-ui/DatePicker';
-import TimePicker from 'material-ui/TimePicker';
-import { IconButton } from 'common-components/lib/components/IconButton.js'
-
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
+import Enumeration from 'common-components/lib/components/fieldInputs/Enumeration'
+import IconButton from 'common-components/lib/components/IconButton'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import { withTheme } from '@material-ui/core/styles';
 import { Row, Col } from 'react-bootstrap';
+
+// TODO Replace Date / Time Pickers
+//import DatePicker from 'material-ui/DatePicker';
+//import TimePicker from 'material-ui/TimePicker';
 
 var parse = require('wellknown');
 
@@ -23,6 +26,15 @@ export class FieldInput extends React.Component {
         root: {
         },
         none: {
+        },
+        floatingLabel: {
+          color: 'rgba(0,0,0,0.5)'
+        },
+        floatingLabelFocus: {
+          color: props.muiTheme ? props.muiTheme.textField.focusColor : 'rgba(0,0,0,0.5)'
+        },
+        underline: {
+          borderColor: 'rgba(0,0,0,0.5)'
         }
       }
     } else {
@@ -37,6 +49,12 @@ export class FieldInput extends React.Component {
         },
         none: {
           'display': 'none'
+        },
+        floatingLabel: {
+        },
+        floatingLabelFocus: {
+        },
+        underline: {
         }
 
       }
@@ -44,24 +62,20 @@ export class FieldInput extends React.Component {
 
     this.state = {
       field: props.field,
-      style: style
+      style: style,
     };
-
 
     this.handleOnChange = this.handleOnChange.bind(this);
   }
 
   handleOnChange(attr, value) {
-
-    console.log(`${attr}=${value}`);
-
     const {field} = this.state;
     field[attr] = value;
 
-    this.setState({field: field});
+    //console.log(`${attr}=${value}`);
+    this.setState(field);
 
-    if (this.props.onChange != null)
-    {
+    if (this.props.onChange) {
       this.props.onChange(value);
     }
   }
@@ -72,155 +86,139 @@ export class FieldInput extends React.Component {
 
     var type = (this.props.dataType != null) ? this.props.dataType : field.dataType;
     var attr = (this.props.attr != null) ? this.props.attr : 'value';
-    var label = this.props.showLabels ? (field.label != null && field.label.length > 0 ? field.label : field.name) : null;
+    var label = this.props.showLabels ? this.props.label ? this.props.label : (field.label != null && field.label.length > 0 ? field.label : field.name) : null;
+    var defaultValue = (this.props.defaultValue != null) ? this.props.defaultValue : field.defaultValue;
+    var view;
 
     switch (type) {
       case 'ENUMERATION_LIST_TYPE':
-        return (
-          <SelectField
-            id={field.key}
-            fullWidth={true}
-            floatingLabelText={label}
-            underlineShow={this.props.showLabels}
-            multiple={true}
-            value={field[attr]}
-            style={style.root}
-            labelStyle={style.root}
-            iconStyle={style.none}
-            hintStyle={style.none}
-            floatingLabelStyle={style.none}
-            errorStyle={style.none}
-            onChange={(event, index, values) => {this.handleOnChange(attr, values)}}
-          >
-            {this.props.options && this.props.options.map((item) => {
-              return (
-                <MenuItem key={item.enum} value={item.enum} primaryText={item.label} />
-              )
-            })}
-          </SelectField>
-        )
-      case 'ENUMERATION_TYPE':
-        return (
-          <SelectField
-            id={field.key}
-            fullWidth={true}
-            floatingLabelText={label}
-            underlineShow={this.props.showLabels}
-            style={style.root}
-            labelStyle={style.root}
-            iconStyle={style.none}
-            hintStyle={style.none}
-            floatingLabelStyle={style.none}
-            errorStyle={style.none}
-            value={field[attr]}
-            onChange={(event, value) => {this.handleOnChange(attr, this.props.options[value].enum)}}
-          >
-            {this.props.options && this.props.options.map((item) => {
-              return (
-                <MenuItem key={item.enum} value={item.enum} primaryText={item.label} />
-              )
-            })}
-          </SelectField>
-        )
-      case 'URI_TYPE':
-      case 'STRING_TYPE':
-        return (
-          <TextField
-            id={field.key}
-            fullWidth={true}
-            floatingLabelText={label}
-            underlineShow={this.props.showLabels}
-            style={style.root}
-            value={field[attr]}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
+        view = (
+          <Enumeration
+            list={true}
+            field={field}
+            style={style}
+            label={label}
+            showLabels={this.props.showLabels}
+            attr={attr}
+            options={this.props.options}
+            onChange={this.handleOnChange}
+            onKeyDown={this.props.onKeyDown}
           />
         );
+        break;
+
+      case 'ENUMERATION_TYPE':
+        view = (
+          <Enumeration
+            list={false}
+            field={field}
+            dense
+            style={style}
+            label={label}
+            showLabels={this.props.showLabels}
+            attr={attr}
+            options={this.props.options}
+            onChange={this.handleOnChange}
+            onKeyDown={this.props.onKeyDown}
+          />
+        );
+        break;
+
+      case 'URI_TYPE':
+      case 'STRING_TYPE':
+        view = (
+          <TextField
+            id={field.key}
+            fullWidth
+            label={label}
+            style={style.root}
+            helperText={this.props.hint}
+            value={field[attr]}
+            defaultValue={field.defaultValue}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
+            onKeyDown={this.props.onKeyDown}
+          />
+        );
+        break;
+      case 'BOOLEAN_LIST_TYPE':
+      case 'GUID_LIST_TYPE':
+      case 'FLOAT_LIST_TYPE':
+      case 'DOUBLE_LIST_TYPE':
+      case 'LONG_LIST_TYPE':
+      case 'INTEGER_LIST_TYPE':
+      case 'STRING_LIST_TYPE':
+        view = (
+          <TextField
+              id={field.key}
+              fullWidth
+              label={label}
+              helperText={this.props.hint}
+              InputProps={{
+                  startAdornment: <InputAdornment position="start">(CSV)</InputAdornment>,
+                }}
+              style={style}
+              value={field[attr]}
+              defaultValue={field.defaultValue}
+              value={field[attr] ? field[attr].join() : ""}
+              onChange={(event) => {this.handleOnChange(attr, event.target.value.split(","))}}
+              onKeyDown={this.props.onKeyDown}
+            />
+          );
+          break;
       case 'FLOAT_TYPE':
       case 'DOUBLE_TYPE':
       case 'LONG_TYPE':
-        return (
+        view = (
+          //pass these a "step" prop (.01 or 1)
           <TextField
             id={field.key}
             type='number'
-            step='0.01'
-            fullWidth={true}
-            floatingLabelText={label}
-            underlineShow={this.props.showLabels}
-            style={style.root}
-            value={field[attr]}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
-          />
-        );
-      case 'INTEGER_TYPE':
-        return (
-          <TextField
-            id={field.key}
-            type='number'
-            fullWidth={true}
-            floatingLabelText={label}
-            underlineShow={this.props.showLabels}
-            style={style.root}
-            value={field[attr]}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
-          />
-        );
-      case 'BOOLEAN_TYPE':
-        return (
-          <Checkbox
-            id={field.key}
+            inputProps={{step: 0.01, style: style.root}}
+            fullWidth
             label={label}
+            helperText={this.props.hint}
             style={style.root}
-            checked={field[attr]}
-            onCheck={(event, checked) => {this.handleOnChange(attr, checked)}}
+            value={field[attr]}
+            defaultValue={field.defaultValue}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
+            onKeyDown={this.props.onKeyDown}
           />
         );
-      case 'DATE_TIME_TYPE':
-
-        var dateTime
-
-        if (field.value == null || field.value === "") {
-          dateTime = null;
-        } else {
-          dateTime = new Date(field.value);
-        }
-
-        return (
-          <Row>
-            <Col xs={6}>
-              <DatePicker
-                id={field.key + 'date'}
-                floatingLabelText={this.props.showLabels ? label + " Date" : null}
-                underlineShow={this.props.showLabels}
-                style={style.root}
-                mode="landscape"
-                value={dateTime}
-                onChange={(tmp, date) => {
-                  var newDateTime = dateTime != null ? dateTime : new Date();
-                  newDateTime.setFullYear(date.getFullYear());
-                  newDateTime.setMonth(date.getMonth());
-                  newDateTime.setDate(date.getDate());
-                  this.handleOnChange(attr, newDateTime.toISOString());
-                }}
-              />
-            </Col>
-            <Col xs={6}>
-              <TimePicker
-                id={field.key + 'time'}
-                floatingLabelText={this.props.showLabels ? "Time" : null}
-                underlineShow={this.props.showLabels}
-                style={style.root}
-                value={dateTime}
-                format="24hr"
-                onChange={(tmp, date) => {
-                  var newDateTime = dateTime != null ? dateTime : new Date();
-                  newDateTime.setHours(date.getHours());
-                  newDateTime.setMinutes(date.getMinutes());
-                  this.handleOnChange(attr, newDateTime.toISOString());
-                }}
-              />
-            </Col>
-        </Row>
+        break;
+      case 'INTEGER_TYPE':
+        view = (
+          <TextField
+            id={field.key}
+            type='number'
+            inputProps={{step: 1, style: style.root}}
+            fullWidth
+            label={label}
+            helperText={this.props.hint}
+            style={style.root}
+            value={field[attr]}
+            defaultValue={field.defaultValue}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
+            onKeyDown={this.props.onKeyDown}
+          />
         );
+        break;
+      case 'BOOLEAN_TYPE':
+        view = (
+          <FormControlLabel label={label} control={
+              <Checkbox
+                id={field.key}
+                checked={field[attr] === true}
+                style={style}
+                disableRipple
+                defaultChecked={defaultValue}
+                onChange={(event) => {this.handleOnChange(attr, event.target.checked)}}
+                onKeyDown={this.props.onKeyDown}
+              />
+            }
+          />
+        );
+        break;
+
       case 'BINARY_TYPE':
       case 'FILE_TYPE':
         return (
@@ -234,6 +232,52 @@ export class FieldInput extends React.Component {
             {this.props.showLabel ? <label>Download {label}</label> : null}
           </div>
         );
+        break;
+      case 'LINE_STRING_TYPE':
+          view = (
+            <TextField
+              id={field.key}
+              fullWidth={true}
+              label={label + " - LINESTRING (x1 y1 z1, x2 y2 z2, ...)"}
+              helperText={this.props.hint}
+              style={style.root}
+              value={field[attr]}
+              defaultValue={defaultValue}
+              onChange={(event, value) => {this.handleOnChange(attr, value)}}
+              onKeyDown={this.props.onKeyDown}
+            />
+          );
+          break;
+      case 'POLYGON_TYPE':
+          view = (
+            <TextField
+              id={field.key}
+              fullWidth={true}
+              label={label + " - POLYGON ((x1 y1 z1, x2 y2 z2, ...))"}
+              helperText={this.props.hint}
+              style={style.root}
+              value={field[attr]}
+              defaultValue={defaultValue}
+              onChange={(event, value) => {this.handleOnChange(attr, value)}}
+              onKeyDown={this.props.onKeyDown}
+            />
+          );
+          break;
+      case 'GEOCOORDINATE_LIST_TYPE':
+          view = (
+            <TextField
+              id={field.key}
+              fullWidth={true}
+              label={label + " - MULTIPOINT (x1 y1 z1, x2 y2 z2, ...)"}
+              helperText={this.props.hint}
+              style={style.root}
+              value={field[attr]}
+              defaultValue={defaultValue}
+              onChange={(event, value) => {this.handleOnChange(attr, value)}}
+              onKeyDown={this.props.onKeyDown}
+            />
+          );
+          break;
       case 'GEOCOORDINATE_TYPE':
 
       var geo;
@@ -242,21 +286,26 @@ export class FieldInput extends React.Component {
           geo = {coordinates: [0, 0, 0]};
         } else {
           geo = parse(field.value);
+
+          if (geo == null) {
+              geo = {coordinates: [0, 0, 0]};
+          }
         }
 
-        return (
+        view = (
             <Row>
               <Col xs={4}>
                 <TextField
                   id={field.key + 'x'}
                   type='number'
                   step='0.01'
-                  floatingLabelText={this.props.showLabels ? label + " Latitude" : null}
-                  underlineShow={this.props.showLabels}
+                  label={this.props.showLabels ? label + " Longitude" : null}
+                  helperText={this.props.hint}
                   style={style.root}
                   fullWidth={true}
                   value={geo.coordinates[0]}
                   onChange={(event, value) => {this.handleOnChange(attr, `POINT(${value} ${geo.coordinates[1]} ${geo.coordinates[2]})`)}}
+                  onKeyDown={this.props.onKeyDown}
                 />
               </Col>
               <Col xs={4}>
@@ -264,12 +313,13 @@ export class FieldInput extends React.Component {
                   id={field.key + 'y'}
                   type='number'
                   step='0.01'
-                  floatingLabelText={this.props.showLabels ? "Longitude" : null}
-                  underlineShow={this.props.showLabels}
+                  label={this.props.showLabels ? "Latitude" : null}
+                  helperText={this.props.hint}
                   style={style.root}
                   fullWidth={true}
                   value={geo.coordinates[1]}
                   onChange={(event, value) => {this.handleOnChange(attr, `POINT(${geo.coordinates[0]} ${value} ${geo.coordinates[2]})`)}}
+                  onKeyDown={this.props.onKeyDown}
                 />
               </Col>
               <Col xs={4}>
@@ -277,16 +327,18 @@ export class FieldInput extends React.Component {
                   id={field.key + 'z'}
                   type='number'
                   step='0.01'
-                  floatingLabelText={this.props.showLabels ? "Attitude" : null}
-                  underlineShow={this.props.showLabels}
+                  label={this.props.showLabels ? "Attitude" : null}
+                  helperText={this.props.hint}
                   style={style.root}
                   fullWidth={true}
                   value={geo.coordinates[2]}
                   onChange={(event, value) => {this.handleOnChange(attr, `POINT(${geo.coordinates[0]} ${geo.coordinates[1]} ${value})`)}}
+                  onKeyDown={this.props.onKeyDown}
                 />
               </Col>
           </Row>
         );
+        break;
       case 'CIRCLE_TYPE':
 
         var center;
@@ -297,19 +349,20 @@ export class FieldInput extends React.Component {
           center = parse(field.value);
         }
 
-        return (
+        view = (
           <Row>
             <Col xs={3}>
               <TextField
                 id={field.key + 'x'}
                 type='number'
                 step='0.01'
-                floatingLabelText={this.props.showLabels ? label + " Latitude" : null}
-                underlineShow={this.props.showLabels}
+                label={this.props.showLabels ? label + " Longitude" : null}
+                helperText={this.props.hint}
                 style={style.root}
                 fullWidth={true}
                 value={center.coordinates[0]}
                 onChange={(event, value) => {this.handleOnChange(attr, `POINT(${value} ${center.coordinates[1]} ${center.coordinates[2]})`)}}
+                onKeyDown={this.props.onKeyDown}
               />
             </Col>
             <Col xs={3}>
@@ -317,12 +370,13 @@ export class FieldInput extends React.Component {
                 id={field.key + 'y'}
                 type='number'
                 step='0.01'
-                floatingLabelText={this.props.showLabels ? "Longitude" : null}
-                underlineShow={this.props.showLabels}
+                label={this.props.showLabels ? "Latitude" : null}
+                helperText={this.props.hint}
                 style={style.root}
                 fullWidth={true}
                 value={center.coordinates[1]}
                 onChange={(event, value) => {this.handleOnChange(attr, `POINT(${center.coordinates[0]} ${value} ${center.coordinates[2]})`)}}
+                onKeyDown={this.props.onKeyDown}
               />
             </Col>
             <Col xs={3}>
@@ -330,12 +384,13 @@ export class FieldInput extends React.Component {
                 id={field.key + 'z'}
                 type='number'
                 step='0.01'
-                floatingLabelText={this.props.showLabels ? "Attitude" : null}
-                underlineShow={this.props.showLabels}
+                label={this.props.showLabels ? "Attitude" : null}
+                helperText={this.props.hint}
                 style={style.root}
                 fullWidth={true}
                 value={center.coordinates[2]}
                 onChange={(event, value) => {this.handleOnChange(attr, `POINT(${center.coordinates[0]} ${center.coordinates[1]} ${value})`)}}
+                onKeyDown={this.props.onKeyDown}
               />
             </Col>
             <Col xs={3}>
@@ -344,46 +399,91 @@ export class FieldInput extends React.Component {
                 type='number'
                 step='0.01'
                 value={field.radius}
-                floatingLabelText={this.props.showLabels ? "Radius" : null}
-                underlineShow={this.props.showLabels}
+                label={this.props.showLabels ? "Radius" : null}
+                helperText={this.props.hint}
                 style={style.root}
                 fullWidth={true}
                 onChange={(event, value) => {this.handleOnChange('radius', value)}}
+                onKeyDown={this.props.onKeyDown}
               />
             </Col>
           </Row>
       );
+      break;
       case 'GUID_TYPE':
-        return (
+        view = (
           <TextField
             id={field.key}
             fullWidth={true}
-            floatingLabelText={label}
-            underlineShow={this.props.showLabels}
+            label={label}
+            helperText={this.props.hint}
             //inputProps={{ pattern: "[a-z]" }}
             style={style.root}
             value={field[attr]}
+            defaultValue={defaultValue}
             onChange={(event, value) => {this.handleOnChange(attr, value)}}
+            onKeyDown={this.props.onKeyDown}
           />
         );
-      default:
-        return (
+        break;
+      case "LABEL":
+        view = (
           <TextField
             id={field.key}
             fullWidth={true}
-            floatingLabelText={label}
-            underlineShow={this.props.showLabels}
-            style={style.root}
+            label={label}
+            style={style}
+            inputProps={{style: { 'borderBottom': '1px solid rgba(0, 0, 0, 0.5)' }}}
             disabled
-            value={field[attr]}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
           />
         );
+        break;
+      default:
+        view = (
+          <TextField
+            id={field.key}
+            fullWidth={true}
+            label={label + " (UI Not Implemented)"}
+            helperText={this.props.hint}
+            style={style}
+            inputProps={this.props.inputProps}
+            disabled
+            value={field[attr]}
+            defaultValue={field.defaultValue}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
+          />
+        );
+        break;
     }
 
+    if (this.props.isNullable) {
+      return (
+        <table className={this.props.css}>
+          <tbody>
+            <tr>
+              <td width="100%">
+                {view}
+              </td>
+              <td width="30px">
+                <IconButton
+                  id={field.key}
+                  icon="/images/svg/clear.svg"
+                  title={"Clear " + label}
+                  onClick={() => this.handleOnChange(attr, "")}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      )
+    } else {
+      return view;
+    }
   }
 }
 
 FieldInput.defaultProps = {
   showLabels: true
 }
+
+export default withTheme()(FieldInput);

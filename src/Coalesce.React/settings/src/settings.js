@@ -1,11 +1,6 @@
-import "babel-polyfill";
-
 import React from 'react';
 import ReactTable from 'react-table'
-import Popup from 'react-popup';
-import { ReactTableDefaults } from 'react-table'
 
-import { IconButton} from 'common-components/lib/index.js'
 import 'react-table/react-table.css'
 
 export class SettingsView extends React.Component {
@@ -17,8 +12,6 @@ export class SettingsView extends React.Component {
       settings: props.settings
     };
 
-    this.onAddSetting = this.onAddSetting.bind(this);
-    this.onSaveSettings = props.saveCallback.bind(this, this.state.settings);
   }
 
   onValueChange(name, e) {
@@ -31,26 +24,11 @@ export class SettingsView extends React.Component {
     })
   }
 
-  onAddSetting() {
 
-    var that = this;
-
-    Popup.plugins().prompt('OK', 'Enter Setting Name', '', '', function(value) {
-      const {settings} = that.state;
-
-      settings[value] = '';
-
-      that.setState({
-        settings: settings
-      })
-    });
-  }
 
   render() {
 
     const {settings} = this.state;
-
-    var that = this;
 
     var columns = [
       {
@@ -77,24 +55,15 @@ export class SettingsView extends React.Component {
     })
 
     return (
-        <div className="ui-widget">
-        <div className="ui-widget-header">
-          Settings
-        </div>
-        <div className="ui-widget-content">
-          <ReactTable
-            data={data}
-            showPagination={true}
-            columns={columns}
-            sorted={[{'id': 'name', 'desc': false}]}
-          />
-          <div className="form-buttons">
-            <IconButton icon="/images/svg/add.svg" title="Add Setting" onClick={this.onAddSetting} />
-            <IconButton icon="/images/svg/save.svg" title="Save Settings" onClick={this.onSaveSettings} />
-          </div>
-          </div>
-        </div>
+      <ReactTable
+        data={data}
+        showPagination={true}
+        columns={columns}
+        sorted={[{'id': 'name', 'desc': false}]}
+      />
     )
   }
 
 }
+
+export default SettingsView;

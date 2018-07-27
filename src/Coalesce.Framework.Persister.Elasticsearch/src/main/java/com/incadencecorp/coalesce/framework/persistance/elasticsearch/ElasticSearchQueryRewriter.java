@@ -71,15 +71,23 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
         if (extraData instanceof Boolean)
         {
-            if (isStringField(expression))
+            try
             {
-                name = ff.property(getNormalizedPropertyName(expression.getPropertyName()) + ".keyword");
+                if (isStringField(expression))
+                {
+                    name = ff.property(getNormalizedPropertyName(expression.getPropertyName()) + ".keyword");
 
-                LOGGER.info("Rewriting ({}) => ({})", expression.getPropertyName(), name.getPropertyName());
+                    LOGGER.info("Rewriting ({}) => ({})", expression.getPropertyName(), name.getPropertyName());
+                }
+                else
+                {
+                    name = ff.property(getNormalizedPropertyName(expression.getPropertyName()));
+                }
             }
-            else
+            catch (IllegalArgumentException e)
             {
-                name = ff.property(getNormalizedPropertyName(expression.getPropertyName()));
+                // TODO Need to address, for now do nothing
+                name = expression;
             }
         }
         else

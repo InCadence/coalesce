@@ -1,7 +1,9 @@
 import React from 'react';
-import {List, ListItem} from 'material-ui/List';
-import ActionDelete from 'material-ui/svg-icons/action/delete';
-import EditorModeEdit from 'material-ui/svg-icons/editor/mode-edit';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText'
+import ActionDelete from '@material-ui/icons/Delete';
+import EditorModeEdit from '@material-ui/icons/ModeEdit';
 import { DialogEditDefinition } from './DialogEditDefinition';
 
 export class Definitions extends React.Component {
@@ -25,23 +27,17 @@ export class Definitions extends React.Component {
           {this.props.data.map((item) => {return (
               <ListItem
                 key={item.key}
-                primaryText={item.name}
-                secondaryText={item.dataType}
-                leftIcon={
-                  <EditorModeEdit
-                    color="#000000"
-                    hoverColor="#FF9900"
-                    onClick={() => {this.setState({selected: item})}}
-                  />
-                }
-                rightIcon={
-                  <ActionDelete
-                    color="#000000"
-                    hoverColor="#FF9900"
-                    onClick={() => {this.handleDeleteDefinition(item.key)}}
-                  />
-                }
-              />
+              >
+                <EditorModeEdit
+                  color="primary"
+                  onClick={() => {this.setState({selected: item})}}
+                />
+                <ListItemText primary={item.name} secondary={item.dataType} />
+                <ActionDelete
+                  color="primary"
+                  onClick={() => {this.handleDeleteDefinition(item.key)}}
+                />
+              </ListItem>
           )})}
         </List>
         {this.state.selected != null &&

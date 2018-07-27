@@ -31,7 +31,7 @@ export class RecordsetView extends React.Component
   }
 
   render() {
-    const {data, showAll} = this.state;
+    const {data} = this.state;
     const { recordset } = this.props;
 
     var that = this;

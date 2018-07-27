@@ -17,26 +17,30 @@
 
 package com.incadencecorp.coalesce.services.crud.service.data.controllers;
 
-import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
+import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
+import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.services.api.Results;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkType;
 import com.incadencecorp.coalesce.services.api.crud.ELinkAction;
-import com.incadencecorp.coalesce.services.api.search.HitType;
-import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphLink;
 import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
-import com.incadencecorp.coalesce.services.search.api.ISearchClient;
+import org.geotools.data.Query;
+import org.geotools.filter.SortByImpl;
 import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.rowset.CachedRowSet;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +54,7 @@ public class LinkageDataController {
     private static final Logger LOGGER = LoggerFactory.getLogger(LinkageDataController.class);
 
     private ICrudClient crud;
-    private ISearchClient search;
+    private CoalesceSearchFramework search;
 
     /**
      * Default Constructor
@@ -66,7 +70,7 @@ public class LinkageDataController {
      * @param crud   used for modifying linkages
      * @param search used for retrieving linkages
      */
-    public LinkageDataController(ICrudClient crud, ISearchClient search)
+    public LinkageDataController(ICrudClient crud, CoalesceSearchFramework search)
     {
         this.crud = crud;
         this.search = search;
@@ -74,18 +78,18 @@ public class LinkageDataController {
 
     public void unlink(List<GraphLink> links) throws RemoteException
     {
-        DataObjectLinkType[] tasks = new DataObjectLinkType[links.size()];
+        List<DataObjectLinkType> tasks = new ArrayList<>();
 
-        for (int ii = 0; ii < tasks.length; ii++)
+        for (GraphLink link : links)
         {
-            GraphLink link = links.get(ii);
-
             DataObjectLinkType task = new DataObjectLinkType();
             task.setAction(ELinkAction.UNLINK);
             task.setDataObjectKeySource(link.getSource());
             task.setDataObjectKeyTarget(link.getTarget());
             task.setLinkType(link.getType());
             task.setLabel(link.getLabel());
+
+            tasks.add(task);
 
             LOGGER.debug("(DELETE) ({})<-[{}:{}]->({})",
                          link.getSource(),
@@ -94,34 +98,54 @@ public class LinkageDataController {
                          link.getTarget());
         }
 
-        crud.updateLinkages(tasks);
+        crud.updateLinkages(tasks.toArray(new DataObjectLinkType[tasks.size()]));
     }
 
     public void link(List<GraphLink> links) throws RemoteException
     {
-        DataObjectLinkType[] tasks = new DataObjectLinkType[links.size()];
+        List<DataObjectLinkType> tasks = new ArrayList<>();
 
-        for (int ii = 0; ii < tasks.length; ii++)
+        for (GraphLink link : links)
         {
-            GraphLink link = links.get(ii);
-
             DataObjectLinkType task = new DataObjectLinkType();
             task.setAction(link.getStatus() == ECoalesceObjectStatus.READONLY ? ELinkAction.MAKEREADONLY : ELinkAction.LINK);
             task.setDataObjectKeySource(link.getSource());
             task.setDataObjectKeyTarget(link.getTarget());
             task.setLinkType(link.getType());
             task.setLabel(link.getLabel());
-            // TODO Not Implemented
-            // link.setByDirectional(true);
 
-            LOGGER.debug("(CREATE) ({})<-[{}:{}]->({})",
-                         link.getSource(),
-                         link.getType(),
-                         link.getLabel(),
-                         link.getTarget());
+            tasks.add(task);
+
+            if (link.isBiDirectional())
+            {
+                // Swap Source & Target
+                DataObjectLinkType reverse = new DataObjectLinkType();
+                reverse.setAction(task.getAction());
+                reverse.setDataObjectKeySource(link.getTarget());
+                reverse.setDataObjectKeyTarget(link.getSource());
+                reverse.setLinkType(task.getLinkType());
+                reverse.setLabel(task.getLabel());
+
+                tasks.add(reverse);
+
+                LOGGER.debug("(CREATE) ({})<-[{}:{}]->({})",
+                             link.getSource(),
+                             link.getType(),
+                             link.getLabel(),
+                             link.getTarget());
+            }
+            else
+            {
+                LOGGER.debug("(CREATE) ({})-[{}:{}]->({})",
+                             link.getSource(),
+                             link.getType(),
+                             link.getLabel(),
+                             link.getTarget());
+            }
+
         }
 
-        crud.updateLinkages(tasks);
+        crud.updateLinkages(tasks.toArray(new DataObjectLinkType[tasks.size()]));
     }
 
     public List<GraphLink> retrieveLinkages(String key) throws RemoteException
@@ -131,6 +155,7 @@ public class LinkageDataController {
         if (search == null)
         {
             Results<CoalesceEntity> result = crud.retrieveDataObjects(key)[0];
+
             if (!result.isSuccessful())
             {
                 throw new RemoteException(result.getError());
@@ -144,8 +169,6 @@ public class LinkageDataController {
                 link.setLabel(linkage.getLabel());
                 link.setStatus(linkage.getStatus());
                 link.setType(linkage.getLinkType());
-                // TODO Not Implemented
-                // link.setByDirectional(true);
 
                 response.add(link);
             }
@@ -154,41 +177,48 @@ public class LinkageDataController {
         {
             try
             {
-                PropertyName[] properties = new PropertyName[] { CoalescePropertyFactory.getLinkageLabel(),
-                                                                 CoalescePropertyFactory.getLinkageStatus(),
-                                                                 CoalescePropertyFactory.getLinkageType()
-                };
+                List<PropertyName> properties = new ArrayList<>();
+                properties.add(CoalescePropertyFactory.getLinkageEntityKey());
+                properties.add(CoalescePropertyFactory.getLinkageLabel());
+                properties.add(CoalescePropertyFactory.getLinkageStatus());
+                properties.add(CoalescePropertyFactory.getLinkageType());
 
-                SearchDataObjectResponse searchResult = search.search(CoalescePropertyFactory.getLinkageEntityKey(key),
-                                                                      1,
-                                                                      properties,
-                                                                      null,
-                                                                      true);
+                Query query = new Query("coalesce", CoalescePropertyFactory.getEntityKey(key));
 
-                if (searchResult.getStatus() != EResultStatus.SUCCESS)
+                query.setProperties(properties);
+                query.setStartIndex(0);
+                query.setMaxFeatures(200);
+                query.setSortBy(new SortBy[] {
+                        new SortByImpl(CoalescePropertyFactory.getLastModified(), SortOrder.DESCENDING)
+                });
+
+                SearchResults results = search.search(query);
+
+                if (!results.isSuccessful())
                 {
-                    throw new RemoteException(searchResult.getError());
+                    throw new RemoteException(results.getError());
                 }
 
-                if (searchResult.getResult().get(0).getStatus() != EResultStatus.SUCCESS)
+                try (CachedRowSet rowset = results.getResults())
                 {
-                    throw new RemoteException(searchResult.getResult().get(0).getError());
+                    if (rowset.first())
+                    {
+                        do
+                        {
+                            GraphLink link = new GraphLink();
+                            link.setSource(key);
+                            link.setTarget(rowset.getString(2));
+                            link.setLabel(rowset.getString(3));
+                            link.setStatus(ECoalesceObjectStatus.fromValue(rowset.getString(4)));
+                            link.setType(ELinkTypes.getTypeForLabel(rowset.getString(5)));
+
+                            response.add(link);
+                        }
+                        while (rowset.next());
+                    }
                 }
-
-                for (HitType hit : searchResult.getResult().get(0).getResult().getHits())
-                {
-                    GraphLink link = new GraphLink();
-                    link.setSource(key);
-                    link.setTarget(hit.getEntityKey());
-                    link.setLabel(hit.getValues().get(0));
-                    link.setStatus(ECoalesceObjectStatus.values()[Integer.parseInt(hit.getValues().get(1))]);
-                    link.setType(ELinkTypes.values()[Integer.parseInt(hit.getValues().get(2))]);
-
-                    response.add(link);
-                }
-
             }
-            catch (CoalesceException e)
+            catch (CoalesceException | SQLException e)
             {
                 // Rethrow
                 throw new RemoteException(e.getMessage(), e);

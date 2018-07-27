@@ -42,19 +42,18 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
         CoalesceFramework framework = parameters.getTarget();
         DataObjectLinkType[] params = parameters.getParams();
 
-        // TODO Implement Authorization
-        // boolean isSysAdmin = UserValidator.isSysAdmin(userId);
-
         String user = parameters.getPrincipalName();
         String ip = parameters.getPrincipalIp();
-        boolean isSysAdmin = false;
+
+        // TODO Implement Authorization
+        // boolean isSysAdmin = UserValidator.isSysAdmin(userId);
+        boolean isSysAdmin = true;
 
         Map<String, CoalesceEntity> map = new HashMap<String, CoalesceEntity>();
 
         // Determine complete list of keys
         for (DataObjectLinkType task : params)
         {
-
             // Same Source & Target?
             if (task.getDataObjectKeySource().equalsIgnoreCase(task.getDataObjectKeyTarget()))
             {
@@ -63,7 +62,6 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
 
             map.put(task.getDataObjectKeySource(), null);
             map.put(task.getDataObjectKeyTarget(), null);
-
         }
 
         // Retrieve Entities
@@ -81,9 +79,10 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
             CoalesceEntity entity1 = map.get(task.getDataObjectKeySource());
             CoalesceEntity entity2 = map.get(task.getDataObjectKeyTarget());
 
-            switch (task.getAction()) {
+            switch (task.getAction())
+            {
             case MAKEREADONLY:
-                EntityLinkHelper.linkEntities(entity1,
+                EntityLinkHelper.linkEntitiesUniDirectional(entity1,
                                               task.getLinkType(),
                                               entity2,
                                               user,
@@ -92,16 +91,10 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
                                               true,
                                               ECoalesceObjectStatus.READONLY,
                                               isSysAdmin);
-
-                CoalesceNotifierUtil.sendLinkage(getName(),
-                                                 ECrudOperations.UPDATE,
-                                                 entity1,
-                                                 task.getLinkType(),
-                                                 entity2);
                 break;
             case LINK:
 
-                EntityLinkHelper.linkEntities(entity1,
+                EntityLinkHelper.linkEntitiesUniDirectional(entity1,
                                               task.getLinkType(),
                                               entity2,
                                               user,
@@ -110,21 +103,9 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
                                               true,
                                               ECoalesceObjectStatus.ACTIVE,
                                               isSysAdmin);
-
-                CoalesceNotifierUtil.sendLinkage(getName(),
-                                                 ECrudOperations.CREATE,
-                                                 entity1,
-                                                 task.getLinkType(),
-                                                 entity2);
                 break;
             case UNLINK:
                 EntityLinkHelper.unLinkEntities(entity1, entity2, task.getLinkType(), user, ip, isSysAdmin);
-
-                CoalesceNotifierUtil.sendLinkage(getName(),
-                                                 ECrudOperations.DELETE,
-                                                 entity1,
-                                                 task.getLinkType(),
-                                                 entity2);
                 break;
             }
 
@@ -141,7 +122,8 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
                 CoalesceEntity entity1 = map.get(task.getDataObjectKeySource());
                 CoalesceEntity entity2 = map.get(task.getDataObjectKeyTarget());
 
-                switch (task.getAction()) {
+                switch (task.getAction())
+                {
                 case MAKEREADONLY:
                     CoalesceNotifierUtil.sendLinkage(getName(),
                                                      ECrudOperations.UPDATE,

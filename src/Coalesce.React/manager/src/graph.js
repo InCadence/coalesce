@@ -1,13 +1,16 @@
 import * as React from "react";
 import { Graph } from 'react-d3-graph';
-import Paper from 'material-ui/Paper';
+import Paper from '@material-ui/core/Paper';
 import { DialogMessage } from 'common-components/lib/components/dialogs'
 import ReactTable from 'react-table'
 //import Checkbox from 'material-ui/Checkbox';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import IconButton from 'material-ui/IconButton';
-import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import IconButton from '@material-ui/core/IconButton';
+import NavigationClose from '@material-ui/icons/Close';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
 
 export class GraphView extends React.Component {
 
@@ -18,7 +21,8 @@ export class GraphView extends React.Component {
 
     this.state = {
       data: props.data,
-      config: props.config
+      config: props.config,
+      selectedNode: ""
     };
 
     this.toggleStatic = this.toggleStatic.bind(this);
@@ -52,14 +56,6 @@ export class GraphView extends React.Component {
     window.removeEventListener("resize", this.handleResize.bind(this));
   }
 
-  componentWillUpdate() {
-
-  }
-
-  componentDidUpdate() {
-
-  }
-
   toggleStatic() {
     const { config, data } = this.state;
 
@@ -74,27 +70,27 @@ export class GraphView extends React.Component {
     });
   }
 
-  handleSelectNode(event, index, value) {
+  handleSelectNode(event) {
 
     const that = this;
     const { data } = this.props;
     const { config } = this.state;
 
-    if (value != null)
+    if (event.target.value != null)
     {
       config.staticGraph = false;
 
       var subData = {nodes: [], links: []}
 
-      subData.nodes.push(that.getNode(data.nodes, value));
+      subData.nodes.push(that.getNode(data.nodes, event.target.value));
 
       // Find Referenced Node's Edges
       data.links.forEach(function (link) {
-        if (link.source === value) {
+        if (link.source === event.target.value) {
           subData.nodes.push(that.getNode(data.nodes, link.target));
           subData.links.push(link);
         }
-        if (link.target === value) {
+        if (link.target === event.target.value) {
           subData.nodes.push(that.getNode(data.nodes, link.source));
           subData.links.push(link);
         }
@@ -103,12 +99,12 @@ export class GraphView extends React.Component {
       this.setState({
         data: subData,
         config: config,
-        selectedNode: value
+        selectedNode: event.target.value
       });
     } else {
       this.setState({
         data: data,
-        selectedNode: null
+        selectedNode: ""
       });
     }
   }
@@ -173,21 +169,35 @@ export class GraphView extends React.Component {
 */
 
     return (
-        <Paper zDepth={1} style={{padding: '5px', margin: '10px'}}>
-            <SelectField
-                floatingLabelText="Select a Node"
-                value={this.state.selectedNode}
-                onChange={this.handleSelectNode}
-              >
-                {
-                  this.props.data.nodes.map((item) => {
-                    return (<MenuItem value={item.id} primaryText={item.label != null ? item.label : item.id} />);
-                  })
-                }
-            </SelectField>
-            <IconButton tooltip="SVG Icon" onClick={this.handleSelectNode}>
-              <NavigationClose />
-            </IconButton>
+        <Paper style={{padding: '5px', margin: '10px'}}>
+          <table>
+            <tbody>
+            <tr>
+              <td width="100%">
+                <FormControl style={{width: "100%"}}>
+                  <InputLabel htmlFor="node-selection-helper">Node Selection</InputLabel>
+                  <Select
+                      input={<Input name="nodeSelection" id="node-selection-helper" />}
+                      style={{width: "100%"}}
+                      value={this.state.selectedNode}
+                      onChange={this.handleSelectNode}
+                    >
+                      {
+                        this.props.data.nodes.map((item) => {
+                          return (<MenuItem value={item.id} key={item.id}>{item.label != null ? item.label : item.id}</MenuItem>);
+                        })
+                      }
+                  </Select>
+                </FormControl>
+              </td>
+              <td width="30px">
+                <IconButton tooltip="SVG Icon" onClick={this.handleSelectNode}>
+                  <NavigationClose />
+                </IconButton>
+              </td>
+            </tr>
+            </tbody>
+            </table>
             <Graph
                id='graph-id' // id is mandatory, if no id is defined rd3g will throw an error
                data={data}

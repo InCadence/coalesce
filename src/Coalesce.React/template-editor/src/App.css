@@ -1,4 +1,3 @@
-
 .react-grid-layout {
   position: relative;
   transition: height 200ms ease;
@@ -64,9 +63,19 @@
 .panel {
   min-height: 100%;
   max-height: 100%;
+  padding: 5px;
   /*background:#002833;*/
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
+}
+
+.MuiTab-labelContainer-97 {
+  padding-left: 5px !Important;
+  padding-right: 5px;
+}
+
+.MuiTabScrollButton-root-186 {
+  flex: 0 0 0px  !Important; 
 }
 
 

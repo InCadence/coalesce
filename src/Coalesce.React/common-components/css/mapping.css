@@ -1,0 +1,49 @@
+.map-button {
+  padding: 6px;
+  width: auto;
+  height: auto;
+}
+
+.close-control {
+  top:107px;
+  left: .5em;
+  zIndex: 1001;
+}
+
+.points-control {
+  top: 56px;
+  left: .5em;
+  zIndex: 1001;
+}
+
+.delete-control {
+  top: 81px;
+  left: .5em;
+  zIndex: 1001;
+}
+
+.ol-unselectable.ol-scale-line-inner.ol-scale-line.mouse-pos-control {
+    top: 8px;
+    bottom: unset;
+    right: 8px;
+    left: unset;
+    position: absolute;
+    font-size: 1.25em;
+
+}
+
+input.coordinateInput {
+  font-size: 1em;
+  font-weight: 600;
+}
+
+
+
+.mouse-pos-control {
+}
+
+.tabs-mui: {
+  width: '100%';
+  height: '1px';
+  fontWeight: '1px';
+}

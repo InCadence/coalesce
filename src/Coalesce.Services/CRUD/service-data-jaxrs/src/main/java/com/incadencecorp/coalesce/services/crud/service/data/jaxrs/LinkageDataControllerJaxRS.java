@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.services.crud.service.data.jaxrs;
 
+import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
 import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
 import com.incadencecorp.coalesce.services.crud.service.data.controllers.LinkageDataController;
 import com.incadencecorp.coalesce.services.search.api.ISearchClient;
@@ -33,7 +34,7 @@ public class LinkageDataControllerJaxRS extends LinkageDataController implements
         super(crud);
     }
 
-    public LinkageDataControllerJaxRS(ICrudClient crud, ISearchClient search)
+    public LinkageDataControllerJaxRS(ICrudClient crud, CoalesceSearchFramework search)
     {
         super(crud, search);
     }

@@ -20,6 +20,24 @@ export function loadTemplates()
     });
 }
 
+export function loadTemplateAsXML(key)
+{
+  return fetch(`${karafRootAddr}/templates/${key}.xml`, {
+      method: "GET",
+      headers: new Headers({
+        'content-type': 'application/xml; charset=utf-8'
+      }),
+    }).then(res => {
+      if (!res.ok)
+      {
+        throw Error(res.statusText);
+      }
+      return res.text();
+    }).catch(function(error) {
+      throw Error(error);
+    });
+}
+
 export function loadTemplate(key)
 {
   return fetch(`${karafRootAddr}/templates/${key}`, {

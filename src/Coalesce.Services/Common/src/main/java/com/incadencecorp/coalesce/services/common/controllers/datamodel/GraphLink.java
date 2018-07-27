@@ -17,12 +17,10 @@
 
 package com.incadencecorp.coalesce.services.common.controllers.datamodel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 
-/**
- * @deprecated
- */
 public class GraphLink {
 
     private String source;
@@ -30,7 +28,7 @@ public class GraphLink {
     private String label;
     private ELinkTypes type;
     private ECoalesceObjectStatus status;
-    private boolean isByDirectional;
+    private boolean isBiDirectional;
 
     public String getSource()
     {
@@ -82,13 +80,14 @@ public class GraphLink {
         this.status = status;
     }
 
-    public boolean isByDirectional()
+    @JsonIgnore
+    public boolean isBiDirectional()
     {
-        return isByDirectional;
+        return isBiDirectional;
     }
 
-    public void setByDirectional(boolean byDirectional)
+    public void setBiDirectional(boolean byDirectional)
     {
-        isByDirectional = byDirectional;
+        isBiDirectional = byDirectional;
     }
 }

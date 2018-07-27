@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactTable from 'react-table'
+import IconButton from 'common-components/lib/components/IconButton'
 
 export class SearchResults extends React.PureComponent {
 
@@ -35,7 +36,7 @@ export class SearchResults extends React.PureComponent {
       accessor: 'button',
       Cell: (cell) => (
         <div className="form-buttons">
-          <img id={cell.row.key} src="/images/svg/view.svg" alt="view" title="View Entity" className="coalesce-img-button small enabled" onClick={() => window.open(this.props.url + "/entityeditor/?entitykey=" + cell.row.entityKey)}/>
+          <IconButton icon="/images/svg/view.svg" size="24px" title="View" onClick={() => window.open(this.props.url + "/entityeditor/?entitykey=" + cell.row.entityKey)} />
         </div>
       )
     });
