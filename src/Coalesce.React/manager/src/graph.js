@@ -100,7 +100,7 @@ export class GraphView extends React.Component {
   }
 
   attemptRevert() {
-    return fetch(this.revertUrl).then(() => this.props.reloadBlueprint());
+    return fetch(this.revertURL).then(() => this.props.reloadBlueprint());
   }
 
   getParent(id) {
@@ -264,6 +264,7 @@ export class GraphView extends React.Component {
   onClose() {
     const {actions, selected, originalXml, value} = this.state
     console.log('onClose');
+    console.log(value);
     this.setState({selected: null, })
     var xmlString = ''
     var xmlWithoutNewLines = ''
