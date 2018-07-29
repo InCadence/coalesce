@@ -1,6 +1,7 @@
 import React from 'react';
 import { withTheme } from '@material-ui/core/styles';
 import { getRootKarafUrl } from 'common-components/lib/js/common';
+import Tooltip from '@material-ui/core/Tooltip';
 
 var rootUrl = getRootKarafUrl("") + '..';
 
@@ -62,7 +63,11 @@ class Image extends React.PureComponent {
       )
     }
 
-    return view;
+    return (
+      <Tooltip title={this.props.title} placement={this.props.titlePosition ? this.props.titlePosition : 'bottom'}>
+        {view}
+      </Tooltip>
+    );
   }
 
 }
