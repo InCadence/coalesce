@@ -5,7 +5,8 @@ import ContentClear from '@material-ui/icons/Clear';
 import AvPlaylistAdd from '@material-ui/icons/PlaylistAdd';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
-import { Section } from './TemplateSection'
+import Tooltip from '@material-ui/core/Tooltip';
+import Section from './TemplateSection'
 import uuid from 'uuid';
 
 class TemplateEditor extends Component {
@@ -48,7 +49,7 @@ class TemplateEditor extends Component {
 
     return (
         <Panel className="MuiPaper-root-27 MuiPaper-rounded-28 MuiPaper-elevation2-31" id={template.key} >
-          <div style={{ 'display': 'table' }}>
+          <div className="input-row" style={{ 'display': 'table' }}>
             <div style={{ 'display': 'table-cell', width: '100%' }}>
               <TextField
                 fullWidth={true}
@@ -58,22 +59,25 @@ class TemplateEditor extends Component {
               />
             </div>
             <div style={{ 'display': 'table-cell', 'width': '24px' }}>
-              <IconButton iconstyle={{ width: '24px', height: '24px', padding: '0px' }} style={{ width: '24px', height: '24px', padding: '2px' }}>
-                <ContentClear
-                  color="primary"
-                  onClick={this.handleRemove}
-                />
-              </IconButton>
+              <Tooltip title="Close Template" placement="bottom">
+                <IconButton iconstyle={{ width: '24px', height: '24px', padding: '0px' }} style={{ width: '24px', height: '24px', padding: '2px' }}>
+                  <ContentClear
+                    color="primary"
+                    onClick={this.handleRemove}
+                  />
+                </IconButton>
+              </Tooltip>
             </div>
           </div>
-          <TextField
-            fullWidth={true}
-            label="Classname"
-            value={template.className}
-            onChange={(event) => { this.handleChange("className", event.target.value); }}
-          />
-
-          <div style={{ 'display': 'table' }}>
+          <div className="input-row" style={{ 'display': 'table' }}>
+            <TextField
+              fullWidth={true}
+              label="Classname"
+              value={template.className}
+              onChange={(event) => { this.handleChange("className", event.target.value); }}
+            />
+          </div>
+          <div className="input-row" style={{ 'display': 'table' }}>
             <div style={{ 'display': 'table-cell', width: '100%' }}>
               <Row>
                 <Col xs={7}>
@@ -95,15 +99,19 @@ class TemplateEditor extends Component {
               </Row>
             </div>
             <div style={{ 'display': 'table-cell', 'width': '24px' }}>
-              <IconButton iconstyle={{ width: '24px', height: '24px', padding: '0px' }} style={{ width: '24px', height: '24px', padding: '2px' }}>
-                <AvPlaylistAdd
-                  color="primary"
-                  onClick={this.handleAddSection}
-                />
-              </IconButton>
+              <Tooltip title="Add Section" placement="bottom">
+                <IconButton iconstyle={{ width: '24px', height: '24px', padding: '0px' }} style={{ width: '24px', height: '24px', padding: '2px' }}>
+                  <AvPlaylistAdd
+                    color="primary"
+                    onClick={this.handleAddSection}
+                  />
+                </IconButton>
+              </Tooltip>
             </div>
           </div>
-          <Section data={template} />
+          <div className="input-row" style={{ 'display': 'table' }}>
+            <Section data={template} />
+          </div>
         </Panel>
     );
   }

@@ -1,11 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { withTheme } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { Row, Col } from 'react-bootstrap';
 
 import { Definitions } from './TemplateDefinitions'
 
-export class RecordSet extends Component {
+class RecordSet extends React.Component {
 
   constructor(props) {
     super(props);
@@ -43,13 +45,15 @@ export class RecordSet extends Component {
       <div  >
         <Row>
           <Col xs={4}>
-            <Checkbox
-              label="Singleton"
-              checked={recordset.minRecords === 1 && recordset.maxRecords === 1}
-              onChange={(event, checked) => {
-                this.handleChange("minRecords", checked ? 1 : 0);
-                this.handleChange("maxRecords", checked ? 1 : 0);
-              }}
+            <FormControlLabel label='Singleton' control={
+              <Checkbox
+                checked={recordset.minRecords === 1 && recordset.maxRecords === 1}
+                onChange={(event, checked) => {
+                  this.handleChange("minRecords", checked ? 1 : 0);
+                  this.handleChange("maxRecords", checked ? 1 : 0);
+                }}
+              />
+              }
             />
           </Col>
           <Col xs={4}>
@@ -78,3 +82,5 @@ export class RecordSet extends Component {
     );
   }
 }
+
+export default withTheme()(RecordSet);

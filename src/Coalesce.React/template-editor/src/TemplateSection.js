@@ -1,18 +1,20 @@
 import React from 'react';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import { RecordSet } from './TemplateRecordset'
-import { TabTextField } from './TabTextField'
+import { withTheme } from '@material-ui/core/styles';
+
+import {Tabs, Tab} from 'material-ui/Tabs';
+//import Tabs from '@material-ui/core/Tabs';
+//import Tab from '@material-ui/core/Tab';
+import RecordSet from './TemplateRecordset'
+import TabTextField from './TabTextField'
 import { DialogOptions } from 'common-components/lib/components/dialogs';
 import uuid from 'uuid';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 
-export class Section extends React.Component {
+class Section extends React.Component {
 
   constructor(props) {
     super(props);
-    this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleAdd = this.handleAdd.bind(this);
     this.handleAddSection = this.handleAddSection.bind(this);
@@ -28,13 +30,8 @@ export class Section extends React.Component {
 
     this.state = {
       section: props.data,
-      open: false,
       edit: false,
     };
-  }
-
-  handleClick() {
-    this.setState({ open: !this.state.open })
   }
 
   handleChange(attr, value) {
@@ -190,62 +187,64 @@ export class Section extends React.Component {
   }
 
   handleTabChange = (event, tabIndex) => {
-    this.setState({ tabIndex });
+    this.setState(() => {return { tabIndex: tabIndex }});
   };
 
   render() {
 
     const { section, tabIndex } = this.state;
+    const palette = this.props.theme.palette.primary;
 
     return (
       <div>
         <Tabs
+          key={section.key}
           value={tabIndex}
-          onChange={this.handleTabChange}
-          indicatorColor="primary"
-          textColor="primary"
-          scrollable
-          scrollButtons="on"
-          ScrollButtonComponent="test"
-          style={{
-            overflowX: "hidden"
-          }}
+          //onChange={this.handleTabChange}
+          //indicatorColor="primary"
+          //textColor="primary"
+          //scrollable
+          //scrollButtons="on"
+          //ScrollButtonComponent="test"
         >
           {section.sectionsAsList != null && section.sectionsAsList.map((item) => {return (
               <Tab
                 key={item.key}
-                style={{backgroundColor: '#AAAAFF'}}
+                style={{backgroundColor: palette.light}}
                 label={
                   <TabTextField
+                    label="Section Name"
                     item={item}
                     onNameChange={this.handleSectionChange}
                     onAdd={this.handleAdd}
                     onDelete={this.handleDeleteSection}
+                    palette={palette}
                   />
                 }
-              />
+              >
+                <Section data={item} theme={this.props.theme}/>
+              </Tab>
           )})}
           {section.recordsetsAsList != null && section.recordsetsAsList.map((item) => {return (
             <Tab
               key={item.key}
-              style={{backgroundColor: '#AAFFAA'}}
+              style={{backgroundColor: palette.main}}
               label={
                 <TabTextField
+                  label="Recordset Name"
                   item={item}
                   onNameChange={this.handleRecordsetChange}
                   onAdd={this.handleAddField}
                   onDelete={this.handleDeleteRecordset}
+                  palette={palette}
                 />
-              }  />
+              }
+            >
+              <RecordSet data={item} />
+            </Tab>
           )})}
         </Tabs>
 
-        { tabIndex < section.sectionsAsList.length &&
-            <Section data={section.sectionsAsList[tabIndex]}/>
-        }
-        { tabIndex >= section.sectionsAsList.length &&
-            <RecordSet data={section.recordsetsAsList[tabIndex - section.sectionsAsList.length]}/>
-        }
 
         <DialogOptions
           title="Select Option"
@@ -302,3 +301,5 @@ function createRecordset() {
     maxRecords: 1,
   }
 }
+
+export default withTheme()(Section);

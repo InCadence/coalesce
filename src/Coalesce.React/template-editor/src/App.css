@@ -1,3 +1,8 @@
+.input-row {
+  width: 100%;
+  padding-top: 10px;
+}
+
 .react-grid-layout {
   position: relative;
   transition: height 200ms ease;
@@ -75,7 +80,7 @@
 }
 
 .MuiTabScrollButton-root-186 {
-  flex: 0 0 0px  !Important; 
+  flex: 0 0 0px  !Important;
 }
 
 
