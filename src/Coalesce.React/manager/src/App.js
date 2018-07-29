@@ -58,7 +58,14 @@ export class App extends React.Component {
             img: "/images/svg/add.svg",
             title: 'Add Entity',
             onClick: () => this.setState({actions: 'adding'})
-          }
+          },
+          {
+            id: 'undo',
+            name: 'Undo',
+            img: "/images/svg/back.svg",
+            title: 'Revert Blueprint',
+            onClick: () => this.setState({actions: 'reverting'})
+          },
           ]}/>
           { data != null &&
             <GraphView reloadBlueprint={this.reloadBlueprint} actions={this.state.actions} data={data} title={selected} theme={theme} />
@@ -67,6 +74,7 @@ export class App extends React.Component {
             title="Error"
             opened={error != null}
             message={error}
+            actions={'error'}
             onPrimary={() => {this.setState({error: null})}}
           />
           {blueprints != null &&
@@ -245,7 +253,7 @@ export class App extends React.Component {
 
 function getBlueprintOptions () {
 
-  var karafRootAddr = getRootKarafUrl();
+  var karafRootAddr = getRootKarafUrl('core');
   return fetch(`${karafRootAddr}/blueprints`)
     .then(res => {
       if (!res.ok)
@@ -260,7 +268,7 @@ function getBlueprintOptions () {
 
 function getBlueprint(filename) {
 
-  var karafRootAddr = getRootKarafUrl();
+  var karafRootAddr = getRootKarafUrl('core');
   return fetch(`${karafRootAddr}/blueprints/${filename}`)
     .then(res => {
       if (!res.ok)
@@ -275,7 +283,7 @@ function getBlueprint(filename) {
 
 function getNetwork() {
 
-  var karafRootAddr = getRootKarafUrl();
+  var karafRootAddr = getRootKarafUrl('core');
 
   return fetch(`${karafRootAddr}/network`)
     .then(res => {

@@ -14,7 +14,8 @@ import TextField from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 
-var parser = require('fast-xml-parser');
+import { validate } from './fast-xml-parser/validator'
+//var parser = require('fast-xml-parser');
 
 export class GraphView extends React.Component {
 
@@ -30,11 +31,11 @@ export class GraphView extends React.Component {
       isValid: this.isValidGraph(props.data)
     };
 
-
-    this.addNodeURL = getRootKarafUrl() + '/blueprints/edit/' + this.props.title
-    this.getNodeURL = getRootKarafUrl() + '/blueprints/get/' + this.props.title + '/'
-    this.removeNodeURL = getRootKarafUrl() + '/blueprints/remove/' + this.props.title
-    this.revertURL = getRootKarafUrl() + '/blueprints/undo/' + this.props.title
+    this.rootKarafUrl = getRootKarafUrl('core')
+    this.addNodeURL = this.rootKarafUrl + '/blueprints/edit/' + this.props.title
+    this.getNodeURL = this.rootKarafUrl + '/blueprints/get/' + this.props.title + '/'
+    this.removeNodeURL = this.rootKarafUrl + '/blueprints/remove/' + this.props.title
+    this.revertURL = this.rootKarafUrl + '/blueprints/undo/' + this.props.title
     console.log(this.revertURL);
 
     this.guidRegex = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
@@ -153,6 +154,10 @@ export class GraphView extends React.Component {
       data: nextProps.data,
       actions: nextProps.actions || 'base'
     });
+
+    if(nextProps.actions === 'reverting') {
+      this.attemptRevert()
+    }
   }
 
   componentDidMount() {
@@ -263,8 +268,6 @@ export class GraphView extends React.Component {
 
   onClose() {
     const {actions, selected, originalXml, value} = this.state
-    console.log('onClose');
-    console.log(value);
     this.setState({selected: null, })
     var xmlString = ''
     var xmlWithoutNewLines = ''
@@ -272,42 +275,48 @@ export class GraphView extends React.Component {
     var closeDialog = false
     var nonGuid = ''
 
-    if (value !== null && actions === 'editing' && value !== originalXml) {
-      xmlString = this.state.value
-      xmlWithoutNewLines = xmlString
-      //xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
-      nonGuid = this.getNonGuid(selected.id)
-      if(parser.validate(xmlString) === true) {
-        jsonString = this.createXmlJson(xmlWithoutNewLines, nonGuid)
-        this.postNodeXml(jsonString)
+    if (value != null && actions === 'editing') {
+      if (value !== originalXml) {
+        xmlString = this.state.value
+        xmlWithoutNewLines = xmlString
+        //xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
+        nonGuid = this.getNonGuid(selected.id)
+        if(validate(xmlString) === true) {
+          jsonString = this.createXmlJson(xmlWithoutNewLines, nonGuid)
+          this.postNodeXml(jsonString)
 
-        closeDialog = true
-      }
-      else if(xmlString.trim() === "") {
-        if(this.isOrphan(nonGuid)) {
-          //remove node nonGuid
-          this.removeOrphanNode(nonGuid)
           closeDialog = true
         }
+        else if(xmlString.trim() === "") {
+          if(this.isOrphan(nonGuid)) {
+            //remove node nonGuid
+            this.removeOrphanNode(nonGuid)
+            closeDialog = true
+          }
+          else {
+            var error = `This node has links to other nodes, remove the node from ${this.props.title} and fix any appropriate references!`
+            alert(error)
+            closeDialog = false;
+          }
+        }
         else {
-          var error = `This node has links to other nodes, remove the node from ${this.props.title} and fix any appropriate references!`
-          alert(error)
+          this.xmlValidationError();
           closeDialog = false;
         }
       }
       else {
-        this.xmlValidationError();
-        closeDialog = false;
+        closeDialog = true;
       }
+
     }
-    else if (this.state.value && this.state.actions === 'adding') {
+    else if (this.state.actions === 'adding') {
       xmlString = this.state.value
       xmlWithoutNewLines = xmlString;
       //xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
-      if(xmlString.trim() === "") {
+      if(value == null || xmlString.trim() === "") {
         closeDialog = true
       }
-      else if(parser.validate(xmlString) === true) { //returns true if valid
+      else if(validate(xmlString) === true) { //returns true if valid
         jsonString = this.createXmlJson(xmlWithoutNewLines, '')
         this.setState({actions: 'base'})
         this.postNodeXml(jsonString)
@@ -352,6 +361,7 @@ export class GraphView extends React.Component {
 
     this.setState({
       actions: 'adding',
+      value: null,
     })
   }
 
