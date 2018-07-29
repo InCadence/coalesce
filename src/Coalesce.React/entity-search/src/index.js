@@ -55,21 +55,20 @@ function memorySizeOf(obj) {
 };
 */
 
-loadJSON('theme').then((theme) => {
-    ReactDOM.render(
-      <MuiThemeProvider theme={createMuiTheme(theme)}>
-        <App pjson={pjson} />
-      </MuiThemeProvider>,
-      document.getElementById('main')
-    );
-}).catch((err) => {
-  console.log("(FAILED) Loading Configuration");
+function loadApplication(theme) {
   ReactDOM.render(
-    <MuiThemeProvider theme={createMuiTheme({})}>
-      <App icon={pjson} />
+    <MuiThemeProvider theme={createMuiTheme(theme)}>
+      <App pjson={pjson} />
     </MuiThemeProvider>,
     document.getElementById('main')
   );
+}
+
+loadJSON('theme').then((theme) => {
+  loadApplication(createMuiTheme(theme));
+}).catch((err) => {
+  console.log("Loading Theme: " + err);
+  loadApplication(createMuiTheme({}));
 })
 
 /* TODO Remove this code (Its an example of how to submit a OGC filter as XML)
