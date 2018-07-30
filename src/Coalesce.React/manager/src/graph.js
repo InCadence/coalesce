@@ -37,7 +37,6 @@ export class GraphView extends React.Component {
     this.getNodeURL = this.rootKarafUrl + '/blueprints/get/' + this.props.title + '/'
     this.removeNodeURL = this.rootKarafUrl + '/blueprints/remove/' + this.props.title
     this.revertURL = this.rootKarafUrl + '/blueprints/undo/' + this.props.title
-    console.log(this.revertURL);
 
     this.guidRegex = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
 
@@ -53,10 +52,10 @@ export class GraphView extends React.Component {
     this.onClose = this.onClose.bind(this)
     this.getNonGuid = this.getNonGuid.bind(this)
     this.attemptRevert = this.attemptRevert.bind(this)
-    this.errorMssg = null
   }
 
   postNodeXml(nodeJson) {
+    console.log('postnode');
     fetch(this.addNodeURL, {
       method: 'POST',
       headers: {
@@ -91,6 +90,7 @@ export class GraphView extends React.Component {
   removeOrphanNode(id) {
     //removes xml based on id
 
+    console.log('orphan');
     return fetch(this.removeNodeURL, {
       method: 'POST',
       headers: {
@@ -103,20 +103,24 @@ export class GraphView extends React.Component {
   }
 
   attemptRevert() {
+    console.log('revert');
     return fetch(this.revertURL).then(() => this.props.reloadBlueprint());
   }
 
   getParent(id) {
+    console.log(id);
     var links = this.state.data.links
     var parentId = null
     for(let i = 0; i < links.length; i++) {
       var link = links[i]
       if(link.target === id) {
+        console.log(link);
         //if this id is being the target, return the parent's nonGuid
         parentId = link.source
         break;
       }
     }
+    console.log(parentId);
     //return null if no parent exists, return parent id otherwise
     return parentId
   }
@@ -270,7 +274,6 @@ export class GraphView extends React.Component {
 
   onClose() {
     const {actions, selected, originalXml, value} = this.state
-    this.setState({selected: null, })
     var xmlString = ''
     var xmlWithoutNewLines = ''
     var jsonString = ''
@@ -283,26 +286,26 @@ export class GraphView extends React.Component {
         xmlWithoutNewLines = xmlString
         //xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
         nonGuid = this.getNonGuid(selected.id)
+
         if(validate(xmlString) === true) {
           jsonString = this.createXmlJson(xmlWithoutNewLines, nonGuid)
           this.postNodeXml(jsonString)
-
           closeDialog = true
         }
         else if(xmlString.trim() === "") {
           if(this.isOrphan(nonGuid)) {
             //remove node nonGuid
             this.removeOrphanNode(nonGuid)
-            closeDialog = true
+            closeDialog = false
           }
           else {
             var error = `This node has links to other nodes, remove the node from ${this.props.title} and fix any appropriate references!`
-            this.errorMssg = error;
+            this.createError(error)
             closeDialog = false;
           }
         }
         else {
-          this.xmlValidationError();
+          this.createError('Invalid XML');
           closeDialog = false;
         }
       }
@@ -324,14 +327,13 @@ export class GraphView extends React.Component {
         closeDialog = true
       }
       else {
-        this.xmlValidationError();
+        this.createError('Invalid XML');
         closeDialog = false
       }
     }
 
-    console.log(closeDialog)
     if(closeDialog) {
-      console.log("rip")
+      console.log('hello');
       this.setState({
         data: this.state.data,
         value: null,
@@ -378,9 +380,8 @@ export class GraphView extends React.Component {
     this.onEditCancel();
   }
 
-  xmlValidationError() {
-    var error = "Invalid XML"
-    this.errorMssg = error
+  createError(error) {
+    this.setState({errorMssg: error})
   }
 
   createXmlJson(xml, id) {
@@ -445,6 +446,10 @@ export class GraphView extends React.Component {
     editing = actions === 'editing'
     adding = actions === 'adding'
 
+    console.log(actions);
+    console.log(selected != null);
+    console.log(adding);
+    console.log(editing);
 
     var onSecondary = console.log
     var onPrimary = console.log
@@ -514,7 +519,7 @@ export class GraphView extends React.Component {
 
           <DialogMessage
             title="Details"
-            opened={selected != null || adding}
+            opened={selected != null || adding || editing}
             actions={this.state.actions}
             editable={editable}
             message={
@@ -522,68 +527,67 @@ export class GraphView extends React.Component {
               //checking against boolean values because !editing is true (same as !null if not defined yet)
               (base && selected != null &&
                 <ReactTable
-                width="100%"
-                resizable={true}
-                data={details}
-                columns={[
-                  {
-                    minWidth: 300,
-                    Header: "Key",
-                    id: "key",
-                    accessor: "key"
-                  },{
-                    minWidth: 300,
-                    Header: "Value",
-                    id: "value",
-                    accessor: "value"
-                  }
-                ]
-              }
-              defaultSorted={[
-                {
-                  id: "key",
-                  desc: false
-                }
-              ]}
-              showPageSizeOptions={false}
-              defaultPageSize={10}
-              className="-striped -highlight"
-              />
-            )
-            ||
+                  width="100%"
+                  resizable={true}
+                  data={details}
+                  columns={[
+                    {
+                      minWidth: 300,
+                      Header: "Key",
+                      id: "key",
+                      accessor: "key"
+                    },{
+                      minWidth: 300,
+                      Header: "Value",
+                      id: "value",
+                      accessor: "value"
+                    }
+                  ]}
+                  defaultSorted={[
+                    {
+                      id: "key",
+                      desc: false
+                    }
+                  ]}
+                  showPageSizeOptions={false}
+                  defaultPageSize={10}
+                  className="-striped -highlight"
+                />
+              )
+
+              ||
 
             //if the user is editing or its editable
-            (editing && editable &&
-              <div>
-              <TextField
-              label="Insert XML"
-              id="nodeedittextfield"
-              multiline={true}
-              fullWidth={true}
-              rows="20"
-              onChange={this.onEditJson}
-              value={this.state.value || ''}
-              />
-              <FormHelperText id="name-error-text">{this.errorMssg}</FormHelperText>
-              </div>
-            )
-
-            ||
-
-            (adding &&
-              <div>
+              (editing && editable &&
+                <div>
                 <TextField
-                label="Insert XML"
-                id="nodeaddtextfield"
-                multiline={true}
-                fullWidth={true}
-                rows="20"
-                onChange={this.onAddChange}
-                value={this.state.value || ''}
+                  label="Insert XML"
+                  id="nodeedittextfield"
+                  multiline={true}
+                  fullWidth={true}
+                  rows="20"
+                  onChange={this.onEditJson}
+                  value={this.state.value || ''}
                 />
-                <FormHelperText id="name-error-text">{this.errorMssg}</FormHelperText>
-                {this.errorMssg = null}
-              </div>
+                <FormHelperText error={true} id="name-error-text">{this.state.errorMssg}</FormHelperText>
+                </div>
+              )
+
+              ||
+
+              (adding &&
+                <div>
+                <TextField
+                  label="Insert XML"
+                  id="nodeaddtextfield"
+                  multiline={true}
+                  fullWidth={true}
+                  rows="20"
+                  onChange={this.onAddChange}
+                  value={this.state.value || ''}
+                />
+                <FormHelperText error={true} id="name-error-text">{this.state.errorMssg}</FormHelperText>
+                </div>
               )
             }
 
