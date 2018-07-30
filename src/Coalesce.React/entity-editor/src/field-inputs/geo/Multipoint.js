@@ -41,7 +41,7 @@ export default class Multipoint extends React.Component {
     this.attr = this.opts['attr'];
     this.field = this.opts['field'];
 
-    if(this.field[this.attr] && this.field[this.attr] !== '') {
+    if(this.field[this.attr] && this.field[this.attr] !== this.wktEmpty && this.field[this.attr] !== '') {
 
       this.setState({
         wkt: this.stripZAxis(this.field[this.attr]),
@@ -144,7 +144,7 @@ export default class Multipoint extends React.Component {
   //also handles changes from the points table, since this
   //  method simply grabs current features and sets the mulitpoint, then creates WKT
   handleChangeFeature(self, that) {
-    self.multipoint = new MultiPoint();
+    self.multipoint = new MultiPoint([]);
     var features = that.state.vectorSource.getFeaturesCollection();
     var formatted = 'MULTIPOINT EMPTY'
     if (features.getLength() > 0) {

@@ -26,14 +26,20 @@ export default class PointsTable extends React.Component {
       values: this.props.values || {}
     }
     this.handleInputFocus = this.handleInputFocus.bind(this);
-    this.handleInputXY = this.handleInputXY.bind(this);
+    this.handleInput = this.handleInput.bind(this);
     this.handleOnBlur = this.handleOnBlur.bind(this);
-    this.handleInputZ = this.handleInputZ.bind(this);
-    this.handleOnBlurZ = this.handleOnBlurZ.bind(this);
   }
 
-  initCoordsHashmap() {
-    var coordsHashmap = this.props.coordsHashmap
+  componentWillReceiveProps(newProps) {
+    console.log('props');
+    this.setState({
+      feature: this.props.feature,
+      coordsHashmap: this.initCoordsHashmap(newProps.coordsHashmap),
+    })
+  }
+
+  initCoordsHashmap(hashmap) {
+    var coordsHashmap = hashmap || this.props.coordsHashmap
 
     if (coordsHashmap.size == 0) {
       if (this.props.feature) {
@@ -59,7 +65,7 @@ export default class PointsTable extends React.Component {
             coordsHashmap.set(xy, z)
           }
         }
-
+        console.log(z);
       }
     }
 
@@ -134,11 +140,12 @@ export default class PointsTable extends React.Component {
 
         var x = coords[0];
         var y = coords[1];
+        console.log(this.state.coordsHashmap);
         rows.push(
           <TableRow>
-            <TableCell> {this.createTextField(x, this.handleInputFocus, this.handleInputXY, this.handleOnBlur, 'x' + index)} </TableCell>
-            <TableCell> {this.createTextField(y, this.handleInputFocus, this.handleInputXY, this.handleOnBlur, 'y' + index)} </TableCell>
-            <TableCell> {this.createTextField(this.props.coordsHashmap.get(coords), this.handleInputFocus, this.handleInputZ, this.handleOnBlurZ, 'z' + index)} </TableCell>
+            <TableCell> {this.createTextField(x, this.handleInputFocus, this.handleInput, this.handleOnBlur, 'x' + index)} </TableCell>
+            <TableCell> {this.createTextField(y, this.handleInputFocus, this.handleInput, this.handleOnBlur, 'y' + index)} </TableCell>
+            <TableCell> {this.createTextField(this.state.coordsHashmap.get(coords), this.handleInputFocus, this.handleInput, this.handleOnBlur, 'z' + index)} </TableCell>
           </TableRow>
         )
       }
@@ -151,29 +158,20 @@ export default class PointsTable extends React.Component {
 
     var row = (
       <TableRow>
-        <TableCell> {this.createTextField(point[0], this.handleInputFocus, this.handleInputXY, this.handleOnBlur, 'x0')} </TableCell>
-        <TableCell> {this.createTextField(point[1], this.handleInputFocus, this.handleInputXY, this.handleOnBlur, 'y0')} </TableCell>
-        <TableCell> {this.createTextField(this.props.coordsHashmap.get(point), this.handleInputFocus, this.handleInputZ, this.handleOnBlurZ, 'z0')} </TableCell>
+        <TableCell> {this.createTextField(point[0], this.handleInputFocus, this.handleInput, this.handleOnBlur, 'x0')} </TableCell>
+        <TableCell> {this.createTextField(point[1], this.handleInputFocus, this.handleInput, this.handleOnBlur, 'y0')} </TableCell>
+        <TableCell> {this.createTextField(this.state.coordsHashmap.get(point), this.handleInputFocus, this.handleInput, this.handleOnBlur, 'z0')} </TableCell>
       </TableRow>
     )
     return row;
   }
 
   createTextField(value, onInputFocus, onInputChange, onInputBlur, index) {
-    const styles = {
-      input: {
-        fontSize: '1em',
-        fontWeight: '600',
-      }
-    }
-    var defaultValue = 0
-    if (Object.keys(this.state.values).length == 0)
+    var defaultValue = value || 0
+    console.log(this.state.values);
+    if (!(Object.keys(this.state.values).length === 0))
     {
-      //if there is no input
-      defaultValue = value
-    }
-    else {
-      //if there is input, value = text input
+      //if there is input
       defaultValue = this.state.values[index]
     }
 
@@ -192,41 +190,14 @@ export default class PointsTable extends React.Component {
     this.setState({safeValue: evt.target.value})
   }
 
-  handleInputXY(evt, index) {
-    this.state.values[index] = evt.target.value;
-    this.setState({values: this.state.values})
-    // var inputElem = document.getElementById(index)
-    // inputElem.value = evt.target.value
+  handleInput(evt, index) {
+    var values = this.state.values
+    values[index] = evt.target.value
+
+    this.setState({values: values})
   }
 
   handleOnBlur(self, evt, index) {
-    const NOTHING = ''
-    var inputValue = evt.target.value
-    if (inputValue == NOTHING) {
-      inputValue = 0;
-    }
-    //this ensures it doesn't update when the user didn't even change anything
-    if(inputValue != self.state.safeValue && !isNaN(self.state.safeValue)) {
-      self.props.updateFeature(self.state.values, this.state.coordsHashmap, index)
-    }
-    else {
-      self.state.values[index] = self.state.safeValue
-      self.setState({values: self.state.values})
-    }
-  }
-
-  handleInputZ(evt, index) {
-    //currently the same as handleInputXY function
-
-    this.state.values[index] = evt.target.value
-
-    this.setState({values: this.state.values})
-    // var inputElem = document.getElementById(index)
-    // inputElem.value = evt.target.value
-  }
-
-  handleOnBlurZ(self, evt, index) {
-    //currently the same as handleOnBlur function
     const NOTHING = ''
     var inputValue = evt.target.value
     if (inputValue == NOTHING) {

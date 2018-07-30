@@ -35,7 +35,7 @@ export default class Point extends React.Component {
     this.attr = this.opts['attr'];
     this.field = this.opts['field'];
 
-    if(this.field[this.attr]) {
+    if(this.field[this.attr] && this.field[this.attr] !== this.wktEmpty && this.field[this.attr] !== '') {
 
       this.setState({
         wkt: this.stripZAxis(this.field[this.attr]),
@@ -53,8 +53,10 @@ export default class Point extends React.Component {
 
   stripZAxis(fullWKT) {
     var pattern = / ?-?[0-9]\d*(\.\d+)?/g //matches the point's 3 values
+    console.log(fullWKT);
     var coords = fullWKT.match(pattern) //[x, y, z]
     this.coordsHashmap = new HashMap()
+    console.log(coords);
     this.coordsHashmap.set([parseFloat(coords[0]), parseFloat(coords[1])], parseFloat(coords[2]))
     var wkt = 'POINT(' + coords[0] + ' ' + coords[1] + ')'
 

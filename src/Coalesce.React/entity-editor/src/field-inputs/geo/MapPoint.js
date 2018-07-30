@@ -333,6 +333,8 @@ export default class MapPoint extends React.Component {
       });
     }
 
+
+
     return (
       <table width="100%" className={this.props.css}>
         <tbody>
@@ -345,7 +347,7 @@ export default class MapPoint extends React.Component {
                 underlineShow={this.props.showLabels}
                 style={style.root}
                 value={this.props.fullWKT}
-                disabled
+                InputProps={{readOnly: true}}
                 defaultValue={this.field.defaultValue}></TextField>
               </td>
               <td width="30px">
