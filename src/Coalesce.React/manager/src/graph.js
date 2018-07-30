@@ -55,7 +55,6 @@ export class GraphView extends React.Component {
   }
 
   postNodeXml(nodeJson) {
-    console.log('postnode');
     fetch(this.addNodeURL, {
       method: 'POST',
       headers: {
@@ -72,7 +71,6 @@ export class GraphView extends React.Component {
 
   getNodeXml(id) {
     //fetches the xml
-
     return fetch(this.getNodeURL+id, {
       method: 'GET',
 
@@ -89,8 +87,6 @@ export class GraphView extends React.Component {
 
   removeOrphanNode(id) {
     //removes xml based on id
-
-    console.log('orphan');
     return fetch(this.removeNodeURL, {
       method: 'POST',
       headers: {
@@ -103,37 +99,34 @@ export class GraphView extends React.Component {
   }
 
   attemptRevert() {
-    console.log('revert');
     return fetch(this.revertURL).then(() => this.props.reloadBlueprint());
   }
 
   getParent(id) {
-    console.log(id);
     var links = this.state.data.links
     var parentId = null
     for(let i = 0; i < links.length; i++) {
       var link = links[i]
       if(link.target === id) {
-        console.log(link);
         //if this id is being the target, return the parent's nonGuid
         parentId = link.source
         break;
       }
     }
-    console.log(parentId);
     //return null if no parent exists, return parent id otherwise
     return parentId
   }
 
   getNonGuid(id) {
     const that = this
-
     if(id.search(this.guidRegex) ) { //search returns -1 if a match isnt found, if found returns the index
       return id
     }
     else {
       var parentId = this.getParent(id)
-
+      if(parentId == null){
+        return null
+      }
       return that.getNonGuid(parentId);
     }
   }
@@ -250,11 +243,18 @@ export class GraphView extends React.Component {
         nodeSelected = node
       }
     })
-
+    var editable = true
     var nonGuid = this.getNonGuid(nodeId)
-    that.getNodeXml(nonGuid) //gets and sets the value to xml
+    if(nonGuid) {
+      that.getNodeXml(nonGuid) //gets and sets the value to xml
+    }
+    else {
+      editable = false;
+    }
+
     that.setState({
       selected: nodeSelected,
+      editable: editable
     });
 
     return null
@@ -279,10 +279,9 @@ export class GraphView extends React.Component {
     var jsonString = ''
     var closeDialog = false
     var nonGuid = ''
-    console.log(actions);
+
     if (value != null && actions === 'editing') {
-      console.log(value);
-      console.log(originalXml);
+
       if (value !== originalXml) { //if the value changed
         xmlString = this.state.value
         xmlWithoutNewLines = xmlString
@@ -335,14 +334,14 @@ export class GraphView extends React.Component {
     }
 
     if(closeDialog || actions === 'base') {
-      console.log('hello');
       this.setState({
         data: this.state.data,
         value: null,
         filtered: null,
         selected: null,
         actions: 'base',
-        errorMsg: null
+        errorMsg: null,
+        editable: false,
       })
     }
   }
@@ -431,7 +430,11 @@ export class GraphView extends React.Component {
   render() {
 
     const {data, selected, config, actions} = this.state;
-    var editable = true
+    var editable = this.state.editable
+
+    if(editable == null) {
+      editable = true
+    }
     var base = null
     var editing = null
     var adding = null
@@ -462,11 +465,6 @@ export class GraphView extends React.Component {
     base = actions === 'base'
     editing = actions === 'editing'
     adding = actions === 'adding'
-
-    console.log(actions);
-    console.log(selected != null);
-    console.log(adding);
-    console.log(editing);
 
     var onSecondary = console.log
     var onPrimary = console.log
