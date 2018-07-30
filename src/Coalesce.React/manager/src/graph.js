@@ -276,7 +276,7 @@ export class GraphView extends React.Component {
     var nonGuid = ''
 
     if (value != null && actions === 'editing') {
-      if (value !== originalXml) {
+      if (value !== originalXml) { //if the value changed
         xmlString = this.state.value
         xmlWithoutNewLines = xmlString
         //xmlWithoutNewLines = xmlString.replace(/(\r\n|\n|\r|\t)/gm,"");
@@ -304,7 +304,7 @@ export class GraphView extends React.Component {
           closeDialog = false;
         }
       }
-      else {
+      else { //if the value didn't change
         closeDialog = true;
       }
 
