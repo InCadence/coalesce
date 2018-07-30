@@ -62,6 +62,7 @@ export class DialogMap extends React.Component {
 
   render() {
     var {value} = this.state
+    console.log(this.props.coordsHashmap);
     return (
       <div>
       <IconButton icon='/images/svg/map.svg' onClick={this.handleOpen} />

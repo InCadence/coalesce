@@ -31,7 +31,6 @@ export default class PointsTable extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    console.log('props');
     this.setState({
       feature: this.props.feature,
       coordsHashmap: this.initCoordsHashmap(newProps.coordsHashmap),
@@ -40,8 +39,9 @@ export default class PointsTable extends React.Component {
 
   initCoordsHashmap(hashmap) {
     var coordsHashmap = hashmap || this.props.coordsHashmap
-
-    if (coordsHashmap.size == 0) {
+    //console.log(this.props.shape);
+    //console.log(this.props.coordsHashmap);
+    if (coordsHashmap.size === 0) {
       if (this.props.feature) {
         console.log(this.props.feature);
         if (this.props.shape == 'Circle') {
@@ -65,7 +65,6 @@ export default class PointsTable extends React.Component {
             coordsHashmap.set(xy, z)
           }
         }
-        console.log(z);
       }
     }
 
@@ -74,8 +73,7 @@ export default class PointsTable extends React.Component {
 
   getCoordinates() {
     var coordinates = this.props.feature.getGeometry().getCoordinates()
-    console.log(coordinates);
-    if (this.props.shape == 'Polygon') {
+    if (this.props.shape === 'Polygon') {
       coordinates = coordinates[0]
     }
     return coordinates;
@@ -140,7 +138,7 @@ export default class PointsTable extends React.Component {
 
         var x = coords[0];
         var y = coords[1];
-        console.log(this.state.coordsHashmap);
+        console.log(coords);
         rows.push(
           <TableRow>
             <TableCell> {this.createTextField(x, this.handleInputFocus, this.handleInput, this.handleOnBlur, 'x' + index)} </TableCell>
@@ -168,7 +166,6 @@ export default class PointsTable extends React.Component {
 
   createTextField(value, onInputFocus, onInputChange, onInputBlur, index) {
     var defaultValue = value || 0
-    console.log(this.state.values);
     if (!(Object.keys(this.state.values).length === 0))
     {
       //if there is input

@@ -44,7 +44,8 @@ export default class Shape extends React.Component {
         radius: this.field['radius'],
         coordsHashmap: this.coordsHashmap
       };
-      //this.state.coordsHashmap = this.coordsHashmap
+      console.log(this.props.shape);
+      console.log(this.state.coordsHashmap);
     }
     else {
       this.state = {
@@ -148,8 +149,6 @@ export default class Shape extends React.Component {
     var self = this;
 
     this.state.vectorSource.clear()
-
-    console.log('cleared');
     if (this.state.wkt !== this.wktEmpty)
     {
       console.log(this.state.wkt);
@@ -157,7 +156,7 @@ export default class Shape extends React.Component {
 
       if (this.props.shape === 'Circle') {
         feature = new Feature({
-          geometry: new Circle(feature.getGeometry().getCoordinates(), this.state.radius)
+          geometry: new Circle(feature.getGeometry().getCoordinates(), this.state.radius || 10)
         })
       }
       this.state.vectorSource.addFeature(feature)
@@ -180,7 +179,8 @@ export default class Shape extends React.Component {
     ];
     var overlays = null;
 
-    var maker = new MapMaker(layers, overlays, null, controls,  'map' + this.props.uniqueID)
+    var maker = new MapMaker(layers, overlays, null, controls,  'map' + this.field.key)
+
     this.map = maker.getMap();
 
     var drawInteraction = new Draw({
@@ -212,6 +212,7 @@ export default class Shape extends React.Component {
     this.map.addInteraction(modifyInteraction)
 
     console.log(this.state.wkt);
+    this.setState({map: this.map})
     return this.map;
 
   }
@@ -235,9 +236,9 @@ export default class Shape extends React.Component {
   }
 
   handleInputFocus(event) {
-    if (this.props.shape == 'Circle') {
-      var centerElem = document.getElementById('center' + this.props.uniqueID)
-      var radiusElem = document.getElementById('radius' + this.props.uniqueID)
+    if (this.props.shape === 'Circle') {
+      var centerElem = document.getElementById(this.field.key)
+      var radiusElem = document.getElementById('radius' + this.field.key)
       this.wktSafe = [centerElem.value, radiusElem.value]
     }
     else {
@@ -303,8 +304,8 @@ export default class Shape extends React.Component {
           else {
             throw new TypeError("Radius must be a number!")
           }
-          var features = vecSource.getFeatures();
-          if(features.length > 0 && !this.props.multi) {
+          features = vecSource.getFeatures();
+          if(features.length > 0) {
             //get the circle, set points
             features[0].getGeometry().setCenterAndRadius(centerCoords, radiusAsNum)
           }
@@ -349,6 +350,74 @@ export default class Shape extends React.Component {
     }
   }
 
+  handleRadiusBlur() {
+    try {
+      var vecSource = this.state.vectorSource;
+      const NOTHING = '';
+      const MAPORIGIN = [0, 0]
+
+      const ZERO = '0';
+
+
+      //read the center point input as a Feature (wkt -> Feature)
+      //  get its geometry (Point)
+      //  get coordinates from geometry ( [x, y] format )
+      var centerCoords = new WKT().readFeature(this.state.wkt).getGeometry().getCoordinates();
+      //if coords array is length of 0 (meaning the array is [])
+      //  set it to [0, 0], otherwise keep it the same
+      centerCoords = (centerCoords.length === 0) ? MAPORIGIN : centerCoords
+      //if the radius from text field is '', set it to '0'
+      var radiusAsString = this.state.radius || ZERO;
+      var radiusAsNum = 0;
+      var features = []
+      if(!isNaN(radiusAsString)) {
+        //if the radius IS a string/number
+        //turn string to number
+        radiusAsNum = parseFloat(radiusAsString);
+
+        if (this.state.radius === NOTHING && radiusAsString === ZERO) {
+          //if the radius was '' and is therefore turned into '0',
+          //    update the text field to be '0' instead of '' (for aesthetics)
+          //this won't set the text field to '0' if it was already a number
+          this.props.handleOnChange('radius', radiusAsString)
+          console.log(radiusAsString);
+          this.setState({radius: radiusAsString})
+        }
+      }
+      else {
+        throw new TypeError("Radius must be a number!")
+      }
+      features = vecSource.getFeatures();
+      // if(features.length > 0) {
+      //   //get the circle, set points
+      //   console.log(centerCoords);
+      //   console.log(radiusAsNum);
+      //   features[0].getGeometry().setCenter(centerCoords)
+      //   features[0].getGeometry().setRadius(radiusAsNum)
+      // }
+      // else {
+      //   var feat = new Feature({
+      //     geometry: new Circle(centerCoords, radiusAsNum)
+      //   });
+      //
+      //   vecSource.addFeature(feat)
+      // }
+      this.deleteFeatures()
+      var feat = new Feature({
+        geometry: new Circle(centerCoords, radiusAsNum)
+      });
+
+      vecSource.addFeature(feat)
+      console.log(vecSource.getFeatures()[0].getGeometry().getRadius());
+    }
+    catch (error) {
+     console.log(error);
+     this.setState({
+       wkt: this.wktSafe[0],
+       radius: this.wktSafe[1]
+     })
+    }
+  }
   handleHashmap(newHashmap) {
     this.setState({coordsHashmap: newHashmap})
   }
@@ -536,8 +605,6 @@ export default class Shape extends React.Component {
     var self = this;
 
     var feature = this.state.vectorSource.getFeatures()[0]
-    console.log(feature);
-
     return (
       <table width="100%" className={this.props.css}>
         <tbody>
@@ -550,7 +617,7 @@ export default class Shape extends React.Component {
                 underlineShow={this.props.showLabels}
                 style={style.root}
                 value={this.field[this.attr]}
-                disabled
+                readOnly={true}
                 defaultValue={this.field.defaultValue}
               />
             </td>
@@ -558,7 +625,7 @@ export default class Shape extends React.Component {
               <DialogMap
                 feature={feature}
                 configureMap={this.configureMap}
-                uniqueID={this.props.uniqueID}
+                uniqueID={this.field.key}
                 shape={this.props.shape}
                 handleHashmap={this.handleHashmap}
                 updateFeature={this.updateFeature}
@@ -567,7 +634,7 @@ export default class Shape extends React.Component {
                 textInput={
                   (this.props.shape === 'Circle' &&
                       <TextField
-                        id={'radius' + this.props.uniqueID}
+                        id={'radius' + this.field.key}
                         fullWidth={true}
                         floatingLabelText={"Circle - RADIUS"}
                         underlineShow={this.props.showLabels}
@@ -576,7 +643,7 @@ export default class Shape extends React.Component {
                         defaultValue={field.defaultValue}
                         onFocus={this.handleInputFocus}
                         onChange={(e) => this.handleInputChange(e, 'radius')}
-                        onBlur={this.handleInputBlur}
+                        onBlur={this.handleRadiusBlur.bind(this)}
                       />
                     )
 
@@ -589,7 +656,7 @@ export default class Shape extends React.Component {
   }
   //  // text input for editing wkt, removed from all map fields
   // <TextField
-  //   id={'center' + this.props.uniqueID}
+  //   id={'center' +   this.props.uniqueID}
   //   fullWidth={true}
   //   floatingLabelText={"Circle - POINT (x1 y1 z1)"}
   //   underlineShow={this.props.showLabels}

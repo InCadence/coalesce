@@ -204,7 +204,9 @@ export default class MapPoint extends React.Component {
         self.props.parent.handlePoint(point, self.props.parent, self);
       }
     });
-    this.setState({map: this.map})
+    this.setState({
+      map: this.map
+    })
     return this.map;
   }
 
@@ -340,6 +342,7 @@ export default class MapPoint extends React.Component {
         <tbody>
           <tr>
             <td width="100%">
+
               <TextField
                 id={this.field.key}
                 fullWidth={true}
@@ -347,7 +350,7 @@ export default class MapPoint extends React.Component {
                 underlineShow={this.props.showLabels}
                 style={style.root}
                 value={this.props.fullWKT}
-                InputProps={{readOnly: true}}
+                readOnly={true}
                 defaultValue={this.field.defaultValue}></TextField>
               </td>
               <td width="30px">
