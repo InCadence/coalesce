@@ -25,9 +25,9 @@ export class DialogMessage extends React.PureComponent {
           color='secondary'
           onClick={this.props.onSecondary}>Edit</Button>,
         <Button
-          label="Save"
+          label="Close"
           color='primary'
-          onClick={this.props.onPrimary}>Save</Button>,
+          onClick={this.props.onPrimary}>Close</Button>,
       ];
     }
     else if (!this.props.editable && this.props.actions === 'base') {

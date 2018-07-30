@@ -279,8 +279,10 @@ export class GraphView extends React.Component {
     var jsonString = ''
     var closeDialog = false
     var nonGuid = ''
-
+    console.log(actions);
     if (value != null && actions === 'editing') {
+      console.log(value);
+      console.log(originalXml);
       if (value !== originalXml) { //if the value changed
         xmlString = this.state.value
         xmlWithoutNewLines = xmlString
@@ -332,7 +334,7 @@ export class GraphView extends React.Component {
       }
     }
 
-    if(closeDialog) {
+    if(closeDialog || actions === 'base') {
       console.log('hello');
       this.setState({
         data: this.state.data,
@@ -358,7 +360,7 @@ export class GraphView extends React.Component {
 
   onEditCancel() {
     this.setState({
-      value: null,
+      value: this.state.originalXml,
       actions: 'base',
     })
   }
