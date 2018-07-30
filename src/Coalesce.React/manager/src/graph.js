@@ -342,6 +342,7 @@ export class GraphView extends React.Component {
         filtered: null,
         selected: null,
         actions: 'base',
+        errorMsg: null
       })
     }
   }
@@ -353,16 +354,25 @@ export class GraphView extends React.Component {
   }
 
   onEditJson(event) {
-    this.setState({
-      value: event.target.value,
-    })
+    var newValue = event.target.value
+    var state = {value: newValue}
+    if(this.state.errorMsg){
+      state.errorMsg = null
+    }
+    this.setState(state)
   }
 
   onEditCancel() {
-    this.setState({
+    var state = {
       value: this.state.originalXml,
       actions: 'base',
-    })
+    }
+
+    if(this.state.errorMsg){
+      state.errorMsg = null
+    }
+
+    this.setState(state)
   }
 
   onAddToggle() {
@@ -370,12 +380,17 @@ export class GraphView extends React.Component {
     this.setState({
       actions: 'adding',
       value: null,
+      errorMsg: null,
     })
   }
 
   onAddChange(event) {
     var newValue = event.target.value
-    this.setState({value: newValue})
+    var state = {value: newValue}
+    if(this.state.errorMsg){
+      state.errorMsg = null
+    }
+    this.setState(state)
   }
 
   onAddCancel() {
@@ -383,7 +398,7 @@ export class GraphView extends React.Component {
   }
 
   createError(error) {
-    this.setState({errorMssg: error})
+    this.setState({errorMsg: error})
   }
 
   createXmlJson(xml, id) {
@@ -571,7 +586,7 @@ export class GraphView extends React.Component {
                   onChange={this.onEditJson}
                   value={this.state.value || ''}
                 />
-                <FormHelperText error={true} id="name-error-text">{this.state.errorMssg}</FormHelperText>
+                <FormHelperText error={true} id="name-error-text">{this.state.errorMsg}</FormHelperText>
                 </div>
               )
 
@@ -588,7 +603,7 @@ export class GraphView extends React.Component {
                   onChange={this.onAddChange}
                   value={this.state.value || ''}
                 />
-                <FormHelperText error={true} id="name-error-text">{this.state.errorMssg}</FormHelperText>
+                <FormHelperText error={true} id="name-error-text">{this.state.errorMsg}</FormHelperText>
                 </div>
               )
             }
