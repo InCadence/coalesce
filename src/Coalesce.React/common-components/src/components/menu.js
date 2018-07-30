@@ -71,7 +71,7 @@ class Menu extends React.PureComponent {
           <Navbar.Brand>
             <Image
               icon={this.props.logoSrc}
-              title="logo"
+              title={`v${process.env.REACT_APP_VERSION}`}
               size={40}
               palette={this.props.theme.palette.primary}
               style={{float: "left"}}
