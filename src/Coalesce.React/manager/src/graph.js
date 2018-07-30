@@ -11,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import NavigationClose from '@material-ui/icons/Close';
 import Input from '@material-ui/core/Input';
 import TextField from '@material-ui/core/Input';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 
@@ -28,7 +29,7 @@ export class GraphView extends React.Component {
       data: props.data,
       config: props.config,
       selectedNode: "",
-      isValid: this.isValidGraph(props.data)
+      isValid: this.isValidGraph(props.data),
     };
 
     this.rootKarafUrl = getRootKarafUrl('core')
@@ -52,6 +53,7 @@ export class GraphView extends React.Component {
     this.onClose = this.onClose.bind(this)
     this.getNonGuid = this.getNonGuid.bind(this)
     this.attemptRevert = this.attemptRevert.bind(this)
+    this.errorMssg = null
   }
 
   postNodeXml(nodeJson) {
@@ -295,7 +297,7 @@ export class GraphView extends React.Component {
           }
           else {
             var error = `This node has links to other nodes, remove the node from ${this.props.title} and fix any appropriate references!`
-            alert(error)
+            this.errorMssg = error;
             closeDialog = false;
           }
         }
@@ -307,7 +309,6 @@ export class GraphView extends React.Component {
       else { //if the value didn't change
         closeDialog = true;
       }
-
     }
     else if (this.state.actions === 'adding') {
       xmlString = this.state.value
@@ -327,7 +328,10 @@ export class GraphView extends React.Component {
         closeDialog = false
       }
     }
+
+    console.log(closeDialog)
     if(closeDialog) {
+      console.log("rip")
       this.setState({
         data: this.state.data,
         value: null,
@@ -375,7 +379,8 @@ export class GraphView extends React.Component {
   }
 
   xmlValidationError() {
-    alert("Please ensure the xml is valid!")
+    var error = "Invalid XML"
+    this.errorMssg = error
   }
 
   createXmlJson(xml, id) {
@@ -409,7 +414,6 @@ export class GraphView extends React.Component {
 
     const {data, selected, config, actions} = this.state;
     var editable = true
-
     var base = null
     var editing = null
     var adding = null
@@ -550,7 +554,7 @@ export class GraphView extends React.Component {
 
             //if the user is editing or its editable
             (editing && editable &&
-
+              <div>
               <TextField
               label="Insert XML"
               id="nodeedittextfield"
@@ -560,20 +564,27 @@ export class GraphView extends React.Component {
               onChange={this.onEditJson}
               value={this.state.value || ''}
               />
+              <FormHelperText id="name-error-text">{this.errorMssg}</FormHelperText>
+              </div>
             )
 
             ||
 
             (adding &&
-              <TextField
-              label="Insert XML"
-              id="nodeaddtextfield"
-              multiline={true}
-              fullWidth={true}
-              rows="20"
-              onChange={this.onAddChange}
-              value={this.state.value || ''}
-              />)
+              <div>
+                <TextField
+                label="Insert XML"
+                id="nodeaddtextfield"
+                multiline={true}
+                fullWidth={true}
+                rows="20"
+                onChange={this.onAddChange}
+                value={this.state.value || ''}
+                />
+                <FormHelperText id="name-error-text">{this.errorMssg}</FormHelperText>
+                {this.errorMssg = null}
+              </div>
+              )
             }
 
             onSecondary={onSecondary}

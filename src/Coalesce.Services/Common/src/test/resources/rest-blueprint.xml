@@ -1,4 +1,4 @@
-<!-- Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!-- Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
 	Notwithstanding any contractor copyright notice, the Government has Unlimited
 	Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014. Use
 	of this work other than as specifically authorized by these DFARS Clauses
@@ -7,20 +7,7 @@
 	right to use, modify, reproduce, perform, display, release or disclose this
 	computer software and to have or authorize others to do so. Distribution
 	Statement D. Distribution authorized to the Department of Defense and U.S.
-	DoD contractors only in support of U.S. DoD efforts. -->
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws"
-	xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs" xmlns:wsa="http://cxf.apache.org/ws/addressing"
-	xmlns:http="http://cxf.apache.org/transports/http/configuration"
-	xmlns:cxf="http://cxf.apache.org/blueprint/core" xmlns:sec="http://cxf.apache.org/configuration/security"
-	xsi:schemaLocation="
-                http://www.osgi.org/xmlns/blueprint/v1.0.0
-                http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
-                http://cxf.apache.org/transports/http/configuration
-                http://cxf.apache.org/schemas/configuration/http-conf.xsd
-                http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd
- 				http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
-                http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd">
+	DoD contractors only in support of U.S. DoD efforts. --><blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:cxf="http://cxf.apache.org/blueprint/core" xmlns:http="http://cxf.apache.org/transports/http/configuration" xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs" xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws" xmlns:sec="http://cxf.apache.org/configuration/security" xmlns:wsa="http://cxf.apache.org/ws/addressing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="                 http://www.osgi.org/xmlns/blueprint/v1.0.0                 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd                 http://cxf.apache.org/transports/http/configuration                 http://cxf.apache.org/schemas/configuration/http-conf.xsd                 http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd      http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd                 http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd">
 
 
 	<!-- ========================== -->
@@ -28,12 +15,12 @@
 	<!-- ========================== -->
 	<jaxrs:server address="/data" id="someRestService">
 		<jaxrs:serviceBeans>
-			<ref component-id="templateServiceImpl" />
-			<ref component-id="optionsServiceImpl" />
-			<ref component-id="searchServiceImpl" />
-			<ref component-id="enumerationImpl" />
-			<ref component-id="entityImpl" />
-			<ref component-id="propertyImpl" />
+			<ref component-id="templateServiceImpl"/>
+			<ref component-id="optionsServiceImpl"/>
+			<ref component-id="searchServiceImpl"/>
+			<ref component-id="enumerationImpl"/>
+			<ref component-id="entityImpl"/>
+			<ref component-id="propertyImpl"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider">
@@ -59,47 +46,39 @@
 	<!-- ========================== -->
 	<!-- Service Implementations -->
 	<!-- ========================== -->
-	<bean id="blueprintImpl"
-		  class="com.incadencecorp.coalesce.services.common.jaxrs.BlueprintControllerJaxRS">
+	<bean class="com.incadencecorp.coalesce.services.common.jaxrs.BlueprintControllerJaxRS" id="blueprintImpl">
 	</bean>
 
-	<bean id="propertyImpl"
-		class="com.incadencecorp.coalesce.services.common.jaxrs.PropertyControllerJaxRS">
+	<bean class="com.incadencecorp.coalesce.services.common.jaxrs.PropertyControllerJaxRS" id="propertyImpl">
 	</bean>
 
-	<bean id="enumerationImpl"
-		class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.EnumerationDataControllerJaxRS">
+	<bean class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.EnumerationDataControllerJaxRS" id="enumerationImpl">
 		<argument>
-			<bean
-				class="com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl">
-				<argument ref="framework" />
+			<bean class="com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl">
+				<argument ref="framework"/>
 			</bean>
 		</argument>
 		<argument>
-			<bean
-				class="com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl">
-				<argument ref="persister" />
+			<bean class="com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl">
+				<argument ref="persister"/>
 			</bean>
 		</argument>
 	</bean>
 
 
-	<bean id="entityImpl"
-		class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.EntityDataControllerJaxRS">
+	<bean class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.EntityDataControllerJaxRS" id="entityImpl">
 		<argument>
-			<bean
-				class="com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl">
-				<argument ref="framework" />
+			<bean class="com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl">
+				<argument ref="framework"/>
 			</bean>
 		</argument>
-		<argument ref="template" />
+		<argument ref="template"/>
 	</bean>
 
-	<bean id="templateServiceImpl"
-		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.TemplateDataControllerJaxRS">
+	<bean class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.TemplateDataControllerJaxRS" id="templateServiceImpl">
 		<argument>
 			<bean class="com.incadencecorp.coalesce.framework.CoalesceFramework">
-				<property name="authoritativePersistor" ref="template" />
+				<property name="authoritativePersistor" ref="template"/>
 				<property name="secondaryPersistors">
 					<array>
 						<ref component-id="persister"/>
@@ -109,16 +88,13 @@
 		</argument>
 	</bean>
 
-	<bean id="optionsServiceImpl"
-		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.OptionsDataControllerJaxRS">
+	<bean class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.OptionsDataControllerJaxRS" id="optionsServiceImpl">
 	</bean>
 
-	<bean id="searchServiceImpl"
-		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.SearchDataControllerJaxRS">
+	<bean class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.SearchDataControllerJaxRS" id="searchServiceImpl">
 		<argument>
-			<bean
-				class="com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl">
-				<argument ref="persister" />
+			<bean class="com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl">
+				<argument ref="persister"/>
 			</bean>
 		</argument>
 	</bean>
@@ -126,28 +102,25 @@
 	<!-- ========================== -->
 	<!-- Persisters -->
 	<!-- ========================== -->
-	<bean id="persister"
- 		class="com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor">
+	<bean class="com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor" id="persister">
  	</bean>
 
-	<bean id="template"
-		class="com.incadencecorp.coalesce.framework.persistance.FilePersistorImpl">
+	<bean class="com.incadencecorp.coalesce.framework.persistance.FilePersistorImpl" id="template">
 	</bean>
 
 	<!-- ========================== -->
 	<!-- Framework -->
 	<!-- ========================== -->
-	<bean id="framework" class="com.incadencecorp.coalesce.framework.CoalesceFramework">
-		<property name="authoritativePersistor" ref="persister" />
+	<bean class="com.incadencecorp.coalesce.framework.CoalesceFramework" id="framework">
+		<property name="authoritativePersistor" ref="persister"/>
 		<property name="templates">
 			<array>
-				<bean
-					class="com.incadencecorp.coalesce.services.crud.service.data.model.impl.coalesce.entity.EnumerationCoalesceEntity" />
+				<bean class="com.incadencecorp.coalesce.services.crud.service.data.model.impl.coalesce.entity.EnumerationCoalesceEntity"/>
 			</array>
 		</property>
 	</bean>
 
-	<bean id="elasticsearch" class="com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor">
+	<bean class="com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor" id="elasticsearch">
         <argument>
             <map>
                 <entry key="ssl.enabled" value="false"/>
