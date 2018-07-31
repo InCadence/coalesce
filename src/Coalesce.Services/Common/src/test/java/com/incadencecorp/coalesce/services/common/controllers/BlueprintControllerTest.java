@@ -58,31 +58,35 @@ public class BlueprintControllerTest {
         String xml = controller.getXML("rest-blueprint.xml", "someRestService");
         System.out.println(xml);
         Assert.assertNotNull(xml);
+
     }
 
-//      @Test public void testRemoveBean() throws Exception {
-//        BlueprintController controller = new BlueprintController();
-//        controller.setDirectory(Paths.get("src", "test", "resources").toString());
-//
-//        JSONObject json = new JSONObject();
-//        String xml = "<bean id=\"persister\" class=\"TEST\"/>";
-//        json.append("xml", xml);
-//        String help = "";
-//        json.accumulate("oldId", help);
-//
-//        String filename = "rest-blueprint.xml";
-//        controller.editBlueprint(filename, json.toString());
-//        System.out.println("get " + controller.getXML("rest-blueprint.xml", "persister"));
-//
-//        //Remove node with no "links"
-//        String rem = "";
-//        String id = "persister";
-//        JSONObject remove = new JSONObject();
-//        remove.append("xml", rem);
-//        remove.accumulate("oldId", id);
-//
-//        controller.removeBean(filename, remove.toString());
-//      }
+      @Test public void testRemoveBean() throws Exception {
+        BlueprintController controller = new BlueprintController();
+        controller.setDirectory(Paths.get("src", "test", "resources").toString());
+
+        JSONObject json = new JSONObject();
+        String xml = "<bean id=\"persister\" class=\"TEST\"/>";
+        json.append("xml", xml);
+        String help = "";
+        json.accumulate("oldId", help);
+
+        String filename = "rest-blueprint.xml";
+        controller.editBlueprint(filename, json.toString());
+        System.out.println("get " + controller.getXML("rest-blueprint.xml", "persister"));
+
+        //Remove node with no "links"
+        String rem = "";
+        String id = "persister";
+        JSONObject remove = new JSONObject();
+        remove.append("xml", rem);
+        remove.accumulate("oldId", id);
+
+        controller.removeBean(filename, remove.toString());
+
+        controller.undo(filename);
+        controller.undo(filename);
+      }
 
     @Test public void testUndo() throws Exception
     {
@@ -97,6 +101,8 @@ public class BlueprintControllerTest {
         //System.out.println(controller.getXML("rest-blueprint.xml", "persister"));
         controller.undo("rest-blueprint.xml");
         System.out.println(controller.getXML("rest-blueprint.xml", id));
+
+        controller.undo("rest-blueprint.xml");
     }
 }
 

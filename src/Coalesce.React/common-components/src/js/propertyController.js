@@ -1,6 +1,6 @@
 import { getRootKarafUrl } from './common'
 
-var karafRootAddr = getRootKarafUrl();
+var karafRootAddr = getRootKarafUrl('core');
 
 export function loadJSON(name)
 {

@@ -25,9 +25,9 @@ export class DialogMessage extends React.PureComponent {
           color='secondary'
           onClick={this.props.onSecondary}>Edit</Button>,
         <Button
-          label="Save"
+          label="Close"
           color='primary'
-          onClick={this.props.onPrimary}>Save</Button>,
+          onClick={this.props.onPrimary}>Close</Button>,
       ];
     }
     else if (!this.props.editable && this.props.actions === 'base') {
@@ -41,6 +41,11 @@ export class DialogMessage extends React.PureComponent {
     else if (this.props.actions === 'editing') {
       actions = [
         <Button
+          label='Delete Node'
+          color='secondary'
+          align='left'
+          onClick={this.props.onTertiary}>Delete Node</Button>,
+        <Button
           label="Cancel"
           color='secondary'
           onClick={this.props.onSecondary}>Cancel</Button>,
@@ -53,6 +58,11 @@ export class DialogMessage extends React.PureComponent {
     else if (this.props.actions === 'edited') {
       actions = [
         <Button
+          label='Delete Node'
+          color='secondary'
+          alight="left"
+          onClick={this.props.onTertiary}>Delete Node</Button>,
+        <Button
           label="Cancel"
           color='secondary'
           onClick={this.props.onSecondary}>Cancel</Button>,
@@ -64,6 +74,7 @@ export class DialogMessage extends React.PureComponent {
     }
     else if (this.props.actions === 'adding') {
       actions = [
+
         <Button
           label="Cancel"
           color='secondary'

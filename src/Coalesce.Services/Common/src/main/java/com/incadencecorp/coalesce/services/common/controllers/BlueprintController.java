@@ -147,9 +147,6 @@ public class BlueprintController implements IBlueprintController {
         String id = json.get("oldId").toString();
         Document old_xml = loadBlueprint(name);
 
-
-        id ="";
-
         //Write Changes to backup
         String backup = name + ".backup" + this.version;
 
