@@ -43,11 +43,10 @@ public class BlueprintController implements IBlueprintController {
     private static final List<String> IGNORE_LIST = Arrays.asList(CoalesceThreadFactoryImpl.class.getSimpleName(),
                                                                   CoalesceMapper.class.getSimpleName());
 
-    private int version = 1;
 
     // Default Directory
     private Path root = Paths.get("deploy");
-
+    private int version = this.findVersion();
     /**
      * Overrides the default directory to search for blueprints. By default it is the deploy directory.
      *
@@ -56,6 +55,7 @@ public class BlueprintController implements IBlueprintController {
     public void setDirectory(String path)
     {
         root = Paths.get(path);
+        version = this.findVersion();
     }
 
     @Override
@@ -148,7 +148,7 @@ public class BlueprintController implements IBlueprintController {
         Document old_xml = loadBlueprint(name);
 
         //Write Changes to backup
-        String backup = name + ".backup" + this.version;
+        String backup = "backups/" + name + ".backup" + this.version;
 
         writeToFile(backup, old_xml);
 
@@ -193,15 +193,14 @@ public class BlueprintController implements IBlueprintController {
 
     @Override
     public void undo(String filename) throws Exception {
-        if (this.version > 1 ) {
-            String backup = filename + ".backup" + (this.version - 1);
+        if (--this.version > 0 ) {
+            String backup = "backups/" + filename + ".backup" + (this.version);
             Document old = loadBlueprint(backup);
-            String remove = filename + ".backup" + (this.version);
-            Path path = root.resolve(remove);
+            writeToFile(filename, old);
+
+            Path path = root.resolve(backup);
             File file = path.toFile();
             file.delete();
-            writeToFile(filename, old);
-            this.version --;
         }
         else {
             LOGGER.debug("No more backups available");
@@ -499,4 +498,21 @@ public class BlueprintController implements IBlueprintController {
         return result;
     }
 
+
+    private int findVersion() {
+        String name = "core-blueprint.xml";
+        Path filename = root.resolve(name);
+        Path deploy = filename.getParent();
+        File f = new File(deploy + "/backups/");
+        if ( f.isDirectory() ) {
+            File [] files = f.listFiles();
+            if ( files.length > 0 ) {
+                return files.length;
+            }
+        }
+        else {
+           f.mkdir();
+        }
+        return 1;
+    }
 }
