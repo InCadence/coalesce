@@ -119,8 +119,6 @@ export class GraphView extends React.Component {
     var parentId = null
     for(let i = 0; i < links.length; i++) {
       var link = links[i]
-      console.log('source ' + link.source);
-      console.log('target ' + link.target);
       if(link.target === id) {
         //if this id is being the target, return the parent's nonGuid
         parentId = link.source
@@ -250,9 +248,7 @@ export class GraphView extends React.Component {
   onClickNode = function(nodeId) {
     const {data} = this.state;
     const that = this;
-    console.log(nodeId);
     var nodeSelected = null
-    console.log(data);
     data.nodes.forEach(function (node) {
       if (node.id === nodeId) {
         nodeSelected = node
@@ -260,7 +256,6 @@ export class GraphView extends React.Component {
     })
     var editable = true
     var nonGuid = this.getNonGuid(nodeId)
-    console.log(nonGuid);
     if(nonGuid) {
       that.getNodeXml(nonGuid) //gets and sets the value to xml
     }
@@ -268,7 +263,6 @@ export class GraphView extends React.Component {
       editable = false;
     }
 
-    console.log(editable);
     that.setState({
       selected: nodeSelected,
       editable: editable
