@@ -102,8 +102,8 @@ class FilterCreator extends React.Component {
             <Divider />
             <ExpansionPanelActions  style={{padding: '5px'}}>
               <IconButton icon="/images/svg/add.svg" title="Add Criteria" onClick={this.handleAddCriteria} />
-              <IconButton icon="/images/svg/new.svg" title="Add SubGroup" onClick={this.handleAddGroup}/>
-              <IconButton icon="/images/svg/remove.svg" title="Add Criteria" onClick={this.handleRemoveGroup} />
+              <IconButton icon="/images/svg/new.svg" title="Add Sub Grouping" onClick={this.handleAddGroup}/>
+              <IconButton icon="/images/svg/remove.svg" title="Remove Grouping" onClick={this.handleRemoveGroup} />
             </ExpansionPanelActions>
          </ExpansionPanel>
     )

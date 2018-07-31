@@ -63,11 +63,15 @@ class Image extends React.PureComponent {
       )
     }
 
-    return (
-      <Tooltip title={this.props.title} placement={this.props.titlePosition ? this.props.titlePosition : 'bottom'}>
-        {view}
-      </Tooltip>
-    );
+    if (this.props.title) {
+      return (
+        <Tooltip title={this.props.title} placement={this.props.titlePosition ? this.props.titlePosition : 'bottom'}>
+          {view}
+        </Tooltip>
+      );
+    } else {
+      return view;
+    }
   }
 
 }
