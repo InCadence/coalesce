@@ -115,7 +115,8 @@ export class App extends React.Component {
     getBlueprint(blueprint).then((value) => {
       this.setState({
         selected: blueprint,
-        data: this.formatData(value)
+        data: this.formatData(value),
+        actions: 'base',
       });
 
     }).catch((err) => {

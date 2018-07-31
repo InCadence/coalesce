@@ -52,6 +52,7 @@ export class GraphView extends React.Component {
     this.onClose = this.onClose.bind(this)
     this.getNonGuid = this.getNonGuid.bind(this)
     this.attemptRevert = this.attemptRevert.bind(this)
+    this.attemptRemoveNode = this.attemptRemoveNode.bind(this)
   }
 
   postNodeXml(nodeJson) {
@@ -102,11 +103,24 @@ export class GraphView extends React.Component {
     return fetch(this.revertURL).then(() => this.props.reloadBlueprint());
   }
 
+  attemptRemoveNode(id) {
+    if(this.isOrphan(id)) {
+      //remove node nonGuid
+      this.removeOrphanNode(id)
+    }
+    else {
+      var error = `This node has links to other nodes, remove the node from ${this.props.title} and fix any appropriate references!`
+      this.createError(error)
+    }
+  }
+
   getParent(id) {
     var links = this.state.data.links
     var parentId = null
     for(let i = 0; i < links.length; i++) {
       var link = links[i]
+      console.log('source ' + link.source);
+      console.log('target ' + link.target);
       if(link.target === id) {
         //if this id is being the target, return the parent's nonGuid
         parentId = link.source
@@ -151,7 +165,8 @@ export class GraphView extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       data: nextProps.data,
-      actions: nextProps.actions || 'base'
+      actions: nextProps.actions || 'base',
+      editable: true,
     });
 
     if(nextProps.actions === 'reverting') {
@@ -235,9 +250,9 @@ export class GraphView extends React.Component {
   onClickNode = function(nodeId) {
     const {data} = this.state;
     const that = this;
-
+    console.log(nodeId);
     var nodeSelected = null
-
+    console.log(data);
     data.nodes.forEach(function (node) {
       if (node.id === nodeId) {
         nodeSelected = node
@@ -245,6 +260,7 @@ export class GraphView extends React.Component {
     })
     var editable = true
     var nonGuid = this.getNonGuid(nodeId)
+    console.log(nonGuid);
     if(nonGuid) {
       that.getNodeXml(nonGuid) //gets and sets the value to xml
     }
@@ -252,6 +268,7 @@ export class GraphView extends React.Component {
       editable = false;
     }
 
+    console.log(editable);
     that.setState({
       selected: nodeSelected,
       editable: editable
@@ -294,16 +311,7 @@ export class GraphView extends React.Component {
           closeDialog = true
         }
         else if(xmlString.trim() === "") {
-          if(this.isOrphan(nonGuid)) {
-            //remove node nonGuid
-            this.removeOrphanNode(nonGuid)
-            closeDialog = false
-          }
-          else {
-            var error = `This node has links to other nodes, remove the node from ${this.props.title} and fix any appropriate references!`
-            this.createError(error)
-            closeDialog = false;
-          }
+          this.attemptRemoveNode(nonGuid)
         }
         else {
           this.createError('Invalid XML');
@@ -606,6 +614,7 @@ export class GraphView extends React.Component {
               )
             }
 
+            onTertiary={() => this.attemptRemoveNode(this.getNonGuid(selected.id))}
             onSecondary={onSecondary}
             onPrimary={onPrimary}
             onClose={this.onClose}
