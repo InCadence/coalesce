@@ -60,19 +60,20 @@ class Main extends React.Component {
   }
 }
 
-loadJSON('theme').then((theme) => {
+function loadApplication(theme) {
   ReactDOM.render(
     <MuiThemeProvider theme={createMuiTheme(theme)}>
       <V0MuiThemeProvider muiTheme={getMuiTheme(theme)}>
         <Main />
       </V0MuiThemeProvider>
     </MuiThemeProvider>,
-    document.getElementById('entityview')
+    document.getElementById('main')
   );
+}
+
+loadJSON('theme').then((theme) => {
+  loadApplication(createMuiTheme(theme));
 }).catch((err) => {
-  console.log(`Failed Loading Theme`);
-  ReactDOM.render(
-    <Main />,
-    document.getElementById('entityview')
-  );
+  console.log("Loading Theme: " + err);
+  loadApplication(createMuiTheme({}));
 })

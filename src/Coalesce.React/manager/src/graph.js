@@ -52,6 +52,7 @@ export class GraphView extends React.Component {
     this.onClose = this.onClose.bind(this)
     this.getNonGuid = this.getNonGuid.bind(this)
     this.attemptRevert = this.attemptRevert.bind(this)
+    this.attemptRemoveNode = this.attemptRemoveNode.bind(this)
   }
 
   postNodeXml(nodeJson) {
@@ -100,6 +101,17 @@ export class GraphView extends React.Component {
 
   attemptRevert() {
     return fetch(this.revertURL).then(() => this.props.reloadBlueprint());
+  }
+
+  attemptRemoveNode(id) {
+    if(this.isOrphan(id)) {
+      //remove node nonGuid
+      this.removeOrphanNode(id)
+    }
+    else {
+      var error = `This node has links to other nodes, remove the node from ${this.props.title} and fix any appropriate references!`
+      this.createError(error)
+    }
   }
 
   getParent(id) {
@@ -151,7 +163,8 @@ export class GraphView extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       data: nextProps.data,
-      actions: nextProps.actions || 'base'
+      actions: nextProps.actions || 'base',
+      editable: true,
     });
 
     if(nextProps.actions === 'reverting') {
@@ -235,9 +248,7 @@ export class GraphView extends React.Component {
   onClickNode = function(nodeId) {
     const {data} = this.state;
     const that = this;
-
     var nodeSelected = null
-
     data.nodes.forEach(function (node) {
       if (node.id === nodeId) {
         nodeSelected = node
@@ -294,16 +305,7 @@ export class GraphView extends React.Component {
           closeDialog = true
         }
         else if(xmlString.trim() === "") {
-          if(this.isOrphan(nonGuid)) {
-            //remove node nonGuid
-            this.removeOrphanNode(nonGuid)
-            closeDialog = false
-          }
-          else {
-            var error = `This node has links to other nodes, remove the node from ${this.props.title} and fix any appropriate references!`
-            this.createError(error)
-            closeDialog = false;
-          }
+          this.attemptRemoveNode(nonGuid)
         }
         else {
           this.createError('Invalid XML');
@@ -606,6 +608,7 @@ export class GraphView extends React.Component {
               )
             }
 
+            onTertiary={() => this.attemptRemoveNode(this.getNonGuid(selected.id))}
             onSecondary={onSecondary}
             onPrimary={onPrimary}
             onClose={this.onClose}

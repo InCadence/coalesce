@@ -20,13 +20,13 @@ class Menu extends React.PureComponent {
       if (item.onClick != null) {
         return (
             <NavItem key={item.id} eventKey={item.id} href="#">
-              <div onClick={item.onClick}>{item.name}</div>
+              <div onClick={item.onClick}>{item.title ? item.title : item.name}</div>
             </NavItem>
           )
       } else {
         return (
             <NavItem key={item.id} eventKey={item.id} href={item.url}>
-              <div>{item.name}</div>
+              <div>{item.title ? item.title : item.name}</div>
             </NavItem>
           )
       }
@@ -36,13 +36,13 @@ class Menu extends React.PureComponent {
       if (item.onClick != null) {
         return (
             <NavItem key={item.id} eventKey={item.id} href="#">
-              <IconButton icon={item.img} title={item.name} onClick={item.onClick} size={40} />
+              <IconButton icon={item.img} title={item.title ? item.title : item.name} onClick={item.onClick} size={40} />
             </NavItem>
           )
       } else {
         return (
             <NavItem key={item.id} eventKey={item.id} href={item.url}>
-              <IconButton icon={item.img} title={item.name} size={40} />
+              <IconButton icon={item.img} title={item.title ? item.title : item.name} size={40} />
             </NavItem>
           )
       }
@@ -71,7 +71,7 @@ class Menu extends React.PureComponent {
           <Navbar.Brand>
             <Image
               icon={this.props.logoSrc}
-              title="logo"
+              title={`v${process.env.REACT_APP_VERSION}`}
               size={40}
               palette={this.props.theme.palette.primary}
               style={{float: "left"}}

@@ -70,7 +70,7 @@ class Main extends React.PureComponent {
 
 const MainThemed = withTheme()(Main)
 
-loadJSON('theme').then((theme) => {
+function loadApplication(theme) {
   loadJSON("home").then((data) => {
     ReactDOM.render(
       <MuiThemeProvider theme={createMuiTheme(theme)}>
@@ -78,7 +78,12 @@ loadJSON('theme').then((theme) => {
       </MuiThemeProvider>,
       document.getElementById('main')
     );
-  })
+  });
+}
+
+loadJSON('theme').then((theme) => {
+  loadApplication(createMuiTheme(theme));
 }).catch((err) => {
-  console.log("(FAILED) Loading Configuration");
+  console.log("Loading Theme: " + err);
+  loadApplication(createMuiTheme({}));
 })

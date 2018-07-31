@@ -1,6 +1,6 @@
 {
   "name": "map-viewer",
-  "version": "1.0.0",
+  "version": "0.0.28-SNAPSHOT",
   "description": " This UI is a map visualization of coalesce entities",
   "main": "index.js",
   "author": "InCadence",
@@ -11,6 +11,7 @@
     "@material-ui/core": "1.4.0",
     "@material-ui/icons": "1.1.0",
     "common-components": "file:../common-components",
+    "eslint": "^4.10.0",
     "openlayers": "^4.4.2",
     "react": "16.3.0",
     "react-dom": "16.3.0",

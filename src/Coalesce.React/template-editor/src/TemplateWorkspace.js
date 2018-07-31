@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import TemplateGraph from './TemplateGraph.js';
 import TemplateEditor from './TemplateEditor.js';
 import { Template } from './TemplateObjects.js';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import { getDefaultTheme } from 'common-components/lib/js/theme'
 import uuid from 'uuid';
 
 import { loadTemplates, loadTemplate, saveTemplate,registerTemplate, loadTemplateAsXML } from 'common-components/lib/js/templateController';
@@ -16,7 +14,6 @@ import {Menu} from 'common-components/lib/index';
 import { DialogMessage, DialogLoader, DialogOptions} from 'common-components/lib/components/dialogs';
 import RGL,{WidthProvider} from 'react-grid-layout';
 
-var pjson = require('../package.json');
 const ReactGridLayout = WidthProvider(RGL);
 class TemplateWorkspace extends Component {
 
@@ -43,7 +40,6 @@ class TemplateWorkspace extends Component {
       removedItems: [],
       removedCount: 0,
       scaling: [1,2,3,4],
-      theme: createMuiTheme(getDefaultTheme())
     }
 
     this.handlePromptTemplate = this.handlePromptTemplate.bind(this);
@@ -57,18 +53,6 @@ class TemplateWorkspace extends Component {
     this.handleTemplateDownload = this.handleTemplateDownload.bind(this);
     this.handleGraphAdd = this.handleGraphAdd.bind(this);
     this.handleEditModalToggle = this.handleEditModalToggle.bind(this);
-  }
-
-  componentDidMount() {
-
-    var that = this;
-    loadJSON('theme').then((value) => {
-      that.setState({
-        theme: createMuiTheme(value)
-      })
-    }).catch((err) => {
-      console.log("Loading Theme: " + err);
-    })
   }
 
   handleTemplateClear(){
@@ -497,8 +481,8 @@ class TemplateWorkspace extends Component {
   render() {
 
     return (
-      <MuiThemeProvider theme={this.state.theme}>
-        <Menu logoSrc={pjson.icon} title={pjson.title} homeEnabled={false} items={[
+      <div className="App">
+        <Menu logoSrc={this.props.icon} title={this.props.title} homeEnabled={false} items={[
           {
             id: 'home',
             name: 'Home',
@@ -581,7 +565,7 @@ class TemplateWorkspace extends Component {
             />
           }
           </div>
-      </MuiThemeProvider>
+      </div>
     );
 
   }

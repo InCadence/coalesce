@@ -81,7 +81,7 @@ export class App extends React.Component {
                 id: 'save',
                 name: 'Save Settings',
                 img: "/images/svg/save.svg",
-                title: 'Add Setting',
+                title: 'Save Settings',
                 onClick: this.handleSave
               }
             ]}

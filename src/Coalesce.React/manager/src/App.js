@@ -36,7 +36,7 @@ export class App extends React.Component {
             id: 'load',
             name: 'Load',
             img: "/images/svg/load.svg",
-            title: 'Load Entity',
+            title: 'Load Blueprint',
             onClick: () => {
               getBlueprintOptions().then(data => {
 
@@ -56,7 +56,7 @@ export class App extends React.Component {
             id: 'add',
             name: 'Add',
             img: "/images/svg/add.svg",
-            title: 'Add Entity',
+            title: 'Add Bean',
             onClick: () => this.setState({actions: 'adding'})
           },
           {
@@ -115,7 +115,8 @@ export class App extends React.Component {
     getBlueprint(blueprint).then((value) => {
       this.setState({
         selected: blueprint,
-        data: this.formatData(value)
+        data: this.formatData(value),
+        actions: 'base',
       });
 
     }).catch((err) => {

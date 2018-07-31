@@ -2,7 +2,7 @@ import React from 'react'
 import Menu from 'common-components/lib/components/menu'
 import { loadTemplates, loadTemplate } from 'common-components/lib/js/templateController.js';
 import { getRootKarafUrl } from 'common-components/lib/js/common';
-import { DialogMessage, DialogLoader, DialogTemplateSelection } from 'common-components/lib/components/dialogs'
+import { DialogMessage, DialogLoader, DialogOptions } from 'common-components/lib/components/dialogs'
 import { searchComplex } from 'common-components/lib/js/searchController.js';
 
 import Paper from '@material-ui/core/Paper';
@@ -94,7 +94,8 @@ export class App extends React.Component {
   handleError(message) {
     this.setState(() => {return {
       error: message,
-      loading: null
+      loading: null,
+      promptTemplate: false
     }});
   }
 
@@ -129,7 +130,8 @@ export class App extends React.Component {
 
         that.setState({
           key: key,
-          query: this.createQuery(cache[key].name)
+          query: this.createQuery(cache[key].name),
+          promptTemplate: false
           }
         );
 
@@ -141,6 +143,7 @@ export class App extends React.Component {
 
       that.setState({
         key: key,
+        promptTemplate: false
         });
     }
   }
@@ -230,11 +233,12 @@ export class App extends React.Component {
               />
             }
             { this.state.promptTemplate && this.state.templates &&
-              <DialogTemplateSelection
-                templates={this.state.templates}
-                opened={true}
-                onClose={() => {this.setState({promptTemplate: false});}}
+              <DialogOptions
+                title="Select Template"
+                open={true}
+                onClose={() => {this.setState({promptTemplate: false})}}
                 onClick={this.handleTemplateLoad}
+                options={this.state.templates}
               />
             }
           </div>

@@ -38,7 +38,7 @@ export class ListItemExpandable extends React.Component {
           <ListItemText
             primary={this.props.primary}
             secondary={this.props.secondary}
-            onClick={this.props.onClick}
+            onClick={this.props.details ? this.props.onClick : undefined}
           />
 
           {this.props.details &&
