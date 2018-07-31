@@ -2,7 +2,7 @@
   "name": "json-editor",
   "title": "JSON Editor",
   "icon": "/images/svg/json.svg",
-  "version": "1.0.0",
+  "version": "0.0.28-SNAPSHOT",
   "description": " This UI is for viewing and modifying JSON properties.",
   "main": "index.js",
   "author": "InCadence",
@@ -14,8 +14,8 @@
     "@material-ui/icons": "1.1.0",
     "common-components": "file:../common-components",
     "react": "16.3.0",
-    "react-dom": "16.3.0",
     "react-bootstrap": "0.32.1",
+    "react-dom": "16.3.0",
     "react-json-view": "1.15.2",
     "wellknown": "0.5.0"
   },

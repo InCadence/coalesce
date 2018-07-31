@@ -2,7 +2,7 @@
   "name": "entity-editor",
   "title": "Entity Editor",
   "icon": "/images/svg/edit.svg",
-  "version": "0.1.0",
+  "version": "0.0.28-SNAPSHOT",
   "author": "InCadence",
   "description": "Generic interface for creating, viewing, and editing Coalesce entities.",
   "main": "index.js",
