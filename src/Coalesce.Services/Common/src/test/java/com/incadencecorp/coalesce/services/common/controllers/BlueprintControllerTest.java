@@ -101,7 +101,6 @@ public class BlueprintControllerTest {
         //System.out.println(controller.getXML("rest-blueprint.xml", "persister"));
         controller.undo("rest-blueprint.xml");
         System.out.println(controller.getXML("rest-blueprint.xml", id));
-
         controller.undo("rest-blueprint.xml");
     }
 }
