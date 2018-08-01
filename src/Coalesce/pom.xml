@@ -149,6 +149,7 @@
         <dependency>
             <groupId>com.incadencecorp.coalesce</groupId>
             <artifactId>coalesce-classification</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Required for the JSON annotations -->
