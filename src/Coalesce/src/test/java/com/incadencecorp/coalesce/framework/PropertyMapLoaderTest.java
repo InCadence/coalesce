@@ -17,41 +17,33 @@
 
 package com.incadencecorp.coalesce.framework;
 
+import com.incadencecorp.unity.common.SettingType;
+import com.incadencecorp.unity.common.connectors.MemoryConnector;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.incadencecorp.unity.common.connectors.MemoryConnector;
+import java.util.Collections;
 
 /**
- * Ensures proper operation of the {@link PropertyLoader}.
- * 
- * @author n78554
+ * Ensures proper operation of the {@link PropertyMapLoader}.
+ *
+ * @author Derek Clemenzi
  */
-public class PropertyLoaderTests {
+public class PropertyMapLoaderTest {
 
     private static final String PROPERTY_NAME = "prop";
     private static final String PROPERTY_VALUE = "value";
+    private static final String PROPERTY2_NAME = "prop2";
+    private static final String PROPERTY2_VALUE = "value2";
+    private static final String CONFIG_NAME = "HelloWorld";
 
     /**
-     * This test ensures that a null pointer exception is thrown when getting
-     * settings if the connector is null.
+     * This test ensures that an empty map is created when no connector is specified.
      */
-    @Test(expected = NullPointerException.class)
-    public void testGetFailure()
+    @Test
+    public void testNullConnector()
     {
-        PropertyLoader loader = new PropertyLoader(null, "HelloWorld");
-        loader.getProperty(PROPERTY_NAME);
-    }
-
-    /**
-     * This test ensures that a null pointer exception is thrown when setting
-     * settings if the connector is null.
-     */
-    @Test(expected = NullPointerException.class)
-    public void testSetFailure()
-    {
-        PropertyLoader loader = new PropertyLoader(null, "HelloWorld");
-        loader.setProperty(PROPERTY_NAME, PROPERTY_VALUE);
+        Assert.assertEquals(0, new PropertyMapLoader(null, CONFIG_NAME).size());
     }
 
     /**
@@ -60,11 +52,14 @@ public class PropertyLoaderTests {
     @Test
     public void testPropertyLoader()
     {
-        PropertyLoader loader = new PropertyLoader(new MemoryConnector(), "HelloWorld");
-        loader.setProperty(PROPERTY_NAME, PROPERTY_VALUE);
+        MemoryConnector connector = new MemoryConnector();
+        connector.setSetting(CONFIG_NAME, PROPERTY_NAME, PROPERTY_VALUE, SettingType.ST_STRING);
 
-        Assert.assertEquals(PROPERTY_VALUE, loader.getProperty(PROPERTY_NAME));
+        PropertyMapLoader loader = new PropertyMapLoader(connector, CONFIG_NAME);
+        loader.setProperties(Collections.singletonMap(PROPERTY2_NAME, PROPERTY2_VALUE));
 
+        Assert.assertEquals(PROPERTY_VALUE, loader.get(PROPERTY_NAME));
+        Assert.assertEquals(PROPERTY2_VALUE, loader.get(PROPERTY2_NAME));
     }
 
 }
