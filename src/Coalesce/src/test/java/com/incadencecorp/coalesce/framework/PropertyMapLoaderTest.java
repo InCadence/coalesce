@@ -38,15 +38,6 @@ public class PropertyMapLoaderTest {
     private static final String CONFIG_NAME = "HelloWorld";
 
     /**
-     * This test ensures that an empty map is created when no connector is specified.
-     */
-    @Test
-    public void testNullConnector()
-    {
-        Assert.assertEquals(0, new PropertyMapLoader(null, CONFIG_NAME).size());
-    }
-
-    /**
      * Ensures that a property can be retrieved after settings.
      */
     @Test
