@@ -25,6 +25,8 @@ import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.exim.impl.JsonFullEximImpl;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.services.api.Results;
+import com.incadencecorp.coalesce.services.api.crud.DataObjectStatusActionType;
+import com.incadencecorp.coalesce.services.api.crud.DataObjectStatusType;
 import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -166,9 +168,11 @@ public class EntityDataController {
 
     public void deleteEntity(String entityKey) throws RemoteException
     {
-        CoalesceEntity entity = getEntity(entityKey);
-        entity.setStatus(ECoalesceObjectStatus.DELETED);
-        setEntity(entityKey, false, entity);
+        DataObjectStatusType task = new DataObjectStatusType();
+        task.setAction(DataObjectStatusActionType.MARK_AS_DELETED);
+        task.setKey(entityKey);
+
+        crud.updateDataObjectStatus(task);
     }
 
     public CoalesceSection getSection(String entityKey, String key) throws RemoteException

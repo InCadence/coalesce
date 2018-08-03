@@ -70,7 +70,7 @@ export class App extends React.Component {
   }
 
   renderEntity(key) {
-  const that = this;
+    const that = this;
 
     this.setState({
       prompt: false,
@@ -140,35 +140,41 @@ export class App extends React.Component {
     const { entity, template, isNew } = this.state;
     const that = this;
 
+    const menuItems = [
+      {
+        id: 'new',
+        name: 'New',
+        img: '/images/svg/new.svg',
+        title: 'Create New Entity',
+        onClick: () => {
+          this.setState({
+            promptTemplate: true
+          })
+        }
+      },{
+        id: 'load',
+        name: 'Load',
+        img: '/images/svg/load.svg',
+        title: 'Load Entity',
+        onClick: () => {
+          this.setState({prompt: true});
+        }
+      }
+    ]
+
+    if (entity) {
+      menuItems.push({
+          id: 'save',
+          name: 'Save',
+          img: '/images/svg/save.svg',
+          title: 'Save Entity',
+          onClick: () => {that.handleSaveEntity();}
+      })
+    }
+
     return (
       <div>
-        <Menu logoSrc={this.props.icon} title={this.props.title} items={[
-          {
-            id: 'new',
-            name: 'New',
-            img: '/images/svg/new.svg',
-            title: 'Create New Entity',
-            onClick: () => {
-              this.setState({
-                promptTemplate: true
-              })
-            }
-          },{
-            id: 'load',
-            name: 'Load',
-            img: '/images/svg/load.svg',
-            title: 'Load Entity',
-            onClick: () => {
-              this.setState({prompt: true});
-            }
-          },{
-              id: 'save',
-              name: 'Save',
-              img: '/images/svg/save.svg',
-              title: 'Save Entity',
-              onClick: () => {that.handleSaveEntity();}
-          }
-        ]}/>
+        <Menu logoSrc={this.props.icon} title={this.props.title} items={menuItems}/>
         <Paper style={{padding: '5px', margin: '10px'}}>
           <EntityView data={entity} template={template} isNew={isNew} />
           <DialogPrompt
@@ -178,16 +184,18 @@ export class App extends React.Component {
             onClose={() => {this.setState({prompt: false})}}
             onSubmit={this.renderEntity}
           />
-          <DialogMessage
-            title="Error"
-            opened={this.state.error != null}
-            message={this.state.error}
-            onClose={() => {this.setState({error: null})}}
-          />
-          {this.state.templates != null &&
+          {this.state.error &&
+            <DialogMessage
+              title="Error"
+              opened={true}
+              message={this.state.error}
+              onClose={() => {this.setState({error: null})}}
+            />
+          }
+          {this.state.templates && this.state.promptTemplate &&
             <DialogOptions
               title="Select Template"
-              open={this.state.promptTemplate}
+              open={true}
               onClose={() => {this.setState({promptTemplate: false})}}
               options={this.state.templates.map((item) => {
                 return {

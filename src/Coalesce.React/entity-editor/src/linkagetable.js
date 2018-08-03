@@ -8,8 +8,7 @@ import { loadEntity } from 'common-components/lib/js/entityController'
 import uuid from 'uuid';
 import { FieldInput } from './FieldInput'
 
-const linkage_enum = [{enum: 'IS_PARENT_OF', label: "Is Parent Of"}, {enum: 'IS_CHILD_OF', label: 'Is Child Of'}];
-const status_enum = [{enum: 'ACTIVE', label: "Active"}, {enum: 'READONLY', label: 'Read Only'}, {enum: 'DELETED', label: 'Deleted'}];
+import { linkage_enum, status_enum } from './enumerations.js'
 
 export class LinkageView extends React.Component
 {

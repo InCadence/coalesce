@@ -6,6 +6,7 @@ import {Row, Col} from 'react-bootstrap'
 import {Tabs, Tab} from 'material-ui/Tabs';
 import {FieldInput} from './FieldInput.js'
 
+import { status_enum } from './enumerations.js'
 
 export class EntityView extends React.Component {
 
@@ -102,6 +103,22 @@ export class EntityView extends React.Component {
           </Col>
           <Col xs={4}>
             {data != null ? data.objectVersion : ''}
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={2}>
+            <label>Status</label>
+          </Col>
+          <Col xs={4}>
+            {data &&
+              <FieldInput
+                field={data}
+                dataType="ENUMERATION_TYPE"
+                attr="status"
+                options={status_enum}
+                showLabels={false}
+              />
+            }
           </Col>
         </Row>
         { template != null && data != null &&

@@ -69,12 +69,19 @@ export class FieldInput extends React.Component {
     this.handleOnChange = this.handleOnChange.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log("updating");
+    this.setState({
+      field: nextProps.field
+    })
+  }
+
   handleOnChange(attr, value) {
     const {field} = this.state;
     field[attr] = value;
 
     //console.log(`${attr}=${value}`);
-    this.setState(field);
+    this.setState(() => {return {field: field}});
 
     if (this.props.onChange) {
       this.props.onChange(value);

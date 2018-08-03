@@ -46,3 +46,16 @@ export function loadEntity(key) {
       throw Error(error);
     });
 }
+
+export function deleteEntity(key) {
+  return fetch(`${karafRootAddr}/entity/${key}`, {
+      method: "DELETE",
+    }).then(res => {
+      if (!res.ok)
+      {
+        throw Error(res.statusText);
+      }
+    }).catch(function(error) {
+      throw Error(error);
+    });
+}
