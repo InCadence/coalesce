@@ -625,7 +625,7 @@ export class GraphView extends React.Component {
             actions={'reverting'}
             onPrimary={onPrimary}
             >
-              The file {this.props.itle} is broken and cannot be loaded.
+              The file {this.props.title} is broken and cannot be loaded.
                 You can try and use the revert button, but if it is not able
                 to revert, someone must manually fix the file on the system.
             </DialogMessage>
