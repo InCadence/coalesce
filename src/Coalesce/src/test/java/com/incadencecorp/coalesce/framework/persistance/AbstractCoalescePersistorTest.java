@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.EventObject;
 import java.util.List;
 import java.util.UUID;
 
@@ -192,6 +193,10 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         entity.addRecord1().getStringField().setValue("New Record");
         entity.markAsDeleted();
+
+        Assert.assertTrue(persister.saveEntity(false, entity));
+        Assert.assertEquals(1, persister.getEntityXml(entity.getKey()).length);
+        Assert.assertEquals(ECoalesceObjectStatus.DELETED, persister.getEntity(entity.getKey())[0].getStatus());
 
         Assert.assertTrue(persister.saveEntity(true, entity));
         Assert.assertEquals(0, persister.getEntityXml(entity.getKey()).length);
