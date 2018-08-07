@@ -142,7 +142,7 @@
                 </execution>
               </executions>
               <configuration>
-                <repository>192.168.11.86:8083/coalesce-karaf</repository>
+                <repository>192.168.11.3:8083/coalesce-karaf</repository>
                 <buildArgs>
                   <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
                 </buildArgs>
