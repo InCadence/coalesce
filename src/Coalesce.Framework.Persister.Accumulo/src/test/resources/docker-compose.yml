@@ -38,12 +38,13 @@ services:
       restart: unless-stopped
       user: root
     accumulo:
-        image: ccruz09/accumulo
+        image: mraad/accumulo
         container_name: accumulo-instance
         ports:
             - "9999:9999"
             - "9997:9997"
             - "50095:50095"
+            - "2181:2181"
         restart: unless-stopped
     #kibana5:
 #      image: docker.elastic.co/kibana/kibana:5.4.0
