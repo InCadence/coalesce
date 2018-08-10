@@ -5,13 +5,14 @@ ARG TARBALL=*.tar.gz
 ARG TAR_PATH=./target/$TARBALL
 
 
-RUN mkdir -p /opt/karaf
+RUN apk add --no-cache bash && \ 
+    apk add supervisor && \  
+    mkdir -p /opt/karaf /var/log/supervisor
+
 ADD $TAR_PATH /opt/karaf
-
-
-RUN apk add --no-cache bash
+COPY supervisord.conf /etc/supervisord.conf
 
 EXPOSE 8101
 EXPOSE 8181
 
-ENTRYPOINT ["bash", "-c", "/opt/karaf/bin/karaf"]
+CMD ["/usr/bin/supervisord"] 
