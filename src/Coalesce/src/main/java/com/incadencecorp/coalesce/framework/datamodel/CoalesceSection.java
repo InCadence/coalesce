@@ -1,12 +1,13 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.incadencecorp.coalesce.api.Views;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import org.apache.commons.lang.NullArgumentException;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import java.util.List;
+import java.util.Map;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -36,11 +37,11 @@ public class CoalesceSection extends CoalesceObjectHistory {
     /**
      * Creates an {@link CoalesceSection}, by name, and ties it to its parent
      * {@link CoalesceEntity}.
-     * 
+     *
      * @param parent {@link CoalesceEntity} that the new {@link CoalesceSection}
-     *            will belong to.
-     * @param name String, the name/namepath to be assigned to the
-     *            {@link CoalesceSection} .
+     *               will belong to.
+     * @param name   String, the name/namepath to be assigned to the
+     *               {@link CoalesceSection} .
      * @return {@link CoalesceSection} , the new {@link CoalesceSection} .
      */
     public static CoalesceSection create(CoalesceEntity parent, String name)
@@ -51,11 +52,11 @@ public class CoalesceSection extends CoalesceObjectHistory {
     /**
      * Creates an {@link CoalesceSection}, by name, and ties it to its parent
      * {@link CoalesceSection}.
-     * 
+     *
      * @param parent {@link CoalesceSection} that the new
-     *            {@link CoalesceSection} will belong to.
-     * @param name String, the name/namepath to be assigned to the
-     *            {@link CoalesceSection} .
+     *               {@link CoalesceSection} will belong to.
+     * @param name   String, the name/namepath to be assigned to the
+     *               {@link CoalesceSection} .
      * @return {@link CoalesceSection} , the new {@link CoalesceSection} .
      */
     public static CoalesceSection create(CoalesceSection parent, String name)
@@ -66,11 +67,11 @@ public class CoalesceSection extends CoalesceObjectHistory {
     /**
      * Creates an {@link CoalesceSection}, by name, and ties it to its parent
      * {@link CoalesceEntity}. Also sets the noIndex attribute.
-     * 
-     * @param parent {@link CoalesceEntity} that the new {@link CoalesceSection}
-     *            will belong to.
-     * @param name String, the name/namepath to be assigned to the
-     *            {@link CoalesceSection} .
+     *
+     * @param parent  {@link CoalesceEntity} that the new {@link CoalesceSection}
+     *                will belong to.
+     * @param name    String, the name/namepath to be assigned to the
+     *                {@link CoalesceSection} .
      * @param noIndex boolean value.
      * @return {@link CoalesceSection} , the new {@link CoalesceSection} .
      */
@@ -114,11 +115,11 @@ public class CoalesceSection extends CoalesceObjectHistory {
     /**
      * Creates an {@link CoalesceSection}, by name, and ties it to its parent
      * {@link CoalesceSection}. Also sets the noIndex attribute.
-     * 
-     * @param parent {@link CoalesceSection} that the new
-     *            {@link CoalesceSection} will belong to.
-     * @param name String, the name/namepath to be assigned to the
-     *            {@link CoalesceSection} .
+     *
+     * @param parent  {@link CoalesceSection} that the new
+     *                {@link CoalesceSection} will belong to.
+     * @param name    String, the name/namepath to be assigned to the
+     *                {@link CoalesceSection} .
      * @param noIndex boolean value.
      * @return {@link CoalesceSection} , the new {@link CoalesceSection} .
      */
@@ -160,7 +161,6 @@ public class CoalesceSection extends CoalesceObjectHistory {
 
     /**
      * Class constructor. Creates a CoalesceSection class.
-     * 
      */
     public CoalesceSection()
     {
@@ -170,9 +170,8 @@ public class CoalesceSection extends CoalesceObjectHistory {
     /**
      * Class constructor. Creates a CoalesceSection class off of an existing
      * CoalesceSection.
-     * 
+     *
      * @param section
-     * 
      */
     public CoalesceSection(CoalesceSection section)
     {
@@ -186,9 +185,9 @@ public class CoalesceSection extends CoalesceObjectHistory {
     /**
      * Initializes this {@link CoalesceSection} based on a Section and ties it
      * to its parent {@link CoalesceEntity}.
-     * 
-     * @param parent {@link CoalesceEntity} that the new {@link CoalesceSection}
-     *            will belong to.
+     *
+     * @param parent  {@link CoalesceEntity} that the new {@link CoalesceSection}
+     *                will belong to.
      * @param section that the new {@link CoalesceSection} will be based off of.
      * @return boolean indicator of success/failure.
      */
@@ -200,9 +199,9 @@ public class CoalesceSection extends CoalesceObjectHistory {
     /**
      * Initializes this {@link CoalesceSection} based on a Section and ties it
      * to its parent {@link CoalesceSection}.
-     * 
-     * @param parent {@link CoalesceSection} that the new
-     *            {@link CoalesceSection} will belong to.
+     *
+     * @param parent  {@link CoalesceSection} that the new
+     *                {@link CoalesceSection} will belong to.
      * @param section that the new {@link CoalesceSection} will be based off of.
      * @return boolean indicator of success/failure.
      */
@@ -258,9 +257,19 @@ public class CoalesceSection extends CoalesceObjectHistory {
     // -----------------------------------------------------------------------//
 
     /**
+     * Modify the JSON annotation
+     */
+    @JsonView(Views.Entity.class)
+    @Override
+    public String getKey()
+    {
+        return super.getKey();
+    }
+
+    /**
      * Creates an {@link CoalesceRecordset} for this {@link CoalesceSection},
      * with the name specified.
-     * 
+     *
      * @param name of the new {@link CoalesceRecordset} .
      * @return {@link CoalesceRecordset} , the new {@link CoalesceRecordset} .
      */
@@ -273,11 +282,11 @@ public class CoalesceSection extends CoalesceObjectHistory {
     /**
      * Returns {@link CoalesceSection}'s {@link CoalesceRecordset} with the
      * matching String NamePath.
-     * 
+     *
      * @param namePath of the new {@link CoalesceRecordset} .
      * @return {@link CoalesceRecordset} , the {@link CoalesceRecordset} with
-     *         the name path. Null if the name path is not a
-     *         {@link CoalesceRecordset} or doesn't exist.
+     * the name path. Null if the name path is not a
+     * {@link CoalesceRecordset} or doesn't exist.
      */
     public CoalesceRecordset getRecordset(String namePath)
     {
@@ -285,10 +294,10 @@ public class CoalesceSection extends CoalesceObjectHistory {
     }
 
     /**
-     * @deprecated
+     * @return map of {@link CoalesceRecordset} s contained by this section.
      * @see #getRecordsetsAsList()
      * @since 0.0.7
-     * @return map of {@link CoalesceRecordset} s contained by this section.
+     * @deprecated
      */
     @JsonIgnore
     public Map<String, CoalesceRecordset> getRecordsets()
@@ -298,9 +307,9 @@ public class CoalesceSection extends CoalesceObjectHistory {
 
     /**
      * Returns this {@link CoalesceEntity}'s {@link CoalesceRecordset}s.
-     * 
+     *
      * @return a list of record sets in order that they appear within this
-     *         section.
+     * section.
      */
     public List<CoalesceRecordset> getRecordsetsAsList()
     {
@@ -310,7 +319,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
     /**
      * Creates an {@link CoalesceSection} for this {@link CoalesceSection}, with
      * the name specified.
-     * 
+     *
      * @param name of the new {@link CoalesceSection} .
      * @return {@link CoalesceSection} , the new {@link CoalesceSection} .
      */
@@ -322,11 +331,11 @@ public class CoalesceSection extends CoalesceObjectHistory {
     /**
      * Returns {@link CoalesceSection}'s {@link CoalesceSection} with the
      * matching String NamePath.
-     * 
+     *
      * @param namePath of the new {@link CoalesceSection} .
      * @return {@link CoalesceSection} , the {@link CoalesceSection} with the
-     *         name path. Null if the name path is not a {@link CoalesceSection}
-     *         or doesn't exist.
+     * name path. Null if the name path is not a {@link CoalesceSection}
+     * or doesn't exist.
      */
     public CoalesceSection getSection(String namePath)
     {
@@ -341,10 +350,10 @@ public class CoalesceSection extends CoalesceObjectHistory {
     }
 
     /**
-     * @deprecated
+     * @return a map of {@link CoalesceSection} s contained by this section.
      * @see #getSectionsAsList()
      * @since 0.0.7
-     * @return a map of {@link CoalesceSection} s contained by this section.
+     * @deprecated
      */
     @JsonIgnore
     public Map<String, CoalesceSection> getSections()
@@ -354,7 +363,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
 
     /**
      * Returns this {@link CoalesceSection}'s nested {@link CoalesceSection}s.
-     * 
+     *
      * @return a list of sections in order that they appear within this section.
      */
     public List<CoalesceSection> getSectionsAsList()
@@ -368,7 +377,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
 
     /**
      * Returns a Recordset List for the Entity Section.
-     * 
+     *
      * @return List&lt;Recordset&gt; Section's Recordset list.
      */
     protected List<Recordset> getEntityRecordSets()
@@ -405,7 +414,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
 
     /**
      * @return a list of {@link Section} that belong to this
-     *         {@link CoalesceSection}.
+     * {@link CoalesceSection}.
      */
     protected List<Section> getSectionSections()
     {

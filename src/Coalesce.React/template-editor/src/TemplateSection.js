@@ -207,7 +207,13 @@ class Section extends React.Component {
           //scrollButtons="on"
           //ScrollButtonComponent="test"
         >
-          {section.sectionsAsList != null && section.sectionsAsList.map((item) => {return (
+          {section.sectionsAsList != null && section.sectionsAsList.map((item) => {
+
+            if (!item.key) {
+              item.key = uuid.v4();
+            }
+
+            return (
               <Tab
                 key={item.key}
                 style={{backgroundColor: palette.light}}
@@ -225,7 +231,13 @@ class Section extends React.Component {
                 <Section data={item} theme={this.props.theme}/>
               </Tab>
           )})}
-          {section.recordsetsAsList != null && section.recordsetsAsList.map((item) => {return (
+          {section.recordsetsAsList != null && section.recordsetsAsList.map((item) => {
+
+            if (!item.key) {
+              item.key = uuid.v4();
+            }
+
+            return (
             <Tab
               key={item.key}
               style={{backgroundColor: palette.main}}
@@ -251,11 +263,14 @@ class Section extends React.Component {
           open={this.state.editKey != null}
           onClose={() => this.setState({editKey: null})}
           options={[
+/*
             {
               key: 'section',
               name: 'Section',
               onClick: this.handleAddSection
-            },{
+            },
+*/
+            {
               key: 'recordset',
               name: 'Recordset',
               onClick: this.handleAddRecordset

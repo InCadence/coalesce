@@ -1,16 +1,15 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.NullArgumentException;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import org.apache.commons.lang.NullArgumentException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -45,11 +44,11 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     /**
      * Creates an {@link CoalesceLinkageSection} and ties it to its parent
      * {@link CoalesceEntity}.
-     * 
+     *
      * @param parent {@link CoalesceEntity} that the new
-     *            {@link CoalesceLinkageSection} will belong to.
+     *               {@link CoalesceLinkageSection} will belong to.
      * @return {@link CoalesceLinkageSection} the new
-     *         {@link CoalesceLinkageSection} .
+     * {@link CoalesceLinkageSection} .
      */
     public static CoalesceLinkageSection create(CoalesceEntity parent)
     {
@@ -59,12 +58,12 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     /**
      * Creates an {@link CoalesceLinkageSection} and ties it to its parent
      * {@link CoalesceEntity}. Also sets the noIndex attribute.
-     * 
-     * @param parent {@link CoalesceEntity} that the new
-     *            {@link CoalesceLinkageSection} will belong to.
+     *
+     * @param parent  {@link CoalesceEntity} that the new
+     *                {@link CoalesceLinkageSection} will belong to.
      * @param noIndex boolean value.
      * @return {@link CoalesceLinkageSection} the new
-     *         {@link CoalesceLinkageSection} .
+     * {@link CoalesceLinkageSection} .
      */
     public static CoalesceLinkageSection create(CoalesceEntity parent, boolean noIndex)
     {
@@ -89,9 +88,9 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     /**
      * Initializes a previously new {@link CoalesceLinkageSection} and ties it
      * to its parent {@link CoalesceEntity}.
-     * 
+     *
      * @param parent {@link CoalesceEntity} containing an LinkageSection to base
-     *            this {@link CoalesceLinkageSection} on.
+     *               this {@link CoalesceLinkageSection} on.
      * @return boolean indicator of success/failure.
      */
     protected boolean initialize(CoalesceEntity parent)
@@ -139,11 +138,21 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     // -----------------------------------------------------------------------//
 
     /**
+     * Modify the JSON annotation
+     */
+    @JsonView(Views.Entity.class)
+    @Override
+    public String getKey()
+    {
+        return super.getKey();
+    }
+
+    /**
      * Returns a hashmap of the {@link CoalesceLinkage}s contained in the
      * {@link CoalesceLinkageSection} .
-     * 
+     *
      * @return HashMap of this {@link CoalesceLinkageSection} 's
-     *         {@link CoalesceLinkage} s.
+     * {@link CoalesceLinkage} s.
      */
     @JsonIgnore
     public Map<String, CoalesceLinkage> getLinkages()
@@ -168,14 +177,12 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
         return getObjectsAsList(_entityLinkageSection.getLinkage());
     }
 
-
-
     /**
      * Creates an {@link CoalesceLinkage} child for this
      * {@link CoalesceLinkageSection} .
-     * 
+     *
      * @return {@link CoalesceLinkage} newly created and added to this
-     *         {@link CoalesceLinkageSection} .
+     * {@link CoalesceLinkageSection} .
      */
     public CoalesceLinkage createLinkage()
     {
@@ -188,12 +195,14 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     public void clearLinkages()
     {
         List<String> linkageKeys = new ArrayList<String>();
-        
-        for (Linkage linkage : _entityLinkageSection.getLinkage()) {
+
+        for (Linkage linkage : _entityLinkageSection.getLinkage())
+        {
             linkageKeys.add(linkage.getKey());
         }
-        
-        for (String key : linkageKeys) {
+
+        for (String key : linkageKeys)
+        {
             pruneCoalesceObject(key);
         }
     }

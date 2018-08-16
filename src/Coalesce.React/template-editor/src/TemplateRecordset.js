@@ -48,9 +48,9 @@ class RecordSet extends React.Component {
             <FormControlLabel label='Singleton' control={
               <Checkbox
                 checked={recordset.minRecords === 1 && recordset.maxRecords === 1}
-                onChange={(event, checked) => {
-                  this.handleChange("minRecords", checked ? 1 : 0);
-                  this.handleChange("maxRecords", checked ? 1 : 0);
+                onChange={(event) => {
+                  this.handleChange("minRecords", event.target.checked ? 1 : 0);
+                  this.handleChange("maxRecords", event.target.checked ? 1 : 0);
                 }}
               />
               }
@@ -63,7 +63,7 @@ class RecordSet extends React.Component {
               type='number'
               fullWidth
               value={recordset.minRecords}
-              onChange={(event, value) => this.handleChange("minRecords", value)}
+              onChange={(event) => this.handleChange("minRecords", event.target.value)}
             />
           </Col>
           <Col xs={4}>
@@ -73,7 +73,7 @@ class RecordSet extends React.Component {
               type='number'
               fullWidth
               value={recordset.maxRecords}
-              onChange={(event, value) => this.handleChange("maxRecords", value)}
+              onChange={(event) => this.handleChange("maxRecords", event.target.value)}
             />
           </Col>
         </Row>

@@ -186,6 +186,16 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     // -----------------------------------------------------------------------//
 
     /**
+     * Modify the JSON annotation
+     */
+    @JsonView(Views.Entity.class)
+    @Override
+    public String getKey()
+    {
+        return super.getKey();
+    }
+
+    /**
      * @return a list of field definitions that are defined for this recorset.
      */
     @JsonView(Views.Template.class)

@@ -5,6 +5,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ActionDelete from '@material-ui/icons/Delete';
 import EditorModeEdit from '@material-ui/icons/ModeEdit';
 import { DialogEditDefinition } from './DialogEditDefinition';
+import uuid from 'uuid';
 
 export class Definitions extends React.Component {
   constructor(props) {
@@ -24,7 +25,13 @@ export class Definitions extends React.Component {
     return (
       <div>
         <List>
-          {this.props.data.map((item) => {return (
+          {this.props.data.map((item) => {
+
+            if (!item.key) {
+              item.key = uuid.v4();
+            }
+
+            return (
               <ListItem
                 key={item.key}
               >

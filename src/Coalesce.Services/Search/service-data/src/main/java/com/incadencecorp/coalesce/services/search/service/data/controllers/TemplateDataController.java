@@ -232,36 +232,24 @@ public class TemplateDataController {
      * @param name    template's name
      * @param source  template's source
      * @param version template's version
-     * @return an entity created by the template specified by the provided arguments.
+     * @return the specified template
      * @throws RemoteException on error
      */
     public CoalesceEntity getTemplate(String name, String source, String version) throws RemoteException
     {
-        CoalesceEntity result = null;
-
-        for (TemplateNode node : templates.values())
-        {
-            if (name.equalsIgnoreCase(node.template.getName()) && source.equalsIgnoreCase(node.template.getSource())
-                    && version.equalsIgnoreCase(node.template.getVersion()))
-            {
-                result = node.entity;
-            }
-        }
-
-        if (result == null)
-        {
-            error(String.format(CoalesceErrors.NOT_FOUND,
-                                "Template",
-                                "name=" + name + ", source=" + source + ", version=" + version));
-        }
-
-        return result;
-
+        return getTemplateNode(name, source, version).entity;
     }
 
+    /**
+     * @param name    template's name
+     * @param source  template's source
+     * @param version template's version
+     * @return the specified template in XML format
+     * @throws RemoteException on error
+     */
     public String getTemplateXml(String name, String source, String version) throws RemoteException
     {
-        return getTemplate(name, source, version).toXml();
+        return getTemplateNode(name, source, version).template.toXml();
     }
 
     /**
@@ -271,23 +259,17 @@ public class TemplateDataController {
      */
     public CoalesceEntity getTemplate(String key) throws RemoteException
     {
-        CoalesceEntity result = null;
-
-        if (templates.containsKey(key))
-        {
-            result = templates.get(key).entity;
-        }
-        else
-        {
-            error(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
-        }
-
-        return result;
+        return getTemplateNode(key).entity;
     }
 
+    /**
+     * @param key template's key
+     * @return the specified template in XML format
+     * @throws RemoteException on error
+     */
     public String getTemplateXml(String key) throws RemoteException
     {
-        return getTemplate(key).toXml();
+        return getTemplateNode(key).template.toXml();
     }
 
     public CoalesceEntity getNewEntity(String key) throws RemoteException
@@ -532,6 +514,45 @@ public class TemplateDataController {
         return results;
     }
 
+    private TemplateNode getTemplateNode(String key) throws RemoteException
+    {
+        TemplateNode result = null;
+
+        if (templates.containsKey(key))
+        {
+            result = templates.get(key);
+        }
+        else
+        {
+            error(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+        }
+
+        return result;
+    }
+
+    private TemplateNode getTemplateNode(String name, String source, String version) throws RemoteException
+    {
+        TemplateNode result = null;
+
+        for (TemplateNode node : templates.values())
+        {
+            if (name.equalsIgnoreCase(node.template.getName()) && source.equalsIgnoreCase(node.template.getSource())
+                    && version.equalsIgnoreCase(node.template.getVersion()))
+            {
+                result = node;
+            }
+        }
+
+        if (result == null)
+        {
+            error(String.format(CoalesceErrors.NOT_FOUND,
+                                "Template",
+                                "name=" + name + ", source=" + source + ", version=" + version));
+        }
+
+        return result;
+    }
+
     private class TemplateNode {
 
         private CoalesceEntity entity;
@@ -564,4 +585,5 @@ public class TemplateDataController {
 
         throw new RemoteException(msg);
     }
+
 }

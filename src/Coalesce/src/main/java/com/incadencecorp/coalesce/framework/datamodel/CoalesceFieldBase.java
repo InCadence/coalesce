@@ -144,22 +144,6 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     }
 
     /**
-     * Sets the key value for the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}
-     * .
-     * 
-     * @param fieldHistory provides the value of the newer field's Previous
-     *            History Key.
-     */
-    public void setPreviousHistoryKey(CoalesceFieldHistory fieldHistory)
-    {
-        if (fieldHistory == null)
-            throw new NullArgumentException("fieldHistory");
-
-        setPreviousHistoryKey(fieldHistory.getKey());
-    }
-
-    /**
      * Sets the Field's value by the String parameter.
      * 
      * @param value field's value as a String.

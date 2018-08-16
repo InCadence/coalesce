@@ -1,15 +1,16 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.incadencecorp.coalesce.api.Views;
+import com.incadencecorp.coalesce.common.classification.Marking;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
+
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.namespace.QName;
-
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -561,6 +562,16 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     // public Properties
     // -----------------------------------------------------------------------//
 
+    /**
+     * Modify the JSON annotation
+     */
+    @JsonView(Views.Entity.class)
+    @Override
+    public String getKey()
+    {
+        return super.getKey();
+    }
+
     protected List<Constraint> getDefinitionConstraints()
     {
         return _entityFieldDefinition.getConstraint();
@@ -626,6 +637,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     /**
      * @return whether this field is a list type.
      */
+    @JsonIgnore
     public boolean isListType()
     {
         return getDataType().toString().endsWith(CoalesceSettings.VAR_IS_LIST_TYPE)

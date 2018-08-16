@@ -27,13 +27,13 @@ public class Views {
     /**
      * Serializes records.
      */
-    public static class Entity {
+    public interface Entity {
     }
 
     /**
      * Serializes field definitions used for templates.
      */
-    public static class Template {
+    public interface Template {
     }
 
 }

@@ -1,20 +1,17 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
-import org.joda.time.DateTime;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import org.joda.time.DateTime;
+
+import javax.xml.namespace.QName;
+import java.util.*;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -132,6 +129,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
         _object.setName(value);
     }
 
+    @JsonView(Views.Entity.class)
+    @JsonProperty("dateCreated")
     public final String getDateCreatedAsString()
     {
         return JodaDateTimeHelper.toXmlDateTimeUTC(getDateCreated());
@@ -144,6 +143,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
         return _object.getDatecreated();
     }
 
+    @JsonProperty("dateCreated")
     public final void setDateCreatedAsString(String value)
     {
         setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
@@ -156,6 +156,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
         _object.setDatecreated(value);
     }
 
+    @JsonView(Views.Entity.class)
+    @JsonProperty("lastModified")
     public final String getLastModifiedAsString()
     {
         return JodaDateTimeHelper.toXmlDateTimeUTC(getLastModified());
@@ -258,6 +260,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
         _object.setModifiedbyip(value);
     }
 
+    @JsonIgnore
     @Override
     public final String getPreviousHistoryKey()
     {
@@ -278,6 +281,17 @@ public abstract class CoalesceObject implements ICoalesceObject {
     public final void setPreviousHistoryKey(String value)
     {
         _object.setPrevioushistorykey(value);
+    }
+
+    /**
+     * Calls {@link #setPreviousHistoryKey(String)} using the key from the provided object.
+     *
+     * @param object to obtain key from.
+     */
+    @JsonIgnore
+    public void setPreviousHistoryKey(CoalesceObject object)
+    {
+        setPreviousHistoryKey(object.getKey());
     }
 
     @Override
@@ -447,6 +461,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
         }
     }
 
+    @JsonIgnore
     @Override
     public final String getTag()
     {
@@ -477,6 +492,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
         this.setAttribute(ATTRIBUTE_FLATTEN, Boolean.toString(value));
     }
 
+    @JsonProperty("lastModified")
     public final void setLastModifiedAsString(String value)
     {
         setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
@@ -622,7 +638,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
         case "previoushistorykey":
             setPreviousHistoryKey(value);
             return true;
-        case "noindex":
+        case ATTRIBUTE_NOINDEX:
             setNoIndex(Boolean.parseBoolean(value));
             return true;
         default:

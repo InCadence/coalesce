@@ -1,19 +1,12 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.incadencecorp.coalesce.api.Views;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -24,11 +17,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import javax.xml.namespace.QName;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -49,7 +45,7 @@ import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 
 /**
  * This class is the root element of the meta model.
- * 
+ *
  * @author n78554
  */
 public class CoalesceEntity extends CoalesceObjectHistory {
@@ -93,12 +89,11 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Creates a {@link CoalesceEntity} based off of an (XML) String.
-     * 
+     *
      * @param entityXml (XML) String that the {@link CoalesceEntity} is to be
-     *            created from
-     * 
+     *                  created from
      * @return {@link CoalesceEntity} resulting from entityXml String parameter,
-     *         null if failed
+     * null if failed
      */
     public static CoalesceEntity create(String entityXml)
     {
@@ -125,13 +120,12 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * Creates an {@link CoalesceEntity} based off of an (XML) String and sets
      * the title.
-     * 
+     *
      * @param entityXml (XML) String that the {@link CoalesceEntity} is to be
-     *            created from.
-     * @param title String that could be a a field namepath.
-     * 
+     *                  created from.
+     * @param title     String that could be a a field namepath.
      * @return {@link CoalesceEntity} resulting from entityXml String parameter,
-     *         null if failed
+     * null if failed
      */
     public static CoalesceEntity create(String entityXml, String title)
     {
@@ -148,33 +142,31 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Creates a new {@link CoalesceEntity} of the name, source and version.
-     * 
-     * @param name String identifying the {@link CoalesceEntity} type to create
-     * @param source String identifying the {@link CoalesceEntity} source
+     *
+     * @param name    String identifying the {@link CoalesceEntity} type to create
+     * @param source  String identifying the {@link CoalesceEntity} source
      * @param version String identifying the {@link CoalesceEntity} version
-     * 
      * @return {@link CoalesceEntity} resulting from entityXml String parameter,
-     *         null if failed
+     * null if failed
      */
     public static CoalesceEntity create(String name, String source, String version)
     {
         return CoalesceEntity.create(name, source, version, null, null, null);
     }
-    
+
     /**
      * Creates a new {@link CoalesceEntity} of the name, source and version
      * specified for the entityId and entityIdType specified.
-     * 
-     * @param name String identifying the {@link CoalesceEntity} type to create
-     * @param source String identifying the {@link CoalesceEntity} source
-     * @param version String identifying the {@link CoalesceEntity} version
-     * @param entityId String of the entity id, could be a guid, tcn, bag-tag id
-     *            or other value
+     *
+     * @param name         String identifying the {@link CoalesceEntity} type to create
+     * @param source       String identifying the {@link CoalesceEntity} source
+     * @param version      String identifying the {@link CoalesceEntity} version
+     * @param entityId     String of the entity id, could be a guid, tcn, bag-tag id
+     *                     or other value
      * @param entityIdType String identifying the entity id's type (guid, tcn,
-     *            bag-tag id or other value)
-     * 
+     *                     bag-tag id or other value)
      * @return {@link CoalesceEntity} resulting from entityXml String parameter,
-     *         null if failed
+     * null if failed
      */
     public static CoalesceEntity create(String name, String source, String version, String entityId, String entityIdType)
     {
@@ -185,18 +177,17 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * Creates a new {@link CoalesceEntity} of the name, source and version
      * specified for the entityId and entityIdType specified. Also sets the
      * title.
-     * 
-     * @param name String identifying the {@link CoalesceEntity} type to create
-     * @param source String identifying the {@link CoalesceEntity} source
-     * @param version String identifying the {@link CoalesceEntity} version
-     * @param entityId String of the entity id, could be a guid, tcn, bag-tag id
-     *            or other value
+     *
+     * @param name         String identifying the {@link CoalesceEntity} type to create
+     * @param source       String identifying the {@link CoalesceEntity} source
+     * @param version      String identifying the {@link CoalesceEntity} version
+     * @param entityId     String of the entity id, could be a guid, tcn, bag-tag id
+     *                     or other value
      * @param entityIdType String identifying the entity id's type (guid, tcn,
-     *            bag-tag id or other value)
-     * @param title String that could be a a field namepath.
-     * 
+     *                     bag-tag id or other value)
+     * @param title        String that could be a a field namepath.
      * @return {@link CoalesceEntity} resulting from entityXml String parameter,
-     *         null if failed
+     * null if failed
      */
     public static CoalesceEntity create(String name,
                                         String source,
@@ -216,14 +207,14 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * Initializes a previously new {@link CoalesceEntity} by initializing
      * skeletal child objects.
-     * 
+     *
      * @return boolean indicator of success/failure
      */
     public boolean initialize()
     {
-    	if (this.isInitialized())
-    		return true;
-    	
+        if (this.isInitialized())
+            return true;
+
         _entity = new Entity();
 
         if (!super.initialize(_entity))
@@ -237,15 +228,15 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Initializes core settings.
-     * 
-     * @param name String identifying the {@link CoalesceEntity} type to create
-     * @param source String identifying the {@link CoalesceEntity} source
-     * @param version String identifying the {@link CoalesceEntity} version
-     * @param entityId String of the entity id, could be a guid, tcn, bag-tag id
-     *            or other value
+     *
+     * @param name         String identifying the {@link CoalesceEntity} type to create
+     * @param source       String identifying the {@link CoalesceEntity} source
+     * @param version      String identifying the {@link CoalesceEntity} version
+     * @param entityId     String of the entity id, could be a guid, tcn, bag-tag id
+     *                     or other value
      * @param entityIdType String identifying the entity id's type (guid, tcn,
-     *            bag-tag id or other value)
-     * @param title String that could be a a field namepath.
+     *                     bag-tag id or other value)
+     * @param title        String that could be a a field namepath.
      */
     protected boolean initializeEntity(String name,
                                        String source,
@@ -254,9 +245,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
                                        String entityIdType,
                                        String title)
     {
-    	if (this.isInitialized())
-    		return true;
-    	
+        if (this.isInitialized())
+            return true;
+
         _entity = new Entity();
 
         if (!super.initialize(_entity))
@@ -280,16 +271,15 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * Initializes a previously new {@link CoalesceEntity} based off of an (XML)
      * String.
-     * 
+     *
      * @param entityXml (XML) String that the {@link CoalesceEntity} is to be
-     *            initialized from.
+     *                  initialized from.
      * @return boolean indicator of success/failure
      */
     public boolean initialize(String entityXml)
     {
-    	if (this.isInitialized())
-    		return true;
-    	
+        if (this.isInitialized())
+            return true;
 
         if (entityXml == null || StringHelper.isNullOrEmpty(entityXml.trim()))
         {
@@ -326,7 +316,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Initializes from an existing entity.
-     * 
+     *
      * @param entity {@link CoalesceEntity} to duplicate.
      * @return boolean indicator of success/failure
      */
@@ -353,7 +343,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * Initializes a previously new {@link CoalesceEntity} by initializing
      * skeletal child objects.
-     * 
+     *
      * @return boolean indicator of success/failure
      */
     protected boolean initializeChildren()
@@ -390,7 +380,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Returns the {@link CoalesceEntity}'s source attribute value.
-     * 
+     *
      * @return String, source attribute value
      */
     public String getSource()
@@ -400,7 +390,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Sets the {@link CoalesceEntity}'s source attribute value.
-     * 
+     *
      * @param value String, new value for the source attribute
      */
     public void setSource(String value)
@@ -410,7 +400,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Returns the {@link CoalesceEntity}'s version attribute value.
-     * 
+     *
      * @return String, version attribute value
      */
     public String getVersion()
@@ -420,7 +410,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Sets the {@link CoalesceEntity}'s version attribute value.
-     * 
+     *
      * @param value String, new value for the version attribute
      */
     public void setVersion(String value)
@@ -430,7 +420,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Returns the {@link CoalesceEntity}'s EntityId attribute value.
-     * 
+     *
      * @return String, EntityId attribute value
      */
     public String getEntityId()
@@ -440,7 +430,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Sets the {@link CoalesceEntity}'s EntityId attribute value.
-     * 
+     *
      * @param value String, new value for the EntityId attribute
      */
     public void setEntityId(String value)
@@ -450,7 +440,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Returns the {@link CoalesceEntity}'s EntityIdType attribute value.
-     * 
+     *
      * @return String, EntityIdType attribute value
      */
     public String getEntityIdType()
@@ -477,7 +467,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Sets the {@link CoalesceEntity}'s EntityIdType attribute value.
-     * 
+     *
      * @param value String, new value for the EntityIdType attribute
      */
     public void setEntityIdType(String value)
@@ -487,7 +477,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Returns the {@link CoalesceEntity}'s title attribute value.
-     * 
+     *
      * @return String, title attribute value
      */
     public String getTitle()
@@ -553,7 +543,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Sets the {@link CoalesceEntity}'s title attribute value.
-     * 
+     *
      * @param value String, new value for the title attribute
      */
     public void setTitle(String value)
@@ -584,9 +574,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * Returns the {@link CoalesceEntity}'s linkages from the
      * {@link CoalesceEntity}'s linkagesection.
-     * 
+     *
      * @return Map&lt;String, CoalesceLinkage&gt; CoalesceLinkages of relationships to
-     *         this CoalesceEntity
+     * this CoalesceEntity
      */
     @JsonIgnore
     public Map<String, CoalesceLinkage> getLinkages()
@@ -601,9 +591,8 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * Creates a CoalesceEntityTemplate based off of this {@link CoalesceEntity}
      * .
-     * 
+     *
      * @return CoalesceEntityTemplate generated from this {@link CoalesceEntity}
-     * 
      * @throws CoalesceException
      */
     public CoalesceEntityTemplate createNewEntityTemplate() throws CoalesceException
@@ -624,12 +613,11 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Creates an {@link CoalesceSection} for this {@link CoalesceEntity}.
-     * 
-     * @param name String, the namepath of the section.
+     *
+     * @param name    String, the namepath of the section.
      * @param noIndex boolean
-     * 
      * @return {@link CoalesceSection} , newly created and now belonging to this
-     *         {@link CoalesceEntity}
+     * {@link CoalesceEntity}
      */
     public CoalesceSection createSection(String name, boolean noIndex)
     {
@@ -638,11 +626,10 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Creates an {@link CoalesceSection} for this {@link CoalesceEntity}.
-     * 
+     *
      * @param name String, the namepath of the section.
-     * 
      * @return {@link CoalesceSection} , newly created and now belonging to this
-     *         {@link CoalesceEntity}
+     * {@link CoalesceEntity}
      */
     public CoalesceSection createSection(String name)
     {
@@ -652,10 +639,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * Used to locate a record instance for a given record set. If not found its
      * created.
-     * 
+     *
      * @param clazz
      * @param names
-     * 
      * @return Coalesce Record
      */
     public <T extends CoalesceRecord> T createSingleton(Class<T> clazz, String... names)
@@ -686,8 +672,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
             {
                 result = clazz.getConstructor(CoalesceRecord.class).newInstance(record);
             }
-            catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
-                   | InvocationTargetException | NoSuchMethodException e)
+            catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException e)
             {
                 LOGGER.error("Failed to create record", e);
             }
@@ -700,9 +685,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * Returns this
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s
      * sections.
-     * 
+     *
      * @return Map&lt;String, CoalesceSection&gt; sections belonging to this
-     *         CoalesceEntity
+     * CoalesceEntity
      */
     @JsonIgnore
     public Map<String, CoalesceSection> getSections()
@@ -712,7 +697,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Returns this {@link CoalesceEntity}'s {@link CoalesceSection}s.
-     * 
+     *
      * @return a list of sections in order that they appear within this entity.
      */
     public List<CoalesceSection> getSectionsAsList()
@@ -722,9 +707,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Returns this {@link CoalesceEntity}'s {@link CoalesceLinkageSection} .
-     * 
+     *
      * @return {@link CoalesceLinkageSection} belonging to this
-     *         {@link CoalesceEntity}
+     * {@link CoalesceEntity}
      */
     public CoalesceLinkageSection getLinkageSection()
     {
@@ -745,10 +730,10 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * Returns the {@link CoalesceEntity}'s linkages, from the
      * {@link CoalesceEntity}'s linkagesection, for the EntityName specified.
      * Returns all linkages when the forEntityName parameter is null.
-     * 
+     *
      * @param forEntityName String of the Entity Name to return linkages for
      * @return Map&lt;String, CoalesceLinkage&gt; linkages with matches for the Entity
-     *         Name parameter
+     * Name parameter
      */
     public Map<String, CoalesceLinkage> getLinkages(String forEntityName)
     {
@@ -779,11 +764,10 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * Returns the {@link CoalesceEntity}'s linkages, from the
      * {@link CoalesceEntity}'s linkagesection, based on LinkType.
-     * 
+     *
      * @param forLinkType
-     * 
      * @return Map&lt;String, CoalesceLinkage&gt; linkages with matches for the
-     *         ELinkTypes parameter
+     * ELinkTypes parameter
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType)
     {
@@ -791,11 +775,10 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     }
 
     /**
-     * 
      * @param forLinkType
      * @return the linkage for the specified type.
      * @throws CoalesceException if more then one linkage of the specified type
-     *             exists.
+     *                           exists.
      */
     public CoalesceLinkage getLinkage(ELinkTypes forLinkType) throws CoalesceException
     {
@@ -806,13 +789,13 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * Returns the {@link CoalesceEntity}'s linkages, from the
      * {@link CoalesceEntity}'s linkagesection, based on LinkType and EntityName
      * specified.
-     * 
-     * @param forLinkType ELinkTypes (one link type), the type of relationship
-     *            link to find matching linkages for
+     *
+     * @param forLinkType   ELinkTypes (one link type), the type of relationship
+     *                      link to find matching linkages for
      * @param forEntityName String, the Entity name attribute to find matching
-     *            linkages for
+     *                      linkages for
      * @return Map&lt;String, CoalesceLinkage&gt; linkages with matches for the Entity
-     *         Name and ELinkType parameters
+     * Name and ELinkType parameters
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName)
     {
@@ -820,12 +803,11 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     }
 
     /**
-     * 
      * @param forLinkType
      * @param forEntityName
      * @return the linkage for the specified type.
      * @throws CoalesceException if more then one linkage of the specified type
-     *             exists.
+     *                           exists.
      */
     public CoalesceLinkage getLinkage(ELinkTypes forLinkType, String forEntityName) throws CoalesceException
     {
@@ -836,15 +818,15 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * Returns the {@link CoalesceEntity}'s linkages, from the
      * {@link CoalesceEntity}'s linkagesection, based on LinkType EntityName and
      * Entity Source specified.
-     * 
-     * @param forLinkType ELinkTypes, the type of relationship link to find
-     *            matching linkages for
-     * @param forEntityName String, the Entity name attribute to find matching
-     *            linkages for
+     *
+     * @param forLinkType     ELinkTypes, the type of relationship link to find
+     *                        matching linkages for
+     * @param forEntityName   String, the Entity name attribute to find matching
+     *                        linkages for
      * @param forEntitySource String, the Entity source attribute to find
-     *            matching linkages for
+     *                        matching linkages for
      * @return Map&lt;String, CoalesceLinkage&gt; linkages with matches for the
-     *         parameter criteria
+     * parameter criteria
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
     {
@@ -852,20 +834,20 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     }
 
     /**
-     * 
      * @param forLinkType
      * @param forEntityName
      * @param forEntitySource
      * @return the linkage for the specified type.
      * @throws CoalesceException if more then one linkage of the specified type
-     *             exists.
+     *                           exists.
      */
     public CoalesceLinkage getLinkage(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
             throws CoalesceException
     {
         Map<String, CoalesceLinkage> results = getLinkages(Arrays.asList(forLinkType), forEntityName, forEntitySource);
 
-        switch (results.size()) {
+        switch (results.size())
+        {
 
         case 0:
             return null;
@@ -878,13 +860,13 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     }
 
     /**
-     * @param forLinkTypes ELinkTypes (list of link types), the type of
-     *            relationship link to find matching linkages for
+     * @param forLinkTypes  ELinkTypes (list of link types), the type of
+     *                      relationship link to find matching linkages for
      * @param forEntityName String, the Entity name attribute to find matching
-     *            linkages for
+     *                      linkages for
      * @return the {@link CoalesceEntity} 's linkages, from the
-     *         {@link CoalesceEntity} 's linkagesection, based on a list of
-     *         LinkTypes and the EntityName specified.
+     * {@link CoalesceEntity} 's linkagesection, based on a list of
+     * LinkTypes and the EntityName specified.
      */
     public Map<String, CoalesceLinkage> getLinkages(List<ELinkTypes> forLinkTypes, String forEntityName)
     {
@@ -893,10 +875,10 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * Returns the {@link CoalesceSection} specified by the namepath string.
-     * 
+     *
      * @param namePath String, namepath of the desired {@link CoalesceSection}
      * @return {@link CoalesceSection} having the matching namepath parameter.
-     *         Null if not found.
+     * Null if not found.
      */
     public CoalesceSection getSection(String namePath)
     {
@@ -913,10 +895,10 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * Returns the {@link CoalesceEntity}'s list of EntityIds specified by
      * EntityIdType String.
-     * 
+     *
      * @param typeParam EntityIdType String to retrieve entityIds for
      * @return List&lt;String&gt; list of entityIds that match the EntityIdType
-     *         typeParam
+     * typeParam
      */
     public List<String> getEntityId(String typeParam)
     {
@@ -942,11 +924,10 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * Sets the {@link CoalesceEntity}'s EntityId and EntityIdType attribute
      * values when values do not exist. Appends values when the attributes have
      * values.
-     * 
+     *
      * @param typeParam String EntityIdType value to append to the EntityIdType
-     *            attribute
-     * @param value String EntityId value to append to the EntityId attribute
-     * 
+     *                  attribute
+     * @param value     String EntityId value to append to the EntityId attribute
      * @return boolean indicator of success/failure
      */
     public boolean setEntityId(String typeParam, String value)
@@ -1013,9 +994,8 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     }
 
     /**
-     * 
      * Increments the object's version.
-     * 
+     *
      * @param userId
      * @param ip
      */
@@ -1037,10 +1017,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * Creates a {@link CoalesceEntitySyncShell} based off of this
      * {@link CoalesceEntity}.
-     * 
+     *
      * @return {@link CoalesceEntitySyncShell} , newly created based on this
-     *         {@link CoalesceEntity}
-     * 
+     * {@link CoalesceEntity}
      * @throws SAXException
      * @throws IOException
      */
@@ -1051,11 +1030,10 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     }
 
     /**
-     * 
      * @param originalEntity
      * @param updatedEntity
      * @return {@link #mergeSyncEntity(CoalesceEntity, CoalesceEntity, String, String)}
-     *         with nulls being passed in as the userId and ip.
+     * with nulls being passed in as the userId and ip.
      * @throws CoalesceException
      */
     @Deprecated
@@ -1069,14 +1047,13 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * Sets the Elements and attribute values of {@link CoalesceEntity} myEntity
      * to the Elements and attribute values of {@link CoalesceEntity} syncEntity
      * when the syncEntity's LastModified values are more recent.
-     * 
+     *
      * @param originalEntity is the original entity.
-     * @param updatedEntity is that entity that should be merged into the
-     *            original.
-     * @param userId the ID of the user making the change.
-     * @param ip the IP of the user making the change.
+     * @param updatedEntity  is that entity that should be merged into the
+     *                       original.
+     * @param userId         the ID of the user making the change.
+     * @param ip             the IP of the user making the change.
      * @return {@link CoalesceEntity} result of the merged CoalesceEntities
-     * 
      * @throws CoalesceException
      */
     public static CoalesceEntity mergeSyncEntity(CoalesceEntity originalEntity,
@@ -1094,7 +1071,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * Serializes the Coalesce Entity into XML without binary data using the
      * specified encoding.
-     * 
+     *
      * @param encoding the encoding format to use.
      * @return (XML) String of the entity without the binary data.
      */
@@ -1106,11 +1083,11 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * Serializes the Coalesce Entity into UTF-8 XML and, when removeBinary is
      * true, removes the binary values.
-     * 
+     *
      * @param removeBinary boolean. If true, field values of binary and file
-     *            will be removed from the entityXml string output.
+     *                     will be removed from the entityXml string output.
      * @return (XML) String of the entity in UTF-8, with or without the fields
-     *         of binary/file based on the parameter.
+     * of binary/file based on the parameter.
      */
     public String toXml(boolean removeBinary)
     {
@@ -1120,12 +1097,12 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * Serializes the Coalesce Entity into XML using the specified encoding and,
      * when removeBinary is true, removes the binary values.
-     * 
+     *
      * @param removeBinary boolean. If true, field values of binary and file
-     *            will be removed from the entityXml string output.
-     * @param encoding the encoding format to use.
+     *                     will be removed from the entityXml string output.
+     * @param encoding     the encoding format to use.
      * @return (XML) String of the entity, with or without the fields of
-     *         binary/file based on the parameter.
+     * binary/file based on the parameter.
      */
     public String toXml(boolean removeBinary, String encoding)
     {
@@ -1180,8 +1157,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     private void clearFieldTypeValue(String fieldType, Document xmlDoc) throws XPathExpressionException
     {
 
-        String expression = "//field[translate(@datatype,'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='"
-                + fieldType + "']";
+        String expression =
+                "//field[translate(@datatype,'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + fieldType
+                        + "']";
 
         XPath xPath = XPathFactory.newInstance().newXPath();
         NodeList nodes = (NodeList) xPath.evaluate(expression, xmlDoc.getDocumentElement(), XPathConstants.NODESET);
@@ -1214,9 +1192,8 @@ public class CoalesceEntity extends CoalesceObjectHistory {
                 CoalesceLinkage linkage = (CoalesceLinkage) cdo;
 
                 if ((forEntityName == null || linkage.getEntity2Name().equalsIgnoreCase(forEntityName))
-                        && forLinkTypes.contains(linkage.getLinkType())
-                        && (forEntitySource == null || linkage.getEntity2Source().equalsIgnoreCase(forEntitySource))
-                        && !linkage.isMarkedDeleted())
+                        && forLinkTypes.contains(linkage.getLinkType()) && (forEntitySource == null
+                        || linkage.getEntity2Source().equalsIgnoreCase(forEntitySource)) && !linkage.isMarkedDeleted())
                 {
                     linkages.put(linkage.getKey(), linkage);
                 }
@@ -1245,7 +1222,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     /**
      * @return a list of {@link Section} that belong to this
-     *         {@link CoalesceEntity}.
+     * {@link CoalesceEntity}.
      */
     protected List<Section> getEntitySections()
     {
@@ -1272,7 +1249,8 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     @Override
     protected boolean setExtendedAttributes(String name, String value)
     {
-        switch (name.toLowerCase()) {
+        switch (name.toLowerCase())
+        {
         case ATTRIBUTE_SOURCE:
             _entity.setSource(value);
             return true;
