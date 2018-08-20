@@ -225,6 +225,7 @@
             </snapshots>
         </repository>
         <!-- Gemini Blueprint repository -->
+        <!--
         <repository>
             <id>zodiac-repository</id>
             <name>Zodiac Release Repository</name>
@@ -236,7 +237,9 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        -->
         <!-- Spring EBR repository -->
+        <!--
         <repository>
             <id>spring-ebr-repository</id>
             <name>Spring EBR Repository</name>
@@ -248,6 +251,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        -->
         <!-- OPS4J SNAPSHOT repository -->
         <repository>
             <id>ops4j.sonatype.snapshots.deploy</id>
