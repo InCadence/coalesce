@@ -77,6 +77,26 @@ public class DirectNotifierImpl implements ICoalesceNotifier, ICoalesceSubscribe
     }
 
     @Override
+    public void sendMetrics(String task, Long duration)
+    {
+        if (handlerMetrics != null)
+        {
+            MetricsEvent event = new MetricsEvent();
+            event.setName(task);
+            event.setPending(0);
+            event.setWorking(duration);
+            event.setTotal(duration);
+            event.setSuccessful(true);
+
+            handlerMetrics.handle(event);
+        }
+        else
+        {
+            LOGGER.warn("Handler Not Found");
+        }
+    }
+
+    @Override
     public void sendCrud(String task, ECrudOperations operation, ObjectMetaData data)
     {
         if (handlerCrud != null)

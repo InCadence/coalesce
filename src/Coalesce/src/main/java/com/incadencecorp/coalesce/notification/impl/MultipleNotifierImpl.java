@@ -17,9 +17,6 @@
 
 package com.incadencecorp.coalesce.notification.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
 import com.incadencecorp.coalesce.enums.EAuditCategory;
 import com.incadencecorp.coalesce.enums.EAuditLevels;
@@ -29,6 +26,9 @@ import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 import org.osgi.framework.BundleContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This implementation allows for multiple notifiers to be initialized and used.
@@ -41,7 +41,7 @@ public class MultipleNotifierImpl implements ICoalesceNotifier {
     Member Variables
     --------------------------------------------------------------------------*/
 
-    private final List<ICoalesceNotifier> notifiers = new ArrayList<ICoalesceNotifier>();
+    private final List<ICoalesceNotifier> notifiers = new ArrayList<>();
 
     /*--------------------------------------------------------------------------
     Public Methods
@@ -50,11 +50,11 @@ public class MultipleNotifierImpl implements ICoalesceNotifier {
     /**
      * Default Constructor
      *
-     * @param values
+     * @param notifers implementations
      */
-    public MultipleNotifierImpl(ICoalesceNotifier... values)
+    public MultipleNotifierImpl(ICoalesceNotifier... notifers)
     {
-        for (ICoalesceNotifier value : values)
+        for (ICoalesceNotifier value : notifers)
         {
             if (!this.getClass().isInstance(value))
             {
@@ -82,6 +82,15 @@ public class MultipleNotifierImpl implements ICoalesceNotifier {
         for (ICoalesceNotifier notifier : notifiers)
         {
             notifier.sendMetrics(task, results);
+        }
+    }
+
+    @Override
+    public void sendMetrics(String task, Long duration)
+    {
+        for (ICoalesceNotifier notifier : notifiers)
+        {
+            notifier.sendMetrics(task, duration);
         }
     }
 
