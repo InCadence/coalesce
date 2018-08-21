@@ -49,6 +49,14 @@ public interface ICoalesceNotifier {
     void sendMetrics(String task, MetricResults<?> results);
 
     /**
+     * Send when metrics are collected.
+     *
+     * @param task
+     * @param duration
+     */
+    void sendMetrics(String task, Long duration);
+
+    /**
      * Send when a CRUD operation is performed on a object.
      *
      * @param task
