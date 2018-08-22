@@ -18,7 +18,7 @@ being done through SetUp.
 """
 
 import unittest
-from wrapper.coalesce_request import *
+from pyCoalesce.coalesce_request import *
 
 class test_search(unittest.TestCase):
 
@@ -39,7 +39,7 @@ class test_search(unittest.TestCase):
                                                                 "operator":"EqualTo","value":"{}".format(self.key),"matchCase":"false"
                                                                  }])
     def tearDown(self):
-        delete(KEY=self.key, TYPE=Configurations["SetUp"]["TYPE"])
+        delete(key=self.create[1]["key"])
 
 class test_read(unittest.TestCase):
     #Add tests for each field query
@@ -56,7 +56,7 @@ class test_read(unittest.TestCase):
         self.assertTrue(read(ARTIFACT=Configurations["SetUp"]["TYPE"], KEY=self.key))
 
     def tearDown(self):
-        delete(KEY=self.key, TYPE=Configurations["SetUp"]["TYPE"])
+        delete(key=self.create[1]["key"])
 
 class test_delete(unittest.TestCase):
 
@@ -66,7 +66,7 @@ class test_delete(unittest.TestCase):
         self.delete = delete(KEY=self.create[1]["key"], TYPE=Configurations["SetUp"]["TYPE"])
 
     def test_response_status(self):
-        self.assertEqual(self.delete.status_code, 204)
+        self.assertTrue(self.delete)
 
 class test_update(unittest.TestCase):
 
@@ -83,8 +83,8 @@ class test_update(unittest.TestCase):
         self.assertEqual(self.create[1]["flatten"], Configurations["SetUp"]["FIELDSADDED"][0]["flatten"])
 
     def tearDown(self):
-        delete(TYPE=Configurations["SetUp"]["TYPE"], KEY=self.create[1]["key"])
-        
+        delete(key=self.create[1]["key"])
+
 class test_create(unittest.TestCase):
     def setUp(self):
         self.create = create(TYPE=Configurations["SetUp"]["TYPE"], FIELDSADDED=Configurations["SetUp"]["FIELDSADDED"],
@@ -98,4 +98,4 @@ class test_create(unittest.TestCase):
         self.assertEqual(self.create[0].status_code, 204)
 
     def tearDown(self):
-        delete(TYPE= Configurations["SetUp"]["TYPE"], KEY=self.key)
+        delete(key=self.create[1]["key"])

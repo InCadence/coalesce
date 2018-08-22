@@ -1,0 +1,1 @@
+generateDS.py -o entity.py Entity.xsd
