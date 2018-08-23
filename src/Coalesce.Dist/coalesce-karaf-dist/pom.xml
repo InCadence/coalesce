@@ -148,8 +148,8 @@
                 <buildArgs>
                   <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
                 </buildArgs>
-		<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
-		<skip>${docker.skip}</skip>
+		        <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+		        <skip>${skipDocker}</skip>
               </configuration>
             </plugin>
         </plugins>

@@ -25,6 +25,18 @@
 		<module>../Coalesce.Core.Feature</module>
 	</modules>
 
+	<!-- Build flags to skip components -->
+	<properties>
+
+		<!-- Skips creating docker images -->
+        <skipDocker>false</skipDocker>
+
+		<!-- Skips 'npm version' and 'npm install' -->
+        <skipNPM>false</skipNPM>
+
+	</properties>
+
+	<!-- Profiles to include directories -->
 	<profiles>
 		<profile>
 			<id>bundles</id>
