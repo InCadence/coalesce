@@ -3,11 +3,9 @@ package com.incadencecorp.coalesce.framework.datamodel;
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import org.junit.Assert;
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 import static org.junit.Assert.*;
 
@@ -84,7 +82,7 @@ public class CoalesceEntityTemplateTest {
 
                     Node attribute = attributeList.item(ii);
 
-                    if (CoalesceEntityTemplate.excludeAttribute(attribute.getNodeName()))
+                    if (CoalesceEntityTemplate.excludeAttribute(node.getNodeName(), attribute.getNodeName()))
                     {
                         assertTrue(attribute.getNodeName(), StringHelper.isNullOrEmpty(attribute.getNodeValue()));
                     }
@@ -144,6 +142,37 @@ public class CoalesceEntityTemplateTest {
         CoalesceEntityTemplate template2 = CoalesceEntityTemplate.create(entity2);
 
         assertEquals(1, template1.compareTo(template2));
+
+    }
+
+    /**
+     * This test ensures that templates when created don't contain timestamps or keys on the field definitions.
+     */
+    @Test
+    public void test() throws Exception
+    {
+        CoalesceEntity entity = new TestEntity();
+        entity.initialize();
+
+        // Create Initial Template
+        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
+
+        NodeList nodes = template.getEntityNode().getElementsByTagName(Fielddefinition.class.getSimpleName());
+
+        for (int ii = 0; ii < nodes.getLength(); ii++)
+        {
+            Assert.assertFalse(((Element) nodes.item(ii)).hasAttribute(CoalesceObject.ATTRIBUTE_KEY));
+            Assert.assertFalse(((Element) nodes.item(ii)).hasAttribute(CoalesceObject.ATTRIBUTE_DATECREATED));
+            Assert.assertFalse(((Element) nodes.item(ii)).hasAttribute(CoalesceObject.ATTRIBUTE_LASTMODIFIED));
+        }
+
+        Element root = template.getEntityNode();
+
+        Assert.assertTrue(root.hasAttribute(CoalesceObject.ATTRIBUTE_KEY));
+        Assert.assertTrue(root.hasAttribute(CoalesceEntity.ATTRIBUTE_NAME));
+        Assert.assertTrue(root.hasAttribute(CoalesceEntity.ATTRIBUTE_SOURCE));
+        Assert.assertTrue(root.hasAttribute(CoalesceEntity.ATTRIBUTE_VERSION));
+        Assert.assertTrue(root.hasAttribute(CoalesceObject.ATTRIBUTE_LASTMODIFIED));
 
     }
 

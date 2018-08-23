@@ -5,10 +5,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import org.joda.time.DateTime;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -44,7 +41,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
     // -----------------------------------------------------------------------//
 
     private Document _document;
-    private Node _entityNode;
+    private Element _entityNode;
 
     // -----------------------------------------------------------------------//
     // Static Create Functions
@@ -151,13 +148,13 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
     {
 
         // Clean up XML
-        removeNodes(doc, "record");
-        removeNodes(doc, "linkage");
+        removeNodes(doc, Record.class.getSimpleName().toLowerCase());
+        removeNodes(doc, Linkage.class.getSimpleName().toLowerCase());
         removeAttributes(doc);
 
         // Set Document
         _document = doc;
-        _entityNode = doc.getElementsByTagName("entity").item(0);
+        _entityNode = (Element) doc.getElementsByTagName(Entity.class.getSimpleName().toLowerCase()).item(0);
 
         // return Success
         return true;
@@ -182,7 +179,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
      *
      * @return Node representing the {@link CoalesceEntityTemplate} 's entity
      */
-    public Node getEntityNode()
+    public Element getEntityNode()
     {
         return _entityNode;
     }
@@ -358,7 +355,6 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
 
         NodeList nodeList = doc.getElementsByTagName(nodeName);
 
-        // Remove all Linkages
         for (int i = nodeList.getLength() - 1; i >= 0; i--)
         {
             Node child = nodeList.item(i);
@@ -380,19 +376,18 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
 
         for (int jj = 0; jj < nodeList.getLength(); jj++)
         {
-            Node node = nodeList.item(jj);
+            Element node = (Element) nodeList.item(jj);
 
-            if (node.getNodeType() == Node.ELEMENT_NODE && !node.getNodeName().equalsIgnoreCase("constraint"))
+            if (node.getNodeType() == Node.ELEMENT_NODE)
             {
                 NamedNodeMap attributeList = node.getAttributes();
 
-                for (int ii = 0; ii < attributeList.getLength(); ii++)
+                for (int ii = attributeList.getLength() - 1; ii >= 0; ii--)
                 {
-
                     Node attribute = attributeList.item(ii);
-                    if (excludeAttribute(attribute.getNodeName()))
+                    if (excludeAttribute(node.getNodeName(), attribute.getNodeName()))
                     {
-                        attribute.setNodeValue("");
+                        node.removeAttribute(attribute.getLocalName());
                     }
                 }
             }
@@ -401,23 +396,40 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
     }
 
     /**
-     * @param name of attribute to check
+     * @param attrName of attribute to check
      * @return whether or not the attribute should be excluded from the template.
      */
-    public static boolean excludeAttribute(String name)
+    public static boolean excludeAttribute(String nodeName, String attrName)
     {
-        return !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NAME)
-                && !name.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_CLASSNAME)
-                && !name.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_SOURCE)
-                && !name.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_VERSION)
-                && !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_STATUS)
-                && !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_FLATTEN)
-                && !name.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NOINDEX)
-                && !name.equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MAX)
-                && !name.equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MIN)
-                && !name.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DATA_TYPE)
-                && !name.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DEFAULT_VALUE)
-                && !name.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_LABEL);
+
+        if (nodeName.equalsIgnoreCase(Entity.class.getSimpleName()))
+        {
+            return !attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_KEY)
+                    && !attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_NAME)
+                    && !attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_SOURCE)
+                    && !attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_VERSION)
+                    && !attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_LASTMODIFIED)
+                    && !attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_CLASSNAME);
+        }
+        if (nodeName.equalsIgnoreCase(Constraint.class.getSimpleName()))
+        {
+            return attrName.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_KEY)
+                    || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_LASTMODIFIED)
+                    || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_DATECREATED);
+        }
+        else
+        {
+            return !attrName.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NAME)
+                    && !attrName.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_STATUS)
+                    && !attrName.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_FLATTEN)
+                    && !attrName.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NOINDEX)
+                    && !attrName.equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MAX)
+                    && !attrName.equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MIN)
+                    && !attrName.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DATA_TYPE)
+                    && !attrName.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DEFAULT_VALUE)
+                    && !attrName.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DEFAULT_CLASSIFICATION_MARKING)
+                    && !attrName.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_LABEL);
+        }
     }
 
     @Override
