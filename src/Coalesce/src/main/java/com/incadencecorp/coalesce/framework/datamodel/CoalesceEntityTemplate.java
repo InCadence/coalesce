@@ -404,12 +404,16 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
 
         if (nodeName.equalsIgnoreCase(Entity.class.getSimpleName()))
         {
-            return !attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_KEY)
-                    && !attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_NAME)
-                    && !attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_SOURCE)
-                    && !attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_VERSION)
-                    && !attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_LASTMODIFIED)
-                    && !attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_CLASSNAME);
+            return  attrName.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_KEY)
+                    || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_ENTITYID)
+                    || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_ENTITYIDTYPE)
+                    || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_TITLE)
+                    || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_DATECREATED)
+                    || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_MODIFIEDBY)
+                    || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_MODIFIEDBYIP)
+                    || attrName.equalsIgnoreCase("objectversion")
+                    || attrName.equalsIgnoreCase("objectversionstatus")
+                    || attrName.equalsIgnoreCase("previoushistorykey");
         }
         if (nodeName.equalsIgnoreCase(Constraint.class.getSimpleName()))
         {
@@ -419,16 +423,14 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
         }
         else
         {
-            return !attrName.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NAME)
-                    && !attrName.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_STATUS)
-                    && !attrName.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_FLATTEN)
-                    && !attrName.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NOINDEX)
-                    && !attrName.equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MAX)
-                    && !attrName.equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MIN)
-                    && !attrName.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DATA_TYPE)
-                    && !attrName.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DEFAULT_VALUE)
-                    && !attrName.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_DEFAULT_CLASSIFICATION_MARKING)
-                    && !attrName.equalsIgnoreCase(CoalesceFieldDefinition.ATTRIBUTE_LABEL);
+            return attrName.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_KEY)
+                    || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_DATECREATED)
+                    || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_LASTMODIFIED)
+                    || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_MODIFIEDBY)
+                    || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_MODIFIEDBYIP)
+                    || attrName.equalsIgnoreCase("objectversion")
+                    || attrName.equalsIgnoreCase("objectversionstatus")
+                    || attrName.equalsIgnoreCase("previoushistorykey");
         }
     }
 

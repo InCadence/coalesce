@@ -168,7 +168,6 @@ public class CoalesceEntityTemplateTest {
 
         Element root = template.getEntityNode();
 
-        Assert.assertTrue(root.hasAttribute(CoalesceObject.ATTRIBUTE_KEY));
         Assert.assertTrue(root.hasAttribute(CoalesceEntity.ATTRIBUTE_NAME));
         Assert.assertTrue(root.hasAttribute(CoalesceEntity.ATTRIBUTE_SOURCE));
         Assert.assertTrue(root.hasAttribute(CoalesceEntity.ATTRIBUTE_VERSION));
