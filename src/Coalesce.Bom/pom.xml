@@ -106,9 +106,6 @@
                             <goals>
                                 <goal>bundle</goal>
                             </goals>
-                            <configuration>
-                                <obrRepository>NONE</obrRepository>
-                            </configuration>
                         </execution>
                         <!-- <execution> -->
                         <!-- <id>baseline</id> -->
@@ -142,9 +139,6 @@
                     <version>${karaf.version}</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <instructions>
-                            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-                        </instructions>
                         <startLevel>75</startLevel>
                     </configuration>
                 </plugin>
