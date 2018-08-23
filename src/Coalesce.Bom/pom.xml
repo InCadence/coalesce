@@ -213,6 +213,13 @@
                 <artifactId>coalesce-services-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
+			<dependency>
+				<groupId>com.incadencecorp.unity</groupId>
+				<artifactId>unity-bom</artifactId>
+				<version>${unityVersion}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
         </dependencies>
     </dependencyManagement>
 

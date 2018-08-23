@@ -74,6 +74,7 @@
 	</build>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.osgi.core</artifactId>
@@ -106,17 +107,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.incadencecorp.unity</groupId>
-				<artifactId>unity-bom</artifactId>
-				<version>${unityVersion}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 </project>
