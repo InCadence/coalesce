@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -252,6 +253,7 @@ public class CoalesceMapTest {
 
     }
 
+    @Ignore // There are no assertions
     @Test
     public void testMerge() throws Exception
     {
@@ -297,6 +299,7 @@ public class CoalesceMapTest {
 
     }
 
+    @Ignore // There are no assertions
     @Test
     public void testMerge2() throws Exception
     {

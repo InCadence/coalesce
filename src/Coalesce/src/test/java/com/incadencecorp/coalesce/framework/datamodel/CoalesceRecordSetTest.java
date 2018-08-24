@@ -790,16 +790,12 @@ public class CoalesceRecordSetTest {
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
 
-        System.out.println(recordset.toXml());
-
         recordset.removeAll();
 
         assertFalse(recordset.contains(existingRecord));
         assertEquals(0, recordset.getCount());
         assertFalse(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
-        
-        System.out.println(recordset.toXml());
 
     }
 

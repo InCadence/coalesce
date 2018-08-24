@@ -46,8 +46,6 @@ public class CoalesceHistoryTest {
 
         assertCreateHistory(entity.getLinkageSection());
 
-        System.out.println(entity.toXml());
-
     }
 
     private void assertCreateHistory(CoalesceObjectHistory object)

@@ -170,11 +170,6 @@ public class CoalesceListFieldTest {
 
         record.getStringListField().setValue(values);
 
-        for (String value : record.getStringListField().getValue())
-        {
-            System.out.println(value);
-        }
-
         assertEquals("Hello World,Derek,\"comma,test\"", record.getStringListField().getBaseValue());
         assertEquals(values[0], record.getStringListField().getValue()[0]);
         assertEquals(values[1], record.getStringListField().getValue()[1]);
@@ -274,12 +269,5 @@ public class CoalesceListFieldTest {
         assertEquals(0, record.getGUIDListField().getValue().length);
 
     }
-
-    // @AfterClass
-    // public static void printXml()
-    // {
-    //
-    // System.out.println(record.toXml());
-    // }
 
 }

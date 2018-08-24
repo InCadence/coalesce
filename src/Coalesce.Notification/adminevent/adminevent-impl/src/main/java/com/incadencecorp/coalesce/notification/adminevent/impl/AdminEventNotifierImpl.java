@@ -73,10 +73,6 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
             {
                 context = bundle.getBundleContext();
             }
-            else
-            {
-                LOGGER.error("Bundle Context Not Found");
-            }
         }
 
         return context;

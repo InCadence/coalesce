@@ -17,15 +17,6 @@
 
 package com.incadencecorp.coalesce.framework.persistance;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
@@ -33,20 +24,25 @@ import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityJob;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityProperties;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveTemplateJob;
 import com.incadencecorp.coalesce.handlers.FileExceptionHandlerImpl;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * These unit test ensure that the framework can support multiple persistors.
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public class CoalesceMultiplePersistorTest extends AbstractFileHandlerTests {
 
     /**
      * Creates an entity with the MockPersistor to simulate an error and
      * confirms that the error is written out by the handler.
-     * 
-     * @throws Exception
      */
     @Test
     public void testJobFailure() throws Exception
@@ -59,33 +55,36 @@ public class CoalesceMultiplePersistorTest extends AbstractFileHandlerTests {
         MockPersister target = new MockPersister();
         target.setThrowException(true);
 
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(CoalesceParameters.PARAM_DIRECTORY, "src/test/resources");
         params.put(CoalesceParameters.PARAM_SUBDIR_LEN, "2");
 
         FileExceptionHandlerImpl handler = new FileExceptionHandlerImpl();
         handler.setProperties(params);
 
-        CoalesceSaveEntityJob job = new CoalesceSaveEntityJob(parameters);
-        job.setHandler(handler);
-        job.setExecutor(new CoalesceFramework());
-        job.setTarget(target);
-        job.call();
+        try (CoalesceFramework framework = new CoalesceFramework())
+        {
+            framework.setIsAnsyncUpdates(false);
 
-        // Verify File
-        Assert.assertTrue(Files.exists(Paths.get("src",
-                                                 "test",
-                                                 "resources",
-                                                 CoalesceSaveEntityJob.class.getName(),
-                                                 entity.getKey().substring(0, 2),
-                                                 entity.getKey())));
+            CoalesceSaveEntityJob job = new CoalesceSaveEntityJob(parameters);
+            job.setHandler(handler);
+            job.setExecutor(framework);
+            job.setTarget(target);
+            job.call();
+
+            // Verify File
+            Assert.assertTrue(Files.exists(Paths.get("src",
+                                                     "test",
+                                                     "resources",
+                                                     CoalesceSaveEntityJob.class.getSimpleName(),
+                                                     entity.getKey().substring(0, 2),
+                                                     entity.getKey())));
+        }
     }
 
     /**
      * Uses the framework to test the creation of an error file indicating there
      * was an issue creating an entity.
-     * 
-     * @throws Exception
      */
     @Test
     public void testFrameworkFailure() throws Exception
@@ -96,7 +95,7 @@ public class CoalesceMultiplePersistorTest extends AbstractFileHandlerTests {
         secondary.setThrowException(true);
 
         // Configure the error handler
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(CoalesceParameters.PARAM_DIRECTORY, "src/test/resources");
         params.put(CoalesceParameters.PARAM_SUBDIR_LEN, "2");
 
@@ -109,30 +108,20 @@ public class CoalesceMultiplePersistorTest extends AbstractFileHandlerTests {
         Path file = Paths.get("src",
                               "test",
                               "resources",
-                              CoalesceSaveEntityJob.class.getName(),
+                              CoalesceSaveEntityJob.class.getSimpleName(),
                               entity.getKey().substring(0, 2),
                               entity.getKey());
 
         try (CoalesceFramework framework = new CoalesceFramework())
         {
+            Assert.assertFalse(Files.exists(file));
+
             // Save Entity
+            framework.setIsAnsyncUpdates(false);
             framework.setAuthoritativePersistor(authoritative);
             framework.setSecondaryPersistors(secondary);
             framework.setHandler(handler);
             framework.saveCoalesceEntity(entity);
-
-            // Authoritative Should Succeed
-            Assert.assertFalse(Files.exists(file));
-
-            int max = 500;
-
-            // Allow enough time for the job to submit the tasks. Waits up for 1
-            // second (This is a potential race condition)
-            while (!Files.exists(file) && max > 0)
-            {
-                Thread.sleep(2);
-                max--;
-            }
         }
 
         // Secondary Should Fail
@@ -143,8 +132,6 @@ public class CoalesceMultiplePersistorTest extends AbstractFileHandlerTests {
     /**
      * Uses the framework to test the creation of an error file indicating there
      * was an issue creating an entity.
-     * 
-     * @throws Exception
      */
     @Test
     public void testFramework() throws Exception
@@ -180,7 +167,7 @@ public class CoalesceMultiplePersistorTest extends AbstractFileHandlerTests {
         secondary.setThrowException(true);
 
         // Configure the error handler
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(CoalesceParameters.PARAM_DIRECTORY, "src/test/resources");
         params.put(CoalesceParameters.PARAM_SUBDIR_LEN, "2");
 
@@ -193,7 +180,7 @@ public class CoalesceMultiplePersistorTest extends AbstractFileHandlerTests {
         Path file = Paths.get("src",
                               "test",
                               "resources",
-                              CoalesceSaveTemplateJob.class.getName(),
+                              CoalesceSaveTemplateJob.class.getSimpleName(),
                               "UN",
                               "UNIT_TEST_UNIT_TEST_1");
 

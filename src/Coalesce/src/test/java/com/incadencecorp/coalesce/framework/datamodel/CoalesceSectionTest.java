@@ -77,8 +77,6 @@ public class CoalesceSectionTest {
         section1_1_1 = entity2.getSection("TREXOperation/section 1/section 1.1/section 1.1.1");
         section1_1_2 = entity2.getSection("TREXOperation/section 1/section 1.1/section 1.1.2");
 
-        //System.out.println(entityXml);
-
         // Verify
         assertNotNull(section1_1);
         assertNotNull(section1_1_1);

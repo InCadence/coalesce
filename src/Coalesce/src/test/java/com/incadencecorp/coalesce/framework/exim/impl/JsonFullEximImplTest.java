@@ -149,8 +149,6 @@ public class JsonFullEximImplTest {
 
         TestRecord record2 = new TestRecord(entity2.getRecordset1().getItem(0));
 
-        System.out.println(record2.getParent().toXml());
-
         assertEquals(record.getBooleanField().getValue(), record2.getBooleanField().getValue());
         assertEquals(record.getStringField().getValue(), record2.getStringField().getValue());
 

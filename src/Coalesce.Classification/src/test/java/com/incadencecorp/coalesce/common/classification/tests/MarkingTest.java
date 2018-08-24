@@ -3123,8 +3123,6 @@ public class MarkingTest {
 
         Marking mk = new Marking("(U//ACCM-XXX AAA BBB/YYY)");
 
-        System.out.println(mk.toString());
-
         // assertEquals("(//JOINT TS AND USA)", mk.toPortionString());
         assertEquals("UNCLASSIFIED//ACCM-XXX AAA BBB/YYY", mk.toString());
 

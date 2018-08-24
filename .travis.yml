@@ -1,0 +1,15 @@
+sudo: true
+language: java
+jdk:
+- oraclejdk8
+cache:
+  directories:
+  - "$HOME/.m2"
+  - node_modules
+install:
+- travis_retry mvn install -DskipTests -f src/Coalesce.Bom -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+script:
+after_success:
+- mvn coveralls:report
+before_deploy:
+deploy:

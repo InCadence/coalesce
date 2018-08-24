@@ -85,7 +85,7 @@ public class CoalescePrecisionTest {
     @AfterClass
     public static void printXml()
     {
-        System.out.println(record.toXml());
+        //System.out.println(record.toXml());
     }
 
 }

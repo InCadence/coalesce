@@ -9,7 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.Locale;
+import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 
@@ -153,6 +153,12 @@ public class JodaDateTimeHelperTest {
         String milDate = JodaDateTimeHelper.militaryFormat(date, false);
 
         String offset = date.toString("ZZ");
+
+        if (offset.equals("+00:00"))
+        {
+            offset = "Z";
+        }
+
         assertEquals("2014-05-06 07:08:09" + offset, milDate);
 
     }
@@ -579,6 +585,12 @@ public class JodaDateTimeHelperTest {
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, true, false);
 
         String offset = date.toString("ZZ");
+
+        if (offset.equals("+00:00"))
+        {
+            offset = "Z";
+        }
+
         assertEquals("2014-05-06 06:08:09" + offset + " (2 years ago)", elapsed);
     }
 
@@ -848,7 +860,7 @@ public class JodaDateTimeHelperTest {
         Assert.assertEquals(0, results.getMinuteOfHour());
         Assert.assertEquals(0, results.getSecondOfMinute());
 
-        Assert.assertEquals("America/New_York", results.getZone().getID());
+        Assert.assertEquals(TimeZone.getDefault().getID(), results.getZone().getID());
 
         results = JodaDateTimeHelper.parseDateTime("2018-06-17T17:47:28+0000");
 

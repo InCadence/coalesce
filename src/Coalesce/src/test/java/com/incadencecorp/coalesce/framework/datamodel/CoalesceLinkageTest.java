@@ -649,8 +649,6 @@ public class CoalesceLinkageTest {
 
         linkage.setAttribute("TestAttribute", "TestingValue");
 
-        System.out.println(linkage.toXml());
-
         assertEquals(before + 1, linkage.getAttributes().size());
 
         assertEquals("TestingValue", linkage.getAttribute("TestAttribute"));
