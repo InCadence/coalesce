@@ -62,6 +62,12 @@ public class Log4jNotifierImpl implements ICoalesceNotifier {
     }
 
     @Override
+    public void sendMetrics(String task, Long duration)
+    {
+        LOGGER.debug("(SUCCESS) ({}) Pending (0) Working ({}) Total ({})", task, duration, duration);
+    }
+
+    @Override
     public void sendCrud(String task, ECrudOperations operation, ObjectMetaData data)
     {
         LOGGER.info("({}) ({}) ({})", operation.toString(), task, getDetail(data));

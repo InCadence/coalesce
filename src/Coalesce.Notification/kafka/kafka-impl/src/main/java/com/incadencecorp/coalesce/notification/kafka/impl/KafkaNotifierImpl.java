@@ -152,6 +152,19 @@ public class KafkaNotifierImpl extends CoalesceComponentImpl implements ICoalesc
     }
 
     @Override
+    public void sendMetrics(String task, Long duration)
+    {
+        MetricsEvent event = new MetricsEvent();
+        event.setName(task);
+        event.setPending(0);
+        event.setWorking(duration);
+        event.setTotal(duration);
+        event.setSuccessful(true);
+
+        sendRecord(TOPIC_METRICS, event);
+    }
+
+    @Override
     public void sendCrud(String task, ECrudOperations operation, ObjectMetaData data)
     {
         CrudEvent event = new CrudEvent();

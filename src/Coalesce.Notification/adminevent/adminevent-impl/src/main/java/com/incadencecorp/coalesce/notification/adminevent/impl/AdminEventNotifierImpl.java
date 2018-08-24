@@ -19,7 +19,6 @@ package com.incadencecorp.coalesce.notification.adminevent.impl;
 
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
 import com.incadencecorp.coalesce.api.subscriber.events.*;
-import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.enums.EAuditCategory;
 import com.incadencecorp.coalesce.enums.EAuditLevels;
 import com.incadencecorp.coalesce.enums.ECrudOperations;
@@ -103,7 +102,45 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
         Dictionary<String, Object> properties = new Hashtable<>();
         properties.put("event", event);
 
+        // Required for Elastic Search Appender
+        properties.put("name", event.getName());
+        properties.put("pending", event.getPending());
+        properties.put("working", event.getWorking());
+        properties.put("total", event.getTotal());
+        properties.put("success", event.isSuccessful());
+
+        if (event.getError() != null)
+        {
+            properties.put("error", event.getError());
+        }
+
         sendEvent(new Event(TOPIC_METRICS, properties));
+    }
+
+    @Override
+    public void sendMetrics(String task, Long duration)
+    {
+        if (task != null && duration != null)
+        {
+            MetricsEvent event = new MetricsEvent();
+            event.setName(task);
+            event.setPending(0);
+            event.setWorking(duration);
+            event.setTotal(duration);
+            event.setSuccessful(true);
+
+            Dictionary<String, Object> properties = new Hashtable<>();
+            properties.put("event", event);
+
+            // Required for Elastic Search Appender
+            properties.put("name", event.getName());
+            properties.put("pending", event.getPending());
+            properties.put("working", event.getWorking());
+            properties.put("total", event.getTotal());
+            properties.put("success", event.isSuccessful());
+
+            sendEvent(new Event(TOPIC_METRICS, properties));
+        }
     }
 
     @Override
