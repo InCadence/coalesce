@@ -296,12 +296,11 @@ public class TemplateDataController {
     /**
      * Saves the specified template.
      *
-     * @param key    template's key
      * @param entity in which the template should be derived
      * @return whether or not it was successfully saved.
      * @throws RemoteException on error
      */
-    public String setTemplate(String key, CoalesceEntity entity) throws RemoteException
+    public String setTemplate(CoalesceEntity entity) throws RemoteException
     {
         String result = null;
 
@@ -316,7 +315,7 @@ public class TemplateDataController {
             catch (CoalesceException e)
             {
                 error(String.format(CoalesceErrors.NOT_SAVED,
-                                    key,
+                                    "unknown template",
                                     CoalesceEntityTemplate.class.getSimpleName(),
                                     e.getMessage()), e);
             }
@@ -332,12 +331,11 @@ public class TemplateDataController {
     /**
      * Saves the specified template.
      *
-     * @param key  template's key
      * @param json template in json format
      * @return whether or not it was successfully saved.
      * @throws RemoteException on error
      */
-    public String setTemplateJson(String key, String json) throws RemoteException
+    public String setTemplateJson(String json) throws RemoteException
     {
         String result = null;
 
@@ -348,14 +346,15 @@ public class TemplateDataController {
         }
         catch (CoalesceException e)
         {
-            error(String.format(CoalesceErrors.NOT_SAVED, key, CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
+            error(String.format(CoalesceErrors.NOT_SAVED, "unknown template",
+                                CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
                   e);
         }
 
         return result;
     }
 
-    public String setTemplateXml(String key, String xml) throws RemoteException
+    public String setTemplateXml(String xml) throws RemoteException
     {
         String results = null;
         try
@@ -364,7 +363,8 @@ public class TemplateDataController {
         }
         catch (CoalesceException e)
         {
-            error(String.format(CoalesceErrors.NOT_SAVED, key, CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
+            error(String.format(CoalesceErrors.NOT_SAVED, "unknown template",
+                                CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
                   e);
         }
 

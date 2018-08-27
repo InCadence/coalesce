@@ -88,17 +88,17 @@ public class EntityDataController {
         return retrieveEntity(entityKey).toXml();
     }
 
-    public void updateEntity(String entityKey, String json) throws RemoteException
+    public void updateEntity(String json) throws RemoteException
     {
-        setEntity(entityKey, false, processJSON(entityKey, json));
+        setEntity(false, processJSON(json));
     }
 
-    public void createEntity(String entityKey, String json) throws RemoteException
+    public void createEntity(String json) throws RemoteException
     {
-        setEntity(entityKey, true, processJSON(entityKey, json));
+        setEntity(true, processJSON(json));
     }
 
-    private CoalesceEntity processJSON(String entityKey, String json) throws RemoteException
+    private CoalesceEntity processJSON(String json) throws RemoteException
     {
         JSONObject obj = new JSONObject(json);
 
@@ -133,17 +133,17 @@ public class EntityDataController {
         return entity;
     }
 
-    public void updateEntityAsXml(String entityKey, String xml) throws RemoteException
+    public void updateEntityAsXml(String xml) throws RemoteException
     {
-        setEntity(entityKey, false, CoalesceEntity.create(xml));
+        setEntity(false, CoalesceEntity.create(xml));
     }
 
-    public void createEntityAsXml(String entityKey, String xml) throws RemoteException
+    public void createEntityAsXml(String xml) throws RemoteException
     {
-        setEntity(entityKey, true, CoalesceEntity.create(xml));
+        setEntity(true, CoalesceEntity.create(xml));
     }
 
-    private void setEntity(String entityKey, boolean isNew, CoalesceEntity entity) throws RemoteException
+    private void setEntity(boolean isNew, CoalesceEntity entity) throws RemoteException
     {
         if (entity == null)
         {
