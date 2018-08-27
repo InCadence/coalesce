@@ -33,9 +33,7 @@
 					<xs:sequence>
 						<xs:element ref="linkage" minOccurs="0" maxOccurs="unbounded" />
 					</xs:sequence>
-                    <xs:redefine>
-                        <xs:attribute name="name" type="xs:string" fixed="Linkage"/>
-                    </xs:redefine>
+                    <xs:attribute ref="name" fixed="Linkages"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
@@ -45,9 +43,7 @@
 		<xs:complexType>
 			<xs:complexContent>
 				<xs:extension base="coalesceObjectHistoryType">
-                    <xs:redefine>
-                        <xs:attribute name="name" type="xs:string" fixed="Linkage"/>
-                    </xs:redefine>
+                    <xs:attribute ref="name" fixed="Linkage"/>
 					<xs:attribute name="entity1key" type="xs:string" />
 					<xs:attribute name="entity1name" type="xs:string" />
 					<xs:attribute name="entity1source" type="xs:string" />
