@@ -31,22 +31,22 @@ public interface IEntityDataControllerJaxRS {
     String getEntityAsXml(@PathParam("entityKey") String entityKey) throws RemoteException;
 
     @POST
-    @Path("{ext:(.json)?}")
+    @Path("/save{ext:(.json)?}")
     @Consumes(MediaType.APPLICATION_JSON)
     void updateEntity(String json) throws RemoteException;
 
     @POST
-    @Path(".xml")
+    @Path("/save.xml")
     @Consumes(MediaType.APPLICATION_XML)
     void updateEntityAsXml(String xml) throws RemoteException;
 
     @PUT
-    @Path("{ext:(.json)?}")
+    @Path("/save{ext:(.json)?}")
     @Consumes(MediaType.APPLICATION_JSON)
     void createEntity(String json) throws RemoteException;
 
     @PUT
-    @Path(".xml")
+    @Path("/save.xml")
     @Consumes(MediaType.APPLICATION_XML)
     void createEntityAsXml(String xml) throws RemoteException;
 
