@@ -248,6 +248,8 @@ export class App extends React.Component {
 
   handleSearch() {
 
+    const that = this;
+
     // Create Query
     var query = {
       "pageSize": 200,
@@ -270,13 +272,13 @@ export class App extends React.Component {
 
     // Submit Query
     searchComplex(query).then(response => {
-      this.setState(() => {return {
+      that.setState(() => {return {
         results: response,
         properties: query.propertyNames,
         loading: null
       }})
     }).catch(function(error) {
-        this.handleError("Executing Search: " + error);
+        that.handleError("Executing Search: " + error);
     });
   }
 }
