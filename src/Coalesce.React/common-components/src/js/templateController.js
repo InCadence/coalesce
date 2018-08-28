@@ -95,7 +95,7 @@ export function registerTemplate(key)
 
 export function saveTemplate(template)
 {
-  return fetch(`${karafRootAddr}/templates`, {
+  return fetch(`${karafRootAddr}/templates/save`, {
       method: "POST",
       body: JSON.stringify(template),
       headers: new Headers({
