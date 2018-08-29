@@ -104,51 +104,61 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             }
 
             //The datastore factory needs an index in order to find a matching store
+            SearchResults results = new SearchResults();
             DataStore datastore = getDataStore(localQuery.getTypeName());
 
-            SimpleFeatureSource featureSource = datastore.getFeatureSource(typeName);
-
-            LOGGER.debug("Doing this search: " + localQuery.toString());
-
-            // Normalize Column Headers
-            String[] columnList = new String[properties.size()];
-            for (int i = 0; i < properties.size(); i++)
+            try
             {
-                String property = properties.get(i).getPropertyName();
+                SimpleFeatureSource featureSource = datastore.getFeatureSource(typeName);
 
-                if (!CoalescePropertyFactory.isRecordPropertyName(property))
+                LOGGER.debug("Doing this search: " + localQuery.toString());
+
+                // Normalize Column Headers
+                String[] columnList = new String[properties.size()];
+                for (int i = 0; i < properties.size(); i++)
                 {
-                    ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(property);
+                    String property = properties.get(i).getPropertyName();
 
-                    if (type == null)
+                    if (!CoalescePropertyFactory.isRecordPropertyName(property))
                     {
-                        throw new IllegalArgumentException("Unknown Property: " + property);
+                        ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(property);
+
+                        if (type == null)
+                        {
+                            throw new IllegalArgumentException("Unknown Property: " + property);
+                        }
+
+                        LOGGER.debug("Property: {} Type: {}", property, type);
                     }
 
-                    LOGGER.debug("Property: {} Type: {}", property, type);
+                    columnList[i] = CoalescePropertyFactory.getColumnName(property);
                 }
 
-                columnList[i] = CoalescePropertyFactory.getColumnName(property);
+                CachedRowSet rowset;
+                int total;
+
+                try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localQuery).features())
+                {
+                    Iterator<Object[]> columnIterator = new FeatureColumnIterator(featureItr, properties);
+                    CoalesceResultSet resultSet = new CoalesceResultSet(columnIterator, columnList);
+                    rowset = RowSetProvider.newFactory().createCachedRowSet();
+                    rowset.populate(resultSet);
+
+                    total = rowset.size();
+                }
+
+                // TODO If page size is reach we need to determine the total.
+
+                results.setTotal(total);
+                results.setResults(rowset);
             }
-
-            SearchResults results = new SearchResults();
-            CachedRowSet rowset;
-            int total;
-
-            try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localQuery).features())
+            finally
             {
-                Iterator<Object[]> columnIterator = new FeatureColumnIterator(featureItr, properties);
-                CoalesceResultSet resultSet = new CoalesceResultSet(columnIterator, columnList);
-                rowset = RowSetProvider.newFactory().createCachedRowSet();
-                rowset.populate(resultSet);
-
-                total = rowset.size();
+                if (!isDataStoreCacheEnabled())
+                {
+                    datastore.dispose();
+                }
             }
-
-            // TODO If page size is reach we need to determine the total.
-
-            results.setTotal(total);
-            results.setResults(rowset);
 
             return results;
         }
@@ -181,11 +191,16 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
         return capability;
     }
 
+    private boolean isDataStoreCacheEnabled()
+    {
+        return params.containsKey(ElasticSearchSettings.PARAM_DATASTORE_CACHE_ENABLED);
+    }
+
     private DataStore getDataStore(String index) throws IOException, CoalescePersistorException
     {
         DataStore store;
 
-        if (params.containsKey(ElasticSearchSettings.PARAM_DATASTORE_CACHE_ENABLED))
+        if (isDataStoreCacheEnabled())
         {
             //Check if the datastore for the given index is null, if not return it
             if (datastores.get(index) != null)
