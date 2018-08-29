@@ -8,8 +8,8 @@ cache:
   - node_modules
 install:
 - cp .travis.settings.xml $HOME/.m2/settings.xml
-- travis_retry mvn install -DskipTests -f src/Coalesce.Bom -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+- travis_retry mvn install -DskipTests -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 script:
-- travis_retry mvn verify -f src/Coalesce.Bom -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+- travis_retry mvn verify -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 after_success:
 deploy:

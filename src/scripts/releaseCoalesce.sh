@@ -1,7 +1,7 @@
 #!/bin/bash
 name="Coalesce"
 tagname="coalesce"
-parentpom="../Coalesce.Bom/pom.xml"
+parentpom="../../pom.xml"
 
 preVersion=$(cat ${parentpom} | grep -E -m 1 -o "<version>(.*)</version>" | sed -e 's,.*<version>\([^<]*\)</version>.*,\1,g')
 version=${preVersion}
