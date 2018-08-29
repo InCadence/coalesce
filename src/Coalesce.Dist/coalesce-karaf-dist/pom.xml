@@ -211,6 +211,14 @@
             <classifier>features</classifier>
             <type>xml</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.decanter</groupId>
+            <artifactId>apache-karaf-decanter</artifactId>
+            <version>${decanter.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>
+
     </dependencies>
 
     <repositories>
