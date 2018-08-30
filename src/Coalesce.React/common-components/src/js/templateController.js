@@ -80,7 +80,7 @@ export function loadTemplateByName(name, source, version)
 
 export function registerTemplate(key)
 {
-  return fetch(`${karafRootAddr}/templates/${key}`, {
+  return fetch(`${karafRootAddr}/templates`, {
       method: "PUT",
     }).then(res => {
       if (!res.ok)
@@ -95,7 +95,7 @@ export function registerTemplate(key)
 
 export function saveTemplate(template)
 {
-  return fetch(`${karafRootAddr}/templates/${template.key}`, {
+  return fetch(`${karafRootAddr}/templates/save`, {
       method: "POST",
       body: JSON.stringify(template),
       headers: new Headers({

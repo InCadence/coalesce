@@ -51,7 +51,7 @@ public class TemplateDataControllerTest {
 
         CoalesceEntityTemplate template2 = CoalesceEntityTemplate.create(entity);
 
-        Assert.assertEquals(template2.getKey(), controller.setTemplate(template2.getKey(), template2.createNewEntity()));
+        Assert.assertEquals(template2.getKey(), controller.setTemplate(template2.createNewEntity()));
 
         Assert.assertEquals(2, controller.getEntityTemplateMetadata().size());
 
@@ -135,7 +135,7 @@ public class TemplateDataControllerTest {
         TestRecord.createCoalesceRecordset(section, "rs-2");
 
         CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
-        Assert.assertEquals(template.getKey(), controller.setTemplate(template.getKey(), template.createNewEntity()));
+        Assert.assertEquals(template.getKey(), controller.setTemplate(template.createNewEntity()));
 
         List<CoalesceObjectImpl> results = controller.getRecordSets(template.getKey());
 
@@ -191,7 +191,7 @@ public class TemplateDataControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writerWithView(Views.Template.class).writeValueAsString(entity);
 
-        controller.setTemplateJson(entity.getKey(), json);
+        controller.setTemplateJson(json);
         CoalesceEntity template = controller.getTemplate(entity.getName(), entity.getSource(), entity.getVersion());
 
         CoalesceRecordset templateRS = template.getCoalesceRecordsetForNamePath(recordset.getNamePath());

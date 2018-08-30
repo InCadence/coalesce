@@ -13,7 +13,7 @@ export function updateEntity(entity)
 }
 
 export function saveEntity(entity, isNew) {
-  return fetch(`${karafRootAddr}/entity/${entity.key}`, {
+  return fetch(`${karafRootAddr}/entity/save`, {
       method: ((isNew) ? "PUT" : "POST"),
       body: JSON.stringify(entity),
       headers: new Headers({

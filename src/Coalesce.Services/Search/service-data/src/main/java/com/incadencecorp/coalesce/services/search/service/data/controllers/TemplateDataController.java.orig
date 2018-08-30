@@ -315,7 +315,11 @@ public class TemplateDataController {
             catch (CoalesceException e)
             {
                 error(String.format(CoalesceErrors.NOT_SAVED,
+<<<<<<< HEAD
                                     "unknown template",
+=======
+                                    String "unknown template",
+>>>>>>> 682908e4... I am an idiot ... help me please. I need my training wheels!!!!!!!!!!!!!!!!!
                                     CoalesceEntityTemplate.class.getSimpleName(),
                                     e.getMessage()), e);
             }
@@ -346,7 +350,11 @@ public class TemplateDataController {
         }
         catch (CoalesceException e)
         {
+<<<<<<< HEAD
             error(String.format(CoalesceErrors.NOT_SAVED, "unknown template",
+=======
+            error(String.format(CoalesceErrors.NOT_SAVED, String "unknown template",
+>>>>>>> 682908e4... I am an idiot ... help me please. I need my training wheels!!!!!!!!!!!!!!!!!
                                 CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
                   e);
         }
@@ -363,7 +371,11 @@ public class TemplateDataController {
         }
         catch (CoalesceException e)
         {
+<<<<<<< HEAD
             error(String.format(CoalesceErrors.NOT_SAVED, "unknown template",
+=======
+            error(String.format(CoalesceErrors.NOT_SAVED, String "unknown template",
+>>>>>>> 682908e4... I am an idiot ... help me please. I need my training wheels!!!!!!!!!!!!!!!!!
                                 CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
                   e);
         }

@@ -31,24 +31,24 @@ public interface IEntityDataControllerJaxRS {
     String getEntityAsXml(@PathParam("entityKey") String entityKey) throws RemoteException;
 
     @POST
-    @Path("/{entityKey:" + GUIDHelper.REGEX_UUID +  "}{ext:(.json)?}")
+    @Path("/save{ext:(.json)?}")
     @Consumes(MediaType.APPLICATION_JSON)
-    void updateEntity(@PathParam("entityKey") String entityKey, String json) throws RemoteException;
+    void updateEntity(String json) throws RemoteException;
 
     @POST
-    @Path("/{entityKey:" + GUIDHelper.REGEX_UUID +  "}.xml")
+    @Path("/save.xml")
     @Consumes(MediaType.APPLICATION_XML)
-    void updateEntityAsXml(@PathParam("entityKey") String entityKey, String xml) throws RemoteException;
+    void updateEntityAsXml(String xml) throws RemoteException;
 
     @PUT
-    @Path("/{entityKey:" + GUIDHelper.REGEX_UUID +  "}{ext:(.json)?}")
+    @Path("/save{ext:(.json)?}")
     @Consumes(MediaType.APPLICATION_JSON)
-    void createEntity(@PathParam("entityKey") String entityKey, String json) throws RemoteException;
+    void createEntity(String json) throws RemoteException;
 
     @PUT
-    @Path("/{entityKey:" + GUIDHelper.REGEX_UUID +  "}.xml")
+    @Path("/save.xml")
     @Consumes(MediaType.APPLICATION_XML)
-    void createEntityAsXml(@PathParam("entityKey") String entityKey, String xml) throws RemoteException;
+    void createEntityAsXml(String xml) throws RemoteException;
 
     @DELETE
     @Path("/{entityKey:" + GUIDHelper.REGEX_UUID +  "}")

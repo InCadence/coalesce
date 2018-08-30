@@ -90,10 +90,17 @@ public class EntityDataController {
 
     public void updateEntity(String json) throws RemoteException
     {
+<<<<<<< HEAD
         setEntity(false, processJSON(json));
     }
 
     public void createEntity(String json) throws RemoteException
+=======
+        setEntity(false, processJSON(entityKey, json));
+    }
+
+    public void createEntity(SString json) throws RemoteException
+>>>>>>> 682908e4... I am an idiot ... help me please. I need my training wheels!!!!!!!!!!!!!!!!!
     {
         setEntity(true, processJSON(json));
     }
