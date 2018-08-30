@@ -981,26 +981,7 @@ public final class EntityLinkHelper {
                          otherEntity.getObjectVersion());
         }
 
-        CoalesceLinkage linkage = null;
-        // Do we already have the Linkage made? (Same Entities and Same
-        // LinkType)?
-        for (ICoalesceObject cdo : linkageSection.getChildCoalesceObjects().values())
-        {
-            if (cdo instanceof CoalesceLinkage)
-            {
-
-                CoalesceLinkage childLinkage = (CoalesceLinkage) cdo;
-                if (childLinkage.getEntity1Key().equals(entity.getKey()) && childLinkage.getLinkType() == linkType
-                        && childLinkage.getEntity2Key().equalsIgnoreCase(otherEntity.getKey()))
-                {
-
-                    // Found; Use Existing Linkage
-                    linkage = childLinkage;
-
-                    break;
-                }
-            }
-        }
+        CoalesceLinkage linkage = linkageSection.getLinkage(otherEntity.getKey(), linkType);
 
         // Update/Populate Linkage
         if (linkage != null)

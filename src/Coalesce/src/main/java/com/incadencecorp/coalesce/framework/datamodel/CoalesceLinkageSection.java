@@ -148,6 +148,29 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     }
 
     /**
+     * @param key
+     * @param type
+     * @return the linkage that matches the key and type otherwise null
+     */
+    public CoalesceLinkage getLinkage(String key, ELinkTypes type)
+    {
+        for (ICoalesceObject cdo : getChildCoalesceObjects().values())
+        {
+            if (cdo instanceof CoalesceLinkage)
+            {
+                CoalesceLinkage linkage = (CoalesceLinkage) cdo;
+
+                if (linkage.getLinkType() == type && linkage.getEntity2Key().equalsIgnoreCase(key))
+                {
+                    return linkage;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Returns a hashmap of the {@link CoalesceLinkage}s contained in the
      * {@link CoalesceLinkageSection} .
      *
