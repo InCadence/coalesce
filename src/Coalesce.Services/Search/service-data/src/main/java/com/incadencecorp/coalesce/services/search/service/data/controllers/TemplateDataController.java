@@ -304,7 +304,7 @@ public class TemplateDataController {
      */
     public String setTemplate(String key, CoalesceEntity entity) throws RemoteException
     {
-        String result = null;
+        String generatedKey = null;
 
         CoalesceEntityTemplate template = null;
 
@@ -322,12 +322,23 @@ public class TemplateDataController {
                                     e.getMessage()), e);
             }
 
+            if (!key.equals("new"));
+            {
+                // We want to make sure the template key is hashed from name/source/version, not arbitrary.
+                template.setKey(null);
+                generatedKey = template.getKey();
+                if (!key.equals(generatedKey))
+                {
+                    error(String.format(String.format(CoalesceErrors.INVALID_KEY,
+                            key, generatedKey)));
+                }
+            }
+
             setTemplate(template);
 
-            result = template.getKey();
         }
 
-        return result;
+        return generatedKey;
     }
 
     /**
@@ -380,7 +391,7 @@ public class TemplateDataController {
         }
         catch (CoalescePersistorException e)
         {
-            error("Registeration Failed", e);
+            error("Registration Failed", e);
         }
 
         return true;

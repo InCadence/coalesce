@@ -147,6 +147,12 @@ public class EntityDataController {
 
     private void setEntity(String entityKey, boolean isNew, CoalesceEntity entity) throws RemoteException
     {
+        String extractedKey = entity.getKey();
+        if (extractedKey != null && !entityKey.equals(extractedKey))
+        {
+            error(String.format(String.format(CoalesceErrors.KEY_MISMATCH,
+                    entityKey, extractedKey)));
+        }
         if (entity == null)
         {
             error("(FAILED) Initializing Entity");

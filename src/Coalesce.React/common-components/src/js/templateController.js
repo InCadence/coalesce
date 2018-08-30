@@ -95,7 +95,12 @@ export function registerTemplate(key)
 
 export function saveTemplate(template)
 {
-  return fetch(`${karafRootAddr}/templates/${template.key}`, {
+  var templateKey = template.key
+  // If there's been a change to name/source/version, save this as a new template.
+  if (!templateKey) {
+    templateKey = "new"
+  }
+  return fetch(`${karafRootAddr}/templates/${templateKey}`, {
       method: "POST",
       body: JSON.stringify(template),
       headers: new Headers({
