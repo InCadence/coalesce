@@ -3,7 +3,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText'
 import ActionDelete from '@material-ui/icons/Delete';
-import EditorModeEdit from '@material-ui/icons/ModeEdit';
+import Create from '@material-ui/icons/Create';
 import { DialogEditDefinition } from './DialogEditDefinition';
 import uuid from 'uuid';
 
@@ -35,7 +35,7 @@ export class Definitions extends React.Component {
               <ListItem
                 key={item.key}
               >
-                <EditorModeEdit
+                <Create
                   color="primary"
                   onClick={() => {this.setState({selected: item})}}
                 />

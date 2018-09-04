@@ -14,7 +14,7 @@ import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import { Row, Col } from 'react-bootstrap';
 import ActionDelete from '@material-ui/icons/Delete';
-import EditorModeEdit from '@material-ui/icons/ModeEdit';
+import Create from '@material-ui/icons/Create';
 import ListSubheader from '@material-ui/core/ListSubheader';
 
 // TODO Move this to a common file
@@ -166,7 +166,7 @@ export class DialogEditDefinition extends React.Component {
             <ListSubheader>Constraints</ListSubheader>
             {definition.constraints.map((item) => {return (
                 <ListItem key={item.key} >
-                  <EditorModeEdit
+                  <Create
                     color="primary"
                     onClick={() => {this.setState({selected: item})}}
                   />
