@@ -9,8 +9,8 @@
   "private": true,
   "homepage": "/enumerations",
   "dependencies": {
-    "@material-ui/core": "1.4.0",
-    "@material-ui/icons": "1.1.0",
+    "@material-ui/core": "1.5.0",
+    "@material-ui/icons": "2.0.0",
     "common-components": "file:../common-components",
     "react": "16.3.0",
     "react-bootstrap": "0.32.1",
