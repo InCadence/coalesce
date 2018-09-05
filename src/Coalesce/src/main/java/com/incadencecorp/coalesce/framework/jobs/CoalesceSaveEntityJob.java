@@ -36,8 +36,6 @@ public class CoalesceSaveEntityJob extends AbstractCoalescePersistorsJob<Coalesc
 
     /**
      * Constructor
-     * 
-     * @param params
      */
     public CoalesceSaveEntityJob(CoalesceSaveEntityProperties params)
     {
@@ -53,7 +51,7 @@ public class CoalesceSaveEntityJob extends AbstractCoalescePersistorsJob<Coalesc
     @Override
     protected String[] getKeys(AbstractPersistorTask<CoalesceSaveEntityProperties> task)
     {
-        List<String> keys = new ArrayList<String>(); 
+        List<String> keys = new ArrayList<>();
         
         for (CoalesceEntity entity : task.getParams().getEntities())
         {
@@ -67,7 +65,7 @@ public class CoalesceSaveEntityJob extends AbstractCoalescePersistorsJob<Coalesc
     @Override
     protected ICoalesceResponseType<List<CoalesceStringResponseType>> createResponse()
     {
-        return new CoalesceResponseType<List<CoalesceStringResponseType>>();
+        return new CoalesceResponseType<>();
     }
 
     @Override

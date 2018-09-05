@@ -41,8 +41,9 @@ import com.incadencecorp.coalesce.framework.tasks.MetricResults;
  * Abstract base for jobs that perform the same task with the same parameters
  * for each persister configured.
  * 
- * @author Derek
  * @param <INPUT> input type
+ * @param <OUTPUT>
+ * @author Derek
  */
 public abstract class AbstractCoalescePersistorsJob<INPUT> extends
         AbstractCoalesceJob<INPUT, ICoalesceResponseType<List<CoalesceStringResponseType>>, CoalesceStringResponseType>

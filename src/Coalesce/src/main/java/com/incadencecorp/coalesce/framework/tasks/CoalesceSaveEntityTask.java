@@ -64,7 +64,7 @@ public class CoalesceSaveEntityTask extends AbstractPersistorTask<CoalesceSaveEn
     @Override
     protected Map<String, String> getParameters(CoalesceSaveEntityProperties params, boolean isTrace)
     {
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
 
         results.put("allow removal", String.valueOf(params.isAllowRemoval()));
         results.put("entity total", String.valueOf(params.getEntities().length));

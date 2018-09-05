@@ -49,7 +49,7 @@ public class CoalesceRegisterTemplateTask extends AbstractPersistorTask<Coalesce
     @Override
     protected Map<String, String> getParameters(CoalesceEntityTemplate[] params, boolean isTrace)
     {
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
 
         results.put("entity total", String.valueOf(params.length));
 

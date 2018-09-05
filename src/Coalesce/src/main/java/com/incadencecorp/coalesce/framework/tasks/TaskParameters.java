@@ -45,8 +45,6 @@ public class TaskParameters<T, Y> {
 
     /**
      * Sets the task's target.
-     * 
-     * @param value
      */
     public void setTarget(T value)
     {
@@ -71,8 +69,6 @@ public class TaskParameters<T, Y> {
 
     /**
      * Sets the user's principal who kicked off the task.
-     * 
-     * @param value
      */
     public void setPrincipal(ICoalescePrincipal value)
     {
@@ -99,8 +95,6 @@ public class TaskParameters<T, Y> {
 
     /**
      * Sets the parameters from the original request that applies to this task.
-     * 
-     * @param value
      */
     public void setParams(Y value)
     {

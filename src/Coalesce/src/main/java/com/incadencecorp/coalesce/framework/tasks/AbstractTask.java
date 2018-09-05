@@ -17,7 +17,6 @@
 
 package com.incadencecorp.coalesce.framework.tasks;
 
-import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.api.ICoalesceResponseTypeBase;
@@ -50,7 +49,7 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
 
     private StopWatch watch;
     private String id;
-    private TaskParameters<TARGET, INPUT> parameters = new TaskParameters<TARGET, INPUT>();
+    private TaskParameters<TARGET, INPUT> parameters = new TaskParameters<>();
 
     public AbstractTask()
     {
@@ -64,8 +63,6 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
 
     /**
      * Sets the framework
-     *
-     * @param value
      */
     public final void setTarget(TARGET value)
     {
@@ -74,8 +71,6 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
 
     /**
      * Sets the principal of the user running this task.
-     *
-     * @param value
      */
     public final void setPrincipal(ICoalescePrincipal value)
     {
@@ -84,8 +79,6 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
 
     /**
      * Sets the parameters.
-     *
-     * @param value
      */
     public final void setParams(INPUT value)
     {
@@ -123,7 +116,7 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
     @Override
     public MetricResults<OUTPUT> call() throws CoalesceException
     {
-        MetricResults<OUTPUT> result = new MetricResults<OUTPUT>(this.getName());
+        MetricResults<OUTPUT> result = new MetricResults<>(this.getName());
 
         watch.start();
 
@@ -149,12 +142,12 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
         if (!result.isSuccessful())
         {
             LOGGER.warn("({}) ({}) Pending ({}) Working ({}) Total ({}) {}",
-                         result.isSuccessful() ? "SUCCESS" : "FAILED",
-                         getName(),
-                         result.getWatch().getPendingLife(),
-                         result.getWatch().getWorkLife(),
-                         result.getWatch().getTotalLife(),
-                         result.isSuccessful() ? "" : " Reason: (" + result.getResults().getError() + ")");
+                        result.isSuccessful() ? "SUCCESS" : "FAILED",
+                        getName(),
+                        result.getWatch().getPendingLife(),
+                        result.getWatch().getWorkLife(),
+                        result.getWatch().getTotalLife(),
+                        result.isSuccessful() ? "" : " Reason: (" + result.getResults().getError() + ")");
 
             logParameters();
         }

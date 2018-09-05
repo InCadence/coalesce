@@ -58,7 +58,7 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
     private ICoalescePrincipal principal;
 
     private ICoalesceExecutorService service;
-    private List<MetricResults<TASKOUTPUT>> taskMetrics = new ArrayList<MetricResults<TASKOUTPUT>>();
+    private List<MetricResults<TASKOUTPUT>> taskMetrics = new ArrayList<>();
 
     /*--------------------------------------------------------------------------
     Constructors
@@ -193,9 +193,9 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
     /**
      * @param future the future to set
      */
-    public final void setFuture(Future<?> future)
+    public final void setFuture(Future<OUTPUT> future)
     {
-        this.future = (Future<OUTPUT>) future;
+        this.future = future;
     }
 
     /**
@@ -217,8 +217,6 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
 
     /**
      * Sets the principal that created this job.
-     *
-     * @param principal
      */
     public void setPrincipal(ICoalescePrincipal principal)
     {
@@ -239,8 +237,6 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
 
     /**
      * Sets the job's status.
-     *
-     * @param value
      */
     protected final void setJobStatus(EJobStatus value)
     {
@@ -249,8 +245,6 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
 
     /**
      * Sets the job's ID
-     *
-     * @param value
      */
     protected final void setJobId(String value)
     {
@@ -273,11 +267,6 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
 
     /**
      * Performs the work of the job.
-     *
-     * @param principal
-     * @param params
-     * @return
-     * @throws CoalesceException
      */
     protected abstract OUTPUT doWork(ICoalescePrincipal principal, INPUT params) throws CoalesceException, InterruptedException;
 

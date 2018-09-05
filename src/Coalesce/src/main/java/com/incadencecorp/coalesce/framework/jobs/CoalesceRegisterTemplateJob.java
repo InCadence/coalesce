@@ -36,8 +36,6 @@ public class CoalesceRegisterTemplateJob extends AbstractCoalescePersistorsJob<C
 
     /**
      * Default Constructor
-     * 
-     * @param params
      */
     public CoalesceRegisterTemplateJob(CoalesceEntityTemplate[] params)
     {
@@ -53,7 +51,7 @@ public class CoalesceRegisterTemplateJob extends AbstractCoalescePersistorsJob<C
     @Override
     protected String[] getKeys(AbstractPersistorTask<CoalesceEntityTemplate[]> task)
     {
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
         
         for (CoalesceEntityTemplate template : task.getParams())
         {
@@ -66,7 +64,7 @@ public class CoalesceRegisterTemplateJob extends AbstractCoalescePersistorsJob<C
     @Override
     protected ICoalesceResponseType<List<CoalesceStringResponseType>> createResponse()
     {
-        return new CoalesceResponseType<List<CoalesceStringResponseType>>();
+        return new CoalesceResponseType<>();
     }
 
     @Override

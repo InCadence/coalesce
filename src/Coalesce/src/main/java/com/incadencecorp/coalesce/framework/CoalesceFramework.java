@@ -363,8 +363,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      * @param entities to save
      * @throws CoalescePersistorException on error
      */
-    public void saveCoalesceEntityAsync(boolean allowRemoval, CoalesceEntity... entities)
-            throws CoalescePersistorException
+    public void saveCoalesceEntityAsync(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
         for (CoalesceEntity entity : entities)
         {
