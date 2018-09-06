@@ -1,5 +1,9 @@
 package com.incadencecorp.coalesce.framework;
 
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
+import com.incadencecorp.coalesce.framework.persistance.MockPersister;
+import org.junit.Assert;
 import org.junit.Test;
 
 /*-----------------------------------------------------------------------------'
@@ -21,20 +25,44 @@ import org.junit.Test;
 
 public class CoalesceFrameworkTest {
 
-    /*
-     * @BeforeClass public static void setUpBeforeClass() throws Exception { }
-     * 
-     * 
-     * @AfterClass public static void tearDownAfterClass() throws Exception { }
-     * 
-     * @Before public void setUp() throws Exception { }
-     * 
-     * @After public void tearDown() throws Exception { }
-     */
-
     @Test
-    public void isInitializedTest()
+    public void testSecondaryReads() throws Exception
     {
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize();
+
+        TestEntity entity3 = new TestEntity();
+        entity3.initialize();
+
+        MockPersister mock1 = new MockPersister();
+        MockPersister mock2 = new MockPersister();
+
+        CoalesceFramework framework = new CoalesceFramework();
+        framework.setAuthoritativePersistor(mock1);
+        framework.setSecondaryPersistors(mock2);
+
+        mock1.saveEntity(false, entity1);
+        mock2.saveEntity(false, entity3, entity2);
+
+        CoalesceEntity[] entities;
+
+        // Verify order in which entities are returned.
+        entities = framework.getCoalesceEntities(entity1.getKey(), entity2.getKey(), entity3.getKey());
+
+        Assert.assertEquals(3, entities.length);
+        Assert.assertEquals(entity1.getKey(), entities[0].getKey());
+        Assert.assertEquals(entity2.getKey(), entities[1].getKey());
+        Assert.assertEquals(entity3.getKey(), entities[2].getKey());
+
+        entities = framework.getCoalesceEntities(entity2.getKey(), entity3.getKey(), entity1.getKey());
+
+        Assert.assertEquals(3, entities.length);
+        Assert.assertEquals(entity2.getKey(), entities[0].getKey());
+        Assert.assertEquals(entity3.getKey(), entities[1].getKey());
+        Assert.assertEquals(entity1.getKey(), entities[2].getKey());
 
     }
 }

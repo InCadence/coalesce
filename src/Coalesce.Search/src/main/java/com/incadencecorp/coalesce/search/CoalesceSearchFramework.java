@@ -154,9 +154,9 @@ public class CoalesceSearchFramework extends CoalesceFramework {
         }
         else
         {
-            for (ICoalescePersistor secondary : getSecondaryPersistors())
+            for (ICoalescePersistor secondary : getSecondaryPersistors(capabilities))
             {
-                if (secondary instanceof ICoalesceSearchPersistor && secondary.getCapabilities().containsAll(capabilities))
+                if (secondary instanceof ICoalesceSearchPersistor)
                 {
                     result = (ICoalesceSearchPersistor) secondary;
                     break;
