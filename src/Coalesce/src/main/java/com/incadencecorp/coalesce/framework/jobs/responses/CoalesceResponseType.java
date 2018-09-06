@@ -19,6 +19,7 @@ package com.incadencecorp.coalesce.framework.jobs.responses;
 
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 /**
  * 
@@ -35,6 +36,7 @@ public class CoalesceResponseType<T> implements ICoalesceResponseType<T> {
     private String id;
     private String error;
     private T _result;
+    private Exception exception;
 
     /*--------------------------------------------------------------------------
     Constructors
@@ -115,6 +117,27 @@ public class CoalesceResponseType<T> implements ICoalesceResponseType<T> {
      */
     public final void setSuccessful(boolean value) {
         // Do Nothing
+    }
+
+    /**
+     * @return the exception that caused this result, if caused by an exception;
+     *         otherwise <code>null</code>.
+     */
+    public Exception getException()
+    {
+        return exception;
+    }
+
+    /**
+     * Sets the exception that caused this result.
+     *
+     * @param exception
+     */
+    public void setException(Exception exception)
+    {
+        this.setStatus(EResultStatus.FAILED);
+        this.setError(exception.getMessage());
+        this.exception = exception;
     }
 
 }

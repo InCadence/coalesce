@@ -17,16 +17,17 @@
 
 package com.incadencecorp.coalesce.framework.tasks;
 
-import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 
 /**
  * Abstract base for persister tasks in Coalesce.
- * 
- * @author Derek
  *
  * @param <INPUT>
+ * @param <OUTPUT>
+ * @author Derek
  */
-public abstract class AbstractPersistorTask<INPUT> extends AbstractTask<INPUT, CoalesceStringResponseType, ICoalescePersistor> {
+public abstract class AbstractPersistorTask<INPUT, OUTPUT extends ICoalesceResponseType<?>>
+        extends AbstractTask<INPUT, OUTPUT, ICoalescePersistor> {
 
 }

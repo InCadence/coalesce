@@ -31,7 +31,7 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
  * 
  * @author Derek
  */
-public class CoalesceSaveTemplateTask extends AbstractPersistorTask<CoalesceEntityTemplate[]> {
+public class CoalesceSaveTemplateTask extends AbstractPersistorTask<CoalesceEntityTemplate[], CoalesceStringResponseType> {
 
     @Override
     protected CoalesceStringResponseType doWork(TaskParameters<ICoalescePersistor, CoalesceEntityTemplate[]> parameters)

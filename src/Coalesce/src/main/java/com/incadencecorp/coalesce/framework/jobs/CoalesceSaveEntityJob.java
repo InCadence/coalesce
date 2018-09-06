@@ -32,7 +32,7 @@ import com.incadencecorp.coalesce.framework.tasks.CoalesceSaveEntityTask;
  * @author Derek
  *
  */
-public class CoalesceSaveEntityJob extends AbstractCoalescePersistorsJob<CoalesceSaveEntityProperties> {
+public class CoalesceSaveEntityJob extends AbstractCoalescePersistorsJob<CoalesceSaveEntityProperties, CoalesceStringResponseType> {
 
     /**
      * Constructor
@@ -43,13 +43,13 @@ public class CoalesceSaveEntityJob extends AbstractCoalescePersistorsJob<Coalesc
     }
 
     @Override
-    protected AbstractPersistorTask<CoalesceSaveEntityProperties> createTask()
+    protected AbstractPersistorTask<CoalesceSaveEntityProperties, CoalesceStringResponseType> createTask()
     {
         return new CoalesceSaveEntityTask();
     }
 
     @Override
-    protected String[] getKeys(AbstractPersistorTask<CoalesceSaveEntityProperties> task)
+    protected String[] getKeys(AbstractPersistorTask<CoalesceSaveEntityProperties, CoalesceStringResponseType> task)
     {
         List<String> keys = new ArrayList<>();
         

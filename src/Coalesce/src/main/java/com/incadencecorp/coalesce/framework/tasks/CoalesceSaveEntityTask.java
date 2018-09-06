@@ -32,7 +32,7 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
  * 
  * @author Derek
  */
-public class CoalesceSaveEntityTask extends AbstractPersistorTask<CoalesceSaveEntityProperties> {
+public class CoalesceSaveEntityTask extends AbstractPersistorTask<CoalesceSaveEntityProperties, CoalesceStringResponseType> {
 
     @Override
     protected CoalesceStringResponseType doWork(TaskParameters<ICoalescePersistor, CoalesceSaveEntityProperties> parameters)

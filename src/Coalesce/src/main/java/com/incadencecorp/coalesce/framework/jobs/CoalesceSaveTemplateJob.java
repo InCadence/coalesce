@@ -30,7 +30,8 @@ import java.util.List;
 /**
  * @author Derek
  */
-public class CoalesceSaveTemplateJob extends AbstractCoalescePersistorsJob<CoalesceEntityTemplate[]> {
+public class CoalesceSaveTemplateJob
+        extends AbstractCoalescePersistorsJob<CoalesceEntityTemplate[], CoalesceStringResponseType> {
 
     /**
      * Constructor
@@ -41,15 +42,15 @@ public class CoalesceSaveTemplateJob extends AbstractCoalescePersistorsJob<Coale
     }
 
     @Override
-    protected AbstractPersistorTask<CoalesceEntityTemplate[]> createTask()
+    protected AbstractPersistorTask<CoalesceEntityTemplate[], CoalesceStringResponseType> createTask()
     {
         return new CoalesceSaveTemplateTask();
     }
 
     @Override
-    protected String[] getKeys(AbstractPersistorTask<CoalesceEntityTemplate[]> task)
+    protected String[] getKeys(AbstractPersistorTask<CoalesceEntityTemplate[], CoalesceStringResponseType> task)
     {
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
 
         for (CoalesceEntityTemplate template : task.getParams())
         {
@@ -68,7 +69,7 @@ public class CoalesceSaveTemplateJob extends AbstractCoalescePersistorsJob<Coale
     @Override
     protected CoalesceStringResponseType createResults()
     {
-        return new CoalesceStringResponseType(); 
+        return new CoalesceStringResponseType();
     }
 
 }

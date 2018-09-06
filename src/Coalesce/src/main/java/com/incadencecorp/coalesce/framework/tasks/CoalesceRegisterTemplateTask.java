@@ -26,7 +26,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 
-public class CoalesceRegisterTemplateTask extends AbstractPersistorTask<CoalesceEntityTemplate[]> {
+public class CoalesceRegisterTemplateTask extends AbstractPersistorTask<CoalesceEntityTemplate[], CoalesceStringResponseType> {
 
     @Override
     protected CoalesceStringResponseType doWork(TaskParameters<ICoalescePersistor, CoalesceEntityTemplate[]> parameters)
