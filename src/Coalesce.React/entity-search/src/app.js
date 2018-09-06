@@ -214,6 +214,7 @@ export class App extends React.Component {
                 <SearchResults
                   data={results}
                   properties={properties}
+                  handleError={this.handleError}
                   url={this.props.karafRootAddr}
                 />
               </Paper>
