@@ -51,6 +51,11 @@ public interface IEntityDataControllerJaxRS {
     void createEntityAsXml(@PathParam("entityKey") String entityKey, String xml) throws RemoteException;
 
     @DELETE
+    @Path("/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    void deleteEntities(String[] keys) throws RemoteException;
+
+    @DELETE
     @Path("/{entityKey:" + GUIDHelper.REGEX_UUID +  "}")
     void deleteEntity(@PathParam("entityKey") String entityKey) throws RemoteException;
 
