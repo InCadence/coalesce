@@ -17,10 +17,8 @@
 
 package com.incadencecorp.coalesce.services.crud.service.jobs;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import com.incadencecorp.coalesce.api.CoalesceParameters;
+import com.incadencecorp.coalesce.common.helpers.ArrayHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
@@ -30,8 +28,16 @@ import com.incadencecorp.coalesce.services.api.crud.DataObjectUpdateStatusReques
 import com.incadencecorp.coalesce.services.common.jobs.AbstractFrameworkServiceJob;
 import com.incadencecorp.coalesce.services.crud.service.tasks.UpdateDataObjectStatusTask;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 public class UpdateDataObjectStatusJob
         extends AbstractFrameworkServiceJob<DataObjectUpdateStatusRequest, StringResponse, ResultsType> {
+
+    private static final int DEFAULT_BLOCK_SIZE = 100;
+    private int blockSize = DEFAULT_BLOCK_SIZE;
 
     public UpdateDataObjectStatusJob(DataObjectUpdateStatusRequest request)
     {
@@ -39,16 +45,29 @@ public class UpdateDataObjectStatusJob
     }
 
     @Override
+    public void setProperties(Map<String, String> params)
+    {
+        super.setProperties(params);
+
+        if (params.containsKey(CoalesceParameters.PARAM_BLOCK_SIZE))
+        {
+            blockSize = Integer.parseInt(params.get(CoalesceParameters.PARAM_BLOCK_SIZE));
+        }
+    }
+
+    @Override
     protected Collection<AbstractTask<?, ResultsType, CoalesceFramework>> getTasks(DataObjectUpdateStatusRequest params)
     {
-        List<AbstractTask<?, ResultsType, CoalesceFramework>> tasks = new ArrayList<AbstractTask<?, ResultsType, CoalesceFramework>>();
+        List<AbstractTask<?, ResultsType, CoalesceFramework>> tasks = new ArrayList<>();
 
-        for (DataObjectStatusType type : params.getTaskList())
+        DataObjectStatusType[][] chunks = ArrayHelper.createChunks(params.getTaskList().toArray(new DataObjectStatusType[params.getTaskList().size()]),
+                                                                   blockSize,
+                                                                   DataObjectStatusType[][]::new);
+
+        for (DataObjectStatusType[] chunk : chunks)
         {
             UpdateDataObjectStatusTask task = new UpdateDataObjectStatusTask();
-            task.setParams(new DataObjectStatusType[] {
-                                                        type
-            });
+            task.setParams(chunk);
 
             tasks.add(task);
         }

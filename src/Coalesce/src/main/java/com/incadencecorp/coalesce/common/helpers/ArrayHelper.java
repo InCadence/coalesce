@@ -20,6 +20,7 @@ package com.incadencecorp.coalesce.common.helpers;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 
 import java.util.*;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -296,5 +297,35 @@ public final class ArrayHelper {
     public static String[] tolowerCase(String[] strings)
     {
         return Arrays.stream(strings).map(String::toLowerCase).collect(Collectors.toList()).toArray(new String[strings.length]);
+    }
+
+    /**
+     * @param arrayToSplit array to split into chunks
+     * @param chunkSize    size of the chunks
+     * @param generator    initialization method for creating the array of chunks
+     * @param <A>          type of the array
+     * @return the array divided into chunks.
+     */
+    public static <A> A[][] createChunks(A[] arrayToSplit, int chunkSize, IntFunction<A[][]> generator)
+    {
+        // Determine size of last array
+        int rest = arrayToSplit.length % chunkSize;
+
+        // Determine number of chunks
+        int chunks = arrayToSplit.length / chunkSize + (rest > 0 ? 1 : 0);
+
+        A[][] arrays = generator.apply(chunks);
+
+        // Create Arrays
+        for (int i = 0; i < (rest > 0 ? chunks - 1 : chunks); i++)
+        {
+            arrays[i] = Arrays.copyOfRange(arrayToSplit, i * chunkSize, i * chunkSize + chunkSize);
+        }
+        if (rest > 0)
+        {
+            arrays[chunks - 1] = Arrays.copyOfRange(arrayToSplit, (chunks - 1) * chunkSize, (chunks - 1) * chunkSize + rest);
+        }
+
+        return arrays;
     }
 }
