@@ -17,9 +17,6 @@
 
 package com.incadencecorp.coalesce.services.crud.service.tasks;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
@@ -33,6 +30,9 @@ import com.incadencecorp.coalesce.framework.util.CoalesceNotifierUtil;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectStatusType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class UpdateDataObjectStatusTask extends AbstractFrameworkTask<DataObjectStatusType[], ResultsType> {
 
     @Override
@@ -40,42 +40,57 @@ public class UpdateDataObjectStatusTask extends AbstractFrameworkTask<DataObject
             throws CoalesceException
     {
         ResultsType result = new ResultsType();
+
+        Map<String, CoalesceEntity> entities = new HashMap<>();
         CoalesceFramework framework = parameters.getTarget();
-        DataObjectStatusType[] params = parameters.getParams();
 
-        CoalesceEntity[] entities = new CoalesceEntity[params.length];
-
-        for (int ii = 0; ii < params.length; ii++)
+        // Create PlaceHolders
+        for (DataObjectStatusType task : parameters.getParams())
         {
-            DataObjectStatusType task = params[ii];
+            entities.put(task.getKey(), new CoalesceEntity());
+        }
 
+        // Retrieve Entities
+        for (CoalesceEntity entity : framework.getCoalesceEntities(entities.keySet().toArray(new String[entities.keySet().size()])))
+        {
+            entities.put(entity.getKey(), entity);
+        }
+
+        // Update Entities
+        for (DataObjectStatusType task : parameters.getParams())
+        {
             if (task.getAction() == null)
             {
                 throw new CoalesceException(String.format(CoalesceErrors.NOT_SPECIFIED, "Update Action"));
             }
 
-            CoalesceEntity entity = framework.getCoalesceEntity(task.getKey());
+            CoalesceEntity entity = entities.get(task.getKey());
 
-            switch (task.getAction()) {
-            case MARK_AS_ACTIVE:
-                entity.setStatus(ECoalesceObjectStatus.ACTIVE);
-                break;
-            case MARK_AS_DELETED:
-                entity.setStatus(ECoalesceObjectStatus.DELETED);
-                break;
-            case MARK_AS_READONLY:
-                entity.setStatus(ECoalesceObjectStatus.READONLY);
-                break;
+            if (entity.isInitialized())
+            {
+                switch (task.getAction())
+                {
+                case MARK_AS_ACTIVE:
+                    entity.setStatus(ECoalesceObjectStatus.ACTIVE);
+                    break;
+                case MARK_AS_DELETED:
+                    entity.setStatus(ECoalesceObjectStatus.DELETED);
+                    break;
+                case MARK_AS_READONLY:
+                    entity.setStatus(ECoalesceObjectStatus.READONLY);
+                    break;
+                }
             }
-            
-            entities[ii] = entity;
         }
 
-        if (framework.saveCoalesceEntity(entities))
+        CoalesceEntity[] entitiesUpdated = entities.values().stream().filter(CoalesceEntity::isInitialized).toArray(
+                CoalesceEntity[]::new);
+
+        if (framework.saveCoalesceEntity(entitiesUpdated))
         {
             result.setStatus(EResultStatus.SUCCESS);
-            
-            CoalesceNotifierUtil.sendCrud(getName(), ECrudOperations.UPDATE, entities);
+
+            CoalesceNotifierUtil.sendCrud(getName(), ECrudOperations.UPDATE, entitiesUpdated);
         }
         else
         {
@@ -88,14 +103,7 @@ public class UpdateDataObjectStatusTask extends AbstractFrameworkTask<DataObject
     @Override
     protected Map<String, String> getParameters(DataObjectStatusType[] params, boolean isTrace)
     {
-        Map<String, String> results = new HashMap<String, String>();
-
-        for (DataObjectStatusType type : params)
-        {
-            // TODO Not Implemented
-        }
-
-        return results;
+        return new HashMap<>();
     }
 
     @Override

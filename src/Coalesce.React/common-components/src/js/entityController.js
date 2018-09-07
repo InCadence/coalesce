@@ -59,3 +59,20 @@ export function deleteEntity(key) {
       throw Error(error);
     });
 }
+
+export function deleteEntities(keys) {
+  return fetch(`${karafRootAddr}/entity`, {
+      method: "DELETE",
+      body: JSON.stringify(keys),
+      headers: new Headers({
+        'content-type': 'application/json; charset=utf-8'
+      }),
+    }).then(res => {
+      if (!res.ok)
+      {
+        throw Error(res.statusText);
+      }
+    }).catch(function(error) {
+      throw Error(error);
+    });
+}

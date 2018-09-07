@@ -33,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -166,13 +168,20 @@ public class EntityDataController {
         }
     }
 
-    public void deleteEntity(String entityKey) throws RemoteException
+    public void deleteEntities(String[] keys) throws RemoteException
     {
-        DataObjectStatusType task = new DataObjectStatusType();
-        task.setAction(DataObjectStatusActionType.MARK_AS_DELETED);
-        task.setKey(entityKey);
+        List<DataObjectStatusType> tasks = new ArrayList<>();
 
-        crud.updateDataObjectStatus(task);
+        for (String key : keys)
+        {
+            DataObjectStatusType task = new DataObjectStatusType();
+            task.setAction(DataObjectStatusActionType.MARK_AS_DELETED);
+            task.setKey(key);
+
+            tasks.add(task);
+        }
+
+        crud.updateDataObjectStatus(tasks.toArray(new DataObjectStatusType[tasks.size()]));
     }
 
     public CoalesceSection getSection(String entityKey, String key) throws RemoteException

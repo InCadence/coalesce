@@ -369,6 +369,7 @@ public final class CoalesceTemplateUtil {
             coalesceentity.put("coalesceentity.objectkey", ECoalesceFieldDataTypes.GUID_TYPE);
             coalesceentity.put("coalesceentity.datecreated", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
             coalesceentity.put("coalesceentity.lastmodified", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
+            coalesceentity.put("coalesceentity.status", ECoalesceFieldDataTypes.ENUMERATION_TYPE);
 
             coalescelinkage.put("coalescelinkage.entity2key", ECoalesceFieldDataTypes.GUID_TYPE);
             coalescelinkage.put("coalescelinkage.entity2name", ECoalesceFieldDataTypes.STRING_TYPE);

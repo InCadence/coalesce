@@ -69,7 +69,6 @@ export class FieldInput extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log("updating");
     this.setState({
       field: nextProps.field
     })
@@ -210,20 +209,38 @@ export class FieldInput extends React.Component {
         );
         break;
       case 'BOOLEAN_TYPE':
+      if (!style.root.width) {
+        style.root.width = style.root.height
+      }
+
+      if (label) {
         view = (
-          <FormControlLabel label={label} control={
-              <Checkbox
-                id={field.key}
-                checked={field[attr] === true}
-                style={style}
-                disableRipple
-                defaultChecked={defaultValue}
-                onChange={(event) => {this.handleOnChange(attr, event.target.checked)}}
-                onKeyDown={this.props.onKeyDown}
-              />
-            }
-          />
-        );
+            <FormControlLabel label={label} control={
+                <Checkbox
+                  id={field.key}
+                  checked={field[attr] === true}
+                  style={style.root}
+                  disableRipple
+                  defaultChecked={defaultValue}
+                  onChange={(event) => {this.handleOnChange(attr, event.target.checked)}}
+                  onKeyDown={this.props.onKeyDown}
+                />
+              }
+            />
+          )
+          } else {
+            view = (
+            <Checkbox
+              id={field.key}
+              checked={field[attr] === true}
+              style={style.root}
+              disableRipple
+              defaultChecked={defaultValue}
+              onChange={(event) => {this.handleOnChange(attr, event.target.checked)}}
+              onKeyDown={this.props.onKeyDown}
+            />
+            )
+          }
         break;
 
       case 'BINARY_TYPE':

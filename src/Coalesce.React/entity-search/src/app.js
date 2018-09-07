@@ -4,6 +4,7 @@ import { loadTemplates, loadTemplate } from 'common-components/lib/js/templateCo
 import { getRootKarafUrl } from 'common-components/lib/js/common';
 import { DialogMessage, DialogLoader, DialogOptions } from 'common-components/lib/components/dialogs'
 import { searchComplex } from 'common-components/lib/js/searchController.js';
+import uuid from 'uuid';
 
 import Paper from '@material-ui/core/Paper';
 
@@ -22,6 +23,7 @@ export class App extends React.Component {
     this.handleUpdate = this.handleUpdate.bind(this);
     this.createQuery = this.createQuery.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
+    this.handleSpinner = this.handleSpinner.bind(this);
 
     this.state = {
       cache: [],
@@ -143,6 +145,7 @@ export class App extends React.Component {
 
       that.setState({
         key: key,
+        query: this.createQuery(cache[key].name),
         promptTemplate: false
         });
     }
@@ -155,13 +158,6 @@ export class App extends React.Component {
     return (
         <div>
         <Menu logoSrc={this.props.pjson.icon} title={this.props.pjson.title} items={[
-          {
-            id: 'search',
-            name: 'Search',
-            img: "/images/svg/search.svg",
-            title: 'Execute Search',
-            onClick: this.handleSearch
-          },
           {
             id: 'select',
             name: 'Select',
@@ -195,6 +191,12 @@ export class App extends React.Component {
               this.setState({query: this.createQuery()})
               console.log("Reset Criteria");
             }
+          },{
+            id: 'search',
+            name: 'Search',
+            img: "/images/svg/search.svg",
+            title: 'Execute Search',
+            onClick: this.handleSearch
           }
         ]}/>
           <div  style={{padding: '5px', margin: '10px'}}>
@@ -210,13 +212,13 @@ export class App extends React.Component {
 
             }
             { results != null &&
-              <Paper>
-                <SearchResults
-                  data={results}
-                  properties={properties}
-                  url={this.props.karafRootAddr}
-                />
-              </Paper>
+              <SearchResults
+                data={results}
+                properties={properties}
+                handleError={this.handleError}
+                handleSpinner={this.handleSpinner}
+                url={this.props.karafRootAddr}
+              />
             }
             { this.state.error &&
               <DialogMessage
@@ -246,6 +248,12 @@ export class App extends React.Component {
     )
   }
 
+  handleSpinner(value) {
+    this.setState(() => {return {
+      loading: value
+    }})
+  }
+
   handleSearch() {
 
     const that = this;
@@ -272,6 +280,9 @@ export class App extends React.Component {
 
     // Submit Query
     searchComplex(query).then(response => {
+
+      response.key = uuid.v4();
+
       that.setState(() => {return {
         results: response,
         properties: query.propertyNames,
