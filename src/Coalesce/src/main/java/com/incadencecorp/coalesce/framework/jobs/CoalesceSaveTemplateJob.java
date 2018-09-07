@@ -17,9 +17,6 @@
 
 package com.incadencecorp.coalesce.framework.jobs;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
@@ -27,15 +24,17 @@ import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringRespons
 import com.incadencecorp.coalesce.framework.tasks.AbstractPersistorTask;
 import com.incadencecorp.coalesce.framework.tasks.CoalesceSaveTemplateTask;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Derek
  */
-public class CoalesceSaveTemplateJob extends AbstractCoalescePersistorsJob<CoalesceEntityTemplate[]> {
+public class CoalesceSaveTemplateJob
+        extends AbstractCoalescePersistorsJob<CoalesceEntityTemplate[], CoalesceStringResponseType> {
 
     /**
      * Constructor
-     * 
-     * @param params
      */
     public CoalesceSaveTemplateJob(CoalesceEntityTemplate[] params)
     {
@@ -43,15 +42,15 @@ public class CoalesceSaveTemplateJob extends AbstractCoalescePersistorsJob<Coale
     }
 
     @Override
-    protected AbstractPersistorTask<CoalesceEntityTemplate[]> createTask()
+    protected AbstractPersistorTask<CoalesceEntityTemplate[], CoalesceStringResponseType> createTask()
     {
         return new CoalesceSaveTemplateTask();
     }
 
     @Override
-    protected String[] getKeys(AbstractPersistorTask<CoalesceEntityTemplate[]> task)
+    protected String[] getKeys(AbstractPersistorTask<CoalesceEntityTemplate[], CoalesceStringResponseType> task)
     {
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
 
         for (CoalesceEntityTemplate template : task.getParams())
         {
@@ -61,17 +60,16 @@ public class CoalesceSaveTemplateJob extends AbstractCoalescePersistorsJob<Coale
         return keys.toArray(new String[keys.size()]);
     }
 
-
     @Override
     protected ICoalesceResponseType<List<CoalesceStringResponseType>> createResponse()
     {
-        return new CoalesceResponseType<List<CoalesceStringResponseType>>();
+        return new CoalesceResponseType<>();
     }
 
     @Override
     protected CoalesceStringResponseType createResults()
     {
-        return new CoalesceStringResponseType(); 
+        return new CoalesceStringResponseType();
     }
 
 }

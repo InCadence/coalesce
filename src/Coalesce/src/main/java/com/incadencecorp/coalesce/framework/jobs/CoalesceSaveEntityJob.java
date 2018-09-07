@@ -32,12 +32,10 @@ import com.incadencecorp.coalesce.framework.tasks.CoalesceSaveEntityTask;
  * @author Derek
  *
  */
-public class CoalesceSaveEntityJob extends AbstractCoalescePersistorsJob<CoalesceSaveEntityProperties> {
+public class CoalesceSaveEntityJob extends AbstractCoalescePersistorsJob<CoalesceSaveEntityProperties, CoalesceStringResponseType> {
 
     /**
      * Constructor
-     * 
-     * @param params
      */
     public CoalesceSaveEntityJob(CoalesceSaveEntityProperties params)
     {
@@ -45,15 +43,15 @@ public class CoalesceSaveEntityJob extends AbstractCoalescePersistorsJob<Coalesc
     }
 
     @Override
-    protected AbstractPersistorTask<CoalesceSaveEntityProperties> createTask()
+    protected AbstractPersistorTask<CoalesceSaveEntityProperties, CoalesceStringResponseType> createTask()
     {
         return new CoalesceSaveEntityTask();
     }
 
     @Override
-    protected String[] getKeys(AbstractPersistorTask<CoalesceSaveEntityProperties> task)
+    protected String[] getKeys(AbstractPersistorTask<CoalesceSaveEntityProperties, CoalesceStringResponseType> task)
     {
-        List<String> keys = new ArrayList<String>(); 
+        List<String> keys = new ArrayList<>();
         
         for (CoalesceEntity entity : task.getParams().getEntities())
         {
@@ -67,7 +65,7 @@ public class CoalesceSaveEntityJob extends AbstractCoalescePersistorsJob<Coalesc
     @Override
     protected ICoalesceResponseType<List<CoalesceStringResponseType>> createResponse()
     {
-        return new CoalesceResponseType<List<CoalesceStringResponseType>>();
+        return new CoalesceResponseType<>();
     }
 
     @Override

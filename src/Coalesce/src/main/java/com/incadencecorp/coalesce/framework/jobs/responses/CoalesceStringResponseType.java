@@ -17,45 +17,9 @@
 
 package com.incadencecorp.coalesce.framework.jobs.responses;
 
-import com.incadencecorp.coalesce.api.EResultStatus;
-
 /**
- * 
  * @author Derek
- *
  */
 public class CoalesceStringResponseType extends CoalesceResponseType<String> {
 
-    /*--------------------------------------------------------------------------
-    Private Member Variables
-    --------------------------------------------------------------------------*/
-
-    private Exception exception;
-
-    /*--------------------------------------------------------------------------
-    Getters / Setters
-    --------------------------------------------------------------------------*/
-
-    /**
-     * @return the exception that caused this result, if caused by an exception;
-     *         otherwise <code>null</code>.
-     */
-    public Exception getException()
-    {
-        return exception;
-    }
-
-    /**
-     * Sets the exception that caused this result.
-     * 
-     * @param exception
-     */
-    public void setException(Exception exception)
-    {
-        this.setStatus(EResultStatus.FAILED);
-        this.exception = exception;
-        
-        setError(exception.getMessage());
-    }
-    
 }

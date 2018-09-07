@@ -32,12 +32,10 @@ import com.incadencecorp.coalesce.framework.tasks.CoalesceRegisterTemplateTask;
  * 
  * @author n78554
  */
-public class CoalesceRegisterTemplateJob extends AbstractCoalescePersistorsJob<CoalesceEntityTemplate[]> {
+public class CoalesceRegisterTemplateJob extends AbstractCoalescePersistorsJob<CoalesceEntityTemplate[], CoalesceStringResponseType> {
 
     /**
      * Default Constructor
-     * 
-     * @param params
      */
     public CoalesceRegisterTemplateJob(CoalesceEntityTemplate[] params)
     {
@@ -45,15 +43,15 @@ public class CoalesceRegisterTemplateJob extends AbstractCoalescePersistorsJob<C
     }
 
     @Override
-    protected AbstractPersistorTask<CoalesceEntityTemplate[]> createTask()
+    protected AbstractPersistorTask<CoalesceEntityTemplate[], CoalesceStringResponseType> createTask()
     {
         return new CoalesceRegisterTemplateTask();
     }
 
     @Override
-    protected String[] getKeys(AbstractPersistorTask<CoalesceEntityTemplate[]> task)
+    protected String[] getKeys(AbstractPersistorTask<CoalesceEntityTemplate[], CoalesceStringResponseType> task)
     {
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
         
         for (CoalesceEntityTemplate template : task.getParams())
         {
@@ -66,7 +64,7 @@ public class CoalesceRegisterTemplateJob extends AbstractCoalescePersistorsJob<C
     @Override
     protected ICoalesceResponseType<List<CoalesceStringResponseType>> createResponse()
     {
-        return new CoalesceResponseType<List<CoalesceStringResponseType>>();
+        return new CoalesceResponseType<>();
     }
 
     @Override

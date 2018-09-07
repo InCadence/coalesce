@@ -17,36 +17,30 @@
 
 package com.incadencecorp.coalesce.framework.jobs;
 
+import com.incadencecorp.coalesce.api.*;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+import com.incadencecorp.coalesce.framework.tasks.AbstractPersistorTask;
+import com.incadencecorp.coalesce.framework.tasks.MetricResults;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.incadencecorp.coalesce.api.EResultStatus;
-import com.incadencecorp.coalesce.api.ICoalescePersistorJob;
-import com.incadencecorp.coalesce.api.ICoalescePrincipal;
-import com.incadencecorp.coalesce.api.ICoalesceResponseType;
-import com.incadencecorp.coalesce.api.IExceptionHandler;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
-import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.incadencecorp.coalesce.framework.tasks.AbstractPersistorTask;
-import com.incadencecorp.coalesce.framework.tasks.MetricResults;
-
 /**
  * Abstract base for jobs that perform the same task with the same parameters
  * for each persister configured.
- * 
+ *
+ * @param <INPUT>  input type
+ * @param <OUTPUT>
  * @author Derek
- * @param <INPUT> input type
  */
-public abstract class AbstractCoalescePersistorsJob<INPUT> extends
-        AbstractCoalesceJob<INPUT, ICoalesceResponseType<List<CoalesceStringResponseType>>, CoalesceStringResponseType>
-        implements ICoalescePersistorJob {
+public abstract class AbstractCoalescePersistorsJob<INPUT, OUTPUT extends ICoalesceResponseType<?>>
+        extends AbstractCoalesceJob<INPUT, ICoalesceResponseType<List<OUTPUT>>, OUTPUT> implements ICoalescePersistorJob {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractCoalescePersistorsJob.class);
 
@@ -63,7 +57,7 @@ public abstract class AbstractCoalescePersistorsJob<INPUT> extends
 
     /**
      * Sets the persistors that the task will be performed on.
-     * 
+     *
      * @param params task parameters.
      */
     public AbstractCoalescePersistorsJob(INPUT params)
@@ -92,21 +86,21 @@ public abstract class AbstractCoalescePersistorsJob<INPUT> extends
     --------------------------------------------------------------------------*/
 
     @Override
-    public final ICoalesceResponseType<List<CoalesceStringResponseType>> doWork(ICoalescePrincipal principal, INPUT params)
+    public final ICoalesceResponseType<List<OUTPUT>> doWork(ICoalescePrincipal principal, INPUT params)
             throws CoalesceException
     {
-        List<CoalesceStringResponseType> results = new ArrayList<CoalesceStringResponseType>();
+        List<OUTPUT> results = new ArrayList<>();
 
         try
         {
-            List<AbstractPersistorTask<INPUT>> tasks = new ArrayList<AbstractPersistorTask<INPUT>>();
+            List<AbstractPersistorTask<INPUT, OUTPUT>> tasks = new ArrayList<>();
 
             // Create Tasks
-            for (int ii = 0; ii < _persistors.length; ii++)
+            for (ICoalescePersistor persistor : _persistors)
             {
-                AbstractPersistorTask<INPUT> task = createTask();
+                AbstractPersistorTask<INPUT, OUTPUT> task = createTask();
                 task.setParams(params);
-                task.setTarget(_persistors[ii]);
+                task.setTarget(persistor);
                 task.setPrincipal(principal);
 
                 tasks.add(task);
@@ -115,9 +109,9 @@ public abstract class AbstractCoalescePersistorsJob<INPUT> extends
             int ii = 0;
 
             // Execute Tasks
-            for (Future<MetricResults<CoalesceStringResponseType>> future : getService().invokeAll(tasks))
+            for (Future<MetricResults<OUTPUT>> future : getService().invokeAll(tasks))
             {
-                MetricResults<CoalesceStringResponseType> metrics;
+                MetricResults<OUTPUT> metrics;
 
                 try
                 {
@@ -128,7 +122,7 @@ public abstract class AbstractCoalescePersistorsJob<INPUT> extends
                     LOGGER.error("Interrupted Task", e);
 
                     // Create Failed Result
-                    CoalesceStringResponseType task = createResults();
+                    OUTPUT task = createResults();
                     task.setError(e.getMessage());
                     task.setStatus(EResultStatus.FAILED);
 
@@ -144,7 +138,12 @@ public abstract class AbstractCoalescePersistorsJob<INPUT> extends
                         LOGGER.trace("Handling ({})", _handler.getName());
                     }
 
-                    _handler.handle(getKeys(tasks.get(ii)), this, metrics.getResults().getException());
+                    if (metrics.getResults() instanceof CoalesceResponseType)
+                    {
+                        _handler.handle(getKeys(tasks.get(ii)),
+                                        this,
+                                        ((CoalesceResponseType) metrics.getResults()).getException());
+                    }
                 }
 
                 addResult(metrics);
@@ -159,7 +158,7 @@ public abstract class AbstractCoalescePersistorsJob<INPUT> extends
             throw new CoalesceException("Job Interrupted", e);
         }
 
-        CoalesceResponseType<List<CoalesceStringResponseType>> result = new CoalesceResponseType<List<CoalesceStringResponseType>>();
+        CoalesceResponseType<List<OUTPUT>> result = new CoalesceResponseType<>();
         result.setResult(results);
         result.setStatus(EResultStatus.SUCCESS);
 
@@ -170,7 +169,7 @@ public abstract class AbstractCoalescePersistorsJob<INPUT> extends
     Abstract Methods
     --------------------------------------------------------------------------*/
 
-    abstract protected AbstractPersistorTask<INPUT> createTask();
+    abstract protected AbstractPersistorTask<INPUT, OUTPUT> createTask();
 
-    abstract protected String[] getKeys(AbstractPersistorTask<INPUT> task);
+    abstract protected String[] getKeys(AbstractPersistorTask<INPUT, OUTPUT> task);
 }

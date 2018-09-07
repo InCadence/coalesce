@@ -83,7 +83,7 @@ public abstract class AbstractCoalesceTargetJob<INPUT, OUTPUT extends ICoalesceR
      */
     public final OUTPUT getResponse()
     {
-        OUTPUT response = null;
+        OUTPUT response;
 
         if (isDone())
         {

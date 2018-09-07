@@ -47,7 +47,7 @@ public class JobManager<T extends AbstractCoalesceJob<?, ?, ?>> {
     public JobManager()
     {
         // Initialize Data Structures
-        jobsh = new ConcurrentHashMap<String, T>();
+        jobsh = new ConcurrentHashMap<>();
     }
 
     // ----------------------------------------------------------------------//
@@ -114,7 +114,7 @@ public class JobManager<T extends AbstractCoalesceJob<?, ?, ?>> {
     public List<T> removeOldJobs(long minutes)
     {
 
-        List<T> expiredList = new ArrayList<T>();
+        List<T> expiredList = new ArrayList<>();
 
         // Determine Max Queue Time
         long minCreateTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(minutes);
@@ -160,15 +160,8 @@ public class JobManager<T extends AbstractCoalesceJob<?, ?, ?>> {
      */
     public T getJob(String jobID)
     {
-        if (jobsh.containsKey(jobID))
-        {
-            // Get Job
-            return jobsh.get(jobID);
-        }
-        else
-        {
-            return null;
-        }
+        // Get Job
+        return jobsh.getOrDefault(jobID, null);
     }
 
 }

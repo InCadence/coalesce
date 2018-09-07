@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.framework;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
@@ -11,7 +12,6 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.jobs.*;
-import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
@@ -20,8 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -65,6 +64,19 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
         return _persistors;
     }
 
+    protected ICoalescePersistor[] getSecondaryPersistors(EnumSet<EPersistorCapabilities> capabilities)
+    {
+        if (hasSecondaryPersistors())
+        {
+            return Arrays.stream(getSecondaryPersistors()).filter(p -> p.getCapabilities().containsAll(capabilities)).toArray(
+                    ICoalescePersistor[]::new);
+        }
+        else
+        {
+            return new ICoalescePersistor[0];
+        }
+    }
+
     protected boolean hasSecondaryPersistors()
     {
         return _persistors != null && _persistors.length > 0;
@@ -96,6 +108,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
 
         return persistor;
     }
+
     /*--------------------------------------------------------------------------
         Initialization Functions
     --------------------------------------------------------------------------*/
@@ -225,13 +238,103 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
     --------------------------------------------------------------------------*/
 
     /**
-     * @param key
+     * @param keys
      * @return an array of Coalesce Entities.
      * @throws CoalescePersistorException
      */
-    public CoalesceEntity[] getCoalesceEntities(String... key) throws CoalescePersistorException
+    public CoalesceEntity[] getCoalesceEntities(String... keys) throws CoalescePersistorException
     {
-        return getXmlPersistor().getEntity(key);
+        // Get Entities
+        CoalesceEntity[] entities = getXmlPersistor().getEntity(keys);
+
+        // Entities Missing?
+        if (entities.length != keys.length && hasSecondaryPersistors())
+        {
+            Map<String, CoalesceEntity> results = new LinkedHashMap<>();
+
+            // Create Placeholders
+            for (String key : keys)
+            {
+                results.put(key, new CoalesceEntity());
+            }
+
+            // Add Results to Map
+            for (CoalesceEntity entity : entities)
+            {
+                results.put(entity.getKey(), entity);
+            }
+
+            // Determine Missing Keys
+            String[] keysNotFound = results.entrySet().stream().filter(e -> !e.getValue().isInitialized()).map(Map.Entry::getKey).toArray(
+                    String[]::new);
+
+            if (keysNotFound.length > 0)
+            {
+                if (LOGGER.isDebugEnabled())
+                {
+                    for (String key : keysNotFound)
+                    {
+                        LOGGER.debug(String.format(CoalesceErrors.NOT_FOUND, "Entity", key));
+                    }
+                }
+
+                // Check Secondary Persisters
+                results.putAll(getCoalesceEntitiesFromSecondary(keysNotFound));
+
+                if (LOGGER.isDebugEnabled())
+                {
+                    for (String key : keysNotFound)
+                    {
+                        if (results.get(key).isInitialized())
+                        {
+                            LOGGER.debug("Found {}", key);
+                        }
+                        else
+                        {
+                            LOGGER.debug(String.format(CoalesceErrors.NOT_FOUND, "Entity", key));
+                        }
+                    }
+                }
+            }
+
+            entities = results.values().stream().filter(CoalesceEntity::isInitialized).toArray(CoalesceEntity[]::new);
+        }
+
+        return entities;
+    }
+
+    private Map<String, CoalesceEntity> getCoalesceEntitiesFromSecondary(String... keys) throws CoalescePersistorException
+    {
+        Map<String, CoalesceEntity> results = new HashMap<>();
+
+        ICoalescePersistor[] persisters = getSecondaryPersistors(EnumSet.of(EPersistorCapabilities.READ));
+
+        if (persisters.length > 0)
+        {
+            // Create Job
+            CoalesceReadEntityJob job = new CoalesceReadEntityJob(keys);
+            job.setHandler(_handler);
+            job.setExecutor(this);
+            job.setTarget(persisters);
+
+            ICoalesceResponseType<List<ICoalesceResponseType<List<CoalesceEntity>>>> response = job.call();
+
+            if (response.getStatus() == EResultStatus.SUCCESS)
+            {
+                for (ICoalesceResponseType<List<CoalesceEntity>> result : response.getResult())
+                {
+                    if (result.getStatus() == EResultStatus.SUCCESS)
+                    {
+                        for (CoalesceEntity entity : result.getResult())
+                        {
+                            results.put(entity.getKey(), entity);
+                        }
+                    }
+                }
+            }
+        }
+
+        return results;
     }
 
     /**
@@ -313,7 +416,7 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      * authoritative persistor.
      *
      * @param allowRemoval whether or not DELETE status should mark or remove the entity from data store.
-     * @param entities to save
+     * @param entities     to save
      * @return whether the authoritative was updated successfully.
      * @throws CoalescePersistorException on error
      */
@@ -360,11 +463,10 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      * authoritative persistor.
      *
      * @param allowRemoval whether or not DELETE status should mark or remove the entity from data store.
-     * @param entities to save
+     * @param entities     to save
      * @throws CoalescePersistorException on error
      */
-    public void saveCoalesceEntityAsync(boolean allowRemoval, CoalesceEntity... entities)
-            throws CoalescePersistorException
+    public void saveCoalesceEntityAsync(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
         for (CoalesceEntity entity : entities)
         {

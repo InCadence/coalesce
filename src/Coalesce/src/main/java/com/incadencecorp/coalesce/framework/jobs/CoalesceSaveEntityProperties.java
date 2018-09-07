@@ -50,8 +50,6 @@ public class CoalesceSaveEntityProperties {
     /**
      * Sets whether entities marked as deleted will be removed from the
      * database.
-     * 
-     * @param allowRemoval
      */
     public void setAllowRemoval(boolean allowRemoval)
     {
@@ -68,8 +66,6 @@ public class CoalesceSaveEntityProperties {
 
     /**
      * Sets the entities to be processed.
-     * 
-     * @param entities
      */
     public void setEntities(CoalesceEntity... entities)
     {
