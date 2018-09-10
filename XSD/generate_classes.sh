@@ -1,1 +1,1 @@
-generateDS.py -o entity.py Entity.xsd
+generateDS.py -fo entity.py Entity.xsd

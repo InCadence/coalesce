@@ -190,20 +190,10 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-    <xs:simpleType name="empty_string">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value=""/>
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:simpleType name="dateTime_or_empty">
-        <xs:union memberTypes="xs:dateTime empty-string"/>
-    </xs:simpleType>
-
 	<xs:complexType name="coalesceObjectType">
 		<xs:attribute name="key" type="xs:string" />
-		<xs:attribute name="datecreated" type="dateTime_or_empty" />
-		<xs:attribute name="lastmodified" type="dateTime_or_empty" />
+		<xs:attribute name="datecreated" type="xs:dateTime" />
+		<xs:attribute name="lastmodified" type="xs:dateTime" />
 		<xs:attribute name="name" type="xs:string" />
 		<xs:attribute name="status" type="ECoalesceObjectStatus" />
 		<xs:attribute name="noindex" type="xs:boolean" />

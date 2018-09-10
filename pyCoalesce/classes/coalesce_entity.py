@@ -32,6 +32,29 @@ DATA_TYPE_MAP = {"string": unicode, "short": int, "int": int, "long": long,
                  "float": float, "double": float, "boolean": bool,
                  "stringlist": list}
 
+# The keys in "LINKAGE_TYPES" are mainly for import to JSON implementations.
+# Eventually, this hashmap should be available through the "property" API , at
+# which point it can be downloaded rather than hard-coded.
+LINKAGE_TYPES = {"UNDEFINED": "Undefined", "IS_CHILD_OF": "IsChildOf",
+                 "IS_PARENT_OF": "IsParentOf", "CREATED": "Created",
+                 "WAS_CREATED_BY": "WasCreatedBy", "HAS_MEMBER": "HasMember",
+                 "IS_A_MEMBER_OF": "IsAMemberOf",
+                 "HAS_PARTICIPANT": "HasParticipant",
+                 "IS_A_PARTICIPANT_OF": "IsAParticipantOf",
+                 "IS_WATCHING": "IsWatching",
+                 "IS_BEING_WATCHED_BY": "IsBeingWatchedBy",
+                 "IS_A_PEER_OF": "IsAPeerOf", "IS_OWNED_BY": "IsOwnedBy",
+                 "HAS_OWNERSHIP_OF": "HasOwnershipOf", "IS_USED_BY": "IsUsedBy",
+                 "HAS_USE_OF": "HasUseOf", "SUCCESSOR": "Successor",
+                 "PREDECESSOR": "Predecessor",
+                 "CROSS_DOMAIN_SOURCE": "CrossDomainSource",
+                 "CROSS_DOMAIN_TARGET": "CrossDomainTarget",
+                 "IS_INPUT_PARAMETER_TO": "IsInputParameterTo",
+                 "HAS_INPUT_PARAMETER_OF": "HasInputParameterOf",
+                 "IS_INPUT_TO": "IsInputTo", "HAS_INPUT_OF": "HasInputOf",
+                 "IS_OUTPUT_TO": "IsOutputTo", "HAS_OUTPUT_OF": "HasOutputOF",
+                 "IS_PRODUCT_OF": "IsProductOf", "HAS_PRODUCT": "HasProduct"}
+
 
 #
 # Data representation classes
@@ -234,8 +257,55 @@ CoalesceHistory = historySub
 
 
 class linkageSub(supermod.linkage):
-    def __init__(self, key=None, datecreated=None, lastmodified=None, name=None, status=None, noindex=None, modifiedby=None, modifiedbyip=None, objectversion=None, objectversionstatus=None, previoushistorykey=None, disablehistory=None, history=None, entity1key=None, entity1name=None, entity1source=None, entity1version=None, linktype=None, entity2key=None, entity2name=None, entity2source=None, entity2version=None, entity2objectversion=None, classificationmarking=None, inputlang=None, label=None):
-        super(linkageSub, self).__init__(key, datecreated, lastmodified, name, status, noindex, modifiedby, modifiedbyip, objectversion, objectversionstatus, previoushistorykey, disablehistory, history, entity1key, entity1name, entity1source, entity1version, linktype, entity2key, entity2name, entity2source, entity2version, entity2objectversion, classificationmarking, inputlang, label, )
+    def __init__(self, key=None, datecreated=None, lastmodified=None, status=None,
+                 noindex=None, modifiedby=None, modifiedbyip=None,
+                 objectversion=None, objectversionstatus=None,
+                 previoushistorykey=None, disablehistory=None, history=None,
+                 entity1key=None, entity1name=None, entity1source=None,
+                 entity1version=None, linktype=None, entity2key=None,
+                 entity2name=None, entity2source=None, entity2version=None,
+                 entity2objectversion=None, classificationmarking=None,
+                 inputlang=None, label=None):
+
+        # The XSD doesn't enforce this, and doing so would be difficult if
+        # not impossible, but currently all linkages have the name "Linkage".
+        super(linkageSub, self).__init__(key, datecreated, lastmodified,
+                                         "Linkage", status, noindex, modifiedby,
+                                         modifiedbyip, objectversion,
+                                         objectversionstatus, previoushistorykey,
+                                         disablehistory, history, entity1key,
+                                         entity1name, entity1source,
+                                         entity1version, linktype, entity2key,
+                                         entity2name, entity2source,
+                                         entity2version, entity2objectversion,
+                                         classificationmarking, inputlang, label)
+
+        # Check the link type, and convert a key to a value if necessary.
+        if linktype in LINKAGE_TYPES:
+            linktype = LINKAGE_TYPES[linktype]
+        elif not linktype in LINKAGE_TYPES.values():
+            raise ValueError('"' + unicode(linktype) + '" is not a valid ' +
+                             'linkage type.')
+
+    def to_API(self, isBiDirectional = False):
+        """
+        Returns a version of the linkage as a (JSON-serializable) instance of
+        pyCoalesce.classes.CoalesceAPILinkage.
+
+        :param is_bidirectional:  a boolean indicating whether or not the
+            server should create a second linkage, from entity2 to entity1.
+        """
+
+        # Performing this import here avoids a circular import.
+        from coalesce_json import CoalesceAPILinkage
+
+        API_linkage = CoalesceAPILinkage(self.entity1key, self.entity2key,
+                                   label = self.label,
+                                   linkage_type = self.linktype,
+                                   isBiDirectional = isBiDirectional)
+
+        return API_linkage
+
 
 supermod.linkage.subclass = linkageSub
 
@@ -246,8 +316,21 @@ CoalesceLinkage = linkageSub
 
 
 class linkagesectionSub(supermod.linkagesection):
-    def __init__(self, key=None, datecreated=None, lastmodified=None, name=None, status=None, noindex=None, modifiedby=None, modifiedbyip=None, objectversion=None, objectversionstatus=None, previoushistorykey=None, disablehistory=None, history=None, linkage=None):
-        super(linkagesectionSub, self).__init__(key, datecreated, lastmodified, name, status, noindex, modifiedby, modifiedbyip, objectversion, objectversionstatus, previoushistorykey, disablehistory, history, linkage, )
+    def __init__(self, key=None, datecreated=None, lastmodified=None, status=None,
+                 noindex=None, modifiedby=None, modifiedbyip=None,
+                 objectversion=None, objectversionstatus=None,
+                 previoushistorykey=None, disablehistory=None, history=None,
+                 linkage=None):
+
+        # The XSD doesn't enforce this, and doing so would be difficult if
+        # not impossible, but currently all linkage sections have the name
+        # "Linkages".
+        super(linkagesectionSub, self).__init__(key, datecreated, lastmodified,
+                                                "Linkages", status, noindex,
+                                                modifiedby, modifiedbyip,
+                                                objectversion, objectversionstatus,
+                                                previoushistorykey, disablehistory,
+                                                history, linkage)
 
 supermod.linkagesection.subclass = linkagesectionSub
 
