@@ -219,7 +219,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         searchQuery.setStartIndex(1);
         searchQuery.setMaxFeatures(200);
         searchQuery.setFilter(FF.and(filter, CoalescePropertyFactory.getEntityKey(entity.getKey())));
-        searchQuery.setPropertyNames(new String[] {CoalescePropertyFactory.getEntityKey().getPropertyName()});
+        searchQuery.setPropertyNames(new String[] { CoalescePropertyFactory.getEntityKey().getPropertyName() });
 
         SearchResults results = persister.search(searchQuery);
 
@@ -441,7 +441,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     }
 
     /**
-     * This test persist an entity that contains linkages and verifies that they linkages can be retrieved doing a search.
+     * This test persist an entity that contains linkages and verifies that the linkages can be retrieved doing a search.
      */
     @Test
     public void searchLinkages() throws Exception
@@ -459,6 +459,9 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.IS_PARENT_OF, entity2);
         EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.HAS_MEMBER, entity2);
 
+        CoalesceLinkage linkage = entity1.getLinkage(ELinkTypes.IS_PARENT_OF);
+        linkage.setLabel("Hello World");
+
         // Save Entity
         persister.saveEntity(false, entity1);
 
@@ -474,6 +477,28 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         SearchResults results = persister.search(query);
 
         Assert.assertEquals(2, results.getTotal());
+
+        CachedRowSet rowset = results.getResults();
+        Assert.assertTrue(rowset.next());
+
+        // Create Filter w/ Type and Label
+        List<Filter> filters = new ArrayList<>();
+        filters.add(CoalescePropertyFactory.getLinkageEntityKey(entity2.getKey()));
+        // TODO OEBDP-118 Needs to be resolved before this can be uncommented. (Inconsistent handling of LinkType and Status between Elastic & Accumulo)
+        //filters.add(FF.equals(CoalescePropertyFactory.getLinkageType(), FF.literal(ELinkTypes.IS_PARENT_OF.getLabel())));
+        filters.add(FF.equals(CoalescePropertyFactory.getLinkageLabel(), FF.literal(linkage.getLabel())));
+
+        query = new Query();
+        query.setFilter(FF.and(filters));
+        query.setProperties(properties);
+
+        results = persister.search(query);
+        rowset = results.getResults();
+
+        // Verify
+        Assert.assertEquals(1, results.getTotal());
+        Assert.assertTrue(rowset.next());
+        Assert.assertEquals(linkage.getLabel(), rowset.getString(2));
     }
 
     /**
