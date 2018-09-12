@@ -386,6 +386,82 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         return true;
     }
 
+    public void deletePhantomRecords(String schema, String tableName, CoalesceRecordset recordset) throws CoalesceException
+    {
+        try
+        {
+            List<CoalesceParameter> params = new ArrayList<>();
+            params.add(new CoalesceParameter(recordset.getEntity().getKey()));
+
+            StringBuilder sql = new StringBuilder(
+                    "DELETE FROM " + schema + "." + NORMALIZER.normalize(tableName) + " WHERE entitykey=?");
+
+            if (recordset.getHasRecords())
+            {
+                sql.append(" AND ").append(COLUMNS.getKey()).append(" NOT IN(");
+
+                boolean isFirst = true;
+
+                for (CoalesceRecord record : recordset.getAllRecords())
+                {
+                    if (!isFirst)
+                    {
+                        sql.append(",");
+                    }
+
+                    sql.append("?");
+
+                    params.add(new CoalesceParameter(record.getKey()));
+
+                    isFirst = false;
+                }
+
+                sql.append(")");
+            }
+
+            int deleted = executeUpdate(sql.toString(), params.toArray(new CoalesceParameter[params.size()]));
+
+            LOGGER.debug("{} Deleted", deleted);
+        }
+        catch (SQLException e)
+        {
+            throw new CoalesceException("Delete Phantom Record Failed", e);
+        }
+    }
+
+    public void deleteAllRecords(String schema, String tableName, String key) throws CoalesceException
+    {
+        try
+        {
+            String sql = "DELETE FROM " + schema + "." + NORMALIZER.normalize(tableName) + " WHERE entitykey=?";
+
+            int deleted = executeUpdate(sql, new CoalesceParameter(key));
+
+            LOGGER.debug("{} Deleted", deleted);
+        }
+        catch (SQLException e)
+        {
+            throw new CoalesceException("Deleting All Record Failed", e);
+        }
+    }
+
+    public void deleteRecord(String schema, String tableName, String key) throws CoalesceException
+    {
+        try
+        {
+            String sql =
+                    "DELETE FROM " + schema + "." + NORMALIZER.normalize(tableName) + " WHERE " + COLUMNS.getKey() + "=?";
+
+            int deleted = executeUpdate(sql, new CoalesceParameter(key));
+
+            LOGGER.debug("{} Deleted", deleted);
+        }
+        catch (SQLException e)
+        {
+            throw new CoalesceException("Deleting Record Failed", e);
+        }
+    }
+
     public boolean insertRecord(String schema, String tableName, java.util.List<CoalesceParameter> parameters)
             throws CoalesceException
     {
@@ -491,7 +567,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
     protected String quote(String value)
     {
-        return "'" + value.replaceAll("'","''") + "'";
+        return "'" + value.replaceAll("'", "''") + "'";
     }
 
     protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, CoalesceDataConnectorBase conn)

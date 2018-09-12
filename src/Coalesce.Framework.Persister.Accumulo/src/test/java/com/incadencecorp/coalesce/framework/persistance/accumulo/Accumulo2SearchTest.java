@@ -41,6 +41,15 @@ public class Accumulo2SearchTest extends AbstractSearchTest<AccumuloSearchPersis
         }
     }
 
+    /**
+     * TODO Need to resolve COAL-44 before removing this override.
+     */
+    @Override
+    public void testUpdateRecordKey() throws Exception
+    {
+        Assume.assumeTrue(false);
+    }
+
     @Override
     protected AccumuloSearchPersistor createPersister()
     {

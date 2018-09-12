@@ -1034,6 +1034,8 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         TestEntity entity2 = new TestEntity();
         entity2.initialize();
+        entity2.addRecord1();
+        entity2.addRecord1();
 
         // Create Record
         TestRecord record = entity1.addRecord1();
@@ -1046,8 +1048,13 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
         props.add(CoalescePropertyFactory.getFieldProperty(TestEntity.RECORDSET1, "objectkey"));
 
+        List<Filter> filters = new ArrayList<>();
+        filters.add(CoalescePropertyFactory.getEntityKey(entity1.getKey()));
+        filters.add(FF.equals(CoalescePropertyFactory.getFieldProperty(record.getStringField()),
+                              FF.literal(record.getStringField().getValue())));
+
         // Create Query
-        Query query = new Query(TestEntity.getTest1RecordsetName(), CoalescePropertyFactory.getEntityKey(entity1.getKey()));
+        Query query = new Query(TestEntity.getTest1RecordsetName(), FF.and(filters));
         query.setProperties(props);
 
         // Search
@@ -1104,8 +1111,13 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
         props.add(CoalescePropertyFactory.getFieldProperty(TestEntity.RECORDSET1, "objectkey"));
 
+        List<Filter> filters = new ArrayList<>();
+        filters.add(CoalescePropertyFactory.getEntityKey(entity.getKey()));
+        filters.add(FF.equals(CoalescePropertyFactory.getFieldProperty(record.getStringField()),
+                              FF.literal(record.getStringField().getValue())));
+
         // Create Query
-        Query query = new Query(TestEntity.getTest1RecordsetName(), CoalescePropertyFactory.getEntityKey(entity.getKey()));
+        Query query = new Query(TestEntity.getTest1RecordsetName(), FF.and(filters));
         query.setProperties(props);
 
         // Search

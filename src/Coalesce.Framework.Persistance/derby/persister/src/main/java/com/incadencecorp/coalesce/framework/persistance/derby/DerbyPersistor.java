@@ -395,6 +395,15 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         {
             if (recordset.isActive())
             {
+                try
+                {
+                    derbyConn.deletePhantomRecords(getSchema(), tablename, recordset);
+                }
+                catch (CoalesceException e)
+                {
+                    throw new SQLException(e);
+                }
+
                 // Iterate through each record within the record set.
                 for (CoalesceRecord record : recordset.getAllRecords())
                 {
@@ -485,16 +494,28 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                     }
                     else
                     {
-                        // deleteRecord(record, conn); // TODO
-                        LOGGER.warn("TODO: delete the inactive record");
+                        try
+                        {
+                            derbyConn.deleteRecord(getSchema(), tablename, record.getKey());
+                        }
+                        catch (CoalesceException ce)
+                        {
+                            throw new SQLException("(FAILED) Deleting Record {}", record.getKey(), ce);
+                        }
                     }
 
                 }
             }
             else
             {
-                // deleteRecordset(recordset, conn); // TODO
-                LOGGER.warn("TODO: delete the inactive recordset");
+                try
+                {
+                    derbyConn.deleteAllRecords(getSchema(), tablename, recordset.getEntity().getKey());
+                }
+                catch (CoalesceException ce)
+                {
+                    throw new SQLException("(FAILED) Deleting Record {}", recordset.getEntity().getKey(), ce);
+                }
             }
         }
         else
