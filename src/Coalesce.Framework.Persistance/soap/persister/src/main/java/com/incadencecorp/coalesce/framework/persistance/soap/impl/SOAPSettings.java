@@ -19,6 +19,7 @@
 package com.incadencecorp.coalesce.framework.persistance.soap.impl;
 
 import com.incadencecorp.coalesce.api.CoalesceParameters;
+import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
@@ -75,6 +76,17 @@ public class SOAPSettings {
     private SOAPSettings()
     {
         // Do Nothing
+    }
+
+
+    /**
+     * Configures the settings to use a particular connector.
+     *
+     * @param connector
+     */
+    public static void setConnector(final IConfigurationsConnector connector)
+    {
+        settings = new SettingsBase(connector);
     }
 
     /**

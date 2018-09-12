@@ -17,14 +17,25 @@
 
 package com.incadencecorp.coalesce.exim.xsd.tests;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
-
-import javax.xml.transform.dom.DOMSource;
-
+import com.incadencecorp.coalesce.common.classification.Marking;
+import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import com.incadencecorp.coalesce.exim.xsd.XSDEximImpl;
+import com.incadencecorp.coalesce.exim.xsd.XSDGeneratorUtil;
+import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
+import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
+import com.incadencecorp.coalesce.framework.datamodel.testentity.*;
+import com.incadencecorp.coalesce.framework.datamodel.testentity.ECoalesceObjectStatus;
+import com.incadencecorp.coalesce.framework.datamodel.testentity.Linkages.Linkage;
+import com.incadencecorp.coalesce.framework.datamodel.testentity.Test1.Test1Record;
+import com.incadencecorp.coalesce.framework.datamodel.testentity.Test1.Test1Record.Intlist;
+import com.incadencecorp.coalesce.framework.enumerationprovider.impl.JavaEnumerationProviderImpl;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Polygon;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,49 +44,20 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
-import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.exim.xsd.XSDEximImpl;
-import com.incadencecorp.coalesce.exim.xsd.XSDGeneratorUtil;
-import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceCircle;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceConstraint;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
-import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
-import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
-import com.incadencecorp.coalesce.framework.datamodel.testentity.Circle;
-import com.incadencecorp.coalesce.framework.datamodel.testentity.ECoalesceObjectStatus;
-import com.incadencecorp.coalesce.framework.datamodel.testentity.Linkages;
-import com.incadencecorp.coalesce.framework.datamodel.testentity.Linkages.Linkage;
-import com.incadencecorp.coalesce.framework.datamodel.testentity.StringType;
-import com.incadencecorp.coalesce.framework.datamodel.testentity.Test1;
-import com.incadencecorp.coalesce.framework.datamodel.testentity.Test1.Test1Record;
-import com.incadencecorp.coalesce.framework.datamodel.testentity.Test1.Test1Record.Intlist;
-import com.incadencecorp.coalesce.framework.datamodel.testentity.Testsection;
-import com.incadencecorp.coalesce.framework.datamodel.testentity.UNITTEST;
-import com.incadencecorp.coalesce.framework.enumerationprovider.impl.JavaEnumerationProviderImpl;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Polygon;
+import javax.xml.transform.dom.DOMSource;
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 /**
  * These test ensure that objects can be created towards the schema and
  * validated.
- * 
- * @author Derek C.
  *
+ * @author Derek C.
  */
 public class XSDEximImplTest {
 
@@ -87,7 +69,7 @@ public class XSDEximImplTest {
 
     /**
      * Initializes utilities required by these unit tests.
-     * 
+     *
      * @throws Exception
      */
     @BeforeClass
@@ -100,13 +82,26 @@ public class XSDEximImplTest {
         }
 
         testCreateExampleXSD();
+
+        Files.copy(TEST_RESOURCE.resolve("test.xsd"),
+                   TEST_RESOURCE.resolve("test.xsd.backup"),
+                   StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    @AfterClass
+    public static void cleanup() throws Exception
+    {
+        Files.move(TEST_RESOURCE.resolve("test.xsd.backup"),
+                   TEST_RESOURCE.resolve("test.xsd"),
+                   StandardCopyOption.REPLACE_EXISTING);
+
     }
 
     /**
      * This test was created to reveal an issue with the namespace being added
      * as an attribute within the CoalesceEntity. The ExIm now filters out the
      * xmlns tag and this to ensures it works.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -145,7 +140,7 @@ public class XSDEximImplTest {
     /**
      * This test attempts to validate an entity that is missing a mandatory
      * field which should result in an exception.
-     * 
+     *
      * @throws Exception
      */
     @Test(expected = IllegalArgumentException.class)
@@ -156,8 +151,7 @@ public class XSDEximImplTest {
         TestRecord record = entity.addRecord1();
 
         record.getStringField().setValue("A");
-        record.getIntegerListField().setValue(new int[] {
-                7, 8
+        record.getIntegerListField().setValue(new int[] { 7, 8
         });
 
         XSDEximImpl exim = new XSDEximImpl();
@@ -172,7 +166,7 @@ public class XSDEximImplTest {
 
     /**
      * This test converts a Coalesce object to XML that conforms to the schema
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -181,8 +175,7 @@ public class XSDEximImplTest {
         String otherAttributeValue = "test";
 
         String field1Value = "A";
-        int[] field2Value = new int[] {
-                7, 8
+        int[] field2Value = new int[] { 7, 8
         };
         int field3Value = 2;
 
@@ -190,16 +183,14 @@ public class XSDEximImplTest {
         TestRecord record = entity.addRecord1();
 
         record.getStringField().setValue(field1Value);
-        record.getStringListField().setValue(new String[] {
-                "01234567890123456789AA", "98765432109876543210AA"
+        record.getStringListField().setValue(new String[] { "01234567890123456789AA", "98765432109876543210AA"
         });
         record.getIntegerListField().setValue(field2Value);
         record.getEnumerationField().setValue(field3Value);
         record.getEnumerationListField().setValue(field2Value);
 
         record.getGeoField().setValue(new Coordinate(5.6, 3));
-        record.getGeoListField().setValue(new Coordinate[] {
-                new Coordinate(1, 2, 3), new Coordinate(3, 2.5, 1)
+        record.getGeoListField().setValue(new Coordinate[] { new Coordinate(1, 2, 3), new Coordinate(3, 2.5, 1)
         });
 
         CoalesceCircle circle = new CoalesceCircle();
@@ -208,14 +199,13 @@ public class XSDEximImplTest {
 
         record.getCircleField().setValue(circle);
 
-        Polygon polygon = GF.createPolygon(new Coordinate[] {
-                new Coordinate(1, 2, 3), new Coordinate(-3, -2.2, 1), new Coordinate(2, 3, 3), new Coordinate(1, 2, 3)
+        Polygon polygon = GF.createPolygon(new Coordinate[] { new Coordinate(1, 2, 3), new Coordinate(-3, -2.2, 1),
+                                                              new Coordinate(2, 3, 3), new Coordinate(1, 2, 3)
         });
 
         record.getPolygonField().setValue(polygon);
 
-        LineString linestring = GF.createLineString(new Coordinate[] {
-                new Coordinate(1, 2, 3), new Coordinate(3, 2.3, 1)
+        LineString linestring = GF.createLineString(new Coordinate[] { new Coordinate(1, 2, 3), new Coordinate(3, 2.3, 1)
         });
 
         record.getLineField().setValue(linestring);
@@ -302,7 +292,7 @@ public class XSDEximImplTest {
     /**
      * This test creates an object from the generated classes and ensures that
      * it validates.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -391,8 +381,7 @@ public class XSDEximImplTest {
         // Validate Values
         Assert.assertEquals(StringType.A.toString(), importedRecord.getStringField().getValue());
 
-        Assert.assertArrayEquals(new int[] {
-                6, 7, 8
+        Assert.assertArrayEquals(new int[] { 6, 7, 8
         }, importedRecord.getIntegerListField().getValue());
 
         CoalesceCircle circleValue = importedRecord.getCircleField().getValue();
@@ -410,7 +399,7 @@ public class XSDEximImplTest {
 
     /**
      * Ensures that the schema supports nested sections.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -442,7 +431,7 @@ public class XSDEximImplTest {
 
     /**
      * Ensures that pruning fields wont invalidate an object.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -489,7 +478,7 @@ public class XSDEximImplTest {
     /**
      * This test ensures that there are no issues merging entities that have
      * been exported and imported.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -578,7 +567,7 @@ public class XSDEximImplTest {
 
     /**
      * This test creates an XSD from the generated object.
-     * 
+     *
      * @throws Exception
      */
     private static void testCreateExampleXSD() throws Exception
@@ -602,9 +591,10 @@ public class XSDEximImplTest {
         return XmlHelper.formatXml(document);
     }
 
-    private enum ETest
-    {
-        A, B, C;
+    private enum ETest {
+        A,
+        B,
+        C;
     }
 
 }
