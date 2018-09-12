@@ -21,11 +21,14 @@ package com.incadencecorp.coalesce.persistance.soap.impl.test;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.persistance.AbstractCoalescePersistorTest;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.framework.persistance.soap.impl.SOAPPersisterImpl;
+import com.incadencecorp.coalesce.framework.persistance.soap.impl.SOAPSettings;
 import com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl;
 import com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.junit.BeforeClass;
 
 import java.nio.file.Paths;
@@ -42,6 +45,12 @@ public class SOAPPersisterImplTest extends AbstractCoalescePersistorTest<SOAPPer
     {
         System.setProperty(CoalesceParameters.COALESCE_CONFIG_LOCATION_PROPERTY,
                            Paths.get("src", "test", "resources").toString());
+
+        FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
+        connector.setReadOnly(true);
+
+        SOAPSettings.setConnector(connector);
+        CoalesceSettings.setConnector(connector);
     }
 
     @Override

@@ -20,8 +20,11 @@ package com.incadencecorp.coalesce.persistance.soap.impl.test;
 
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.persistance.AbstractCoalescePersistorTest;
 import com.incadencecorp.coalesce.framework.persistance.soap.impl.SOAPPersisterImpl;
+import com.incadencecorp.coalesce.framework.persistance.soap.impl.SOAPSettings;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.junit.BeforeClass;
 
 import java.nio.file.Paths;
@@ -36,6 +39,12 @@ public class SOAPPersisterImplIT extends AbstractCoalescePersistorTest<SOAPPersi
     {
         System.setProperty(CoalesceParameters.COALESCE_CONFIG_LOCATION_PROPERTY,
                            Paths.get("src", "test", "resources").toString());
+
+        FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
+        connector.setReadOnly(true);
+
+        SOAPSettings.setConnector(connector);
+        CoalesceSettings.setConnector(connector);
     }
 
     @Override

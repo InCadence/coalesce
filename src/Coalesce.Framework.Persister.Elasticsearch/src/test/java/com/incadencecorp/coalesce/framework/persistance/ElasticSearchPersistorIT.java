@@ -24,6 +24,9 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
+/**
+ * @deprecated
+ */
 public class ElasticSearchPersistorIT extends AbstractCoalescePersistorTest<ElasticSearchPersistor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistorIT.class);
