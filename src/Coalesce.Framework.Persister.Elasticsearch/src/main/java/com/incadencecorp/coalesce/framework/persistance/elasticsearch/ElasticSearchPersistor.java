@@ -4,17 +4,23 @@ import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.bulk.byscroll.BulkByScrollResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.support.AbstractClient;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.DeleteByQueryAction;
 import org.elasticsearch.rest.RestStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +101,7 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
             LOGGER.debug("{} Entities Created {} Request", entities.length, request.requests().size());
 
+            executeCleanup(client, request, entities);
             executeRequest(client, request, 1);
         }
         catch (CoalesceException | InterruptedException e)
@@ -103,6 +110,55 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
         }
 
         return true;
+    }
+
+    private void executeCleanup(AbstractClient client, BulkRequest request, CoalesceEntity... entities)
+    {
+        Set<String> indices = new HashSet<>();
+        Set<String> recordKeys = new HashSet<>();
+
+        // Create List of Indices
+        for (DocWriteRequest task : request.requests())
+        {
+            recordKeys.add(task.id());
+            indices.add(task.index());
+        }
+
+        // Don't cleanup coalesce index
+        indices.remove(COALESCE_ENTITY_INDEX);
+
+        if (indices.size() > 0)
+        {
+            StopWatch watch = new StopWatch();
+            watch.start();
+
+            BoolQueryBuilder builder = QueryBuilders.boolQuery();
+
+            // Only records belonging to one of the entities being updated
+            for (CoalesceEntity entity : entities)
+            {
+                builder.should().add(QueryBuilders.matchQuery(ElasticSearchPersistor.ENTITY_KEY_COLUMN_NAME,
+                                                              entity.getKey()));
+            }
+
+            // Only records that are not being updated by this request
+            for (String key : recordKeys)
+            {
+                builder.mustNot().add(QueryBuilders.matchQuery("_id", key));
+            }
+
+            BulkByScrollResponse response = DeleteByQueryAction.INSTANCE.newRequestBuilder(client).filter(builder).
+                    source(indices.toArray(new String[indices.size()])).get();
+
+            long deleted = response.getDeleted();
+
+            watch.finish();
+
+            if (deleted > 0 || LOGGER.isTraceEnabled())
+            {
+                LOGGER.debug("Deleted {} Phantom Records in {} ms", deleted, watch.getWorkLife());
+            }
+        }
     }
 
     private void executeRequest(AbstractClient client, BulkRequest request, int attempt)
