@@ -97,7 +97,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
 
         newRecord.setName(name);
 
-        parent.addChildCoalesceObject(newRecord);
+        //parent.addChildCoalesceObject(newRecord);
 
         return newRecord;
     }
@@ -164,9 +164,9 @@ public class CoalesceRecord extends CoalesceObjectHistory {
      * @return List&lt;CoalesceField&gt; list of {@link CoalesceField} s contained by
      *         this {@link CoalesceRecord} .
      */
-    public List<CoalesceField<?>> getFields()
+    public List<CoalesceField> getFields()
     {
-        return getObjectsAsList(_entityRecord.getField());
+        return getObjectsAsList(CoalesceField.class);
     }
 
     /**

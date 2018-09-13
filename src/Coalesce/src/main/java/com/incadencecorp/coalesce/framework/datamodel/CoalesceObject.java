@@ -86,7 +86,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     private CoalesceObject _parent;
     private CoalesceObjectType _object;
 
-    private HashMap<String, CoalesceObject> _children = new HashMap<String, CoalesceObject>();
+    private HashMap<String, CoalesceObject> _children = new LinkedHashMap<String, CoalesceObject>();
 
     /*--------------------------------------------------------------------------
     Constructors
@@ -1021,26 +1021,23 @@ public abstract class CoalesceObject implements ICoalesceObject {
     }
 
     /**
-     * @param items
+     * @param clazz
      * @param exclusions status to exclude from the return set.
      * @return a list of CoalesceObjects for the given list of XSD objects
-     * @see #getObjectsAsList(List, ECoalesceObjectStatus...)
+     * @see #getObjectsAsList(Class, ECoalesceObjectStatus...)
      * @deprecated
      */
-    protected <T extends CoalesceObject, Y extends CoalesceObjectType> Map<String, T> getObjectsAsMap(List<Y> items,
+    protected <T extends CoalesceObject, Y extends CoalesceObjectType> Map<String, T> getObjectsAsMap(Class<T> clazz,
                                                                                                       ECoalesceObjectStatus... exclusions)
     {
         List<ECoalesceObjectStatus> statusList = Arrays.asList(exclusions);
-        Map<String, T> results = new HashMap<String, T>();
+        Map<String, T> results = new HashMap<>();
 
-        for (Y item : items)
+        for (CoalesceObject item : getChildCoalesceObjects().values())
         {
-            CoalesceObject childCoalesceObject = getChildCoalesceObject(item.getKey());
-            if (childCoalesceObject != null && !statusList.contains(childCoalesceObject.getStatus()))
+            if (clazz.isAssignableFrom(item.getClass()) && !statusList.contains(item.getStatus()))
             {
-                // You should never get a cast error here because we control
-                // what is inserted into the map.
-                results.put(item.key, (T) childCoalesceObject);
+                results.put(item.getKey(), (T) item);
             }
         }
 
@@ -1048,24 +1045,20 @@ public abstract class CoalesceObject implements ICoalesceObject {
     }
 
     /**
-     * @param items
+     * @param clazz
      * @param exclusions status to exclude from the return set.
      * @return a list of CoalesceObjects for the given list of XSD objects
      */
-    protected <T extends CoalesceObject, Y extends CoalesceObjectType> List<T> getObjectsAsList(List<Y> items,
-                                                                                                ECoalesceObjectStatus... exclusions)
+    protected <T extends CoalesceObject> List<T> getObjectsAsList(Class<T> clazz, ECoalesceObjectStatus... exclusions)
     {
         List<ECoalesceObjectStatus> statusList = Arrays.asList(exclusions);
         List<T> results = new ArrayList<>();
 
-        for (Y item : items)
+        for (CoalesceObject item : getChildCoalesceObjects().values())
         {
-            CoalesceObject childCoalesceObject = getChildCoalesceObject(item.getKey());
-            if (childCoalesceObject != null && !statusList.contains(childCoalesceObject.getStatus()))
+            if (clazz.isAssignableFrom(item.getClass()) && !statusList.contains(item.getStatus()))
             {
-                // You should never get a cast error here because we control
-                // what is inserted into the map.
-                results.add((T) childCoalesceObject);
+                results.add((T) item);
             }
         }
 
@@ -1095,21 +1088,12 @@ public abstract class CoalesceObject implements ICoalesceObject {
     protected void addChildCoalesceObject(CoalesceObject newChild)
     {
         // Add to Parent's Child Collection
-        if (!(_children.containsKey(newChild.getKey())))
-        {
-            _children.put(newChild.getKey(), newChild);
-        }
-
+        _children.put(newChild.getKey(), newChild);
     }
 
     protected void removeChildCoalesceObject(CoalesceObject newChild)
     {
-        // Add to Parent's Child Collection
-        if (!(_children.containsKey(newChild.getKey())))
-        {
-            _children.remove(newChild.getKey());
-        }
-
+        _children.remove(newChild.getKey());
     }
 
     /**

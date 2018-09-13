@@ -197,7 +197,7 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     @JsonView(Views.Entity.class)
     public List<CoalesceLinkage> getLinkagesAsList()
     {
-        return getObjectsAsList(_entityLinkageSection.getLinkage());
+        return getObjectsAsList(CoalesceLinkage.class);
     }
 
     /**

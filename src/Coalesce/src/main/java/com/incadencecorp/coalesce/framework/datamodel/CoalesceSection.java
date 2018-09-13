@@ -302,7 +302,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
     @JsonIgnore
     public Map<String, CoalesceRecordset> getRecordsets()
     {
-        return getObjectsAsMap(_entitySection.getRecordset(), ECoalesceObjectStatus.DELETED);
+        return getObjectsAsMap(CoalesceRecordset.class, ECoalesceObjectStatus.DELETED);
     }
 
     /**
@@ -313,7 +313,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
      */
     public List<CoalesceRecordset> getRecordsetsAsList()
     {
-        return getObjectsAsList(_entitySection.getRecordset(), ECoalesceObjectStatus.DELETED);
+        return getObjectsAsList(CoalesceRecordset.class, ECoalesceObjectStatus.DELETED);
     }
 
     /**
@@ -358,7 +358,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
     @JsonIgnore
     public Map<String, CoalesceSection> getSections()
     {
-        return getObjectsAsMap(_entitySection.getSection(), ECoalesceObjectStatus.DELETED);
+        return getObjectsAsMap(CoalesceSection.class, ECoalesceObjectStatus.DELETED);
     }
 
     /**
@@ -368,7 +368,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
      */
     public List<CoalesceSection> getSectionsAsList()
     {
-        return getObjectsAsList(_entitySection.getSection(), ECoalesceObjectStatus.DELETED);
+        return getObjectsAsList(CoalesceSection.class, ECoalesceObjectStatus.DELETED);
     }
 
     // -----------------------------------------------------------------------//
@@ -413,10 +413,9 @@ public class CoalesceSection extends CoalesceObjectHistory {
     }
 
     /**
-     * @return a list of {@link Section} that belong to this
-     * {@link CoalesceSection}.
+     * @return a list of {@link Section} that belong to this {@link CoalesceSection}.
      */
-    protected List<Section> getSectionSections()
+    private List<Section> getSectionSections()
     {
         return _entitySection.getSection();
     }
