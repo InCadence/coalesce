@@ -225,7 +225,7 @@ public class ${classname} extends CoalesceRecord implements I${name}Record {
     --------------------------------------------------------------------------*/
 
     @JsonIgnore
-    public List<CoalesceField<?>> getFields()
+    public List<CoalesceField> getFields()
     {
         return super.getFields();
     }
