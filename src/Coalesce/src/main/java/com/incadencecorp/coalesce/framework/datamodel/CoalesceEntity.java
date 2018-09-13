@@ -692,7 +692,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     @JsonIgnore
     public Map<String, CoalesceSection> getSections()
     {
-        return getObjectsAsMap(_entity.getSection());
+        return getObjectsAsMap(CoalesceSection.class);
     }
 
     /**
@@ -702,7 +702,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      */
     public List<CoalesceSection> getSectionsAsList()
     {
-        return getObjectsAsList(_entity.getSection());
+        return getObjectsAsList(CoalesceSection.class);
     }
 
     /**

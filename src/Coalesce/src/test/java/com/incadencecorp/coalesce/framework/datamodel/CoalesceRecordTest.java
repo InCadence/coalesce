@@ -231,7 +231,7 @@ public class CoalesceRecordTest {
     {
         CoalesceRecord record = getMissionRecord();
 
-        List<CoalesceField<?>> fields = record.getFields();
+        List<CoalesceField> fields = record.getFields();
 
         assertEquals(17, fields.size());
 
@@ -239,7 +239,7 @@ public class CoalesceRecordTest {
         boolean middleFound = false;
         boolean lastFound = false;
 
-        for (CoalesceField<?> field : fields)
+        for (CoalesceField field : fields)
         {
             switch (field.getKey())
             {
