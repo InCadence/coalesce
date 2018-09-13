@@ -22,7 +22,7 @@ export function loadTemplates()
 
 export function loadTemplateAsXML(key)
 {
-  return fetch(`${karafRootAddr}/templates/${key}.xml`, {
+  return fetch(`${karafRootAddr}/templates/${key}/xml`, {
       method: "GET",
       headers: new Headers({
         'content-type': 'application/xml; charset=utf-8'
