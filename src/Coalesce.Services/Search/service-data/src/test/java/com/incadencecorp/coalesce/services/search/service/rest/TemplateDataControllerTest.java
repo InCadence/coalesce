@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.*;
-import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.services.search.service.data.controllers.TemplateDataController;
 import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
@@ -51,7 +50,9 @@ public class TemplateDataControllerTest {
 
         CoalesceEntityTemplate template2 = CoalesceEntityTemplate.create(entity);
 
-        Assert.assertEquals(template2.getKey(), controller.setTemplate(template2.getKey(), template2.createNewEntity()));
+        Assert.assertNotEquals(template2.getKey(), entity.getKey());
+        Assert.assertEquals(template2.getKey(), controller.setTemplate(template2.getKey(), entity));
+        Assert.assertEquals(template2.getKey(), controller.setTemplate("new", entity));
 
         Assert.assertEquals(2, controller.getEntityTemplateMetadata().size());
 
@@ -191,10 +192,13 @@ public class TemplateDataControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writerWithView(Views.Template.class).writeValueAsString(entity);
 
-        controller.setTemplateJson(entity.getKey(), json);
+        controller.setTemplateJson("new", json);
         CoalesceEntity template = controller.getTemplate(entity.getName(), entity.getSource(), entity.getVersion());
 
         CoalesceRecordset templateRS = template.getCoalesceRecordsetForNamePath(recordset.getNamePath());
+
+        Assert.assertNotNull(templateRS);
+
         CoalesceFieldDefinition templateFD = templateRS.getFieldDefinition(fd.getName());
 
         Assert.assertEquals(fd.getLabel(), templateFD.getLabel());

@@ -152,6 +152,11 @@ public class EntityDataController {
             error("(FAILED) Initializing Entity");
         }
 
+        if (!entityKey.equals(entity.getKey()))
+        {
+            error(String.format(CoalesceErrors.KEY_MISMATCH, entityKey, entity.getKey()));
+        }
+
         if (isNew)
         {
             if (!crud.createDataObject(entity))

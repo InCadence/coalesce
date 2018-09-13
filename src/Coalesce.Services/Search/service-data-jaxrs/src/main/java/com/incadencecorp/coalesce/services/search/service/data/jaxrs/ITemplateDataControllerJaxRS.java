@@ -29,40 +29,42 @@ import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
 @Path("templates")
 public interface ITemplateDataControllerJaxRS {
 
+    String REGEX_UUID_OR_NEW = "(" + GUIDHelper.REGEX_UUID + "|new)";
+
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     List<ObjectMetaData> getEntityTemplateMetadata() throws RemoteException;
 
     @GET
-    @Path("/{name}/{source}/{version}{ext:(.json)?}")
+    @Path("/{name}/{source}/{version}{ext:(/json)?}")
     @Produces(MediaType.APPLICATION_JSON)
     CoalesceEntity getTemplate(@PathParam("name") String name, @PathParam("source") String source, @PathParam("version") String version) throws RemoteException;
 
     @GET
-    @Path("/{name}/{source}/{version}.xml")
+    @Path("/{name}/{source}/{version}/xml")
     @Produces(MediaType.APPLICATION_XML)
     String getTemplateXml(@PathParam("name") String name, @PathParam("source") String source, @PathParam("version") String version) throws RemoteException;
 
     @GET
-    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}{ext:(.json)?}")
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}{ext:(/json)?}")
     @JsonView(Views.Template.class)
     @Produces(MediaType.APPLICATION_JSON)
     CoalesceEntity getTemplate(@PathParam("key") String key) throws RemoteException;
 
     @GET
-    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}.xml")
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}/xml")
     @JsonView(Views.Template.class)
     @Produces(MediaType.APPLICATION_XML)
     String getTemplateXml(@PathParam("key") String key) throws RemoteException;
 
     @POST
-    @Path("/{key}{ext:(.json)?}")
+    @Path("/{key:" + REGEX_UUID_OR_NEW + "}{ext:(/json)?}")
     @Consumes(MediaType.APPLICATION_JSON)
     String setTemplateJson(@PathParam("key") String key, String json) throws RemoteException;
 
     @POST
-    @Path("/{key}.xml")
+    @Path("/{key:" + REGEX_UUID_OR_NEW +  "}/xml")
     @Consumes(MediaType.APPLICATION_XML)
     String setTemplateXml(@PathParam("key") String key, String xml) throws RemoteException;
 
@@ -75,13 +77,13 @@ public interface ITemplateDataControllerJaxRS {
     boolean deleteTemplate(@PathParam("key") String key) throws RemoteException;
 
     @GET
-    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}/new{ext:(.json)?}")
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}/new{ext:(/json)?}")
     @JsonView(Views.Entity.class)
     @Produces(MediaType.APPLICATION_JSON)
     CoalesceEntity getNewEntity(@PathParam("key") String key) throws RemoteException;
 
     @GET
-    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}/new.xml")
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}/new/xml")
     @JsonView(Views.Entity.class)
     @Produces(MediaType.APPLICATION_XML)
     String getNewEntityXml(@PathParam("key") String key) throws RemoteException;

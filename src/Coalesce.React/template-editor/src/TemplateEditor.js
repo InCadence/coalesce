@@ -30,6 +30,10 @@ class TemplateEditor extends Component {
   handleChange(attr, value) {
     const { template } = this.state;
     template[attr] = value;
+    // The hashed key will change if there's a change in name/source/version.
+    if (["name", "source", "version"].indexOf(attr) > -1) {
+        template.key = null
+    }
     this.setState({
       template: template
     })

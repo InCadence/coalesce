@@ -30,6 +30,9 @@ node_modules/
 # Derby
 derby.log
 
+# Mergetools
+*.orig
+
 ######################
 # Windows
 ######################
