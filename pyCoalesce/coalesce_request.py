@@ -6,7 +6,6 @@
 from uuid import UUID, uuid4
 from copy import copy
 from warnings import warn
-from numbers import Number
 
 import simplejson as json
 from simplejson import JSONDecodeError
@@ -22,6 +21,7 @@ from utilities.API_request import get_response
 logger = package_logger.getChild(__name__)
 
 # Set constants.
+
 ENDPOINTS = {
         u"search" : {u"persistor": u"search", u"controller": u"/search/complex"},
         u"entity" : {u"persistor": u"CRUD", u"controller": u"/entity/"},
@@ -46,6 +46,7 @@ OPERATIONS = {
         u"delete_linkages" : {u"endpoint": u"linkage", u"method": u"delete"},
     }
 ENTITY_UPLOAD_OPERATIONS = (u"create", u"update", u"save_template")
+
 # Eventually, this hashmap should be available through the "property" API, at
 # which point it can be downloaded rather than hard-coded.  However, hard-
 # coding may still be necessary to specify the proper number of arguments.
@@ -64,8 +65,9 @@ SEARCH_OPERATORS = {
         u"BBOX": None,
         u"NullCheck": 0
     }
+
 SEARCH_OUTPUT_FORMATS = (u"JSON", u"list", u"full_dict")
-CRUD_OUTPUT_FORMATS = (u"JSON", u"XML", u"dict", u"full_dict", u"entity_object")
+CRUD_OUTPUT_FORMATS = (u"JSON", u"XML", u"dict", u"entity_object")
 TEMPLATE_LIST_OUTPUT_FORMATS = (u"JSON", u"list")
 LINK_CRUD_OUTPUT_FORMATS = (u"JSON", u"dict_list", u"API_list")
 
@@ -322,7 +324,7 @@ def search(server = None, query = None,
 
     if output == u"list":
         results_list = \
-          json.loads(response.text)['hits']
+          json.loads(response.text)["hits"]
         return results_list
 
     elif output == u"full_dict":
@@ -475,7 +477,7 @@ def _test_key(key):
     return key_str
 
 
-def construct_entity(template = None, server = None, key = None, fields = None):
+def construct_entity(server = None, template = None, key = None, fields = None):
     """
     A convenience function to retreive a template from the Coalesce server,
     construct an entity using that template, and (optionally) fill any or
@@ -493,12 +495,12 @@ def construct_entity(template = None, server = None, key = None, fields = None):
     endpoint each time, a problem not shared by entities created through this
     function.
 
-    :param template:  a Coalesce template (UUID) key, an iterable containing
-        the template's name, source, and version (in that order), or a
-        CoalesceEntityTemplate object
     :param server:  a CoalesceServer object or the URL of a Coalesce server.
         If "template" is an instance of CoalesceEntityTemplate, no server is
         needed.
+    :param template:  a Coalesce template (UUID) key, an iterable containing
+        the template's name, source, and version (in that order), or a
+        CoalesceEntityTemplate object
     :param key:  a UUID to serve as the key for the new entity, either as an
         instance of the "UUID" class, or as any string or integer that could
         serve as input to the UUID class constructor.  If this argument is
@@ -538,7 +540,8 @@ def construct_entity(template = None, server = None, key = None, fields = None):
     return new_entity
 
 
-def save_entity(new_entity, server = None, key = None, operation = u"create"):
+def save_entity(server = None, new_entity = None, key = None,
+                operation = u"create"):
 
     """
     Uploads a new entity or modified entity to the Coalesce server.  The
@@ -549,13 +552,13 @@ def save_entity(new_entity, server = None, key = None, operation = u"create"):
     from the API server.
 
     Arguments:
+    :param server:  a CoalesceServer object or the URL of a Coalesce server
     :param new_entity:  the entity to upload to the server.  This can be a
         JSON or XML representation of an entity, a nested dict-like in the
         same format as a JSON respresentation, or an instance of
         CoalesceEntity (or a subclass); the function automatically detects the
         input type and adjusts the RESTful endpoint and requests headers
         accordingly.
-    :param server:  a CoalesceServer object or the URL of a Coalesce server
     :param key:  a UUID to serve as the key for the new entity, either as an
         instance of the "UUID" class, or as any string or integer that could
         serve as input to the UUID class constructor.  If "new_entity"
@@ -578,48 +581,63 @@ def save_entity(new_entity, server = None, key = None, operation = u"create"):
         saved template.
     """
 
+    # Check the server input, and create a server object if needed.
+    if not server:
+        raise ValueError('The argument "server" must be a URL or an ' +
+                         'instance of CoalesceServer.')
+    elif isinstance(server, CoalesceServer):
+        server_obj = server
+    else:
+        server_obj = CoalesceServer(server)
+
     # Check the entity input, and it's a Python object, transform it into
     # a JSON or XML string, and set the corresponding API input format.  If
     # the entity includes a key, extract it.
 
-    entity_error_msg = 'The first argument supplied to "create" must be a ' + \
+    entity_error_msg = 'The argument "new_entity" must be a ' + \
                        'JSON or XML representation of an entity, a nested ' + \
                        'dict-like in the same format as a JSON ' + \
                        'respresentation, or an instance of CoalesceEntity (or ' + \
                        'a subclass).'
 
-    if isinstance(basestring, new_entity):
+    if new_entity:
 
-        try:
-            entity_dict = json.loads(new_entity)
-            entity_key = entity_dict.key
-            input_format = "JSON"
+        if isinstance(basestring, new_entity):
 
-        except JSONDecodeError:
             try:
-                entity_dict = xmltodict.parse(new_entity).values()[0]
-            except:
-                raise ValueError(entity_error_msg)
-            else:
-                entity_key = entity_dict["@key"]
-                input_format = "XML"
+                entity_dict = json.loads(new_entity)
+                entity_key = entity_dict.key
+                input_format = "JSON"
 
-    elif isinstance(CoalesceEntity, new_entity):
-        data = to_XML_string(new_entity)
-        entity_key = new_entity.key
-        input_format = "XML"
+            except JSONDecodeError:
+                try:
+                    entity_dict = xmltodict.parse(new_entity).values()[0]
+                except:
+                    raise ValueError(entity_error_msg)
+                else:
+                    entity_key = entity_dict["@key"]
+                    input_format = "XML"
+
+        elif isinstance(CoalesceEntity, new_entity):
+            data = to_XML_string(new_entity)
+            entity_key = new_entity.key
+            input_format = "XML"
+
+        else:
+            try:
+                data = json.dumps(new_entity)
+                try:
+                    entity_key = new_entity["key"]
+                except KeyError:
+                    entity_key = None
+                input_format = "JSON"
+
+            except TypeError:
+                raise TypeError(entity_error_msg)
 
     else:
-        try:
-            data = json.dumps(new_entity)
-            try:
-                entity_key = new_entity["key"]
-            except KeyError:
-                entity_key = None
-            input_format = "JSON"
+        raise TypeError(entity_error_msg)
 
-        except TypeError:
-            raise TypeError(entity_error_msg)
 
     # Check for a separately submitted key, check it for validity, and if
     # necessary change it into a string.
@@ -646,15 +664,6 @@ def save_entity(new_entity, server = None, key = None, operation = u"create"):
             entity_key = u"new"
         else:
             entity_key = unicode(uuid4())
-
-    # Check the server input, and create a server object if needed.
-    if not server:
-        raise ValueError('The argument "server" must be a URL or an ' +
-                         'instance of CoalesceServer.')
-    elif isinstance(server, CoalesceServer):
-        server_obj = server
-    else:
-        server_obj = CoalesceServer(server)
 
     # Check the operation input.
     if not operation in ENTITY_UPLOAD_OPERATIONS:
@@ -691,20 +700,20 @@ def save_entity(new_entity, server = None, key = None, operation = u"create"):
     return response
 
 
-def create(new_entity, server = None, key = None, full_response = False):
+def create(server = None, new_entity = None, key = None, full_response = False):
 
     """
     Uploads a new entity to the Coalesce server using the "PUT" method.  This
     is a wrapper for the "upload_entity" function.
 
     Arguments:
+    :param server:  a CoalesceServer object or the URL of a Coalesce server
     :param new_entity:  the entity to upload to the server.  This can be a
         JSON or XML representation of an entity, a nested dict-like in the
         same format as a JSON respresentation, or an instance of
         CoalesceEntity (or a subclass); the function automatically detects the
         input type and adjusts the RESTful endpoint and requests headers
         accordingly.
-    :param server:  a CoalesceServer object or the URL of a Coalesce server
     :param key:  a UUID to serve as the key for the new entity, either as an
         instance of the "UUID" class, or any string or integer that could
         serve as input to the UUID class constructor.  If the entity itself
@@ -723,7 +732,7 @@ def create(new_entity, server = None, key = None, full_response = False):
         exception.)
     """
 
-    response = save_entity(new_entity, server = server, key = key,
+    response = save_entity(server = server, new_entity = new_entity, key = key,
                              operation = u"create")
 
     status = response.status_code
@@ -754,11 +763,10 @@ def read(server = None, key = None, output = "dict"):
         of the "UUID" class, or any string or integer that could serve as
         input to the UUID class constructor
     :param output:  If this argument is "dict", return the results as a
-        Python dict; for "full_dict", return the full response, including
-        metadata, as a dict.  For "entity_object", return the result as an
+        Python dict; for "entity_object", return the result as an
         instance of class "CoalesceEntity".  For "JSON" or "XML" return the
-        full response, unparsed, including metadata, as a Unicode string of
-        the corresponding type.
+        full response, unparsed, as a Unicode string in the corresponding
+        format.
 
     :return:  a dict, CoalesceEntity, JSON object, or XML object, depending
         on the value of "output".
@@ -788,8 +796,8 @@ def read(server = None, key = None, output = "dict"):
     if not output in CRUD_OUTPUT_FORMATS:
         raise ValueError('The argument "output" must take one of the ' +
                          'following values:\n' + str(CRUD_OUTPUT_FORMATS) + '.')
-    if output == u"xml":
-        server_URL += "/" + output
+    if output == u"xml" or output == u"entity_object":
+        server_URL += "/xml"
 
     method = OPERATIONS[operation][u"method"]
     headers = server_obj.base_headers
@@ -801,11 +809,6 @@ def read(server = None, key = None, output = "dict"):
     # Return the entity in the format specified by "output".
 
     if output == u"dict":
-        response_dict = \
-          json.loads(response.text)['sectionsAsList'][0]['recordsetsAsList']
-        return response_dict
-
-    elif output == u"full_dict":
         response_dict = json.loads(response.text)
         return response_dict
 
@@ -818,19 +821,20 @@ def read(server = None, key = None, output = "dict"):
         return response.text
 
 
-def update(modified_entity, server = None, key = None, full_response = False):
+def update(server = None, updated_entity = None, key = None,
+           full_response = False):
     """
     Uploads a modified entity to the Coalesce server using the "POST" method.
     This is a wrapper for the "upload_entity" function.
 
     Arguments:
-    :param new_entity:  the entity to upload to the server.  This can be a
-        JSON or XML representation of an entity, a nested dict-like in the
-        same format as a JSON respresentation, or an instance of
-        CoalesceEntity (or a subclass); the function automatically detects the
-        input type and adjusts the RESTful endpoint and requests headers
-        accordingly.
     :param server:  a CoalesceServer object or the URL of a Coalesce server
+    :param updated_entity:  the content of the entity to be updated on the
+        server.  This can be a JSON or XML representation of an entity, a
+        nested dict-like in the same format as a JSON respresentation, or an
+        instance of CoalesceEntity (or a subclass); the function automatically
+        detects the input type and adjusts the RESTful endpoint and requests
+        headers accordingly.
     :param key:  a UUID to serve as the key for the new entity, either as an
         instance of the "UUID" class, or any string or integer that could
         serve as input to the UUID class constructor.  If this argument is
@@ -849,8 +853,8 @@ def update(modified_entity, server = None, key = None, full_response = False):
         exception.)
     """
 
-    response = save_entity(modified_entity, server = server, key = key,
-                             operation = u"update")
+    response = save_entity(server = server, new_entity = updated_entity,
+                           key = key, operation = u"update")
 
     status = response.status_code
 
@@ -928,7 +932,8 @@ def delete(server = None, keys = None):
                    operation_endpoint[u"controller"]
     server_URL = server_obj.URL + endpoint_str + key
     method = OPERATIONS[operation][u"method"]
-    headers = server_obj.base_headers
+    headers = copy(server_obj.base_headers)
+    headers["Content-type"] = "application/json"
 
     # Submit the request.
     response = get_response(URL = server_URL, method = method,
@@ -951,7 +956,7 @@ def delete(server = None, keys = None):
     return success
 
 
-def save_template(template, server = None, full_response = False):
+def save_template(server = None, template = None, full_response = False):
 
     """
     Updates an entity template to the Coalesce server using the "POST"
@@ -972,21 +977,21 @@ def save_template(template, server = None, full_response = False):
     template.)
 
     Arguments:
+    :param server:  a CoalesceServer object or the URL of a Coalesce server
     :param template:  the entity to upload to the server.  This can be a
         JSON or XML representation of an entity, a nested dict-like in the
         same format as a JSON respresentation, or an instance of
         CoalesceEntity (or a subclass); the function automatically detects the
         input type and adjusts the RESTful endpoint and requests headers
         accordingly.
-    :param server:  a CoalesceServer object or the URL of a Coalesce server
     :param full_response:  if True, return the full response from the server
         as a Python requests Response object, rather than a boolean.
 
     :return:  the template's UUID
     """
 
-    response = save_entity(template, server = server,
-                             operation = u"save_template")
+    response = save_entity(server = server, template = template,
+                           operation = u"save_template")
 
     # Return the UUID key generated by the server.
     key = response.text
@@ -1045,11 +1050,9 @@ def read_template(server = None, template = None, output = "dict"):
     :param template:  a Coalesce template (UUID) key, or an iterable
         containing the template's name, source, and version (in that order)
     :param output:  If this argument is "dict", return the results as a
-        Python dict; for "full_dict", return the full response, including
-        metadata, as a dict.  For "entity_object", return the result as an
-        instance of class "CoalesceEntityTemplate".  For "JSON" or "XML"
-        return the full response, unparsed, including metadata, as a Unicode
-        string of the corresponding type.
+        Python dict; for "entity_object", return the result as an instance of
+        class "CoalesceEntityTemplate".  For "JSON" or "XML" return the full
+        response, unparsed, as a Unicode string in the corresponding format.
 
     :return:  a dict, CoalesceEntity, JSON object, or XML object, depending
         on the value of "output".
@@ -1062,40 +1065,43 @@ def read_template(server = None, template = None, output = "dict"):
     else:
         server_obj = CoalesceServer(server)
 
-    operation = u"read_template"
-    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
-    endpoint_str = server_obj.persistors[operation_endpoint[u"persistor"]] + \
-                   operation_endpoint[u"controller"]
+    if template:
 
-    if len(template) == 3:
-        name, source, version = template
-        server_URL = server_obj.URL + endpoint_str + name + "/" + \
-                     source + "/" + version + ".xml"
-
-    else:
-
-        if isinstance(UUID, template):
-            template_key_obj = template
+        if len(template) == 3:
+            name, source, version = template
+            endpoint_final = name + "/" + source + "/" + version
 
         else:
-            try:
-                template_key_obj = UUID(template)
-            except AttributeError:
-                template_key_obj = UUID(int = template)
-            except ValueError:
-                template_key_obj = UUID(bytes = template)
 
-        template_key = unicode(template_key_obj)
-        server_URL = server_obj.URL + endpoint_str + template_key + ".xml"
+            if isinstance(UUID, template):
+                template_key_obj = template
 
+            else:
+                try:
+                    template_key_obj = UUID(template)
+                except AttributeError:
+                    template_key_obj = UUID(int = template)
+                except ValueError:
+                    template_key_obj = UUID(bytes = template)
+
+            template_key = unicode(template_key_obj)
+            endpoint_final = + template_key
+
+    else:
+        raise TypeError('You must supply a value for "template".')
 
     output = output.lower()
     if not output in CRUD_OUTPUT_FORMATS:
         raise ValueError('The argument "output" must take one of the ' +
                          'following values:\n' + str(CRUD_OUTPUT_FORMATS) + '.')
-    if output == u"xml":
-        server_URL += "." + output
+    if output == u"xml" or output = u"enity_object":
+        endpoint_final += "/xml"
 
+    # Set the request parameters.
+    operation = u"read_template"
+    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
+    server_URL = server_obj.persistors[operation_endpoint[u"persistor"]] + \
+                 operation_endpoint[u"controller"] + endpoint_final
     method = OPERATIONS[operation][u"method"]
     headers = server_obj.base_headers
 
@@ -1106,11 +1112,6 @@ def read_template(server = None, template = None, output = "dict"):
     # Return the template in the format specified by "output".
 
     if output == u"dict":
-        response_dict = \
-          json.loads(response.text)['sectionsAsList'][0]['recordsetsAsList']
-        return response_dict
-
-    elif output == u"full_dict":
         response_dict = json.loads(response.text)
         return response_dict
 

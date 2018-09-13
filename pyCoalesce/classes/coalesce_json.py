@@ -60,18 +60,18 @@ class CoalesceAPILinkage(dict):
                             unicode(VALID_KEYS)
 
 
-    def __init__(self, source, target, label = None, linkage_type = "UNDEFINED",
-                 isBiDirectional = False):
+    def __init__(self, source = None, target = None, label = None,
+                 linkage_type = "UNDEFINED", isBiDirectional = False):
         """
         source:  the UUID key of the source entity, either as an instance of
             uuid.UUID or as a string or integer that can be used as input to
             the UUID class constructor.  The linkage created on the server
-            will be part of this entity.
+            will be part of this entity.  The argument is required.
         target:  the UUID key of the target entity, either as an instance of
             uuid.UUID or as a string or integer that can be used as input to
             the UUID class constructor.  The linkage created on the server
             will not be part of this entity, unless the link is bi-
-            directional.
+            directional.  The argument is required.
         label:  a string label for the linkage.  This attribute isn't used by
             Coalesce, and may be set to any value required by an application.
         linkage_type:  the (string) type of linkage; the actual name of the
@@ -88,31 +88,41 @@ class CoalesceAPILinkage(dict):
         # Make sure "source" and "target" are valid ID's, then convert them
         # (back) to strings and set the corresponding values.
 
-        if isinstance(UUID, source):
-            source_obj = source
+        if source:
+
+            if isinstance(UUID, source):
+                source_obj = source
+
+            else:
+                try:
+                    source_obj = UUID(source)
+                except AttributeError:
+                    source_obj = UUID(int = source)
+                except ValueError:
+                    source_obj = UUID(bytes = source)
+
+            self["source"] = unicode(source_obj)
 
         else:
-            try:
-                source_obj = UUID(source)
-            except AttributeError:
-                source_obj = UUID(int = source)
-            except ValueError:
-                source_obj = UUID(bytes = source)
+            raise TypeError("You must provide a source entity for the linkage.")
 
-        self["source"] = unicode(source_obj)
+        if target:
 
-        if isinstance(UUID, target):
-            target_obj = target
+            if isinstance(UUID, target):
+                target_obj = target
+
+            else:
+                try:
+                    target_obj = UUID(target)
+                except AttributeError:
+                    target_obj = UUID(int = target)
+                except ValueError:
+                    target_obj = UUID(bytes = target)
+
+            self["target"] = unicode(target_obj)
 
         else:
-            try:
-                target_obj = UUID(target)
-            except AttributeError:
-                target_obj = UUID(int = target)
-            except ValueError:
-                target_obj = UUID(bytes = target)
-
-        self["target"] = unicode(target_obj)
+            raise TypeError("You must provide a target entity for the linkage.")
 
         # If "label" has been provided and it isn't a string, try to coerce it
         # to one.
@@ -215,7 +225,8 @@ class CoalesceAPILinkage(dict):
         Note that this representation does _not_ include a counterpart of the
         "isBiDirectional" attribute, since the XSD that defines Coalesce
         entities includes no such attribute (which means no such attribute is
-        ever stored on the server).
+        ever stored on the server).  To generate the reverse linkage, call
+        "reverse_to_XSD".
         """
 
         linkage_XSD = CoalesceLinkage(entity1key = self["source"],
@@ -224,3 +235,23 @@ class CoalesceAPILinkage(dict):
                                       label = self["label"])
 
         return linkage_XSD
+
+
+    def reverse_to_XSD(self):
+        """
+        For a bidrectional linkage, returns a version of the the reverse linkage
+        as an instance of pyCoalesce.classes.CoalesceLinkage.  Calling this
+        method on a unidirectional linkage will raise an exception.
+        """
+
+        if self.isBiDirectional:
+            linkage_XSD = CoalesceLinkage(entity1key = self["target"],
+                                          entity2key = self["source"],
+                                          linktype = LINKAGE_TYPES[self["type"]],
+                                          label = self["label"])
+            return linkage_XSD
+
+        else:
+            raise ValueError("This method can only be called on a " +
+                             "on a bidirectional link.")
+
