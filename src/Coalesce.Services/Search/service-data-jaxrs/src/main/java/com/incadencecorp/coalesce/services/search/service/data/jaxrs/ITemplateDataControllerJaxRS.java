@@ -38,6 +38,7 @@ public interface ITemplateDataControllerJaxRS {
 
     @GET
     @Path("/{name}/{source}/{version}{ext:(/json)?}")
+    @JsonView(Views.Template.class)
     @Produces(MediaType.APPLICATION_JSON)
     CoalesceEntity getTemplate(@PathParam("name") String name, @PathParam("source") String source, @PathParam("version") String version) throws RemoteException;
 
