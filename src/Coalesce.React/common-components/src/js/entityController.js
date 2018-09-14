@@ -13,15 +13,24 @@ export function updateEntity(entity)
 }
 
 export function saveEntity(entity, isNew) {
-  return fetch(`${karafRootAddr}/entity/${entity.key}`, {
-      method: ((isNew) ? "PUT" : "POST"),
+  var url = `${karafRootAddr}/entity/`;
+  var method = 'PUT';
+  if(isNew) {
+    method = 'POST';
+    url += 'new'
+  }
+  return fetch(url, {
+      method: method,
       body: JSON.stringify(entity),
       headers: new Headers({
         'content-type': 'application/json; charset=utf-8'
       }),
     }).then(res => {
-      if (!res.ok)
+      if (method === 'POST' && !res.ok)
       {
+        throw Error(res.statusText);
+      }
+      else if (method === 'PUT' && !res.status === 204) {
         throw Error(res.statusText);
       }
       return res;
