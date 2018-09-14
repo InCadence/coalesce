@@ -19,6 +19,9 @@ export function saveEntity(entity, isNew) {
     method = 'POST';
     url += 'new'
   }
+  else {
+    url += entity.key;
+  }
   return fetch(url, {
       method: method,
       body: JSON.stringify(entity),
