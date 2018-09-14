@@ -68,13 +68,15 @@ public interface ITemplateDataControllerJaxRS {
     void updateTemplateXml(@PathParam("key") String key, String xml) throws RemoteException;
 
     @POST
-    @Path("{ext:(/json)?}")
+    @Path("/{ext:(json)?}")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     String createTemplateJson(String json) throws RemoteException;
 
     @POST
     @Path("/xml")
     @Consumes(MediaType.APPLICATION_XML)
+    @Produces(MediaType.TEXT_PLAIN)
     String createTemplateXml(String xml) throws RemoteException;
 
     @PUT

@@ -41,13 +41,15 @@ public interface IEntityDataControllerJaxRS {
     void updateEntityAsXml(@PathParam("entityKey") String entityKey, String xml) throws RemoteException;
 
     @POST
-    @Path("{ext:(/json)?}")
+    @Path("/{ext:(json)?}")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     String createEntityAsJson(String json) throws RemoteException;
 
     @POST
     @Path("/xml")
     @Consumes(MediaType.APPLICATION_XML)
+    @Produces(MediaType.TEXT_PLAIN)
     String createEntityAsXml(String xml) throws RemoteException;
 
     @DELETE
