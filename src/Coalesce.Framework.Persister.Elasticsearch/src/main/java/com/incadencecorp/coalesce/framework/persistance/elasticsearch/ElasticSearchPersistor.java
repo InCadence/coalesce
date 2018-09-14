@@ -13,15 +13,17 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRespon
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.bulk.byscroll.BulkByScrollResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.support.AbstractClient;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.reindex.DeleteByQueryAction;
 import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,9 +101,10 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
             BulkRequest request = iterator.iterate(allowRemoval, entities);
 
+            executeCleanup(client, request, entities);
+
             LOGGER.debug("{} Entities Created {} Request", entities.length, request.requests().size());
 
-            executeCleanup(client, request, entities);
             executeRequest(client, request, 1);
         }
         catch (CoalesceException | InterruptedException e)
@@ -141,22 +144,38 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
                                                               entity.getKey()));
             }
 
-            // Only records that are not being updated by this request
-            for (String key : recordKeys)
+            int pageSize = 1000;
+            int original = request.requests().size();
+
+            SearchResponse response = client.prepareSearch(indices.toArray(new String[indices.size()])).setQuery(builder).setSize(
+                    pageSize).setScroll(new TimeValue(60000)).get();
+
+            do
             {
-                builder.mustNot().add(QueryBuilders.matchQuery("_id", key));
+                for (SearchHit hit : response.getHits().getHits())
+                {
+                    // Records being updated by this request
+                    if (!recordKeys.contains(hit.getId()))
+                    {
+                        // No; Create Delete Request
+                        DeleteRequest deleteRequest = new DeleteRequest();
+                        deleteRequest.index(hit.getIndex());
+                        deleteRequest.type(hit.getType());
+                        deleteRequest.id(hit.getId());
+
+                        request.requests().add(deleteRequest);
+                    }
+                }
+
+                response = client.prepareSearchScroll(response.getScrollId()).setScroll(new TimeValue(60000)).get();
             }
-
-            BulkByScrollResponse response = DeleteByQueryAction.INSTANCE.newRequestBuilder(client).filter(builder).
-                    source(indices.toArray(new String[indices.size()])).get();
-
-            long deleted = response.getDeleted();
+            while (response.getHits().getHits().length != 0);
 
             watch.finish();
 
-            if (deleted > 0 || LOGGER.isTraceEnabled())
+            if (original != request.requests().size() || LOGGER.isTraceEnabled())
             {
-                LOGGER.debug("Deleted {} Phantom Records in {} ms", deleted, watch.getWorkLife());
+                LOGGER.debug("Created {} Delete Request for Phantom Records in {} ms", request.requests().size() - original, watch.getWorkLife());
             }
         }
     }

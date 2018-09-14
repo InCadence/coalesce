@@ -1191,6 +1191,34 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Assert.assertEquals(record.getStringField().getValue(), results.getString(3));
     }
 
+    /**
+     * This test ensures that the persister does not throw any exceptions for a large amount of records.
+     */
+    @Test
+    public void test20KRecords() throws Exception
+    {
+        ICoalescePersistor persistor = createPersister();
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        // Add X Records
+        for (int ii = 0; ii < 20000; ii++)
+        {
+            entity.addRecord1();
+        }
+
+        persistor.saveEntity(false, entity);
+
+        // Change Record Keys (This causes phantom records to be deleted)
+        for (CoalesceRecord record : entity.getRecordset1().getAllRecords())
+        {
+            record.setKey(UUID.randomUUID().toString());
+        }
+
+        persistor.saveEntity(false, entity);
+    }
+
     private static Filter createFilter(String geomField,
                                        double x0,
                                        double y0,
