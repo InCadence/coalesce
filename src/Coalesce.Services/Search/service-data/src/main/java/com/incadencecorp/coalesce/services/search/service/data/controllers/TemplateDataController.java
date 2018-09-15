@@ -338,46 +338,71 @@ public class TemplateDataController {
     /**
      * Saves the specified template.
      *
-     * @param key  template's key
      * @param json template in json format
      * @return whether or not it was successfully saved.
      * @throws RemoteException on error
      */
-    public String setTemplateJson(String key, String json) throws RemoteException
+    public String createTemplateJson(String json) throws RemoteException
     {
         String result = null;
 
         try
         {
-            //result = json != null && setTemplate(createTemplate(json));
             result = setTemplate(createTemplate(json));
         }
         catch (CoalesceException e)
         {
-            error(String.format(CoalesceErrors.NOT_SAVED, key, CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
-                  e);
+            error(String.format(CoalesceErrors.NOT_SAVED, "NEW", CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
+                    e);
         }
 
         return result;
     }
 
-    public String setTemplateXml(String key, String xml) throws RemoteException
+    public String createTemplateXml(String xml) throws RemoteException
     {
         String results = null;
+
         try
         {
             results = setTemplate(CoalesceEntityTemplate.create(xml));
         }
         catch (CoalesceException e)
         {
-            error(String.format(CoalesceErrors.NOT_SAVED, key, CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
-                  e);
+            error(String.format(CoalesceErrors.NOT_SAVED, "NEW", CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
+                    e);
         }
 
         return results;
     }
 
-    public boolean registerTemplate(String key) throws RemoteException
+    public void updateTemplateJson(String key, String json) throws RemoteException
+    {
+        try
+        {
+            setTemplate(key, createTemplate(json));
+        }
+        catch (CoalesceException e)
+        {
+            error(String.format(CoalesceErrors.NOT_SAVED, key, CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
+                  e);
+        }
+    }
+
+    public void updateTemplateXml(String key, String xml) throws RemoteException
+    {
+        try
+        {
+            setTemplate(key, CoalesceEntityTemplate.create(xml));
+        }
+        catch (CoalesceException e)
+        {
+            error(String.format(CoalesceErrors.NOT_SAVED, key, CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
+                  e);
+        }
+    }
+
+    public void registerTemplate(String key) throws RemoteException
     {
         try
         {
@@ -387,26 +412,30 @@ public class TemplateDataController {
         {
             error("Registration Failed", e);
         }
-
-        return true;
     }
 
-    public boolean deleteTemplate(String key) throws RemoteException
+    public void deleteTemplate(String key) throws RemoteException
     {
-        boolean result = false;
-
         try
         {
             framework.deleteTemplate(key);
             templates.remove(key);
-            result = true;
         }
         catch (CoalescePersistorException e)
         {
             error("Registeration Failed", e);
         }
+    }
 
-        return result;
+    private void setTemplate(String key, CoalesceEntityTemplate template) throws RemoteException
+    {
+        if (!key.equalsIgnoreCase(template.getKey()))
+        {
+            // We want to make sure the template key is hashed from name/source/version, not arbitrary.
+            error(String.format(CoalesceErrors.INVALID_KEY, key, template.getKey()));
+        }
+
+        setTemplate(template);
     }
 
     private String setTemplate(CoalesceEntityTemplate template) throws RemoteException
