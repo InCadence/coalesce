@@ -72,24 +72,6 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
         }
     }
 
-    public JSONObject exportValuesAsBytes(CoalesceEntity entity, boolean includeEntityType) throws CoalesceException
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
-
-        System.out.println("Doing the bytes one");
-
-        try
-        {
-            return new JSONObject(mapper.writerWithView(view).writeValueAsBytes(entity));
-        }
-        catch (IOException e)
-        {
-            throw new CoalesceException(e);
-        }
-    }
-
     @Override
     public CoalesceEntity importValues(JSONObject values, CoalesceEntityTemplate template) throws CoalesceException
     {
@@ -97,7 +79,6 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
         entity.initialize();
 
         importValues(values, entity);
-
         return entity;
     }
 
@@ -112,8 +93,6 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
                                                             "fields",
                                                             "linkagesaslist",
                                                             "datatype",
-                                                            "datecreatedasstring",
-                                                            "lastmodifiedasstring",
                                                             "type",
                                                             "classname",
                                                             "portionmarking",
@@ -154,9 +133,9 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
 
     private void copySection(JSONObject json, CoalesceObject parent) throws CoalesceException
     {
-        String path = json.getString("namePath");
+        String name = json.getString(CoalesceObject.ATTRIBUTE_NAME);
 
-        CoalesceSection section = parent.getEntity().getCoalesceSectionForNamePath(path);
+        CoalesceSection section = parent.getCoalesceSectionForNamePath(parent.getName(), name);
 
         // Exists?
         if (section != null)
@@ -182,15 +161,15 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
         }
         else
         {
-            LOGGER.warn(String.format(CoalesceErrors.INVALID_OBJECT, "Section", path));
+            LOGGER.warn(String.format(CoalesceErrors.INVALID_OBJECT, "Section", name));
         }
     }
 
     private void copyRecordset(JSONObject json, CoalesceSection section) throws CoalesceException
     {
-        String path = json.getString("namePath");
+        String name = json.getString(CoalesceSection.ATTRIBUTE_NAME);
 
-        CoalesceRecordset recordset = section.getEntity().getCoalesceRecordsetForNamePath(path);
+        CoalesceRecordset recordset = section.getCoalesceRecordsetForNamePath(section.getName(), name);
 
         // Exists?
         if (recordset != null)
@@ -213,7 +192,7 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
         }
         else
         {
-            LOGGER.warn(String.format(CoalesceErrors.INVALID_OBJECT, "Recordset", path));
+            LOGGER.warn(String.format(CoalesceErrors.INVALID_OBJECT, "Recordset", name));
         }
 
     }

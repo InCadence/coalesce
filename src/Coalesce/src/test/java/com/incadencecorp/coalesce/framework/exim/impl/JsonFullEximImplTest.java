@@ -195,7 +195,6 @@ public class JsonFullEximImplTest {
         assertEquals(entity.getSource(), json.getString("source"));
         assertEquals(entity.getClassName(), json.getString("className"));
         assertEquals(entity.getName(), json.getString("name"));
-        assertEquals(entity.getName(), json.getString("namePath"));
         assertEquals(entity.getKey(), json.getString("key"));
 
         // Verify Section

@@ -683,6 +683,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
         return this._children.get(key);
     }
 
+    @JsonIgnore
     @Override
     public final String getNamePath()
     {
