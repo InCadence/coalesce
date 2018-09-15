@@ -36,6 +36,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Responsible for storing and retrieving Coalesce entities.
@@ -92,15 +93,19 @@ public class EntityDataController {
 
     public void updateEntity(String entityKey, String json) throws RemoteException
     {
-        setEntity(entityKey, false, processJSON(entityKey, json));
+        setUpdatedEntity(entityKey, processJSON(json));
     }
 
-    public void createEntity(String entityKey, String json) throws RemoteException
+    public String createEntity(String json) throws RemoteException
     {
-        setEntity(entityKey, true, processJSON(entityKey, json));
+        CoalesceEntity newEntity = processJSON(json);
+        String entityKey = newEntity.getKey();
+        setNewEntity(newEntity);
+
+        return entityKey;
     }
 
-    private CoalesceEntity processJSON(String entityKey, String json) throws RemoteException
+    private CoalesceEntity processJSON(String json) throws RemoteException
     {
         JSONObject obj = new JSONObject(json);
 
@@ -137,39 +142,46 @@ public class EntityDataController {
 
     public void updateEntityAsXml(String entityKey, String xml) throws RemoteException
     {
-        setEntity(entityKey, false, CoalesceEntity.create(xml));
+        setUpdatedEntity(entityKey, CoalesceEntity.create(xml));
     }
 
-    public void createEntityAsXml(String entityKey, String xml) throws RemoteException
+    public String createEntityAsXml(String xml) throws RemoteException
     {
-        setEntity(entityKey, true, CoalesceEntity.create(xml));
+        CoalesceEntity newEntity = CoalesceEntity.create(xml);
+        String entityKey = newEntity.getKey();
+        setNewEntity(newEntity);
+
+        return entityKey;
     }
 
-    private void setEntity(String entityKey, boolean isNew, CoalesceEntity entity) throws RemoteException
+    private void setUpdatedEntity(String entityKey, CoalesceEntity entity) throws RemoteException
     {
         if (entity == null)
         {
             error("(FAILED) Initializing Entity");
         }
 
-        if (!entityKey.equals(entity.getKey()))
+        if (!entityKey.equalsIgnoreCase(entity.getKey()))
         {
             error(String.format(CoalesceErrors.KEY_MISMATCH, entityKey, entity.getKey()));
         }
 
-        if (isNew)
+        if (!crud.updateDataObject(entity))
         {
-            if (!crud.createDataObject(entity))
-            {
-                error(crud.getLastResult()[0].getError());
-            }
+            error(crud.getLastResult()[0].getError());
         }
-        else
+    }
+
+    private void setNewEntity(CoalesceEntity entity) throws RemoteException
+    {
+        if (entity == null)
         {
-            if (!crud.updateDataObject(entity))
-            {
-                error(crud.getLastResult()[0].getError());
-            }
+            error("(FAILED) Initializing Entity");
+        }
+
+        if (!crud.createDataObject(entity))
+        {
+            error(crud.getLastResult()[0].getError());
         }
     }
 
