@@ -36,7 +36,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Responsible for storing and retrieving Coalesce entities.
@@ -93,22 +92,32 @@ public class EntityDataController {
 
     public void updateEntity(String entityKey, String json) throws RemoteException
     {
-        setUpdatedEntity(entityKey, processJSON(json));
+        JSONObject obj = new JSONObject(json);
+
+        // If the supplied object has no key, set the key to the value of
+        // "entityKey"--this prevents the key mismatch that would be caused
+        // if the entity "initialize" method generated a random key.
+        String keyName = CoalesceEntity.ATTRIBUTE_KEY;
+        if (!obj.has(keyName) || obj.isNull(keyName) || obj.getString(keyName).equals(""))
+        {
+            obj.put(CoalesceEntity.ATTRIBUTE_KEY, entityKey);
+        }
+
+        setUpdatedEntity(entityKey, processJSON(obj));
     }
 
     public String createEntity(String json) throws RemoteException
     {
-        CoalesceEntity newEntity = processJSON(json);
+        JSONObject obj = new JSONObject(json);
+        CoalesceEntity newEntity = processJSON(obj);
         String entityKey = newEntity.getKey();
         setNewEntity(newEntity);
 
         return entityKey;
     }
 
-    private CoalesceEntity processJSON(String json) throws RemoteException
+    private CoalesceEntity processJSON(JSONObject obj) throws RemoteException
     {
-        JSONObject obj = new JSONObject(json);
-
         String name = obj.getString(CoalesceEntity.ATTRIBUTE_NAME);
         String source = obj.getString(CoalesceEntity.ATTRIBUTE_SOURCE);
         String version = obj.getString(CoalesceEntity.ATTRIBUTE_VERSION);
@@ -142,7 +151,7 @@ public class EntityDataController {
 
     public void updateEntityAsXml(String entityKey, String xml) throws RemoteException
     {
-        setUpdatedEntity(entityKey, CoalesceEntity.create(xml));
+        setUpdatedEntity(entityKey, CoalesceEntity.createWithKey(entityKey, xml));
     }
 
     public String createEntityAsXml(String xml) throws RemoteException

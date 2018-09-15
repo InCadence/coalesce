@@ -88,6 +88,27 @@ public class CoalesceEntityTest {
     }
 
     @Test
+    public void createFromXmlWithKeyTest()
+    {
+
+        String entityKey = UUID.randomUUID().toString();
+        CoalesceEntity entity = CoalesceEntity.createWithKey(entityKey, CoalesceTypeInstances.TEST_MISSION);
+
+        assertEquals("TREXMission", entity.getNamePath());
+
+        String title = entity.getTitle();
+        assertEquals("NORTHCOM Volunteer Background Checks Changed, NORTHCOM Volunteer Background Checks", title);
+        assertEquals(4, entity.getLinkages().values().size());
+        assertEquals(2, entity.getSectionsAsList().size());
+        assertEquals(1,
+                ((CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
+        assertEquals(17,
+                ((CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getFieldDefinitions().size());
+        assertEquals(17,
+                entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORD_PATH).getChildCoalesceObjects().size());
+    }
+
+    @Test
     public void createFromXmlEmptyTest()
     {
         CoalesceEntity entity = CoalesceEntity.create("");

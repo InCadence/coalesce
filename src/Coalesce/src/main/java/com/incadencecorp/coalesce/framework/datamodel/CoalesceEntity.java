@@ -117,6 +117,28 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
     }
 
+    public static CoalesceEntity createWithKey(String entityKey, String entityXml)
+    {
+
+        // Create Entity
+        CoalesceEntity entity = new CoalesceEntity();
+
+        boolean passed = entity.initializeWithKey(entityKey, entityXml);
+
+        if (!passed)
+        {
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("(FAILED) Xml: {}", entityXml);
+            }
+
+            return null;
+        }
+
+        return entity;
+
+    }
+
     /**
      * Creates an {@link CoalesceEntity} based off of an (XML) String and sets
      * the title.
@@ -297,6 +319,53 @@ public class CoalesceEntity extends CoalesceObjectHistory {
             _entity = (Entity) deserializedObject;
 
             if (!super.initialize(_entity))
+            {
+                LOGGER.error("Failed to intialize");
+
+                return false;
+            }
+
+            if (!initializeChildren())
+            {
+                LOGGER.error("Failed to initialize children");
+
+                return false;
+            }
+
+            return initializeReferences();
+        }
+    }
+
+    /**
+     * Initializes a previously new {@link CoalesceEntity} based off of an (XML)
+     * String, filling in a blank value of "key" with a supplied entity key.
+     *
+     * @param entityKey a UUID key to replace a blank value of "key"
+     * @param entityXml (XML) String that the {@link CoalesceEntity} is to be
+     *                  initialized from.
+     * @return boolean indicator of success/failure
+     */
+    public boolean initializeWithKey(String entityKey, String entityXml)
+    {
+        if (this.isInitialized())
+            return true;
+
+        if (entityXml == null || StringHelper.isNullOrEmpty(entityXml.trim()))
+        {
+            return initialize();
+        }
+        else
+        {
+            Object deserializedObject = XmlHelper.deserialize(entityXml, Entity.class);
+
+            if (deserializedObject == null || !(deserializedObject instanceof Entity))
+            {
+                LOGGER.error("Failed to parse XML");
+                return false;
+            }
+            _entity = (Entity) deserializedObject;
+
+            if (!super.initializeWithKey(entityKey, _entity))
             {
                 LOGGER.error("Failed to intialize");
 
