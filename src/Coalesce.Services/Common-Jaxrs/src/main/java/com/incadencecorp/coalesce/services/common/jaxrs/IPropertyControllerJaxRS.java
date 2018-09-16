@@ -41,12 +41,12 @@ interface IPropertyControllerJaxRS extends IPropertyController {
     Map<String, String> getProperties() throws RemoteException;
 
     @POST
-    @Path("/")
+    @Path("/read")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     Map<String, String> getProperties(String[] names) throws RemoteException;
 
-    @PUT
+    @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     void setProperties(Map<String, String> values) throws RemoteException;

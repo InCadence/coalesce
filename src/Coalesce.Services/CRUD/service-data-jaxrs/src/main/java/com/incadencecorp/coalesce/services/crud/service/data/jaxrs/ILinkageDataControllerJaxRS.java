@@ -38,7 +38,7 @@ public interface ILinkageDataControllerJaxRS {
     @Consumes(MediaType.APPLICATION_JSON)
     void unlink(List<GraphLink> links) throws RemoteException;
 
-    @PUT
+    @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     void link(List<GraphLink> links) throws RemoteException;
