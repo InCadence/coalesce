@@ -92,18 +92,32 @@ public class EntityDataController {
 
     public void updateEntity(String entityKey, String json) throws RemoteException
     {
-        setEntity(entityKey, false, processJSON(entityKey, json));
-    }
-
-    public void createEntity(String entityKey, String json) throws RemoteException
-    {
-        setEntity(entityKey, true, processJSON(entityKey, json));
-    }
-
-    private CoalesceEntity processJSON(String entityKey, String json) throws RemoteException
-    {
         JSONObject obj = new JSONObject(json);
 
+        // If the supplied object has no key, set the key to the value of
+        // "entityKey"--this prevents the key mismatch that would be caused
+        // if the entity "initialize" method generated a random key.
+        String keyName = CoalesceEntity.ATTRIBUTE_KEY;
+        if (!obj.has(keyName) || obj.isNull(keyName) || obj.getString(keyName).equals(""))
+        {
+            obj.put(CoalesceEntity.ATTRIBUTE_KEY, entityKey);
+        }
+
+        setUpdatedEntity(entityKey, processJSON(obj));
+    }
+
+    public String createEntity(String json) throws RemoteException
+    {
+        JSONObject obj = new JSONObject(json);
+        CoalesceEntity newEntity = processJSON(obj);
+        String entityKey = newEntity.getKey();
+        setNewEntity(newEntity);
+
+        return entityKey;
+    }
+
+    private CoalesceEntity processJSON(JSONObject obj) throws RemoteException
+    {
         String name = obj.getString(CoalesceEntity.ATTRIBUTE_NAME);
         String source = obj.getString(CoalesceEntity.ATTRIBUTE_SOURCE);
         String version = obj.getString(CoalesceEntity.ATTRIBUTE_VERSION);
@@ -137,39 +151,46 @@ public class EntityDataController {
 
     public void updateEntityAsXml(String entityKey, String xml) throws RemoteException
     {
-        setEntity(entityKey, false, CoalesceEntity.create(xml));
+        setUpdatedEntity(entityKey, CoalesceEntity.createWithKey(entityKey, xml));
     }
 
-    public void createEntityAsXml(String entityKey, String xml) throws RemoteException
+    public String createEntityAsXml(String xml) throws RemoteException
     {
-        setEntity(entityKey, true, CoalesceEntity.create(xml));
+        CoalesceEntity newEntity = CoalesceEntity.create(xml);
+        String entityKey = newEntity.getKey();
+        setNewEntity(newEntity);
+
+        return entityKey;
     }
 
-    private void setEntity(String entityKey, boolean isNew, CoalesceEntity entity) throws RemoteException
+    private void setUpdatedEntity(String entityKey, CoalesceEntity entity) throws RemoteException
     {
         if (entity == null)
         {
             error("(FAILED) Initializing Entity");
         }
 
-        if (!entityKey.equals(entity.getKey()))
+        if (!entityKey.equalsIgnoreCase(entity.getKey()))
         {
             error(String.format(CoalesceErrors.KEY_MISMATCH, entityKey, entity.getKey()));
         }
 
-        if (isNew)
+        if (!crud.updateDataObject(entity))
         {
-            if (!crud.createDataObject(entity))
-            {
-                error(crud.getLastResult()[0].getError());
-            }
+            error(crud.getLastResult()[0].getError());
         }
-        else
+    }
+
+    private void setNewEntity(CoalesceEntity entity) throws RemoteException
+    {
+        if (entity == null)
         {
-            if (!crud.updateDataObject(entity))
-            {
-                error(crud.getLastResult()[0].getError());
-            }
+            error("(FAILED) Initializing Entity");
+        }
+
+        if (!crud.createDataObject(entity))
+        {
+            error(crud.getLastResult()[0].getError());
         }
     }
 

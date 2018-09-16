@@ -30,25 +30,25 @@ public interface IEntityDataControllerJaxRS {
     @Produces(MediaType.APPLICATION_XML)
     String getEntityAsXml(@PathParam("entityKey") String entityKey) throws RemoteException;
 
-    @POST
+    @PUT
     @Path("/{entityKey:" + GUIDHelper.REGEX_UUID +  "}{ext:(/json)?}")
     @Consumes(MediaType.APPLICATION_JSON)
     void updateEntity(@PathParam("entityKey") String entityKey, String json) throws RemoteException;
 
-    @POST
+    @PUT
     @Path("/{entityKey:" + GUIDHelper.REGEX_UUID +  "}/xml")
     @Consumes(MediaType.APPLICATION_XML)
     void updateEntityAsXml(@PathParam("entityKey") String entityKey, String xml) throws RemoteException;
 
-    @PUT
-    @Path("/{entityKey:" + GUIDHelper.REGEX_UUID +  "}{ext:(/json)?}")
+    @POST
+    @Path("{ext:(/json)?}")
     @Consumes(MediaType.APPLICATION_JSON)
-    void createEntity(@PathParam("entityKey") String entityKey, String json) throws RemoteException;
+    String createEntity(String json) throws RemoteException;
 
-    @PUT
-    @Path("/{entityKey:" + GUIDHelper.REGEX_UUID +  "}/xml")
+    @POST
+    @Path("/xml")
     @Consumes(MediaType.APPLICATION_XML)
-    void createEntityAsXml(@PathParam("entityKey") String entityKey, String xml) throws RemoteException;
+    String createEntityAsXml(String xml) throws RemoteException;
 
     @DELETE
     @Path("/")

@@ -987,13 +987,37 @@ public abstract class CoalesceObject implements ICoalesceObject {
     --------------------------------------------------------------------------*/
 
     protected boolean initialize(CoalesceObjectType object)
+    // This function provides backwards compatibility for the modified function
+    // below.  This version fills in a blank "key" attribute by randomly
+    // generating a new UUID.
+    {
+        _object = object;
+
+        String key = getKey();
+
+        if (key == null || key.equals(""))
+        {
+            key = java.util.UUID.randomUUID().toString();
+        }
+
+        boolean result = initializeWithKey(key, object);
+
+        return result;
+    }
+
+    protected boolean initializeWithKey(String submittedKey, CoalesceObjectType object)
+    // This version fills in a blank "key" attribute by using the submitted
+    // value.  It's really only useful for a top-level object (e.g.,
+    // CoalesceEntity).
     {
 
         _object = object;
 
-        if (getKey() == null || getKey().equals(""))
+        String objectKey = getKey();
+
+        if (objectKey == null || objectKey.equals(""))
         {
-            setKey(java.util.UUID.randomUUID().toString());
+            setKey(submittedKey);
         }
 
         DateTime utcDate = JodaDateTimeHelper.nowInUtc();

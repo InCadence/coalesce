@@ -29,8 +29,6 @@ import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
 @Path("templates")
 public interface ITemplateDataControllerJaxRS {
 
-    String REGEX_UUID_OR_NEW = "(" + GUIDHelper.REGEX_UUID + "|new)";
-
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -59,23 +57,33 @@ public interface ITemplateDataControllerJaxRS {
     @Produces(MediaType.APPLICATION_XML)
     String getTemplateXml(@PathParam("key") String key) throws RemoteException;
 
-    @POST
-    @Path("/{key:" + REGEX_UUID_OR_NEW + "}{ext:(/json)?}")
+    @PUT
+    @Path("/{key:" + GUIDHelper.REGEX_UUID + "}{ext:(/json)?}")
     @Consumes(MediaType.APPLICATION_JSON)
-    String setTemplateJson(@PathParam("key") String key, String json) throws RemoteException;
-
-    @POST
-    @Path("/{key:" + REGEX_UUID_OR_NEW +  "}/xml")
-    @Consumes(MediaType.APPLICATION_XML)
-    String setTemplateXml(@PathParam("key") String key, String xml) throws RemoteException;
+    void updateTemplateJson(@PathParam("key") String key, String json) throws RemoteException;
 
     @PUT
-    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}")
-    boolean registerTemplate(@PathParam("key") String key) throws RemoteException;
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}/xml")
+    @Consumes(MediaType.APPLICATION_XML)
+    void updateTemplateXml(@PathParam("key") String key, String xml) throws RemoteException;
+
+    @POST
+    @Path("{ext:(/json)?}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    String createTemplateJson(String json) throws RemoteException;
+
+    @POST
+    @Path("/xml")
+    @Consumes(MediaType.APPLICATION_XML)
+    String createTemplateXml(String xml) throws RemoteException;
+
+    @PUT
+    @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}/register")
+    void registerTemplate(@PathParam("key") String key) throws RemoteException;
 
     @DELETE
     @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}")
-    boolean deleteTemplate(@PathParam("key") String key) throws RemoteException;
+    void deleteTemplate(@PathParam("key") String key) throws RemoteException;
 
     @GET
     @Path("/{key:" + GUIDHelper.REGEX_UUID +  "}/new{ext:(/json)?}")

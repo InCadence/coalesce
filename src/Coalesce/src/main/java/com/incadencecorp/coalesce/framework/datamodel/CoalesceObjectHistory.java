@@ -80,6 +80,25 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
 
     }
 
+    protected boolean initializeWithKey(String entityKey, CoalesceObjectHistoryType object)
+    {
+
+        _object = object;
+
+        for (History history : _object.getHistory())
+        {
+
+            CoalesceHistory coalesceHistory = new CoalesceHistory();
+            coalesceHistory.initialize(this, history);
+
+            // Add to Child Collection
+            addChildCoalesceObject(coalesceHistory);
+        }
+
+        return super.initializeWithKey(entityKey, object);
+
+    }
+
     protected boolean initialize(CoalesceObjectHistory coalesceObject)
     {
 

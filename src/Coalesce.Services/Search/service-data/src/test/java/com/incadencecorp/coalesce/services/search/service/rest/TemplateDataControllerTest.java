@@ -192,7 +192,7 @@ public class TemplateDataControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writerWithView(Views.Template.class).writeValueAsString(entity);
 
-        controller.setTemplateJson("new", json);
+        controller.createTemplateJson(json);
         CoalesceEntity template = controller.getTemplate(entity.getName(), entity.getSource(), entity.getVersion());
 
         CoalesceRecordset templateRS = template.getCoalesceRecordsetForNamePath(recordset.getNamePath());
