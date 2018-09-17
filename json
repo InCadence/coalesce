@@ -1,0 +1,1 @@
+{"source": "pyCoalesceTest", "sectionsAsList": [{"recordsetsAsList": [{"allRecords": [{"fields": [{"name": "Field1", "value": "Sir"}, {"name": "Field2", "value": "Robin"}], "name": "TestRecord"}], "name": "TestRecordset"}], "name": "TestSection"}], "version": "0.1", "linkageSection": {"name": "Linkages", "linkagesAsList": []}, "name": "TestEntity2"}

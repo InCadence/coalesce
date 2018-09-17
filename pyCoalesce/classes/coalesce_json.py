@@ -90,7 +90,7 @@ class CoalesceAPILinkage(dict):
 
         if source:
 
-            if isinstance(UUID, source):
+            if isinstance(source, UUID):
                 source_obj = source
 
             else:
@@ -108,7 +108,7 @@ class CoalesceAPILinkage(dict):
 
         if target:
 
-            if isinstance(UUID, target):
+            if isinstance(target, UUID):
                 target_obj = target
 
             else:

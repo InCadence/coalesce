@@ -267,8 +267,9 @@ class linkageSub(supermod.linkage):
                  entity2objectversion=None, classificationmarking=None,
                  inputlang=None, label=None):
 
-        # The XSD doesn't enforce this, and doing so would be difficult if
-        # not impossible, but currently all linkages have the name "Linkage".
+        # The XSD doesn't enforce this, and getting it to do so would be
+        # difficult if not impossible, but currently all linkages have the
+        # name "Linkage".
         super(linkageSub, self).__init__(key, datecreated, lastmodified,
                                          "Linkage", status, noindex, modifiedby,
                                          modifiedbyip, objectversion,
@@ -281,11 +282,27 @@ class linkageSub(supermod.linkage):
                                          classificationmarking, inputlang, label)
 
         # Check the link type, and convert a key to a value if necessary.
-        if linktype in LINKAGE_TYPES:
-            linktype = LINKAGE_TYPES[linktype]
-        elif not linktype in LINKAGE_TYPES.values():
-            raise ValueError('"' + unicode(linktype) + '" is not a valid ' +
+        # We can't throw an error if no value was supplied for "linktype",
+        # "parseString" and similar functions use the "build" method to
+        # fill in the attributes, rather than the __init__.
+        if linktype:
+            if linktype in LINKAGE_TYPES:
+                linktype = LINKAGE_TYPES[linktype]
+            elif not self.linktype in LINKAGE_TYPES.values():
+                raise ValueError('"' + unicode(linktype) + '" is not a valid ' +
+                                 'linkage type.')
+
+    def buildAttributes(self, node, attrs, already_processed):
+
+        super(linkageSub, self).buildAttributes(node = node, attrs = attrs,
+                                                already_processed = already_processed)
+        # Check the link type, and convert a key to a value if necessary.
+        if self.linktype in LINKAGE_TYPES:
+            self.linktype = LINKAGE_TYPES[self.linktype]
+        elif not self.linktype in LINKAGE_TYPES.values():
+            raise ValueError('"' + unicode(self.linktype) + '" is not a valid ' +
                              'linkage type.')
+
 
     def to_API(self, isBiDirectional = False):
         """

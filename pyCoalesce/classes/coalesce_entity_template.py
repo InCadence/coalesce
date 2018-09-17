@@ -71,7 +71,7 @@ class CoalesceEntityTemplate(CoalesceEntity):
         return
 
 
-    def new_entity(self, key = None, populate_min_records = True):
+    def new_entity(self, key = None, populate_min_records = True, silence = True):
         """
         Creates a new instance of class "entity" based on the template.
 
@@ -83,7 +83,8 @@ class CoalesceEntityTemplate(CoalesceEntity):
         :return:  a new instance of class "entity".
         """
 
-        new_entity = parseString(self.XML, object_class = type(self).mro()[1])
+        new_entity = parseString(self.XML, object_class = type(self).mro()[1],
+                                 silence = silence)
 
         if key:
             new_entity.key = key

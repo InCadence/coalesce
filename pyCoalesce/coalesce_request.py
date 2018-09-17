@@ -3,7 +3,9 @@
 @author: dvenkat & sorr
 """
 
-from uuid import UUID, uuid4
+from sys import stdout, stderr
+from string import Template
+from uuid import UUID
 from copy import copy
 from warnings import warn
 
@@ -24,25 +26,34 @@ logger = package_logger.getChild(__name__)
 
 ENDPOINTS = {
         u"search" : {u"persistor": u"search", u"controller": u"/search/complex"},
-        u"entity" : {u"persistor": u"CRUD", u"controller": u"/entity/"},
-        u"templates" : {u"persistor": u"CRUD", u"controller": u"/templates/"},
-        u"property" : {u"persistor": u"CRUD", u"controller": u"/property/"},
-        u"linkage" : {u"persistor": u"CRUD", u"controller": u"/linkage/"},
+        u"entity" : {u"persistor": u"CRUD", u"controller": u"/entity"},
+        u"templates" : {u"persistor": u"CRUD", u"controller": u"/templates"},
+        u"property" : {u"persistor": u"CRUD", u"controller": u"/property"},
+        u"linkage" : {u"persistor": u"CRUD", u"controller": u"/linkage"},
     }
 OPERATIONS = {
         u"search" : {u"endpoint": u"search", u"method": u"post"},
-        u"create" : {u"endpoint": u"CRUD", u"method": u"put"},
-        u"read" : {u"endpoint": u"CRUD", u"method": u"get"},
-        u"update" : {u"endpoint": u"CRUD", u"method": u"post"},
-        u"delete" : {u"endpoint": u"CRUD", u"method": u"delete"},
-        u"save_template" : {u"endpoint": u"templates", u"method": u"post"},
-        u"register_template" : {u"endpoint": u"templates", u"method": u"put"},
-        u"read_template": {u"endpoint": u"templates", u"method": u"get"},
-        u"get_template_list": {u"endpoint": u"templates", u"method": u"get"},
+        u"create" : {u"endpoint": u"entity", u"method": u"post"},
+        u"read" : {u"endpoint": u"entity", u"method": u"get", u"final": "$key"},
+        u"update" : {u"endpoint": u"entity", u"method": u"put", u"final": "$key"},
+        u"delete" : {u"endpoint": u"entity", u"method": u"delete",
+                     u"final": "{key}"},
+        u"create_template" : {u"endpoint": u"templates", u"method": u"post"},
+        u"register_template" : {u"endpoint": u"templates", u"method": u"put",
+                                u"final": "$key/register"},
+        u"update_template" : {u"endpoint": u"templates", u"method": u"put",
+                              u"final": "$key"},
+        u"read_template_by_key": {u"endpoint": u"templates", u"method": u"get",
+                                  u"final": "$key"},
+        u"read_template_by_nsv": {u"endpoint": u"templates", u"method": u"get",
+                                  u"final": "$name/$source/$version"},
+        u"get_template_list": {u"endpoint": u"templates", u"method": u"get",
+                               u"final": "$key"},
         u"get_new_entity" : {u"endpoint": u"templates", u"method": u"get"},
         u"delete_template" : {u"endpoint": u"templates", u"method": u"delete"},
         u"create_linkages" : {u"endpoint": u"linkage", u"method": u"put"},
-        u"read_linkages" : {u"endpoint": u"linkage", u"method": u"get"},
+        u"read_linkages" : {u"endpoint": u"linkage", u"method": u"get",
+                            u"final": "$key"},
         u"delete_linkages" : {u"endpoint": u"linkage", u"method": u"delete"},
     }
 ENTITY_UPLOAD_OPERATIONS = (u"create", u"update", u"save_template")
@@ -66,10 +77,10 @@ SEARCH_OPERATORS = {
         u"NullCheck": 0
     }
 
-SEARCH_OUTPUT_FORMATS = (u"JSON", u"list", u"full_dict")
-CRUD_OUTPUT_FORMATS = (u"JSON", u"XML", u"dict", u"entity_object")
-TEMPLATE_LIST_OUTPUT_FORMATS = (u"JSON", u"list")
-LINK_CRUD_OUTPUT_FORMATS = (u"JSON", u"dict_list", u"API_list")
+SEARCH_OUTPUT_FORMATS = (u"json", u"list", u"full_dict")
+CRUD_OUTPUT_FORMATS = (u"json", u"xml", u"dict", u"entity_object")
+TEMPLATE_LIST_OUTPUT_FORMATS = (u"json", u"list")
+LINK_CRUD_OUTPUT_FORMATS = (u"json", u"dict_list", u"API_list")
 
 
 class UnexpectedResponseWarning(Warning):
@@ -135,11 +146,11 @@ class CoalesceServer(object):
         except:
             raise ValueError('The argument "URL" must be a valid URL.')
 
-        if not isinstance(basestring, CRUD_persistor):
+        if not isinstance(CRUD_persistor, basestring):
             raise TypeError('The argument "CRUD_persistor" must be an ASCII ' +
                             'or Unicode string.')
 
-        if not isinstance(basestring, search_persistor):
+        if not isinstance(search_persistor, basestring):
             raise TypeError('The argument "search_persistor" must be an ASCII ' +
                             'or Unicode string.')
 
@@ -160,6 +171,58 @@ class CoalesceServer(object):
         if self.max_attempts < 0:
             raise ValueError('Parameter "max_attempts" must be a positive ' +
                              'integer.')
+
+
+def _construct_URL(server_obj = None, operation = "read", key = None,
+                   name_source_version = None):
+    """
+    A helper function to construct the RESTful API endpoint from the
+    configuration constants.  This function doesn't handle the final
+    "json" or "xml" element of some endpoints--since that element changes
+    the format of the server's response, it's best to handle it within
+    the calling functions, which also parse the response.
+
+    :param server:  a CoalesceServer object
+    :param operation:  one of the keys in the constant "OPERATIONS"
+    :param name_source_version:  an entity's name, source, and version (in
+        that order), as an iterable
+
+    :return:  a URL as a Unicode string
+    """
+
+    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
+    endpoint_str = server_obj.persistors[operation_endpoint[u"persistor"]] + \
+                   operation_endpoint[u"controller"]
+    API_URL = server_obj.URL + endpoint_str
+
+
+    # If there's a "final" segement, add it to the URL, substituting values
+    # as approriate.
+
+    if "final" in operation:
+
+        final_template = Template(operation["final"])
+        sub_dict = {}
+
+        if key:
+            sub_dict["key"] = key
+
+        if name_source_version:
+            sub_dict["name"] = name_source_version[0]
+            sub_dict["source"] = name_source_version[0]
+            sub_dict["version"] = name_source_version[0]
+
+        try:
+            final_str = final_template.substitute(sub_dict)
+        except KeyError:
+            raise KeyError("Forming the endpoint for the requested opertion " +
+                           "requires additional information:  either a UUID " +
+                           "entity key or a name, source, and version, " +
+                           "depending on the operation in question.")
+
+        API_URL += "/" + final_str
+
+    return API_URL
 
 
 def case_operator(input_operator):
@@ -284,10 +347,7 @@ def search(server = None, query = None,
         raise ValueError('The argument "output" must take one of the ' +
                          'following values:\n' + str(SEARCH_OUTPUT_FORMATS) + '.')
     operation = u"search"
-    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
-    endpoint_str = server_obj.persistors[operation_endpoint[u"persistor"]] + \
-                   operation_endpoint[u"controller"]
-    server_URL = server_obj.URL + endpoint_str
+    API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
     method = OPERATIONS[operation][u"method"]
     headers = copy(server_obj.base_headers)
     headers["Content-type"] = "application/json"
@@ -317,7 +377,7 @@ def search(server = None, query = None,
         data["group"] = _case_operators(data["group"])
 
     # Submit the request.
-    response = get_response(URL = server_URL, method = method, data = data_json,
+    response = get_response(URL = API_URL, method = method, data = data_json,
                             headers = headers, delay = 1, max_attempts = 4)
 
     # Return the type of output specified by "output".
@@ -449,7 +509,7 @@ def _test_key(key):
                      'the class uuid.UUID, or any string or integer that ' + \
                      'could serve as input for that class\'s .'
 
-    if isinstance(UUID, key):
+    if isinstance(key, UUID):
         key_obj = key
 
     else:
@@ -464,7 +524,7 @@ def _test_key(key):
                 key_obj = UUID(bytes = key)
 
             except ValueError:
-                if isinstance(basestring, key): # "key" is probably a JSON array.
+                if isinstance(key, basestring): # "key" is probably a JSON array.
                     raise ValueError(key_error_msg)
                 else: # "key" is probably an iterable of keys.
                     raise TypeError(key_error_msg)
@@ -526,8 +586,8 @@ def construct_entity(server = None, template = None, key = None, fields = None):
         key_str = None
 
     # If we don't have a template already, we'll need to get one.
-    if not isinstance(CoalesceEntityTemplate, template):
-        template = read_template(server = server, template = template,
+    if not isinstance(template, CoalesceEntityTemplate):
+        template = read_template(server_obj =  server, template = template,
                                  output = "entity_object")
 
     # Build a new entity from the template.
@@ -540,8 +600,7 @@ def construct_entity(server = None, template = None, key = None, fields = None):
     return new_entity
 
 
-def save_entity(server = None, new_entity = None, key = None,
-                operation = u"create"):
+def save_entity(server = None, entity = None, key = None, operation = u"create"):
 
     """
     Uploads a new entity or modified entity to the Coalesce server.  The
@@ -553,32 +612,34 @@ def save_entity(server = None, new_entity = None, key = None,
 
     Arguments:
     :param server:  a CoalesceServer object or the URL of a Coalesce server
-    :param new_entity:  the entity to upload to the server.  This can be a
-        JSON or XML representation of an entity, a nested dict-like in the
-        same format as a JSON respresentation, or an instance of
-        CoalesceEntity (or a subclass); the function automatically detects the
-        input type and adjusts the RESTful endpoint and requests headers
-        accordingly.
-    :param key:  a UUID to serve as the key for the new entity, either as an
+    :param entity:  the entity to upload to the server.  This can be a JSON or
+        XML representation of an entity, a nested dict-like in the same format
+        as a JSON respresentation, or an instance of CoalesceEntity (or a
+        subclass); the function automatically detects the input type and
+        adjusts the RESTful endpoint and requests headers accordingly.
+    :param key:  a UUID to serve as the key for the entity, either as an
         instance of the "UUID" class, or as any string or integer that could
-        serve as input to the UUID class constructor.  If "new_entity"
-        contains a key, any key supplied as a separate argument must match it
-        or an error will be raised.  If "new_entity" lacks a key and no key
-        is supplied, the function generates one randomly for a normal
-        entity.  In the case of templates, the server generates all keys by
-        hashing the name, source, and version of template.  An updated
-        template may include the key obtained from the server, but submitting
-        an updated template with no key will also work--unless its name,
-        source, or version has been modified, in which case it must be treated
-        as a new template (and any entities created from the template will
-        remain associated with the old version).
-    :param operation:  "create" (PUT), "update" (POST), or
-        "save_template" (POST)
+        serve as input to the UUID class constructor.  Alternately, the key
+        can be contained in "entity"; however, if "entity" contains a
+        key _and_ a key is supplied separately (as the "key" argumet), the
+        two keys must match, or an error will be raised.  When creating a new
+        regular entity, supplying a key (either as part of "entity" or
+        separately) is optional:  if no key is supplied, the server generates
+        one randomly.  In the case of a new template, the server generates a
+        key by hashing the name, source, and version.  Because of this, a key
+        should never be supplied for a new template, and it is important to
+        note that modifying the name, source, and version of a template will
+        change its key, in which case it must be treated as a new template
+        (and any entities created from the template will remain associated
+        with the old version); submiting such a modified template via the
+        update endpoint will result in a server error.
+    :param operation:  "create" (POST), "update" (PUT), "create_template"
+        (POST), or "update_template" (PUT).
 
-    return:  A Python requests Response object.  The "status_code" attribute
-        of this object should be 204 for normal entities, and 200 for
-        templates; in the latter case, the server returns the key of the
-        saved template.
+    return:  A Python requests Response object.  When an entity is created,
+        the server returns the new entity's key (attribute "text"), with a
+        status code (attribute "status_code") of 200.  When an entity is
+        updated, the server returns a status code of 204.
     """
 
     # Check the server input, and create a server object if needed.
@@ -590,9 +651,16 @@ def save_entity(server = None, new_entity = None, key = None,
     else:
         server_obj = CoalesceServer(server)
 
+    # Check for a separately submitted key, check it for validity, and if
+    # necessary change it into a string.
+    if key:
+        key_str = _test_key(key)
+
     # Check the entity input, and it's a Python object, transform it into
     # a JSON or XML string, and set the corresponding API input format.  If
-    # the entity includes a key, extract it.
+    # the entity includes a key, extract it.  If a key was supplied as "key"
+    # but not within "entity", insert the key into the entity object (this is
+    # necessary for a "create" operation).
 
     entity_error_msg = 'The argument "new_entity" must be a ' + \
                        'JSON or XML representation of an entity, a nested ' + \
@@ -600,107 +668,100 @@ def save_entity(server = None, new_entity = None, key = None,
                        'respresentation, or an instance of CoalesceEntity (or ' + \
                        'a subclass).'
 
-    if new_entity:
+    if entity:
 
-        if isinstance(basestring, new_entity):
+        if isinstance(entity, basestring):
 
             try:
-                entity_dict = json.loads(new_entity)
-                entity_key = entity_dict.key
+                entity_dict = json.loads(entity)
+                data = entity
                 input_format = "JSON"
+                try:
+                    entity_key = entity_dict.key
+                except KeyError:
+                    if key:
+                        entity_dict.key = key_str
+                        entity_key = key_str
 
             except JSONDecodeError:
                 try:
-                    entity_dict = xmltodict.parse(new_entity).values()[0]
+                    entity_dict = xmltodict.parse(entity).values()[0]
+                    input_format = "XML"
+                    try:
+                        entity_key = entity_dict["entity"]["@key"]
+                        data = entity
+                    except:
+                        if key:
+                            entity_dict["entity"]["@key"] = key_str
+                            data = xmltodict.unparse(entity_dict)
+                            entity_key = key_str
+
                 except:
                     raise ValueError(entity_error_msg)
-                else:
-                    entity_key = entity_dict["@key"]
-                    input_format = "XML"
 
-        elif isinstance(CoalesceEntity, new_entity):
-            data = to_XML_string(new_entity)
-            entity_key = new_entity.key
+        elif isinstance(entity, CoalesceEntity):
             input_format = "XML"
+            if not entity.key and key:
+                    entity.key = key_str
+            data = to_XML_string(entity)
+            entity_key = entity.key
 
         else:
             try:
-                data = json.dumps(new_entity)
-                try:
-                    entity_key = new_entity["key"]
-                except KeyError:
-                    entity_key = None
                 input_format = "JSON"
-
+                entity_key = entity["key"]
+            except KeyError:
+                if key:
+                    entity["key"] = key_str
+                    entity_key = key_str
+                else:
+                    entity_key = None
             except TypeError:
                 raise TypeError(entity_error_msg)
+            else:
+                 data = json.dumps(entity)
 
     else:
         raise TypeError(entity_error_msg)
 
 
-    # Check for a separately submitted key, check it for validity, and if
-    # necessary change it into a string.
-    if key:
-        key_str = _test_key(key)
-
-        # If the entity includes a key and a key was also supplied separately,
-        # make sure that the keys match.
-        if entity_key:
-            if entity_key != key_str:
-                raise ValueError('The values of "key" and the key found in the ' +
-                                 'submitted entity do not match.')
-
-        # If the entity did not include a key, but one was supplied separately,
-        # use the separately supplied key.
-        else:
-            entity_key = key_str
-
-    # If no key was supplied, generate a random one (for a normal
-    # entity), or substitute "new" for the key (for a template--to make use of
-    # the special template creation endpoint).
-    elif not entity_key:
-        if operation == u"save_template":
-            entity_key = u"new"
-        else:
-            entity_key = unicode(uuid4())
+    # If the entity includes a key and a key was also supplied separately,
+    # make sure that the keys match.
+    if key and entity_key and entity_key != key_str:
+        raise ValueError('The values of "key" and the key found in the ' +
+                         'submitted entity do not match.')
 
     # Check the operation input.
     if not operation in ENTITY_UPLOAD_OPERATIONS:
         raise ValueError('The argument "operation" must take one of the ' +
                          'values:\n' + unicode(ENTITY_UPLOAD_OPERATIONS))
 
-    # Set the request parameters.  Note that in this case, since we'll be
-    # adding headers to the base headers, we copy the base headers, so that
-    # the extra header isn't preserved in the server object.
+    # Set the request parameters.  Note that "entity_key" may or may not be
+    # used by "_construct_URL", depending on the pattern set for the endpoint
+    # in question.  Note also that, since we'll be adding headers to the base
+    # headers, we copy the base headers, so that the extra header isn't
+    # preserved in the server object.
 
-    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
-    endpoint_str = server_obj.persistors[operation_endpoint[u"persistor"]] + \
-                   operation_endpoint[u"controller"]
-    server_URL = server_obj.URL + endpoint_str + "/" + entity_key
+    API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
+                                 key = entity_key)
     method = OPERATIONS[operation][u"method"]
     headers = copy(server_obj.base_headers)
 
     if input_format == u"JSON":
         headers[u"Content-type"] = "application/json"
     elif input_format == u"XML":
-        server_URL += u"/xml"
+        API_URL += u"/xml"
         headers[u"Content-type"] = "application/xml"
     else: # This shouldn't be possible.
         raise ValueError('"' + input_format + '" is not a valid input format.')
 
-    response = get_response(URL = server_URL,
-                            method = method,
-                            data = data,
-                            headers = headers,
-                            delay = 1,
-                            max_attempts = 4
-                            )
+    response = get_response(URL = API_URL, method = method, data = data,
+                            headers = headers, delay = 1, max_attempts = 4)
 
     return response
 
 
-def create(server = None, new_entity = None, key = None, full_response = False):
+def create(server = None, entity = None, key = None, full_response = False):
 
     """
     Uploads a new entity to the Coalesce server using the "PUT" method.  This
@@ -708,48 +769,46 @@ def create(server = None, new_entity = None, key = None, full_response = False):
 
     Arguments:
     :param server:  a CoalesceServer object or the URL of a Coalesce server
-    :param new_entity:  the entity to upload to the server.  This can be a
-        JSON or XML representation of an entity, a nested dict-like in the
-        same format as a JSON respresentation, or an instance of
-        CoalesceEntity (or a subclass); the function automatically detects the
-        input type and adjusts the RESTful endpoint and requests headers
-        accordingly.
+    :param entity:  the entity to upload to the server.  This can be a JSON or
+        XML representation of an entity, a nested dict-like in the same format
+        as a JSON respresentation, or an instance of CoalesceEntity (or a
+        subclass); the function automatically detects the input type and
+        adjusts the RESTful endpoint and requests headers accordingly.
     :param key:  a UUID to serve as the key for the new entity, either as an
         instance of the "UUID" class, or any string or integer that could
-        serve as input to the UUID class constructor.  If the entity itself
-        already includes a key, this argument must match that key, or an
-        error will be raised.  If no key is supplied (either in this argument
-        or as part of the entity), the function randomly generates one.
+        serve as input to the UUID class constructor.  If "entity" already
+        includes a key, this argument must match that key, or an error will be
+        raised.  If no key is supplied (either in this argument or as part of
+        the entity), the server randomly generates one.
     :param full_response:  if True, return the full response from the server
         as a Python requests Response object, rather than a boolean.
 
-    return:  a boolean if "full_response" is False:  True if the response
-        status code is 204 (indicating a successfl creation), False otherwise.
-        If "full_response" is True, a Python requests Response object is
-        returned instead.  Regardless of the value of "full_response", if the
-        response status code has a value in the 200's other than 204, the
-        function raises a warning.  (Any value outside the 200's will raise an
+    return:  the UUID key of the new entity if "full_response" is False.  If
+        "full_response" is True, a Python requests Response object is returned
+        instead.  Regardless of the value of "full_response", if the response
+        status code has a value in the 200's other than 200, the function
+        raises a warning.  (Any value outside the 200's will raise an
         exception.)
     """
 
-    response = save_entity(server = server, new_entity = new_entity, key = key,
+    response = save_entity(server = server, entity = entity, key = key,
                              operation = u"create")
 
     status = response.status_code
 
     if not full_response:
 
-        if status == 204:
-            return True
+        new_entity_key = response.text
 
-        else:
+        if status != 200:
             warn("The API server returned an unexpected status code, " + status +
                  ".  However, the entity might have been created on the server, " +
                  "or might be created after a delay.", UnexpectedResponseWarning)
-            return False
+
+        return new_entity_key
 
     else:
-        if status != 204:
+        if status != 200:
             warn("The API server returned an unexpected status code, " + status +
                  ".  However, the entity might have been created on the server, " +
                  "or might be created after a delay.", UnexpectedResponseWarning)
@@ -787,23 +846,21 @@ def read(server = None, key = None, output = "dict"):
         raise ValueError("Please specify a UUID key.")
 
     operation = u"read"
-    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
-    endpoint_str = server_obj.persistors[operation_endpoint[u"persistor"]] + \
-                   operation_endpoint[u"controller"]
-    server_URL = server_obj.URL + endpoint_str + key_str
+    API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
+                             key = key_str)
 
     output = output.lower()
     if not output in CRUD_OUTPUT_FORMATS:
         raise ValueError('The argument "output" must take one of the ' +
                          'following values:\n' + str(CRUD_OUTPUT_FORMATS) + '.')
     if output == u"xml" or output == u"entity_object":
-        server_URL += "/xml"
+        API_URL += "/xml"
 
     method = OPERATIONS[operation][u"method"]
     headers = server_obj.base_headers
 
     # Submit the request.
-    response = get_response(URL = server_URL, method = method, headers = headers,
+    response = get_response(URL = API_URL, method = method, headers = headers,
                             delay = 1, max_attempts = 4)
 
     # Return the entity in the format specified by "output".
@@ -821,31 +878,30 @@ def read(server = None, key = None, output = "dict"):
         return response.text
 
 
-def update(server = None, updated_entity = None, key = None,
-           full_response = False):
+def update(server = None, entity = None, key = None, full_response = False):
     """
     Uploads a modified entity to the Coalesce server using the "POST" method.
     This is a wrapper for the "upload_entity" function.
 
     Arguments:
     :param server:  a CoalesceServer object or the URL of a Coalesce server
-    :param updated_entity:  the content of the entity to be updated on the
-        server.  This can be a JSON or XML representation of an entity, a
-        nested dict-like in the same format as a JSON respresentation, or an
-        instance of CoalesceEntity (or a subclass); the function automatically
-        detects the input type and adjusts the RESTful endpoint and requests
-        headers accordingly.
-    :param key:  a UUID to serve as the key for the new entity, either as an
+    :param entity:  the content of the entity to be updated on the server.
+        This can be a JSON or XML representation of an entity, a nested dict-
+        like in the same format as a JSON respresentation, or an instance of
+        CoalesceEntity (or a subclass); the function automatically detects the
+        input type and adjusts the RESTful endpoint and requests headers
+        accordingly.
+    :param key:  the UUID key of the entity to be updated, either as an
         instance of the "UUID" class, or any string or integer that could
         serve as input to the UUID class constructor.  If this argument is
         not supplied, "modified_entity" must include a key; if this argument
-        is supplied, it must match any key found in "modified_entity", or an
-        error will be raised.
+        is supplied, it must match any key found in "entity", or an error will
+        be raised.
     :param full_response:  if True, return the full response from the server
         as a Python requests Response object, rather than a boolean.
 
     return:  a boolean if "full_response" is False:  True if the response
-        status code is 204 (indicating a successfl update), False otherwise.
+        status code is 204 (indicating a successful update), False otherwise.
         If "full_response" is True, a Python requests Response object is
         returned instead.  Regardless of the value of "full_response", if the
         response status code has a value in the 200's other than 204, the
@@ -853,8 +909,8 @@ def update(server = None, updated_entity = None, key = None,
         exception.)
     """
 
-    response = save_entity(server = server, new_entity = updated_entity,
-                           key = key, operation = u"update")
+    response = save_entity(server = server, entity = entity, key = key,
+                           operation = u"update")
 
     status = response.status_code
 
@@ -893,9 +949,9 @@ def delete(server = None, keys = None):
         constructor.
 
     :return:  True if the returned status code is 204 (indicating a successful
-        deletion), False in the unlikely event that the server returns another
-        status code in the 200's.  (Any value outside the 200's will raise an
-        exception.)
+        deletion), False (with a warning) in the unlikely event that the
+        server returns another status code in the 200's.  (Any value outside
+        the 200's will raise an exception.)
     """
 
     if isinstance(server, CoalesceServer):
@@ -927,18 +983,15 @@ def delete(server = None, keys = None):
             keys_str = "[" + key_str + "]"
 
     operation = u"delete"
-    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
-    endpoint_str = server_obj.persistors[operation_endpoint[u"persistor"]] + \
-                   operation_endpoint[u"controller"]
-    server_URL = server_obj.URL + endpoint_str + key
+    API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
+                             key = key_str)
     method = OPERATIONS[operation][u"method"]
     headers = copy(server_obj.base_headers)
     headers["Content-type"] = "application/json"
 
     # Submit the request.
-    response = get_response(URL = server_URL, method = method,
-                            data = keys_str, headers = headers, delay = 1,
-                            max_attempts = 4)
+    response = get_response(URL = API_URL, method = method, data = keys_str,
+                            headers = headers, delay = 1, max_attempts = 4)
 
     # Check for the appropriate status code.
 
@@ -956,46 +1009,57 @@ def delete(server = None, keys = None):
     return success
 
 
-def save_template(server = None, template = None, full_response = False):
+def create_template(server = None, template = None, full_response = False):
 
     """
-    Updates an entity template to the Coalesce server using the "POST"
-    method; this can be a new template, or it can overwrite an existing one
-    with the same name, source, and version attributes.  This function is a
-    wrapper for the "upload_entity" function.
+    Creates an entity template on the Coalesce server.  This function is a
+    wrapper for the "save_entity" function.
 
     Note that the user need not supply a key for the template: the server
     will autogenerate the key as a hash of the template's name, source,
-    and version attributes.  Since a given combination of name, source, and
-    version always produces the same key, uploading a template whose name,
-    source, and version match those of an existing template will overwrite
-    the older template.  Likiwise, if a modified template includes a key,
-    that key must match the key generated by the server; a mismatch will
-    produce an error on the serverside.  (This prevents accidental changes
-    to a template's name, source, and version, any of which produce a new
-    template, not associated with any of the entities created from the old
-    template.)
+    and version attributes.
 
     Arguments:
     :param server:  a CoalesceServer object or the URL of a Coalesce server
-    :param template:  the entity to upload to the server.  This can be a
-        JSON or XML representation of an entity, a nested dict-like in the
-        same format as a JSON respresentation, or an instance of
-        CoalesceEntity (or a subclass); the function automatically detects the
-        input type and adjusts the RESTful endpoint and requests headers
-        accordingly.
+    :param template:  the entity template to create on the server.  This can
+        be a JSON or XML representation of a temaplte, a nested dict-like in
+        the same format as a JSON respresentation, or an instance of
+        CoalesceEntityTemplate (or a subclass); the function automatically
+        detects the input type and adjusts the RESTful endpoint and requests
+        headers accordingly.
     :param full_response:  if True, return the full response from the server
         as a Python requests Response object, rather than a boolean.
 
-    :return:  the template's UUID
+    return:  the UUID key of the new entity if "full_response" is False.  If
+        "full_response" is True, a Python requests Response object is returned
+        instead.  Regardless of the value of "full_response", if the response
+        status code has a value in the 200's other than 200, the function
+        raises a warning.  (Any value outside the 200's will raise an
+        exception.)
     """
 
-    response = save_entity(server = server, template = template,
-                           operation = u"save_template")
+    response = save_entity(server = server, entity = template,
+                           operation = u"create_template")
 
-    # Return the UUID key generated by the server.
-    key = response.text
-    return key
+    status = response.status_code
+
+    if not full_response:
+
+        new_template_key = response.text
+
+        if status != 200:
+            warn("The API server returned an unexpected status code, " + status +
+                 ".  However, the entity might have been created on the server, " +
+                 "or might be created after a delay.", UnexpectedResponseWarning)
+
+        return new_template_key
+
+    else:
+        if status != 200:
+            warn("The API server returned an unexpected status code, " + status +
+                 ".  However, the entity might have been created on the server, " +
+                 "or might be created after a delay.", UnexpectedResponseWarning)
+        return response
 
 
 def register_template(server = None, key = None):
@@ -1020,17 +1084,17 @@ def register_template(server = None, key = None):
 
     if not key:
         raise ValueError("Please specify a UUID key.")
+    else:
+        key_str = _test_key(key)
 
     operation = u"register_template"
-    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
-    endpoint_str = server_obj.persistors[operation_endpoint[u"persistor"]] + \
-                   operation_endpoint[u"controller"]
-    server_URL = server_obj.URL + endpoint_str + key
+    API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
+                             key = key_str)
     method = OPERATIONS[operation][u"method"]
     headers = server_obj.base_headers
 
     # Submit the request.
-    response = get_response(URL = server_URL, method = method, headers = headers,
+    response = get_response(URL = API_URL, method = method, headers = headers,
                             delay = 1, max_attempts = 4)
 
     # Convert the response to a boolean.
@@ -1068,12 +1132,12 @@ def read_template(server = None, template = None, output = "dict"):
     if template:
 
         if len(template) == 3:
-            name, source, version = template
-            endpoint_final = name + "/" + source + "/" + version
+            operation = u"read_template_by_nsv"
+            URL_kwarg = {"name_source_version": template}
 
         else:
 
-            if isinstance(UUID, template):
+            if isinstance(template, UUID):
                 template_key_obj = template
 
             else:
@@ -1084,8 +1148,9 @@ def read_template(server = None, template = None, output = "dict"):
                 except ValueError:
                     template_key_obj = UUID(bytes = template)
 
+            operation = u"read_template_by_nsv"
             template_key = unicode(template_key_obj)
-            endpoint_final = + template_key
+            URL_kwarg = {"key": template_key}
 
     else:
         raise TypeError('You must supply a value for "template".')
@@ -1094,19 +1159,18 @@ def read_template(server = None, template = None, output = "dict"):
     if not output in CRUD_OUTPUT_FORMATS:
         raise ValueError('The argument "output" must take one of the ' +
                          'following values:\n' + str(CRUD_OUTPUT_FORMATS) + '.')
-    if output == u"xml" or output = u"enity_object":
-        endpoint_final += "/xml"
 
     # Set the request parameters.
     operation = u"read_template"
-    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
-    server_URL = server_obj.persistors[operation_endpoint[u"persistor"]] + \
-                 operation_endpoint[u"controller"] + endpoint_final
+    API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
+                             **URL_kwarg)
     method = OPERATIONS[operation][u"method"]
     headers = server_obj.base_headers
+    if output == u"xml" or output == u"entity_object":
+        API_URL += "/xml"
 
     # Submit the request.
-    response = get_response(URL = server_URL, method = method, headers = headers,
+    response = get_response(URL = API_URL, method = method, headers = headers,
                             delay = 1, max_attempts = 4)
 
     # Return the template in the format specified by "output".
@@ -1149,10 +1213,7 @@ def get_template_list(server = None, output = "list"):
         server_obj = CoalesceServer(server)
 
     operation = u"get_template_list"
-    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
-    endpoint_str = server_obj.persistors[operation_endpoint[u"persistor"]] + \
-                   operation_endpoint[u"controller"]
-    server_URL = server_obj.URL + endpoint_str
+    API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
 
     output = output.lower()
     if not output in TEMPLATE_LIST_OUTPUT_FORMATS:
@@ -1164,7 +1225,7 @@ def get_template_list(server = None, output = "list"):
     headers = server_obj.base_headers
 
     # Submit the request.
-    response = get_response(URL = server_URL, method = method, headers = headers,
+    response = get_response(URL = API_URL, method = method, headers = headers,
                             delay = 1, max_attempts = 4)
 
     # Return the template in the format specified by "output".
@@ -1175,6 +1236,71 @@ def get_template_list(server = None, output = "list"):
 
     else: # The requested output format was "JSON".
         return response.text
+
+
+def update_template(server = None, template = None, key = None,
+                    full_response = False):
+
+    """
+    Updates an entity template on the Coalesce server.  This function is a
+    wrapper for the "upload_entity" function.
+
+    Note that, since a template key is a hash of the template's name, source,
+    and version, modifying any of these values produces a new template, with
+    a different key, which must be uploaded via the "create_template"
+    function (and any of the entities created from the old template remain
+    associated with that one).
+
+    Arguments:
+    :param server:  a CoalesceServer object or the URL of a Coalesce server
+    :param template:  the content of the entity to be updated on the server.
+        This can be a JSON or XML representation of a template, a nested dict-
+        like in the same format as a JSON respresentation, or an instance of
+        CoalesceEntityTemplate (or a subclass); the function automatically
+        detects the input type and adjusts the RESTful endpoint and requests
+        headers accordingly.
+    :param key:  the UUID key of the template to be updated, either as an
+        instance of the "UUID" class, or any string or integer that could
+        serve as input to the UUID class constructor.  If this argument is
+        not supplied, "modified_entity" must include a key; if this argument
+        is supplied, it must match any key found in "template", or an error
+        will be raised.
+    :param full_response:  if True, return the full response from the server
+        as a Python requests Response object, rather than a boolean.
+
+    return:  a boolean if "full_response" is False:  True if the response
+        status code is 204 (indicating a successful update), False otherwise.
+        If "full_response" is True, a Python requests Response object is
+        returned instead.  Regardless of the value of "full_response", if the
+        response status code has a value in the 200's other than 204, the
+        function raises a warning.  (Any value outside the 200's will raise an
+        exception.)
+    """
+
+    response = save_entity(server = server, entity = template,
+                           operation = u"update_template")
+
+    status = response.status_code
+
+    if not full_response:
+
+        if status == 204:
+            return True
+
+        else:
+            warn("The API server returned an unexpected status code, " + status +
+                 ".  However, the entity might have been modified on the " +
+                 "server, or might be modified after a delay.",
+                 UnexpectedResponseWarning)
+            return False
+
+    else:
+        if status != 204:
+            warn("The API server returned an unexpected status code, " + status +
+                 ".  However, the entity might have been modified on the " +
+                 "server, or might be modified after a delay.",
+                 UnexpectedResponseWarning)
+        return response
 
 
 def delete_template(server = None, key = None):
@@ -1189,9 +1315,9 @@ def delete_template(server = None, key = None):
     :param key:  The UUID of the entity being deleted
 
     :return:  True if the returned status code is 200 (which should
-        indicate a successful deletion), False if the status code has any
-        other value in the 200's.  (Any values outside the 200's will raise
-        an error.)
+        indicate a successful deletion), False (with a warning) if the status
+        code has any other value in the 200's.  (Any values outside the 200's
+        will raise an error.)
     """
 
     if isinstance(server, CoalesceServer):
@@ -1202,16 +1328,17 @@ def delete_template(server = None, key = None):
     if not key:
         raise ValueError("Please specify a UUID key.")
 
+    else:
+        key_str = _test_key(key)
+
     operation = u"delete_template"
-    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
-    endpoint_str = server_obj.persistors[operation_endpoint[u"persistor"]] + \
-                   operation_endpoint[u"controller"]
-    server_URL = server_obj.URL + endpoint_str + key
+    API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
+                             key = key_str)
     method = OPERATIONS[operation][u"method"]
     headers = server_obj.base_headers
 
     # Submit the request.
-    response = get_response(URL = server_URL, method = method, headers = headers,
+    response = get_response(URL = API_URL, method = method, headers = headers,
                             delay = 1, max_attempts = 4)
 
     # Check for the appropriate status code.
@@ -1260,7 +1387,7 @@ def _JSONify_linkage_list(linkages):
                          'CoalesceAPILinkage (or a subclass); or an iterable ' + \
                          'of such linkages.'
 
-        if isinstance(basestring, linkage):
+        if isinstance(linkage, basestring):
 
             try:
                 linkage_Python = json.loads(linkage)
@@ -1287,11 +1414,11 @@ def _JSONify_linkage_list(linkages):
                 else:
                     linkage_format = "JSON_array"
 
-        elif isinstance(CoalesceLinkage, linkage):
+        elif isinstance(linkage, CoalesceLinkage):
             linkage_JSON = json.dumps(linkage.to_API())
             linkage_format = "XSD"
 
-        elif isinstance(CoalesceAPILinkage, linkage):
+        elif isinstance(linkage, CoalesceAPILinkage):
             linkage_JSON = json.dumps(linkage)
             linkage_format = "API"
 
@@ -1392,10 +1519,7 @@ def create_linkages(server = None, linkages = None):
         server_obj = CoalesceServer(server)
 
     operation = u"create_linkages"
-    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
-    endpoint_str = server_obj.persistors[operation_endpoint[u"persistor"]] + \
-                   operation_endpoint[u"controller"]
-    server_URL = server_obj.URL + endpoint_str
+    API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
 
     linkage_array = _JSONify_linkage_list(linkages)
 
@@ -1404,7 +1528,7 @@ def create_linkages(server = None, linkages = None):
     headers["Content-type"] = "application/json"
 
     # Submit the request.
-    response = get_response(URL = server_URL, data = linkage_array,
+    response = get_response(URL = API_URL, data = linkage_array,
                             method = method, headers = headers, delay = 1,
                             max_attempts = 4)
 
@@ -1450,7 +1574,7 @@ def read_linkages(server = None, key = None, output = "dict_list"):
     else:
         server_obj = CoalesceServer(server)
 
-    if isinstance(UUID, key):
+    if isinstance(key, UUID):
         key_obj = key
 
     else:
@@ -1464,10 +1588,8 @@ def read_linkages(server = None, key = None, output = "dict_list"):
     key_str = unicode(key_obj)
 
     operation = u"read_linkages"
-    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
-    endpoint_str = server_obj.persistors[operation_endpoint[u"persistor"]] + \
-                   operation_endpoint[u"controller"]
-    server_URL = server_obj.URL + endpoint_str + "/" + key_str
+    API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
+                             key = key_str)
 
     method = OPERATIONS[operation][u"method"]
     headers = server_obj.base_headers
@@ -1478,7 +1600,7 @@ def read_linkages(server = None, key = None, output = "dict_list"):
                          'values:\n' + str(LINK_CRUD_OUTPUT_FORMATS) + '.')
 
     # Submit the request.
-    response = get_response(URL = server_URL, method = method, headers = headers,
+    response = get_response(URL = API_URL, method = method, headers = headers,
                             delay = 1, max_attempts = 4)
 
     # Return the type of output specified by "output".
@@ -1525,10 +1647,7 @@ def delete_linkages(server = None, linkages = None):
         server_obj = CoalesceServer(server)
 
     operation = u"delete_linkages"
-    operation_endpoint = ENDPOINTS[OPERATIONS[operation][u"endpoint"]]
-    endpoint_str = server_obj.persistors[operation_endpoint[u"persistor"]] + \
-                   operation_endpoint[u"controller"]
-    server_URL = server_obj.URL + endpoint_str
+    API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
 
     linkage_array = _JSONify_linkage_list(linkages)
 
@@ -1537,7 +1656,7 @@ def delete_linkages(server = None, linkages = None):
     headers["Content-type"] = "application/json"
 
     # Submit the request.
-    response = get_response(URL = server_URL, data = linkage_array,
+    response = get_response(URL = API_URL, data = linkage_array,
                             method = method, headers = headers, delay = 1,
                             max_attempts = 4)
 

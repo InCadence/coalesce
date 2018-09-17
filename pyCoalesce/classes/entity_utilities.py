@@ -7,6 +7,7 @@ Created on Sat Aug 11 18:14:28 2018
 
 import sys
 from cStringIO import StringIO
+from copy import copy
 from collections import deque
 
 from lxml import etree as etree_
@@ -198,7 +199,8 @@ def to_XML_string(Coalesce_object, indent_level = 1, pretty_print = True):
     return string_file.getvalue()
 
 
-def find_child(Coalesce_object, name, match_case = False):
+def find_child(Coalesce_object, name, match_case = False,
+               include_fielddefinitions = False):
     """
     Recursively searches a Coalesce object tree to find any objects matching
     "name".
@@ -207,10 +209,14 @@ def find_child(Coalesce_object, name, match_case = False):
     :param name:  the (ASCII or Unicode) name of the object being searched
         for.
     :param match_case:  if True, match the case of "name".
+    :param include_fielddefinitions:  if True, include "fielddefinition"
+        objects in the results.  Normally, we want to exclude these,
+        because they have the same names as fields, leading to ambiguity
+        when using this function to find fields to set.
 
     :return:  a nested list containing paths to all matching objects.  If
         "Coalesce_object" itself matches "name", its "path" will be a list
-        whose single item is "<root>".w3
+        whose single item is "<root>".
 
     The function does not search linkages--these can always be found in the
     same place.
@@ -218,14 +224,14 @@ def find_child(Coalesce_object, name, match_case = False):
 
     # Check input.
 
-    if not isinstance(coalesceObjectType, Coalesce_object):
+    if not isinstance(Coalesce_object, coalesceObjectType):
         raise TypeError('Argument "Coalesce_object" must be an instance of '
-                        'a CoalesceEntity or one of its child types.')
+                        'CoalesceEntity or one of its child types.')
 
-    if not isinstance(basestring, name):
+    if not isinstance(name, basestring):
         raise TypeError('Argument "name" must be an ASCII or Unicode string.')
 
-    if not isinstance(bool, match_case):
+    if not isinstance(match_case, bool):
         raise TypeError('Argument "match_case" must be a boolean.')
 
     if not match_case:
@@ -244,7 +250,11 @@ def find_child(Coalesce_object, name, match_case = False):
     # object, we need the "<root>" tag, since otherwise its path would be
     # empty, but we need to remove it for the child objects.
 
-    for object_type in OBJECT_TYPES:
+    object_types = copy(OBJECT_TYPES)
+    if not include_fielddefinitions:
+        object_types.remove("fielddefinition")
+
+    for object_type in object_types:
 
         if hasattr(Coalesce_object, object_type):
             for i, child in enumerate(getattr(Coalesce_object, object_type)):
@@ -277,14 +287,14 @@ def get_child_attrib(Coalesce_object, path = [u"<root>"], attrib = "value"):
     :return:  the value of the target attribute
     """
 
-    if not isinstance(coalesceObjectType, Coalesce_object):
+    if not isinstance(Coalesce_object, coalesceObjectType):
         raise TypeError('Argument "Coalesce_object" must be an instance of '
                         'a CoalesceEntity or one of its child types.')
 
     if len(path) == 0:
         raise ValueError("The specified path is empty.")
 
-    if not isinstance(basestring, attrib):
+    if not isinstance(attrib, basestring):
         raise TypeError('Argument "attrib" must be an ASCII or Unicode string.')
 
     target = Coalesce_object
@@ -328,14 +338,14 @@ def set_child_attrib(Coalesce_object, path = [u"<root>"], attrib = "value",
     :return:  True, indicating the attribute has been set successfully
     """
 
-    if not isinstance(coalesceObjectType, Coalesce_object):
+    if not isinstance(Coalesce_object, coalesceObjectType):
         raise TypeError('Argument "Coalesce_object" must be an instance of '
                         'a CoalesceEntity or one of its child types.')
 
     if len(path) == 0:
         raise ValueError("The specified path is empty.")
 
-    if not isinstance(basestring, attrib):
+    if not isinstance(attrib, basestring):
         raise TypeError('Argument "attrib" must be an ASCII or Unicode string.')
 
     target = Coalesce_object
@@ -388,11 +398,11 @@ def set_entity_fields(Coalesce_entity = None, fields = None, match_case = False)
 
     # Check for valid input.
     if not Coalesce_entity:
-        raise ValueError('The argument "entity" must be an instance of class ' +
-                        'CoalesceEntity or one of its subclasses.')
-    elif not isinstance(supermod.entity, Coalesce_entity):
-        raise TypeError('The argument "entity" must be an instance of class ' +
-                        'CoalesceEntity or one of its subclasses.')
+        raise ValueError('The argument "Coalesce_entity" must be an instance of ' +
+                        'class CoalesceEntity or one of its subclasses.')
+    elif not isinstance(Coalesce_entity, supermod.entity):
+        raise TypeError('The argument "Coalesce_entity" must be an instance of ' +
+                        'class CoalesceEntity or one of its subclasses.')
     try:
         fields_iter = fields.iteritems()
     except:
@@ -400,21 +410,22 @@ def set_entity_fields(Coalesce_entity = None, fields = None, match_case = False)
                         'with field names or paths as keys and field values as ' +
                         'values.')
 
-    if not isinstance(bool, match_case):
+    if not isinstance(match_case, bool):
         raise TypeError('Argument "match_case" must be a boolean.')
 
     # Set each field in turn.
     for key, value in fields_iter:
 
         # If necessary, find the path to the field in question.
-        if isinstance(basestring, key):
-            matches = find_child(Coalesce_entity, key)
+        if isinstance(key, basestring):
+            matches = find_child(Coalesce_entity, key,
+                                 include_fielddefinitions = False)
             num_matches = len(matches)
             if num_matches == 0:
                 raise ValueError('Field "' + key + '" not found.')
             elif num_matches > 1:
                 raise ValueError('The entity has more than one field named "' +
-                                 key + '".  Try using field paths instead:  use' +
+                                 key + '".  Try using field paths instead:  use ' +
                                  'classes.find_child to find these.')
             else:
                 path = matches[0]

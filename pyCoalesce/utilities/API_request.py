@@ -10,11 +10,11 @@ from random import randint
 from requests import Session, Request, ConnectionError, Timeout, ConnectTimeout
 import urllib3
 
-from app_config.log_setup import master_logger
+from logger import package_logger
 
 
 # Set up logging.
-logger = master_logger.getChild(__name__)
+logger = package_logger.getChild(__name__)
 
 # Create a session object.
 session = Session()
@@ -110,6 +110,9 @@ def get_response(URL, method = "get", verify = True, cert = None, params = None,
 
             # In some cases, retrying won't do us any good.
             else:
+                logger.warn("Received the following error message from server " +
+                            "at " + URL + ":\n" + response.text)
+                stderr.flush()
                 response.raise_for_status()
 
         except (ConnectionError, Timeout) as err:
