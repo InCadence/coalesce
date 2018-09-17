@@ -304,12 +304,6 @@ class TemplateWorkspace extends Component {
       items.forEach(function (item) {
 
         registerTemplate(item.template.key).then(function (result) {
-          if (!result) {
-            that.setState({
-              loading: null,
-              error: "Registering Template: " + item.template.key
-            });
-          }
           if (++count >= items.length) {
             that.setState({
               loading: null

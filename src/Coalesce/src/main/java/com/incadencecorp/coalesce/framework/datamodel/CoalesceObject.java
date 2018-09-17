@@ -87,6 +87,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     private CoalesceObjectType _object;
 
     private HashMap<String, CoalesceObject> _children = new LinkedHashMap<String, CoalesceObject>();
+    private boolean wasKeyGenerated = false;
 
     /*--------------------------------------------------------------------------
     Constructors
@@ -988,12 +989,12 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
     protected boolean initialize(CoalesceObjectType object)
     {
-
         _object = object;
 
-        if (getKey() == null || getKey().equals(""))
+        if (StringHelper.isNullOrEmpty(getKey()))
         {
             setKey(java.util.UUID.randomUUID().toString());
+            wasKeyGenerated = true;
         }
 
         DateTime utcDate = JodaDateTimeHelper.nowInUtc();
@@ -1009,6 +1010,11 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
         return true;
 
+    }
+
+    public boolean wasKeyGenerated()
+    {
+        return wasKeyGenerated;
     }
 
     protected boolean initialize(CoalesceObject coalesceObject)

@@ -90,17 +90,17 @@ public class EntityDataController {
         return retrieveEntity(entityKey).toXml();
     }
 
-    public void updateEntity(String entityKey, String json) throws RemoteException
+    public void updateEntityAsJson(String entityKey, String json) throws RemoteException
     {
-        setEntity(entityKey, false, processJSON(entityKey, json));
+        updatedEntity(entityKey, processJSON(json));
     }
 
-    public void createEntity(String entityKey, String json) throws RemoteException
+    public String createEntityAsJson(String json) throws RemoteException
     {
-        setEntity(entityKey, true, processJSON(entityKey, json));
+        return createEntity(processJSON(json));
     }
 
-    private CoalesceEntity processJSON(String entityKey, String json) throws RemoteException
+    private CoalesceEntity processJSON(String json) throws RemoteException
     {
         JSONObject obj = new JSONObject(json);
 
@@ -137,40 +137,61 @@ public class EntityDataController {
 
     public void updateEntityAsXml(String entityKey, String xml) throws RemoteException
     {
-        setEntity(entityKey, false, CoalesceEntity.create(xml));
+        updatedEntity(entityKey, CoalesceEntity.create(xml));
     }
 
-    public void createEntityAsXml(String entityKey, String xml) throws RemoteException
+    public String createEntityAsXml(String xml) throws RemoteException
     {
-        setEntity(entityKey, true, CoalesceEntity.create(xml));
+        return createEntity(CoalesceEntity.create(xml));
     }
 
-    private void setEntity(String entityKey, boolean isNew, CoalesceEntity entity) throws RemoteException
+    private void updatedEntity(String entityKey, CoalesceEntity entity) throws RemoteException
     {
-        if (entity == null)
+        if (entity != null)
         {
-            error("(FAILED) Initializing Entity");
-        }
+            if (!entityKey.equalsIgnoreCase(entity.getKey()))
+            {
+                if (entity.wasKeyGenerated())
+                {
+                    // Replace with key specified by the endpoint
+                    entity.setKey(entityKey);
+                }
+                else
+                {
+                    error(String.format(CoalesceErrors.KEY_MISMATCH, entityKey, entity.getKey()));
+                }
+            }
 
-        if (!entityKey.equals(entity.getKey()))
-        {
-            error(String.format(CoalesceErrors.KEY_MISMATCH, entityKey, entity.getKey()));
-        }
-
-        if (isNew)
-        {
-            if (!crud.createDataObject(entity))
+            if (!crud.updateDataObject(entity))
             {
                 error(crud.getLastResult()[0].getError());
             }
         }
         else
         {
-            if (!crud.updateDataObject(entity))
+            error("(FAILED) Initializing Entity");
+        }
+    }
+
+    private String createEntity(CoalesceEntity entity) throws RemoteException
+    {
+        String key = null;
+
+        if (entity != null)
+        {
+            if (!crud.createDataObject(entity))
             {
                 error(crud.getLastResult()[0].getError());
             }
+
+            key = entity.getKey();
         }
+        else
+        {
+            error("(FAILED) Initializing Entity");
+        }
+
+        return key;
     }
 
     public void deleteEntities(String[] keys) throws RemoteException
