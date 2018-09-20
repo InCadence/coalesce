@@ -469,7 +469,7 @@ export class FieldInput extends React.Component {
             fullWidth={true}
             label={label + " (UI Not Implemented)"}
             helperText={this.props.hint}
-            style={style}
+            style={style.root}
             inputProps={this.props.inputProps}
             disabled
             value={field[attr]}
