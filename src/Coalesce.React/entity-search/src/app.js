@@ -27,7 +27,7 @@ export class App extends React.Component {
       cache: [],
       key: null,
       results: null,
-      properties: null,
+      properties: [],
       query: this.createQuery()
     }
   }
@@ -99,8 +99,8 @@ export class App extends React.Component {
     }});
   }
 
-  handleUpdate(data) {
-    this.setState({query: data});
+  handleUpdate(data, properties) {
+    this.setState(() => {return {query: data, properties: properties}});
   }
 
   handleTemplateLoad(key) {
@@ -131,7 +131,8 @@ export class App extends React.Component {
         that.setState({
           key: key,
           query: this.createQuery(cache[key].name),
-          promptTemplate: false
+          promptTemplate: false,
+          properties: []
           }
         );
 
@@ -186,7 +187,7 @@ export class App extends React.Component {
             img: "/images/svg/erase.svg",
             title: 'Reset Criteria',
             onClick: () => {
-              this.setState({query: this.createQuery()})
+              this.setState(() => {return {query: this.createQuery(), properties: []}})
               console.log("Reset Criteria");
             }
           },{
@@ -264,12 +265,20 @@ export class App extends React.Component {
       "group": this.state.query
     };
     console.log("Index search", this.state.query);
-    // Get additional columns
-    // TODO Handle nested properties
-    this.state.query.criteria.forEach(function (criteria) {
-      query.propertyNames.push(criteria.recordset + "." + criteria.field);
-      console.log("Index search", query.propertyNames);
+
+    // Get Specified columns
+    this.state.properties.forEach(function (property) {
+      query.propertyNames.push(property);
     });
+
+    // If Columns were not specified
+    if (this.state.properties.length === 0) {
+      this.state.query.criteria.forEach(function (criteria) {
+        if (!query.propertyNames.includes(criteria.recordset + "." + criteria.field)) {
+          query.propertyNames.push(criteria.recordset + "." + criteria.field);
+        }
+      })
+    }
 
     // Display Spinner
     this.setState(() => {return {

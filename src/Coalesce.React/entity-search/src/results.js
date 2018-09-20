@@ -10,7 +10,6 @@ import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import Checkbox from '@material-ui/core/Checkbox';
 
 export class SearchResults extends React.Component {
 
@@ -23,7 +22,6 @@ export class SearchResults extends React.Component {
 
     this.handleDownload = this.handleDownload.bind(this);
     this.handleCheckAll = this.handleCheckAll.bind(this);
-    this.handleColumnChange = this.handleColumnChange.bind(this);
 
     var columns = this.createColumns(this.props.properties);
 
@@ -71,7 +69,6 @@ export class SearchResults extends React.Component {
         />
         <Divider />
         <ExpansionPanelActions  style={{padding: '5px', float: 'right'}}>
-          <IconButton icon="/images/svg/settings.svg" title="Settings" onClick={this.handleColumnChange} />
           <IconButton icon="/images/svg/download.svg" title="Download Results" onClick={this.handleDownload} />
           <IconButton icon="/images/svg/delete.svg" title="Delete Results" onClick={this.handleDelete} />
         </ExpansionPanelActions>
@@ -127,20 +124,16 @@ export class SearchResults extends React.Component {
     this.setState(() => {return {keysToDelete: keysToDelete}})
   }
 
-  handleColumnChange() {
-    this.props.handleError("(Coming Soon!!!) This will allow you to select which columns to display.");
-  }
-
   handleCheckAll(value) {
     const {tabledata} = this.state;
 
     if (tabledata) {
-    tabledata.forEach(function (hit) {
-      hit.checked = value
-    })
+      tabledata.forEach(function (hit) {
+        hit.checked = value
+      })
 
-    this.setState(() => {return {tabledata: tabledata}} )
-  }
+      this.setState(() => {return {tabledata: tabledata}} )
+    }
   }
 
   createColumns(properties) {
@@ -158,7 +151,8 @@ export class SearchResults extends React.Component {
       },{
         // Add Entity Key Column
         Header: 'Key',
-        accessor: 'entityKey'
+        accessor: 'entityKey',
+        show: false
       }
     ];
 
