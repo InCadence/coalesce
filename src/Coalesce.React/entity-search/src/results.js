@@ -134,11 +134,13 @@ export class SearchResults extends React.Component {
   handleCheckAll(value) {
     const {tabledata} = this.state;
 
+    if (tabledata) {
     tabledata.forEach(function (hit) {
       hit.checked = value
     })
 
     this.setState(() => {return {tabledata: tabledata}} )
+  }
   }
 
   createColumns(properties) {
@@ -182,8 +184,9 @@ export class SearchResults extends React.Component {
           id={cell.row.key}
           icon='/images/svg/view.svg'
           title="View Entity"
-          size="18px"
+          size="20px"
           onClick={() => window.open(`${this.props.url}/entityeditor/?entitykey=${cell.row.entityKey}`)}
+          square
         />
       )
     });

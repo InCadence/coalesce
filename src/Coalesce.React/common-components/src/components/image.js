@@ -15,7 +15,10 @@ class Image extends React.PureComponent {
     }
 
     style.height = this.props.size;
-    //style.width = this.props.size;
+
+    if (this.props.square) {
+      style.width = this.props.size;
+    }
 
     var isSvg = this.props.icon.endsWith("svg");
     var view;

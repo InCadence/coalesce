@@ -36,13 +36,13 @@ class Menu extends React.PureComponent {
       if (item.onClick != null) {
         return (
             <NavItem key={item.id} eventKey={item.id} href="#">
-              <IconButton icon={item.img} title={item.title ? item.title : item.name} onClick={item.onClick} size={40} />
+              <IconButton icon={item.img} title={item.title ? item.title : item.name} onClick={item.onClick} size={40} square/>
             </NavItem>
           )
       } else {
         return (
             <NavItem key={item.id} eventKey={item.id} href={item.url}>
-              <IconButton icon={item.img} title={item.title ? item.title : item.name} size={40} />
+              <IconButton icon={item.img} title={item.title ? item.title : item.name} size={40} square/>
             </NavItem>
           )
       }
@@ -75,6 +75,7 @@ class Menu extends React.PureComponent {
               size={40}
               palette={this.props.theme.palette.primary}
               style={{float: "left"}}
+              square
             />
           </Navbar.Brand>
           <Navbar.Brand>
