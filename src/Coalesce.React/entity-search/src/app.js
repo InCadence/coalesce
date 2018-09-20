@@ -6,8 +6,6 @@ import { DialogMessage, DialogLoader, DialogOptions } from 'common-components/li
 import { searchComplex } from 'common-components/lib/js/searchController.js';
 import uuid from 'uuid';
 
-import Paper from '@material-ui/core/Paper';
-
 import FilterCreator from './filtercreator.js'
 import {SearchResults} from './results.js'
 

@@ -157,12 +157,12 @@ public class TemplateDataControllerTest {
         Assert.assertEquals(CoalesceEntity.ATTRIBUTE_DATECREATED, fieldResults.get(4).getName());
         Assert.assertEquals(CoalesceEntity.ATTRIBUTE_LASTMODIFIED, fieldResults.get(5).getName());
 
-        Assert.assertEquals(ECoalesceFieldDataTypes.GUID_TYPE, fieldResults.get(0).getType());
-        Assert.assertEquals(ECoalesceFieldDataTypes.STRING_TYPE, fieldResults.get(1).getType());
-        Assert.assertEquals(ECoalesceFieldDataTypes.STRING_TYPE, fieldResults.get(2).getType());
-        Assert.assertEquals(ECoalesceFieldDataTypes.STRING_TYPE, fieldResults.get(3).getType());
-        Assert.assertEquals(ECoalesceFieldDataTypes.DATE_TIME_TYPE, fieldResults.get(4).getType());
-        Assert.assertEquals(ECoalesceFieldDataTypes.DATE_TIME_TYPE, fieldResults.get(5).getType());
+        Assert.assertEquals(ECoalesceFieldDataTypes.GUID_TYPE, fieldResults.get(0).getDataType());
+        Assert.assertEquals(ECoalesceFieldDataTypes.STRING_TYPE, fieldResults.get(1).getDataType());
+        Assert.assertEquals(ECoalesceFieldDataTypes.STRING_TYPE, fieldResults.get(2).getDataType());
+        Assert.assertEquals(ECoalesceFieldDataTypes.STRING_TYPE, fieldResults.get(3).getDataType());
+        Assert.assertEquals(ECoalesceFieldDataTypes.DATE_TIME_TYPE, fieldResults.get(4).getDataType());
+        Assert.assertEquals(ECoalesceFieldDataTypes.DATE_TIME_TYPE, fieldResults.get(5).getDataType());
 
         fieldResults = controller.getRecordSetFields(template.getKey(), results.get(1).getKey());
 
