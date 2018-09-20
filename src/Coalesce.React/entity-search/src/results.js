@@ -10,6 +10,7 @@ import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
+import { toCSV } from 'react-csv/lib/core';
 
 export class SearchResults extends React.Component {
 
@@ -88,7 +89,44 @@ export class SearchResults extends React.Component {
   }
 
   handleDownload() {
-    this.props.handleError("(Coming Soon!!!) This will allow you to download search results.");
+
+    const { tabledata, columns } = this.state;
+
+    // Derive Headers from columns
+    var headers = columns.filter(column => column.show !== false && column.width !== 34).map((item) => item.accessor);
+
+    // Map tabledata into CSV rows
+    var data = tabledata.map((item) => {
+
+      var row = {};
+
+      for (var ii=0; ii<headers.length && ii<item.values.length; ii++) {
+        row[headers[ii]] = item.values[ii];
+      }
+
+      return row
+    });
+
+    let blob = new Blob([toCSV(data, headers, ',')])
+    this.saveFile(blob, `query-results.csv`);
+
+  }
+
+  saveFile(blob, filename) {
+    if (window.navigator.msSaveOrOpenBlob) {
+      window.navigator.msSaveOrOpenBlob(blob, filename);
+    } else {
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      const url = window.URL.createObjectURL(blob);
+      a.href = url;
+      a.download = filename;
+      a.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }, 0)
+    }
   }
 
   handleDeleteCancel() {
