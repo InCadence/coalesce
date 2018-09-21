@@ -70,7 +70,6 @@ export class FieldInput extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log("updating");
     this.setState({
       field: nextProps.field
     })

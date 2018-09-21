@@ -9,6 +9,8 @@ import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
+import { OPERATORS } from 'common-components/lib/js/searchController.js';
+import { Row, Col } from 'react-bootstrap'
 
 Object.assign(ReactTableDefaults, {
   defaultPageSize: 5,
@@ -34,7 +36,9 @@ class FilterCreator extends React.Component {
     this.state = {
       data: props.data,
       isOpened: true,
-      currentkey: 0
+      currentkey: 0,
+      promptProperties: false,
+      properties: createPropertyList(props.recordsets)
     }
 
     this.handleUpdate = this.handleUpdate.bind(this);
@@ -46,6 +50,8 @@ class FilterCreator extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (this.props.data !== nextProps.data) {
       nextState.data = nextProps.data;
+      nextState.properties = createPropertyList(nextProps.recordsets);
+      nextState.selectedColumns = [];
     }
 
     return true;
@@ -64,7 +70,26 @@ class FilterCreator extends React.Component {
              </Typography>
            </ExpansionPanelSummary>
            <div style={{padding: '5px'}}>
-              <FieldInput
+             {!this.props.isChild &&
+               <FieldInput
+                 field={{
+                   key: "columns",
+                   name: "Columns",
+                   label: "Columns",
+                   value: this.state.selectedColumns,
+                   showLabels: true
+                 }}
+                 dataType="ENUMERATION_LIST_TYPE"
+                 attr="value"
+                 options={this.state.properties}
+                 showLabels={true}
+                 onChange={(value) => {
+                   this.setState({selectedColumns: value});
+                   this.props.handleUpdate(this.state.data, value);
+                 }}
+               />
+             }
+             <FieldInput
                 label="Operator"
                 field={data}
                 attr="operator"
@@ -94,6 +119,7 @@ class FilterCreator extends React.Component {
                     data={group}
                     handleRemoveGroup={that.props.handleRemoveGroup}
                     handleError={that.props.handleError}
+                    isChild
                   />
                 )})
               }
@@ -103,34 +129,38 @@ class FilterCreator extends React.Component {
             <ExpansionPanelActions  style={{padding: '5px'}}>
               <IconButton icon="/images/svg/add.svg" title="Add Criteria" onClick={this.handleAddCriteria} />
               <IconButton icon="/images/svg/new.svg" title="Add Sub Grouping" onClick={this.handleAddGroup}/>
-              <IconButton icon="/images/svg/remove.svg" title="Remove Grouping" onClick={this.handleRemoveGroup} />
+              {this.props.isChild &&
+              <IconButton icon="/images/svg/remove.svg" title="Remove Grouping" onClick={this.props.handleRemoveGroup} />
+              }
             </ExpansionPanelActions>
-         </ExpansionPanel>
+          </ExpansionPanel>
     )
   }
 
   handleUpdate(data) {
       this.setState({data: data});
 
+      const { selectedColumns } = this.state;
+
       if (this.props.handleUpdate) {
-        this.props.handleUpdate(data);
+        this.props.handleUpdate(data, selectedColumns);
       }
   }
 
-  onRecordsetChange(key, e) {
+  onRecordsetChange(key, value) {
     //console.log("On record set change key is", key, "e is", e);
     const { data } = this.state;
     var row = this.getRow(data.criteria, key);
     var defaultField;
 
     for (var ii=0; ii<this.props.recordsets.length; ii++) {
-      if (this.props.recordsets[ii].name === e.target.value) {
+      if (this.props.recordsets[ii].name === value) {
         defaultField = this.props.recordsets[ii].definition[0].name;
         break;
       }
     };
 
-    row.recordset = e.target.value;
+    row.recordset = value;
     row.field = defaultField;
     row.operator = 'EqualTo';
     row.value = '';
@@ -138,50 +168,26 @@ class FilterCreator extends React.Component {
     this.handleUpdate(data)
   }
 
-  onFieldChange(key, e) {
+  onFieldChange(key, value) {
     const {data} = this.state;
     var row = this.getRow(data.criteria, key);
 
-    row.field = e.target.value;
-    row.operator = 'EqualTo';
+    var dataType = getDataType(this.props.recordsets, row);
+
+    row.field = value;
+    row.operator = OPERATORS[dataType][0];
     row.value = '';
 
     this.handleUpdate(data)
   }
 
-  onOperatorChange(key, e) {
+  onOperatorChange(key, value) {
     const {data} = this.state;
     var row = this.getRow(data.criteria, key);
 
-    row.operator = e.target.value;
+    row.operator = value;
 
     this.handleUpdate(data)
-  }
-
-  onValueChange(key, e) {
-    const {data} = this.state;
-    var row = this.getRow(data.criteria, key);
-
-    row.value = e.target.value;
-
-    this.handleUpdate(data)
-  }
-
-  onMatchCaseChange(key, e) {
-    const {data} = this.state;
-    var row = this.getRow(data.criteria, key);
-
-    row.matchCase = e.target.checked;
-
-    this.handleUpdate(data)
-  }
-
-  onAndOrChange(e) {
-    const { data } = this.state;
-
-    data.operator = e.target.value;
-    //Want to set the props to
-    this.handleUpdate(data);
   }
 
   handleRemoveCriteria(key, e) {
@@ -220,7 +226,7 @@ class FilterCreator extends React.Component {
     this.props.handleError("(Coming Soon!!!) This will allow you to remove a criteria group.");
   }
 
-  handleAddCriteria(e) {
+  handleAddCriteria() {
     const {currentkey, data} = this.state;
     var keyvalue = currentkey + 1;
 
@@ -258,7 +264,45 @@ class FilterCreator extends React.Component {
   }
 }
 
+function createPropertyList(recordsets) {
 
+  var properties = [];
+
+  recordsets.forEach((recordset) => {
+
+    recordset.definition.forEach((definition) => {
+      properties.push({
+          enum: recordset.name + '.' + definition.name,
+          label: recordset.name + '.' + definition.name
+      });
+    })
+
+  })
+
+  return properties;
+
+}
+
+function getDataType(recordsets, criteria) {
+
+  var dataType = 'STRING_TYPE';
+
+  for (var ii=0; ii<recordsets.length; ii++) {
+    if (criteria.recordset === recordsets[ii].name) {
+      for (var jj=0; jj<recordsets[ii].definition.length; jj++) {
+          var def = recordsets[ii].definition[jj];
+
+          if (def.name === criteria.field) {
+            dataType = def.dataType;
+            break;
+          }
+      };
+      break;
+    }
+  }
+
+  return dataType;
+}
 
 function createColumns(that, recordsets, key) {
 
@@ -269,12 +313,14 @@ function createColumns(that, recordsets, key) {
       accessor: 'delete',
       resizable: false,
       sortable: false,
-      width: 50,
+      width: 34,
       Cell: (cell) => (
         <IconButton
           icon={"/images/svg/remove.svg"}
           title="Remove Criteria"
+          size="20px"
           onClick={that.handleRemoveCriteria.bind(that, cell.row.key)}
+          square
         />
       )
     });
@@ -286,11 +332,19 @@ function createColumns(that, recordsets, key) {
       sortable: false,
       Cell: (cell) => {
         return (
-          <select className="form-control" value={cell.row.recordset} onChange={that.onRecordsetChange.bind(that, cell.row.key)}>
-            {recordsets.map((recordset) => {
-              return (<option key={recordset.name + cell.row.key} value={recordset.name}>{recordset.name}</option>);
+          <FieldInput
+            field={cell.original}
+            dataType="ENUMERATION_TYPE"
+            attr="recordset"
+            showLabels={false}
+            onChange={that.onRecordsetChange.bind(that, cell.original.key)}
+            options={recordsets.map((recordset) => {
+              return ({
+                enum: recordset.name,
+                label: recordset.name
+              });
             })}
-          </select>
+          />
         )}
     });
 
@@ -302,9 +356,13 @@ function createColumns(that, recordsets, key) {
       Cell: (cell) => {
         var options = [];
         for (var ii=0; ii<recordsets.length; ii++) {
-          if (cell.row._original.recordset === recordsets[ii].name) {
+          if (cell.original.recordset === recordsets[ii].name) {
             recordsets[ii].definition.forEach(function (field) {
-                options.push(<option key={field.name + cell.row.key} value={field.name}>{field.name}</option>);
+                options.push({
+                  enum: field.name,
+                  label: field.name
+                });
+                //<option key={field.name + cell.row.key} value={field.name}>{field.name}</option>);
             });
             break;
 
@@ -312,10 +370,27 @@ function createColumns(that, recordsets, key) {
         };
 
         return (
-          <select className="form-control" value={cell.row.field} onChange={that.onFieldChange.bind(that, cell.row.key)}>
-            {options}
-          </select>)
+            <FieldInput
+              field={cell.original}
+              dataType="ENUMERATION_TYPE"
+              attr="field"
+              showLabels={false}
+              options={options}
+              onChange={that.onFieldChange.bind(that, cell.original.key)}
+            />
+          )
         }
+    });
+
+    columns.push({
+      Header: 'Not',
+      accessor: 'not',
+      resizable: false,
+      sortable: false,
+      width: 34,
+      Cell: (cell) => (
+        <FieldInput field={cell.original} dataType="BOOLEAN_TYPE" attr="not" showLabels={false} />
+      )
     });
 
     columns.push({
@@ -323,34 +398,101 @@ function createColumns(that, recordsets, key) {
       accessor: 'operator',
       resizable: false,
       sortable: false,
-      width: 80,
-      Cell: (cell) => (
-        <select className="form-control"  value={cell.row.operator} onChange={that.onOperatorChange.bind(that, cell.row.key)}>
-          <option>EqualTo</option>
-          <option>NotEqualTo</option>
-          <option>Like</option>
-          <option>Between</option>
-          <option>GreaterThan</option>
-          <option>GreaterThanOrEqualTo</option>
-          <option>LessThan</option>
-          <option>LessThanOrEqualTo</option>
-          <option>During</option>
-          <option>After</option>
-          <option>Before</option>
-          <option>BBOX</option>
-        </select>
-      )
-    });
+      width: 120,
+      Cell: (cell) => {
 
+        var dataType = getDataType(recordsets, cell.original);
+
+        return (
+          <FieldInput
+            field={cell.original}
+            dataType="ENUMERATION_TYPE"
+            attr="operator"
+            showLabels={false}
+            onChange={that.onOperatorChange.bind(that, cell.original.key)}
+            options={
+                      OPERATORS[dataType].map((item) => {
+                        return {
+                          enum: item,
+                          label: item
+                        }
+                      })
+                    }
+          />
+        )
+      }
+    });
 
     columns.push({
       Header: 'Value',
       accessor: 'value',
       resizable: false,
       sortable: false,
-      Cell: (cell) => (
-        <input type="text" className="form-control" value={cell.row.value} onChange={that.onValueChange.bind(that, cell.row.key)}/>
-      )
+      Cell: (cell) => {
+        var dataType = getDataType(recordsets, cell.original);
+        var hint = "";
+
+        switch (dataType) {
+          case 'DATE_TIME_TYPE':
+            dataType = 'STRING_TYPE';
+            hint = "2018-09-21T00:00:00.000Z"
+            break;
+          case 'POLYGON_TYPE':
+          case 'CIRCLE_TYPE':
+          case 'GEOCOORDINATE_TYPE':
+          case 'GEOCOORDINATE_LIST_TYPE':
+          case 'LINE_STRING_TYPE':
+            hint = "POLYGON ((x1 y1 z1, x2 y2 z2, ...))"
+            dataType = 'STRING_TYPE';
+            break;
+          case 'ENUMERATION_TYPE':
+            dataType = 'STRING_TYPE';
+            break;
+          default:
+           // Do Nothing
+        }
+
+        if (cell.original.operator === "Between" || cell.original.operator === "During") {
+
+          return (
+            <Row>
+              <Col xs={6}>
+                <FieldInput
+                  field={cell.original}
+                  hint={hint}
+                  dataType={dataType}
+                  attr="value"
+                  showLabels={false}
+                />
+              </Col>
+              <Col xs={6}>
+                <FieldInput
+                  field={cell.original}
+                  hint={hint}
+                  dataType={dataType}
+                  attr="value2"
+                  showLabels={false}
+                />
+              </Col>
+            </Row>
+          )
+        } else {
+
+          cell.original.value2 = undefined;
+
+          return (
+            <FieldInput
+              field={cell.original}
+              dataType={dataType}
+              hint={hint}
+              attr="value"
+              showLabels={false}
+            />
+          )
+        }
+
+
+      }
     });
 
     columns.push({
@@ -358,9 +500,9 @@ function createColumns(that, recordsets, key) {
       accessor: 'case',
       resizable: false,
       sortable: false,
-      width: 50,
+      width: 40,
       Cell: (cell) => (
-        <input type="checkbox" className="form-control" title="Match Case" checked={cell.row.matchCase} onChange={that.onMatchCaseChange.bind(that, cell.row.key)}/>
+        <FieldInput field={cell.original} dataType="BOOLEAN_TYPE" attr="matchCase" showLabels={false} />
       )
     });
 

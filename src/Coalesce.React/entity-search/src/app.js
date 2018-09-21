@@ -6,8 +6,6 @@ import { DialogMessage, DialogLoader, DialogOptions } from 'common-components/li
 import { searchComplex } from 'common-components/lib/js/searchController.js';
 import uuid from 'uuid';
 
-import Paper from '@material-ui/core/Paper';
-
 import FilterCreator from './filtercreator.js'
 import {SearchResults} from './results.js'
 
@@ -29,7 +27,7 @@ export class App extends React.Component {
       cache: [],
       key: null,
       results: null,
-      properties: null,
+      properties: [],
       query: this.createQuery()
     }
   }
@@ -101,8 +99,8 @@ export class App extends React.Component {
     }});
   }
 
-  handleUpdate(data) {
-    this.setState({query: data});
+  handleUpdate(data, properties) {
+    this.setState(() => {return {query: data, properties: properties}});
   }
 
   handleTemplateLoad(key) {
@@ -133,7 +131,8 @@ export class App extends React.Component {
         that.setState({
           key: key,
           query: this.createQuery(cache[key].name),
-          promptTemplate: false
+          promptTemplate: false,
+          properties: []
           }
         );
 
@@ -188,7 +187,7 @@ export class App extends React.Component {
             img: "/images/svg/erase.svg",
             title: 'Reset Criteria',
             onClick: () => {
-              this.setState({query: this.createQuery()})
+              this.setState(() => {return {query: this.createQuery(), properties: []}})
               console.log("Reset Criteria");
             }
           },{
@@ -265,13 +264,34 @@ export class App extends React.Component {
       "propertyNames": [],
       "group": this.state.query
     };
-    console.log("Index search", this.state.query);
-    // Get additional columns
-    // TODO Handle nested properties
+
+    if (this.state.query.criteria.length === 0) {
+      that.handleError("Please add one or more criteria.");
+      return;
+    }
+
+    // Get Specified columns
+    if (this.state.properties && this.state.properties.length > 0) {
+      this.state.properties.forEach(function (property) {
+        query.propertyNames.push(property);
+      });
+    } else {
+      this.state.query.criteria.forEach(function (criteria) {
+        if (!query.propertyNames.includes(criteria.recordset + "." + criteria.field)) {
+          query.propertyNames.push(criteria.recordset + "." + criteria.field);
+        }
+      })
+    }
+
     this.state.query.criteria.forEach(function (criteria) {
-      query.propertyNames.push(criteria.recordset + "." + criteria.field);
-      console.log("Index search", query.propertyNames);
-    });
+      if (criteria.value2)
+      {
+        criteria.value = criteria.value + " " + criteria.value2;
+        criteria.value2 = undefined;
+      }
+    })
+
+    console.log("Index search", this.state.query);
 
     // Display Spinner
     this.setState(() => {return {

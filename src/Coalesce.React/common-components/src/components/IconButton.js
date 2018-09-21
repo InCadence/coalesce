@@ -28,6 +28,7 @@ export class IconButton extends React.PureComponent {
         icon={this.props.icon}
         title={this.props.title}
         size={this.props.size}
+        square={this.props.square}
         style={{
           backgroundColor: palette.dark,
           borderColor: palette.light,

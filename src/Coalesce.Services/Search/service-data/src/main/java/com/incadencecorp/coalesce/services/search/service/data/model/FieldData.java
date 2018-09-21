@@ -21,16 +21,16 @@ import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 
 public class FieldData extends CoalesceObjectImpl {
 
-    private ECoalesceFieldDataTypes type;
+    private ECoalesceFieldDataTypes dataType;
 
     public FieldData(String key, String name, ECoalesceFieldDataTypes type)
     {
         super(key, name);
-        this.type = type;
+        this.dataType = type;
     }
 
-    public ECoalesceFieldDataTypes getType()
+    public ECoalesceFieldDataTypes getDataType()
     {
-        return type;
+        return dataType;
     }
 }
