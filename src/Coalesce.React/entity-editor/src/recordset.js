@@ -2,7 +2,7 @@ import React from 'react';
 import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
 import {FieldInput} from './FieldInput.js'
-import { IconButton } from 'common-components/lib/components/IconButton.js'
+import IconButton from 'common-components/lib/components/IconButton'
 import uuid from 'uuid';
 
 Object.assign(ReactTableDefaults, {
@@ -31,7 +31,7 @@ export class RecordsetView extends React.Component
   }
 
   render() {
-    const {data} = this.state;
+    const { data, showAll } = this.state;
     const { recordset } = this.props;
 
     var that = this;
@@ -66,16 +66,13 @@ export class RecordsetView extends React.Component
     if (data != null && data.allRecords != null)
     {
       data.allRecords.forEach(function(record) {
-
-        console.log(record.status);
-
-        //if (showAll || record.status !== 'DELETED') {
+        if (showAll || record.status !== 'DELETED') {
           tabledata.push(that.createDataRow(record, recordset.fieldDefinitions));
-        //}
+        }
       });
     }
 
-    var label = recordset.name.toProperCase() + " Recordset";
+    //var label = recordset.name.toProperCase() + " Recordset";
     return (
       <div id={recordset.key} key={recordset.key} className="ui-widget-content section">
             <ReactTable
@@ -83,9 +80,9 @@ export class RecordsetView extends React.Component
               columns={columns}
               className="-striped -highlight"
             />
+
           <div className='form-buttons'>
-            <input type='checkbox'  onClick={this.toggleShowAll} />
-            <label>Show All</label>
+            <FieldInput field={{value: showAll}} dataType="BOOLEAN_TYPE" label="Show All"  showLabels={true} onChange={this.toggleShowAll}/>
             <IconButton icon="/images/svg/add.svg" title="Add Record" onClick={this.createRow} />
           </div>
         </div>
@@ -127,7 +124,7 @@ export class RecordsetView extends React.Component
 
     });
 
-    console.log(JSON.stringify(row));
+    //console.log(JSON.stringify(row));
 
     return row;
   }
@@ -159,7 +156,7 @@ export class RecordsetView extends React.Component
       fields: fields
     });
 
-    console.log(data.allRecords[data.allRecords.length -1].key);
+    //console.log(data.allRecords[data.allRecords.length -1].key);
 
     this.setState({
       data: data,
@@ -171,7 +168,6 @@ export class RecordsetView extends React.Component
 
     const {data} = this.state;
 
-console.log(value);
     data.allRecords.forEach(function (record) {
       if (record.key === recordkey) {
         record.status = value;
@@ -184,8 +180,8 @@ console.log(value);
 
   }
 
-  toggleShowAll(e) {
-    this.setState({showAll: e.target.checked})
+  toggleShowAll(value) {
+    this.setState(() => { return {showAll: value}})
   }
 
 }
