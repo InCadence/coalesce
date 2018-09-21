@@ -72,27 +72,6 @@ while true; do
     esac
 done
 
-while true; do
-    read -p "Commit (yes / no / exit)? " doCommit
-    case $doCommit in
-        y | yes)
-	    git add ../ -u
-            git commit -m "${name} version ${version}"
-
-	    if [ "${isSnapshot}" = false ] ; then
-
-		git tag ${tagname}-${version}
-
-	    fi
-
-            break;;
-
-	n | no) break;;
-        exit)  exit 0;;
-        * ) echo "Please enter yes, no or exit";;
-    esac
-done
-
 function release {
 
     path=$1
@@ -129,6 +108,26 @@ while true; do
     esac
 done
 
+while true; do
+    read -p "Commit (yes / no / exit)? " doCommit
+    case $doCommit in
+        y | yes)
+	    git add ../../ -u
+        git commit -m "${name} version ${version}"
+
+	    if [ "${isSnapshot}" = false ] ; then
+
+		git tag ${tagname}-${version}
+
+	    fi
+
+            break;;
+
+	n | no) break;;
+        exit)  exit 0;;
+        * ) echo "Please enter yes, no or exit";;
+    esac
+done
 
 while true; do
     read -p "Push to master (yes / no / exit)? " doPush

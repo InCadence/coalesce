@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.incadencecorp.coalesce</groupId>
     <artifactId>coalesce-bom</artifactId>
-    <version>0.0.29</version>
+    <version>0.0.30-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>coalesce.bom</name>
 
     <parent>
         <groupId>com.incadencecorp.coalesce</groupId>
         <artifactId>coalesce-parent</artifactId>
-        <version>0.0.29</version>
+        <version>0.0.30-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
 
@@ -35,8 +35,8 @@
 
         <jackson.jaxb.version>2.9.1</jackson.jaxb.version>
 
-        <changelog.start.tag>coalesce-0.0.28</changelog.start.tag>
-        <changelog.end.tag>coalesce-0.0.29</changelog.end.tag>
+        <changelog.start.tag>coalesce-0.0.29</changelog.start.tag>
+        <changelog.end.tag>HEAD</changelog.end.tag>
 
     </properties>
 
