@@ -10,6 +10,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { OPERATORS } from 'common-components/lib/js/searchController.js';
+import { Row, Col } from 'react-bootstrap'
 
 Object.assign(ReactTableDefaults, {
   defaultPageSize: 5,
@@ -180,39 +181,13 @@ class FilterCreator extends React.Component {
     this.handleUpdate(data)
   }
 
-  onOperatorChange(key, e) {
+  onOperatorChange(key, value) {
     const {data} = this.state;
     var row = this.getRow(data.criteria, key);
 
-    row.operator = e.target.value;
+    row.operator = value;
 
     this.handleUpdate(data)
-  }
-
-  onValueChange(key, e) {
-    const {data} = this.state;
-    var row = this.getRow(data.criteria, key);
-
-    row.value = e.target.value;
-
-    this.handleUpdate(data)
-  }
-
-  onMatchCaseChange(key, e) {
-    const {data} = this.state;
-    var row = this.getRow(data.criteria, key);
-
-    row.matchCase = e.target.checked;
-
-    this.handleUpdate(data)
-  }
-
-  onAndOrChange(e) {
-    const { data } = this.state;
-
-    data.operator = e.target.value;
-    //Want to set the props to
-    this.handleUpdate(data);
   }
 
   handleRemoveCriteria(key, e) {
@@ -434,6 +409,7 @@ function createColumns(that, recordsets, key) {
             dataType="ENUMERATION_TYPE"
             attr="operator"
             showLabels={false}
+            onChange={that.onOperatorChange.bind(that, cell.original.key)}
             options={
                       OPERATORS[dataType].map((item) => {
                         return {
@@ -454,25 +430,68 @@ function createColumns(that, recordsets, key) {
       sortable: false,
       Cell: (cell) => {
         var dataType = getDataType(recordsets, cell.original);
+        var hint = "";
 
         switch (dataType) {
-          case 'ENUMERATION_TYPE':
+          case 'DATE_TIME_TYPE':
+            dataType = 'STRING_TYPE';
+            hint = "2018-09-21T00:00:00.000Z"
+            break;
           case 'POLYGON_TYPE':
           case 'CIRCLE_TYPE':
           case 'GEOCOORDINATE_TYPE':
           case 'GEOCOORDINATE_LIST_TYPE':
           case 'LINE_STRING_TYPE':
-          case 'DATE_TIME_TYPE':
-            console.log(`${dataType} currently not supported`);
+            hint = "POLYGON ((x1 y1 z1, x2 y2 z2, ...))"
+            dataType = 'STRING_TYPE';
+            break;
+          case 'ENUMERATION_TYPE':
             dataType = 'STRING_TYPE';
             break;
           default:
            // Do Nothing
         }
 
-        return (
-          <FieldInput field={cell.original} dataType={dataType} attr="value" showLabels={false} />
-        )
+        if (cell.original.operator === "Between" || cell.original.operator === "During") {
+
+          return (
+            <Row>
+              <Col xs={6}>
+                <FieldInput
+                  field={cell.original}
+                  hint={hint}
+                  dataType={dataType}
+                  attr="value"
+                  showLabels={false}
+                />
+              </Col>
+              <Col xs={6}>
+                <FieldInput
+                  field={cell.original}
+                  hint={hint}
+                  dataType={dataType}
+                  attr="value2"
+                  showLabels={false}
+                />
+              </Col>
+            </Row>
+          )
+        } else {
+
+          cell.original.value2 = undefined;
+
+          return (
+            <FieldInput
+              field={cell.original}
+              dataType={dataType}
+              hint={hint}
+              attr="value"
+              showLabels={false}
+            />
+          )
+        }
+
+
       }
     });
 

@@ -7,6 +7,7 @@ import IconButton from 'common-components/lib/components/IconButton'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import { withTheme } from '@material-ui/core/styles';
 import { Row, Col } from 'react-bootstrap';
+import Tooltip from '@material-ui/core/Tooltip';
 
 // TODO Replace Date / Time Pickers
 //import DatePicker from 'material-ui/DatePicker';
@@ -138,7 +139,7 @@ export class FieldInput extends React.Component {
             fullWidth
             label={label}
             style={style.root}
-            helperText={this.props.hint}
+            helperText={this.props.showLabels ? this.props.hint : undefined}
             value={field[attr]}
             defaultValue={field.defaultValue}
             onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
@@ -158,7 +159,7 @@ export class FieldInput extends React.Component {
               id={field.key}
               fullWidth
               label={label}
-              helperText={this.props.hint}
+              helperText={this.props.showLabels ? this.props.hint : undefined}
               InputProps={{
                   startAdornment: <InputAdornment position="start">(CSV)</InputAdornment>,
                 }}
@@ -182,7 +183,7 @@ export class FieldInput extends React.Component {
             inputProps={{step: 0.01, style: style.root}}
             fullWidth
             label={label}
-            helperText={this.props.hint}
+            helperText={this.props.showLabels ? this.props.hint : undefined}
             style={style.root}
             value={field[attr]}
             defaultValue={field.defaultValue}
@@ -199,7 +200,7 @@ export class FieldInput extends React.Component {
             inputProps={{step: 1, style: style.root}}
             fullWidth
             label={label}
-            helperText={this.props.hint}
+            helperText={this.props.showLabels ? this.props.hint : undefined}
             style={style.root}
             value={field[attr]}
             defaultValue={field.defaultValue}
@@ -263,7 +264,7 @@ export class FieldInput extends React.Component {
               id={field.key}
               fullWidth={true}
               label={label + " - LINESTRING (x1 y1 z1, x2 y2 z2, ...)"}
-              helperText={this.props.hint}
+              helperText={this.props.showLabels ? this.props.hint : undefined}
               style={style.root}
               value={field[attr]}
               defaultValue={defaultValue}
@@ -278,7 +279,7 @@ export class FieldInput extends React.Component {
               id={field.key}
               fullWidth={true}
               label={label + " - POLYGON ((x1 y1 z1, x2 y2 z2, ...))"}
-              helperText={this.props.hint}
+              helperText={this.props.showLabels ? this.props.hint : undefined}
               style={style.root}
               value={field[attr]}
               defaultValue={defaultValue}
@@ -293,7 +294,7 @@ export class FieldInput extends React.Component {
               id={field.key}
               fullWidth={true}
               label={label + " - MULTIPOINT (x1 y1 z1, x2 y2 z2, ...)"}
-              helperText={this.props.hint}
+              helperText={this.props.showLabels ? this.props.hint : undefined}
               style={style.root}
               value={field[attr]}
               defaultValue={defaultValue}
@@ -324,7 +325,7 @@ export class FieldInput extends React.Component {
                   type='number'
                   step='0.01'
                   label={this.props.showLabels ? label + " Longitude" : null}
-                  helperText={this.props.hint}
+                  helperText={this.props.showLabels ? this.props.hint : undefined}
                   style={style.root}
                   fullWidth={true}
                   value={geo.coordinates[0]}
@@ -338,7 +339,7 @@ export class FieldInput extends React.Component {
                   type='number'
                   step='0.01'
                   label={this.props.showLabels ? "Latitude" : null}
-                  helperText={this.props.hint}
+                  helperText={this.props.showLabels ? this.props.hint : undefined}
                   style={style.root}
                   fullWidth={true}
                   value={geo.coordinates[1]}
@@ -352,7 +353,7 @@ export class FieldInput extends React.Component {
                   type='number'
                   step='0.01'
                   label={this.props.showLabels ? "Attitude" : null}
-                  helperText={this.props.hint}
+                  helperText={this.props.showLabels ? this.props.hint : undefined}
                   style={style.root}
                   fullWidth={true}
                   value={geo.coordinates[2]}
@@ -381,7 +382,7 @@ export class FieldInput extends React.Component {
                 type='number'
                 step='0.01'
                 label={this.props.showLabels ? label + " Longitude" : null}
-                helperText={this.props.hint}
+                helperText={this.props.showLabels ? this.props.hint : undefined}
                 style={style.root}
                 fullWidth={true}
                 value={center.coordinates[0]}
@@ -395,7 +396,7 @@ export class FieldInput extends React.Component {
                 type='number'
                 step='0.01'
                 label={this.props.showLabels ? "Latitude" : null}
-                helperText={this.props.hint}
+                helperText={this.props.showLabels ? this.props.hint : undefined}
                 style={style.root}
                 fullWidth={true}
                 value={center.coordinates[1]}
@@ -409,7 +410,7 @@ export class FieldInput extends React.Component {
                 type='number'
                 step='0.01'
                 label={this.props.showLabels ? "Attitude" : null}
-                helperText={this.props.hint}
+                helperText={this.props.showLabels ? this.props.hint : undefined}
                 style={style.root}
                 fullWidth={true}
                 value={center.coordinates[2]}
@@ -424,7 +425,7 @@ export class FieldInput extends React.Component {
                 step='0.01'
                 value={field.radius}
                 label={this.props.showLabels ? "Radius" : null}
-                helperText={this.props.hint}
+                helperText={this.props.showLabels ? this.props.hint : undefined}
                 style={style.root}
                 fullWidth={true}
                 onChange={(event, value) => {this.handleOnChange('radius', value)}}
@@ -440,7 +441,7 @@ export class FieldInput extends React.Component {
             id={field.key}
             fullWidth={true}
             label={label}
-            helperText={this.props.hint}
+            helperText={this.props.showLabels ? this.props.hint : undefined}
             //inputProps={{ pattern: "[a-z]" }}
             style={style.root}
             value={field[attr]}
@@ -468,7 +469,7 @@ export class FieldInput extends React.Component {
             id={field.key}
             fullWidth={true}
             label={label + " (UI Not Implemented)"}
-            helperText={this.props.hint}
+            helperText={this.props.showLabels ? this.props.hint : undefined}
             style={style.root}
             inputProps={this.props.inputProps}
             disabled
@@ -480,8 +481,16 @@ export class FieldInput extends React.Component {
         break;
     }
 
+    if (!this.props.showLabels && this.props.hint) {
+      view = (
+        <Tooltip title={this.props.hint} placement={this.props.titlePosition ? this.props.titlePosition : 'bottom'}>
+          {view}
+        </Tooltip>
+      );
+    }
+
     if (this.props.isNullable) {
-      return (
+      view = (
         <table className={this.props.css}>
           <tbody>
             <tr>
@@ -500,9 +509,10 @@ export class FieldInput extends React.Component {
           </tbody>
         </table>
       )
-    } else {
-      return view;
     }
+
+    return view;
+
   }
 }
 

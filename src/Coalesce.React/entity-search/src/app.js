@@ -264,21 +264,34 @@ export class App extends React.Component {
       "propertyNames": [],
       "group": this.state.query
     };
-    console.log("Index search", this.state.query);
+
+    if (this.state.query.criteria.length === 0) {
+      that.handleError("Please add one or more criteria.");
+      return;
+    }
 
     // Get Specified columns
-    this.state.properties.forEach(function (property) {
-      query.propertyNames.push(property);
-    });
-
-    // If Columns were not specified
-    if (this.state.properties.length === 0) {
+    if (this.state.properties && this.state.properties.length > 0) {
+      this.state.properties.forEach(function (property) {
+        query.propertyNames.push(property);
+      });
+    } else {
       this.state.query.criteria.forEach(function (criteria) {
         if (!query.propertyNames.includes(criteria.recordset + "." + criteria.field)) {
           query.propertyNames.push(criteria.recordset + "." + criteria.field);
         }
       })
     }
+
+    this.state.query.criteria.forEach(function (criteria) {
+      if (criteria.value2)
+      {
+        criteria.value = criteria.value + " " + criteria.value2;
+        criteria.value2 = undefined;
+      }
+    })
+
+    console.log("Index search", this.state.query);
 
     // Display Spinner
     this.setState(() => {return {
