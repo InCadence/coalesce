@@ -143,7 +143,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         //String type = normalize(recordset.getName());
         if (recordset.isFlatten())
         {
-            for (CoalesceRecord record : recordset.getRecords())
+            for (CoalesceRecord record : recordset.getAllRecords())
             {
                 if (record.isFlatten())
                 {

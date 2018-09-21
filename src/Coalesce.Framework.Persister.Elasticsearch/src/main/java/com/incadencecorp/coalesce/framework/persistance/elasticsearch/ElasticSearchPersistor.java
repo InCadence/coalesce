@@ -4,18 +4,26 @@ import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.support.AbstractClient;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +101,8 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
             BulkRequest request = iterator.iterate(allowRemoval, entities);
 
+            executeCleanup(client, request, entities);
+
             LOGGER.debug("{} Entities Created {} Request", entities.length, request.requests().size());
 
             executeRequest(client, request, 1);
@@ -103,6 +113,71 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
         }
 
         return true;
+    }
+
+    private void executeCleanup(AbstractClient client, BulkRequest request, CoalesceEntity... entities)
+    {
+        Set<String> indices = new HashSet<>();
+        Set<String> recordKeys = new HashSet<>();
+
+        // Create List of Indices
+        for (DocWriteRequest task : request.requests())
+        {
+            recordKeys.add(task.id());
+            indices.add(task.index());
+        }
+
+        // Don't cleanup coalesce index
+        indices.remove(COALESCE_ENTITY_INDEX);
+
+        if (indices.size() > 0)
+        {
+            StopWatch watch = new StopWatch();
+            watch.start();
+
+            BoolQueryBuilder builder = QueryBuilders.boolQuery();
+
+            // Only records belonging to one of the entities being updated
+            for (CoalesceEntity entity : entities)
+            {
+                builder.should().add(QueryBuilders.matchQuery(ElasticSearchPersistor.ENTITY_KEY_COLUMN_NAME,
+                                                              entity.getKey()));
+            }
+
+            int pageSize = 1000;
+            int original = request.requests().size();
+
+            SearchResponse response = client.prepareSearch(indices.toArray(new String[indices.size()])).setQuery(builder).setSize(
+                    pageSize).setScroll(new TimeValue(60000)).get();
+
+            do
+            {
+                for (SearchHit hit : response.getHits().getHits())
+                {
+                    // Records being updated by this request
+                    if (!recordKeys.contains(hit.getId()))
+                    {
+                        // No; Create Delete Request
+                        DeleteRequest deleteRequest = new DeleteRequest();
+                        deleteRequest.index(hit.getIndex());
+                        deleteRequest.type(hit.getType());
+                        deleteRequest.id(hit.getId());
+
+                        request.requests().add(deleteRequest);
+                    }
+                }
+
+                response = client.prepareSearchScroll(response.getScrollId()).setScroll(new TimeValue(60000)).get();
+            }
+            while (response.getHits().getHits().length != 0);
+
+            watch.finish();
+
+            if (original != request.requests().size() || LOGGER.isTraceEnabled())
+            {
+                LOGGER.debug("Created {} Delete Request for Phantom Records in {} ms", request.requests().size() - original, watch.getWorkLife());
+            }
+        }
     }
 
     private void executeRequest(AbstractClient client, BulkRequest request, int attempt)

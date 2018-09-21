@@ -1021,6 +1021,133 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     }
 
     /**
+     * This test ensures that when changing a record key it will properly delete the feature w/ the old key.
+     */
+    @Test
+    public void testUpdateRecordKey() throws Exception
+    {
+        T persistor = createPersister();
+
+        // Create Entity
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize();
+        entity2.addRecord1();
+        entity2.addRecord1();
+
+        // Create Record
+        TestRecord record = entity1.addRecord1();
+        record.getStringField().setValue("Hello World");
+
+        // Persist
+        persistor.saveEntity(false, entity1, entity2);
+
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
+        props.add(CoalescePropertyFactory.getFieldProperty(TestEntity.RECORDSET1, "objectkey"));
+
+        List<Filter> filters = new ArrayList<>();
+        filters.add(CoalescePropertyFactory.getEntityKey(entity1.getKey()));
+        filters.add(FF.equals(CoalescePropertyFactory.getFieldProperty(record.getStringField()),
+                              FF.literal(record.getStringField().getValue())));
+
+        // Create Query
+        Query query = new Query(TestEntity.getTest1RecordsetName(), FF.and(filters));
+        query.setProperties(props);
+
+        // Search
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            // One and only 1 result
+            Assert.assertEquals(entity1.getRecordset1().getCount(), results.size());
+            Assert.assertTrue(results.next());
+            Assert.assertEquals(entity1.getKey(), results.getString(1));
+            Assert.assertEquals(record.getKey(), results.getString(3));
+        }
+
+        // Change Record Key
+        record.setKey(UUID.randomUUID().toString());
+        persistor.saveEntity(false, entity1, entity2);
+
+        // Search
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            // One and only 1 result
+            Assert.assertEquals(entity1.getRecordset1().getCount(), results.size());
+            Assert.assertTrue(results.next());
+            Assert.assertEquals(entity1.getKey(), results.getString(1));
+            Assert.assertEquals(record.getKey(), results.getString(3));
+        }
+
+        // Cleanup
+        entity1.markAsDeleted();
+        entity2.markAsDeleted();
+
+        persistor.saveEntity(true, entity1, entity2);
+    }
+
+    /**
+     * This test ensures that when a record is deleted that it is no longer discoverable.
+     */
+    @Test
+    public void testDeleteRecord() throws Exception
+    {
+        T persistor = createPersister();
+
+        // Create Entity
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        // Create Record
+        TestRecord record = entity.addRecord1();
+        record.getStringField().setValue("Hello World");
+
+        // Persist
+        persistor.saveEntity(false, entity);
+
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
+        props.add(CoalescePropertyFactory.getFieldProperty(TestEntity.RECORDSET1, "objectkey"));
+
+        List<Filter> filters = new ArrayList<>();
+        filters.add(CoalescePropertyFactory.getEntityKey(entity.getKey()));
+        filters.add(FF.equals(CoalescePropertyFactory.getFieldProperty(record.getStringField()),
+                              FF.literal(record.getStringField().getValue())));
+
+        // Create Query
+        Query query = new Query(TestEntity.getTest1RecordsetName(), FF.and(filters));
+        query.setProperties(props);
+
+        // Search
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            // One and only 1 result
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+            Assert.assertEquals(entity.getKey(), results.getString(1));
+            Assert.assertEquals(record.getKey(), results.getString(3));
+        }
+
+        // Change Record Key
+        record.markAsDeleted();
+        persistor.saveEntity(false, entity);
+
+        // Search
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            // Should be no results
+            Assert.assertEquals(0, results.size());
+        }
+
+        // Cleanup
+        entity.markAsDeleted();
+
+        persistor.saveEntity(true, entity);
+    }
+
+    /**
      * This test verifies searching for entities w/o geospatial fields.
      */
     @Test
@@ -1062,6 +1189,34 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         Assert.assertEquals((int) record.getIntegerField().getValue(), results.getInt(2));
         Assert.assertEquals(record.getStringField().getValue(), results.getString(3));
+    }
+
+    /**
+     * This test ensures that the persister does not throw any exceptions for a large amount of records.
+     */
+    @Test
+    public void test20KRecords() throws Exception
+    {
+        ICoalescePersistor persistor = createPersister();
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        // Add X Records
+        for (int ii = 0; ii < 20000; ii++)
+        {
+            entity.addRecord1();
+        }
+
+        persistor.saveEntity(false, entity);
+
+        // Change Record Keys (This causes phantom records to be deleted)
+        for (CoalesceRecord record : entity.getRecordset1().getAllRecords())
+        {
+            record.setKey(UUID.randomUUID().toString());
+        }
+
+        persistor.saveEntity(false, entity);
     }
 
     private static Filter createFilter(String geomField,
