@@ -423,7 +423,7 @@ public class TemplateDataController {
         }
         catch (CoalescePersistorException e)
         {
-            error("Registeration Failed", e);
+            error("Failed to delete the template; template deletion may not be implemented for the persistor in question.", e);
         }
     }
 
