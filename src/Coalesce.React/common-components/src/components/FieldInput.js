@@ -39,9 +39,13 @@ export class FieldInput extends React.Component {
         }
       }
     } else {
+
+      var type = (props.dataType) ? props.dataType : field.dataType;
+
       style = {
         root: {
           'height': '20px',
+          'width': type === 'BOOLEAN_TYPE' ? '20px' : undefined,
           'lineHeight': '20px',
           'top': '0px',
           'padding': '0px',
@@ -91,10 +95,10 @@ export class FieldInput extends React.Component {
 
     const {field, style} = this.state;
 
-    var type = (this.props.dataType != null) ? this.props.dataType : field.dataType;
-    var attr = (this.props.attr != null) ? this.props.attr : 'value';
-    var label = this.props.showLabels ? this.props.label ? this.props.label : (field.label != null && field.label.length > 0 ? field.label : field.name) : null;
-    var defaultValue = (this.props.defaultValue != null) ? this.props.defaultValue : field.defaultValue;
+    var type = (this.props.dataType) ? this.props.dataType : field.dataType;
+    var attr = (this.props.attr) ? this.props.attr : 'value';
+    var label = this.props.showLabels ? this.props.label ? this.props.label : (field.label && field.label.length > 0 ? field.label : field.name) : null;
+    var defaultValue = (this.props.defaultValue) ? this.props.defaultValue : field.defaultValue;
     var view;
 
     switch (type) {
@@ -210,9 +214,6 @@ export class FieldInput extends React.Component {
         );
         break;
       case 'BOOLEAN_TYPE':
-      if (!style.root.width) {
-        style.root.width = style.root.height
-      }
 
       if (label) {
         view = (

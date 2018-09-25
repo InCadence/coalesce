@@ -67,7 +67,7 @@ export class SearchResults extends React.Component {
            </Typography>
          </ExpansionPanelSummary>
          <ReactTable
-          className="ui-widget-content"
+          className="-striped -highlight"
           data={tabledata}
           columns={columns}
         />
@@ -165,17 +165,17 @@ export class SearchResults extends React.Component {
       })
 
       meta.allChecked = value;
-      this.setState(() => {return {tabledata: tabledata, meta: meta}} )
+      this.setState(() => {return {meta: meta}} )
     }
   }
 
   handleCheck(value) {
     const { meta, tabledata } = this.state;
-    var checked = true;
+    var checked = value;
 
-    tabledata.forEach(function (item) {
-      checked = checked && item.checked;
-    })
+    for (var ii=0; ii<tabledata.length && checked; ii++) {
+      checked = checked && tabledata[ii].checked;
+    }
 
     if (checked !== meta.allChecked) {
       meta.allChecked = checked;
@@ -192,7 +192,7 @@ export class SearchResults extends React.Component {
         accessor: 'select',
         resizable: false,
         sortable: false,
-        width: 34,
+        width: 30,
         Cell: (cell) => (
           <FieldInput field={cell.original} dataType="BOOLEAN_TYPE" attr="checked" showLabels={false} onChange={this.handleCheck} />
         )
@@ -220,7 +220,7 @@ export class SearchResults extends React.Component {
       accessor: 'button',
       resizable: false,
       sortable: false,
-      width: 34,
+      width: 30,
       Cell: (cell) => (
         <IconButton
           id={cell.row.key}

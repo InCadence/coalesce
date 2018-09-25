@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { OPERATORS } from 'common-components/lib/js/searchController.js';
 import { Row, Col } from 'react-bootstrap'
+import uuid from 'uuid';
 
 Object.assign(ReactTableDefaults, {
   defaultPageSize: 5,
@@ -36,7 +37,6 @@ class FilterCreator extends React.Component {
     this.state = {
       data: props.data,
       isOpened: true,
-      currentkey: 0,
       promptProperties: false,
       properties: createPropertyList(props.recordsets)
     }
@@ -75,7 +75,7 @@ class FilterCreator extends React.Component {
                  field={{
                    key: "columns",
                    name: "Columns",
-                   label: "Columns",
+                   label: "Columns to Return",
                    value: this.state.selectedColumns,
                    showLabels: true
                  }}
@@ -108,7 +108,7 @@ class FilterCreator extends React.Component {
                  pageSize={this.props.maxRows}
                  data={data.criteria}
                  showPagination={false}
-                 columns={createColumns(this, this.props.recordsets, this.state.currentkey)}
+                 columns={createColumns(this, this.props.recordsets)}
                />
                <div style={{padding: '5px', backgroundColor: "#CCCCCC"}}>
               {
@@ -227,22 +227,18 @@ class FilterCreator extends React.Component {
   }
 
   handleAddCriteria() {
-    const {currentkey, data} = this.state;
-    var keyvalue = currentkey + 1;
+    const {data} = this.state;
 
     if (data.criteria.length < this.props.maxRows) {
       // Create New Data Row
       data.criteria.push({
-        key: keyvalue,
+        key: uuid.v4(),
         recordset: this.props.recordsets[0].name, //Assuming we always start with an existing recordset when we instantiate a filtercreator, always match with that
         field: this.props.recordsets[0].definition[0].name,
         operator: 'EqualTo',
         value: '',
         matchCase: false
       });
-
-      // Save State
-      this.setState({currentkey: keyvalue });
 
       this.handleUpdate(data)
     } else {
@@ -304,7 +300,7 @@ function getDataType(recordsets, criteria) {
   return dataType;
 }
 
-function createColumns(that, recordsets, key) {
+function createColumns(that, recordsets) {
 
   var columns = [{Header: 'key', accessor: 'key', show: false}];
   if (recordsets != null) {
