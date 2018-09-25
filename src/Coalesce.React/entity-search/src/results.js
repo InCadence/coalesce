@@ -10,7 +10,10 @@ import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import { toCSV } from 'react-csv/lib/core';
+import { toCSV } from 'common-components/lib/js/csv'
+import { saveFile } from 'common-components/lib/js/file'
+
+const MAX_LENGTH = 32000;
 
 export class SearchResults extends React.Component {
 
@@ -23,12 +26,13 @@ export class SearchResults extends React.Component {
 
     this.handleDownload = this.handleDownload.bind(this);
     this.handleCheckAll = this.handleCheckAll.bind(this);
+    this.handleCheck = this.handleCheck.bind(this);
 
-    var columns = this.createColumns(this.props.properties);
+    var meta = {allChecked: false};
+    var columns = this.createColumns(this.props.properties, meta);
 
     this.state = {
-        editMode: this.props.editMode,
-        selectAll: false,
+        meta: meta,
         columns: columns,
         tabledata: this.createData(columns, this.props.data)
       }
@@ -38,11 +42,12 @@ export class SearchResults extends React.Component {
   componentWillReceiveProps(nextProps) {
 
     if (nextProps.data.key !== this.props.data.key) {
-      var columns = this.createColumns(nextProps.properties);
+
+      var meta = {allChecked: false};
+      var columns = this.createColumns(nextProps.properties, meta);
 
       this.setState(() => {return {
-          editMode: nextProps.editMode,
-          selectAll: false,
+          meta: meta,
           columns: columns,
           tabledata: this.createData(columns, nextProps.data)
         }
@@ -52,9 +57,7 @@ export class SearchResults extends React.Component {
 
   render() {
 
-    const {editMode, columns, tabledata} = this.state;
-
-    columns[0].show = editMode;
+    const {columns, tabledata} = this.state;
 
     return (
       <ExpansionPanel  defaultExpanded>
@@ -96,7 +99,7 @@ export class SearchResults extends React.Component {
     var headers = columns.filter(column => column.show !== false && column.width !== 34).map((item) => item.accessor);
 
     // Map tabledata into CSV rows
-    var data = tabledata.map((item) => {
+    var data = tabledata.filter(item => item.checked).map((item) => {
 
       var row = {};
 
@@ -107,26 +110,17 @@ export class SearchResults extends React.Component {
       return row
     });
 
-    let blob = new Blob([toCSV(data, headers, ',')])
-    this.saveFile(blob, `query-results.csv`);
+    saveFile(new Blob([toCSV(data, headers, MAX_LENGTH)]), `query-results.csv`);
 
   }
 
-  saveFile(blob, filename) {
-    if (window.navigator.msSaveOrOpenBlob) {
-      window.navigator.msSaveOrOpenBlob(blob, filename);
-    } else {
-      const a = document.createElement('a');
-      document.body.appendChild(a);
-      const url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = filename;
-      a.click();
-      setTimeout(() => {
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      }, 0)
+  escapeDoubleQuotes = (value) => {
+
+    if (value && typeof value === 'string' && value.includes('"')) {
+      value = value.replace(/"/g, '""');
     }
+
+    return value;
   }
 
   handleDeleteCancel() {
@@ -163,28 +157,44 @@ export class SearchResults extends React.Component {
   }
 
   handleCheckAll(value) {
-    const {tabledata} = this.state;
+    const {tabledata, meta} = this.state;
 
     if (tabledata) {
       tabledata.forEach(function (hit) {
         hit.checked = value
       })
 
-      this.setState(() => {return {tabledata: tabledata}} )
+      meta.allChecked = value;
+      this.setState(() => {return {tabledata: tabledata, meta: meta}} )
     }
   }
 
-  createColumns(properties) {
+  handleCheck(value) {
+    const { meta, tabledata } = this.state;
+    var checked = true;
+
+    tabledata.forEach(function (item) {
+      checked = checked && item.checked;
+    })
+
+    if (checked !== meta.allChecked) {
+      meta.allChecked = checked;
+      this.setState(() => {return {meta: meta}});
+    }
+  }
+
+  createColumns(properties, meta) {
+
     var columns = [
       {
         // Add CheckBox Column
-        Header: (<FieldInput field={{}} dataType="BOOLEAN_TYPE" attr="checked" showLabels={false} onChange={this.handleCheckAll}/>),
+        Header: (<FieldInput field={meta} dataType="BOOLEAN_TYPE" attr="allChecked" showLabels={false} onChange={this.handleCheckAll}/>),
         accessor: 'select',
         resizable: false,
         sortable: false,
         width: 34,
         Cell: (cell) => (
-          <FieldInput field={cell.original} dataType="BOOLEAN_TYPE" attr="checked" showLabels={false}/>
+          <FieldInput field={cell.original} dataType="BOOLEAN_TYPE" attr="checked" showLabels={false} onChange={this.handleCheck} />
         )
       },{
         // Add Entity Key Column
