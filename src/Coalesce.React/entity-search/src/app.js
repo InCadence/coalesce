@@ -42,7 +42,7 @@ export class App extends React.Component {
         operator: 'AND',
         criteria: [
           {
-            key: 0,
+            key: uuid.v4(),
             recordset: 'CoalesceEntity',
             field: 'name',
             operator: 'EqualTo',
