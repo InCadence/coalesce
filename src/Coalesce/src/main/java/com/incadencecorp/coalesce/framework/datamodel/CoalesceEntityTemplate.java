@@ -255,10 +255,33 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
                                                                             CoalesceEntity.ATTRIBUTE_DATECREATED));
     }
 
+    /**
+     * Sets the date in which this template was created.
+     *
+     * @param value date of creation
+     */
+    public void setDateCreated(DateTime value)
+    {
+        XmlHelper.setAttribute(getCoalesceObjectDocument(), getEntityNode(), CoalesceEntity.ATTRIBUTE_DATECREATED, value);
+    }
+
+    /**
+     * @return the last time this template was modified.
+     */
     public DateTime getLastModified()
     {
         return JodaDateTimeHelper.fromXmlDateTimeUTC(XmlHelper.getAttribute(getEntityNode(),
                                                                             CoalesceEntity.ATTRIBUTE_LASTMODIFIED));
+    }
+
+    /**
+     * Sets the last time this template was modified.
+     *
+     * @param value date of last modification
+     */
+    public void setLastModified(DateTime value)
+    {
+        XmlHelper.setAttribute(getCoalesceObjectDocument(), getEntityNode(), CoalesceEntity.ATTRIBUTE_LASTMODIFIED, value);
     }
 
     /**

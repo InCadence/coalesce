@@ -19,6 +19,7 @@ package com.incadencecorp.coalesce.services.search.service.data.controllers;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
@@ -444,6 +445,13 @@ public class TemplateDataController {
 
         try
         {
+            if (template.getDateCreated() == null)
+            {
+                template.setDateCreated(JodaDateTimeHelper.nowInUtc());
+            }
+
+            template.setLastModified(JodaDateTimeHelper.nowInUtc());
+
             LOGGER.info("Saving template {}, Key: {}", template.getName(), template.getKey());
             framework.saveCoalesceEntityTemplate(template);
             templates.put(template.getKey(), new TemplateNode(template));
@@ -503,7 +511,7 @@ public class TemplateDataController {
                     String defaultValue = getString(jsonField, "defaultValue");
                     ECoalesceFieldDataTypes type = ECoalesceFieldDataTypes.getTypeForCoalesceType(fieldType);
 
-                    CoalesceFieldDefinition fd = recordset.createFieldDefinition(fieldName, type, label, "U", defaultValue);
+                    recordset.createFieldDefinition(fieldName, type, label, "U", defaultValue);
                 }
             }
         }
