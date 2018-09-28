@@ -130,43 +130,20 @@ public abstract class CoalesceObject implements ICoalesceObject {
         _object.setName(value);
     }
 
-    @JsonView(Views.Entity.class)
-    @JsonProperty("dateCreated")
-    public final String getDateCreatedAsString()
-    {
-        return JodaDateTimeHelper.toXmlDateTimeUTC(getDateCreated());
-    }
-
-    @JsonIgnore
     @Override
-    public final DateTime getDateCreated()
+    public DateTime getDateCreated()
     {
         return _object.getDatecreated();
     }
 
-    @JsonProperty("dateCreated")
-    public final void setDateCreatedAsString(String value)
-    {
-        setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
-    }
-
-    @JsonIgnore
     @Override
     public final void setDateCreated(DateTime value)
     {
         _object.setDatecreated(value);
     }
 
-    @JsonView(Views.Entity.class)
-    @JsonProperty("lastModified")
-    public final String getLastModifiedAsString()
-    {
-        return JodaDateTimeHelper.toXmlDateTimeUTC(getLastModified());
-    }
-
-    @JsonIgnore
     @Override
-    public final DateTime getLastModified()
+    public DateTime getLastModified()
     {
         return _object.getLastmodified();
     }
@@ -493,13 +470,6 @@ public abstract class CoalesceObject implements ICoalesceObject {
         this.setAttribute(ATTRIBUTE_FLATTEN, Boolean.toString(value));
     }
 
-    @JsonProperty("lastModified")
-    public final void setLastModifiedAsString(String value)
-    {
-        setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
-    }
-
-    @JsonIgnore
     @Override
     public final void setLastModified(DateTime value)
     {

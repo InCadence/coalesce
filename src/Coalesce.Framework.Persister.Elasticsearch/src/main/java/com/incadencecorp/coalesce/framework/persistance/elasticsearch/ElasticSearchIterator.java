@@ -212,7 +212,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         source.put(ElasticSearchPersistor.LINKAGE_ENTITY2_VERSION_COLUMN_NAME, linkage.getEntity2Version());
 
         source.put(ElasticSearchPersistor.LINKAGE_DATE_CREATED_COLUMN_NAME, linkage.getDateCreated());
-        source.put(ElasticSearchPersistor.LINKAGE_LAST_MODIFIED_COLUMN_NAME, linkage.getLastModifiedAsString());
+        source.put(ElasticSearchPersistor.LINKAGE_LAST_MODIFIED_COLUMN_NAME, linkage.getLastModified());
         source.put(ElasticSearchPersistor.LINKAGE_LABEL_COLUMN_NAME, linkage.getLabel());
         source.put(ElasticSearchPersistor.LINKAGE_STATUS_COLUMN_NAME, linkage.getStatus().toString());
         source.put(ElasticSearchPersistor.LINKAGE_LINK_TYPE_COLUMN_NAME, linkage.getLinkType().getLabel());
