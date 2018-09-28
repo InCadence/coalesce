@@ -986,7 +986,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
                 // Column properly formatted with a table name?
                 if (name.contains(DOT))
                 {
-                    sortByList.add(factory.sort(name, sortBy.getSortOrder()));
+                    sortByList.add(factory.sort(normalize(name), sortBy.getSortOrder()));
                 }
             }
         }

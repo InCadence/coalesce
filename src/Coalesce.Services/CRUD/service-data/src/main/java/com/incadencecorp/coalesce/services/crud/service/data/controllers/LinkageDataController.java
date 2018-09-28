@@ -182,6 +182,7 @@ public class LinkageDataController {
                 properties.add(CoalescePropertyFactory.getLinkageLabel());
                 properties.add(CoalescePropertyFactory.getLinkageStatus());
                 properties.add(CoalescePropertyFactory.getLinkageType());
+                properties.add(CoalescePropertyFactory.getLastModified());
 
                 Query query = new Query("coalesce", CoalescePropertyFactory.getEntityKey(key));
 
@@ -209,7 +210,7 @@ public class LinkageDataController {
                             link.setSource(key);
                             link.setTarget(rowset.getString(2));
                             link.setLabel(rowset.getString(3));
-                            link.setStatus(ECoalesceObjectStatus.fromValue(rowset.getString(4)));
+                            link.setStatus(ECoalesceObjectStatus.fromValue(rowset.getString(4).toLowerCase()));
                             link.setType(ELinkTypes.getTypeForLabel(rowset.getString(5)));
 
                             response.add(link);
