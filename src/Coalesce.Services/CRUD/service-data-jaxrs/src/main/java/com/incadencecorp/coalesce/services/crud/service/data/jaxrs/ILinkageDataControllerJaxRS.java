@@ -18,6 +18,7 @@
 package com.incadencecorp.coalesce.services.crud.service.data.jaxrs;
 
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
+import com.incadencecorp.coalesce.services.common.api.ILinkageDataController;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphLink;
 
 import javax.ws.rs.*;
@@ -31,7 +32,7 @@ import java.util.List;
  * @author Derek Clemenzi
  */
 @Path("linkage")
-public interface ILinkageDataControllerJaxRS {
+public interface ILinkageDataControllerJaxRS extends ILinkageDataController {
 
     @DELETE
     @Path("/")
