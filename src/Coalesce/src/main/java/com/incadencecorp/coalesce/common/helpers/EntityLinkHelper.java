@@ -512,7 +512,7 @@ public final class EntityLinkHelper {
                                     boolean canUpdateReadOnly,
                                     boolean isByDirection) throws CoalesceException
     {
-        if (entity1 == null || entity2 == null)
+        if (entity1 == null || entity2 == null || linkType == null)
         {
             throw new IllegalArgumentException(MODULE_NAME + " : LinkEntities");
         }

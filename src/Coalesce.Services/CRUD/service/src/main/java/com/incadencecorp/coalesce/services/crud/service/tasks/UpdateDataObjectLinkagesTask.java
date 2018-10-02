@@ -175,7 +175,7 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
             results.put("target", type.getDataObjectKeyTarget());
             results.put("label", type.getLabel());
             results.put("action", type.getAction().toString());
-            results.put("link type", type.getLinkType().toString());
+            results.put("link type", type.getLinkType() != null ? type.getLinkType().toString() : "");
         }
 
         return results;

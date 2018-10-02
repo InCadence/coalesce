@@ -495,7 +495,7 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
         setEntity1Source(entity1.getSource());
         setEntity1Version(entity1.getVersion());
 
-        setLinkType(linkType);
+        setLinkType(linkType != null ? linkType : ELinkTypes.UNDEFINED);
 
         setEntity2Key(entity2Key);
         setEntity2Name(entity2Name);

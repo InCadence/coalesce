@@ -17,6 +17,8 @@
 
 package com.incadencecorp.coalesce.services.crud.service.data.controllers;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
@@ -26,8 +28,10 @@ import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.services.api.Results;
+import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkType;
 import com.incadencecorp.coalesce.services.api.crud.ELinkAction;
+import com.incadencecorp.coalesce.services.common.api.ILinkageDataController;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphLink;
 import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
 import org.geotools.data.Query;
@@ -49,7 +53,7 @@ import java.util.List;
  *
  * @author Derek Clemenzi
  */
-public class LinkageDataController {
+public class LinkageDataController implements ILinkageDataController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LinkageDataController.class);
 
@@ -76,12 +80,17 @@ public class LinkageDataController {
         this.search = search;
     }
 
+    @Override
     public void unlink(List<GraphLink> links) throws RemoteException
     {
         List<DataObjectLinkType> tasks = new ArrayList<>();
 
         for (GraphLink link : links)
         {
+            verifyNonNullArgument("Type", link.getType());
+            verifyNonNullArgument("Source", link.getSource());
+            verifyNonNullArgument("Target", link.getTarget());
+
             DataObjectLinkType task = new DataObjectLinkType();
             task.setAction(ELinkAction.UNLINK);
             task.setDataObjectKeySource(link.getSource());
@@ -98,15 +107,20 @@ public class LinkageDataController {
                          link.getTarget());
         }
 
-        crud.updateLinkages(tasks.toArray(new DataObjectLinkType[tasks.size()]));
+        processResponse(crud.updateLinkages(tasks.toArray(new DataObjectLinkType[tasks.size()])));
     }
 
+    @Override
     public void link(List<GraphLink> links) throws RemoteException
     {
         List<DataObjectLinkType> tasks = new ArrayList<>();
 
         for (GraphLink link : links)
         {
+            verifyNonNullArgument("Type", link.getType());
+            verifyNonNullArgument("Source", link.getSource());
+            verifyNonNullArgument("Target", link.getTarget());
+
             DataObjectLinkType task = new DataObjectLinkType();
             task.setAction(link.getStatus() == ECoalesceObjectStatus.READONLY ? ELinkAction.MAKEREADONLY : ELinkAction.LINK);
             task.setDataObjectKeySource(link.getSource());
@@ -123,7 +137,7 @@ public class LinkageDataController {
                 reverse.setAction(task.getAction());
                 reverse.setDataObjectKeySource(link.getTarget());
                 reverse.setDataObjectKeyTarget(link.getSource());
-                reverse.setLinkType(task.getLinkType());
+                reverse.setLinkType(task.getLinkType().getReciprocalLinkType());
                 reverse.setLabel(task.getLabel());
 
                 tasks.add(reverse);
@@ -145,9 +159,10 @@ public class LinkageDataController {
 
         }
 
-        crud.updateLinkages(tasks.toArray(new DataObjectLinkType[tasks.size()]));
+        processResponse(crud.updateLinkages(tasks.toArray(new DataObjectLinkType[tasks.size()])));
     }
 
+    @Override
     public List<GraphLink> retrieveLinkages(String key) throws RemoteException
     {
         List<GraphLink> response = new ArrayList<>();
@@ -226,6 +241,28 @@ public class LinkageDataController {
             }
         }
         return response;
+    }
+
+    private void verifyNonNullArgument(String name, Object argument) throws RemoteException
+    {
+        if (argument == null)
+        {
+            throw new RemoteException(String.format(CoalesceErrors.INVALID_INPUT_REASON, name, "Cannot be null"));
+        }
+    }
+
+    private void processResponse(boolean successful) throws RemoteException
+    {
+        if (!successful)
+        {
+            for (ResultsType result : crud.getLastResult())
+            {
+                if (result.getStatus() != EResultStatus.SUCCESS)
+                {
+                    throw new RemoteException(result.getError());
+                }
+            }
+        }
     }
 
 }
