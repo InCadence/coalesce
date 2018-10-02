@@ -18,32 +18,10 @@
                 <directory>src/main/webapp</directory>
             </resource>
             <resource>
-                <directory>../../Coalesce.Bom/target/site/apidocs</directory>
+                <directory>../../../target/site</directory>
             </resource>
         </resources>
         <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.3.2</version>
-                <executions>
-                    <execution>
-                        <id>mvn site</id>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <phase>initialize</phase>
-                        <configuration>
-                            <executable>mvn</executable>
-                            <arguments>
-                                <argument>javadoc:aggregate</argument>
-                                <argument>-f</argument>
-                                <argument>../../Coalesce.Bom</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
