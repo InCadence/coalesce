@@ -1,20 +1,25 @@
 Metadata-Version: 2.1
-Name: Coalesce-Wrapper
-Version: 1.0.0
+Name: pyCoalesce
+Version: 0.1
 Summary: A python wrapper for coalesce objects
 Home-page: https://github.com/InCadence/coalesce/wiki
-Author: Dhruva Venkat
-Author-email: dvenkat@incadencecorp.com
+Author: Dhruva Venkat & Scott Orr
+Author-email: sorr@incadencecorp.com
 License: UNKNOWN
-Description: Coalesce Wrapper
+Description: The pyCoalesce package itself is found in the pyCoalesce directory.  The 
+        other directories contain documentation (and source for creating
+        documentation), a script for generating classes from the the Coalesce entity
+        XSD, tests, and build tools.
         
-        The Python wrapper supports the basic functions of Create, Read, Update and Delete. 
-        All of these functions are tailored for coalesece based servers.
-        These functions can be imported into separate projects, but can not be run directly from the 
-        request file itself. They can be run from the wrapper_runner file found in the main directory 
-        of the wrapper.
+        The "lxml" package is recommended for manipulated XSD-based classes, but
+        it's not absolutely required.
         
+        Watch this space for information on installing pyCoalesce via pip.
         
+        The "unit tests" are not true unit tests:  later tests rely on the entities
+        created in earlier tests, thereby avoiding either repeated creation and 
+        deletion of entities, or testing against a mocked-up API.  (The latter would
+        be unnecessarily time-consuming, and wouldn't catch bugs in the API itself.
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 2.7
 Classifier: License :: OSI Approved :: MIT License

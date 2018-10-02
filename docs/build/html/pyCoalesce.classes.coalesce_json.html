@@ -1,0 +1,245 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pyCoalesce.classes.coalesce_json module &#8212; pyCoalesce 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pyCoalesce.classes.entity module" href="pyCoalesce.classes.entity.html" />
+    <link rel="prev" title="pyCoalesce.classes.coalesce_entity_template module" href="pyCoalesce.classes.coalesce_entity_template.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pyCoalesce.classes.coalesce_JSON">
+<span id="pycoalesce-classes-coalesce-json-module"></span><h1>pyCoalesce.classes.coalesce_json module<a class="headerlink" href="#module-pyCoalesce.classes.coalesce_JSON" title="Permalink to this headline">¶</a></h1>
+<p>This module provides a JSON-serializable version of Coalesce linkages that,
+unlike the <a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.CoalesceLinkage" title="pyCoalesce.classes.coalesce_entity.CoalesceLinkage"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyCoalesce.classes.coalesce_entity.CoalesceLinkage</span></code></a> class,
+can be used with the JSON-only Coalesce linkage API.  Both this class and
+<a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.CoalesceLinkage" title="pyCoalesce.classes.coalesce_entity.CoalesceLinkage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoalesceLinkage</span></code></a> include methods
+to convert linkages to the other class.</p>
+<p>The class can be imported directly from the <a class="reference internal" href="pyCoalesce.classes.html#module-pyCoalesce.classes" title="pyCoalesce.classes"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyCoalesce.classes</span></code></a> module.</p>
+<p>&#64;author: sorr</p>
+<dl class="class">
+<dt id="pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage">
+<em class="property">class </em><code class="descclassname">pyCoalesce.classes.coalesce_JSON.</code><code class="descname">CoalesceAPILinkage</code><span class="sig-paren">(</span><em>source=None</em>, <em>target=None</em>, <em>label=None</em>, <em>linkage_type='UNDEFINED'</em>, <em>biDirectional=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<p>A JSON-serializable version of a Coalesce linkage, intended for use with
+the linkage CRUD endpoints of the RESTful API, which allow the creation,
+retreival, and deletion of links independently of their corresponding
+entities.  This capability makes it possible to submit links in bulk jobs,
+and also allows the submission of bi-directional links (which Coalesce
+instantiates by creating links in each of the corresponding entities).</p>
+<p>While this class is used to create Coalesce linkages, its format is
+different from the representation of those linkages in the databases
+themselves, and in the Java and RESTful entity API’s:  this class’s keys
+match the attribues in the Java GraphLink class, which correspond to a
+subset of the full set of keys/attributes in the entity model, but which
+use different names (thus, though this class is JSON-serializable, it
+doesn’t produce a JSON object that looks the same as a nested linkage
+object in a JSON representation of an entity).</p>
+<p>Although this is a subclass of dict (in order to make it JSON-
+serializable), only five keys can be set, each corresponding to one of the
+attributes included in the GraphLink class (the RESTful API doesn’t use a
+sixth attribute, “status”).  The __setitem__ and setdefault methods
+enforce this restriction, and the update method has been disabled.</p>
+<p>Keys:</p>
+<ul class="simple">
+<li>“source”:  the UUID key of the source entity, as either an instance of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">uuid.UUID</span></code> or a string or integer that can be used as input to
+the <code class="xref py py-class docutils literal notranslate"><span class="pre">UUID</span></code> class constructor.  The linkage created on
+the server will be part of this entity.</li>
+<li>“target”:  the UUID key of the target entity, as either an instance of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">uuid.UUID</span></code> or a string or integer that can be used as input to
+the <code class="xref py py-class docutils literal notranslate"><span class="pre">UUID</span></code> class constructor.  The linkage created on
+the server will not be part of this entity, unless the link is bi-
+directional.</li>
+<li>“label”:  a string label for the linkage.  This attribute isn’t used by
+Coalesce, and may be set to any value required by an application.</li>
+<li>“type”:  the (string) type of linkage.  The value of this attribute must
+be one the keys in <a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.LINKAGE_TYPES" title="pyCoalesce.classes.coalesce_entity.LINKAGE_TYPES"><code class="xref py py-const docutils literal notranslate"><span class="pre">pyCoalesce.classes.coalesce_entity.LINKAGE_TYPES</span></code></a>.</li>
+<li>“isBiDirectional”:  a boolean indicating whether or not the server
+should create a second linkage, from the target to the source.  The
+unPythonic name of this key is due to the need to match the attribute
+name of the Java GraphLink class.</li>
+<li>“status”:  the current status (active or deleted) of the linkage.  This
+key is set by the server, and therefore can’t be specified in the
+class constructor, and the constructor sets its value to <cite>None</cite>.
+However, the key can be passed through the
+<a class="reference internal" href="#pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.from_dict" title="pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.from_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_dict()</span></code></a>
+method, allowing it to be retained for links received from the RESTful
+API.</li>
+</ul>
+<p>Class Constant:</p>
+<dl class="attribute">
+<dt id="pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.VALID_KEYS">
+<code class="descname">VALID_KEYS</code><em class="property"> = ('source', 'target', 'label', 'type', 'biDirectional')</em><a class="headerlink" href="#pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.VALID_KEYS" title="Permalink to this definition">¶</a></dt>
+<dd><p>All instances have these keys (though “label” may have a value of
+<code class="docutils literal notranslate"><span class="pre">None</span></code>), and may not have any others.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.SERVER_KEYS">
+<code class="descname">SERVER_KEYS</code><em class="property"> = ('status',)</em><a class="headerlink" href="#pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.SERVER_KEYS" title="Permalink to this definition">¶</a></dt>
+<dd><p>This key may be set only by the server, and therefore isn’t included in
+the <a class="reference internal" href="#pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage" title="pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoalesceAPILinkage</span></code></a>
+constructor.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>input_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs an instance using a dict-like as input.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dict</strong> – a dict-like with keys matching the keys in
+:attr:’cls.VALID_KEYS’; “source” and “target” are required, while
+“label”, “type”, and “isBiDirectional” are optional.  Any
+extraneous keys will raise an exception.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a new instance</td>
+</tr>
+</tbody>
+</table>
+<p>For a normal dict subclass, we’d probably just use the update method
+here, but it’s not implemented for this class–and anyway, we need to
+check the input values, which is something the __init__ method already
+handles.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.setdefault">
+<code class="descname">setdefault</code><span class="sig-paren">(</span><em>key</em>, <em>value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.setdefault" title="Permalink to this definition">¶</a></dt>
+<dd><p>This <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> method has been overriden to add a check for
+extraneous keys.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>This <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> method has been disabled to prevent the addition of
+extraneous keys.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.to_XSD">
+<code class="descname">to_XSD</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.to_XSD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a version of the linkage as an instance of
+<a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.CoalesceLinkage" title="pyCoalesce.classes.coalesce_entity.CoalesceLinkage"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyCoalesce.classes.coalesce_entity.CoalesceLinkage</span></code></a>.</p>
+<p>Note that this representation does _not_ include a counterpart of the
+“isBiDirectional” attribute, since the XSD that defines Coalesce
+entities includes no such attribute (which means no such attribute is
+ever stored on the server).  To generate the reverse linkage, call
+“reverse_to_XSD”.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the linkage as an instance of class
+<a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.CoalesceLinkage" title="pyCoalesce.classes.coalesce_entity.CoalesceLinkage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoalesceLinkage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.reverse_to_XSD">
+<code class="descname">reverse_to_XSD</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.reverse_to_XSD" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a bidrectional linkage, returns a version of the the reverse linkage
+as an instance of <a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.CoalesceLinkage" title="pyCoalesce.classes.coalesce_entity.CoalesceLinkage"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyCoalesce.classes.coalesce_entity.CoalesceLinkage</span></code></a>.
+Calling this method on a unidirectional linkage will raise an exception.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the reverse linkage as an instance of class
+<a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.CoalesceLinkage" title="pyCoalesce.classes.coalesce_entity.CoalesceLinkage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoalesceLinkage</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pyCoalesce.coalesce_request.html">pyCoalesce.coalesce_request module</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyCoalesce.classes.html">pyCoalesce.classes package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="pyCoalesce.classes.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html">pyCoalesce.classes.coalesce_entity module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.classes.coalesce_entity_template.html">pyCoalesce.classes.coalesce_entity_template module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pyCoalesce.classes.coalesce_json module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.classes.entity.html">pyCoalesce.classes.entity module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.classes.entity_utilities.html">pyCoalesce.classes.entity_utilities module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyCoalesce.utilities.html">pyCoalesce.utilities package</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, InCadence Strategic Solutions.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/pyCoalesce.classes.coalesce_JSON.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

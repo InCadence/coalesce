@@ -5,12 +5,15 @@ Created on Fri Jul  6 11:39:12 2018
 @author: dvenkat & sorr
 """
 
+from sys import stdout
 from ConfigParser import SafeConfigParser
 from unittest import TestCase, TestSuite
+from copy import copy
 from uuid import uuid4
 
 import xmltodict
 import simplejson as json
+from requests import HTTPError
 
 from pyCoalesce.coalesce_request import *
 from pyCoalesce.coalesce_request import _test_key
@@ -37,7 +40,7 @@ TEMPLATE1_XML = '<entity ' + \
                    '<linkagesection name="Linkages"/> ' + \
                    '<section name="TestSection"> ' + \
                        '<recordset maxrecords="1" minrecords="1" ' + \
-                           'name="TestRecordset"> ' + \
+                           'name="TestRecordset1"> ' + \
                            '<fielddefinition datatype="string" ' + \
                                'defaultclassificationmarking="U" ' + \
                                'name="Field1"/> ' + \
@@ -55,7 +58,7 @@ TEMPLATE2_XML = '<entity ' + \
                    '<linkagesection name="Linkages"/> ' + \
                    '<section name="TestSection"> ' + \
                        '<recordset maxrecords="1" minrecords="1" ' + \
-                           'name="TestRecordset"> ' + \
+                           'name="TestRecordset2"> ' + \
                            '<fielddefinition datatype="string" ' + \
                                'defaultclassificationmarking="U" ' + \
                                'name="Field1"/> ' + \
@@ -82,7 +85,7 @@ TEMPLATE3_DICT = {
                                 {
                                     'maxRecords': 1,
                                     'minRecords': 1,
-                                    'name': 'TestRecordset',
+                                    'name': 'TestRecordset3',
                                     'fieldDefinitions': [
                                         {
                                             'dataType': 'string',
@@ -114,20 +117,23 @@ ENTITY3_DICT = {
                    'sectionsAsList': [
                        {
                            'name': 'TestSection',
+                           'sectionsAsList': [],
                            'recordsetsAsList': [
                                {
-                                   'name': 'TestRecordset',
+                                   'name': 'TestRecordset2',
                                    'allRecords': [
                                        {
                                            'name': 'TestRecord',
                                            'fields': [
                                                {
                                                    'name': 'Field1',
-                                                   'value': 'Sir'
+                                                   'value': 'Sir',
+                                                   'datatype': 'string',
                                                },
                                                {
                                                    'name': 'Field2',
-                                                   'value': 'Robin'
+                                                   'value': 'Robin',
+                                                   'datatype': 'string',
                                                }
                                            ]
                                        }
@@ -149,20 +155,23 @@ ENTITY4_DICT = {
                    'sectionsAsList': [
                        {
                            'name': 'TestSection',
+                           'sectionsAsList': [],
                            'recordsetsAsList': [
                                {
-                                   'name': 'TestRecordset',
+                                   'name': 'TestRecordset3',
                                    'allRecords': [
                                        {
                                            'name': 'TestRecord',
                                            'fields': [
                                                {
                                                    'name': 'Field1',
-                                                   'value': 'The'
+                                                   'value': 'The',
+                                                   'datatype': 'string',
                                                },
                                                {
                                                    'name': 'Field2',
-                                                   'value': 'Larch'
+                                                   'value': 'Larch',
+                                                   'datatype': 'string',
                                                }
                                            ]
                                        }
@@ -188,17 +197,17 @@ QUERY1_DICT = {
                           "operator": "AND",
                           "criteria": [
                               {
-                                  "recordset": "testrecordset",
+                                  "recordset": "testrecordset2",
                                   "field": "field1",
                                   "operator": "EqualTo",
-                                  "value": "sir",
+                                  "value": "Sir",
                                   "matchCase": False
                               },
                               {
-                                  "recordset": "testrecordset",
+                                  "recordset": "testrecordset2",
                                   "field": "field2",
                                   "operator": "EqualTo",
-                                  "value": "robin",
+                                  "value": "Robin",
                                   "matchCase": False
                               }
                           ]
@@ -221,7 +230,7 @@ QUERY2_DICT = {
                           "operator": "AND",
                           "criteria": [
                               {
-                                  "recordset": "testrecordset",
+                                  "recordset": "testrecordset3",
                                   "field": "field1",
                                   "operator": "EqualTo",
                                   "value": "aardvark",
@@ -229,10 +238,10 @@ QUERY2_DICT = {
                                   "not": True
                               },
                               {
-                                  "recordset": "testrecordset",
+                                  "recordset": "testrecordset3",
                                   "field": "field2",
                                   "operator": "Like",
-                                  "value": "lar",
+                                  "value": "Larch",
                                   "matchCase": False,
                               }
                           ]
@@ -258,20 +267,21 @@ class EntityTests(ServerTest):
     Methods that set values used by later methods must be class methods.
     """
 
-    def test_save_template(self):
+    def test_create_template(self):
 
         cls = self.__class__
 
         cls.template1_key = \
-            save_template(server = cls.server, template = TEMPLATE1_XML)
+            create_template(server = cls.server, template = TEMPLATE1_XML)
 
         template2 = parseString(TEMPLATE2_XML,
-                                object_class = CoalesceEntityTemplate)
+                                object_class = CoalesceEntityTemplate,
+                                silence = True)
         cls.template2_key = \
-            save_template(server = cls.server, template = template2)
+            create_template(server = cls.server, template = template2)
 
         cls.template3_key = \
-            save_template(server = cls.server, template = TEMPLATE3_DICT)
+            create_template(server = cls.server, template = TEMPLATE3_DICT)
 
         # Did the server return valid UUID keys?
 
@@ -365,25 +375,76 @@ class EntityTests(ServerTest):
         self.assertTrue(self.template3_key in key_JSON_list)
 
 
-    def test_delete_template(self):
+    def test_update_template(self):
 
-        success1 = delete_template(server = self.server,
+        new_template1_XML = TEMPLATE1_XML.replace("Field1", "FieldX")
+        success1 = update_template(server = self.server,
+                                   template = new_template1_XML,
                                    key = self.template1_key)
         self.assertTrue(success1)
 
-        success2 = delete_template(server = self.server,
+        new_template2_XML = TEMPLATE2_XML.replace("Field2", "FieldY")
+        new_template2 = parseString(new_template2_XML,
+                                    object_class = CoalesceEntityTemplate,
+                                    silence = True)
+        success2 = update_template(server = self.server, template = new_template2,
                                    key = self.template2_key)
-        self.assertTrue(success2)
+        self.assertTrue(success1)
 
-        success3 = delete_template(server = self.server,
+        new_template3_dict = copy(TEMPLATE3_DICT)
+        new_template3_dict["sectionsAsList"][0]["recordsetsAsList"][0]["name"] = \
+            "Fun Records!"
+        success3 = update_template(server = self.server,
+                                   template = new_template3_dict,
                                    key = self.template3_key)
         self.assertTrue(success3)
+
+
+    def test_delete_template(self):
+
+        # The default Derby persistor doesn't implement template deletion.
+        not_implemented_msg = "Server Error"
+
+        try:
+            success1 = delete_template(server = self.server,
+                                       key = self.template1_key)
+        except HTTPError as err:
+            if str(err).find(not_implemented_msg) > -1:
+                success1 = True
+            else:
+                raise
+        else:
+            self.assertTrue(success1)
+
+        try:
+            success2 = delete_template(server = self.server,
+                                       key = self.template2_key)
+        except HTTPError as err:
+            if str(err).find(not_implemented_msg) > -1:
+                success1 = True
+            else:
+                raise
+        else:
+            self.assertTrue(success2)
+
+        try:
+            success3 = delete_template(server = self.server,
+                                       key = self.template3_key)
+        except HTTPError as err:
+            if str(err).find(not_implemented_msg) > -1:
+                success1 = True
+            else:
+                raise
+        else:
+            self.assertTrue(success3)
 
 
     def test_construct_entity(self):
 
         cls = self.__class__
 
+        # It's best to create random keys while the test suite is running, so
+        # that we don't accidentally access entities from an earlier test.
         cls.entity1_key = unicode(uuid4())
         entity2_UUID = uuid4()
         cls.entity3_key = unicode(uuid4())
@@ -420,24 +481,22 @@ class EntityTests(ServerTest):
 
     def test_create(self):
 
-        response1 = create(server = self.server, new_entity = self.entity1,
+        response1 = create(server = self.server, entity = self.entity1,
                            full_response = True)
-        print response1.text
-        self.assertEqual(response1.status_code, 1)
+        self.assertEqual(self.entity1.key, response1.text)
 
         entity2_XML = to_XML_string(self.entity2)
-        success2 = create(server = self.server, new_entity = entity2_XML)
-        self.assertTrue(success2)
+        new_entity_key2 = create(server = self.server, entity = entity2_XML)
+        self.assertTrue(self.entity2.key, new_entity_key2)
 
-        success3 = create(server = self.server, new_entity = ENTITY3_DICT,
+        new_entity_key3 = create(server = self.server, entity = ENTITY3_DICT,
                           key = self.entity3_key)
-        self.assertTrue(success3)
+        self.assertTrue(self.entity3_key, new_entity_key3)
 
         entity4_JSON = json.dumps(ENTITY4_DICT)
-        response4 = create(server = self.server, new_entity = entity4_JSON,
+        response4 = create(server = self.server, entity = entity4_JSON,
                            key = self.entity4_key, full_response = True)
-        status4 = response4.status_code
-        self.assertEqual(status4, 204)
+        self.assertEqual(self.entity4_key, response4.text)
 
 
     def test_read(self):
@@ -447,25 +506,24 @@ class EntityTests(ServerTest):
         orig_name3 = ENTITY3_DICT["name"]
         orig_name4 = ENTITY4_DICT["name"]
 
-        entity1_dict = read_template(server = self.server, key = self.entity1_key,
-                                     output = "dict")
+        entity1_dict = read(server = self.server, key = self.entity1_key,
+                            output = "dict")
         name1 = entity1_dict["name"]
         self.assertEqual(name1, orig_name1)
 
-        entity2_object = read_template(server = self.server,
-                                       key = self.entity2_key,
-                                       output = "entity_object")
+        entity2_object = read(server = self.server, key = self.entity2_key,
+                              output = "entity_object")
         name2 = entity2_object.name
         self.assertEqual(name2, orig_name2)
 
-        JSON_text = read_template(server = self.server, key = self.entity3_key,
-                                  output = "JSON")
+        JSON_text = read(server = self.server, key = self.entity3_key,
+                         output = "JSON")
         entity3_JSON = json.loads(JSON_text)
         name3 = entity3_JSON["name"]
         self.assertEqual(name3, orig_name3)
 
-        XML_text = read_template(server = self.server, key = self.entity4_key,
-                                 output = "XML")
+        XML_text = read(server = self.server, key = self.entity4_key,
+                        output = "XML")
         entity4_XML = xmltodict.parse(XML_text)
         name4 = entity4_XML["entity"]["@name"]
         self.assertEqual(name4, orig_name4)
@@ -474,22 +532,22 @@ class EntityTests(ServerTest):
     def test_update(self):
 
         self.entity1.title = "Gumby #1"
-        success1 = update(server = self.server, updated_entity = self.entity1)
+        success1 = update(server = self.server, entity = self.entity1)
         self.assertTrue(success1)
 
         self.entity2.title = "Gumby #2"
         entity2_XML = to_XML_string(self.entity2)
-        success2 = update(server = self.server, updated_entity = entity2_XML)
+        success2 = update(server = self.server, entity = entity2_XML)
         self.assertTrue(success2)
 
         ENTITY3_DICT["title"] = "Gumby #3"
-        success3 = update(server = self.server, updated_entity = ENTITY3_DICT,
+        success3 = update(server = self.server, entity = ENTITY3_DICT,
                           key = self.entity3_key)
         self.assertTrue(success3)
 
         ENTITY4_DICT["title"] = "Gumby #4"
         entity4_new_JSON = json.dumps(ENTITY3_DICT)
-        response4 = update(server = self.server, updated_entity = entity4_new_JSON,
+        response4 = update(server = self.server, entity = entity4_new_JSON,
                            key = self.entity4_key, full_response = True)
         status4 = response4.status_code
         self.assertEqual(status4, 204)
@@ -518,54 +576,57 @@ class EntityTests(ServerTest):
         """
 
         # Set for dict input
-        cls.linkage01_dict = {"source": cls.entity1_key, "target": cls.entity2.key}
-        cls.linkage02_dict = {"source": cls.entity2_key, "target": cls.entity3.key,
+        cls.linkage01_dict = {"source": cls.entity1_key, "target": cls.entity2_key,
+                              "type": "UNDEFINED"}
+        cls.linkage02_dict = {"source": cls.entity2_key, "target": cls.entity3_key,
                               "label": "Brain hurts", "type": "IS_PARENT_OF"}
-        cls.linkage03_dict = {"source": cls.entity3_key, "target": cls.entity4.key,
+        cls.linkage03_dict = {"source": cls.entity3_key,
+                              "target": cls.entity4_key,
                               "type": "IS_BEING_WATCHED_BY",
-                              "isBiDirectional": True}
+                              "biDirectional": True}
 
         # Set for JSON input
-        linkage11_dict = {"source": cls.entity2_key, "target": cls.entity3.key}
+        linkage11_dict = {"source": cls.entity2_key, "target": cls.entity3_key,
+                          "type": "UNDEFINED"}
         cls.linkage11_JSON = json.dumps(linkage11_dict)
-        linkage12_dict = {"source": cls.entity3_key, "target": cls.entity4.key,
+        linkage12_dict = {"source": cls.entity3_key, "target": cls.entity4_key,
                           "label": "Brain hurts", "type": "IS_PARENT_OF"}
-        linkage13_dict = {"source": cls.entity4_key, "target": cls.entity1.key,
-                          "type": "IS_BEING_WATCHED_BY", "isBiDirectional": True}
+        linkage13_dict = {"source": cls.entity4_key, "target": cls.entity1_key,
+                          "type": "IS_BEING_WATCHED_BY", "biDirectional": True}
         cls.linkage1_array_JSON = json.dumps([linkage12_dict, linkage13_dict])
 
         # Set for CoalesceAPILinkage input
         cls.linkage21_API = CoalesceAPILinkage(source = cls.entity3_key,
-                                               target = cls.entity4.key,
+                                               target = cls.entity4_key,
                                                linkage_type = "WAS_CREATED_BY")
-        linkage22_dict = {"source": cls.entity4_key, "target": cls.entity1.key,
+        linkage22_dict = {"source": cls.entity4_key, "target": cls.entity1_key,
                           "label": "Brain hurts", "type": "IS_PARENT_OF"}
         cls.linkage22_API = CoalesceAPILinkage.from_dict(linkage22_dict)
         linkage23_XSD = CoalesceLinkage(entity1key = cls.entity1_key,
-                                        entity2key = cls.entity2.key,
+                                        entity2key = cls.entity2_key,
                                         linktype = "IsBeingWatchedBy")
-        cls.linkage23_API = linkage23_XSD.to_API(isBiDirectional = True)
+        cls.linkage23_API = linkage23_XSD.to_API(biDirectional = True)
 
         # Set for XML input
         linkage31_XSD = CoalesceLinkage(entity1key = cls.entity4_key,
-                                        entity2key = cls.entity1.key)
+                                        entity2key = cls.entity1_key)
         cls.linkage31_XML = to_XML_string(linkage31_XSD)
         linkage3_API = CoalesceAPILinkage(source = cls.entity2_key,
-                                          target = cls.entity3.key,
+                                          target = cls.entity3_key,
                                           linkage_type = "IS_BEING_WATCHED_BY",
-                                          isBiDirectional = True)
+                                          biDirectional = True)
         cls.linkage32_XML = to_XML_string(linkage3_API.to_XSD())
         cls.linkage33_XML = to_XML_string(linkage3_API.reverse_to_XSD())
 
         # Set for CoalesceLinkage input
         cls.linkage41_XSD = CoalesceLinkage(entity1key = cls.entity1_key,
-                                            entity2key = cls.entity2.key,
+                                            entity2key = cls.entity2_key,
                                             label = "Brain hurts",
                                             linktype = "IsParentOf")
         linkage4_API = CoalesceAPILinkage(source = cls.entity1_key,
-                                          target = cls.entity4.key,
+                                          target = cls.entity4_key,
                                           linkage_type = "IS_A_PEER_OF",
-                                          isBiDirectional = True)
+                                          biDirectional = True)
         cls.linkage42_XSD = linkage4_API.to_XSD()
         cls.linkage43_XSD = linkage4_API.reverse_to_XSD()
 
@@ -617,12 +678,12 @@ class EntityTests(ServerTest):
         linkages1 = read_linkages(server = self.server, key = self.entity1_key,
                                   output  = "JSON")
         num_links1 = len(json.loads(linkages1))
-        self.assertEqual(num_links1, 5)
+        self.assertEqual(num_links1, 4)
 
         linkages2 = read_linkages(server = self.server, key = self.entity2_key,
                                   output  = "dict_list")
         num_links2 = len(linkages2)
-        self.assertEqual(num_links2, 4)
+        self.assertEqual(num_links2, 3)
 
         linkages3 = read_linkages(server = self.server, key = self.entity3_key,
                                   output  = "API_list")
@@ -632,7 +693,7 @@ class EntityTests(ServerTest):
         linkages4 = read_linkages(server = self.server, key = self.entity4_key,
                                   output  = "JSON")
         num_links4 = len(json.loads(linkages4))
-        self.assertEqual(num_links4, 5)
+        self.assertEqual(num_links4, 4)
 
 
     def test_delete_linkages(self):
@@ -693,20 +754,20 @@ class SearchTests(ServerTest):
                                         ["value"]
 
         results1_list = search(server = self.server, query = QUERY1_DICT,
-                               property_names = ["testrecordset.field1"],
+                               property_names = ["testrecordset2.field1"],
                                output = "list")
         results1_first_field = results1_list[0]["values"][0]
         self.assertEqual(results1_first_field, orig1_first_field)
 
         query2_JSON = json.dumps(QUERY2_DICT)
         results2_full_dict = search(server = self.server, query = query2_JSON,
-                                    property_names = ["testrecordset.field1"],
+                                    property_names = ["testrecordset3.field1"],
                                     output = "full_dict")
         results2_first_field = results2_full_dict["hits"][0]["values"][0]
         self.assertEqual(results2_first_field, orig2_first_field)
 
         results3_JSON = search(server = self.server, query = QUERY1_DICT,
-                               property_names = ["testrecordset.field1"],
+                               property_names = ["testrecordset2.field1"],
                                output = "JSON")
         results3_first_field = json.loads(results3_JSON)["hits"][0]["values"][0]
         self.assertEqual(results3_first_field, orig1_first_field)
@@ -726,43 +787,44 @@ class SearchTests(ServerTest):
                                         ["value"]
 
         results1_list = search_simple(server = self.server,
-                                      recordset = "testrecordset",
+                                      recordset = "testrecordset2",
                                       field = "field1", operator = "EqualTo",
                                       value = "Sir",
-                                      property_names = ["testrecordset.field1"],
+                                      property_names = ["testrecordset2.field1"],
                                       output = "list")
         results1_first_field = results1_list[0]["values"][0]
         self.assertEqual(results1_first_field, orig1_first_field)
 
         results2_full_dict = search_simple(server = self.server,
-                                           recordset = "testrecordset",
+                                           recordset = "testrecordset3",
                                            field = "field2", operator = "Like",
-                                           value = "lar",
-                                           property_names = ["testrecordset.field1"],
+                                           value = "Larch",
+                                           property_names = ["testrecordset3.field1"],
                                            output = "full_dict")
         results2_first_field = results2_full_dict["hits"][0]["values"][0]
         self.assertEqual(results2_first_field, orig2_first_field)
 
         results3_JSON = search_simple(server = self.server,
-                                      recordset = "testrecordset",
+                                      recordset = "testrecordset2",
                                       field = "field1", operator = "EqualTo",
                                       value = "Sir",
-                                      property_names = ["testrecordset.field1"],
+                                      property_names = ["testrecordset2.field1"],
                                       output = "JSON")
         results3_first_field = json.loads(results3_JSON)["hits"][0]["values"][0]
         self.assertEqual(results3_first_field, orig1_first_field)
 
 
-TESTS = (EntityTests("test_save_template"), EntityTests("test_register_template"),
+TESTS = (EntityTests("test_create_template"), EntityTests("test_register_template"),
          EntityTests("test_read_template"), EntityTests("test_get_template_list"),
          EntityTests("test_construct_entity"), EntityTests("test_create"),
-         )
-#         EntityTests("test_read"), EntityTests("test_update"),
-#         EntityTests("test_linkage_manipulation"),
-#         EntityTests("test_create_linkages"), EntityTests("test_read_linkages"),
-#         SearchTests("test_search"), SearchTests("test_search_simple"),
-#         EntityTests("test_delete_linkages"), EntityTests("test_delete"),
-#         EntityTests("test_delete_template"))
+         EntityTests("test_read"), EntityTests("test_update"),
+         EntityTests("test_update_template"),
+         EntityTests("test_linkage_manipulation"),
+         EntityTests("test_create_linkages"),
+         EntityTests("test_read_linkages"),
+         SearchTests("test_search"), SearchTests("test_search_simple"),
+         EntityTests("test_delete_linkages"), EntityTests("test_delete"),
+         EntityTests("test_delete_template"))
 
 
 def pyCoalesce_test_suite():

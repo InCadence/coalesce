@@ -1,0 +1,7 @@
+pyCoalesce.classes.URL\_class module
+====================================
+
+.. automodule:: pyCoalesce.classes.URL_class
+    :members:
+    :undoc-members:
+    :show-inheritance:
