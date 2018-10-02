@@ -164,4 +164,26 @@ public class LinkageDataControllerTest {
         Assert.assertEquals(1, links.size());
         Assert.assertEquals(ECoalesceObjectStatus.DELETED, links.get(0).getStatus());
     }
+
+    /**
+     * This test ensures that not specifying a linkage type will result in an exception
+     */
+    @Test (expected = RemoteException.class)
+    public void testTypeNotSet() throws Exception
+    {
+        // Setup
+        CoalesceSearchFramework framework = new CoalesceSearchFramework();
+        framework.setAuthoritativePersistor(new DerbyPersistor());
+
+        LinkageDataController controller = new LinkageDataController(new CrudFrameworkClientImpl(framework), framework);
+
+        // Create Task
+        GraphLink task = new GraphLink();
+        task.setBiDirectional(false);
+        task.setSource(UUID.randomUUID().toString());
+        task.setTarget(UUID.randomUUID().toString());
+
+        controller.link(Collections.singletonList(task));
+    }
+
 }
