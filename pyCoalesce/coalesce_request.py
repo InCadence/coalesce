@@ -1737,6 +1737,8 @@ def read_linkages(server = None, key = None, output = "dict_list"):
                             delay = 1, max_attempts = 4)
 
     # Return the type of output specified by "output".
+    print response.text
+    stdout.flush()
 
     if output == u"json":
        return response.text

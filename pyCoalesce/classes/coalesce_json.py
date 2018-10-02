@@ -38,10 +38,10 @@ class CoalesceAPILinkage(dict):
     object in a JSON representation of an entity).
 
     Although this is a subclass of dict (in order to make it JSON-
-    serializable), only five keys can be set, each corresponding to one of the
-    attributes included in the GraphLink class (the RESTful API doesn't use a
-    sixth attribute, "status").  The __setitem__ and setdefault methods
-    enforce this restriction, and the update method has been disabled.
+    serializable), only six keys can be set, each corresponding to one of the
+    attributes included in the GraphLink class.  The __setitem__ and
+    setdefault methods enforce this restriction, and the update method has
+    been disabled.
 
     Keys:
 
@@ -70,10 +70,11 @@ class CoalesceAPILinkage(dict):
     * "status":  the current status (active or deleted) of the linkage.  This
       key is set by the server, and therefore can't be specified in the
       class constructor, and the constructor sets its value to `None`.
-      However, the key can be passed through the
+      However, the server will accept accept changes to "status", and its
+      value can be set directly.  The key can be passed through the
       :meth:`~pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.from_dict`
-      method, allowing it to be retained for links received from the RESTful
-      API.
+      method, allowing a server-set value to be retained for links received
+      from the RESTful API.
 
     Class Constant:
 

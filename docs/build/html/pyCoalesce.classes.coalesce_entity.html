@@ -290,9 +290,12 @@ that contains the entity’s <a class="reference internal" href="#pyCoalesce.cla
 <li><strong>section</strong> – a list of the entity’s sections</li>
 <li><strong>noindex</strong> – a boolean indicating whether or not to index the entity
 for search</li>
-<li><strong>disablehistory</strong> – a boolean that serves as a default value for the
-same attribute for entities created from the template, specifying
-whether or not each entity’s history of revisions should be retained</li>
+<li><strong>disablehistory</strong> – a boolean that determines whether or not the
+entity’s history of revisions should be retained</li>
+<li><strong>status</strong> – the current status (active, read only, or deleted) of the
+entity.  While “status” is set by the server, and therefore not
+included in the class constructor, the attribute can be set directly,
+and the server will accept modifications to its value in an entity update.</li>
 <li><strong>datecreated</strong> – the date on which the entity was created.  If not
 specified, this attribute will be set by the server.</li>
 <li><strong>template</strong> – the
@@ -304,8 +307,6 @@ this attribute is <code class="docutils literal notranslate"><span class="pre">N
 <li><strong>entityid</strong> – a unique, searchable ID used by some specific
 applications</li>
 <li><strong>entityidtype</strong> – the type of entityid in use</li>
-<li><strong>status</strong> – the current status (active or deleted) of the entity (set
-by the server)</li>
 <li><strong>lastmodified</strong> – the date on which the entity was last modified (set
 by the server)</li>
 <li><strong>modifiedby</strong> – the last user to modify the entity (set by the

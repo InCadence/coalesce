@@ -78,8 +78,10 @@ specified, this attribute will be set by the server.</li>
 <li><strong>entityid</strong> – a unique, searchable ID used by some specific
 applications</li>
 <li><strong>entityidtype</strong> – the type of entityid in use</li>
-<li><strong>status</strong> – the current status (active or deleted) of the template (set
-by the server)</li>
+<li><strong>status</strong> – the current status (active, read only, or deleted) of the
+entity.  While “status” is set by the server, and therefore not
+included in the class constructor, the attribute can be set directly,
+and the server will accept modifications to its value in an entity update.</li>
 <li><strong>lastmodified</strong> – the date on which the template was last modified
 (set by the server)</li>
 <li><strong>modifiedby</strong> – the last user to modify the template (set by the

@@ -59,10 +59,10 @@ use different names (thus, though this class is JSON-serializable, it
 doesn’t produce a JSON object that looks the same as a nested linkage
 object in a JSON representation of an entity).</p>
 <p>Although this is a subclass of dict (in order to make it JSON-
-serializable), only five keys can be set, each corresponding to one of the
-attributes included in the GraphLink class (the RESTful API doesn’t use a
-sixth attribute, “status”).  The __setitem__ and setdefault methods
-enforce this restriction, and the update method has been disabled.</p>
+serializable), only six keys can be set, each corresponding to one of the
+attributes included in the GraphLink class.  The __setitem__ and
+setdefault methods enforce this restriction, and the update method has
+been disabled.</p>
 <p>Keys:</p>
 <ul class="simple">
 <li>“source”:  the UUID key of the source entity, as either an instance of
@@ -85,10 +85,11 @@ name of the Java GraphLink class.</li>
 <li>“status”:  the current status (active or deleted) of the linkage.  This
 key is set by the server, and therefore can’t be specified in the
 class constructor, and the constructor sets its value to <cite>None</cite>.
-However, the key can be passed through the
+However, the server will accept accept changes to “status”, and its
+value can be set directly.  The key can be passed through the
 <a class="reference internal" href="#pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.from_dict" title="pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.from_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_dict()</span></code></a>
-method, allowing it to be retained for links received from the RESTful
-API.</li>
+method, allowing a server-set value to be retained for links received
+from the RESTful API.</li>
 </ul>
 <p>Class Constant:</p>
 <dl class="attribute">

@@ -47,6 +47,9 @@ TEMPLATE1_XML = '<entity ' + \
                            '<fielddefinition datatype="string" ' + \
                                'defaultclassificationmarking="U" ' + \
                                'name="Field2"/> ' + \
+                           '<fielddefinition datatype="string" ' + \
+                               'defaultclassificationmarking="U" ' + \
+                               'name="Field3"/> ' + \
                        '</recordset> ' + \
                    '</section> ' + \
                '</entity>'
@@ -65,6 +68,9 @@ TEMPLATE2_XML = '<entity ' + \
                            '<fielddefinition datatype="string" ' + \
                                'defaultclassificationmarking="U" ' + \
                                'name="Field2"/> ' + \
+                           '<fielddefinition datatype="string" ' + \
+                               'defaultclassificationmarking="U" ' + \
+                               'name="Field3"/> ' + \
                        '</recordset> ' + \
                    '</section> ' + \
                '</entity>'
@@ -182,19 +188,19 @@ ENTITY4_DICT = {
                    ]
                }
 QUERY1_DICT = {
-                  "operator": "OR",
+                  "operator": "AND",
                   "criteria": [
                       {
                           "recordset": "coalesceentity",
                           "field": "name",
                           "operator": "EqualTo",
-                          "value": "testentity2",
+                          "value": "TestEntity2",
                           "matchCase": False
                       }
                   ],
                   "groups": [
                       {
-                          "operator": "AND",
+                          "operator": "OR",
                           "criteria": [
                               {
                                   "recordset": "testrecordset2",
@@ -207,7 +213,7 @@ QUERY1_DICT = {
                                   "recordset": "testrecordset2",
                                   "field": "field2",
                                   "operator": "EqualTo",
-                                  "value": "Robin",
+                                  "value": "aardvark",
                                   "matchCase": False
                               }
                           ]
@@ -215,13 +221,13 @@ QUERY1_DICT = {
                   ]
               }
 QUERY2_DICT = {
-                  "operator": "OR",
+                  "operator": "AND",
                   "criteria": [
                       {
                           "recordset": "coalesceentity",
                           "field": "name",
                           "operator": "EqualTo",
-                          "value": "testentity3",
+                          "value": "TestEntity3",
                           "matchCase": False
                       }
                   ],
@@ -377,13 +383,13 @@ class EntityTests(ServerTest):
 
     def test_update_template(self):
 
-        new_template1_XML = TEMPLATE1_XML.replace("Field1", "FieldX")
+        new_template1_XML = TEMPLATE1_XML.replace("Field3", "FieldX")
         success1 = update_template(server = self.server,
                                    template = new_template1_XML,
                                    key = self.template1_key)
         self.assertTrue(success1)
 
-        new_template2_XML = TEMPLATE2_XML.replace("Field2", "FieldY")
+        new_template2_XML = TEMPLATE2_XML.replace("Field3", "FieldY")
         new_template2 = parseString(new_template2_XML,
                                     object_class = CoalesceEntityTemplate,
                                     silence = True)
@@ -814,16 +820,17 @@ class SearchTests(ServerTest):
         self.assertEqual(results3_first_field, orig1_first_field)
 
 
-TESTS = (EntityTests("test_create_template"), EntityTests("test_register_template"),
-         EntityTests("test_read_template"), EntityTests("test_get_template_list"),
+TESTS = (EntityTests("test_create_template"),
+         EntityTests("test_register_template"), EntityTests("test_read_template"),
+         EntityTests("test_get_template_list"),
          EntityTests("test_construct_entity"), EntityTests("test_create"),
          EntityTests("test_read"), EntityTests("test_update"),
-         EntityTests("test_update_template"),
          EntityTests("test_linkage_manipulation"),
          EntityTests("test_create_linkages"),
          EntityTests("test_read_linkages"),
          SearchTests("test_search"), SearchTests("test_search_simple"),
          EntityTests("test_delete_linkages"), EntityTests("test_delete"),
+         EntityTests("test_update_template"),
          EntityTests("test_delete_template"))
 
 

@@ -436,9 +436,12 @@ class entitySub(supermod.entity):
     :ivar section:  a list of the entity's sections
     :ivar noindex:  a boolean indicating whether or not to index the entity
         for search
-    :ivar disablehistory:  a boolean that serves as a default value for the
-        same attribute for entities created from the template, specifying
-        whether or not each entity's history of revisions should be retained
+    :ivar disablehistory:  a boolean that determines whether or not the
+        entity's history of revisions should be retained
+    :ivar status:  the current status (active, read only, or deleted) of the
+        entity.  While "status" is set by the server, and therefore not
+        included in the class constructor, the attribute can be set directly,
+        and the server will accept modifications to its value in an entity update.
     :ivar datecreated:  the date on which the entity was created.  If not
         specified, this attribute will be set by the server.
     :ivar template:  the
@@ -450,8 +453,6 @@ class entitySub(supermod.entity):
     :ivar entityid:  a unique, searchable ID used by some specific
         applications
     :ivar entityidtype:  the type of entityid in use
-    :ivar status:  the current status (active or deleted) of the entity (set
-        by the server)
     :ivar lastmodified:  the date on which the entity was last modified (set
         by the server)
     :ivar modifiedby:  the last user to modify the entity (set by the
