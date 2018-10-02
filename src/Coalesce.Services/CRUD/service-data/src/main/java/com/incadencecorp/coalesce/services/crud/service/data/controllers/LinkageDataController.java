@@ -126,7 +126,7 @@ public class LinkageDataController implements ILinkageDataController {
                 reverse.setAction(task.getAction());
                 reverse.setDataObjectKeySource(link.getTarget());
                 reverse.setDataObjectKeyTarget(link.getSource());
-                reverse.setLinkType(task.getLinkType());
+                reverse.setLinkType(task.getLinkType().getReciprocalLinkType());
                 reverse.setLabel(task.getLabel());
 
                 tasks.add(reverse);
