@@ -267,10 +267,12 @@ function createPropertyList(recordsets) {
   recordsets.forEach((recordset) => {
 
     recordset.definition.forEach((definition) => {
-      properties.push({
-          enum: recordset.name + '.' + definition.name,
-          label: recordset.name + '.' + definition.name
-      });
+      if(definition.name !== 'objectkey') {
+        properties.push({
+            enum: recordset.name + '.' + definition.name,
+            label: recordset.name + '.' + definition.name
+        });
+      }
     })
 
   })
