@@ -24,12 +24,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.incadencecorp.coalesce.api.Views;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import org.joda.time.DateTime;
 
 /**
  * Implementation of ICoalesceConstraint.
@@ -431,6 +434,32 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
     {
         return getCastParent();
     }
+
+
+    /**
+     * Modify the JSON annotation
+     */
+    @JsonView(Views.Entity.class)
+    @Override
+    public String getKey()
+    {
+        return super.getKey();
+    }
+
+    @JsonView(Views.Entity.class)
+    @Override
+    public DateTime getDateCreated()
+    {
+        return super.getDateCreated();
+    }
+
+    @JsonView(Views.Entity.class)
+    @Override
+    public DateTime getLastModified()
+    {
+        return super.getLastModified();
+    }
+
 
     /*--------------------------------------------------------------------------
     Protected Overrides

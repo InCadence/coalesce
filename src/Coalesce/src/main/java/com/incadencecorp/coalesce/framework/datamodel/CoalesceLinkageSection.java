@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import org.apache.commons.lang.NullArgumentException;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -145,6 +146,20 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     public String getKey()
     {
         return super.getKey();
+    }
+
+    @JsonView(Views.Entity.class)
+    @Override
+    public DateTime getDateCreated()
+    {
+        return super.getDateCreated();
+    }
+
+    @JsonView(Views.Entity.class)
+    @Override
+    public DateTime getLastModified()
+    {
+        return super.getLastModified();
     }
 
     /**

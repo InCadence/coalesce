@@ -6,6 +6,7 @@ import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
+import org.joda.time.DateTime;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -570,6 +571,20 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     public String getKey()
     {
         return super.getKey();
+    }
+
+    @JsonView(Views.Entity.class)
+    @Override
+    public DateTime getDateCreated()
+    {
+        return super.getDateCreated();
+    }
+
+    @JsonView(Views.Entity.class)
+    @Override
+    public DateTime getLastModified()
+    {
+        return super.getLastModified();
     }
 
     protected List<Constraint> getDefinitionConstraints()

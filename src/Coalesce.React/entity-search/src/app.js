@@ -9,7 +9,8 @@ import uuid from 'uuid';
 import FilterCreator from './filtercreator.js'
 import {SearchResults} from './results.js'
 
-var karafRootAddr = getRootKarafUrl();
+const karafRootAddr = getRootKarafUrl();
+const DEFAULT = 'CoalesceEntity';
 
 export class App extends React.Component {
 
@@ -23,9 +24,16 @@ export class App extends React.Component {
     this.handleSearch = this.handleSearch.bind(this);
     this.handleSpinner = this.handleSpinner.bind(this);
 
+    var cache = {};
+
+    cache[DEFAULT] = {
+      recordsets: [],
+      name: ''
+    };
+
     this.state = {
-      cache: [],
-      key: null,
+      cache: cache,
+      key: DEFAULT,
       results: null,
       properties: [],
       query: this.createQuery()
@@ -43,7 +51,7 @@ export class App extends React.Component {
         criteria: [
           {
             key: uuid.v4(),
-            recordset: 'CoalesceEntity',
+            recordset: DEFAULT,
             field: 'name',
             operator: 'EqualTo',
             value: name,
@@ -58,36 +66,36 @@ export class App extends React.Component {
 
     var that = this;
 
-    fetch(karafRootAddr + '/templates/998b040b-2c39-4c98-9a9d-61d565b46e28/recordsets/CoalesceEntity/fields')
+    this.loadFields('CoalesceEntity');
+    this.loadFields('CoalesceLinkage');
+
+    loadTemplates().then((templates) => {
+      that.setState(() => {
+        return {templates: templates}
+      })
+    }).catch(function(error) {
+      that.handleError("Loading Templates: " + error);
+    });
+  }
+
+  loadFields(key, idx) {
+
+    var that = this;
+
+    fetch(`${karafRootAddr}/templates/998b040b-2c39-4c98-9a9d-61d565b46e28/recordsets/${key}/fields`)
       .then(res => res.json())
       .then(definition => {
 
         const { cache } = this.state;
 
-        var recordsets = [];
-        recordsets.push({name: 'CoalesceEntity', definition: definition});
+        cache[DEFAULT].recordsets.push({name: key, definition: definition});
 
-        cache['CoalesceEntity'] = {
-          recordsets: recordsets,
-          name: ''
-        };
-
-        that.setState({
-          key: 'CoalesceEntity',
-          cache: cache,
-          }
-        );
+        that.setState(() => {
+          return {cache: cache}
+        });
 
     }).catch(function(error) {
       that.handleError("Loading Common Fields: " + error);
-    });
-
-    loadTemplates().then((templates) => {
-      that.setState({
-        templates: templates,
-      })
-    }).catch(function(error) {
-      that.handleError("Loading Templates: " + error);
     });
   }
 
@@ -114,12 +122,14 @@ export class App extends React.Component {
 
       loadTemplate(key).then(template => {
 
-        var recordsets = [].concat(cache['CoalesceEntity'].recordsets);
+        var recordsets = []
 
         // Get Other Recordsets
         template.sectionsAsList.forEach(function(section) {
           recordsets = recordsets.concat(getRecordsets(section));
         });
+
+        recordsets = recordsets.concat(cache[DEFAULT].recordsets);
 
         cache[key] = {
           recordsets: recordsets,
@@ -199,7 +209,7 @@ export class App extends React.Component {
           }
         ]}/>
           <div  style={{padding: '5px', margin: '10px'}}>
-            { cache[key] != null &&
+            { cache[key] != null && cache[key].recordsets.length >= 2 &&
               <FilterCreator
                 label={this.state.key ? this.state.cache[this.state.key].name : undefined}
                 maxRows={10}

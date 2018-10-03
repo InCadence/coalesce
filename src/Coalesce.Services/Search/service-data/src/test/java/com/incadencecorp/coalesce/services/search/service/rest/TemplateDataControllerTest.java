@@ -141,11 +141,13 @@ public class TemplateDataControllerTest {
         List<CoalesceObjectImpl> results = controller.getRecordSets(template.getKey());
 
         // Verify Recordsets
-        Assert.assertEquals(3, results.size());
+        Assert.assertEquals(4, results.size());
         Assert.assertEquals(CoalesceEntity.class.getSimpleName(), results.get(0).getName());
         Assert.assertEquals(CoalesceEntity.class.getSimpleName(), results.get(0).getKey());
-        Assert.assertEquals("rs-1", results.get(1).getName());
-        Assert.assertEquals("rs-2", results.get(2).getName());
+        Assert.assertEquals(CoalesceLinkage.class.getSimpleName(), results.get(1).getName());
+        Assert.assertEquals(CoalesceLinkage.class.getSimpleName(), results.get(1).getKey());
+        Assert.assertEquals("rs-1", results.get(2).getName());
+        Assert.assertEquals("rs-2", results.get(3).getName());
 
         // Verify Fields
         List<FieldData> fieldResults = controller.getRecordSetFields(template.getKey(), results.get(0).getKey());

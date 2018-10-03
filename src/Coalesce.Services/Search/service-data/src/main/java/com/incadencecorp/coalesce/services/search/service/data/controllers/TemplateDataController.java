@@ -19,6 +19,7 @@ package com.incadencecorp.coalesce.services.search.service.data.controllers;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
@@ -46,6 +47,7 @@ public class TemplateDataController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateDataController.class);
     private static final String COALESCEENTITY_KEY = CoalesceEntity.class.getSimpleName();
+    private static final String COALESCELINKAGE_KEY = CoalesceLinkage.class.getSimpleName();
 
     private final Map<String, TemplateNode> templates = new HashMap<>();
     private final CoalesceFramework framework;
@@ -164,6 +166,7 @@ public class TemplateDataController {
         if (templates.containsKey(key))
         {
             results.add(new CoalesceObjectImpl(COALESCEENTITY_KEY, COALESCEENTITY_KEY));
+            results.add(new CoalesceObjectImpl(COALESCELINKAGE_KEY, COALESCELINKAGE_KEY));
 
             for (CoalesceSection section : templates.get(key).entity.getSectionsAsList())
             {
@@ -199,6 +202,16 @@ public class TemplateDataController {
             results.add(getField(CoalescePropertyFactory.getDateCreated(), ECoalesceFieldDataTypes.DATE_TIME_TYPE));
             results.add(getField(CoalescePropertyFactory.getLastModified(), ECoalesceFieldDataTypes.DATE_TIME_TYPE));
             results.add(getField(CoalescePropertyFactory.getEntityStatus(), ECoalesceFieldDataTypes.ENUMERATION_TYPE));
+        }
+        else if (recordsetKey.equalsIgnoreCase(COALESCELINKAGE_KEY))
+        {
+            results.add(getField(CoalescePropertyFactory.getLinkageLabel(), ECoalesceFieldDataTypes.STRING_TYPE));
+            results.add(getField(CoalescePropertyFactory.getLinkageStatus(), ECoalesceFieldDataTypes.ENUMERATION_TYPE));
+            results.add(getField(CoalescePropertyFactory.getLinkageType(), ECoalesceFieldDataTypes.ENUMERATION_TYPE));
+            results.add(getField(CoalescePropertyFactory.getLinkageEntityKey(), ECoalesceFieldDataTypes.GUID_TYPE));
+            results.add(getField(CoalescePropertyFactory.getLinkageSource(), ECoalesceFieldDataTypes.STRING_TYPE));
+            results.add(getField(CoalescePropertyFactory.getLinkageName(), ECoalesceFieldDataTypes.STRING_TYPE));
+            results.add(getField(CoalescePropertyFactory.getLinkageVersion(), ECoalesceFieldDataTypes.STRING_TYPE));
         }
         else
         {
@@ -444,6 +457,13 @@ public class TemplateDataController {
 
         try
         {
+            if (template.getDateCreated() == null)
+            {
+                template.setDateCreated(JodaDateTimeHelper.nowInUtc());
+            }
+
+            template.setLastModified(JodaDateTimeHelper.nowInUtc());
+
             LOGGER.info("Saving template {}, Key: {}", template.getName(), template.getKey());
             framework.saveCoalesceEntityTemplate(template);
             templates.put(template.getKey(), new TemplateNode(template));
@@ -503,7 +523,7 @@ public class TemplateDataController {
                     String defaultValue = getString(jsonField, "defaultValue");
                     ECoalesceFieldDataTypes type = ECoalesceFieldDataTypes.getTypeForCoalesceType(fieldType);
 
-                    CoalesceFieldDefinition fd = recordset.createFieldDefinition(fieldName, type, label, "U", defaultValue);
+                    recordset.createFieldDefinition(fieldName, type, label, "U", defaultValue);
                 }
             }
         }
