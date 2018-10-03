@@ -17,7 +17,6 @@
 
 package com.incadencecorp.coalesce.services.common.controllers.datamodel;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 
@@ -80,7 +79,6 @@ public class GraphLink {
         this.status = status;
     }
 
-    @JsonIgnore
     public boolean isBiDirectional()
     {
         return isBiDirectional;
