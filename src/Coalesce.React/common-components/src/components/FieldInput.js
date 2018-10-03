@@ -440,14 +440,13 @@ export class FieldInput extends React.Component {
         view = (
           <TextField
             id={field.key}
-            fullWidth={true}
+            fullWidth
             label={label}
-            helperText={this.props.showLabels ? this.props.hint : undefined}
-            //inputProps={{ pattern: "[a-z]" }}
             style={style.root}
+            helperText={this.props.showLabels ? this.props.hint : undefined}
             value={field[attr]}
             defaultValue={defaultValue}
-            onChange={(event, value) => {this.handleOnChange(attr, value)}}
+            onChange={(event) => {this.handleOnChange(attr, event.target.value)}}
             onKeyDown={this.props.onKeyDown}
           />
         );
