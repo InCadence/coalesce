@@ -25,6 +25,7 @@ import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.exim.impl.JsonFullEximImpl;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.services.api.Results;
+import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectStatusActionType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectStatusType;
 import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
@@ -64,7 +65,7 @@ public class EntityDataController {
     /**
      * Sets the view to use when converting entities to JSON.
      *
-     * @param clazz
+     * @param clazz view's class
      */
     public void setView(Class<?> clazz)
     {
@@ -164,7 +165,7 @@ public class EntityDataController {
 
             if (!crud.updateDataObject(entity))
             {
-                error(crud.getLastResult()[0].getError());
+                error(crud.getLastResult());
             }
         }
         else
@@ -181,7 +182,7 @@ public class EntityDataController {
         {
             if (!crud.createDataObject(entity))
             {
-                error(crud.getLastResult()[0].getError());
+                error(crud.getLastResult());
             }
 
             key = entity.getKey();
@@ -207,7 +208,10 @@ public class EntityDataController {
             tasks.add(task);
         }
 
-        crud.updateDataObjectStatus(tasks.toArray(new DataObjectStatusType[tasks.size()]));
+        if (!crud.updateDataObjectStatus(tasks.toArray(new DataObjectStatusType[tasks.size()])))
+        {
+            error(crud.getLastResult());
+        }
     }
 
     public CoalesceSection getSection(String entityKey, String key) throws RemoteException
@@ -251,10 +255,9 @@ public class EntityDataController {
         }
         else if (!clazz.isInstance(result))
         {
-            error(String.format(String.format(CoalesceErrors.INVALID_INPUT_REASON,
-                                              key,
-                                              "Expected: " + clazz.getSimpleName() + " Actual: "
-                                                      + result.getClass().getSimpleName())));
+            error(String.format(CoalesceErrors.INVALID_INPUT_REASON,
+                                key,
+                                "Expected: " + clazz.getSimpleName() + " Actual: " + result.getClass().getSimpleName()));
         }
 
         return (T) result;
@@ -264,9 +267,9 @@ public class EntityDataController {
      * Retrieves the entity from the data store and throws an exception if not
      * found or multiple entries are found.
      *
-     * @param key
-     * @return
-     * @throws RemoteException
+     * @param key of the entity to retrieve
+     * @return the Coalesce Entity
+     * @throws RemoteException on error
      */
     private CoalesceEntity retrieveEntity(String key) throws RemoteException
     {
@@ -287,6 +290,17 @@ public class EntityDataController {
         }
 
         return results[0].getResult();
+    }
+
+    private void error(ResultsType[] results) throws RemoteException
+    {
+        for (ResultsType result : results)
+        {
+            if (result.getStatus() != EResultStatus.SUCCESS)
+            {
+                error(result.getError(), null);
+            }
+        }
     }
 
     private void error(String msg) throws RemoteException

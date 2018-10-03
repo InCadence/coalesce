@@ -168,6 +168,19 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         return true;
     }
 
+    public boolean deleteEntity(String key) throws SQLException
+    {
+        return executeUpdate("DELETE FROM " + schema + ".coalesceentity WHERE " + COLUMNS.getKey() + "=?",
+                      new CoalesceParameter(key, Types.CHAR)) != 0;
+    }
+
+    public boolean deleteLinkage(String key) throws SQLException
+
+    {
+        return executeUpdate("DELETE FROM " + schema + ".coalescelinkage WHERE " + COLUMNS.getKey() + "=?",
+                      new CoalesceParameter(key, Types.CHAR)) != 0;
+    }
+
     public boolean coalesceLinkage_InsertOrUpdate(CoalesceLinkage linkage) throws SQLException
     {
         // get connection, insert or update
@@ -182,7 +195,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         try (Statement stmt = conn.createStatement())
         {
             result = stmt.executeQuery(
-                    "select name from coalesce.coalescelinkage where objectkey='" + linkage.getKey() + "'");
+                    "select name from " + schema + ".coalescelinkage where objectkey='" + linkage.getKey() + "'");
 
             if (!result.next())
             {

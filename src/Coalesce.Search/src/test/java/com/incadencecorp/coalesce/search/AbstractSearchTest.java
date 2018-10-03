@@ -1147,6 +1147,62 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         persistor.saveEntity(true, entity);
     }
 
+    @Test
+    public void testDeleteEntity() throws Exception
+    {
+        T persistor = createPersister();
+
+        // Create Entity
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        // Create Record
+        TestRecord record = entity.addRecord1();
+        record.getStringField().setValue("Hello World");
+
+        // Persist
+        persistor.saveEntity(false, entity);
+
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
+        props.add(CoalescePropertyFactory.getFieldProperty(TestEntity.RECORDSET1, "objectkey"));
+
+        List<Filter> filters = new ArrayList<>();
+        filters.add(CoalescePropertyFactory.getEntityKey(entity.getKey()));
+        filters.add(FF.equals(CoalescePropertyFactory.getFieldProperty(record.getStringField()),
+                              FF.literal(record.getStringField().getValue())));
+
+        // Create Query
+        Query query = new Query(TestEntity.getTest1RecordsetName(), FF.and(filters));
+        query.setProperties(props);
+
+        // Search
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            // One and only 1 result
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+            Assert.assertEquals(entity.getKey(), results.getString(1));
+            Assert.assertEquals(record.getKey(), results.getString(3));
+        }
+
+        // Change Record Key
+        entity.markAsDeleted();
+        persistor.saveEntity(false, entity);
+
+        // Search
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            // Should be no results
+            Assert.assertEquals(0, results.size());
+        }
+
+        // Cleanup
+        entity.markAsDeleted();
+
+        persistor.saveEntity(true, entity);
+    }
+
     /**
      * This test verifies searching for entities w/o geospatial fields.
      */
