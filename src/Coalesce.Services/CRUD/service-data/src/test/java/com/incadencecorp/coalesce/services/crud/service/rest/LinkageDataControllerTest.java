@@ -153,16 +153,13 @@ public class LinkageDataControllerTest {
         links = controller.retrieveLinkages(entity1.getKey());
 
         // Verify
-        Assert.assertEquals(2, links.size());
-        Assert.assertEquals(ECoalesceObjectStatus.DELETED, links.get(0).getStatus());
-        Assert.assertEquals(ECoalesceObjectStatus.DELETED, links.get(1).getStatus());
+        Assert.assertEquals(0, links.size());
 
         // Retrieve Linkages
         links = controller.retrieveLinkages(entity2.getKey());
 
         // Verify
-        Assert.assertEquals(1, links.size());
-        Assert.assertEquals(ECoalesceObjectStatus.DELETED, links.get(0).getStatus());
+        Assert.assertEquals(0, links.size());
     }
 
     /**

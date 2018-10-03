@@ -20,6 +20,8 @@ package com.incadencecorp.coalesce.services.crud.service.data.controllers;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.EnumHelper;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
@@ -178,14 +180,17 @@ public class LinkageDataController implements ILinkageDataController {
 
             for (CoalesceLinkage linkage : result.getResult().getLinkages().values())
             {
-                GraphLink link = new GraphLink();
-                link.setSource(linkage.getEntity1Key());
-                link.setTarget(linkage.getEntity2Key());
-                link.setLabel(linkage.getLabel());
-                link.setStatus(linkage.getStatus());
-                link.setType(linkage.getLinkType());
+                if (!linkage.isMarkedDeleted())
+                {
+                    GraphLink link = new GraphLink();
+                    link.setSource(linkage.getEntity1Key());
+                    link.setTarget(linkage.getEntity2Key());
+                    link.setLabel(linkage.getLabel());
+                    link.setStatus(linkage.getStatus());
+                    link.setType(linkage.getLinkType());
 
-                response.add(link);
+                    response.add(link);
+                }
             }
         }
         else
@@ -225,10 +230,13 @@ public class LinkageDataController implements ILinkageDataController {
                             link.setSource(key);
                             link.setTarget(rowset.getString(2));
                             link.setLabel(rowset.getString(3));
-                            link.setStatus(ECoalesceObjectStatus.fromValue(rowset.getString(4).toLowerCase()));
+                            link.setStatus(EnumHelper.stringToECoalesceObjectStatus(rowset.getString(4)));
                             link.setType(ELinkTypes.getTypeForLabel(rowset.getString(5)));
 
-                            response.add(link);
+                            if (!StringHelper.isNullOrEmpty(link.getTarget()))
+                            {
+                                response.add(link);
+                            }
                         }
                         while (rowset.next());
                     }

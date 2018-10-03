@@ -167,14 +167,19 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      */
     protected boolean deleteObject(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
-        String objectType = coalesceObject.getType();
-        String objectKey = coalesceObject.getKey();
-        String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
+        boolean isSuccessful;
 
-        conn.executeUpdate("DELETE FROM " + getSchemaPrefix() + tableName + " WHERE " + COLUMNS.getKey() + "=?",
-                           new CoalesceParameter(objectKey, Types.CHAR));
+        switch (coalesceObject.getType())
+        {
+        case "entity":
+            isSuccessful = conn.deleteEntity(coalesceObject.getKey());
+            break;
+        default:
+            isSuccessful = persistObject(coalesceObject, conn);
+            break;
+        }
 
-        return true;
+        return isSuccessful;
     }
 
     private boolean updateCoalesceObject(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn, boolean allowRemoval)
@@ -182,40 +187,29 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
     {
         boolean isSuccessful = false;
-        boolean isDeleted = false;
 
         if (coalesceObject.isFlatten())
         {
-            switch (coalesceObject.getStatus())
+            if (!coalesceObject.isMarkedDeleted() && !coalesceObject.getEntity().isMarkedDeleted())
             {
-            case NEW:
-            case READONLY:
-            case ACTIVE:
-                // Persist Object
                 isSuccessful = persistObject(coalesceObject, conn);
-                break;
-
-            case DELETED:
-                if (allowRemoval)
-                {
-                    // Delete Object
-                    isSuccessful = deleteObject(coalesceObject, conn);
-                    isDeleted = coalesceObject instanceof CoalesceEntity;
                 }
                 else
+                {
+                if (coalesceObject instanceof CoalesceEntity && !allowRemoval)
                 {
                     // Mark Object as Deleted
                     isSuccessful = persistObject(coalesceObject, conn);
                 }
-
-                break;
-
-            default:
-                isSuccessful = false;
+                else
+                {
+                    // Delete Object
+                    isSuccessful = deleteObject(coalesceObject, conn);
+                }
             }
 
             // Successful?
-            if (isSuccessful && !isDeleted)
+            if (isSuccessful)
             {
                 // Yes; Iterate Through Children
                 for (CoalesceObject childObject : coalesceObject.getChildCoalesceObjects().values())
@@ -223,6 +217,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                     updateCoalesceObject(childObject, conn, allowRemoval);
                 }
             }
+
         }
         return isSuccessful;
     }
@@ -393,7 +388,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
         if (tableExists(info, getSchema(), derbyConn))
         {
-            if (recordset.isActive())
+            if (recordset.isActive() && !recordset.getEntity().isMarkedDeleted())
             {
                 try
                 {
@@ -618,7 +613,14 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
 
         // Yes; Call Procedure
-        return ((DerbyDataConnector) conn).coalesceLinkage_InsertOrUpdate(linkage);
+        if (linkage.isActive() && !linkage.getEntity().isMarkedDeleted())
+        {
+            return conn.coalesceLinkage_InsertOrUpdate(linkage);
+        }
+        else
+        {
+            return conn.deleteLinkage(linkage.getKey());
+        }
     }
 
     /**
