@@ -2,7 +2,7 @@
   "name": "expert-search",
   "title": "Expert Search",
   "icon": "/images/svg/search.svg",
-  "version": "0.0.30-SNAPSHOT",
+  "version": "0.0.30",
   "author": "InCadence",
   "description": "This UI is for search for Coalesce entities.",
   "main": "index.js",
@@ -17,8 +17,8 @@
     "react-bootstrap": "0.32.1",
     "react-dom": "16.3.0",
     "react-table": "6.6.0",
-    "wellknown": "0.5.0",
-    "uuid": "3.2.1"
+    "uuid": "3.2.1",
+    "wellknown": "0.5.0"
   },
   "devDependencies": {
     "@babel/runtime": "7.0.0-beta.54",

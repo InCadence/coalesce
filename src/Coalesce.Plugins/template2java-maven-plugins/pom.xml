@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.plugins</groupId>
         <artifactId>coalesce-plugins-parent</artifactId>
-        <version>0.0.30-SNAPSHOT</version>
+        <version>0.0.30</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -36,7 +36,7 @@
         <dependency>
             <groupId>com.incadencecorp.coalesce</groupId>
             <artifactId>coalesce-core</artifactId>
-            <version>0.0.30-SNAPSHOT</version>
+            <version>0.0.30</version>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>

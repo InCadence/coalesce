@@ -2,7 +2,7 @@
   "name": "manager",
   "title": "Manager",
   "icon": "/images/svg/manager.svg",
-  "version": "0.0.30-SNAPSHOT",
+  "version": "0.0.30",
   "author": "InCadence",
   "description": "UI for viewing blueprint configurations",
   "main": "index.js",
