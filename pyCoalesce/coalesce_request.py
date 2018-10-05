@@ -75,6 +75,10 @@ OPERATIONS = {
 ENTITY_UPLOAD_OPERATIONS = (u"create", u"update", u"create_template",
                             u"update_template")
 
+# Eventually, the following list of operations should be available through the
+# "property" API, at which point it might be possible to downloaded it rather
+# than hard-code it.  However, hard-coding may still be necessary to specify
+# the proper numbers of arguments.
 SEARCH_OPERATORS = {
         u"EqualTo": 1,
         u"GreaterThan": 1,
@@ -96,11 +100,8 @@ arguments required for each operator (a ``None`` indicates that the operation
 isn't yet implemented in this wrapper).
 
 """
-# Eventually, the list of operations should be available through the
-# "property" API, at which point it might be possible to downloaded it rather
-# than hard-code it.  However, hard-coding may still be necessary to specify
-# the proper numbers of arguments.
 
+SEARCH_SORT_ORDERS = (u"ASC", u"DESC")
 SEARCH_OUTPUT_FORMATS = (u"json", u"list", u"full_dict")
 CRUD_OUTPUT_FORMATS = (u"json", u"xml", u"dict", u"entity_object")
 TEMPLATE_LIST_OUTPUT_FORMATS = (u"json", u"list")
@@ -281,7 +282,7 @@ def case_operator(input_operator):
     return unicode(input_operator)
 
 
-def search(server = None, query = None,
+def search(server = None, query = None, sort_by = None,
            property_names = ["coalesceentity.name"], page_size = 200,
            page_number = 1, output = "list", check_case = True):
 
@@ -292,18 +293,27 @@ def search(server = None, query = None,
 
     :param server:  A :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
-    :param query:  the search query (the value of "group" in a Coalesce
-        search request object), as dict-like or a JSON object (string).
-        For the most part, this query must follow the Coalesce format
-        exactly, but operators not in the right form (upper camelcase)
-        are replaced with the proper forms, provided they're included in
-        the :const:`~pyCoalesce.coalesce_request.SEARCH_OPERATORS` constant.
+    :param query:  the search query (the value of "group" in a `Coalesce
+        search request object
+        <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`),
+        as dict-like or a JSON object (string).  For the most part, this query
+        must follow the Coalesce format exactly, but operators not in the
+        right form (upper camelcase) are replaced with the proper forms,
+        provided they're included in the
+        :const:`~pyCoalesce.coalesce_request.SEARCH_OPERATORS` constant.
+    :param sort_by:  one or more properties (fields) on which the results
+        should be sorted, along with the sort order ("ASC" for ascending,
+        "DESC" for descending), as an iterable, a dict-like (for a single
+        field), or a JSON object (string).  Each entry must take the form
+        `{"propertyName": <recordset>.<field>, "sortOrder": <sort order>}`.
     :param property_names:  an iterable naming the properties (fields) to
-        return for each search result.  The values are passed directly to
-        the appropriate persistor(s) underlying Coalesce, and for most
-        persistors, these names are case-insensitive.  Note that the
-        "entityKey" (identical to "coelesceentity.objectkey") property is
-        always returned, regardless of the value of this argument.
+        return for each search result.  The values, each in the format
+        `<recordset>.<field>`, are passed directly to the appropriate
+        persistor(s) underlying Coalesce, and for most persistors, these names
+        are case-insensitive; for basic entity fields, such as "name" and
+        "dateCreated", give just the field name, with no recordset.  Note that
+        the "entityKey" property is always returned, regardless of the value
+        of this argument.
     :param page_size:  the number of results to return
     :param page_number:  used to retrieve results deeper in the list.  For
         example, a query with "page_size" 250 and "page_number" 3 returns
@@ -401,12 +411,34 @@ def search(server = None, query = None,
             "propertyNames": property_names,
             "group": query
            }
-    data_json = json.dumps(data)
+
+    # Add any sorting parameters.
+
+    if sort_by:
+
+        if isinstance(sort_by, basestring):
+            sort_by = json.loads(sort_by)
+
+        # If "sort_by" is a single entry rather than list-like, wrap it in a
+        # list.
+        try:
+            sort_by[0]
+        except KeyError:
+            sort_by = [sort_by]
+
+        data["sortBy"] = sort_by
 
     # Convert any search operator not in the proper case, recursively
-    # searching through the search criteria sets in the query ("group").
+    # searching through the search criteria sets in the query ("group").  Do
+    # the same for the sort order(s).
     if check_case:
         data["group"] = _case_operators(data["group"])
+        if sort_by:
+            for i, entry in enumerate(sort_by):
+                data["sortBy"][i]["sortOrder"] = entry["sortOrder"].upper()
+
+    # Convert the query to JSON.
+    data_json = json.dumps(data)
 
     # Submit the request.
     response = get_response(URL = API_URL, method = method, data = data_json,
@@ -1737,8 +1769,6 @@ def read_linkages(server = None, key = None, output = "dict_list"):
                             delay = 1, max_attempts = 4)
 
     # Return the type of output specified by "output".
-    print response.text
-    stdout.flush()
 
     if output == u"json":
        return response.text

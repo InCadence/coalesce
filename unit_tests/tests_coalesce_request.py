@@ -254,6 +254,18 @@ QUERY2_DICT = {
                       }
                   ]
               }
+QUERY3_DICT = {
+                  "operator": "AND",
+                  "criteria": [
+                      {
+                          "recordset": "coalesceentity",
+                          "field": "name",
+                          "operator": "EqualTo",
+                          "value": "TestEntity2",
+                          "matchCase": False
+                      }
+                  ],
+              }
 
 
 class ServerTest(TestCase):
@@ -552,7 +564,7 @@ class EntityTests(ServerTest):
         self.assertTrue(success3)
 
         ENTITY4_DICT["title"] = "Gumby #4"
-        entity4_new_JSON = json.dumps(ENTITY3_DICT)
+        entity4_new_JSON = json.dumps(ENTITY4_DICT)
         response4 = update(server = self.server, entity = entity4_new_JSON,
                            key = self.entity4_key, full_response = True)
         status4 = response4.status_code
@@ -684,12 +696,12 @@ class EntityTests(ServerTest):
         linkages1 = read_linkages(server = self.server, key = self.entity1_key,
                                   output  = "JSON")
         num_links1 = len(json.loads(linkages1))
-        self.assertEqual(num_links1, 4)
+        self.assertEqual(num_links1, 5)
 
         linkages2 = read_linkages(server = self.server, key = self.entity2_key,
                                   output  = "dict_list")
         num_links2 = len(linkages2)
-        self.assertEqual(num_links2, 3)
+        self.assertEqual(num_links2, 4)
 
         linkages3 = read_linkages(server = self.server, key = self.entity3_key,
                                   output  = "API_list")
@@ -699,7 +711,7 @@ class EntityTests(ServerTest):
         linkages4 = read_linkages(server = self.server, key = self.entity4_key,
                                   output  = "JSON")
         num_links4 = len(json.loads(linkages4))
-        self.assertEqual(num_links4, 4)
+        self.assertEqual(num_links4, 5)
 
 
     def test_delete_linkages(self):
@@ -748,12 +760,13 @@ class SearchTests(ServerTest):
 
     def test_search(self):
 
-        orig1_first_field = ENTITY3_DICT["sectionsAsList"][0] \
+        orig2_first_field = ENTITY2_FIELDS["Field1"]
+        orig3_first_field = ENTITY3_DICT["sectionsAsList"][0] \
                                         ["recordsetsAsList"][0] \
                                         ["allRecords"][0] \
                                         ["fields"][0] \
                                         ["value"]
-        orig2_first_field = ENTITY4_DICT["sectionsAsList"][0] \
+        orig4_first_field = ENTITY4_DICT["sectionsAsList"][0] \
                                         ["recordsetsAsList"][0] \
                                         ["allRecords"][0] \
                                         ["fields"][0] \
@@ -763,20 +776,30 @@ class SearchTests(ServerTest):
                                property_names = ["testrecordset2.field1"],
                                output = "list")
         results1_first_field = results1_list[0]["values"][0]
-        self.assertEqual(results1_first_field, orig1_first_field)
+        self.assertEqual(results1_first_field, orig3_first_field)
 
         query2_JSON = json.dumps(QUERY2_DICT)
         results2_full_dict = search(server = self.server, query = query2_JSON,
                                     property_names = ["testrecordset3.field1"],
                                     output = "full_dict")
         results2_first_field = results2_full_dict["hits"][0]["values"][0]
-        self.assertEqual(results2_first_field, orig2_first_field)
+        self.assertEqual(results2_first_field, orig4_first_field)
 
-        results3_JSON = search(server = self.server, query = QUERY1_DICT,
+        query3_JSON = json.dumps(QUERY3_DICT)
+        results3_list = search(server = self.server, query = query3_JSON,
+                               sort_by = {"propertyName": "datecreated",
+                                          "sortOrder": "DESC"},
+                               property_names = ["testrecordset2.field1"],
+                               output = "list")
+        results3_first_fields = [hit["values"][0] for hit in results3_list]
+        self.assertTrue(results3_first_fields.index(orig3_first_field) <
+                        results3_first_fields.index(orig2_first_field))
+
+        results4_JSON = search(server = self.server, query = QUERY1_DICT,
                                property_names = ["testrecordset2.field1"],
                                output = "JSON")
-        results3_first_field = json.loads(results3_JSON)["hits"][0]["values"][0]
-        self.assertEqual(results3_first_field, orig1_first_field)
+        results4_first_field = json.loads(results4_JSON)["hits"][0]["values"][0]
+        self.assertEqual(results4_first_field, orig3_first_field)
 
 
     def test_search_simple(self):

@@ -63,8 +63,10 @@ class CoalesceEntityTemplate(CoalesceEntity):
     :ivar entityid:  a unique, searchable ID used by some specific
         applications
     :ivar entityidtype:  the type of entityid in use
-    :ivar status:  the current status (active or deleted) of the template (set
-        by the server)
+    :ivar status:  the current status (active, read only, or deleted) of the
+        entity.  While "status" is set by the server, and therefore not
+        included in the class constructor, the attribute can be set directly,
+        and the server will accept modifications to its value in an entity update.
     :ivar lastmodified:  the date on which the template was last modified
         (set by the server)
     :ivar modifiedby:  the last user to modify the template (set by the
