@@ -134,7 +134,7 @@ while true; do
     case $doPush in
         y | yes)
 	    echo "pushing code to master"
-	    git push origin HEAD:refs/heads/develop
+	    git push origin HEAD:refs/heads/release
 
 
 	    if [ "${isSnapshot}" = false ] ; then

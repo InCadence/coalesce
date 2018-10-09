@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.incadencecorp.coalesce</groupId>
     <artifactId>coalesce-bom</artifactId>
-    <version>0.0.30-SNAPSHOT</version>
+    <version>0.0.31-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>coalesce.bom</name>
 
     <parent>
         <groupId>com.incadencecorp.coalesce</groupId>
         <artifactId>coalesce-parent</artifactId>
-        <version>0.0.30-SNAPSHOT</version>
+        <version>0.0.31-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
 
@@ -34,15 +34,21 @@
         <bundle-plugin.version>3.5.0</bundle-plugin.version>
 
         <jackson.jaxb.version>2.9.1</jackson.jaxb.version>
-
-        <changelog.start.tag>coalesce-0.0.29</changelog.start.tag>
-        <changelog.end.tag>HEAD</changelog.end.tag>
-
     </properties>
 
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.3</version>
