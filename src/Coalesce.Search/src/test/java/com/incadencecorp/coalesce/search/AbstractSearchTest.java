@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.rowset.CachedRowSet;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -499,6 +500,77 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Assert.assertEquals(1, results.getTotal());
         Assert.assertTrue(rowset.next());
         Assert.assertEquals(linkage.getLabel(), rowset.getString(2));
+    }
+
+    /**
+     * This test ensures that queries can be sorted based on DateCreated and DateLastModified
+     */
+    @Test
+    public void testTemporalSorting() throws Exception
+    {
+        T persister = createPersister();
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+
+        // Create Entities
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+        entity1.setDateCreated(now.minusMinutes(1));
+        entity1.setLastModified(now);
+
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize();
+        entity2.setDateCreated(now.minusMinutes(10));
+        entity2.setLastModified(now.minusMinutes(5));
+
+        // Save Entities
+        persister.saveEntity(false, entity1, entity2);
+
+        // Create Query
+        List<Filter> filters = new ArrayList<>();
+        filters.add(CoalescePropertyFactory.getEntityKey(entity1.getKey()));
+        filters.add(CoalescePropertyFactory.getEntityKey(entity2.getKey()));
+
+        // Properties to Return
+        List<PropertyName> properties = new ArrayList<>();
+        properties.add(CoalescePropertyFactory.getDateCreated());
+        properties.add(CoalescePropertyFactory.getLastModified());
+
+        // Create Query
+        Query searchQuery = new Query();
+        searchQuery.setStartIndex(1);
+        searchQuery.setMaxFeatures(200);
+        searchQuery.setProperties(properties);
+        searchQuery.setFilter(FF.or(filters));
+
+        // Sort DateCreated ASC
+        searchQuery.setSortBy(new SortBy[] { FF.sort(properties.get(0).getPropertyName(), SortOrder.ASCENDING) });
+        verifyOrder(persister.search(searchQuery), entity2.getKey(), entity1.getKey());
+
+        // Sort DateCreated DESC
+        searchQuery.setSortBy(new SortBy[] { FF.sort(properties.get(0).getPropertyName(), SortOrder.DESCENDING) });
+        verifyOrder(persister.search(searchQuery), entity1.getKey(), entity2.getKey());
+
+        // Sort LastModified ASC
+        searchQuery.setSortBy(new SortBy[] { FF.sort(properties.get(1).getPropertyName(), SortOrder.ASCENDING) });
+        verifyOrder(persister.search(searchQuery), entity2.getKey(), entity1.getKey());
+
+        // Sort LastModified DESC
+        searchQuery.setSortBy(new SortBy[] { FF.sort(properties.get(1).getPropertyName(), SortOrder.DESCENDING) });
+        verifyOrder(persister.search(searchQuery), entity1.getKey(), entity2.getKey());
+    }
+
+    private void verifyOrder(SearchResults results, String... keys) throws SQLException
+    {
+        Assert.assertEquals(keys.length, results.getTotal());
+
+        CachedRowSet rowset = results.getResults();
+
+        for (String key : keys)
+        {
+            Assert.assertTrue(rowset.next());
+            Assert.assertEquals(key, rowset.getString(1));
+        }
     }
 
     /**
