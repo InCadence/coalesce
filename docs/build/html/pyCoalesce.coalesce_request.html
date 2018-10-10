@@ -135,15 +135,15 @@ provided they’re included in the
 should be sorted, along with the sort order (“ASC” for ascending,
 “DESC” for descending), as an iterable, a dict-like (for a single
 field), or a JSON object (string).  Each entry must take the form
-<cite>{“propertyName”: &lt;recordset&gt;.&lt;field&gt;, “sortOrder”: &lt;sort order&gt;}</cite>.</li>
+<cite>{“propertyName”: &lt;recordset&gt;.&lt;field&gt;, “sortOrder”: &lt;sort order&gt;}</cite>;
+for basic entity fields, such as “name” and “dateCreated”, give just
+the field name, with no recordset.</li>
 <li><strong>property_names</strong> – an iterable naming the properties (fields) to
 return for each search result.  The values, each in the format
 <cite>&lt;recordset&gt;.&lt;field&gt;</cite>, are passed directly to the appropriate
 persistor(s) underlying Coalesce, and for most persistors, these names
-are case-insensitive; for basic entity fields, such as “name” and
-“dateCreated”, give just the field name, with no recordset.  Note that
-the “entityKey” property is always returned, regardless of the value
-of this argument.</li>
+are case-insensitive  Note that the “entityKey” property is always
+returned, regardless of the value of this argument.</li>
 <li><strong>page_size</strong> – the number of results to return</li>
 <li><strong>page_number</strong> – used to retrieve results deeper in the list.  For
 example, a query with “page_size” 250 and “page_number” 3 returns
@@ -235,7 +235,10 @@ an entity, it assigns keys to fields and other child objects, and these
 keys prevent the entity from being copied on the client side in order to
 create multiple entities from the same template without calling the
 endpoint each time, a problem not shared by entities created through this
-function.</p>
+function.  Alternately, supplying a
+<a class="reference internal" href="pyCoalesce.classes.coalesce_entity_template.html#pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate" title="pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoalesceEntityTemplate</span></code></a>
+allows this function to be called multiple times without calling the
+server at all.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -244,7 +247,8 @@ function.</p>
 <li><strong>server</strong> – a <a class="reference internal" href="#pyCoalesce.coalesce_request.CoalesceServer" title="pyCoalesce.coalesce_request.CoalesceServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoalesceServer</span></code></a>
 object or the URL of a Coalesce server.  If “template” is an instance of
 <a class="reference internal" href="pyCoalesce.classes.coalesce_entity_template.html#pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate" title="pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoalesceEntityTemplate</span></code></a>,
-no server is needed.</li>
+no server is needed; this is one way of avoiding unnecessary calls to
+the API server when creating multiple entities.</li>
 <li><strong>template</strong> – a Coalesce template (UUID) key, an iterable containing
 the template’s name, source, and version (in that order), or a
 <a class="reference internal" href="pyCoalesce.classes.coalesce_entity_template.html#pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate" title="pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoalesceEntityTemplate</span></code></a>
@@ -337,10 +341,10 @@ is a wrapper for the “upload_entity” function.</p>
 object or the URL of a Coalesce server</li>
 <li><strong>entity</strong> – the entity to upload to the server.  This can be a JSON or
 XML representation of an entity, a nested dict-like in the same format
-as a JSON respresentation, or an instance of :class:’CoalesceEntity
-&lt;pyCoalesce.classes.CoalesceEntity&gt;’ (or a subclass); the function
-automatically detects the input type and adjusts the RESTful endpoint
-and requests headers accordingly.</li>
+as a JSON respresentation, or an instance of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">coalesce_entityCoalesceEntity</span></code> (or a
+subclass); the function automatically detects the input type and
+adjusts the RESTful endpoint and requests headers accordingly.</li>
 <li><strong>key</strong> – a UUID to serve as the key for the entity, as either an
 instance of the <code class="xref py py-class docutils literal notranslate"><span class="pre">uuid.UUID</span></code> class, or any string or integer
 that could serve as input to the <code class="xref py py-class docutils literal notranslate"><span class="pre">UUID</span></code> class
@@ -734,10 +738,10 @@ entity model, but which use different names.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>server</strong> – a <a class="reference internal" href="#pyCoalesce.coalesce_request.CoalesceServer" title="pyCoalesce.coalesce_request.CoalesceServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoalesceServer</span></code></a>
 object or the URL of a Coalesce server</li>
-<li><strong>key</strong> – the UUID key of the template to be registered, as either an
-instance of the <code class="xref py py-class docutils literal notranslate"><span class="pre">uuid.UUID</span></code> class, or any string or integer
-that could serve as input to the <code class="xref py py-class docutils literal notranslate"><span class="pre">UUID</span></code> class
-constructor.</li>
+<li><strong>key</strong> – the UUID key of the entity whose linkages are to be returned,
+as either an instance of the <code class="xref py py-class docutils literal notranslate"><span class="pre">uuid.UUID</span></code> class, or any string
+or integer that could serve as input to the <code class="xref py py-class docutils literal notranslate"><span class="pre">UUID</span></code>
+class constructor.</li>
 <li><strong>output</strong> – If this argument is “JSON”, return the results as a JSON
 array (string).  If the argument is “dict_list” or “API_list”, return
 the results as a <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">dicts</span></code> or instances

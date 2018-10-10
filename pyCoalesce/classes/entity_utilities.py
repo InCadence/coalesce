@@ -247,21 +247,21 @@ def find_child(Coalesce_object, name, match_case = False,
 
     # Check input.
 
-    if not isinstance(Coalesce_object, coalesceObjectType):
-        raise TypeError('Argument "Coalesce_object" must be an instance of '
-                        'CoalesceEntity or one of its child types.')
-
     if not isinstance(name, basestring):
         raise TypeError('Argument "name" must be an ASCII or Unicode string.')
 
     if not isinstance(match_case, bool):
         raise TypeError('Argument "match_case" must be a boolean.')
 
-    if not match_case:
-        object_name = Coalesce_object.name.lower()
-        name = name.lower()
-    else:
-        object_name = Coalesce_object.name
+    try:
+        if not match_case:
+            object_name = Coalesce_object.name.lower()
+            name = name.lower()
+        else:
+            object_name = Coalesce_object.name
+    except AttributeError:
+        raise TypeError('Argument "Coalesce_object" must be an instance of '
+                        'CoalesceEntity or one of its child types.')
 
     # Check the parent's own name, and initialize a return object.
     if  object_name == name:
@@ -311,10 +311,6 @@ def get_child_attrib(Coalesce_object, path = [u"<root>"], attrib = "value"):
 
     """
 
-    if not isinstance(Coalesce_object, coalesceObjectType):
-        raise TypeError('Argument "Coalesce_object" must be an instance of '
-                        'a CoalesceEntity or one of its child types.')
-
     if len(path) == 0:
         raise ValueError("The specified path is empty.")
 
@@ -362,10 +358,6 @@ def set_child_attrib(Coalesce_object, path = [u"<root>"], attrib = "value",
     :returns:  ``True``, indicating the attribute has been set successfully
 
     """
-
-    if not isinstance(Coalesce_object, coalesceObjectType):
-        raise TypeError('Argument "Coalesce_object" must be an instance of '
-                        'a CoalesceEntity or one of its child types.')
 
     if len(path) == 0:
         raise ValueError("The specified path is empty.")
@@ -426,12 +418,11 @@ def set_entity_fields(Coalesce_entity = None, fields = None, match_case = False)
     """
 
     # Check for valid input.
+
     if not Coalesce_entity:
         raise ValueError('The argument "Coalesce_entity" must be an instance of ' +
                         'class CoalesceEntity or one of its subclasses.')
-    elif not isinstance(Coalesce_entity, supermod.entity):
-        raise TypeError('The argument "Coalesce_entity" must be an instance of ' +
-                        'class CoalesceEntity or one of its subclasses.')
+
     try:
         fields_iter = fields.iteritems()
     except:

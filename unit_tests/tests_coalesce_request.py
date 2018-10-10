@@ -787,8 +787,8 @@ class SearchTests(ServerTest):
 
         query3_JSON = json.dumps(QUERY3_DICT)
         results3_list = search(server = self.server, query = query3_JSON,
-                               sort_by = {"propertyName": "datecreated",
-                                          "sortOrder": "DESC"},
+                               sort_by = {"propertyName": "testrecordset2.field1",
+                                          "sortOrder": "ASC"},
                                property_names = ["testrecordset2.field1"],
                                output = "list")
         results3_first_fields = [hit["values"][0] for hit in results3_list]

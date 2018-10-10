@@ -305,15 +305,15 @@ def search(server = None, query = None, sort_by = None,
         should be sorted, along with the sort order ("ASC" for ascending,
         "DESC" for descending), as an iterable, a dict-like (for a single
         field), or a JSON object (string).  Each entry must take the form
-        `{"propertyName": <recordset>.<field>, "sortOrder": <sort order>}`.
+        `{"propertyName": <recordset>.<field>, "sortOrder": <sort order>}`;
+        for basic entity fields, such as "name" and "dateCreated", give just
+        the field name, with no recordset.
     :param property_names:  an iterable naming the properties (fields) to
         return for each search result.  The values, each in the format
         `<recordset>.<field>`, are passed directly to the appropriate
         persistor(s) underlying Coalesce, and for most persistors, these names
-        are case-insensitive; for basic entity fields, such as "name" and
-        "dateCreated", give just the field name, with no recordset.  Note that
-        the "entityKey" property is always returned, regardless of the value
-        of this argument.
+        are case-insensitive  Note that the "entityKey" property is always
+        returned, regardless of the value of this argument.
     :param page_size:  the number of results to return
     :param page_number:  used to retrieve results deeper in the list.  For
         example, a query with "page_size" 250 and "page_number" 3 returns
@@ -379,17 +379,22 @@ def search(server = None, query = None, sort_by = None,
     # Set the request parameters.  We use a copy of the base headers so that
     # the header added here isn't preserved in the server object.
 
-    if isinstance(server, CoalesceServer):
-        server_obj = server
-    else:
+    if isinstance(server, basestring):
         server_obj = CoalesceServer(server)
+    else:
+        server_obj = server
 
     output = output.lower()
     if not output in SEARCH_OUTPUT_FORMATS:
         raise ValueError('The argument "output" must take one of the ' +
                          'following values:\n' + str(SEARCH_OUTPUT_FORMATS) + '.')
     operation = u"search"
-    API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+    try:
+        API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+    except AttributeError as err:
+        raise AttributeError(str(err) + '\n.This error can occur if the ' +
+                              'argument "server" is not either a URL or a ' +
+                              'CoalesceServer object.')
     method = OPERATIONS[operation][u"method"]
     headers = copy(server_obj.base_headers)
     headers["Content-type"] = "application/json"
@@ -573,22 +578,12 @@ def _test_key(key):
 
     key_error_msg = 'The argument "key" must be a UUID key, as an instance of ' + \
                      'the class uuid.UUID, or any string or integer that ' + \
-                     'could serve as input for that class\'s .'
+                     'could serve as input for that class\'s class constructor.'
 
-    if isinstance(key, UUID):
-        key_obj = key
+    if isinstance(key, basestring):
 
-    else:
         try:
             UUID(key)
-
-        except AttributeError:
-
-            try:
-                key_obj = UUID(int = key)
-
-            except ValueError: # "key" is probably an iterable of keys.
-                raise TypeError(key_error_msg)
 
         except ValueError:
             try:
@@ -599,6 +594,19 @@ def _test_key(key):
 
         else:
             return key
+
+    else:
+
+        key_len = len(unicode(key))
+
+        if key_len == 36:
+            key_obj = key
+
+        else:
+            try:
+                key_obj = UUID(int = key)
+            except ValueError: # "key" is probably an iterable of keys.
+                raise TypeError(key_error_msg)
 
     key_str = unicode(key_obj)
 
@@ -622,12 +630,16 @@ def construct_entity(server = None, template = None, key = None, fields = None):
     keys prevent the entity from being copied on the client side in order to
     create multiple entities from the same template without calling the
     endpoint each time, a problem not shared by entities created through this
-    function.
+    function.  Alternately, supplying a
+    :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`
+    allows this function to be called multiple times without calling the
+    server at all.
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server.  If "template" is an instance of
         :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`,
-        no server is needed.
+        no server is needed; this is one way of avoiding unnecessary calls to
+        the API server when creating multiple entities.
     :param template:  a Coalesce template (UUID) key, an iterable containing
         the template's name, source, and version (in that order), or a
         :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`
@@ -659,7 +671,7 @@ def construct_entity(server = None, template = None, key = None, fields = None):
         key_str = None
 
     # If we don't have a template already, we'll need to get one.
-    if not isinstance(template, CoalesceEntityTemplate):
+    if not hasattr(template, "new_entity"):
         template = read_template(server =  server, template = template,
                                  output = "entity_object")
 
@@ -721,10 +733,10 @@ def save_entity(server = None, entity = None, key = None, operation = u"create")
     if not server:
         raise ValueError('The argument "server" must be a URL or an ' +
                          'instance of CoalesceServer.')
-    elif isinstance(server, CoalesceServer):
-        server_obj = server
-    else:
+    if isinstance(server, basestring):
         server_obj = CoalesceServer(server)
+    else:
+        server_obj = server
 
     # Check for a separately submitted key, check it for validity, and if
     # necessary change it into a string.
@@ -746,8 +758,10 @@ def save_entity(server = None, entity = None, key = None, operation = u"create")
         if isinstance(entity, basestring):
 
             try:
+
                 entity_dict = json.loads(entity)
                 data = entity
+
                 try:
                     entity_key = entity_dict["key"]
                 except KeyError:
@@ -755,15 +769,18 @@ def save_entity(server = None, entity = None, key = None, operation = u"create")
                         entity_key = key_str
                         entity_dict["key"] = key_str
                         data= json.dumps(entity_dict)
+
                 input_format = "JSON"
 
             except JSONDecodeError:
+
                 try:
                     entity_dict = xmltodict.parse(entity)
-                    input_format = "XML"
+
                     try:
                         entity_key = entity_dict["entity"]["@key"]
                         data = entity
+
                     except:
                         if key:
                             entity_dict["entity"]["@key"] = key_str
@@ -776,25 +793,39 @@ def save_entity(server = None, entity = None, key = None, operation = u"create")
                 except:
                     raise ValueError(entity_error_msg)
 
-        # Note that if we have to add a key, we use a copy of "entity", to
-        # avoid changing the original object.
-        elif isinstance(entity, CoalesceEntity):
-            input_format = "XML"
+                input_format = "XML"
+
+        # Duck test for a "CoalesceEntity" object or similar:  "entity" and
+        # its subclasses are the only XSD-based Coalesce objects with a
+        # "linkagesection" attribute.  Note that if we have to add a key, we
+        # use a copy of "entity", to avoid changing the original object.
+
+        elif hasattr(entity, "linkagesection"):
+
             if not entity.key and key:
                 keyed_entity = copy(entity)
                 keyed_entity.key = key_str
-                data = to_XML_string(keyed_entity)
-                entity_key = keyed_entity.key
+
             else:
-                data = to_XML_string(entity)
-                entity_key = entity.key
+                keyed_entity = entity # No need for a copy in this case
+
+            try:
+                data = to_XML_string(keyed_entity)
+            except:
+                raise TypeError(entity_error_msg)
+
+            entity_key = keyed_entity.key
+            input_format = "XML"
 
         # As above, if we have to add a key, we use a copy of "entity", to
         # avoid changing the original dict.
+
         else:
+
             try:
                 entity_key = entity["key"]
                 data = json.dumps(entity)
+
             except KeyError:
                 if key:
                     entity_key = key_str
@@ -804,8 +835,10 @@ def save_entity(server = None, entity = None, key = None, operation = u"create")
                 else:
                     entity_key = None
                     data = json.dumps(entity)
+
             except TypeError:
                 raise TypeError(entity_error_msg)
+
             input_format = "JSON"
 
     else:
@@ -829,8 +862,13 @@ def save_entity(server = None, entity = None, key = None, operation = u"create")
     # headers, we copy the base headers, so that the extra header isn't
     # preserved in the server object.
 
-    API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
-                             key = entity_key)
+    try:
+        API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
+                                 key = entity_key)
+    except AttributeError as err:
+        raise AttributeError(str(err) + '\n.This error can occur if the ' +
+                              'argument "server" is not either a URL or a ' +
+                              'CoalesceServer object.')
     method = OPERATIONS[operation][u"method"]
     headers = copy(server_obj.base_headers)
 
@@ -858,10 +896,10 @@ def create(server = None, entity = None, key = None, full_response = False):
         object or the URL of a Coalesce server
     :param entity:  the entity to upload to the server.  This can be a JSON or
         XML representation of an entity, a nested dict-like in the same format
-        as a JSON respresentation, or an instance of :class:'CoalesceEntity
-        <pyCoalesce.classes.CoalesceEntity>' (or a subclass); the function
-        automatically detects the input type and adjusts the RESTful endpoint
-        and requests headers accordingly.
+        as a JSON respresentation, or an instance of
+        :class:`~pyCoalesce.classes.coalesce_entityCoalesceEntity` (or a
+        subclass); the function automatically detects the input type and
+        adjusts the RESTful endpoint and requests headers accordingly.
     :param key:  a UUID to serve as the key for the entity, as either an
         instance of the :class:`uuid.UUID` class, or any string or integer
         that could serve as input to the :class:`UUID <uuid.UUID>` class
@@ -930,10 +968,10 @@ def read(server = None, key = None, output = "dict"):
 
     # Set the request parameters.
 
-    if isinstance(server, CoalesceServer):
-        server_obj = server
-    else:
+    if isinstance(server, basestring):
         server_obj = CoalesceServer(server)
+    else:
+        server_obj = server
 
     # Check for a valid key, and if necessary change it into a string.
     if key:
@@ -943,8 +981,13 @@ def read(server = None, key = None, output = "dict"):
         raise ValueError("Please specify a UUID key.")
 
     operation = u"read"
-    API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
-                             key = key_str)
+    try:
+        API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
+                                 key = key_str)
+    except AttributeError as err:
+        raise AttributeError(str(err) + '\n.This error can occur if the ' +
+                              'argument "server" is not either a URL or a ' +
+                              'CoalesceServer object.')
 
     output = output.lower()
     if not output in CRUD_OUTPUT_FORMATS:
@@ -1054,10 +1097,10 @@ def delete(server = None, keys = None):
 
     """
 
-    if isinstance(server, CoalesceServer):
-        server_obj = server
-    else:
+    if isinstance(server, basestring):
         server_obj = CoalesceServer(server)
+    else:
+        server_obj = server
 
     # Figure out whether we have one key or an iterable of them, check the
     # validity of each, and transform them into a JSON array.
@@ -1081,7 +1124,12 @@ def delete(server = None, keys = None):
             keys_str = '["' + key_str + '"]'
 
     operation = u"delete"
-    API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+    try:
+        API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+    except AttributeError as err:
+        raise AttributeError(str(err) + '\n.This error can occur if the ' +
+                              'argument "server" is not either a URL or a ' +
+                              'CoalesceServer object.')
     method = OPERATIONS[operation][u"method"]
     headers = copy(server_obj.base_headers)
     headers["Content-type"] = "application/json"
@@ -1180,10 +1228,10 @@ def register_template(server = None, key = None):
 
     # Set the request parameters.
 
-    if isinstance(server, CoalesceServer):
-        server_obj = server
-    else:
+    if isinstance(server, basestring):
         server_obj = CoalesceServer(server)
+    else:
+        server_obj = server
 
     if not key:
         raise ValueError("Please specify a UUID key.")
@@ -1191,8 +1239,18 @@ def register_template(server = None, key = None):
         key_str = _test_key(key)
 
     operation = u"register_template"
-    API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
-                             key = key_str)
+    if isinstance(server, basestring):
+        server_obj = CoalesceServer(server)
+    else:
+        server_obj = server
+
+    try:
+        API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
+                                 key = key_str)
+    except AttributeError as err:
+        raise AttributeError(str(err) + '\n.This error can occur if the ' +
+                              'argument "server" is not either a URL or a ' +
+                              'CoalesceServer object.')
     method = OPERATIONS[operation][u"method"]
     headers = server_obj.base_headers
 
@@ -1241,10 +1299,10 @@ def read_template(server = None, template = None, output = "dict"):
 
     # Set the request parameters.
 
-    if isinstance(server, CoalesceServer):
-        server_obj = server
-    else:
+    if isinstance(server, basestring):
         server_obj = CoalesceServer(server)
+    else:
+        server_obj = server
 
     if template:
 
@@ -1254,19 +1312,17 @@ def read_template(server = None, template = None, output = "dict"):
 
         else:
 
-            if isinstance(template, UUID):
-                template_key_obj = template
+            try:
+                template_key = _test_key(template)
 
-            else:
-                try:
-                    template_key_obj = UUID(template)
-                except AttributeError:
-                    template_key_obj = UUID(int = template)
-                except ValueError:
-                    template_key_obj = UUID(bytes = template)
+            except ValueError:
+                raise ValueError('The argument "template" must be an instance ' +
+                                 'of the "uuid.UUID" class, or any string or ' +
+                                 'integer that could serve as input to "UUID" ' +
+                                 'class constructor, or an iterable containing ' +
+                                 'the template\'s name, source, and version')
 
             operation = u"read_template_by_key"
-            template_key = unicode(template_key_obj)
             URL_kwarg = {"key": template_key}
 
     else:
@@ -1278,8 +1334,13 @@ def read_template(server = None, template = None, output = "dict"):
                          'following values:\n' + str(CRUD_OUTPUT_FORMATS) + '.')
 
     # Set the request parameters.
-    API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
-                             **URL_kwarg)
+    try:
+        API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
+                                 **URL_kwarg)
+    except AttributeError as err:
+        raise AttributeError(str(err) + '\n.This error can occur if the ' +
+                              'argument "server" is not either a URL or a ' +
+                              'CoalesceServer object.')
     method = OPERATIONS[operation][u"method"]
     headers = server_obj.base_headers
     if output == u"xml" or output == u"entity_object":
@@ -1325,13 +1386,18 @@ def get_template_list(server = None, output = "list"):
 
     # Set the request parameters.
 
-    if isinstance(server, CoalesceServer):
-        server_obj = server
-    else:
+    if isinstance(server, basestring):
         server_obj = CoalesceServer(server)
+    else:
+        server_obj = server
 
     operation = u"get_template_list"
-    API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+    try:
+        API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+    except AttributeError as err:
+        raise AttributeError(str(err) + '\n.This error can occur if the ' +
+                              'argument "server" is not either a URL or a ' +
+                              'CoalesceServer object.')
 
     output = output.lower()
     if not output in TEMPLATE_LIST_OUTPUT_FORMATS:
@@ -1449,10 +1515,10 @@ def delete_template(server = None, key = None):
 
     """
 
-    if isinstance(server, CoalesceServer):
-        server_obj = server
-    else:
+    if isinstance(server, basestring):
         server_obj = CoalesceServer(server)
+    else:
+        server_obj = server
 
     if not key:
         raise ValueError("Please specify a UUID key.")
@@ -1461,8 +1527,17 @@ def delete_template(server = None, key = None):
         key_str = _test_key(key)
 
     operation = u"delete_template"
-    API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
-                             key = key_str)
+    if isinstance(server, basestring):
+        server_obj = CoalesceServer(server)
+    else:
+        server_obj = server
+    try:
+        API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
+                                 key = key_str)
+    except AttributeError as err:
+        raise AttributeError(str(err) + '\n.This error can occur if the ' +
+                              'argument "server" is not either a URL or a ' +
+                              'CoalesceServer object.')
     method = OPERATIONS[operation][u"method"]
     headers = server_obj.base_headers
 
@@ -1559,24 +1634,29 @@ def _JSONify_linkage_list(linkages):
                 else:
                     raise ValueError(link_error_msg)
 
-        elif isinstance(linkage, CoalesceLinkage):
-            parsed_linkage = json.dumps(linkage.to_API())
-            linkage_format = "XSD"
-
-        # If none of the above worked, this is probably a Python object that's
-        # JSON-serializable (a category that includes CoalesceAPILinkage).
+        # Duck test for a "CoalesceLinkage" object
         else:
             try:
-                parsed_linkage = json.dumps(linkage)
-                if parsed_linkage[0] == u"{":
-                    linkage_format = "dict"
-                else:
-                    if parsed_linkage[1] == u"{":
-                        linkage_format = "JSON_array"
+                parsed_linkage = json.dumps(linkage.to_API())
+
+            # If none of the above worked, this is probably a Python object
+            # that's JSON-serializable (a category that includes
+            # "CoalesceAPILinkage").
+            except AttributeError:
+                try:
+                    parsed_linkage = json.dumps(linkage)
+                    if parsed_linkage[0] == u"{":
+                        linkage_format = "dict"
                     else:
-                        linkage_format = "list"
-            except TypeError:
-                raise TypeError(link_error_msg)
+                        if parsed_linkage[1] == u"{":
+                            linkage_format = "JSON_array"
+                        else:
+                            linkage_format = "list"
+                except TypeError:
+                    raise TypeError(link_error_msg)
+
+            else:
+                linkage_format = "XSD"
 
         return parsed_linkage, linkage_format
 
@@ -1671,13 +1751,18 @@ def create_linkages(server = None, linkages = None):
 
     # Set the request parameters.
 
-    if isinstance(server, CoalesceServer):
-        server_obj = server
-    else:
+    if isinstance(server, basestring):
         server_obj = CoalesceServer(server)
+    else:
+        server_obj = server
 
     operation = u"create_linkages"
-    API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+    try:
+        API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+    except AttributeError as err:
+        raise AttributeError(str(err) + '\n.This error can occur if the ' +
+                              'argument "server" is not either a URL or a ' +
+                              'CoalesceServer object.')
 
     linkage_array = _JSONify_linkage_list(linkages)
 
@@ -1716,10 +1801,10 @@ def read_linkages(server = None, key = None, output = "dict_list"):
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
-    :param key:  the UUID key of the template to be registered, as either an
-        instance of the :class:`uuid.UUID` class, or any string or integer
-        that could serve as input to the :class:`UUID <uuid.UUID>` class
-        constructor.
+    :param key:  the UUID key of the entity whose linkages are to be returned,
+        as either an instance of the :class:`uuid.UUID` class, or any string
+        or integer that could serve as input to the :class:`UUID <uuid.UUID>`
+        class constructor.
     :param output:  If this argument is "JSON", return the results as a JSON
         array (string).  If the argument is "dict_list" or "API_list", return
         the results as a :class:`list` of :class:`dicts <dict>` or instances
@@ -1734,27 +1819,21 @@ def read_linkages(server = None, key = None, output = "dict_list"):
 
     # Set the request parameters.
 
-    if isinstance(server, CoalesceServer):
-        server_obj = server
-    else:
+    if isinstance(server, basestring):
         server_obj = CoalesceServer(server)
-
-    if isinstance(key, UUID):
-        key_obj = key
-
     else:
-        try:
-            key_obj = UUID(key)
-        except AttributeError:
-            key_obj = UUID(int = key)
-        except ValueError:
-            key_obj = UUID(bytes = key)
+        server_obj = server
 
-    key_str = unicode(key_obj)
+    key_str = _test_key(key)
 
     operation = u"read_linkages"
-    API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
-                             key = key_str)
+    try:
+        API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
+                                 key = key_str)
+    except AttributeError as err:
+        raise AttributeError(str(err) + '\n.This error can occur if the ' +
+                              'argument "server" is not either a URL or a ' +
+                              'CoalesceServer object.')
 
     method = OPERATIONS[operation][u"method"]
     headers = server_obj.base_headers
@@ -1814,13 +1893,18 @@ def delete_linkages(server = None, linkages = None):
 
     # Set the request parameters.
 
-    if isinstance(server, CoalesceServer):
-        server_obj = server
-    else:
+    if isinstance(server, basestring):
         server_obj = CoalesceServer(server)
+    else:
+        server_obj = server
 
     operation = u"delete_linkages"
-    API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+    try:
+        API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+    except AttributeError as err:
+        raise AttributeError(str(err) + '\n.This error can occur if the ' +
+                              'argument "server" is not either a URL or a ' +
+                              'CoalesceServer object.')
 
     linkage_array = _JSONify_linkage_list(linkages)
 

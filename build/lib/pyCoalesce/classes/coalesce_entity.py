@@ -98,6 +98,7 @@ The Coalesce XML and JSON API's use different values for the same link types;
 the keys are the JSON versions, and the values are the XML versions.
 Eventually, this map should be available through the "property" API , at which
 point it can be downloaded rather than hard-coded.
+
 """
 
 
@@ -156,20 +157,22 @@ class fieldSub(supermod.field):
     @classmethod
     def create_from_definition(cls, field_definition):
 
-        if not isinstance(field_definition, supermod.fielddefinition):
+        # Instantiate the new field.
+
+        try:
+            new_field = cls(name = field_definition.name,
+                            value = field_definition.defaultvalue,
+                            datatype = field_definition.datatype,
+                            classificationmarking =
+                                field_definition.defaultclassificationmarking,
+                            label = field_definition.label,
+                            noindex = field_definition.noindex,
+                            disablehistory = field_definition.disablehistory)
+
+        except AttributeError:
             raise TypeError('The argument of "create_from_definition" must be ' +
                             'an instance of class "fielddefinition or one of ' +
                             'its subclasses.')
-
-        # Instantiate the new field.
-        new_field = cls(name = field_definition.name,
-                        value = field_definition.defaultvalue,
-                        datatype = field_definition.datatype,
-                        classificationmarking =
-                            field_definition.defaultclassificationmarking,
-                        label = field_definition.label,
-                        noindex = field_definition.noindex,
-                        disablehistory = field_definition.disablehistory)
 
         return new_field
 

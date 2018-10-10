@@ -19,6 +19,55 @@ from copy import copy
 from coalesce_entity import LINKAGE_TYPES, CoalesceLinkage
 
 
+def _test_key(key):
+    """
+    Determines the format of an input UUID key, and, if necessary, transforms
+    the input into a string
+
+    :param key:  the key to be tested and transformed into a string
+
+    :returns:  "key" as a string
+
+    """
+
+    key_error_msg = 'The argument "source" and "target" must be UUID keys, ' + \
+                    'instances of the class "uuid.UUID", or any strings or ' + \
+                    'integers that could serve as input for that class\'s ' + \
+                    'class constructor.'
+
+    if isinstance(key, basestring):
+
+        try:
+            UUID(key)
+
+        except ValueError:
+            try:
+                key_obj = UUID(bytes = key)
+
+            except ValueError:
+                raise ValueError(key_error_msg)
+
+        else:
+            return key
+
+    else:
+
+        key_len = len(unicode(key))
+
+        if key_len == 36:
+            key_obj = key
+
+        else:
+            try:
+                key_obj = UUID(int = key)
+            except ValueError:
+                raise ValueError(key_error_msg)
+
+    key_str = unicode(key_obj)
+
+    return key_str
+
+
 class CoalesceAPILinkage(dict):
     """
     A JSON-serializable version of a Coalesce linkage, intended for use with
@@ -138,37 +187,13 @@ class CoalesceAPILinkage(dict):
         # (back) to strings and set the corresponding values.
 
         if source:
-
-            if isinstance(source, UUID):
-                source_obj = source
-
-            else:
-                try:
-                    source_obj = UUID(source)
-                except AttributeError:
-                    source_obj = UUID(int = source)
-                except ValueError:
-                    source_obj = UUID(bytes = source)
-
-            self["source"] = unicode(source_obj)
+            self["source"] = _test_key(source)
 
         else:
             raise TypeError("You must provide a source entity for the linkage.")
 
         if target:
-
-            if isinstance(target, UUID):
-                target_obj = target
-
-            else:
-                try:
-                    target_obj = UUID(target)
-                except AttributeError:
-                    target_obj = UUID(int = target)
-                except ValueError:
-                    target_obj = UUID(bytes = target)
-
-            self["target"] = unicode(target_obj)
+            self["target"] = _test_key(target)
 
         else:
             raise TypeError("You must provide a target entity for the linkage.")
