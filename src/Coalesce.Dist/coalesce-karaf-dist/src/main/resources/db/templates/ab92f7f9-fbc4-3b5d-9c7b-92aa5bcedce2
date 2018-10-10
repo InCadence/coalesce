@@ -1,39 +1,25 @@
 <entity classname="com.incadencecorp.coalesce.model.Style"
-    datecreated="" key="ab92f7f9-fbc4-3b5d-9c7b-92aa5bcedce2"
-    lastmodified="" name="Style" source="Coalesce" version="1">
-    <linkagesection datecreated="" key="" lastmodified="" name="Linkages"/>
-    <section datecreated="" key="" lastmodified="" name="style">
-        <recordset datecreated="" key="" lastmodified="" maxrecords="1"
-            minrecords="1" name="meta">
-            <fielddefinition datatype="string" datecreated=""
-                defaultclassificationmarking="" key="" lastmodified="" name="stylename"/>
+        key="ab92f7f9-fbc4-3b5d-9c7b-92aa5bcedce2"
+        name="Style" source="Coalesce" version="1">
+    <linkagesection name="Linkages"/>
+    <section name="style">
+        <recordset maxrecords="1" minrecords="1" name="meta">
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="stylename"/>
         </recordset>
-        <recordset datecreated="" key="" lastmodified="" maxrecords="1"
-            minrecords="1" name="Fill Style">
-            <fielddefinition datatype="string" datecreated=""
-                defaultclassificationmarking="" key="" lastmodified="" name="color"/>
-            <fielddefinition datatype="string" datecreated=""
-                defaultclassificationmarking="" key="" lastmodified="" name="alpha"/>
+        <recordset maxrecords="1" minrecords="1" name="Fill Style">
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="color"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="alpha"/>
         </recordset>
-        <recordset datecreated="" key="" lastmodified="" maxrecords="1"
-            minrecords="1" name="Stroke Style">
-            <fielddefinition datatype="string" datecreated=""
-                defaultclassificationmarking="" key="" lastmodified="" name="color"/>
-            <fielddefinition datatype="string" datecreated=""
-                defaultclassificationmarking="" key="" lastmodified="" name="width"/>
+        <recordset maxrecords="1" minrecords="1" name="Stroke Style">
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="color"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="width"/>
         </recordset>
-        <recordset datecreated="" key="" lastmodified="" maxrecords="1"
-            minrecords="1" name="Text Style">
-            <fielddefinition datatype="string" datecreated=""
-                defaultclassificationmarking="" key="" lastmodified="" name="fontSize"/>
-            <fielddefinition datatype="string" datecreated=""
-                defaultclassificationmarking="" key="" lastmodified="" name="fontType"/>
-            <fielddefinition datatype="string" datecreated=""
-                defaultclassificationmarking="" key="" lastmodified="" name="fontFillColor"/>
-            <fielddefinition datatype="string" datecreated=""
-                defaultclassificationmarking="" key="" lastmodified="" name="fontStrokeColor"/>
-            <fielddefinition datatype="string" datecreated=""
-                defaultclassificationmarking="" key="" lastmodified="" name="fontStrokeWidth"/>
+        <recordset maxrecords="1" minrecords="1" name="Text Style">
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="fontSize"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="fontType"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="fontFillColor"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="fontStrokeColor"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="fontStrokeWidth"/>
         </recordset>
     </section>
 </entity>
