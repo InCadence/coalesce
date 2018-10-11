@@ -77,28 +77,28 @@ public class RESTPersisterImpl extends RESTTemplatePersisterImpl implements ICoa
 
             for (CoalesceEntity entity : entities)
             {
-                if (entity.isNew())
+                if (true)//entity.isNew())
                 {
-                    target = client.target(url + "/" + entity.getKey() + ".xml");
-                    LOGGER.debug("URI: PUT {}", target.getUri());
-                    response = target.request(MediaType.APPLICATION_XML).put(Entity.xml(entity.toXml()));
+                    target = client.target(url + "/xml");
+                    LOGGER.debug("URI: POST {}", target.getUri());
+                    response = target.request().post(Entity.xml(entity.toXml()));
                     entity.setStatus(ECoalesceObjectStatus.ACTIVE);
                 }
                 else if (entity.isMarkedDeleted() && allowRemoval)
                 {
                     target = client.target(url + "/" + entity.getKey());
                     LOGGER.debug("URI: DELETE {}", target.getUri());
-                    response = target.request(MediaType.APPLICATION_XML).delete();
+                    response = target.request().delete();
                 }
                 else
                 {
-                    target = client.target(url + "/" + entity.getKey() + ".xml");
+                    target = client.target(url + "/" + entity.getKey() + "/xml");
                     LOGGER.debug("URI: PUT {}", target.getUri());
                     // TODO This should be a POST
-                    response = target.request(MediaType.APPLICATION_XML).put(Entity.xml(entity.toXml()));
+                    response = target.request().put(Entity.xml(entity.toXml()));
                 }
 
-                if (response.getStatus() != 204)
+                if (response.getStatus() != 204 && response.getStatus() != 200)
                 {
                     throw new CoalescePersistorException("(FAILED) Code: " + response.getStatus() + " " + target.getUri());
                 }
@@ -139,7 +139,7 @@ public class RESTPersisterImpl extends RESTTemplatePersisterImpl implements ICoa
 
             for (String key : keys)
             {
-                target = client.target(url + "/" + key + ".xml");
+                target = client.target(url + "/" + key + "/xml");
 
                 LOGGER.debug("URI: GET {}", target.getUri());
 

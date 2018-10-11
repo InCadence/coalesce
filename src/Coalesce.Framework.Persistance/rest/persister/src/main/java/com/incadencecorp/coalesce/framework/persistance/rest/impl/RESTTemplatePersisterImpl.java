@@ -90,16 +90,16 @@ public class RESTTemplatePersisterImpl implements ICoalesceTemplatePersister {
 
             for (CoalesceEntityTemplate template : templates)
             {
-                target = client.target(url + "/" + template.getKey() + ".xml");
+                target = client.target(url + "/xml");
 
-                LOGGER.debug("URI: POST {}", target.getUri());
+                LOGGER.debug("URI: PUT {}", target.getUri());
 
-                response = target.request(MediaType.TEXT_PLAIN).post(Entity.xml(template.toXml()));
+                response = target.request().post(Entity.xml(template.toXml()));
 
                 if (response.getStatus() != 200)
                 {
                     throw new CoalescePersistorException(
-                            "(FAILED) Code: " + response.getStatus() + " POST " + target.getUri());
+                            "(FAILED) Code: " + response.getStatus() + " PUT " + target.getUri());
                 }
             }
         }
@@ -121,7 +121,7 @@ public class RESTTemplatePersisterImpl implements ICoalesceTemplatePersister {
 
             for (String key : keys)
             {
-                target = client.target(url + "/" + key + ".xml");
+                target = client.target(url + "/" + key);
 
                 LOGGER.debug("URI: POST {}", target.getUri());
 
@@ -152,13 +152,13 @@ public class RESTTemplatePersisterImpl implements ICoalesceTemplatePersister {
 
             for (CoalesceEntityTemplate template : templates)
             {
-                target = client.target(url + "/" + template.getKey());
+                target = client.target(url + "/" + template.getKey() + "/register");
 
                 LOGGER.debug("URI: PUT {}", target.getUri());
 
-                response = target.request(MediaType.TEXT_PLAIN).put(Entity.xml(""));
+                response = target.request(MediaType.TEXT_PLAIN).put(Entity.text(""));
 
-                if (response.getStatus() != 200)
+                if (response.getStatus() != 204)
                 {
                     throw new CoalescePersistorException(
                             "(FAILED) Code: " + response.getStatus() + " PUT " + target.getUri());
@@ -184,7 +184,7 @@ public class RESTTemplatePersisterImpl implements ICoalesceTemplatePersister {
 
         try
         {
-            WebTarget target = client.target(url + "/" + key + ".xml");
+            WebTarget target = client.target(url + "/" + key + "/xml");
 
             LOGGER.debug("URI: GET {}", target.getUri());
 
@@ -218,7 +218,7 @@ public class RESTTemplatePersisterImpl implements ICoalesceTemplatePersister {
 
         try
         {
-            WebTarget target = client.target(url + "/" + name + "/" + source + "/" + version + ".xml");
+            WebTarget target = client.target(url + "/" + name + "/" + source + "/" + version + "/xml");
 
             LOGGER.debug("URI: GET {}", target.getUri());
 
