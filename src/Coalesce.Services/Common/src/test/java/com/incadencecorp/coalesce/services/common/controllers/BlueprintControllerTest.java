@@ -66,7 +66,7 @@ public class BlueprintControllerTest {
         controller.setDirectory(Paths.get("src", "test", "resources").toString());
 
         JSONObject json = new JSONObject();
-        String xml = "<bean id=\"persister\" class=\"TEST\"/>";
+        String xml = "<bean id=\"persister\" class=\"TEST\"><argument /></bean>";
         json.append("xml", xml);
         String help = "";
         json.accumulate("oldId", help);
