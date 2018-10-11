@@ -28,7 +28,7 @@
           destroy-method="stop">
         <property name="drivers">
             <array>
-                <!--ref component-id="myDriver"/-->
+                <ref component-id="myDriver"/>
             </array>
         </property>
     </bean>
@@ -52,22 +52,26 @@
         </property>
     </bean>
 
-    <bean id="myScanner" class="com.incadencecorp.coalesce.synchronizer.service.scanners.CQLScanImpl" init-method="setup">
-        <property name="name" value="Scanner"/>
-        <property name="source" ref="persister"/>
+    <bean class="com.incadencecorp.coalesce.synchronizer.service.scanners.AfterLastModifiedScanImpl2" id="myScanner"
+          init-method="setup">
+        <property name="name" value="Last Modified Scan"/>
+        <property name="source" ref="derby"/>
         <property name="properties">
             <map>
-                <entry key="com.incadencecorp.scanner.cql" value="&quot;coalesceentity.name&quot;=&quot;OEEvent&quot;"/>
+                <entry key="com.incadencecorp.scanners.lastscan" value="2017-11-01T20:20:32.111+00:00"/>
+                <entry key="com.incadencecorp.scanners.days" value="1"/>
+                <entry key="com.incadencecorp.scanners.max" value="50"/>
+                <entry key="com.incadencecorp.scanners.pattern" value=" yyyy-MM-dd HH:mm:ss.S"/>
             </map>
         </property>
     </bean>
 
     <bean id="myOperation" class="com.incadencecorp.coalesce.synchronizer.service.operations.CopyOperationImpl">
         <property name="name" value="Operation"/>
-        <property name="source" ref="persister"/>
+        <property name="source" ref="derby"/>
         <property name="target">
             <array>
-                <ref component-id="persister"/>
+                <ref component-id="rest"/>
             </array>
         </property>
         <property name="properties">
@@ -80,10 +84,23 @@
     <!-- ========================== -->
     <!-- Persisters -->
     <!-- ========================== -->
-    <bean id="persister" class="com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor">
+    <bean id="derby" class="com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor">
     </bean>
 
     <bean id="file" class="com.incadencecorp.coalesce.framework.persistance.FilePersistorImpl">
+    </bean>
+
+    <bean id="rest" class="com.incadencecorp.coalesce.framework.persistance.rest.impl.RESTPersisterImpl">
+        <argument>
+            <map>
+                <entry key="com.incadencecorp.coalesce.persister.rest.template.url"
+                       value="http://localhost:8282/cxf/data/templates"/>
+                <entry key="com.incadencecorp.coalesce.persister.rest.entity.url"
+                       value="http://localhost:8282/cxf/data/entity"/>
+                <entry key="com.incadencecorp.coalesce.persister.rest.search.url"
+                       value="http://localhost:8282/cxf/data/search"/>
+            </map>
+        </argument>
     </bean>
 
 </blueprint>

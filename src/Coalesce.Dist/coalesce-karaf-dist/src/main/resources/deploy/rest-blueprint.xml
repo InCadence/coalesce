@@ -34,7 +34,23 @@
             <ref component-id="linkagesImpl"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider">
+                <property name="mapper">
+                    <bean class="com.incadencecorp.coalesce.services.api.mappers.CoalesceMapper">
+                        <property name="serializationFeature">
+                            <array>
+                                <value>INDENT_OUTPUT</value>
+                            </array>
+                        </property>
+                        <property name="mapperFeature">
+                            <array>
+                                <value>DEFAULT_VIEW_INCLUSION</value>
+                            </array>
+                        </property>
+
+                    </bean>
+                </property>
+            </bean>
         </jaxrs:providers>
     </jaxrs:server>
 
