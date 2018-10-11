@@ -8,8 +8,6 @@ XSD/Entity.xsd
 XSD/entity.py
 XSD/entity_subclasses.py
 XSD/generate_classes.sh
-dist/pyCoalesce-0.1-py2-none-any.whl
-dist/pyCoalesce-0.1.tar.gz
 docs/Makefile
 docs/make.bat
 docs/build/doctrees/environment.pickle

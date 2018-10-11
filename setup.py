@@ -1,3 +1,4 @@
+import re
 import setuptools
 
 with open("README.md", "r") as fh:
@@ -5,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pyCoalesce",
-    version="0.11",
+    version="0.12",
     author="Dhruva Venkat & Scott Orr",
     author_email="sorr@incadencecorp.com",
     description="A python wrapper for coalesce objects",

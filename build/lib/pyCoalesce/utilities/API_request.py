@@ -71,13 +71,17 @@ def get_response(URL, method = "get", verify = True, cert = None, params = None,
     session.cert = cert
 
     # Create a dict of keyword arguments (this allows optional arguments
-    # to be omitted entirely.
+    # to be omitted entirely).  We encode any "data" block in UTF-8
+    # because requests can choke when attempting to send Unicode.
     req_kwargs = {}
     status = None
     for kwarg_key in ("params", "data", "json", "headers"):
         kwarg_value = locals()[kwarg_key]
         if kwarg_value is not None:
-            req_kwargs[kwarg_key] = kwarg_value
+            if kwarg_key == "data":
+                req_kwargs[kwarg_key] = kwarg_value.encode("utf-8")
+            else:
+                req_kwargs[kwarg_key] = kwarg_value
 
     # Create request objects.  Doing it this way, rather than with
     # "requests.request" (or ".get" or ".post"), lets us pass the request

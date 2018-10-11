@@ -31,9 +31,8 @@ import xmltodict
 
 from utilities.logger import package_logger
 from utilities.URL_class import URL
-from classes import CoalesceEntity, CoalesceEntityTemplate, parseString, \
-                    to_XML_string, set_entity_fields, CoalesceLinkage, \
-                    CoalesceAPILinkage
+from classes import CoalesceEntityTemplate, parseString, to_XML_string, \
+                    set_entity_fields, CoalesceAPILinkage
 from utilities.API_request import get_response
 
 # Set up logging.
