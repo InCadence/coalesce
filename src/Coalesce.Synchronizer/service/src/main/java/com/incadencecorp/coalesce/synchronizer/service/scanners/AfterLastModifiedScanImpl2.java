@@ -31,8 +31,6 @@ import org.geotools.temporal.object.DefaultInstant;
 import org.geotools.temporal.object.DefaultPeriod;
 import org.geotools.temporal.object.DefaultPosition;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
@@ -63,7 +61,6 @@ import java.util.concurrent.TimeUnit;
  * @see SynchronizerParameters#PARAM_SCANNER_CQL
  * @see SynchronizerParameters#PARAM_SCANNER_WINDOW
  * @see SynchronizerParameters#PARAM_SCANNER_WINDOW_UNITS
- * @see SynchronizerParameters#PARAM_SCANNER_DATETIME_PATTERN
  */
 public class AfterLastModifiedScanImpl2 extends AbstractScan {
 
@@ -75,7 +72,6 @@ public class AfterLastModifiedScanImpl2 extends AbstractScan {
     private int max = SynchronizerParameters.DEFAULT_SCANNER_MAX;
     private Integer window = null;
     private TimeUnit windowUnit = TimeUnit.DAYS;
-    private DateTimeFormatter formatter = null;
 
     @Override
     public CachedRowSet doScan(Query query) throws CoalesceException
@@ -144,12 +140,8 @@ public class AfterLastModifiedScanImpl2 extends AbstractScan {
         {
             if (result.last())
             {
-                pendingLastScan = result.getString(properties.size() + 1);
-
-                if (formatter != null)
-                {
-                    pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(formatter.parseDateTime(pendingLastScan));
-                }
+                String timestamp = result.getString(properties.size() + 1);
+                pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.parseDateTime(timestamp));
             }
             result.beforeFirst();
         }
@@ -218,16 +210,6 @@ public class AfterLastModifiedScanImpl2 extends AbstractScan {
             {
                 windowUnit = TimeUnit.valueOf(value);
             }
-        }
-
-        // Date / Time Pattern Configured?
-        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_DATETIME_PATTERN))
-        {
-            formatter = DateTimeFormat.forPattern(parameters.get(SynchronizerParameters.PARAM_SCANNER_DATETIME_PATTERN));
-        }
-        else if (loader != null)
-        {
-            formatter = DateTimeFormat.forPattern(loader.getProperty(SynchronizerParameters.PARAM_SCANNER_DATETIME_PATTERN));
         }
 
         if (LOGGER.isInfoEnabled())

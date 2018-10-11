@@ -19,6 +19,7 @@
 package com.incadencecorp.coalesce.synchronizer.service.tests;
 
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
@@ -28,9 +29,11 @@ import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters
 import com.incadencecorp.coalesce.synchronizer.service.scanners.AfterLastModifiedScanImpl;
 import com.incadencecorp.coalesce.synchronizer.service.scanners.AfterLastModifiedScanImpl2;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.sql.rowset.CachedRowSet;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +43,12 @@ import java.util.Map;
  * @author Derek Clemenzi
  */
 public class AfterLastModifiedScanImplTest {
+
+    @BeforeClass
+    public static void initialize() throws Exception
+    {
+        CoalesceSettings.setTimePatterns(Collections.singletonList("yyyy-MM-dd HH:mm:ss.S"));
+    }
 
     /**
      * This test ensures that running the scanner twice will not return results the second time due to the last scan
@@ -101,7 +110,6 @@ public class AfterLastModifiedScanImplTest {
                    JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusDays(2)));
         params.put(SynchronizerParameters.PARAM_SCANNER_CQL,
                    "\"" + CoalescePropertyFactory.getEntityKey().getPropertyName() + "\" = '" + entity.getKey() + "'");
-        params.put(SynchronizerParameters.PARAM_SCANNER_DATETIME_PATTERN, "yyyy-MM-dd HH:mm:ss.S");
 
         DerbyPersistor source = new DerbyPersistor();
 
