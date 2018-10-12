@@ -154,8 +154,16 @@ public class BlueprintController implements IBlueprintController {
 
         Node bean = old_xml.createTextNode("");
         //Build both documents
+
         if ( ! changes.equals("") ) {
+
+            // TODO There has to be a better way of handling this
+            if (!changes.contains("xmlns=\"")) {
+                changes = changes.replaceFirst(">", " xmlns=\"http://www.osgi.org/xmlns/blueprint/v1.0.0\">");
+            }
+
             Document new_xml = XmlHelper.loadXmlFrom(changes);
+
             bean = new_xml.getFirstChild();
             NamedNodeMap attributes = bean.getAttributes();
 
@@ -171,6 +179,14 @@ public class BlueprintController implements IBlueprintController {
         Node oldBean = findBeanWithID(id, old_xml);
         Node importBean = old_xml.importNode(bean, true);
         Element doc = old_xml.getDocumentElement();
+
+        /* TODO this will cause the children to have xmlns=""
+        if (importBean instanceof Element)
+        {
+            old_xml.renameNode(importBean, "http://www.osgi.org/xmlns/blueprint/v1.0.0", importBean.getNodeName());
+        }
+        */
+
         if (oldBean != null)
         {
             doc.replaceChild(importBean, oldBean);

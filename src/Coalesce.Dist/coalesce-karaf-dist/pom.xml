@@ -89,9 +89,16 @@
                         <feature>minimal</feature>
                         <feature>cxf</feature>
                         <feature>war</feature>
+                        <feature>persister-accumulo-feature</feature>
+                        <feature>persister-elasticsearch-feature</feature>
                         <feature>persister-derby-feature</feature>
+                        <feature>persister-rest-feature</feature>
                         <feature>coalesce-frontend</feature>
                         <feature>coalesce-javadocs</feature>
+                        <feature>coalesce-network-feature</feature>
+                        <feature>coalesce-synchronizer-feature</feature>
+                        <feature>notification-adminevent-feature</feature>
+                        <feature>notification-kafka-feature</feature>
                     </bootFeatures>
                     <installedFeatures>
                         <feature>standard</feature>

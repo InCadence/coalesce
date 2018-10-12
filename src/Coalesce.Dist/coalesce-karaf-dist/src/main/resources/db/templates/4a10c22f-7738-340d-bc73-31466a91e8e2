@@ -1,0 +1,45 @@
+<entity classname="com.incadencecorp.oe.entities.OEEvent" key="4a10c22f-7738-340d-bc73-31466a91e8e2" name="OEEvent"
+        source="G2Core" version="0.2">
+    <linkagesection name="Linkages"/>
+    <section name="EventSection" noindex="false">
+        <recordset maxrecords="1" minrecords="1" name="EventRecordset">
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="DataSource"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="OntologyReference"/>
+            <fielddefinition datatype="boolean" defaultclassificationmarking="" name="IsSimulation"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" name="PMESIIPTPolitical"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" name="PMESIIPTMilitary"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" name="PMESIIPTEconomic"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" name="PMESIIPTSocial"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" name="PMESIIPTInformation"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" name="PMESIIPTInfrastructure"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" name="PMESIIPTPhysicalEnvironment"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" name="PMESIIPTTime"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" name="Tags"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" name="GlobalEventID"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" name="Day"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" name="MonthYear"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" name="Year"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" name="FractionDate"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" name="IsRootEvent"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="EventCode"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="EventBaseCode"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="EventRootCode"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" name="QuadClass"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" name="GoldsteinScale"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" name="NumMentions"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" name="NumSources"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" name="NumArticles"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" name="AvgTone"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" name="ActionGeoType"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="ActionGeoFullname"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="ActionGeoCountryCode"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="ActionGeoADM1Code"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="ActionGeoADM2Code"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="ActionGeoFeatureID"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" name="DateAdded"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="SourceURL"/>
+            <fielddefinition datatype="datetime" defaultclassificationmarking="" name="DateTime"/>
+            <fielddefinition datatype="geocoordinate" defaultclassificationmarking="" name="ActionGeoLocation"/>
+        </recordset>
+    </section>
+</entity>
