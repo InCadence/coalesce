@@ -427,18 +427,18 @@ public class SearchDataController {
                 times[0] = times[0].replaceAll("\"", "");
                 times[1] = times[1].replaceAll("\"", "");
 
-                Instant start = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(times[0]).toDate()));
-                Instant end = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(times[1]).toDate()));
+                Instant start = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.parseDateTime(times[0]).toDate()));
+                Instant end = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.parseDateTime(times[1]).toDate()));
 
                 criteriaFilter = ff.during(property, ff.literal(new DefaultPeriod(start, end)));
                 break;
             case After.NAME:
-                DefaultInstant after = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(criteria.getValue()).toDate()));
+                DefaultInstant after = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.parseDateTime(criteria.getValue()).toDate()));
 
                 criteriaFilter = ff.after(property, ff.literal(after));
                 break;
             case Before.NAME:
-                DefaultInstant before = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.fromXmlDateTimeUTC(criteria.getValue()).toDate()));
+                DefaultInstant before = new DefaultInstant(new DefaultPosition(JodaDateTimeHelper.parseDateTime(criteria.getValue()).toDate()));
 
                 criteriaFilter = ff.before(property, ff.literal(before));
                 break;
