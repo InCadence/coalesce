@@ -156,10 +156,12 @@ public class KafkaSubscriberImpl extends CoalesceComponentImpl implements ICoale
         subscribe(topic, event -> {
 
             KeyValuePairEvent<V> kvp = new KeyValuePairEvent<>();
-            kvp.setValue(event);
+            kvp.setKey(event.key().toString());
+            kvp.setValue(readValue(event.value().toString(), clazz));
+
             handler.handle(kvp);
 
-        }, clazz);
+        }, ConsumerRecord.class);
     }
 
     @Override
@@ -241,7 +243,14 @@ public class KafkaSubscriberImpl extends CoalesceComponentImpl implements ICoale
                                 LOGGER.debug("Handling Topic: ({}) Type: {}", record.topic(), clazz.getSimpleName());
                             }
 
-                            handler.handle(readValue(record.value(), clazz));
+                            if (clazz == ConsumerRecord.class)
+                            {
+                                handler.handle((V) record);
+                            }
+                            else
+                            {
+                                handler.handle(readValue(record.value(), clazz));
+                            }
 
                             LOGGER.trace("Handled Topic ({})", record.topic());
 
@@ -282,7 +291,14 @@ public class KafkaSubscriberImpl extends CoalesceComponentImpl implements ICoale
     {
         try
         {
-            return mapper.readValue(json, clazz);
+            if (clazz == String.class)
+            {
+                return (V) json;
+            }
+            else
+            {
+                return mapper.readValue(json, clazz);
+            }
         }
         catch (IOException e)
         {
