@@ -222,7 +222,7 @@ public class KafkaNotifierImpl extends CoalesceComponentImpl implements ICoalesc
     @Override
     public <V> void sendMessage(String topic, String key, V value)
     {
-        sendRecord(topic, value);
+        sendRecord(topic, key, value);
     }
 
     @Override
@@ -245,25 +245,37 @@ public class KafkaNotifierImpl extends CoalesceComponentImpl implements ICoalesc
 
     private String toJSONString(Object value)
     {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
-
-        try
+        if (value instanceof String)
         {
-            return mapper.writeValueAsString(value);
+            return (String) value;
         }
-        catch (IOException e)
+        else
         {
-            throw new RuntimeException(e);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            mapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+
+            try
+            {
+                return mapper.writeValueAsString(value);
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     private void sendRecord(String topic, Object value)
     {
-        LOGGER.debug("Sending Topic: ({}) Type: {}", topic, value.getClass().getSimpleName());
+        sendRecord(topic, null, value);
+    }
 
-        sendRecord(new ProducerRecord<>(KafkaUtil.normalizeTopic(topic), toJSONString(value)));
+    private void sendRecord(String topic, String key, Object value)
+    {
+        LOGGER.debug("Sending Topic: ({}) Key: {}, Type: {}", topic, key, value.getClass().getSimpleName());
+
+        sendRecord(new ProducerRecord<>(KafkaUtil.normalizeTopic(topic), key, toJSONString(value)));
     }
 
     private void sendRecord(ProducerRecord<String, Object> record)
