@@ -104,6 +104,7 @@ public class AfterLastModifiedScanImplTest {
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
         entity.setName("OEEvent");
+        entity.setLastModified(JodaDateTimeHelper.nowInUtc().minusDays(1));
 
         Map<String, String> params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS,
@@ -125,8 +126,6 @@ public class AfterLastModifiedScanImplTest {
         Assert.assertEquals(1, results.size());
 
         scan.finished(true, results);
-
-        Thread.sleep(100);
 
         // Verify No Hits
         results = scan.scan();
