@@ -51,7 +51,7 @@ import com.incadencecorp.coalesce.synchronizer.api.common.AbstractScan;
 /**
  * This implementation checks a directory for files that have been created with
  * their names being keys of entities. You can pair this with the FileHandlerImpl.
- * <p />
+ * <p></p>
  * This implementation ignore the specified source.
  *
  * @author n78554

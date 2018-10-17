@@ -6,16 +6,37 @@ cache:
   directories:
   - "$HOME/.m2"
   - node_modules
-install:
-- cp .travis.settings.xml $HOME/.m2/settings.xml
-- travis_retry mvn install -DskipTests -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
-script:
-- travis_retry mvn verify -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
-after_success:
-deploy:
-  provider: script
-  script: "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy -P bundles,dist,react"
-  skip_cleanup: true
-  on:
-    branch: master
+stages:
+  - install
+  - test
+  - name: deploy
+    if: branch = master || (branch = release && tag IS present)
+  - name: deploy-karaf
+    if: (branch = release && tag IS present)
+jobs:
+  include:
+    - stage: install
+      install: cp .travis.settings.xml $HOME/.m2/settings.xml
+      script: mvn install -DskipTests -P bundles -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
+    - stage: test
+      install: skip
+      script: mvn verify -fae -o -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+
+    - stage: deploy
+      install: skip #mvn javadoc:aggregate -f src/Coalesce.Bom
+      script: mvn clean deploy -f src/Coalesce.Dist/coalesce-javadocs
+
+    - stage: deploy
+      install: skip
+      script: mvn deploy -P bundles -DskipTests -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+
+    - stage: deploy
+      env:
+        - CI=false
+      install: skip
+      script: mvn deploy -f src/Coalesce.React -DskipTests -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+
+    - stage: deploy-karaf
+      install: skip
+      script: mvn deploy -f src/Coalesce.Dist/coalesce-karaf-dist -DskipDocker -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn

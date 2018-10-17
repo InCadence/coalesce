@@ -19,8 +19,6 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 /**
  * Stores meta data about an Coalesce Entity.
- * 
- * @see ICoalescePersistor#getCoalesceEntityIdAndTypeForKey(String)
  */
 public class EntityMetaData {
 

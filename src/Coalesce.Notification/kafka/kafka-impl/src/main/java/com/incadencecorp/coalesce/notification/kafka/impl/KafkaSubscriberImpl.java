@@ -48,8 +48,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author Derek Clemenzi
- * @see CoalesceParameters@PARAM_INTERVAL
- * @see CoalesceParameters@PARAM_INTERVAL_UNIT
+ * @see CoalesceParameters#PARAM_INTERVAL
+ * @see CoalesceParameters#PARAM_INTERVAL_UNIT
  */
 public class KafkaSubscriberImpl extends CoalesceComponentImpl implements ICoalesceSubscriber, AutoCloseable {
 

@@ -41,9 +41,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 
-/**
- * @requiresDependencyResolution test
- */
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true)
 public class Template2JavaMojo extends AbstractMojo {
 

@@ -21,8 +21,6 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 /**
  * Stores meta data about an element within an Coalesce Entity.
- * 
- * @see ICoalescePersistor#getXPath(String, String)
  */
 public class ElementMetaData {
 
