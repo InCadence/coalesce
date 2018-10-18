@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.jobs.responses;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 
@@ -122,6 +123,7 @@ public class CoalesceResponseType<T> implements ICoalesceResponseType<T> {
      * @return the exception that caused this result, if caused by an exception;
      *         otherwise <code>null</code>.
      */
+    @JsonIgnore
     public Exception getException()
     {
         return exception;
@@ -132,6 +134,7 @@ public class CoalesceResponseType<T> implements ICoalesceResponseType<T> {
      *
      * @param exception
      */
+    @JsonIgnore
     public void setException(Exception exception)
     {
         this.setStatus(EResultStatus.FAILED);
