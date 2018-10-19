@@ -64,8 +64,8 @@ public final class EnumerationProviderUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EnumerationProviderUtil.class);
 
-    private static final List<IEnumerationProvider> providers = new ArrayList<IEnumerationProvider>();
-    private static final Map<String, String> lookup = new HashMap<String, String>();
+    private static final List<IEnumerationProvider> providers = new ArrayList<>();
+    private static final Map<String, String> lookup = new HashMap<>();
     private static Principal defaultPrincipal;
 
     private static final Object SYNC_OBJECT = new Object();
@@ -416,7 +416,7 @@ public final class EnumerationProviderUtil {
 
             Map<String, String> properties = factory.getProperties(ENUMERATION_PROVIDERS_FILENAME);
 
-            HashSet<Integer> keys = new HashSet<Integer>();
+            HashSet<Integer> keys = new HashSet<>();
 
             // Re-Order Based on Numeric Key
             for (String key : properties.keySet())

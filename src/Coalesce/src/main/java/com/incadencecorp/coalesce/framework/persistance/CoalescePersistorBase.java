@@ -132,8 +132,8 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     public CoalesceEntity[] getEntity(String... keys) throws CoalescePersistorException
     {
 
-        List<CoalesceEntity> results = new ArrayList<CoalesceEntity>();
-        List<String> keysToQuery = new ArrayList<String>();
+        List<CoalesceEntity> results = new ArrayList<>();
+        List<String> keysToQuery = new ArrayList<>();
 
         for (String key : keys)
         {
@@ -217,8 +217,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     @Override
     public EnumSet<EPersistorCapabilities> getCapabilities()
     {
-        EnumSet<EPersistorCapabilities> enumSet = EnumSet.of(EPersistorCapabilities.CREATE, EPersistorCapabilities.READ);
-        return enumSet;
+        return EnumSet.of(EPersistorCapabilities.CREATE, EPersistorCapabilities.READ);
     }
 
     /*--------------------------------------------------------------------------

@@ -17,12 +17,7 @@
 
 package com.incadencecorp.coalesce.common.bitmask;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +32,7 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
  */
 public class SecurityBitmaskCreator {
 
-    protected List<String> validOptions = new ArrayList<String>();
+    protected List<String> validOptions = new ArrayList<>();
     private String name;
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityBitmaskCreator.class);
 
@@ -61,10 +56,7 @@ public class SecurityBitmaskCreator {
      */
     public SecurityBitmaskCreator(String... options)
     {
-        for (String option : options)
-        {
-            validOptions.add(option);
-        }
+        Collections.addAll(validOptions, options);
     }
 
     /**
@@ -74,9 +66,9 @@ public class SecurityBitmaskCreator {
      */
     public <E extends Enum<E>> SecurityBitmaskCreator(Class<E> clazz)
     {
-        for (Iterator<E> it = EnumSet.allOf(clazz).iterator(); it.hasNext();)
+        for (E e : EnumSet.allOf(clazz))
         {
-            validOptions.add(it.next().toString());
+            validOptions.add(e.toString());
         }
     }
 
@@ -186,7 +178,7 @@ public class SecurityBitmaskCreator {
      */
     public List<String> getOptions(boolean[] mask)
     {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
 
         for (int ii = 0; ii < mask.length; ii++)
         {
@@ -221,7 +213,7 @@ public class SecurityBitmaskCreator {
      */
     public List<String> getOptions()
     {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         results.addAll(validOptions);
 
         return results;

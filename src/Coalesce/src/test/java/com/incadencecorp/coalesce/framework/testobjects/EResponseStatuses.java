@@ -36,7 +36,7 @@ public enum EResponseStatuses
     {
         if (_codeToStatusMapping == null)
         {
-            _codeToStatusMapping = new HashMap<String, EResponseStatuses>();
+            _codeToStatusMapping = new HashMap<>();
             for (EResponseStatuses s : values())
             {
                 _codeToStatusMapping.put(s._label.toLowerCase(), s);

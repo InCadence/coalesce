@@ -179,7 +179,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
     @JsonIgnore
     public List<String> getFieldNames()
     {
-        List<String> fieldNames = new ArrayList<String>();
+        List<String> fieldNames = new ArrayList<>();
 
         for (CoalesceObject coalesceObject : getChildCoalesceObjects().values())
         {
@@ -202,7 +202,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
     @JsonIgnore
     public List<String> getFieldKeys()
     {
-        List<String> fieldKeys = new ArrayList<String>();
+        List<String> fieldKeys = new ArrayList<>();
 
         for (CoalesceObject coalesceObject : getChildCoalesceObjects().values())
         {

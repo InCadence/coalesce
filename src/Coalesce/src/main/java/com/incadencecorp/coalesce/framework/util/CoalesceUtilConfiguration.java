@@ -38,7 +38,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
 /**
  * This class provides access to Coalesce utility classes as an instance to be

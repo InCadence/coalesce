@@ -578,27 +578,21 @@ public class CoalesceRecordTest {
         final String[] fields = new String[] { "field1", "field2", "field3"
         };
 
-        final ICoalesceFieldDefinitionFactory factory = new ICoalesceFieldDefinitionFactory() {
+        final ICoalesceFieldDefinitionFactory factory = (recordset, name) -> {
+            CoalesceFieldDefinition fd = null;
 
-            @Override
-            public CoalesceFieldDefinition create(CoalesceRecordset recordset, String name)
+            switch (name)
             {
-                CoalesceFieldDefinition fd = null;
+            case "field1":
+                fd = CoalesceFieldDefinition.create(recordset, name, ECoalesceFieldDataTypes.STRING_TYPE);
+                break;
+            case "field2":
+                fd = CoalesceFieldDefinition.create(recordset, name, ECoalesceFieldDataTypes.STRING_TYPE);
+                break;
 
-                switch (name)
-                {
-                case "field1":
-                    fd = CoalesceFieldDefinition.create(recordset, name, ECoalesceFieldDataTypes.STRING_TYPE);
-                    break;
-                case "field2":
-                    fd = CoalesceFieldDefinition.create(recordset, name, ECoalesceFieldDataTypes.STRING_TYPE);
-                    break;
-
-                }
-
-                return fd;
             }
 
+            return fd;
         };
 
         CoalesceEntity entity = new CoalesceEntity();

@@ -34,7 +34,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of double from the String array argument.
      */
-    public static final double[] toDoubleArray(String[] values)
+    public static double[] toDoubleArray(String[] values)
     {
         double[] results = new double[values.length];
 
@@ -50,7 +50,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of float from the String array argument.
      */
-    public static final float[] toFloatArray(String[] values)
+    public static float[] toFloatArray(String[] values)
     {
         float[] results = new float[values.length];
 
@@ -66,7 +66,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of int from the String array argument.
      */
-    public static final int[] toIntegerArray(String[] values)
+    public static int[] toIntegerArray(String[] values)
     {
         int[] results = new int[values.length];
 
@@ -82,7 +82,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of long from the String array argument.
      */
-    public static final long[] toLongArray(String[] values)
+    public static long[] toLongArray(String[] values)
     {
         long[] results = new long[values.length];
 
@@ -98,7 +98,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of boolean from the String array argument.
      */
-    public static final boolean[] toBooleanArray(String[] values)
+    public static boolean[] toBooleanArray(String[] values)
     {
         boolean[] results = new boolean[values.length];
 
@@ -114,7 +114,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of UUID from the String array argument.
      */
-    public static final UUID[] toUUIDArray(String[] values)
+    public static UUID[] toUUIDArray(String[] values)
     {
         UUID[] results = new UUID[values.length];
 
@@ -130,7 +130,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of strings
      */
-    public static final String[] toStringArray(boolean[] values)
+    public static String[] toStringArray(boolean[] values)
     {
         String[] results = null;
 
@@ -153,7 +153,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of strings
      */
-    public static final String[] toStringArray(long[] values)
+    public static String[] toStringArray(long[] values)
     {
         String[] results = new String[values.length];
 
@@ -169,7 +169,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of strings
      */
-    public static final String[] toStringArray(double[] values)
+    public static String[] toStringArray(double[] values)
     {
         String[] results = new String[values.length];
 
@@ -185,7 +185,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of strings
      */
-    public static final String[] toStringArray(int[] values)
+    public static String[] toStringArray(int[] values)
     {
         String[] results = new String[values.length];
 
@@ -201,7 +201,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of strings
      */
-    public static final String[] toStringArray(float[] values)
+    public static String[] toStringArray(float[] values)
     {
         String[] results = new String[values.length];
 
@@ -217,7 +217,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of strings
      */
-    public static final String[] toStringArray(UUID[] values)
+    public static String[] toStringArray(UUID[] values)
     {
         String[] results = new String[values.length];
 
@@ -233,7 +233,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of strings
      */
-    public static final String[] toStringArray(Set<UUID> values)
+    public static String[] toStringArray(Set<UUID> values)
     {
         String[] results = new String[values.size()];
 
@@ -251,7 +251,7 @@ public final class ArrayHelper {
      * @param values
      * @return an array of strings
      */
-    public static final String[] toStringArray(List<UUID> values)
+    public static String[] toStringArray(List<UUID> values)
     {
         String[] results = new String[values.size()];
 

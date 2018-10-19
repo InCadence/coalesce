@@ -381,7 +381,7 @@ public class DocumentProperties {
 
                     byte[] decryptBytes = crypto.decryptValueToBytes(Files.readAllBytes(Paths.get(fullFilename)));
 
-                    Collection<Namespace> namespaces = new ArrayList<Namespace>();
+                    Collection<Namespace> namespaces = new ArrayList<>();
                     Map<String, Document> coreXml = getXspDocuments(decryptBytes, namespaces);
 
                     setCoreXpsProperties(coreXml.get("core"), namespaces);
@@ -401,7 +401,7 @@ public class DocumentProperties {
                 try (ZipFile zipFile = new ZipFile(fullFilename))
                 {
 
-                    Collection<Namespace> namespaces = new ArrayList<Namespace>();
+                    Collection<Namespace> namespaces = new ArrayList<>();
                     Map<String, Document> coreXml = getXspDocuments(zipFile, namespaces);
 
                     setCoreXpsProperties(coreXml.get("core"), namespaces);
@@ -431,9 +431,7 @@ public class DocumentProperties {
 
         if (partNamePaths == null) return null;
 
-        Map<String, Document> xmlParts = getXmlDocuments(zipBytes, partNamePaths);
-
-        return xmlParts;
+        return getXmlDocuments(zipBytes, partNamePaths);
     }
 
     private Map<String, String> getXmlPartNames(byte[] zipBytes, Collection<Namespace> namespaces)
@@ -476,7 +474,7 @@ public class DocumentProperties {
 
     private Map<String, Document> getXmlDocuments(byte[] zipBytes, Map<String, String> partNamePaths)
     {
-        Map<String, Document> parts = new HashMap<String, Document>();
+        Map<String, Document> parts = new HashMap<>();
 
         for (Map.Entry<String, String> pathEntry : partNamePaths.entrySet())
         {
@@ -531,7 +529,7 @@ public class DocumentProperties {
 
         Map<String, String> partnamePaths = getXmlPartNames(startPartXml, builder, namespaces);
 
-        Map<String, Document> documents = new HashMap<String, Document>();
+        Map<String, Document> documents = new HashMap<>();
 
         for (Map.Entry<String, String> pathEntry : partnamePaths.entrySet())
         {
@@ -550,7 +548,7 @@ public class DocumentProperties {
     private Map<String, String> getXmlPartNames(Document startPartXml, SAXBuilder builder, Collection<Namespace> namespaces)
     {
 
-        Map<String, String> partNames = new HashMap<String, String>();
+        Map<String, String> partNames = new HashMap<>();
 
         namespaces.add(Namespace.getNamespace("rel", "http://schemas.openxmlformats.org/package/2006/relationships"));
         namespaces.add(Namespace.getNamespace("cp",

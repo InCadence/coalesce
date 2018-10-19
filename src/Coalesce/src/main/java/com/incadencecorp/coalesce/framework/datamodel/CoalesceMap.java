@@ -127,7 +127,7 @@ public class CoalesceMap<T> extends CoalesceRecordset implements Map<String, T> 
 
         ECoalesceFieldDataTypes eType = getDataType(clazz);
 
-        CoalesceMap<T> recordSet = new CoalesceMap<T>(CoalesceRecordset.create(pSection, pPathName));
+        CoalesceMap<T> recordSet = new CoalesceMap<>(CoalesceRecordset.create(pSection, pPathName));
 
         CoalesceFieldDefinition.create(recordSet, "key", ECoalesceFieldDataTypes.STRING_TYPE);
         CoalesceFieldDefinition.create(recordSet, "value", eType);
@@ -163,7 +163,7 @@ public class CoalesceMap<T> extends CoalesceRecordset implements Map<String, T> 
     public Map<String, T> detach()
     {
 
-        Map<String, T> results = new HashMap<String, T>();
+        Map<String, T> results = new HashMap<>();
 
         for (CoalesceRecord record : getRecords())
         {
@@ -334,7 +334,7 @@ public class CoalesceMap<T> extends CoalesceRecordset implements Map<String, T> 
     public Set<String> keySet()
     {
 
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
 
         for (CoalesceRecord record : this.getRecords())
         {
@@ -348,7 +348,7 @@ public class CoalesceMap<T> extends CoalesceRecordset implements Map<String, T> 
     public Collection<T> values()
     {
 
-        Collection<T> list = new ArrayList<T>();
+        Collection<T> list = new ArrayList<>();
 
         for (CoalesceRecord record : this.getRecords())
         {
@@ -362,7 +362,7 @@ public class CoalesceMap<T> extends CoalesceRecordset implements Map<String, T> 
     public Set<java.util.Map.Entry<String, T>> entrySet()
     {
 
-        Set<java.util.Map.Entry<String, T>> set = new HashSet<java.util.Map.Entry<String, T>>();
+        Set<java.util.Map.Entry<String, T>> set = new HashSet<>();
 
         for (CoalesceRecord record : this.getRecords())
         {

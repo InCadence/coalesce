@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -1075,8 +1074,6 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
             throw new CoalesceDataFormatException("Invalid coordinate (" + getName() + "): Malformed");
         }
 
-        return;
-
     }
 
     /**
@@ -1220,7 +1217,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
     private String[] customSplit(String baseValue) {
     	//Method to replace the slow Regex
-    	List<String> tokensList = new ArrayList<String>();
+    	List<String> tokensList = new ArrayList<>();
     	boolean inQuotes = false;
     	StringBuffer b = new StringBuffer();
     	for (char c : baseValue.toCharArray()) {
@@ -1247,7 +1244,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     protected void addArray(String[] values)
     {
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         // Combine List
         list.addAll(Arrays.asList(getArray()));

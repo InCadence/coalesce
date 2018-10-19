@@ -74,7 +74,7 @@ public class CoalescePrunerIteratorTest {
         record2.getBooleanField().setValue(false);
         record2.getIntegerField().setValue(10);
 
-        Map<String, List<String>> fieldsToPrune = new HashMap<String, List<String>>();
+        Map<String, List<String>> fieldsToPrune = new HashMap<>();
 
         String[] fields = new String[] {
                 record1.getStringField().getName(), record1.getBooleanField().getName()
@@ -114,7 +114,7 @@ public class CoalescePrunerIteratorTest {
         record.getBooleanField().setValue(false);
         record.getIntegerField().setValue(10);
 
-        Map<String, List<String>> fieldsToPrune = new HashMap<String, List<String>>();
+        Map<String, List<String>> fieldsToPrune = new HashMap<>();
 
         String[] fields = new String[] {
                 record.getStringField().getName(), record.getBooleanField().getName()
@@ -150,7 +150,7 @@ public class CoalescePrunerIteratorTest {
 
         TestRecord record = entity.addRecord1();
 
-        Map<String, List<String>> fieldsToPrune = new HashMap<String, List<String>>();
+        Map<String, List<String>> fieldsToPrune = new HashMap<>();
 
         String[] fields = new String[] {
                 record.getStringField().getName(), record.getBooleanField().getName(), "unknown"
@@ -188,7 +188,7 @@ public class CoalescePrunerIteratorTest {
         record.getBooleanField().setValue(false);
         record.getIntegerField().setValue(10);
 
-        Map<String, List<String>> fieldsToPrune = new HashMap<String, List<String>>();
+        Map<String, List<String>> fieldsToPrune = new HashMap<>();
 
         String[] fields = new String[] {
                 record.getStringField().getName(), record.getBooleanField().getName()
@@ -245,7 +245,7 @@ public class CoalescePrunerIteratorTest {
 
         ((CoalesceStringField) record.getFieldByName(fd.getName())).setValue("Hello");
 
-        Map<String, List<String>> fieldsToPrune = new HashMap<String, List<String>>();
+        Map<String, List<String>> fieldsToPrune = new HashMap<>();
 
         String[] fields = new String[] {
             fd.getName()

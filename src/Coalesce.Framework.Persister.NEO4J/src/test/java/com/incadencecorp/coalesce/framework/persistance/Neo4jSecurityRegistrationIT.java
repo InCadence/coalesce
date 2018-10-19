@@ -63,7 +63,7 @@ public class Neo4jSecurityRegistrationIT {
 
     private enum EClassification
     {
-        U, R, C, S, TS;
+        U, R, C, S, TS
     }
 
 }

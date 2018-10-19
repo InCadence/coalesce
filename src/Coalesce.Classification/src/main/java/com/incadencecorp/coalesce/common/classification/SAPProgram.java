@@ -51,7 +51,7 @@ public class SAPProgram implements Comparable<SAPProgram> {
      */
     private SAPProgram()
     {
-        _compartments = new ArrayList<Compartment>();
+        _compartments = new ArrayList<>();
     }
 
     /**

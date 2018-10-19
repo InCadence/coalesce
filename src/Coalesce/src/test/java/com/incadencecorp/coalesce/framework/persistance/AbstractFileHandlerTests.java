@@ -41,7 +41,7 @@ import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
  */
 public class AbstractFileHandlerTests {
 
-    private final static Set<Path> roots = new HashSet<Path>();
+    private final static Set<Path> roots = new HashSet<>();
 
     /**
      * Configures the handler to use the resource folder as the default directory
@@ -67,7 +67,7 @@ public class AbstractFileHandlerTests {
      * @throws Exception
      */
     @BeforeClass
-    public static final void setup() throws Exception
+    public static void setup() throws Exception
     {
         cleanup();
     }
@@ -78,7 +78,7 @@ public class AbstractFileHandlerTests {
      * @throws Exception
      */
     @AfterClass
-    public static final void teardown() throws Exception
+    public static void teardown() throws Exception
     {
         cleanup();
     }
@@ -88,7 +88,7 @@ public class AbstractFileHandlerTests {
      * 
      * @throws Exception
      */
-    public static final void cleanup() throws Exception
+    public static void cleanup() throws Exception
     {
         for (final Path root : roots)
         {

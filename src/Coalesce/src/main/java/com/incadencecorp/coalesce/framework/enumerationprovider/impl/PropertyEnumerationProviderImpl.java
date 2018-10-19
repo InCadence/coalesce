@@ -41,7 +41,7 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 public class PropertyEnumerationProviderImpl extends AbstractEnumerationProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertyEnumerationProviderImpl.class);
-    private List<String> paths = new ArrayList<String>();
+    private List<String> paths = new ArrayList<>();
 
     /**
      * Default Constructor; defaults to src/main/resources
@@ -97,7 +97,7 @@ public class PropertyEnumerationProviderImpl extends AbstractEnumerationProvider
                     try
                     {
                         // Read Keys as Values
-                        results = new ArrayList<String>();
+                        results = new ArrayList<>();
 
                         while (iterator.hasNext())
                         {

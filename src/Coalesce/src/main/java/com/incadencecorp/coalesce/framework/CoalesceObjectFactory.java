@@ -39,7 +39,7 @@ public final class CoalesceObjectFactory {
     Private Members
     --------------------------------------------------------------------------*/
 
-    private static final Map<String, Constructor<? extends CoalesceEntity>> map = new ConcurrentHashMap<String, Constructor<? extends CoalesceEntity>>();
+    private static final Map<String, Constructor<? extends CoalesceEntity>> map = new ConcurrentHashMap<>();
 
     private static final String DEFAULT_KEY = "*";
 
@@ -53,7 +53,7 @@ public final class CoalesceObjectFactory {
      * @param classname
      * @param clazz
      */
-    public static final void register(String classname, Class<? extends CoalesceEntity> clazz)
+    public static void register(String classname, Class<? extends CoalesceEntity> clazz)
     {
 
         try
@@ -72,7 +72,7 @@ public final class CoalesceObjectFactory {
      *
      * @param clazz
      */
-    public static final void registerDefault(Class<? extends CoalesceEntity> clazz)
+    public static void registerDefault(Class<? extends CoalesceEntity> clazz)
     {
         register(DEFAULT_KEY, clazz);
     }
@@ -82,7 +82,7 @@ public final class CoalesceObjectFactory {
      *
      * @param clazz
      */
-    public static final void register(Class<? extends CoalesceEntity> clazz)
+    public static void register(Class<? extends CoalesceEntity> clazz)
     {
         register(clazz.getName(), clazz);
     }
@@ -92,7 +92,7 @@ public final class CoalesceObjectFactory {
      *
      * @param clazz
      */
-    public static final void unregister(Class<? extends CoalesceEntity> clazz)
+    public static void unregister(Class<? extends CoalesceEntity> clazz)
     {
         unregister(clazz.getName());
     }
@@ -100,7 +100,7 @@ public final class CoalesceObjectFactory {
     /**
      * Unregisters the default.
      */
-    public static final void unregisterDefault()
+    public static void unregisterDefault()
     {
         unregister(DEFAULT_KEY);
     }
@@ -110,7 +110,7 @@ public final class CoalesceObjectFactory {
      *
      * @param classname
      */
-    public static final void unregister(String classname)
+    public static void unregister(String classname)
     {
         map.remove(classname);
     }
@@ -119,7 +119,7 @@ public final class CoalesceObjectFactory {
      * @param entity
      * @return a Coalesce object that can be safely cast between types.
      */
-    public static final CoalesceEntity createAndLoad(CoalesceEntity entity)
+    public static CoalesceEntity createAndLoad(CoalesceEntity entity)
     {
         CoalesceEntity result = entity;
 

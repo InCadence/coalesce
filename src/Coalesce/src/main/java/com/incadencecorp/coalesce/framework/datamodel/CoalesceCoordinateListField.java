@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

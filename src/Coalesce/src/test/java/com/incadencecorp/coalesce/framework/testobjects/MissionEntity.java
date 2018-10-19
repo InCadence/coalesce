@@ -37,11 +37,11 @@ public class MissionEntity extends CoalesceEntity {
     @Override
     public boolean initialize()
     {
-        if (!initializeEntity(MissionEntity.SOURCE,
-                              "1.0",
-                              "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle")) return false;
+        return initializeEntity(MissionEntity.SOURCE,
+                                "1.0",
+                                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle")
+                && initializeReferences();
 
-        return initializeReferences();
     }
 
     protected boolean initializeEntity(String source, String version, String title)

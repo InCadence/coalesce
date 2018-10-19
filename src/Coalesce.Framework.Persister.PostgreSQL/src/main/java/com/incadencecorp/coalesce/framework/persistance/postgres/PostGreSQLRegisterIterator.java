@@ -332,7 +332,7 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
 
     private List<String> getColumnNames(final String tablename, final CoalesceDataConnectorBase conn) throws SQLException
     {
-        List<String> columnList = new ArrayList<String>();
+        List<String> columnList = new ArrayList<>();
 
         ResultSet results = conn.executeQuery(SQL_GET_COLUMN_NAMES,
                                               new CoalesceParameter(tablename),

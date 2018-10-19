@@ -34,30 +34,30 @@ public interface ICoalesceIndexingPersistor {
      * @param concurrently
      * @throws CoalescePersistorException on error
      */
-    public void createIndex(String fieldPath, String indexName, boolean concurrently) throws CoalescePersistorException;
+    void createIndex(String fieldPath, String indexName, boolean concurrently) throws CoalescePersistorException;
 
     /**
      * @param indexName
      * @return
      * @throws CoalescePersistorException on error
      */
-    public boolean indexExists(String indexName) throws CoalescePersistorException;
+    boolean indexExists(String indexName) throws CoalescePersistorException;
 
     /**
      * @param indexName
      * @throws CoalescePersistorException on error
      */
-    public void deleteIndex(String indexName, boolean concurrently) throws CoalescePersistorException;
+    void deleteIndex(String indexName, boolean concurrently) throws CoalescePersistorException;
 
     /**
      * @param indexName
      * @throws CoalescePersistorException on error
      */
-    public void reindex(String indexName, boolean concurrently) throws CoalescePersistorException;
+    void reindex(String indexName, boolean concurrently) throws CoalescePersistorException;
 
     /**
      * @return A list of indexNames for each index in the current schema
      * @throws CoalescePersistorException on error
      */
-    public List<String> listIndexes() throws CoalescePersistorException;
+    List<String> listIndexes() throws CoalescePersistorException;
 }

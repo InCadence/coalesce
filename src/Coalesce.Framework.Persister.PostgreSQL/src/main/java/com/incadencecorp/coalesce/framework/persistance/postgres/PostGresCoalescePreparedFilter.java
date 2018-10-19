@@ -95,8 +95,8 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
     // Private Members
     // ----------------------------------------------------------------------//
 
-    private final List<String> tableList = new ArrayList<String>();
-    private final List<String> enumList = new ArrayList<String>();
+    private final List<String> tableList = new ArrayList<>();
+    private final List<String> enumList = new ArrayList<>();
     private FilterFactory factory;
 
     private int pageNumber;
@@ -267,10 +267,6 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
         }
     }
 
-    /**
-     * Modified to intercept custom search queries, alter the SQL, and write
-     * them out.
-     */
     // TODO Implemented Functions
     // @Override
     // public Object visit(Function function, Object extraData) {
@@ -316,14 +312,13 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
         }
 
         // extract the property name and the geometry literal
-        BinarySpatialOperator op = filter;
-        Expression e1 = op.getExpression1();
-        Expression e2 = op.getExpression2();
+        Expression e1 = filter.getExpression1();
+        Expression e2 = filter.getExpression2();
 
         if (e1 instanceof Literal && e2 instanceof PropertyName)
         {
-            e1 = op.getExpression2();
-            e2 = op.getExpression1();
+            e1 = filter.getExpression2();
+            e2 = filter.getExpression1();
         }
 
         if (e1 instanceof PropertyName)
@@ -472,8 +467,8 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
             else
             {
 
-                Expression e1 = (Expression) property;
-                Expression e2 = (Expression) geometry;
+                Expression e1 = property;
+                Expression e2 = geometry;
 
                 String closingParenthesis = ")";
                 if (filter instanceof Equals)
@@ -759,8 +754,7 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
             if (LOGGER.isDebugEnabled())
             {
                 LOGGER.debug("Converted ({}) Value ({}) => ({})",
-                             currentProperty,
-                             (String) expression.getValue(),
+                             currentProperty, expression.getValue(),
                              literalValue);
             }
         }
@@ -935,7 +929,7 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
     public void setPropertNames(String... values)
     {
 
-        propertyNameList = new ArrayList<String>();
+        propertyNameList = new ArrayList<>();
 
         if (values != null)
         {
@@ -962,7 +956,7 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
     public void setSortBy(SortBy... sort)
     {
 
-        sortByList = new ArrayList<SortBy>();
+        sortByList = new ArrayList<>();
 
         if (sort != null)
         {

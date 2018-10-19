@@ -443,7 +443,7 @@ public class CoalesceConstraintTest {
         // Set Values
         fieldValid.setTypedValue(5);
         fieldInvalidMin.setTypedValue(-1.0);
-        fieldInvalidMax.setTypedValue(10l);
+        fieldInvalidMax.setTypedValue(10L);
         fieldList.setTypedValue(new long[] {
                                              1, 3, 4, 10
         });
@@ -723,7 +723,7 @@ public class CoalesceConstraintTest {
 
     private enum ETest
     {
-        A, B, C;
+        A, B, C
     }
 
 }

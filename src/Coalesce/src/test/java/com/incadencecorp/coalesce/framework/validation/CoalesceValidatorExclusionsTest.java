@@ -17,10 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.validation;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,7 +26,6 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceConstraint;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
@@ -46,8 +42,6 @@ public class CoalesceValidatorExclusionsTest {
     /**
      * Verifies that if a field's data type is changed from the template it will
      * fail validation. Excluding the field will allow it to pass.
-     * 
-     * @throws Exception
      */
     @Test
     public void testExclusion() throws Exception
@@ -88,19 +82,16 @@ public class CoalesceValidatorExclusionsTest {
                             results.get(field.getKey()));
 
         // Create Validator w/ Exclusions
-        validator = new CoalesceValidator(Arrays.asList(new String[] {
-            field.getParent().getParent().getName() + "." + field.getName()
-        }));
+        validator = new CoalesceValidator(Collections.singletonList(field.getParent().getParent().getName() + "." + field.getName()));
 
         // Verify (Success)
         Assert.assertEquals(0, validator.validate(null, entity, template).size());
 
         // Create Enumeration
-        Map<String, List<String>> enumerations = new HashMap<String, List<String>>();
+        Map<String, List<String>> enumerations = new HashMap<>();
 
-        enumerations.put(CoalesceValidator.ENUM_EXCLUSIONS, Arrays.asList(new String[] {
-            field.getParent().getParent().getName() + "." + field.getName()
-        }));
+        enumerations.put(CoalesceValidator.ENUM_EXCLUSIONS, Collections.singletonList(
+                field.getParent().getParent().getName() + "." + field.getName()));
 
         EnumerationProviderUtil.setEnumerationProviders(new CodeEnumerationProvider(enumerations));
 
@@ -110,11 +101,10 @@ public class CoalesceValidatorExclusionsTest {
         Assert.assertEquals(0, validator.validate(null, entity, template).size());
 
         // Create Enumeration
-        enumerations = new HashMap<String, List<String>>();
+        enumerations = new HashMap<>();
 
-        enumerations.put(CoalesceValidator.ENUM_EXCLUSIONS, Arrays.asList(new String[] {
-            field.getParent().getParent().getName() + "." + CoalesceValidator.WILD_CARD
-        }));
+        enumerations.put(CoalesceValidator.ENUM_EXCLUSIONS, Collections.singletonList(
+                field.getParent().getParent().getName() + "." + CoalesceValidator.WILD_CARD));
 
         EnumerationProviderUtil.setEnumerationProviders(new CodeEnumerationProvider(enumerations));
 
@@ -124,11 +114,9 @@ public class CoalesceValidatorExclusionsTest {
         Assert.assertEquals(0, validator.validate(null, entity, template).size());
 
         // Create Enumeration
-        enumerations = new HashMap<String, List<String>>();
+        enumerations = new HashMap<>();
 
-        enumerations.put(CoalesceValidator.ENUM_EXCLUSIONS, Arrays.asList(new String[] {
-            CoalesceValidator.WILD_CARD
-        }));
+        enumerations.put(CoalesceValidator.ENUM_EXCLUSIONS, Collections.singletonList(CoalesceValidator.WILD_CARD));
 
         EnumerationProviderUtil.setEnumerationProviders(new CodeEnumerationProvider(enumerations));
 
@@ -138,11 +126,9 @@ public class CoalesceValidatorExclusionsTest {
         Assert.assertEquals(0, validator.validate(null, entity, template).size());
         
         // Create Enumeration
-        enumerations = new HashMap<String, List<String>>();
+        enumerations = new HashMap<>();
 
-        enumerations.put(CoalesceValidator.ENUM_EXCLUSIONS, Arrays.asList(new String[] {
-            "test." + CoalesceValidator.WILD_CARD
-        }));
+        enumerations.put(CoalesceValidator.ENUM_EXCLUSIONS, Collections.singletonList("test." + CoalesceValidator.WILD_CARD));
 
         EnumerationProviderUtil.setEnumerationProviders(new CodeEnumerationProvider(enumerations));
 

@@ -750,7 +750,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     {
         if (_selectedCountries == null)
         {
-            _selectedCountries = new ArrayList<ISO3166Country>();
+            _selectedCountries = new ArrayList<>();
         }
 
         return _selectedCountries;
@@ -764,7 +764,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     {
         if (_releaseToCountries == null)
         {
-            _releaseToCountries = new ArrayList<ISO3166Country>();
+            _releaseToCountries = new ArrayList<>();
         }
 
         return _releaseToCountries;
@@ -778,7 +778,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     {
         if (_displayOnlyCountries == null)
         {
-            _displayOnlyCountries = new ArrayList<ISO3166Country>();
+            _displayOnlyCountries = new ArrayList<>();
         }
 
         return _displayOnlyCountries;

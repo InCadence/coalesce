@@ -142,29 +142,25 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         createEntityFeature(ENTITY_FEATURE_NAME);
         createLinkageFeature(LINKAGE_FEATURE_NAME);
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-
-            public void run()
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            boolean inLoop = false;
+            LOGGER.debug("Shutdown Hook Invoked");
+            while (batchInProgress)
             {
-                boolean inLoop = false;
-                LOGGER.debug("Shutdown Hook Invoked");
-                while (batchInProgress)
+                if (!inLoop)
+                    LOGGER.debug("Batch IO in progress waiting");
+                inLoop = true;
+                try
                 {
-                    if (!inLoop)
-                        LOGGER.debug("Batch IO in progress waiting");
-                    inLoop = true;
-                    try
-                    {
-                        sleep(500);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        // Can't count on Log4J not terminating
-                        e.printStackTrace();
-                    }
+                    Thread.sleep(500);
+                }
+                catch (InterruptedException e)
+                {
+                    // Can't count on Log4J not terminating
+                    e.printStackTrace();
                 }
             }
-        });
+        }));
 
     }
 
@@ -188,22 +184,21 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     @Override
     public EnumSet<EPersistorCapabilities> getCapabilities()
     {
-        EnumSet<EPersistorCapabilities> enumSet = EnumSet.of(EPersistorCapabilities.CREATE,
-                                                             EPersistorCapabilities.READ,
-                                                             //EPersistorCapabilities.GET_FIELD_VALUE,
-                                                             EPersistorCapabilities.DELETE,
-                                                             EPersistorCapabilities.UPDATE,
-                                                             EPersistorCapabilities.GEOSPATIAL_SEARCH,
-                                                             EPersistorCapabilities.SEARCH,
-                                                             EPersistorCapabilities.READ_TEMPLATES);
-        return enumSet;
+        return EnumSet.of(EPersistorCapabilities.CREATE,
+                          EPersistorCapabilities.READ,
+                          //EPersistorCapabilities.GET_FIELD_VALUE,
+                          EPersistorCapabilities.DELETE,
+                          EPersistorCapabilities.UPDATE,
+                          EPersistorCapabilities.GEOSPATIAL_SEARCH,
+                          EPersistorCapabilities.SEARCH,
+                          EPersistorCapabilities.READ_TEMPLATES);
     }
 
     @Override
     public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
-        List<String> results = new ArrayList<String>();
-        ArrayList<Range> ranges = new ArrayList<Range>();
+        List<String> results = new ArrayList<>();
+        ArrayList<Range> ranges = new ArrayList<>();
         for (String key : keys)
         {
             ranges.add(new Range(key));
@@ -402,7 +397,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                                                          String entitySource) throws CoalescePersistorException
     {
         // Use are EntityIndex to find the merged keys
-        ArrayList<String> keys = new ArrayList<String>();
+        ArrayList<String> keys = new ArrayList<>();
         // NOTE - Source can be null meaning find all sources so construct the
         // string carefully
 
@@ -459,11 +454,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 String value = entry.getValue().toString();
                 if (cf.equals("entityid"))
                 {
-                    entityid = new String(value);
+                    entityid = value;
                 }
                 if (cf.equals("entityidtype"))
                 {
-                    entityidtype = new String(value);
+                    entityidtype = value;
                 }
             }
             if (entityid != null && entityidtype != null)
@@ -603,7 +598,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         int numnodes = nodeList.getLength();
 
         String recordName = null;
-        ArrayList<Fielddefinition> fieldlist = new ArrayList<Fielddefinition>();
+        ArrayList<Fielddefinition> fieldlist = new ArrayList<>();
 
         // TODO - Deal with noindex sections and records.
         for (int jj = 0; jj < numnodes; jj++)
@@ -769,7 +764,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             }
         }
 
-        if (defaultGeometrySet == false)
+        if (!defaultGeometrySet)
         {
             LOGGER.debug("Creating theWorld for {} ", featurename);
             tb.add(DEFAULT_GEO_FIELD_NAME, Polygon.class);
@@ -1014,7 +1009,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     @Override
     public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        List<ObjectMetaData> results = new ArrayList<ObjectMetaData>();
+        List<ObjectMetaData> results = new ArrayList<>();
 
         Connector dbConnector = connect.getDBConnector();
 
@@ -1029,8 +1024,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             scanner.fetchColumn(templateColumnFamily, new Text(coalesceTemplateDateCreatedQualifier));
             scanner.fetchColumn(templateColumnFamily, new Text(coalesceTemplateDateModifiedQualifier));
             IteratorSetting iter = new IteratorSetting(1,
-                                                       "rowiterator",
-                                                       (Class<? extends SortedKeyValueIterator<Key, Value>>) WholeRowIterator.class);
+                                                       "rowiterator", WholeRowIterator.class);
             scanner.addScanIterator(iter);
             // Create Document
             for (Entry<Key, Value> entry : scanner)
@@ -1766,7 +1760,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     break;
 
                 case GUID_TYPE:
-                    String guid = ((UUID) fieldvalue).toString();
+                    String guid = fieldvalue.toString();
                     toModify.setAttribute(fieldname, guid);
                     break;
 
@@ -1943,7 +1937,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 break;
 
             case GUID_TYPE:
-                String guid = ((UUID) fieldvalue).toString();
+                String guid = fieldvalue.toString();
                 simplefeature.setAttribute(fieldname, guid);
                 break;
 
@@ -2146,10 +2140,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         try
         {
             return getCoalesceObjectLastModified(key, objectType, connect);
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetCoalesceObjectLastModified", e);
         }
         catch (Exception e)
         {

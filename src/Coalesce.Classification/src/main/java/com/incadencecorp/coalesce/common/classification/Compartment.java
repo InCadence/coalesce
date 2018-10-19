@@ -69,7 +69,7 @@ public class Compartment implements Comparable<Compartment> {
     public Compartment(String value)
     {
 
-        _subcompartment = new ArrayList<String>();
+        _subcompartment = new ArrayList<>();
 
         String[] parts = value.trim().split(" ");
 

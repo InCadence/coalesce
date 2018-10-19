@@ -2,8 +2,6 @@ package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.util.Locale;
 
-import com.incadencecorp.coalesce.common.classification.Marking;
-
 /**
  * Interface for accessing Linkages of Coalesce Entities.
  */

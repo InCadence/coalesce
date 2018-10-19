@@ -68,9 +68,7 @@ public final class FileHelper {
         if (StringHelper.isNullOrEmpty(filename))
             return "";
 
-        String extension = FilenameUtils.getExtension(filename).toLowerCase();
-
-        return extension;
+        return FilenameUtils.getExtension(filename).toLowerCase();
 
     }
 
@@ -84,9 +82,8 @@ public final class FileHelper {
      */
     public static String getShortFilename(String filename)
     {
-        String name = FilenameUtils.getName(filename);
 
-        return name;
+        return FilenameUtils.getName(filename);
 
     }
 

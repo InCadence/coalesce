@@ -36,7 +36,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
  -----------------------------------------------------------------------------*/
 public class CoalesceEncrypter implements ICoalesceEncrypter {
 
-    private static HashMap<String, EncoderParameters> _parameters = new HashMap<String, EncoderParameters>();
+    private static final HashMap<String, EncoderParameters> _parameters = new HashMap<>();
 
     private EncoderParameters _parameter;
     private String _transformation;
@@ -130,9 +130,7 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
 
         try
         {
-            String decryptString = new String(utf8, "UTF8");
-
-            return decryptString;
+            return new String(utf8, "UTF8");
         }
         catch (UnsupportedEncodingException e)
         {
@@ -155,10 +153,7 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
     {
         try
         {
-            byte[] utf8 = getDecryptionCipher().doFinal(valueEncryptedBytes);
-
-            return utf8;
-
+            return getDecryptionCipher().doFinal(valueEncryptedBytes);
         }
         catch (IllegalBlockSizeException | BadPaddingException e)
         {
@@ -204,10 +199,7 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
     {
         try
         {
-            byte[] utf8 = getEncryptionCipher().doFinal(valueBytes);
-
-            return utf8;
-
+            return getEncryptionCipher().doFinal(valueBytes);
         }
         catch (IllegalBlockSizeException | BadPaddingException e)
         {

@@ -277,11 +277,11 @@ public class JobMetricsType {
         else
         {
             // Not a batch job - single worker thread
-            MetricResults<CoalesceResponseType<Boolean>> metric = new MetricResults<CoalesceResponseType<Boolean>>(this.name);
+            MetricResults<CoalesceResponseType<Boolean>> metric = new MetricResults<>(this.name);
             
             totalWorkerThreads += 1;
 
-            CoalesceResponseType<Boolean> result = new CoalesceResponseType<Boolean>();
+            CoalesceResponseType<Boolean> result = new CoalesceResponseType<>();
 
             switch (job.getJobStatus()) {
             case COMPLETE:

@@ -40,17 +40,17 @@ public class CoalesceEnumerationFieldTest {
 
     private enum Test1
     {
-        ZERO, ONE, TWO;
+        ZERO, ONE, TWO
     }
 
     private enum Test2
     {
-        HELLO, WORLD;
+        HELLO, WORLD
     }
 
     private enum Test3
     {
-        TWO, ONE, ZERO;
+        TWO, ONE, ZERO
     }
 
     /**

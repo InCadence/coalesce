@@ -48,7 +48,7 @@ public class DefaultNormalizer implements ICoalesceNormalizer {
         private String name;
         private String defaultValue;
 
-        private EParameters(String paramName, String paramDefault)
+        EParameters(String paramName, String paramDefault)
         {
             name = paramName;
             defaultValue = paramDefault;
@@ -79,7 +79,7 @@ public class DefaultNormalizer implements ICoalesceNormalizer {
      */
     public DefaultNormalizer()
     {
-        this(new HashMap<String, String>());
+        this(new HashMap<>());
     }
 
     /**

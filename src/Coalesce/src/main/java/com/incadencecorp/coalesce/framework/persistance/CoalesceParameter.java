@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.incadencecorp.coalesce.framework.persistance;
 
 import java.sql.Types;

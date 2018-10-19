@@ -129,15 +129,15 @@ public class CoalesceEnumerationListField extends CoalesceEnumerationFieldBase<i
             int ii = 0;
 
             // Copy Existing
-            for (int jj = 0; jj < existing.length; jj++)
+            for (int anExisting : existing)
             {
-                results[ii++] = existing[jj];
+                results[ii++] = anExisting;
             }
 
             // Copy New
-            for (int jj = 0; jj < values.length; jj++)
+            for (int value : values)
             {
-                results[ii++] = values[jj];
+                results[ii++] = value;
             }
 
             setTypedValue(results);

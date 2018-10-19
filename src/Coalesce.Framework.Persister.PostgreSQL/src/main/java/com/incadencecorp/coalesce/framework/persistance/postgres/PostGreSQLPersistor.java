@@ -127,10 +127,6 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                 return this.getCoalesceEntityKeysForEntityId(entityId, entityIdType, entityName);
             }
         }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetCoalesceEntityKeysForEntityId", e);
-        }
         catch (Exception e)
         {
             throw new CoalescePersistorException("GetCoalesceEntityKeysForEntityId", e);
@@ -149,10 +145,6 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
             return this.getCoalesceEntityIdAndTypeForKey(key, conn);
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetCoalesceEntityIdAndTypeForKey", e);
         }
         catch (Exception e)
         {
@@ -175,10 +167,6 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
             return this.getCoalesceObjectLastModified(key, objectType, conn);
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetCoalesceObjectLastModified", e);
         }
         catch (Exception e)
         {
@@ -212,10 +200,6 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             }
 
             return binaryArray;
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetBinaryArray", e);
         }
         catch (Exception e)
         {
@@ -264,10 +248,6 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         {
             return getXPathRecursive(key, objectType, "", conn);
         }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetXPath", e);
-        }
         catch (Exception e)
         {
             throw new CoalescePersistorException("GetXPath", e);
@@ -298,10 +278,6 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
             return value;
         }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetFieldValue", e);
-        }
         catch (Exception e)
         {
             throw new CoalescePersistorException("GetFieldValue", e);
@@ -313,8 +289,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
-            List<String> xmlList = new ArrayList<String>();
-            List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
+            List<String> xmlList = new ArrayList<>();
+            List<CoalesceParameter> parameters = new ArrayList<>();
 
             StringBuilder sb = new StringBuilder("");
 
@@ -341,10 +317,6 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             }
 
             return xmlList.toArray(new String[xmlList.size()]);
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetEntityXml", e);
         }
         catch (Exception e)
         {
@@ -377,10 +349,6 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             }
 
             return value;
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetEntityXml", e);
         }
         catch (Exception e)
         {
@@ -415,10 +383,6 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             }
 
             return value;
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetEntityXml", e);
         }
         catch (Exception e)
         {
@@ -546,10 +510,6 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             }
 
             return value;
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateKey", e);
         }
         catch (Exception e)
         {
@@ -783,7 +743,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             return true;
         }
 
-        List<CoalesceParameter> params = new ArrayList<CoalesceParameter>();
+        List<CoalesceParameter> params = new ArrayList<>();
         params.add(new CoalesceParameter(entity.getKey(), Types.OTHER));
         params.add(new CoalesceParameter(entity.getName()));
         params.add(new CoalesceParameter(entity.getSource()));
@@ -836,7 +796,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      */
     protected List<CoalesceParameter> getExtendedParameters(CoalesceEntity entity)
     {
-        return new ArrayList<CoalesceParameter>();
+        return new ArrayList<>();
     }
 
     /**
@@ -1181,7 +1141,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     private List<String> getCoalesceEntityKeysForEntityId(String entityId, String entityIdType, String entityName)
             throws Exception
     {
-        List<String> keyList = new ArrayList<String>();
+        List<String> keyList = new ArrayList<>();
 
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
@@ -1220,7 +1180,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
-            List<String> keyList = new ArrayList<String>();
+            List<String> keyList = new ArrayList<>();
 
             ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM " + getSchemaPrefix()
                                                               + "CoalesceEntity WHERE (EntityId like ? ) AND (EntityIdType like  ? ) AND (Name=?) AND (Source=?)",

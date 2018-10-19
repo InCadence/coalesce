@@ -1,8 +1,6 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
@@ -213,17 +211,14 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     public boolean initialize()
     {
         if (this.isInitialized())
+        {
             return true;
+        }
 
         _entity = new Entity();
 
-        if (!super.initialize(_entity))
-            return false;
+        return super.initialize(_entity) && initializeChildren();
 
-        if (!initializeChildren())
-            return false;
-
-        return true;
     }
 
     /**
@@ -737,7 +732,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      */
     public Map<String, CoalesceLinkage> getLinkages(String forEntityName)
     {
-        Map<String, CoalesceLinkage> linkages = new HashMap<String, CoalesceLinkage>();
+        Map<String, CoalesceLinkage> linkages = new HashMap<>();
 
         // Get Linkage Section
         CoalesceLinkageSection linkageSection = getLinkageSection();
@@ -830,7 +825,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
     {
-        return getLinkages(Arrays.asList(forLinkType), forEntityName, forEntitySource);
+        return getLinkages(Collections.singletonList(forLinkType), forEntityName, forEntitySource);
     }
 
     /**
@@ -844,7 +839,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     public CoalesceLinkage getLinkage(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
             throws CoalesceException
     {
-        Map<String, CoalesceLinkage> results = getLinkages(Arrays.asList(forLinkType), forEntityName, forEntitySource);
+        Map<String, CoalesceLinkage> results = getLinkages(Collections.singletonList(forLinkType), forEntityName, forEntitySource);
 
         switch (results.size())
         {
@@ -902,7 +897,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      */
     public List<String> getEntityId(String typeParam)
     {
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
 
         // EntityID Type Contain Param?
         String[] types = getEntityIdType().split(",");
@@ -1166,7 +1161,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
         for (int i = 0; i < nodes.getLength(); i++)
         {
-            Node childNode = (Node) nodes.item(i);
+            Node childNode = nodes.item(i);
 
             XmlHelper.setAttribute(xmlDoc, childNode, "value", "");
         }
@@ -1177,7 +1172,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
                                                      String forEntityName,
                                                      String forEntitySource)
     {
-        Map<String, CoalesceLinkage> linkages = new HashMap<String, CoalesceLinkage>();
+        Map<String, CoalesceLinkage> linkages = new HashMap<>();
 
         // Get Linkage Section
         CoalesceLinkageSection linkageSection = getLinkageSection();

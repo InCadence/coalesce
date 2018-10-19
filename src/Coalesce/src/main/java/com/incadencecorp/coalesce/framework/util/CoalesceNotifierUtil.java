@@ -42,7 +42,7 @@ public final class CoalesceNotifierUtil {
      * 
      * @param value
      */
-    public static final void setNotifier(final ICoalesceNotifier value)
+    public static void setNotifier(final ICoalesceNotifier value)
     {
         notifier = value;
     }
@@ -54,7 +54,7 @@ public final class CoalesceNotifierUtil {
      * @see ICoalesceNotifier#sendJobComplete(AbstractCoalesceJob)
      * @param job
      */
-    public static final void sendJobComplete(AbstractCoalesceJob<?, ?, ?> job)
+    public static void sendJobComplete(AbstractCoalesceJob<?, ?, ?> job)
     {
 
         notifier.sendJobComplete(job);
@@ -68,7 +68,7 @@ public final class CoalesceNotifierUtil {
      * @param task
      * @param results
      */
-    public static final void sendMetrics(final String task, final MetricResults<?>... results)
+    public static void sendMetrics(final String task, final MetricResults<?>... results)
     {
         for (MetricResults<?> result : results)
         {
@@ -88,7 +88,7 @@ public final class CoalesceNotifierUtil {
      * @param entities
      * @see ICoalesceNotifier#sendCrud(String, ECrudOperations, ObjectMetaData)
      */
-    public static final void sendCrud(final String task, final ECrudOperations operation, final CoalesceEntity... entities)
+    public static void sendCrud(final String task, final ECrudOperations operation, final CoalesceEntity... entities)
     {
         for (CoalesceEntity entity : entities)
         {
@@ -109,7 +109,7 @@ public final class CoalesceNotifierUtil {
      * @param operation
      * @param data
      */
-    public static final void sendCrud(final String task, final ECrudOperations operation, final ObjectMetaData data)
+    public static void sendCrud(final String task, final ECrudOperations operation, final ObjectMetaData data)
     {
         notifier.sendCrud(task, operation, data);
     }
@@ -126,11 +126,11 @@ public final class CoalesceNotifierUtil {
      * @param relationship
      * @param entity2
      */
-    public static final void sendLinkage(final String task,
-                                         final ECrudOperations operation,
-                                         final CoalesceEntity entity1,
-                                         final ELinkTypes relationship,
-                                         final CoalesceEntity entity2)
+    public static void sendLinkage(final String task,
+                                   final ECrudOperations operation,
+                                   final CoalesceEntity entity1,
+                                   final ELinkTypes relationship,
+                                   final CoalesceEntity entity2)
     {
         ObjectMetaData data1 = new ObjectMetaData(entity1.getKey(),
                                                   entity1.getName(),
@@ -158,11 +158,11 @@ public final class CoalesceNotifierUtil {
      * @param relationship
      * @param entity2
      */
-    public static final void sendLinkage(final String task,
-                                         final ECrudOperations operation,
-                                         final ObjectMetaData entity1,
-                                         final ELinkTypes relationship,
-                                         final ObjectMetaData entity2)
+    public static void sendLinkage(final String task,
+                                   final ECrudOperations operation,
+                                   final ObjectMetaData entity1,
+                                   final ELinkTypes relationship,
+                                   final ObjectMetaData entity2)
     {
         notifier.sendLinkage(task, operation, entity1, relationship, entity2);
     }
@@ -175,10 +175,10 @@ public final class CoalesceNotifierUtil {
      * @param level
      * @param message
      */
-    public static final void sendAudit(final String task,
-                                       final EAuditCategory category,
-                                       final EAuditLevels level,
-                                       final String message)
+    public static void sendAudit(final String task,
+                                 final EAuditCategory category,
+                                 final EAuditLevels level,
+                                 final String message)
     {
         notifier.sendAudit(task, category, level, message);
     }
@@ -190,7 +190,7 @@ public final class CoalesceNotifierUtil {
      * @param value
      * @param <V>
      */
-    public static final <V> void sendMessage(String topic, String key, V value)
+    public static <V> void sendMessage(String topic, String key, V value)
     {
         notifier.sendMessage(topic, key, value);
     }

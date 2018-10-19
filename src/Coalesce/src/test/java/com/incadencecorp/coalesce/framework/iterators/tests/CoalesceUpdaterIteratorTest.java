@@ -61,11 +61,9 @@ public class CoalesceUpdaterIteratorTest {
 
         TestRecord record = entity.addRecord1();
 
-        List<String> values = Arrays.asList(new String[] {
-                "Hello", "World"
-        });
+        List<String> values = Arrays.asList("Hello", "World");
 
-        Map<String, List<String>> enumerations = new HashMap<String, List<String>>();
+        Map<String, List<String>> enumerations = new HashMap<>();
         enumerations.put(EnumerationProviderUtil.lookupEnumeration(record.getIntegerField()), values);
         enumerations.put(EnumerationProviderUtil.lookupEnumeration(record.getIntegerListField()), values);
         enumerations.put(EnumerationProviderUtil.lookupEnumeration(record.getStringField()), values);

@@ -191,7 +191,7 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
     @Override
     public CoalesceHistory[] getHistory()
     {
-        ArrayList<CoalesceHistory> historyList = new ArrayList<CoalesceHistory>();
+        ArrayList<CoalesceHistory> historyList = new ArrayList<>();
 
         // Return history items in the same order they are in the Entity
         for (History history : _object.getHistory())
@@ -218,9 +218,8 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
     @Override
     public CoalesceHistory getHistoryRecord(String historyKey)
     {
-        CoalesceHistory historyRecord = (CoalesceHistory) getChildCoalesceObject(historyKey);
 
-        return historyRecord;
+        return (CoalesceHistory) getChildCoalesceObject(historyKey);
 
     }
 

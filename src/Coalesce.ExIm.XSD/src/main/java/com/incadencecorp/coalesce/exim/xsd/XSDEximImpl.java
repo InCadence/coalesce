@@ -17,11 +17,7 @@
 
 package com.incadencecorp.coalesce.exim.xsd;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -67,9 +63,7 @@ public class XSDEximImpl implements CoalesceExim<Document> {
     --------------------------------------------------------------------------*/
 
     private static final String NS = "cns";
-    private static final List<String> ATTRIBUTES_TO_OMIT = Arrays.asList(new String[] {
-                                                                                        CoalesceEntity.ATTRIBUTE_CLASSNAME
-    });
+    private static final List<String> ATTRIBUTES_TO_OMIT = Collections.singletonList(CoalesceEntity.ATTRIBUTE_CLASSNAME);
 
     private String namespace;
 
@@ -125,7 +119,7 @@ public class XSDEximImpl implements CoalesceExim<Document> {
 
     private class XSDToCoalesceIterator extends CoalesceIterator<Document> {
 
-        private Map<String, String> keysToReplace = new HashMap<String, String>();
+        private Map<String, String> keysToReplace = new HashMap<>();
 
         public void createEntity(CoalesceEntity entity, Document doc) throws CoalesceException
         {
@@ -225,7 +219,7 @@ public class XSDEximImpl implements CoalesceExim<Document> {
                             {
                                 Element value = getFirstChildElement(fieldElement);
 
-                                List<String> values = new ArrayList<String>();
+                                List<String> values = new ArrayList<>();
 
                                 while (value != null)
                                 {

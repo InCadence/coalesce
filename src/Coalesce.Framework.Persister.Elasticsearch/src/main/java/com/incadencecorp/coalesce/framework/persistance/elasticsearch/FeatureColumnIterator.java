@@ -27,9 +27,9 @@ public class FeatureColumnIterator implements Iterator<Object[]> {
         this.properties = new ArrayList<>();
 
         // Normalize
-        for (int i = 0; i < properties.size(); i++)
+        for (PropertyName property : properties)
         {
-            this.properties.add(CoalescePropertyFactory.getColumnName(normalizer, properties.get(i)));
+            this.properties.add(CoalescePropertyFactory.getColumnName(normalizer, property));
         }
     }
 
@@ -79,6 +79,5 @@ public class FeatureColumnIterator implements Iterator<Object[]> {
     @Override
     public void remove()
     {
-        return;
     }
 }

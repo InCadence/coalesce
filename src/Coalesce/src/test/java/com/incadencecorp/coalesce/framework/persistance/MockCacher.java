@@ -32,7 +32,7 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
  */
 public class MockCacher implements ICoalesceCacher {
 
-    private Map<String, CoalesceEntity> cache = new HashMap<String, CoalesceEntity>();
+    private Map<String, CoalesceEntity> cache = new HashMap<>();
 
     @Override
     public boolean containsEntity(String key)

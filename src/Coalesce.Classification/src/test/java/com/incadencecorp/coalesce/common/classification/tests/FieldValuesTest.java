@@ -71,7 +71,7 @@ public class FieldValuesTest {
 
     private static void initializeAllClassifications()
     {
-        List<MarkingValue> allClassifications = new ArrayList<MarkingValue>();
+        List<MarkingValue> allClassifications = new ArrayList<>();
 
         allClassifications.add(new MarkingValue("", "COSMIC TOP SECRET", "", "CTS"));
         allClassifications.add(new MarkingValue("", "COSMIC TOP SECRET ATOMAL", "", "CTS-A"));
@@ -99,7 +99,7 @@ public class FieldValuesTest {
 
     private static void initializeNATOClassifications()
     {
-        List<MarkingValue> natoClassifications = new ArrayList<MarkingValue>();
+        List<MarkingValue> natoClassifications = new ArrayList<>();
 
         natoClassifications.add(new MarkingValue("", "COSMIC TOP SECRET", "", "CTS"));
         natoClassifications.add(new MarkingValue("", "COSMIC TOP SECRET ATOMAL", "", "CTS-A"));
@@ -117,7 +117,7 @@ public class FieldValuesTest {
 
     private static void initializeJointNotUSAClassifications()
     {
-        List<MarkingValue> jointNotUSAClassification = new ArrayList<MarkingValue>();
+        List<MarkingValue> jointNotUSAClassification = new ArrayList<>();
 
         jointNotUSAClassification.add(new MarkingValue("", "JOINT TOP SECRET", "", "JOINT TS"));
         jointNotUSAClassification.add(new MarkingValue("", "JOINT SECRET", "", "JOINT S"));
@@ -130,7 +130,7 @@ public class FieldValuesTest {
 
     private static void initializeJointUSAClassifications()
     {
-        List<MarkingValue> jointUSAClassification = new ArrayList<MarkingValue>();
+        List<MarkingValue> jointUSAClassification = new ArrayList<>();
 
         jointUSAClassification.add(new MarkingValue("", "JOINT TOP SECRET", "", "JOINT TS"));
         jointUSAClassification.add(new MarkingValue("", "JOINT SECRET", "", "JOINT S"));
@@ -142,7 +142,7 @@ public class FieldValuesTest {
 
     private static void initializeNotJointNotUSAClassifications()
     {
-        List<MarkingValue> notJointNotUSAClassification = new ArrayList<MarkingValue>();
+        List<MarkingValue> notJointNotUSAClassification = new ArrayList<>();
 
         notJointNotUSAClassification.add(new MarkingValue("", "TOP SECRET", "", "TS"));
         notJointNotUSAClassification.add(new MarkingValue("", "SECRET", "", "S"));
@@ -155,7 +155,7 @@ public class FieldValuesTest {
 
     private static void initializeNotJointUSAClassifications()
     {
-        List<MarkingValue> notJointUSAClassification = new ArrayList<MarkingValue>();
+        List<MarkingValue> notJointUSAClassification = new ArrayList<>();
 
         notJointUSAClassification.add(new MarkingValue("", "TOP SECRET", "", "TS"));
         notJointUSAClassification.add(new MarkingValue("", "SECRET", "", "S"));
@@ -167,7 +167,7 @@ public class FieldValuesTest {
 
     private static void initializeCompartments()
     {
-        List<MarkingValue> compartments = new ArrayList<MarkingValue>();
+        List<MarkingValue> compartments = new ArrayList<>();
 
         compartments.add(new MarkingValue("", "COMINT", "SI", "SI"));
         compartments.add(new MarkingValue("", "HCS", "HCS", "HCS"));
@@ -180,7 +180,7 @@ public class FieldValuesTest {
     private static void initializeListOfCountries()
     {
 
-        List<ISO3166Country> countryList = new ArrayList<ISO3166Country>();
+        List<ISO3166Country> countryList = new ArrayList<>();
 
         countryList.add(new ISO3166Country("AF", "AFG", "AFGHANISTAN"));
         countryList.add(new ISO3166Country("AL", "ALB", "ALBANIA"));
@@ -448,7 +448,7 @@ public class FieldValuesTest {
             NoSuchMethodException
     {
 
-        ArrayList<MarkingValue> markingValues = new ArrayList<MarkingValue>();
+        ArrayList<MarkingValue> markingValues = new ArrayList<>();
 
         callClassListAdd(markingValues, "Parent", "Title", "Abbreviation", "Portion");
 
@@ -1025,7 +1025,7 @@ public class FieldValuesTest {
     {
 
         Class<?>[] methodArgs = new Class[5];
-        methodArgs[0] = new ArrayList<MarkingValue>().getClass();
+        methodArgs[0] = ArrayList.class;
         methodArgs[1] = String.class;
         methodArgs[2] = String.class;
         methodArgs[3] = String.class;

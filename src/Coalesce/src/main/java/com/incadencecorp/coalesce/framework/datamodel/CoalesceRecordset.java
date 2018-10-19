@@ -8,7 +8,6 @@ import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -483,9 +482,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
      */
     public CoalesceRecord addNew()
     {
-        CoalesceRecord newRecord = CoalesceRecord.create(this, getName() + " Record");
-
-        return newRecord;
+        return CoalesceRecord.create(this, getName() + " Record");
     }
 
     /**
@@ -527,7 +524,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
         if (index < 0 || index >= getRecords().size())
             return;
 
-        CoalesceRecord record = (CoalesceRecord) getItem(index);
+        CoalesceRecord record = getItem(index);
 
         // getRecords().remove(record);
 

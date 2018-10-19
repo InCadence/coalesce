@@ -27,7 +27,6 @@ import com.incadencecorp.coalesce.common.helpers.FileHelper;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.net.URISyntaxException;

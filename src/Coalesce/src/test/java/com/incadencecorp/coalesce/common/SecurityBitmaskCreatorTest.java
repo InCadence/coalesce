@@ -101,7 +101,7 @@ public class SecurityBitmaskCreatorTest {
     public void testFillAccess() throws Exception
     {
 
-        List<String> groups = new ArrayList<String>();
+        List<String> groups = new ArrayList<>();
         groups.add("A");
         groups.add("B");
 
@@ -222,7 +222,7 @@ public class SecurityBitmaskCreatorTest {
 
     private enum EGroups
     {
-        A, B;
+        A, B
     }
 
 }

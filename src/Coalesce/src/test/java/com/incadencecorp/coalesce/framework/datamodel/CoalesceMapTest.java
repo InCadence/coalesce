@@ -175,7 +175,7 @@ public class CoalesceMapTest {
 
         recordset.put("0", date);
 
-        HashMap<String, DateTime> map = new HashMap<String, DateTime>();
+        HashMap<String, DateTime> map = new HashMap<>();
 
         map.put("1", date.minusDays(1));
         map.put("2", date.minusDays(2));
@@ -273,14 +273,14 @@ public class CoalesceMapTest {
 
         CoalesceEntity entity2 = new CoalesceEntity();
         entity2.initialize(entity1.toXml());
-        recordset2 = new CoalesceMap<Integer>((CoalesceRecordset) entity2.getCoalesceObjectForNamePath(path));
+        recordset2 = new CoalesceMap<>((CoalesceRecordset) entity2.getCoalesceObjectForNamePath(path));
 
         recordset1.put("1", 1);
         recordset2.put("1", 2);
 
         CoalesceEntity entity3 = new CoalesceEntity();
         entity3.initialize(CoalesceEntity.mergeSyncEntity(entity1, entity2, null, null).toXml());
-        merged = new CoalesceMap<Integer>((CoalesceRecordset) entity3.getCoalesceObjectForNamePath(path));
+        merged = new CoalesceMap<>((CoalesceRecordset) entity3.getCoalesceObjectForNamePath(path));
 
         // TODO Merging two object with the same key added will create a
         // duplicate entry.
@@ -319,9 +319,9 @@ public class CoalesceMapTest {
 
         CoalesceEntity entity2 = new CoalesceEntity();
         entity2.initialize(entity1.toXml());
-        recordset2 = new CoalesceMap<Integer>((CoalesceRecordset) entity2.getCoalesceObjectForNamePath(path));
+        recordset2 = new CoalesceMap<>((CoalesceRecordset) entity2.getCoalesceObjectForNamePath(path));
 
-        Map<String, Integer> map = new HashMap<String, Integer>();
+        Map<String, Integer> map = new HashMap<>();
 
         map.put("1", 1);
 
@@ -333,7 +333,7 @@ public class CoalesceMapTest {
 
         CoalesceEntity entity3 = new CoalesceEntity();
         entity3.initialize(CoalesceEntity.mergeSyncEntity(entity1, entity2, null, null).toXml());
-        merged = new CoalesceMap<Integer>((CoalesceRecordset) entity3.getCoalesceObjectForNamePath(path));
+        merged = new CoalesceMap<>((CoalesceRecordset) entity3.getCoalesceObjectForNamePath(path));
 
         // TODO Merging two object with the same key added will create a
         // duplicate entry.

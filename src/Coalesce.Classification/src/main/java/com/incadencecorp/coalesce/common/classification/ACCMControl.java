@@ -50,7 +50,7 @@ public class ACCMControl {
      */
     public ACCMControl()
     {
-        _nicknames = new ArrayList<ACCMNickname>();
+        _nicknames = new ArrayList<>();
     }
 
     /**

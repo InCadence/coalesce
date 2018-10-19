@@ -45,9 +45,11 @@ public class CoalesceIteratorPromote extends CoalesceIterator {
     private String user;
     private String ip;
 
-    private static final List<String> ATTRIBUTES_TO_IIGNORE = Arrays.asList(new String[] {
-            "previoushistorykey", "modifiedby", "modifiedbyip", "objectversion", "key"
-    });
+    private static final List<String> ATTRIBUTES_TO_IIGNORE = Arrays.asList("previoushistorykey",
+                                                                            "modifiedby",
+                                                                            "modifiedbyip",
+                                                                            "objectversion",
+                                                                            "key");
 
     /*--------------------------------------------------------------------------
     Public Methods

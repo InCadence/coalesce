@@ -278,7 +278,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      */
     public final List<ObjectMetaData> getTemplateMetaData(final String sql) throws SQLException, ParserConfigurationException
     {
-        List<ObjectMetaData> templates = new ArrayList<ObjectMetaData>();
+        List<ObjectMetaData> templates = new ArrayList<>();
 
         // Execute Query
         ResultSet results = executeQuery(sql);
@@ -365,7 +365,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     {
         try
         {
-            return (_conn == null) ? true : _conn.isClosed();
+            return (_conn == null) || _conn.isClosed();
         }
         catch (SQLException e)
         {

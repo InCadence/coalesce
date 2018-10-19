@@ -27,7 +27,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
  * @see AccumuloQueryRewriter2
  */
 class AccumuloQueryRewriter extends DuplicatingFilterVisitor {
-    ArrayList<String> features = new ArrayList<String>();
+    ArrayList<String> features = new ArrayList<>();
     Query origQuery = null;
     FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
     
@@ -83,7 +83,7 @@ class AccumuloQueryRewriter extends DuplicatingFilterVisitor {
           // Rewrite properties also. Strip any table names off these
           
           if (newQuery.getPropertyNames() != null) {
-        	  ArrayList<String> props = new ArrayList<String>(Arrays.asList(newQuery.getPropertyNames()));
+        	  ArrayList<String> props = new ArrayList<>(Arrays.asList(newQuery.getPropertyNames()));
         	  for (int i=0;i<props.size();i++) {
   	        	String[] nameParts = props.get(i).split("[/.]");
   	        	if (nameParts.length == 2) {

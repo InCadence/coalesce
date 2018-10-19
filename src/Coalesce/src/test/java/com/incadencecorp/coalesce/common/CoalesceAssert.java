@@ -38,10 +38,10 @@ public class CoalesceAssert {
     public static void assertXmlEquals(String expected, String actual)
     {
         expected = expected.replaceAll("<\\?xml.*\\?>", "");
-        expected = expected.replaceAll("\\s+", "").replaceAll("[^.]...Z\\\"", "Z\\\"");
+        expected = expected.replaceAll("\\s+", "").replaceAll("[^.]...Z\"", "Z\\\"");
 
         actual = actual.replaceAll("<\\?xml.*\\?>", "");
-        actual = actual.replaceAll("\\s+", "").replaceAll("[^.]...Z\\\"", "Z\\\"");
+        actual = actual.replaceAll("\\s+", "").replaceAll("[^.]...Z\"", "Z\\\"");
 
         assertEquals(expected, actual);
     }
@@ -104,7 +104,7 @@ public class CoalesceAssert {
     public static void assertTemplateSection(List<CoalesceSection> expectedSections,
                                              List<CoalesceSection> templateSections)
     {
-        Map<String, CoalesceSection> templateSectionsByName = new HashMap<String, CoalesceSection>();
+        Map<String, CoalesceSection> templateSectionsByName = new HashMap<>();
         for (CoalesceSection templateSection : templateSections)
         {
             templateSectionsByName.put(templateSection.getName(), templateSection);
@@ -129,7 +129,7 @@ public class CoalesceAssert {
     public static void assertTemplateRecordSection(List<CoalesceRecordset> expectedRecordsets,
                                                    List<CoalesceRecordset> templateRecordsets)
     {
-        Map<String, CoalesceRecordset> templateRecordsetsByName = new HashMap<String, CoalesceRecordset>();
+        Map<String, CoalesceRecordset> templateRecordsetsByName = new HashMap<>();
         for (CoalesceRecordset templateRecordset : templateRecordsets)
         {
             templateRecordsetsByName.put(templateRecordset.getName(), templateRecordset);
@@ -157,7 +157,7 @@ public class CoalesceAssert {
 
         assertEquals(expectedFieldDefinitions.size(), templateFieldDefinitions.size());
 
-        Map<String, CoalesceFieldDefinition> templateFieldDefinitionMap = new HashMap<String, CoalesceFieldDefinition>();
+        Map<String, CoalesceFieldDefinition> templateFieldDefinitionMap = new HashMap<>();
         for (CoalesceFieldDefinition templateFieldDef : templateFieldDefinitions)
         {
             templateFieldDefinitionMap.put(templateFieldDef.getName(), templateFieldDef);

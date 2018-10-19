@@ -78,7 +78,7 @@ public class CoalesceUpdaterIterator extends CoalesceIterator<CoalesceEntity> {
                      template.getVersion());
 
         CoalesceEntity updated = null;
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
 
         if (entity.getName().equalsIgnoreCase(template.getName())
                 && entity.getSource().equalsIgnoreCase(template.getSource()))

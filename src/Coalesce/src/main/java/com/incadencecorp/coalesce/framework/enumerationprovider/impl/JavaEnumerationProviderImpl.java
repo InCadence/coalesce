@@ -27,7 +27,7 @@ import java.util.List;
  * This implementation allows tying a Enumeration field to a java enumeration by
  * providing the fully qualified class name. The enumeration must be on the
  * classpath for it to work.
- * 
+ *
  * @author n78554
  *
  */
@@ -46,16 +46,16 @@ public class JavaEnumerationProviderImpl extends AbstractEnumerationProvider {
             return null;
         }
     }
-    
+
     private List<String> getValues(Class clazz) {
-        
-        List<String> values = new ArrayList<String>();
-        
-        for (Iterator it = EnumSet.allOf(clazz).iterator(); it.hasNext();)
+
+        List<String> values = new ArrayList<>();
+
+        for (Object o : EnumSet.allOf(clazz))
         {
-            values.add(it.next().toString());
+            values.add(o.toString());
         }
-        
+
         return values;
     }
 }

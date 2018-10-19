@@ -35,7 +35,7 @@ public final class GUIDHelper {
     /**
      * Regex used to verify UUIDs w/ or w/o {}
      */
-    public static final String REGEX_UUID_BRACES = REGEX_UUID + "|\\{" + REGEX_UUID + "\\}";
+    public static final String REGEX_UUID_BRACES = REGEX_UUID + "|\\{" + REGEX_UUID + "}";
     private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX_UUID_BRACES);
 
     private GUIDHelper()

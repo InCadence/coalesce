@@ -50,7 +50,7 @@ public class SCIControl {
      */
     public SCIControl()
     {
-        _sci = new ArrayList<SCIElement>();
+        _sci = new ArrayList<>();
     }
 
     /**

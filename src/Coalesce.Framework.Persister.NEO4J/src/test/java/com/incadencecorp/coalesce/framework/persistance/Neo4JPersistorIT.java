@@ -99,7 +99,7 @@ public class Neo4JPersistorIT extends AbstractCoalescePersistorTest<Neo4JPersist
         Neo4jSearchPersister persistor = new Neo4jSearchPersister();
 
         // Create Property List
-        List<PropertyName> properties = new ArrayList<PropertyName>();
+        List<PropertyName> properties = new ArrayList<>();
         properties.add(CoalescePropertyFactory.getName());
         properties.add(CoalescePropertyFactory.getSource());
         properties.add(CoalescePropertyFactory.getEntityType());

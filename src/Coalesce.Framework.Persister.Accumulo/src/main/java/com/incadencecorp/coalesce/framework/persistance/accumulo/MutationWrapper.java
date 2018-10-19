@@ -33,7 +33,7 @@ public class MutationWrapper {
     public MutationWrapper(Mutation mutation)
     {
         this.mutation = mutation;
-        mutationGuyList = new ArrayList<MutationRow>();
+        mutationGuyList = new ArrayList<>();
     }
 
     public Mutation getMutation()

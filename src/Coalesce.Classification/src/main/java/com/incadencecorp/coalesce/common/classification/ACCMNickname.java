@@ -69,7 +69,7 @@ public class ACCMNickname implements Comparable<ACCMNickname> {
     public ACCMNickname(String value)
     {
 
-        _caveats = new ArrayList<String>();
+        _caveats = new ArrayList<>();
 
         value = value.toUpperCase();
 

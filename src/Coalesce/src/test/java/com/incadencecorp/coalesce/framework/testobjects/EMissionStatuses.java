@@ -37,7 +37,7 @@ public enum EMissionStatuses
     {
         if (_codeToStatusMapping == null)
         {
-            _codeToStatusMapping = new HashMap<String, EMissionStatuses>();
+            _codeToStatusMapping = new HashMap<>();
             for (EMissionStatuses s : values())
             {
                 _codeToStatusMapping.put(s._label.toLowerCase(), s);

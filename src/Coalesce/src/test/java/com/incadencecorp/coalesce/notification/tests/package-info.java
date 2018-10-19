@@ -1,7 +1,4 @@
 /**
- * 
- */
-/**
  * @author Derek Clemenzi
  *
  */

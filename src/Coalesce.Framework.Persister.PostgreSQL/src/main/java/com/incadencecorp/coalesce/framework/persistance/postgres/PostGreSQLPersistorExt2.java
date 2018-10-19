@@ -192,7 +192,7 @@ public class PostGreSQLPersistorExt2 extends PostGreSQLPersistorExt implements I
     @Override
     public List<String> listIndexes() throws CoalescePersistorException
     {
-        ArrayList<String> indexList = new ArrayList<String>();
+        ArrayList<String> indexList = new ArrayList<>();
         CoalesceDataConnectorBase conn = getDataConnector();
         String schemaName = getSchema();
         ResultSet results = null;

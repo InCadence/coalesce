@@ -66,7 +66,7 @@ public class CoalesceFieldComparator extends CoalesceComparator<CoalesceEntity> 
 
         if (namePathList == null)
         {
-            namePathList = new ArrayList<String>();
+            namePathList = new ArrayList<>();
         }
 
         namePathList.add(fullNamePath);

@@ -195,7 +195,7 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     @JsonIgnore
     public Map<String, CoalesceLinkage> getLinkages()
     {
-        Map<String, CoalesceLinkage> linkages = new HashMap<String, CoalesceLinkage>();
+        Map<String, CoalesceLinkage> linkages = new HashMap<>();
 
         for (CoalesceObject xdo : getChildCoalesceObjects().values())
         {
@@ -232,7 +232,7 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
      */
     public void clearLinkages()
     {
-        List<String> linkageKeys = new ArrayList<String>();
+        List<String> linkageKeys = new ArrayList<>();
 
         for (Linkage linkage : _entityLinkageSection.getLinkage())
         {

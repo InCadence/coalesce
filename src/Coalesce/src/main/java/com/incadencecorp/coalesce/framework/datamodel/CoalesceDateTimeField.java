@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import org.joda.time.DateTime;

@@ -27,7 +27,7 @@ import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
  */
 public class EnumHelper {
 
-    public static final ECoalesceObjectStatus stringToECoalesceObjectStatus(String value)
+    public static ECoalesceObjectStatus stringToECoalesceObjectStatus(String value)
     {
         ECoalesceObjectStatus status = null;
 

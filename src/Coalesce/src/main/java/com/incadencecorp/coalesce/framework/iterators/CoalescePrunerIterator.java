@@ -133,7 +133,7 @@ public class CoalescePrunerIterator extends CoalesceIterator<Map<String, List<St
         /**
          * Sets the field to null.
          */
-        CLEAR;
+        CLEAR
     }
 
 }

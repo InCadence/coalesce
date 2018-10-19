@@ -73,7 +73,7 @@ public class MarkingTest {
     public void listNotContainsUSATest()
     {
 
-        List<ISO3166Country> countries = new ArrayList<ISO3166Country>();
+        List<ISO3166Country> countries = new ArrayList<>();
         countries.add(FieldValues.getCountryByName("ZAMBIA"));
 
         assertFalse(countries.contains(ISO3166Country.getUSA()));
@@ -84,7 +84,7 @@ public class MarkingTest {
     public void ternaryConditionalTest()
     {
 
-        List<String> joint = new ArrayList<String>();
+        List<String> joint = new ArrayList<>();
         joint.add("TOP");
         joint.add("SECRET");
         joint.add("TEST");
@@ -3668,10 +3668,10 @@ public class MarkingTest {
             InvocationTargetException
     {
 
-        Method method = Marking.class.getDeclaredMethod("getClassifications", (Class<?>[]) null);
+        Method method = Marking.class.getDeclaredMethod("getClassifications");
         method.setAccessible(true);
 
-        Object results = method.invoke(null, (Object[]) null);
+        Object results = method.invoke(null);
 
         return (List<MarkingValue>) results;
     }

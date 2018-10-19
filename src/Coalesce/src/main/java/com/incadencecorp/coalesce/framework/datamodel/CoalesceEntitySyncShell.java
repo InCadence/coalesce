@@ -299,7 +299,7 @@ public class CoalesceEntitySyncShell {
             {
                 if (nodeToPrune.getAttributes().getLength() > 0)
                 {
-                    ArrayList<String> removeList = new ArrayList<String>();
+                    ArrayList<String> removeList = new ArrayList<>();
                     NamedNodeMap attributeList = nodeToPrune.getAttributes();
 
                     // Find Attributes to Remove
@@ -333,7 +333,7 @@ public class CoalesceEntitySyncShell {
             {
                 if (nodeToPrune.getChildNodes().getLength() > 0)
                 {
-                    ArrayList<Node> removeList = new ArrayList<Node>();
+                    ArrayList<Node> removeList = new ArrayList<>();
                     NodeList children = nodeToPrune.getChildNodes();
 
                     // Find Nodes to Remove
@@ -469,7 +469,7 @@ public class CoalesceEntitySyncShell {
     private static HashMap<String, Node> generateMap(Document doc)
     {
 
-        HashMap<String, Node> nodeMap = new HashMap<String, Node>();
+        HashMap<String, Node> nodeMap = new HashMap<>();
 
         NodeList nodeList = doc.getElementsByTagName("*");
 

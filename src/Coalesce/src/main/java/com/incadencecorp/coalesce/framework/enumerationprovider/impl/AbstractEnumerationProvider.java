@@ -48,7 +48,7 @@ public abstract class AbstractEnumerationProvider implements IEnumerationProvide
      */
     public AbstractEnumerationProvider()
     {
-        supported = new HashMap<String, List<String>>();
+        supported = new HashMap<>();
     }
 
     /*
@@ -116,7 +116,7 @@ public abstract class AbstractEnumerationProvider implements IEnumerationProvide
     @Override
     public List<String> getEnumerations()
     {
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
 
         for (Map.Entry<String, List<String>> entry : supported.entrySet())
         {

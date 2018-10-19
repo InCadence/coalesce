@@ -16,7 +16,6 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.framework.persistance;
 
-import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import com.incadencecorp.coalesce.api.CoalesceParameters;

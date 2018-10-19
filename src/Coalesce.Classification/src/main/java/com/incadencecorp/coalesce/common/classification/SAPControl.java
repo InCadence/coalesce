@@ -50,7 +50,7 @@ public class SAPControl {
      */
     public SAPControl()
     {
-        _programs = new ArrayList<SAPProgram>();
+        _programs = new ArrayList<>();
     }
 
     /**

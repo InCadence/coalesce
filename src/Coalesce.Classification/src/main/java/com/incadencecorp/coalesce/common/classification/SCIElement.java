@@ -51,7 +51,7 @@ public class SCIElement implements Comparable<SCIElement> {
      */
     private SCIElement()
     {
-        _compartments = new ArrayList<Compartment>();
+        _compartments = new ArrayList<>();
     }
 
     /**

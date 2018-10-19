@@ -17,7 +17,6 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 package com.incadencecorp.coalesce.framework.jobs.metrics;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 

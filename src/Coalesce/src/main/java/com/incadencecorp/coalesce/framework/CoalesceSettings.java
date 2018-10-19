@@ -256,9 +256,7 @@ public class CoalesceSettings {
                     {
                         Class<?> cls = Class.forName(mainClassName);
 
-                        String classPath = cls.getProtectionDomain().getCodeSource().getLocation().getPath();
-
-                        _defaultApplicationRoot = classPath;
+                        _defaultApplicationRoot = cls.getProtectionDomain().getCodeSource().getLocation().getPath();
 
                     }
                     catch (ClassNotFoundException cnfe)
@@ -513,7 +511,7 @@ public class CoalesceSettings {
         private double _min;
         private double _max;
 
-        private EAxis(boolean isRestricted, double min, double max)
+        EAxis(boolean isRestricted, double min, double max)
         {
             _restricted = isRestricted;
             _min = min;

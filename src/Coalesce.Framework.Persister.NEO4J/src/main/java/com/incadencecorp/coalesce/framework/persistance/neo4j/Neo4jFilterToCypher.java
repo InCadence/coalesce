@@ -1224,7 +1224,7 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
             {
                 LOGGER.debug("Converted ({}) Value ({}) => ({})",
                              currentProperty,
-                             (String) expression.getValue(),
+                             expression.getValue(),
                              literalValue);
             }
         }

@@ -601,7 +601,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     public CoalesceFieldHistory[] getHistory()
     {
 
-        ArrayList<CoalesceFieldHistory> historyList = new ArrayList<CoalesceFieldHistory>();
+        ArrayList<CoalesceFieldHistory> historyList = new ArrayList<>();
 
         // Return history items in the same order they are in the Entity
         for (Fieldhistory fh : _entityField.getFieldhistory())
@@ -628,9 +628,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     @Override
     public CoalesceFieldHistory getHistoryRecord(String historyKey)
     {
-        CoalesceFieldHistory historyRecord = (CoalesceFieldHistory) getChildCoalesceObject(historyKey);
 
-        return historyRecord;
+        return (CoalesceFieldHistory) getChildCoalesceObject(historyKey);
 
     }
 

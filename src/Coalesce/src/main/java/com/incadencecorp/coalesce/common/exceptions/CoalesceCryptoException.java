@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.incadencecorp.coalesce.common.exceptions;
 
 /*-----------------------------------------------------------------------------'

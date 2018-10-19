@@ -69,9 +69,9 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
 
     private static final String SQL_DELETE_OBJECTKEY = "DELETE FROM %s WHERE objectkey=?";
 
-    private static final ConcurrentMap<String, Boolean> STORED_PROCEDURE_EXTSTS_CACHE = new ConcurrentHashMap<String, Boolean>();
+    private static final ConcurrentMap<String, Boolean> STORED_PROCEDURE_EXTSTS_CACHE = new ConcurrentHashMap<>();
 
-    private static final ConcurrentHashMap<String, String[]> COLUMNS_CACHE = new ConcurrentHashMap<String, String[]>();
+    private static final ConcurrentHashMap<String, String[]> COLUMNS_CACHE = new ConcurrentHashMap<>();
 
     private final StoredProcedureArgumentMapper procedureMapper = new StoredProcedureArgumentMapper();
 
@@ -128,7 +128,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
                     if (record.isActive())
                     {
 
-                        List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
+                        List<CoalesceParameter> parameters = new ArrayList<>();
 
                         // Add required columns
                         parameters.add(new CoalesceParameter(record.getKey(), Types.OTHER));
@@ -350,7 +350,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
             String where = preparedFilter.encodeToString(query.getFilter());
 
             // Add Parameters
-            List<CoalesceParameter> paramList = new ArrayList<CoalesceParameter>();
+            List<CoalesceParameter> paramList = new ArrayList<>();
             paramList.addAll(getParameters(preparedFilter));
 
             CoalesceParameter[] params = paramList.toArray(new CoalesceParameter[paramList.size()]);
@@ -411,7 +411,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     private List<CoalesceParameter> getParameters(PostGresCoalescePreparedFilter filter) throws ParseException
     {
 
-        List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
+        List<CoalesceParameter> parameters = new ArrayList<>();
 
         // Add Parameters
         for (Object value : filter.getLiteralValues())
@@ -511,7 +511,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
 
                 // Record Set's Stored Procedure has been cached as
                 // non-existent?
-                if (storedProcedureExists != null && storedProcedureExists == false)
+                if (storedProcedureExists != null && !storedProcedureExists)
                 {
                     // Yes; Remove
                     STORED_PROCEDURE_EXTSTS_CACHE.remove(key);
@@ -611,7 +611,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
         else
         {
 
-            List<String> columnList = new ArrayList<String>();
+            List<String> columnList = new ArrayList<>();
 
             ResultSet results = conn.executeQuery(SQL_GET_COLUMN_NAMES,
                                                   new CoalesceParameter(tablename),
@@ -692,7 +692,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     private void deleteFromListTables(CoalesceRecord record, CoalesceDataConnectorBase conn) throws SQLException
     {
 
-        List<ECoalesceFieldDataTypes> visited = new ArrayList<ECoalesceFieldDataTypes>();
+        List<ECoalesceFieldDataTypes> visited = new ArrayList<>();
 
         for (CoalesceField<?> field : record.getFields())
         {

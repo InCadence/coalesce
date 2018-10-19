@@ -31,10 +31,10 @@ import java.util.*;
  */
 public class MockPersister extends CoalescePersistorBase {
 
-    protected List<String> keys = new ArrayList<String>();
+    protected List<String> keys = new ArrayList<>();
 
     private boolean causeError = false;
-    private final Map<String, CoalesceEntityTemplate> templateMap = new HashMap<String, CoalesceEntityTemplate>();
+    private final Map<String, CoalesceEntityTemplate> templateMap = new HashMap<>();
 
     /**
      * Default Constructor; Creates a mock cacher.
@@ -70,14 +70,7 @@ public class MockPersister extends CoalescePersistorBase {
     @Override
     public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-        if (templateMap.containsKey(key))
-        {
-            return templateMap.get(key);
-        }
-        else
-        {
-            return null;
-        }
+        return templateMap.getOrDefault(key, null);
     }
 
     @Override
@@ -95,7 +88,7 @@ public class MockPersister extends CoalescePersistorBase {
     @Override
     public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        List<ObjectMetaData> results = new ArrayList<ObjectMetaData>();
+        List<ObjectMetaData> results = new ArrayList<>();
 
         for (CoalesceEntityTemplate template : templateMap.values())
         {

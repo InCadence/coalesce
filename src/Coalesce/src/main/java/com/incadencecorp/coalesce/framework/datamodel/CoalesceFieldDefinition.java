@@ -598,7 +598,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     public List<CoalesceConstraint> getConstraints()
     {
 
-        List<CoalesceConstraint> results = new ArrayList<CoalesceConstraint>();
+        List<CoalesceConstraint> results = new ArrayList<>();
 
         for (CoalesceObject xdo : getChildCoalesceObjects().values())
         {

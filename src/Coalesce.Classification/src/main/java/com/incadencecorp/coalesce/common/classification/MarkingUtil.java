@@ -46,7 +46,7 @@ public class MarkingUtil {
      */
     public static SAPProgram[] fromSAPSet(Set<String> values)
     {
-        Map<String, SAPProgram> controls = new HashMap<String, SAPProgram>();
+        Map<String, SAPProgram> controls = new HashMap<>();
 
         for (String value : values)
         {
@@ -133,7 +133,7 @@ public class MarkingUtil {
     public static Set<String> toSet(SAPProgram[] programs)
     {
 
-        Set<String> groups = new HashSet<String>();
+        Set<String> groups = new HashSet<>();
 
         for (SAPProgram program : programs)
         {
@@ -163,7 +163,7 @@ public class MarkingUtil {
      */
     public static SCIElement[] fromSCISet(Set<String> values)
     {
-        Map<String, SCIElement> controls = new HashMap<String, SCIElement>();
+        Map<String, SCIElement> controls = new HashMap<>();
 
         for (String value : values)
         {
@@ -250,7 +250,7 @@ public class MarkingUtil {
     public static Set<String> toSet(SCIElement[] elements)
     {
 
-        Set<String> groups = new HashSet<String>();
+        Set<String> groups = new HashSet<>();
 
         for (SCIElement element : elements)
         {
@@ -305,7 +305,7 @@ public class MarkingUtil {
      */
     public static Set<String> toSet(ACCMNickname[] nicknames)
     {
-        Set<String> groups = new HashSet<String>();
+        Set<String> groups = new HashSet<>();
 
         for (ACCMNickname nickname : nicknames)
         {

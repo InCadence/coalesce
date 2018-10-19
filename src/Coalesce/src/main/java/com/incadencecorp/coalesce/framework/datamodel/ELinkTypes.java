@@ -47,14 +47,14 @@ public enum ELinkTypes {
      */
     private static Map<String, ELinkTypes> _codeToStatusMapping;
 
-    private ELinkTypes(String label) {
+    ELinkTypes(String label) {
         _label = label;
     }
 
     private static void initMapping() {
 
         if (_codeToStatusMapping == null) {
-            _codeToStatusMapping = new HashMap<String, ELinkTypes>();
+            _codeToStatusMapping = new HashMap<>();
             for (ELinkTypes s: values()) {
                 _codeToStatusMapping.put(s._label.toLowerCase(), s);
             }

@@ -37,7 +37,7 @@ public enum EActionStatuses
     {
         if (_codeToStatusMapping == null)
         {
-            _codeToStatusMapping = new HashMap<String, EActionStatuses>();
+            _codeToStatusMapping = new HashMap<>();
             for (EActionStatuses s : values())
             {
                 _codeToStatusMapping.put(s._label.toLowerCase(), s);

@@ -92,9 +92,7 @@ public final class GraphicsHelper {
     {
         if (imageToResample == null) throw new NullArgumentException("imageToResample");
 
-        BufferedImage imgThumbnail = Scalr.resize(imageToResample, Scalr.Mode.FIT_EXACT, width, height, Scalr.OP_ANTIALIAS);
-
-        return imgThumbnail;
+        return Scalr.resize(imageToResample, Scalr.Mode.FIT_EXACT, width, height, Scalr.OP_ANTIALIAS);
     }
 
     /**
@@ -221,10 +219,9 @@ public final class GraphicsHelper {
         double originalWidth = imageToResample.getWidth();
         double originalHeight = imageToResample.getHeight();
 
-        double newHeightRatio = (double) height / (double) originalHeight;
-        double widthScaledForHeight = newHeightRatio * originalWidth;
+        double newHeightRatio = (double) height / originalHeight;
 
-        return widthScaledForHeight;
+        return newHeightRatio * originalWidth;
 
     }
 

@@ -48,8 +48,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class XmlHelper {
 
-    private static ConcurrentHashMap<String, JAXBContext> _jaxbContexts = new ConcurrentHashMap<String, JAXBContext>();
-    private static String _syncObject = "";
+    private static ConcurrentHashMap<String, JAXBContext> _jaxbContexts = new ConcurrentHashMap<>();
+    private static final String _syncObject = "";
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlHelper.class);
 
     private XmlHelper()
@@ -531,9 +531,8 @@ public final class XmlHelper {
         try
         {
             builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(is);
 
-            return doc;
+            return builder.parse(is);
         }
         catch (ParserConfigurationException ex)
         {

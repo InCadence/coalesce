@@ -63,7 +63,7 @@ public class ResourceEnumerationProviderImpl extends AbstractEnumerationProvider
     @Override
     protected List<String> lookup(Principal principal, String enumeration)
     {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
 
         try
         {

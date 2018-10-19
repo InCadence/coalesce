@@ -1,9 +1,6 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
@@ -86,7 +83,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     private CoalesceObject _parent;
     private CoalesceObjectType _object;
 
-    private HashMap<String, CoalesceObject> _children = new LinkedHashMap<String, CoalesceObject>();
+    private HashMap<String, CoalesceObject> _children = new LinkedHashMap<>();
     private boolean wasKeyGenerated = false;
 
     /*--------------------------------------------------------------------------
@@ -458,10 +455,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
         String value = this.getAttribute(ATTRIBUTE_FLATTEN);
 
         // Default Behavior.
-        if (value == null)
-            return true;
+        return value == null || Boolean.parseBoolean(value);
 
-        return Boolean.parseBoolean(value);
     }
 
     @Override
@@ -1106,7 +1101,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
      */
     protected Map<QName, String> getAttributes()
     {
-        Map<QName, String> map = new HashMap<QName, String>();
+        Map<QName, String> map = new HashMap<>();
 
         // Add Common Attributes
         map.put(new QName(ATTRIBUTE_KEY), getKey());
@@ -1136,10 +1131,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
             results = new String[names.length - 1];
 
-            for (int ii = 1; ii < names.length; ii++)
-            {
-                results[ii - 1] = names[ii];
-            }
+            System.arraycopy(names, 1, results, 0, names.length - 1);
 
         }
 

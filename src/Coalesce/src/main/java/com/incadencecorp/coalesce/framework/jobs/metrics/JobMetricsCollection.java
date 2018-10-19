@@ -34,7 +34,7 @@ public class JobMetricsCollection {
     // Private Members
     // ----------------------------------------------------------------------//
 
-    private HashMap<String, JobMetricsType> jobMetrics = new HashMap<String, JobMetricsType>();
+    private HashMap<String, JobMetricsType> jobMetrics = new HashMap<>();
     private long started;
 
     // ----------------------------------------------------------------------//

@@ -178,7 +178,7 @@ public class SecurtyBitmaskHashesTest {
         PropertyLoader loader = new PropertyLoader(new MemoryConnector(), "hash.properties");
         loader.setProperty(CoalesceParameters.HASH_ALGORITHM, "Bad");
 
-        List<String> options = new ArrayList<String>();
+        List<String> options = new ArrayList<>();
 
         SecurityBitmaskHashes cache = new SecurityBitmaskHashes();
         cache.setPropertyLoader(loader);

@@ -126,7 +126,7 @@ public class XmlHelperTest {
         assertNotNull("Searialize failed", xml);
         assertFalse("xml empty", xml.isEmpty());
 
-        String stripped = xml.toString().replace("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>", "");
+        String stripped = xml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>", "");
         assertEquals(CoalesceTypeInstances.TEST_MISSION_LINKAGE_SECTION.replaceAll("\\s+", ""),
                      stripped.replace(" ", "").replaceAll("\\s+", ""));
 
@@ -581,7 +581,7 @@ public class XmlHelperTest {
     @Test
     public void formatXmlDocumentNullDocTest()
     {
-        String docXml = XmlHelper.formatXml((Document) null);
+        String docXml = XmlHelper.formatXml(null);
 
         assertNull(docXml);
     }

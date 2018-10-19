@@ -331,7 +331,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     @Override
     public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
 
         if (Neo4jSettings.isXMLEnabled())
         {
@@ -545,7 +545,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
 
     protected Set<String> getGroups(CoalesceEntity entity) throws SQLException
     {
-        return new HashSet<String>();
+        return new HashSet<>();
     }
 
     protected String getClassification(CoalesceEntity entity) throws SQLException

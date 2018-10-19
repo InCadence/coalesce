@@ -164,14 +164,14 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
     {
         StringBuilder sb = new StringBuilder("");
 
-        for (Iterator<E> it = EnumSet.allOf(clazz).iterator(); it.hasNext();)
+        for (E e : EnumSet.allOf(clazz))
         {
             if (sb.length() != 0)
             {
                 sb.append("|");
             }
 
-            sb.append(it.next());
+            sb.append(e);
         }
 
         return "(" + sb.toString() + ")";
@@ -294,7 +294,7 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
      */
     public static CoalesceConstraint createRegEx(CoalesceFieldDefinition parent, String name, String value)
     {
-        return create(parent, name, ConstraintType.REGEX, value.toString());
+        return create(parent, name, ConstraintType.REGEX, value);
     }
 
     private static CoalesceConstraint createMinMax(CoalesceFieldDefinition parent,
@@ -515,7 +515,7 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
      */
     private static String verifyListType(String key, CoalesceFieldDefinition... definitions)
     {
-        Set<String> xPaths = new HashSet<String>();
+        Set<String> xPaths = new HashSet<>();
 
         for (CoalesceFieldDefinition definition : definitions)
         {

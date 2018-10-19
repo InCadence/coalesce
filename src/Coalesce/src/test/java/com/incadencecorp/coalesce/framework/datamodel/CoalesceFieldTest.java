@@ -380,7 +380,7 @@ public class CoalesceFieldTest {
 
         CoalesceField<?> field = (CoalesceField<?>) mission.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
-        field.setClassificationMarkingAsString((String) null);
+        field.setClassificationMarkingAsString(null);
 
         Assert.assertEquals(new Marking("(U)").getClassification().getPortion(),
                             field.getClassificationMarking().getClassification().getPortion());
@@ -756,8 +756,8 @@ public class CoalesceFieldTest {
             assertTrue(multipoint.getNumGeometries() == coordinates.length);
 
             // Validate Coordinates
-            assertTrue(((Point) multipoint.getGeometryN(0)).getCoordinate().equals2D(coordinates[0]));
-            assertTrue(((Point) multipoint.getGeometryN(1)).getCoordinate().equals2D(coordinates[1]));
+            assertTrue(multipoint.getGeometryN(0).getCoordinate().equals2D(coordinates[0]));
+            assertTrue(multipoint.getGeometryN(1).getCoordinate().equals2D(coordinates[1]));
 
         }
         catch (CoalesceDataFormatException e)
@@ -1301,7 +1301,7 @@ public class CoalesceFieldTest {
 
         assertEquals("POINT (-80.9363995 43.6616578)", field.getBaseValue());
 
-        Object data = (Coordinate) field.getValue();
+        Object data = field.getValue();
 
         assertTrue(data instanceof Coordinate);
 

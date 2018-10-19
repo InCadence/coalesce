@@ -66,7 +66,7 @@ public class CoalescePersisterWrapper implements ICoalescePersistor {
     {
         this.persister = persister;
         this.isExclusion = isExclusion;
-        this.filters = new HashMap<String, ObjectMetaData>();
+        this.filters = new HashMap<>();
 
         for (ObjectMetaData meta : filters)
         {
@@ -131,7 +131,7 @@ public class CoalescePersisterWrapper implements ICoalescePersistor {
     @Override
     public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
-        List<CoalesceEntity> allowed = new ArrayList<CoalesceEntity>();
+        List<CoalesceEntity> allowed = new ArrayList<>();
 
         for (CoalesceEntity entity : entities)
         {
@@ -177,7 +177,7 @@ public class CoalescePersisterWrapper implements ICoalescePersistor {
     @Override
     public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
-        List<CoalesceEntityTemplate> allowed = new ArrayList<CoalesceEntityTemplate>();
+        List<CoalesceEntityTemplate> allowed = new ArrayList<>();
 
         for (CoalesceEntityTemplate template : templates)
         {

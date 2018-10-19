@@ -52,7 +52,7 @@ public class FileExceptionHandlerImplTest extends AbstractFileHandlerTests {
         String key1 = UUID.randomUUID().toString();
         String key2 = UUID.randomUUID().toString();
 
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(CoalesceParameters.PARAM_DIRECTORY, Paths.get("src", "test", "resources").toUri().toString());
         params.put(CoalesceParameters.PARAM_SUBDIR_LEN, Integer.toString(SUB_DIR_LEN));
 
@@ -106,7 +106,7 @@ public class FileExceptionHandlerImplTest extends AbstractFileHandlerTests {
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidRangeSubDir() throws Exception
     {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(CoalesceParameters.PARAM_SUBDIR_LEN, "-1");
 
         FileExceptionHandlerImpl handler = new FileExceptionHandlerImpl();
@@ -122,7 +122,7 @@ public class FileExceptionHandlerImplTest extends AbstractFileHandlerTests {
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidNumberSubDir() throws Exception
     {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(CoalesceParameters.PARAM_SUBDIR_LEN, "A");
 
         FileExceptionHandlerImpl handler = new FileExceptionHandlerImpl();
@@ -138,7 +138,7 @@ public class FileExceptionHandlerImplTest extends AbstractFileHandlerTests {
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidDirectorySchema() throws Exception
     {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(CoalesceParameters.PARAM_DIRECTORY, "file:/HelloWorld");
 
         FileExceptionHandlerImpl handler = new FileExceptionHandlerImpl();
@@ -154,7 +154,7 @@ public class FileExceptionHandlerImplTest extends AbstractFileHandlerTests {
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidDirectory() throws Exception
     {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(CoalesceParameters.PARAM_DIRECTORY, "unknown");
 
         FileExceptionHandlerImpl handler = new FileExceptionHandlerImpl();

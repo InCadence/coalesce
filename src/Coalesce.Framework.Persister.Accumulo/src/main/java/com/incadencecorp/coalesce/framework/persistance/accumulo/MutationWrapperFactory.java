@@ -285,9 +285,9 @@ public class MutationWrapperFactory extends CoalesceIterator<MutationWrapper> {
 
         try
         {
-            Method method = CoalesceObject.class.getDeclaredMethod("getAttributes", null);
+            Method method = CoalesceObject.class.getDeclaredMethod("getAttributes");
             method.setAccessible(true);
-            attributeMap = (Map<QName, String>) method.invoke(object, null);
+            attributeMap = (Map<QName, String>) method.invoke(object);
 
         }
         catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)

@@ -46,7 +46,7 @@ public class SecurityBitmaskHashes {
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityBitmaskHashes.class);
 
     private PropertyLoader loader;
-    private Map<String, SecurityBitmaskHashInfo> hashes = new ConcurrentHashMap<String, SecurityBitmaskHashInfo>();
+    private Map<String, SecurityBitmaskHashInfo> hashes = new ConcurrentHashMap<>();
     private String algorithm = "SHA1";
 
     /**

@@ -58,11 +58,11 @@ import com.incadencecorp.coalesce.framework.validation.api.ICustomValidator;
  */
 public class CoalesceValidator extends CoalesceIterator {
 
-    private Map<String, String> violations = new HashMap<String, String>();
+    private Map<String, String> violations = new HashMap<>();
     private CoalesceEntity entity;
     private Principal principal;
 
-    private final List<String> exclusions = new ArrayList<String>();
+    private final List<String> exclusions = new ArrayList<>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceValidator.class);
     
@@ -497,7 +497,7 @@ public class CoalesceValidator extends CoalesceIterator {
 
     private List<CoalesceField<?>> getFields(CoalesceRecord record, CoalesceConstraint constraint)
     {
-        List<CoalesceField<?>> fields = new ArrayList<CoalesceField<?>>();
+        List<CoalesceField<?>> fields = new ArrayList<>();
 
         for (String name : constraint.getValue().split("[,]"))
         {
@@ -559,7 +559,7 @@ public class CoalesceValidator extends CoalesceIterator {
             if (compareResult == Integer.MAX_VALUE)
             {
                 // Invalid Data Type
-                result = String.format(String.format(CoalesceErrors.INVALID_DATA_TYPE_NUMERIC, field.getName()));
+                result = String.format(CoalesceErrors.INVALID_DATA_TYPE_NUMERIC, field.getName());
                 break;
             }
             else if (compareResult > 0 || (!isInclusive && compareResult == 0))
@@ -587,7 +587,7 @@ public class CoalesceValidator extends CoalesceIterator {
             if (compareResult == Integer.MAX_VALUE)
             {
                 // Invalid Data Type
-                result = String.format(String.format(CoalesceErrors.INVALID_DATA_TYPE_NUMERIC, field.getName()));
+                result = String.format(CoalesceErrors.INVALID_DATA_TYPE_NUMERIC, field.getName());
                 break;
             }
             else if (compareResult < 0 || (!inclusive && compareResult == 0))

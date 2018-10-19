@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import org.apache.xerces.impl.dv.util.Base64;
@@ -40,14 +37,12 @@ public class CoalesceBinaryField extends CoalesceBinaryFieldBase<byte[]>{
         String rawValue = getBaseValue();
 
         if (rawValue == null)
-            return null;
-
-        if (rawValue != null && rawValue.length() > 0)
         {
-            byte[] bytes = Base64.decode(rawValue);
-
-            return bytes;
-
+            return null;
+        }
+        else if (rawValue.length() > 0)
+        {
+            return Base64.decode(rawValue);
         }
         else
         {

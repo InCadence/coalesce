@@ -40,7 +40,7 @@ public class JobMetricsCollectionAsync implements AutoCloseable {
     // Private Members
     // ----------------------------------------------------------------------//
 
-    private final ConcurrentLinkedQueue<JobNode> jobQueue = new ConcurrentLinkedQueue<JobNode>();
+    private final ConcurrentLinkedQueue<JobNode> jobQueue = new ConcurrentLinkedQueue<>();
     private ScheduledExecutorService scheduler;
     private ScheduledFuture<?> future;
     private TimeUnit units = TimeUnit.MINUTES;

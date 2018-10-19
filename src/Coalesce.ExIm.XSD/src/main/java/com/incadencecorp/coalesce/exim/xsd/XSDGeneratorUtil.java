@@ -20,10 +20,7 @@ package com.incadencecorp.coalesce.exim.xsd;
 import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -155,9 +152,7 @@ public final class XSDGeneratorUtil {
 
     private static final String UNBOUNDED = Integer.toString(5000);
 
-    private static final List<String> ATTRIBUTES_TO_OMIT = Arrays.asList(new String[] {
-        CoalesceEntity.ATTRIBUTE_CLASSNAME,
-    });
+    private static final List<String> ATTRIBUTES_TO_OMIT = Collections.singletonList(CoalesceEntity.ATTRIBUTE_CLASSNAME);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XSDGeneratorUtil.class);
 
@@ -354,11 +349,11 @@ public final class XSDGeneratorUtil {
         restriction.setAttribute(ATTRIBUTE_BASE, STRING_TYPE_NS);
         element.appendChild(restriction);
 
-        for (Iterator<E> it = EnumSet.allOf(clazz).iterator(); it.hasNext();)
+        for (E e : EnumSet.allOf(clazz))
         {
             Element enumeration = doc.createElementNS(NS_XML_URI, "enumeration");
             enumeration.setPrefix(NS_XML);
-            enumeration.setAttribute(ATTRIBUTE_VALUE, it.next().toString());
+            enumeration.setAttribute(ATTRIBUTE_VALUE, e.toString());
             restriction.appendChild(enumeration);
         }
 

@@ -108,24 +108,17 @@ public class GraphicsHelperTest {
 
     }
 
-    private static void cleanUpTestThumbnails()
+    private static void cleanUpTestThumbnails() throws IOException
     {
-        try
+        if (Files.exists(Paths.get(GraphicsHelperTest.FILE_FIELD_THUMBNAIL_PATH)))
         {
             Files.delete(Paths.get(GraphicsHelperTest.FILE_FIELD_THUMBNAIL_PATH));
         }
-        catch (IOException e1)
-        {
-        }
 
-        try
+        if (Files.exists(Paths.get(GraphicsHelperTest.NOT_FILE_FIELD_THUMBNAIL_PATH)))
         {
             Files.delete(Paths.get(GraphicsHelperTest.NOT_FILE_FIELD_THUMBNAIL_PATH));
         }
-        catch (IOException e)
-        {
-        }
-
     }
 
     @Test

@@ -70,7 +70,7 @@ public enum ECoalesceFieldDataTypes {
      */
     private static Map<String, ECoalesceFieldDataTypes> _mapping;
 
-    private ECoalesceFieldDataTypes(String label)
+    ECoalesceFieldDataTypes(String label)
     {
         this._label = label;
     }
@@ -130,7 +130,7 @@ public enum ECoalesceFieldDataTypes {
         if (_mapping == null)
         {
 
-            _mapping = new HashMap<String, ECoalesceFieldDataTypes>();
+            _mapping = new HashMap<>();
 
             for (ECoalesceFieldDataTypes s : values())
             {

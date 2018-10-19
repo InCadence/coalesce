@@ -11,23 +11,17 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.AfterClass;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceAssert;
 import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.common.helpers.DocumentThumbnailHelper.DocumentThumbnailResults;
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceEncrypter;
 
 public class DocumentThumbnailHelperTest {
 

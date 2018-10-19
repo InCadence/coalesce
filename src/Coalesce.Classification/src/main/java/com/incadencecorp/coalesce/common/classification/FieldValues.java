@@ -73,7 +73,7 @@ public class FieldValues {
     public static List<MarkingValue> getListOfClassifications(Marking marking, boolean all)
     {
 
-        ArrayList<MarkingValue> classList = new ArrayList<MarkingValue>();
+        ArrayList<MarkingValue> classList = new ArrayList<>();
 
         if (all)
         {
@@ -104,7 +104,7 @@ public class FieldValues {
             if (marking == null)
             {
 
-                return new ArrayList<MarkingValue>();
+                return new ArrayList<>();
 
             }
             else if (marking.isNATO())
@@ -124,13 +124,13 @@ public class FieldValues {
             else if (marking.getSelectedCountries().size() == 0)
             {
 
-                return new ArrayList<MarkingValue>();
+                return new ArrayList<>();
 
             }
             else if (marking.getSelectedCountries().size() < 2 && marking.isJOINT())
             {
 
-                return new ArrayList<MarkingValue>();
+                return new ArrayList<>();
 
             }
             else if (marking.isJOINT())
@@ -174,7 +174,7 @@ public class FieldValues {
     public static List<MarkingValue> getListOfSciControlSystems()
     {
 
-        List<MarkingValue> controlSystemList = new ArrayList<MarkingValue>();
+        List<MarkingValue> controlSystemList = new ArrayList<>();
 
         controlSystemList.add(new MarkingValue("", "COMINT", "SI", "SI"));
         // NOFORN must also be selected
@@ -197,7 +197,7 @@ public class FieldValues {
     public static List<MarkingValue> getListOfCompartments()
     {
 
-        List<MarkingValue> compartmentList = new ArrayList<MarkingValue>();
+        List<MarkingValue> compartmentList = new ArrayList<>();
 
         compartmentList.add(new MarkingValue("", "COMINT", "SI", "SI"));
         // NOFORN must also be selected
@@ -219,7 +219,7 @@ public class FieldValues {
     public static List<MarkingValue> getListOfSubCompartments()
     {
 
-        List<MarkingValue> subCompartmentList = new ArrayList<MarkingValue>();
+        List<MarkingValue> subCompartmentList = new ArrayList<>();
 
         subCompartmentList.add(new MarkingValue("", "COMINT", "SI", "SI"));
         // NOFORN must also be selected
@@ -240,7 +240,7 @@ public class FieldValues {
     public static List<ISO3166Country> getListOfCountries()
     {
 
-        List<ISO3166Country> countryList = new ArrayList<ISO3166Country>();
+        List<ISO3166Country> countryList = new ArrayList<>();
 
         countryList.add(new ISO3166Country("AF", "AFG", "AFGHANISTAN"));
         countryList.add(new ISO3166Country("ZA", "ZAF", "SOUTH AFRICA"));
@@ -516,9 +516,7 @@ public class FieldValues {
         if (filtered.isEmpty())
             return null;
 
-        ISO3166Country item = filtered.toArray(new ISO3166Country[filtered.size()])[0];
-
-        return item;
+        return filtered.toArray(new ISO3166Country[filtered.size()])[0];
 
     }
 
@@ -541,9 +539,7 @@ public class FieldValues {
         if (filtered.isEmpty())
             return null;
 
-        ISO3166Country item = filtered.toArray(new ISO3166Country[filtered.size()])[0];
-
-        return item;
+        return filtered.toArray(new ISO3166Country[filtered.size()])[0];
     }
 
     /**

@@ -594,7 +594,7 @@ public class XSDEximImplTest {
     private enum ETest {
         A,
         B,
-        C;
+        C
     }
 
 }
