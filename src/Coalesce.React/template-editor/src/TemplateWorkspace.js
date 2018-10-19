@@ -6,7 +6,7 @@ import { Template } from './TemplateObjects.js';
 import uuid from 'uuid';
 
 import { loadTemplates, loadTemplate, saveTemplate,registerTemplate, loadTemplateAsXML } from 'common-components/lib/js/templateController';
-import { saveFile } from 'common-components/lib/js/common';
+import { saveFile } from 'common-components/lib/js/file';
 
 import { loadJSON } from 'common-components/lib/js/propertyController';
 import {Menu} from 'common-components/lib/index';
