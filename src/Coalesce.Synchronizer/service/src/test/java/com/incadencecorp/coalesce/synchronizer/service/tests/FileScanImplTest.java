@@ -47,6 +47,8 @@ public class FileScanImplTest extends AbstractFileHandlerTests {
     private static final int SUB_DIR_LEN = 2;
 
     private static final Path ROOT = Paths.get("src", "test", "resources");
+    private static final Path FILE1_DIR = ROOT.resolve(FILE1.substring(0, SUB_DIR_LEN));
+    private static final Path FILE2_DIR = ROOT.resolve(FILE2.substring(0, SUB_DIR_LEN));
 
     /**
      * Creates files needed for these unit tests.
@@ -55,14 +57,18 @@ public class FileScanImplTest extends AbstractFileHandlerTests {
     public static void initialzie() throws Exception
     {
         // Create Files
-        Path path1 = ROOT.resolve(FILE1.substring(0, SUB_DIR_LEN)).resolve(FILE1);
-        Path path2 = ROOT.resolve(FILE2.substring(0, SUB_DIR_LEN)).resolve(FILE2);
+        if (!Files.exists(FILE1_DIR))
+        {
+            Files.createDirectory(FILE1_DIR);
+        }
 
-        Files.createDirectory(ROOT.resolve(FILE1.substring(0, SUB_DIR_LEN)));
-        Files.createDirectory(ROOT.resolve(FILE2.substring(0, SUB_DIR_LEN)));
+        if (!Files.exists(FILE2_DIR))
+        {
+            Files.createDirectory(FILE2_DIR);
+        }
 
-        Files.createFile(path1);
-        Files.createFile(path2);
+        Files.createFile(FILE1_DIR.resolve(FILE1));
+        Files.createFile(FILE2_DIR.resolve(FILE2));
 
         if (Files.exists(ROOT.resolve(CopyOperationImpl.class.getSimpleName())))
         {
@@ -107,20 +113,20 @@ public class FileScanImplTest extends AbstractFileHandlerTests {
         Assert.assertTrue(keys.contains(FILE1));
         Assert.assertTrue(keys.contains(FILE2));
 
-        Assert.assertTrue(Files.exists(ROOT.resolve(FILE1.substring(0, SUB_DIR_LEN))));
-        Assert.assertTrue(Files.exists(ROOT.resolve(FILE2.substring(0, SUB_DIR_LEN))));
+        Assert.assertTrue(Files.exists(FILE1_DIR));
+        Assert.assertTrue(Files.exists(FILE2_DIR));
 
-        Assert.assertTrue(Files.exists(ROOT.resolve(FILE1.substring(0, SUB_DIR_LEN)).resolve(FILE1)));
-        Assert.assertTrue(Files.exists(ROOT.resolve(FILE2.substring(0, SUB_DIR_LEN)).resolve(FILE2)));
+        Assert.assertTrue(Files.exists(FILE1_DIR.resolve(FILE1)));
+        Assert.assertTrue(Files.exists(FILE2_DIR.resolve(FILE2)));
 
         // This scanner should clean up its files.
         scanner.finished(true, results);
 
-        Assert.assertFalse(Files.exists(ROOT.resolve(FILE1.substring(0, SUB_DIR_LEN))));
-        Assert.assertFalse(Files.exists(ROOT.resolve(FILE2.substring(0, SUB_DIR_LEN))));
+        Assert.assertFalse(Files.exists(FILE1_DIR));
+        Assert.assertFalse(Files.exists(FILE2_DIR));
 
-        Assert.assertFalse(Files.exists(ROOT.resolve(FILE1.substring(0, SUB_DIR_LEN)).resolve(FILE1)));
-        Assert.assertFalse(Files.exists(ROOT.resolve(FILE2.substring(0, SUB_DIR_LEN)).resolve(FILE2)));
+        Assert.assertFalse(Files.exists(FILE1_DIR.resolve(FILE1)));
+        Assert.assertFalse(Files.exists(FILE2_DIR.resolve(FILE2)));
 
     }
 
