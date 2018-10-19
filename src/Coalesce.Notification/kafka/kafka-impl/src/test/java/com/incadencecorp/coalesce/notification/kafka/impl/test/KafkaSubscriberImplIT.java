@@ -85,7 +85,7 @@ public class KafkaSubscriberImplIT {
 
     }
 
-        @Test
+    @Test
     public void testSendTabs() throws Exception
     {
         ICoalesceNotifier notifier = new KafkaNotifierImpl();
@@ -123,7 +123,7 @@ public class KafkaSubscriberImplIT {
             Assert.assertEquals("Hello", event.getValue().get(0));
             Assert.assertEquals("World", event.getValue().get(1));
 
-        }, new ArrayList<String>().getClass());
+        }, ArrayList.class);
 
         while (true)
         {

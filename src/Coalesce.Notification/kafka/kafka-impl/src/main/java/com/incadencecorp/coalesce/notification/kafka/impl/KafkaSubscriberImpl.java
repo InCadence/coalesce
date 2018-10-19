@@ -156,8 +156,8 @@ public class KafkaSubscriberImpl extends CoalesceComponentImpl implements ICoale
         subscribe(topic, event -> {
 
             KeyValuePairEvent<V> kvp = new KeyValuePairEvent<>();
-            kvp.setKey(event.key().toString());
-            kvp.setValue(readValue(event.value().toString(), clazz));
+            kvp.setKey(event.key() != null ? event.key().toString() : null);
+            kvp.setValue(event.value() != null ? readValue(event.value().toString(), clazz) : null);
 
             handler.handle(kvp);
 
@@ -289,8 +289,10 @@ public class KafkaSubscriberImpl extends CoalesceComponentImpl implements ICoale
 
     private <V> V readValue(String json, Class<V> clazz)
     {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try
         {
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
             if (clazz == String.class)
             {
                 return (V) json;
@@ -303,6 +305,10 @@ public class KafkaSubscriberImpl extends CoalesceComponentImpl implements ICoale
         catch (IOException e)
         {
             throw new RuntimeException(e);
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader(cl);
         }
     }
 
