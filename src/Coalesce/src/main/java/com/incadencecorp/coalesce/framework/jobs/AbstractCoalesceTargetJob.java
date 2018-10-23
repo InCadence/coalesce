@@ -17,29 +17,28 @@
 
 package com.incadencecorp.coalesce.framework.jobs;
 
+import com.incadencecorp.coalesce.api.EJobStatus;
+import com.incadencecorp.coalesce.api.EResultStatus;
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
+import com.incadencecorp.coalesce.api.ICoalesceTargetJob;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
+import com.incadencecorp.coalesce.framework.tasks.MetricResults;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.incadencecorp.coalesce.api.EJobStatus;
-import com.incadencecorp.coalesce.api.EResultStatus;
-import com.incadencecorp.coalesce.api.ICoalesceTargetJob;
-import com.incadencecorp.coalesce.api.ICoalescePrincipal;
-import com.incadencecorp.coalesce.api.ICoalesceResponseType;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
-import com.incadencecorp.coalesce.framework.tasks.MetricResults;
-
 /**
  * Abstract base for jobs that spawn multiple task depending on parameters of
  * the input.
- * 
- * @author Derek
+ *
  * @param <INPUT> input type
+ * @author Derek
  */
 public abstract class AbstractCoalesceTargetJob<INPUT, OUTPUT extends ICoalesceResponseType<List<TASKOUTPUT>>, TASKOUTPUT extends ICoalesceResponseType<?>, TARGET>
         extends AbstractCoalesceJob<INPUT, OUTPUT, TASKOUTPUT> implements ICoalesceTargetJob<TARGET> {
@@ -58,7 +57,7 @@ public abstract class AbstractCoalesceTargetJob<INPUT, OUTPUT extends ICoalesceR
 
     /**
      * Sets the persistors that the task will be performed on.
-     * 
+     *
      * @param params task parameters.
      */
     public AbstractCoalesceTargetJob(INPUT params)
@@ -77,9 +76,8 @@ public abstract class AbstractCoalesceTargetJob<INPUT, OUTPUT extends ICoalesceR
     }
 
     /**
-     * @return the response with the job ID and status. Also includes the
-     *         results if completed or an error message if an exception was
-     *         thrown with the status of JOB_FAILED.
+     * @return the response with the job ID and status. Also includes the results if completed or an error message if an
+     * exception was thrown with the status of JOB_FAILED.
      */
     public final OUTPUT getResponse()
     {
@@ -143,7 +141,7 @@ public abstract class AbstractCoalesceTargetJob<INPUT, OUTPUT extends ICoalesceR
     public final OUTPUT doWork(ICoalescePrincipal principal, INPUT params) throws CoalesceException
     {
         OUTPUT response = createResponse();
-        
+
         // Default to Success
         response.setStatus(EResultStatus.SUCCESS);
 
@@ -151,7 +149,11 @@ public abstract class AbstractCoalesceTargetJob<INPUT, OUTPUT extends ICoalesceR
 
         for (AbstractTask<?, TASKOUTPUT, TARGET> task : tasks)
         {
-            task.setTarget(_target);
+            if (!task.isTargetSet())
+            {
+                task.setTarget(_target);
+            }
+
             task.setPrincipal(principal);
         }
 

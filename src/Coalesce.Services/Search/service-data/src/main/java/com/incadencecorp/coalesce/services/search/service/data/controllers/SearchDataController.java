@@ -153,7 +153,7 @@ public class SearchDataController {
                 sortBy[ii] = ff.sort(sort.getPropertyName(), SortOrder.valueOf(sort.getSortOrder().toString()));
             }
 
-            Query query = new Query();
+            Query query = new Query(searchQuery.getType());
             query.setFilter(filter);
             query.setProperties(properties);
             query.setSortBy(sortBy);

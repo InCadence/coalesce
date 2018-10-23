@@ -78,6 +78,14 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
     }
 
     /**
+     * @return whether or not the target has already been set for this task.
+     */
+    public final boolean isTargetSet()
+    {
+        return parameters.getTarget() != null;
+    }
+
+    /**
      * Sets the parameters.
      */
     public final void setParams(INPUT value)

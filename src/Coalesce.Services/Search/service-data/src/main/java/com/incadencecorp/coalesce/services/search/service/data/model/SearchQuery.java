@@ -9,12 +9,23 @@ import java.util.List;
 
 public class SearchQuery {
 
+    private String type;
     private SearchGroup group;
     private int pageSize;
     private int pageNumber;
     private List<SortByType> sortBy;
     private List<String> propertyNames;
     private final EnumSet<EPersistorCapabilities> capabilities = EnumSet.of(EPersistorCapabilities.SEARCH);
+
+    public String getType()
+    {
+        return type;
+    }
+
+    public void setType(String type)
+    {
+        this.type = type;
+    }
 
     public SearchGroup getGroup()
     {

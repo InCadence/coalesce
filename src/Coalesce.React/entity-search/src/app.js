@@ -269,6 +269,7 @@ export class App extends React.Component {
 
     // Create Query
     var query = {
+      "type": this.state.key ? this.state.cache[this.state.key].name : undefined,
       "pageSize": 200,
       "pageNumber": 1,
       "propertyNames": [],
