@@ -664,7 +664,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
     private boolean tableAlreadyExists(String tablename) throws SQLException
     {
-        ResultSet tables = _conn.getMetaData().getTables(null, "COALESCE", "%", null);
+        ResultSet tables = _conn.getMetaData().getTables(null, schema.toUpperCase(), "%", null);
 
         while (tables.next())
         {
@@ -927,7 +927,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
         try
         {
-            sb = new StringBuilder("CREATE TABLE coalesce.CoalesceEntity" + "(");
+            sb = new StringBuilder("CREATE TABLE " + schema + ".CoalesceEntity" + "(");
             sb.append(COLUMNS.getKey() + " VARCHAR(128) NOT NULL,");
             sb.append(COLUMNS.getName() + " VARCHAR(256),");
             sb.append(COLUMNS.getSource() + " VARCHAR(256), ");
@@ -960,7 +960,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
         try
         {
-            sb = new StringBuilder("CREATE TABLE coalesce.CoalesceEntityTemplate ( ");
+            sb = new StringBuilder("CREATE TABLE " + schema + ".CoalesceEntityTemplate ( ");
             sb.append(COLUMNS.getKey() + " VARCHAR(128) NOT NULL, ");
             sb.append(COLUMNS.getName() + " VARCHAR(128), ");
             sb.append(COLUMNS.getSource() + " VARCHAR(128), ");
@@ -986,7 +986,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         }
         try
         {
-            sb = new StringBuilder("CREATE TABLE coalesce.CoalesceLinkage ( ");
+            sb = new StringBuilder("CREATE TABLE " + schema + ".CoalesceLinkage ( ");
             sb.append(COLUMNS.getKey() + " VARCHAR(128) NOT NULL,");
             sb.append(" entitykey VARCHAR(128), ");
             sb.append(COLUMNS.getName() + " VARCHAR(256),");

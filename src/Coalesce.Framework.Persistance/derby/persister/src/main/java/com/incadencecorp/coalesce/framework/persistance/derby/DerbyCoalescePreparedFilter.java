@@ -68,14 +68,15 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
     private static final String ENTITY_KEY_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey());
 
-    private static final String SQL_COLUMNS = "coalesce.coalesceentity.objectkey AS " + ENTITY_KEY_COL_NAME + "%1$s";
+    private static final String SQL_COLUMNS = "%s.coalesceentity.objectkey AS " + ENTITY_KEY_COL_NAME + "%2$s";
     private static final String COMMA_SPACE = ", ";
     private static final String COALESCEENTITY = "coalesceentity";
     private static final String QUESTION_MARK = "?";
     private static final String ST_FROM_TEXT = "ST_GeomFromText(?, %s)";
     private static final String DOT = ".";
     private static final EFilterEnumerationModes MODE = EFilterEnumerationModes.ENUMVALUE;
-    private static final int SSRID = PostGreSQLSettings.getSRID();
+
+    private static final int SSRID = DerbySettings.getSRID();
     private static final boolean USE_DISPLAY_NAME = false;
 
     /**
@@ -84,10 +85,10 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
      * <p>
      * TODO Enumeration joins need to be reworked.
      */
-    private static final String SQL_ENUMVALUE_JOIN = " LEFT JOIN coalesce.enumvalue AS E%1$s ON E%1$s.enumtype=lower('%2$s') AND %3$s = E%1$s.ordering";
+    private static final String SQL_ENUMVALUE_JOIN = " LEFT JOIN %s.enumvalue AS E%1$s ON E%1$s.enumtype=lower('%2$s') AND %3$s = E%1$s.ordering";
 
     private static final String SQL_ENUM_ASSOCIATED_JOIN = SQL_ENUMVALUE_JOIN
-            + " LEFT JOIN coalesce.associatedenumvalue AS E%1$sA ON  E%1$sA.enumvalueuuid=E%1$s.uuid AND E%1$sA.valuedescriptor = 'name'";
+            + " LEFT JOIN %s.associatedenumvalue AS E%1$sA ON  E%1$sA.enumvalueuuid=E%1$s.uuid AND E%1$sA.valuedescriptor = 'name'";
 
     private static final String SQL_ENUMVALUE_PROPERTY_NAME = "enumvalue";
 
@@ -1098,7 +1099,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
             {
                 // from = currentTable;
                 sb.append(" LEFT JOIN " + currentTable + " ON " + currentTable + "." + column
-                                  + "=coalesce.coalesceentity.objectkey");
+                                  + "=" + databaseSchema + ".coalesceentity.objectkey");
 
             }
             else
@@ -1115,6 +1116,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
         for (String enumParam : enumList)
         {
             sb.append(String.format(getEnumJoinSQL(),
+                                    databaseSchema,
                                     enumList.indexOf(enumParam),
                                     EnumerationProviderUtil.lookupEnumeration(enumParam),
                                     enumParam));
@@ -1139,13 +1141,13 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     public String getColumns(String postfix)
     {
 
-        StringBuilder sb = new StringBuilder(String.format(SQL_COLUMNS, postfix));
+        StringBuilder sb = new StringBuilder(String.format(SQL_COLUMNS, databaseSchema, postfix));
 
         if (propertyNameList != null)
         {
             for (String column : propertyNameList)
             {
-                String normalizedColumn = column.replaceAll("coalesce\\.|[.\"]", "");
+                String normalizedColumn = column.replaceAll(databaseSchema + "\\.|[.\"]", "");
 
                 if (isEnumeration(column))
                 {

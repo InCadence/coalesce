@@ -16,6 +16,7 @@
  -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.framework.persistance.derby;
 
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.search.AbstractSearchTest;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.junit.Assume;
@@ -42,6 +43,7 @@ public class DerbyPersistorSearchTest extends AbstractSearchTest<DerbyPersistor>
         connector.setReadOnly(true);
 
         DerbySettings.setConnector(connector);
+        CoalesceSettings.setConnector(connector);
     }
 
     @Override

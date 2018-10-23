@@ -18,6 +18,7 @@ package com.incadencecorp.coalesce.framework.persistance.derby;
 
 import java.nio.file.Paths;
 
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import org.junit.BeforeClass;
 
 import com.incadencecorp.coalesce.framework.persistance.AbstractCoalescePersistorTest;
@@ -42,6 +43,7 @@ public class DerbyPersistorTest extends AbstractCoalescePersistorTest<DerbyPersi
         connector.setReadOnly(true);
         
         DerbySettings.setConnector(connector);
+        CoalesceSettings.setConnector(connector);
     }
 
     @Override

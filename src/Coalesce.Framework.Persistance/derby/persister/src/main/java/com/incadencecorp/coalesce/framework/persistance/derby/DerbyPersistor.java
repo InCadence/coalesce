@@ -999,7 +999,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         try
         {
             // Create SQL Query
-            DerbyCoalescePreparedFilter preparedFilter = new DerbyCoalescePreparedFilter(DerbySettings.getDatabaseSchema());
+            DerbyCoalescePreparedFilter preparedFilter = new DerbyCoalescePreparedFilter(_schema);
             preparedFilter.setPageNumber(query.getStartIndex());
             preparedFilter.setPageSize(query.getMaxFeatures());
             preparedFilter.setSortBy(query.getSortBy());
