@@ -40,6 +40,8 @@ public enum ELinkTypes {
     IS_PRODUCT_OF("IsProductOf"),
     HAS_PRODUCT("HasProduct");
 
+    private static final Object SYNC_INIT = new Object();
+
     private String _label;
 
     /**
@@ -53,10 +55,15 @@ public enum ELinkTypes {
 
     private static void initMapping() {
 
-        if (_codeToStatusMapping == null) {
-            _codeToStatusMapping = new HashMap<>();
-            for (ELinkTypes s: values()) {
-                _codeToStatusMapping.put(s._label.toLowerCase(), s);
+        synchronized (SYNC_INIT)
+        {
+            if (_codeToStatusMapping == null)
+            {
+                _codeToStatusMapping = new HashMap<>();
+                for (ELinkTypes s : values())
+                {
+                    _codeToStatusMapping.put(s._label.toLowerCase(), s);
+                }
             }
         }
     }

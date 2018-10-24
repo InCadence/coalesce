@@ -1,19 +1,20 @@
 package com.incadencecorp.coalesce.framework.testobjects;
 
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-
-public enum EActionStatuses
-{
-    CollectionPending("pending"), 
-    CollectionInProgress("inprogress"), 
-    CollectionComplete("complete"), 
-    ExploitationRequired("exploitation_required"), 
-    ExploitationPending("exploitation_pending"), 
-    ExploitationComplete("exploitation_complete"), 
+public enum EActionStatuses {
+    CollectionPending("pending"),
+    CollectionInProgress("inprogress"),
+    CollectionComplete("complete"),
+    ExploitationRequired("exploitation_required"),
+    ExploitationPending("exploitation_pending"),
+    ExploitationComplete("exploitation_complete"),
     Unknown("unknown");
+
+    private static final Object SYNC_INIT = new Object();
 
     private String _label;
 
@@ -35,26 +36,31 @@ public enum EActionStatuses
 
     private static void initMapping()
     {
-        if (_codeToStatusMapping == null)
+        synchronized (SYNC_INIT)
         {
-            _codeToStatusMapping = new HashMap<>();
-            for (EActionStatuses s : values())
+            if (_codeToStatusMapping == null)
             {
-                _codeToStatusMapping.put(s._label.toLowerCase(), s);
+                _codeToStatusMapping = new HashMap<>();
+                for (EActionStatuses s : values())
+                {
+                    _codeToStatusMapping.put(s._label.toLowerCase(), s);
+                }
             }
         }
     }
 
     public static EActionStatuses fromLabel(String label)
     {
-        
+
         initMapping();
-        
-        if (StringHelper.isNullOrEmpty(label)) return EActionStatuses.Unknown;
-    
+
+        if (StringHelper.isNullOrEmpty(label))
+            return EActionStatuses.Unknown;
+
         EActionStatuses value = _codeToStatusMapping.get(label.trim().toLowerCase());
 
-        if (value == null) value = EActionStatuses.Unknown;
+        if (value == null)
+            value = EActionStatuses.Unknown;
 
         return value;
     }

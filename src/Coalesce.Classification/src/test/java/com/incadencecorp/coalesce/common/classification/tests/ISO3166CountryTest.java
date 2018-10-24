@@ -65,8 +65,7 @@ public class ISO3166CountryTest {
     public void countryConstructorNullAlpha2Test()
     {
 
-        @SuppressWarnings("unused")
-        ISO3166Country country = new ISO3166Country(null, "Test2", "Test3");
+        new ISO3166Country(null, "Test2", "Test3");
 
     }
 
@@ -74,8 +73,7 @@ public class ISO3166CountryTest {
     public void countryConstructorNullAlpha3Test()
     {
 
-        @SuppressWarnings("unused")
-        ISO3166Country country = new ISO3166Country("Test1", null, "Test3");
+        new ISO3166Country("Test1", null, "Test3");
 
     }
 
@@ -83,8 +81,7 @@ public class ISO3166CountryTest {
     public void countryConstructorNullNameTest()
     {
 
-        @SuppressWarnings("unused")
-        ISO3166Country country = new ISO3166Country("Test1", "Test2", null);
+        new ISO3166Country("Test1", "Test2", null);
 
     }
 
@@ -101,8 +98,7 @@ public class ISO3166CountryTest {
     public void countryConstructorWithAlpha3EqualToNullTest()
     {
 
-        @SuppressWarnings("unused")
-        ISO3166Country country = ISO3166Country.withAlpha3EqualTo(null);
+        ISO3166Country.withAlpha3EqualTo(null);
 
     }
 

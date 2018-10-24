@@ -1091,7 +1091,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     public boolean hasDisseminationControls()
     {
         return isRSEN() || isFOUO() || isORCON() || isIMCON() || isNOFORN() || isDSEN() || isDisplayOnly() || isFISA()
-                || isNOFORN() || isPROPIN() || isPROPIN() || isReleaseTo() || isRELIDO();
+                || isNOFORN() || isPROPIN() || isReleaseTo() || isRELIDO();
     }
 
     /**

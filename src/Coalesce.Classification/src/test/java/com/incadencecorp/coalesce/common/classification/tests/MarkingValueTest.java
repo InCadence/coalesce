@@ -63,8 +63,7 @@ public class MarkingValueTest {
     public void markingValueNullParentArgConstructorTest()
     {
 
-        @SuppressWarnings("unused")
-        MarkingValue mv = new MarkingValue(null, "title1", "abbreviation1", "portion1");
+        new MarkingValue(null, "title1", "abbreviation1", "portion1");
 
     }
 
@@ -72,8 +71,7 @@ public class MarkingValueTest {
     public void markingValueNullTitleArgConstructorTest()
     {
 
-        @SuppressWarnings("unused")
-        MarkingValue mv = new MarkingValue("parent1", null, "abbreviation1", "portion1");
+        new MarkingValue("parent1", null, "abbreviation1", "portion1");
 
     }
 
@@ -81,8 +79,7 @@ public class MarkingValueTest {
     public void markingValueNullAbbreviationArgConstructorTest()
     {
 
-        @SuppressWarnings("unused")
-        MarkingValue mv = new MarkingValue("parent1", "title1", null, "portion1");
+        new MarkingValue("parent1", "title1", null, "portion1");
 
     }
 
@@ -90,8 +87,7 @@ public class MarkingValueTest {
     public void markingValueNullPortionArgConstructorTest()
     {
 
-        @SuppressWarnings("unused")
-        MarkingValue mv = new MarkingValue("parent1", "title1", "abbreviation1", null);
+        new MarkingValue("parent1", "title1", "abbreviation1", null);
 
     }
 

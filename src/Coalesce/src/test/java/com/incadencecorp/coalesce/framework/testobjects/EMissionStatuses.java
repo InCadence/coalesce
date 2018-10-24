@@ -1,19 +1,19 @@
 package com.incadencecorp.coalesce.framework.testobjects;
 
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-
-
-public enum EMissionStatuses
-{
+public enum EMissionStatuses {
     Pending("pending"),
     InProgress("inprogress"),
     Complete("complete"),
     Cancelled("cancelled"),
     Deleted("deleted"),
     Unknown("unknown");
+
+    private static final Object SYNC_INIT = new Object();
 
     private String _label;
 
@@ -35,12 +35,15 @@ public enum EMissionStatuses
 
     private static void initMapping()
     {
-        if (_codeToStatusMapping == null)
+        synchronized (SYNC_INIT)
         {
-            _codeToStatusMapping = new HashMap<>();
-            for (EMissionStatuses s : values())
+            if (_codeToStatusMapping == null)
             {
-                _codeToStatusMapping.put(s._label.toLowerCase(), s);
+                _codeToStatusMapping = new HashMap<>();
+                for (EMissionStatuses s : values())
+                {
+                    _codeToStatusMapping.put(s._label.toLowerCase(), s);
+                }
             }
         }
     }
@@ -50,11 +53,13 @@ public enum EMissionStatuses
 
         initMapping();
 
-        if (StringHelper.isNullOrEmpty(label)) return EMissionStatuses.Unknown;
+        if (StringHelper.isNullOrEmpty(label))
+            return EMissionStatuses.Unknown;
 
         EMissionStatuses value = _codeToStatusMapping.get(label.trim().toLowerCase());
 
-        if (value == null) value = EMissionStatuses.Unknown;
+        if (value == null)
+            value = EMissionStatuses.Unknown;
 
         return value;
     }

@@ -174,7 +174,7 @@ public class FilterUtilIT {
 
     }
 
-    private class AssertTemporialFilterVistor extends AbstractFilterVisitor {
+    private static class AssertTemporialFilterVistor extends AbstractFilterVisitor {
 
         @Override
         public Object visit(During during, Object extraData)
@@ -205,7 +205,7 @@ public class FilterUtilIT {
                 }
 
                 isValid = after.getExpression1().toString().contains("Derek") && after.getExpression2().toString().contains(
-                        "Instant:");
+                        "Instant");
             }
 
             return isValid;
@@ -228,7 +228,7 @@ public class FilterUtilIT {
 
                 isValid =
                         before.getExpression1().toString().contains("Derek") && before.getExpression2().toString().contains(
-                                "Instant:");
+                                "Instant");
             }
 
             return isValid;
@@ -324,7 +324,7 @@ public class FilterUtilIT {
 
     }
 
-    private class AssertContainsFilterVistor extends AbstractFilterVisitor {
+    private static class AssertContainsFilterVistor extends AbstractFilterVisitor {
 
         @Override
         public Object visit(BBOX filter, Object data)
@@ -425,7 +425,7 @@ public class FilterUtilIT {
 
     }
 
-    private class AssertIsMactingCaseFilterVistor extends AbstractFilterVisitor {
+    private static class AssertIsMactingCaseFilterVistor extends AbstractFilterVisitor {
 
         @Override
         public Object visit(PropertyIsEqualTo filter, Object extraData)

@@ -79,8 +79,11 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     private static final WKTReader WKT_READER = new WKTReader();
     private static final String EPSG4326 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
 
+    private static final Random RANDOM = new Random();
+
     private CoordinateReferenceSystem crs;
     private Boolean isInitialized = false;
+    private Object SYNC_INIT = new Object();
 
     protected abstract T createPersister() throws CoalescePersistorException;
 
@@ -90,7 +93,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     @Before
     public void registerEntities() throws Exception
     {
-        synchronized (isInitialized)
+        synchronized (SYNC_INIT)
         {
             if (!isInitialized)
             {
@@ -1054,7 +1057,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         // Create Record
         TestRecord record = entity.addRecord1();
-        record.getIntegerField().setValue((new Random()).nextInt());
+        record.getIntegerField().setValue(RANDOM.nextInt());
         record.getStringField().setValue("MERICA");
         record.getDateField().setValue(new DateTime());
 
@@ -1288,7 +1291,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         // set fields
         TestRecord record = entity.addRecord1();
-        record.getIntegerField().setValue((new Random()).nextInt());
+        record.getIntegerField().setValue(RANDOM.nextInt());
         record.getStringField().setValue("MERICA");
         record.getDateField().setValue(new DateTime());
 
