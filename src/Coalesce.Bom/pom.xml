@@ -56,12 +56,6 @@
                         <target>1.8</target>
                     </configuration>
                 </plugin>
-                <!-- Required to use scp when deploying site documentation -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.7.1</version>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
@@ -217,38 +211,6 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.9</version>
-                <reportSets>
-                    <reportSet>
-                        <configuration>
-                            <skip>true</skip>
-                        </configuration>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-changelog-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <type>tag</type>
-                    <tags>
-                        <tag implementation="java.lang.String">${changelog.start.tag}</tag>
-                        <tag implementation="java.lang.String">${changelog.end.tag}</tag>
-                    </tags>
-                </configuration>
-            </plugin>
-            -->
-        </plugins>
-    </reporting>
 
     <modules>
         <module>../Coalesce.Pom</module>
