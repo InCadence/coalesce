@@ -11,7 +11,7 @@ stages:
   - install
   - test
   - name: deploy
-    if: branch = master || branch = codequality || (branch = release && tag IS present)
+    if: branch = master || (branch = release && tag IS present)
   - name: deploy-karaf
     if: (branch = release && tag IS present)
 jobs:
