@@ -62,7 +62,9 @@ public class DerbyMappingTest {
         CoalesceSearchFramework framework = new CoalesceSearchFramework();
         framework.setAuthoritativePersistor(persistor1);
         framework.setSecondaryPersistors(persistor2);
-        framework.registerTemplates(CoalesceEntityTemplate.create(entity1));
+
+        persistor1.registerTemplate(CoalesceEntityTemplate.create(entity1));
+        persistor2.registerTemplate(CoalesceEntityTemplate.create(entity1));
 
         persistor1.saveEntity(false, entity1);
         persistor2.saveEntity(false, entity2);

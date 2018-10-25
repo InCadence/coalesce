@@ -36,6 +36,7 @@ while true; do
 		echo "isSnapshot set to: ${isSnapshot}"
 
 		mvn versions:set -DnewVersion=${version} -f ${parentpom}
+        find ../Coalesce.React -maxdepth 2 -type f -path '*/package.json' -exec sed -i "s|${preVersion}|${version}|" {} +
 
 		#set tags
 		if [ "${isSnapshot}" = false ] ; then

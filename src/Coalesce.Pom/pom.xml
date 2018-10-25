@@ -1,123 +1,123 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>coalesce-pom</artifactId>
-	<packaging>pom</packaging>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>coalesce-pom</artifactId>
+    <packaging>pom</packaging>
 
-	<parent>
-		<groupId>com.incadencecorp.coalesce</groupId>
-		<artifactId>coalesce-bom</artifactId>
-		<version>0.0.31-SNAPSHOT</version>
-		<relativePath>../Coalesce.Bom</relativePath>
-	</parent>
+    <parent>
+        <groupId>com.incadencecorp.coalesce</groupId>
+        <artifactId>coalesce-bom</artifactId>
+        <version>0.0.31</version>
+        <relativePath>../Coalesce.Bom</relativePath>
+    </parent>
 
-	<modules>
-		<module>../Coalesce</module>
-		<module>../Coalesce.Classification</module>
-		<module>../Coalesce.Notification</module>
-		<module>../Coalesce.Search</module>
-		<module>../Coalesce.Synchronizer</module>
-		<module>../Coalesce.ExIm.XSD</module>
-		<module>../Coalesce.Services</module>
-		<module>../Coalesce.Framework.Persistance</module>
-		<module>../Coalesce.Feature</module>
-		<module>../Coalesce.Plugins</module>
-		<module>../Coalesce.Core.Feature</module>
-	</modules>
+    <modules>
+        <module>../Coalesce</module>
+        <module>../Coalesce.Classification</module>
+        <module>../Coalesce.Notification</module>
+        <module>../Coalesce.Search</module>
+        <module>../Coalesce.Synchronizer</module>
+        <module>../Coalesce.ExIm.XSD</module>
+        <module>../Coalesce.Services</module>
+        <module>../Coalesce.Framework.Persistance</module>
+        <module>../Coalesce.Plugins</module>
+        <module>../Coalesce.Core.Feature</module>
+    </modules>
 
-	<!-- Build flags to skip components -->
-	<properties>
+    <!-- Build flags to skip components -->
+    <properties>
 
-		<!-- Skips creating docker images -->
+        <!-- Skips creating docker images -->
         <skipDocker>false</skipDocker>
 
-		<!-- Skips 'npm version' and 'npm install' -->
+        <!-- Skips 'npm version' and 'npm install' -->
         <skipNPM>false</skipNPM>
 
-	</properties>
+    </properties>
 
-	<!-- Profiles to include directories -->
-	<profiles>
-		<profile>
-			<id>bundles</id>
-			<modules>
-				<module>../Coalesce.Bundles</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>react</id>
-			<modules>
-				<module>../Coalesce.React</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>dist</id>
-			<modules>
-				<module>../Coalesce.Dist</module>
-			</modules>
-		</profile>
-	</profiles>
+    <!-- Profiles to include directories -->
+    <profiles>
+        <profile>
+            <id>bundles</id>
+            <modules>
+                <module>../Coalesce.Bundles</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>react</id>
+            <modules>
+                <module>../Coalesce.React</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>dist</id>
+            <modules>
+                <module>../Coalesce.Feature</module>
+                <module>../Coalesce.Dist</module>
+            </modules>
+        </profile>
+    </profiles>
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-	<dependencies>
+    <dependencies>
 
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.osgi.core</artifactId>
-			<version>${felix.osgi.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.4</version>
-			<!--<version>1.6.2</version>-->
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.5</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>${felix.osgi.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.4</version>
+            <!--<version>1.6.2</version>-->
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>
