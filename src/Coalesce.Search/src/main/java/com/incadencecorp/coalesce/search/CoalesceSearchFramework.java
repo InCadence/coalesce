@@ -24,6 +24,7 @@ import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.DefaultNormalizer;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
@@ -36,7 +37,9 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -47,6 +50,7 @@ import java.util.concurrent.ExecutorService;
 public class CoalesceSearchFramework extends CoalesceFramework {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceSearchFramework.class);
+    private final Map<String, ICoalesceSearchPersistor> mapping = new HashMap<>();
 
     /**
      * Creates this framework with the default ThreadPoolExecutor based on
@@ -60,11 +64,26 @@ public class CoalesceSearchFramework extends CoalesceFramework {
     /**
      * Creates this framework with the provided executor service.
      *
-     * @param service
+     * @param service used for executing jobs / tasks
      */
     public CoalesceSearchFramework(ExecutorService service)
     {
         super(service);
+    }
+
+    /**
+     * Defines explicit mappings by template names
+     */
+    public void setMapping(Map<String, ICoalesceSearchPersistor> mapping)
+    {
+        DefaultNormalizer normalizer = new DefaultNormalizer();
+
+        this.mapping.clear();
+
+        for (Map.Entry<String, ICoalesceSearchPersistor> entry : mapping.entrySet())
+        {
+            this.mapping.put(normalizer.normalize(entry.getKey()), entry.getValue());
+        }
     }
 
     /**
@@ -99,6 +118,7 @@ public class CoalesceSearchFramework extends CoalesceFramework {
 
             CoalesceSearchJob job = new CoalesceSearchJob(Arrays.asList(queries));
             job.setTarget(persistor);
+            job.setMappings(mapping);
             job.setExecutor(this);
 
             ICoalesceResponseType<List<SearchResults>> response = job.call();
@@ -116,7 +136,7 @@ public class CoalesceSearchFramework extends CoalesceFramework {
         {
             results = new ArrayList<>();
 
-            for (int ii = 0; ii < queries.length; ii++)
+            for (Query ignored : queries)
             {
                 SearchResults result = new SearchResults();
                 result.setStatus(EResultStatus.FAILED);

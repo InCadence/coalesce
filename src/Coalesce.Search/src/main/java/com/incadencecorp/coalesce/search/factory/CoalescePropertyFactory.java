@@ -34,9 +34,18 @@ public class CoalescePropertyFactory {
 
     private static FilterFactory2 ff;
 
-    private static final String SEPERATOR = ".";
-    private static final String COALESCE_ENTITY_TABLE = "coalesceentity" + SEPERATOR;
-    private static final String COALESCE_LINKAGE_TABLE = "coalescelinkage" + SEPERATOR;
+    /**
+     * Separator used for property names when creating filters (recordsetname.fieldname)
+     */
+    public static final String SEPERATOR = ".";
+    /**
+     * The name to use for the recordset when specifying attributes of the root entity element.
+     */
+    public static final String COALESCE_ENTITY_TABLE = "coalesceentity" + SEPERATOR;
+    /**
+     * The name to use for the recordset when specifying fields of a linkage.
+     */
+    public static final String COALESCE_LINKAGE_TABLE = "coalescelinkage" + SEPERATOR;
 
     /**
      * Overrides the default factory.

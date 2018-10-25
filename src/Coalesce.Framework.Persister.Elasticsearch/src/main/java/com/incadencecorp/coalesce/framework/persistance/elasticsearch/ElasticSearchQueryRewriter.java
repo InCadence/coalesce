@@ -20,6 +20,7 @@ package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
@@ -36,8 +37,11 @@ import org.opengis.filter.sort.SortBy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Walks through a Filter, re-writing any property names removing the tablename from the property along with the /
@@ -142,9 +146,9 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
         // See if a valid feature name was set in the query.  If
         // so make sure it is the first in the list
-        if ((newQuery.getTypeName() != null) && (!newQuery.getTypeName().equalsIgnoreCase("coalesce")))
+        if (!StringHelper.isNullOrEmpty(newQuery.getTypeName()) && !newQuery.getTypeName().equalsIgnoreCase("coalesce"))
         {
-            addFeature(newQuery.getTypeName());
+            features.add(normalizer.normalize(newQuery.getTypeName()));
         }
 
         // Clear the type name from the query
@@ -197,8 +201,10 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
         newQuery.setHints(hints);
 
-        // Now go through the features used and figure
-        // out what is the key feature
+        // Now go through the features used and figure out what is the key feature
+
+        // Remove ENTITY_FEATURE_NAME if it is also used.
+        features.removeIf(s -> s.equalsIgnoreCase("coalesceentity"));
 
         // If there are none use coalesceentity
         if (features.isEmpty())
@@ -211,22 +217,12 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         }
         else
         {
-            // Remove ENTITY_FEATURE_NAME if it is also used.
-            Predicate<String> namePredicate = s -> s.equalsIgnoreCase("coalesceentity");
-            features.removeIf(namePredicate);
-
-            // Now if there is more than one feature throw an exception
-            if (features.size() > 1)
+            LOGGER.debug("Features:");
+            for (String feature : features)
             {
-                LOGGER.debug("Features:");
-                for (String feature : features)
-                {
-                    LOGGER.debug("\t{}", feature);
-                }
-                throw new CoalescePersistorException("Multiple featuretypes in query is not supported");
+                LOGGER.debug("\t{}", feature);
             }
-
-            newQuery.setTypeName(getTypeName(features.iterator().next()));
+            throw new CoalescePersistorException("Multiple featuretypes in query is not supported");
         }
 
         features.clear();

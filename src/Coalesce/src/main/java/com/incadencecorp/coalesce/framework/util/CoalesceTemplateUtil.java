@@ -48,7 +48,7 @@ public final class CoalesceTemplateUtil {
     private static final Map<String, Map<String, ECoalesceFieldDataTypes>> TYPES = new HashMap<>();
 
     /**
-     * Contains the mast list of fields for every record set specified by the templates.
+     * Contains the master list of fields for every record set specified by the templates.
      */
     private static final Map<String, ECoalesceFieldDataTypes> MASTER_TYPES = new HashMap<>();
 
@@ -314,7 +314,7 @@ public final class CoalesceTemplateUtil {
 
     /**
      * @param name of the recordset
-     * @return all a list of templates that contain the specified record set.
+     * @return a list of templates that contain the specified record set.
      */
     public static Set<String> getTemplateKey(String name)
     {
