@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Walks through a Filter, re-writing any property names removing the tablename from the property along with the /
@@ -203,24 +204,32 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
         // Now go through the features used and figure out what is the key feature
 
-        // Remove ENTITY_FEATURE_NAME if it is also used.
-        features.removeIf(s -> s.equalsIgnoreCase("coalesceentity"));
+        // Convert to Index Names
+        Set<String> types = new HashSet<>();
+
+        for (String feature : features)
+        {
+            if (!feature.equalsIgnoreCase("coalesceentity"))
+            {
+                types.add(getTypeName(feature));
+            }
+        }
 
         // If there are none use coalesceentity
-        if (features.isEmpty())
+        if (types.isEmpty())
         {
             newQuery.setTypeName(ElasticSearchPersistor.COALESCE_ENTITY_INDEX);
         }
-        else if (features.size() == 1)
+        else if (types.size() == 1)
         {
-            newQuery.setTypeName(getTypeName(features.iterator().next()));
+            newQuery.setTypeName(types.iterator().next());
         }
         else
         {
             LOGGER.debug("Features:");
-            for (String feature : features)
+            for (String type : types)
             {
-                LOGGER.debug("\t{}", feature);
+                LOGGER.debug("\t{}", type);
             }
             throw new CoalescePersistorException("Multiple featuretypes in query is not supported");
         }
@@ -230,7 +239,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         return newQuery;
     }
 
-    private String getTypeName(String feature)
+    private String getTypeName(String feature) throws CoalescePersistorException
     {
         if (feature.equalsIgnoreCase("coalesceentity"))
         {
@@ -242,7 +251,25 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         }
         else
         {
-            return ElasticSearchPersistor.COALESCE_ENTITY_INDEX + "-" + normalizer.normalize(feature);
+            String name;
+            Set<ObjectMetaData> templates = CoalesceTemplateUtil.getTemplatesContainingRecordset(feature);
+
+            if (templates.size() == 0)
+            {
+                name = feature;
+            }
+            else
+            {
+                name = templates.iterator().next().getName();
+
+                if (templates.size() > 1)
+                {
+                    LOGGER.warn("(WARN) Could not determine index; recordset ({}) exists in multiple templates", feature);
+                    templates.iterator().forEachRemaining(meta -> LOGGER.warn("\t{} : {}", meta.getKey(), meta.getName()));
+                }
+            }
+
+            return ElasticSearchPersistor.COALESCE_ENTITY_INDEX + "-" + normalizer.normalize(name);
         }
     }
 
@@ -261,7 +288,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
             if (!features.contains(feature))
             {
-                addFeature(feature);
+                features.add(feature);
             }
 
             normalized = normalizer.normalize(parts[0], parts[1]);
@@ -272,32 +299,6 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         }
 
         return normalized;
-    }
-
-    private void addFeature(String feature)
-    {
-        if (feature.equalsIgnoreCase("coalesceentity") || feature.equalsIgnoreCase("coalescelinkage"))
-        {
-            features.add(feature);
-        }
-        else
-        {
-            Set<ObjectMetaData> templates = CoalesceTemplateUtil.getTemplatesContainingRecordset(feature);
-
-            if (templates.size() == 1)
-            {
-                features.add(templates.iterator().next().getName());
-            }
-            else if (templates.size() == 0)
-            {
-                LOGGER.error("(ERROR) Could not determine index; recordset ({}) does not exists in templates", feature);
-            }
-            else
-            {
-                LOGGER.error("(ERROR) Could not determine index; recordset ({}) exists in multiple templates", feature);
-                templates.iterator().forEachRemaining(meta -> LOGGER.error("\t{} : {}", meta.getKey(), meta.getName()));
-            }
-        }
     }
 
 }

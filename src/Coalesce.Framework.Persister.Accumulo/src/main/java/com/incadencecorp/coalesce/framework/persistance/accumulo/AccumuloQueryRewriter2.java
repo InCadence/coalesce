@@ -2,6 +2,7 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.geotools.data.Query;
 import org.geotools.factory.CommonFactoryFinder;
@@ -53,7 +54,12 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
         // so make sure it is the first in the list
         if ((newQuery.getTypeName() != null) && (!newQuery.getTypeName().equalsIgnoreCase("coalesce")))
         {
-            features.add(normalizer.normalize(newQuery.getTypeName()));
+            // Reference a recordset?
+            if (CoalesceTemplateUtil.getTemplateKey(newQuery.getTypeName()).size() == 1)
+            {
+                // Yes; Add to feature list
+                features.add(normalizer.normalize(newQuery.getTypeName()));
+            }
         }
         // Clear the type name from the query
         newQuery.setTypeName(null);

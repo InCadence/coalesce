@@ -28,7 +28,12 @@ import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKTReader;
 import org.geotools.data.Query;
 import org.geotools.filter.text.cql2.CQL;
@@ -1044,6 +1049,42 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     }
 
     /**
+     * This test ensures that the query can be made using the entity name or recordset name.
+     */
+    @Test
+    public void testTypename() throws Exception
+    {
+        T persistor = createPersister();
+        Query query;
+
+        // Create Entity
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
+        record.getStringField().setValue("Hello World");
+
+        persistor.registerTemplate(CoalesceEntityTemplate.create(entity));
+        persistor.saveEntity(false, entity);
+
+        // Recordset Name
+        query = new Query(TestEntity.RECORDSET1, CoalescePropertyFactory.getEntityKey(entity.getKey()));
+        Assert.assertEquals(1, persistor.search(query).getTotal());
+
+        // Recordset Name
+        query = new Query(TestEntity.RECORDSET1.toUpperCase(), CoalescePropertyFactory.getEntityKey(entity.getKey()));
+        Assert.assertEquals(1, persistor.search(query).getTotal());
+
+        // Entity Name
+        query = new Query(TestEntity.NAME, CoalescePropertyFactory.getEntityKey(entity.getKey()));
+        query.setPropertyNames(new String[] {CoalescePropertyFactory.getFieldProperty(record.getStringField()).getPropertyName()});
+        Assert.assertEquals(1, persistor.search(query).getTotal());
+
+        // Entity Name
+        query = new Query(TestEntity.NAME.toLowerCase(), CoalescePropertyFactory.getEntityKey(entity.getKey()));
+        Assert.assertEquals(1, persistor.search(query).getTotal());
+    }
+
+    /**
      * This test creates an entity and updates it. Then verifies that returning the updated property shows the updated value and not the original.
      */
     @Test
@@ -1076,7 +1117,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
 
         // Create Query
-        Query query = new Query(TestEntity.getTest1RecordsetName(), CQL.toFilter(cql));
+        Query query = new Query(TestEntity.RECORDSET1, CQL.toFilter(cql));
         query.setProperties(props);
 
         // Search
