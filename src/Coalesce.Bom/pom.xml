@@ -2,14 +2,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>coalesce-bom</artifactId>
-    <version>0.0.31-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>coalesce.bom</name>
 
     <parent>
         <groupId>com.incadencecorp.coalesce</groupId>
         <artifactId>coalesce-parent</artifactId>
-        <version>0.0.31-SNAPSHOT</version>
+        <version>0.0.32-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
 

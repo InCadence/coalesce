@@ -2,7 +2,7 @@
   "name": "settings",
   "title": "Settings",
   "icon": "/images/svg/settings.svg",
-  "version": "0.0.31-SNAPSHOT",
+  "version": "0.0.32-SNAPSHOT",
   "description": " This UI for modifying settings on a server",
   "main": "index.js",
   "author": "InCadence",
