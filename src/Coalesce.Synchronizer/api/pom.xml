@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.synchronizer</groupId>
         <artifactId>coalesce-synchronizer-parent</artifactId>
-        <version>0.0.31</version>
+        <version>0.0.32-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
