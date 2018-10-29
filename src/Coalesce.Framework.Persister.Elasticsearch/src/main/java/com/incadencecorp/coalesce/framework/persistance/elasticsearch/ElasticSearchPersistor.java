@@ -85,8 +85,15 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
     public boolean checkIfIndexExists(AbstractClient client, String index)
     {
+        index = index.toLowerCase();
+
+        if (!index.startsWith("coalesce"))
+        {
+            index = "coalesce-" + index;
+        }
+
         IndicesExistsRequest request = new IndicesExistsRequest();
-        request.indices(index.toLowerCase());
+        request.indices(index);
 
         IndicesExistsResponse response = client.admin().indices().exists(request).actionGet();
         return response.isExists();
