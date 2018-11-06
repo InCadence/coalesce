@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<!-- targetNamespace="http://framework.coalesce.incadencecorp.com/datamodel" -->
+	<!-- xmlns:tns="http://framework.coalesce.incadencecorp.com/datamodel" -->
+	<!-- elementFormDefault="qualified" attributeFormDefault="qualified"> -->
+
+	<!-- version = version of the schema used to generate the object -->
+	<!-- objectversion = version of the object -->
+
+	<xs:element name="entity">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="coalesceObjectHistoryType">
+					<xs:sequence>
+						<xs:element ref="linkagesection" />
+						<xs:element ref="section" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+					<xs:attribute name="source" type="xs:string" />
+					<xs:attribute name="version" type="xs:string" />
+					<xs:attribute name="entityid" type="xs:string" />
+					<xs:attribute name="entityidtype" type="xs:string" />
+					<xs:attribute name="title" type="xs:string" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="linkagesection">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="coalesceObjectHistoryType">
+					<xs:sequence>
+						<xs:element ref="linkage" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="linkage">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="coalesceObjectHistoryType">
+					<xs:attribute name="entity1key" type="xs:string" />
+					<xs:attribute name="entity1name" type="xs:string" />
+					<xs:attribute name="entity1source" type="xs:string" />
+					<xs:attribute name="entity1version" type="xs:string" />
+					<xs:attribute name="linktype" type="xs:string" />
+					<xs:attribute name="entity2key" type="xs:string" />
+					<xs:attribute name="entity2name" type="xs:string" />
+					<xs:attribute name="entity2source" type="xs:string" />
+					<xs:attribute name="entity2version" type="xs:string" />
+					<xs:attribute name="entity2objectversion" type="xs:int" />
+					<xs:attribute name="classificationmarking" type="xs:string" />
+					<xs:attribute name="inputlang" type="xs:language" />
+					<xs:attribute name="label" type="xs:string" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="history">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="coalesceObjectType">
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="section">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="coalesceObjectHistoryType">
+					<xs:sequence>
+						<xs:element ref="recordset" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element ref="section" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="recordset">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="coalesceObjectHistoryType">
+					<xs:sequence>
+						<xs:element ref="fielddefinition" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element ref="record" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+					<xs:attribute name="minrecords" type="xs:int" default="0" />
+					<xs:attribute name="maxrecords" type="xs:int" default="0"/>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="fielddefinition">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="coalesceObjectType">
+					<xs:sequence>
+						<xs:element ref="constraint" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+					<xs:attribute name="defaultclassificationmarking"
+						type="xs:string" />
+					<xs:attribute name="defaultvalue" type="xs:string" />
+					<xs:attribute name="datatype" type="xs:string" />
+					<xs:attribute name="label" type="xs:string" />
+					<xs:attribute name="disablehistory" type="xs:boolean" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="constraint">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="coalesceObjectType">
+					<xs:sequence />
+					<xs:attribute name="type" type="constraintType" />
+					<xs:attribute name="value" type="xs:string" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="record">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="coalesceObjectHistoryType">
+					<xs:sequence>
+						<xs:element ref="field" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="field">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="coalesceFieldType">
+					<xs:sequence>
+						<xs:element ref="fieldhistory" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+					<xs:attribute name="disablehistory" type="xs:boolean" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="fieldhistory">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="coalesceFieldType">
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="coalesceFieldType">
+		<xs:complexContent>
+			<xs:extension base="coalesceObjectType">
+				<xs:attribute name="datatype" type="xs:string" />
+				<xs:attribute name="classificationmarking" type="xs:string" />
+				<xs:attribute name="label" type="xs:string" />
+				<xs:attribute name="value" type="xs:string" />
+				<xs:attribute name="inputlang" type="xs:language" />
+<!-- 				<xs:attribute name="filename" type="xs:string" /> -->
+<!-- 				<xs:attribute name="extension" type="xs:string" /> -->
+<!-- 				<xs:attribute name="mimetype" type="xs:string" /> -->
+<!-- 				<xs:attribute name="size" type="xs:string" /> -->
+<!-- 				<xs:attribute name="hash" type="xs:string" /> -->
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="coalesceObjectHistoryType">
+		<xs:complexContent>
+			<xs:extension base="coalesceObjectType">
+				<xs:sequence>
+					<xs:element ref="history" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="disablehistory" type="xs:boolean" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="coalesceObjectType">
+		<xs:attribute name="key" type="xs:string" />
+		<xs:attribute name="datecreated" type="xs:dateTime" />
+		<xs:attribute name="lastmodified" type="xs:dateTime" />
+		<xs:attribute name="name" type="xs:string" />
+		<xs:attribute name="status" type="ECoalesceObjectStatus" />
+		<xs:attribute name="noindex" type="xs:boolean" />
+		<xs:attribute name="modifiedby" type="xs:string" />
+		<xs:attribute name="modifiedbyip" type="xs:string" />
+		<xs:attribute name="objectversion" type="xs:int" />
+		<xs:attribute name="objectversionstatus" type="ECoalesceObjectStatus" />
+		<xs:attribute name="previoushistorykey" type="xs:string" />
+		<xs:anyAttribute namespace="##other" processContents="skip" />
+	</xs:complexType>
+
+	<xs:simpleType name="ECoalesceObjectStatus">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="new" />
+			<xs:enumeration value="active" />
+			<xs:enumeration value="deleted" />
+			<xs:enumeration value="readonly" />
+			<xs:enumeration value="unknown" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="constraintType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="regex" />
+			<xs:enumeration value="mandatory" />
+			<xs:enumeration value="min" />
+			<xs:enumeration value="max" />
+			<xs:enumeration value="enumeration" />
+			<xs:enumeration value="size" />
+			<xs:enumeration value="custom" />
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>
+
