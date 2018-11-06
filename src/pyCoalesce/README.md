@@ -13,3 +13,7 @@ created in earlier tests, thereby avoiding either repeated creation and
 deletion of entities, or testing against a mocked-up API.  (The latter would
 be unnecessarily time-consuming to create, and wouldn't catch bugs in the API
 itself, which was still a consideration when this wrapper was created.)
+
+To recreate the distribution files, run the following command from this directory (typical options have been included):
+
+python setup.py sdist bdist_egg bdist_wheel
