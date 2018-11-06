@@ -17,8 +17,8 @@ from requests import HTTPError
 
 from pyCoalesce.coalesce_request import *
 from pyCoalesce.coalesce_request import _test_key
-from pyCoalesce.classes import parseString, CoalesceEntityTemplate, find_child, \
-                               get_child_attrib, to_XML_string, \
+from pyCoalesce.classes import parseString, CoalesceEntityTemplate, \
+                               find_child, get_child_attrib, to_XML_string, \
                                CoalesceAPILinkage, CoalesceLinkage
 
 
@@ -385,7 +385,8 @@ class EntityTests(ServerTest):
         self.assertTrue(self.template2_key in key_list)
         self.assertTrue(self.template3_key in key_list)
 
-        templates_JSON = get_template_list(server = self.server, output = "JSON")
+        templates_JSON = get_template_list(server = self.server,
+                                           output = "JSON")
         template_JSON_list = json.loads(templates_JSON)
         key_JSON_list = [template["key"] for template in template_JSON_list]
         self.assertTrue(self.template1_key in key_JSON_list)
@@ -405,7 +406,8 @@ class EntityTests(ServerTest):
         new_template2 = parseString(new_template2_XML,
                                     object_class = CoalesceEntityTemplate,
                                     silence = True)
-        success2 = update_template(server = self.server, template = new_template2,
+        success2 = update_template(server = self.server,
+                                   template = new_template2,
                                    key = self.template2_key)
         self.assertTrue(success1)
 
@@ -461,8 +463,9 @@ class EntityTests(ServerTest):
 
         cls = self.__class__
 
-        # It's best to create random keys while the test suite is running, so
-        # that we don't accidentally access entities from an earlier test.
+        # It's best to create random keys while the test suite is running,
+        # so that we don't accidentally access entities from an earlier
+        # test.
         cls.entity1_key = unicode(uuid4())
         entity2_UUID = uuid4()
         cls.entity3_key = unicode(uuid4())
@@ -586,18 +589,19 @@ class EntityTests(ServerTest):
         """
         Create one set of test linkages for each types of input, with three
         linkages in each set, to allow testing both single-linkage and
-        multiple-linkage input.  This also tests the linkage classes and their
-        constructor and output methods.
+        multiple-linkage input.  This also tests the linkage classes and
+        their constructor and output methods.
 
-        Note that this method doesn't feature any asserts--it just throws an
-        error is something goes wrong.
+        Note that this method doesn't feature any asserts--it just throws
+        an error is something goes wrong.
         """
 
         # Set for dict input
-        cls.linkage01_dict = {"source": cls.entity1_key, "target": cls.entity2_key,
-                              "type": "UNDEFINED"}
-        cls.linkage02_dict = {"source": cls.entity2_key, "target": cls.entity3_key,
-                              "label": "Brain hurts", "type": "IS_PARENT_OF"}
+        cls.linkage01_dict = {"source": cls.entity1_key,
+                              "target": cls.entity2_key, "type": "UNDEFINED"}
+        cls.linkage02_dict = {"source": cls.entity2_key,
+                              "target": cls.entity3_key, "label": "Brain hurts",
+                              "type": "IS_PARENT_OF"}
         cls.linkage03_dict = {"source": cls.entity3_key,
                               "target": cls.entity4_key,
                               "type": "IS_BEING_WATCHED_BY",

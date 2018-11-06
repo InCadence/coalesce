@@ -2,12 +2,14 @@
 """
 
 This subclass allows the creation of template objects that can be used to
-create new instances of class "entity", along with their child objects.  The
-subclass can be imported directly from the :mod:`pyCoalesce.classes` module.
+create new instances of class "entity", along with their child objects.
+The subclass can be imported directly from the :mod:`pyCoalesce.classes`
+module.
 
 The :meth:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate.new_entity`
-method doesn't properly with iPython's auto-reload feature.  This problem can
-be overcome by restarting the kernel and reimporting everything at once.
+method doesn't properly with iPython's auto-reload feature.  This problem
+can be overcome by restarting the kernel and reimporting everything at
+once.
 
 """
 
@@ -31,9 +33,9 @@ ExternalEncoding = ''
 
 class CoalesceEntityTemplate(CoalesceEntity):
     """
-    Adds a method to create a regular entity from the template, and overrides
-    the "build" method to store the XML representation needed to build the
-    new entity, thereby avoiding repeated calls of
+    Adds a method to create a regular entity from the template, and
+    overrides the "build" method to store the XML representation needed to
+    build the new entity, thereby avoiding repeated calls of
     :func:`pyCoalesce.classes.entity_utilities.parseString`.
 
     :ivar XML:  an XML representation of the template, stored as a string.
@@ -53,31 +55,33 @@ class CoalesceEntityTemplate(CoalesceEntity):
     :ivar section:  a list of the template's :class:`sections
         <pyCoalesce.classes.coalesce_entity.sectionSub>`, and by
         extension, the sections of any entity created from the template
-    :ivar noindex:  a boolean indicating whether or not to index the template
-        for search
+    :ivar noindex:  a boolean indicating whether or not to index the
+        template for search
     :ivar disablehistory:  a boolean that serves as a default value for the
         same attribute for entities created from the template, specifying
-        whether or not each entity's history of revisions should be retained
+        whether or not each entity's history of revisions should be
+        retained
     :ivar datecreated:  the date on which the template was created.  If not
         specified, this attribute will be set by the server.
     :ivar entityid:  a unique, searchable ID used by some specific
         applications
     :ivar entityidtype:  the type of entityid in use
-    :ivar status:  the current status (active, read only, or deleted) of the
-        entity.  While "status" is set by the server, and therefore not
-        included in the class constructor, the attribute can be set directly,
-        and the server will accept modifications to its value in an entity update.
+    :ivar status:  the current status (active, read only, or deleted) of
+        the entity.  While "status" is set by the server, and therefore not
+        included in the class constructor, the attribute can be set
+        directly, and the server will accept modifications to its value in
+        an entity update.
     :ivar lastmodified:  the date on which the template was last modified
         (set by the server)
     :ivar modifiedby:  the last user to modify the template (set by the
          server)
-    :ivar modifiedbyip:  the ip of the last user to modify the template (set
-        by the server)
+    :ivar modifiedbyip:  the ip of the last user to modify the template
+        (set by the server)
     :ivar linkagesection:  a child object of class
         :class:`~pyCoalesce.classes.coalesce_entity.CoalesceLinkageSection`
         that contains an entity's :class:`linkages
-        <pyCoalesce.classes.coalesce_entity.linkageSub>`; included in templates,
-        but not used in any way
+        <pyCoalesce.classes.coalesce_entity.linkageSub>`; included in
+        templates, but not used in any way
 
     """
 
@@ -126,20 +130,22 @@ class CoalesceEntityTemplate(CoalesceEntity):
         return
 
 
-    def new_entity(self, key = None, populate_min_records = True, silence = True):
+    def new_entity(self, key = None, populate_min_records = True,
+                   silence = True):
         """
         Creates a new instance of class
-        :class:`pyCoalesce.classes.coalesce_entity.CoalesceEntity` based on the
-        template.  The method adds the template object as an attribute of the
-        new entity.
+        :class:`pyCoalesce.classes.coalesce_entity.CoalesceEntity` based on
+        the template.  The method adds the template object as an attribute
+        of the new entity.
 
-        :param key:  a UUID key, as a string.  For most applications, there's
-            no real reason to supply one, since the server returns the key
-            when a new entity is created
-        :param populate_min_records:  if ``True``, build a number of records in
-            each recordset equal to "minrecords" for that recordset.
-        :param silence:  if ``False``, print the XML representation of the new
-            entity to ``stdout``.
+        :param key:  a UUID key, as a string.  For most applications,
+            there's no real reason to supply one, since the server returns
+            the key when a new entity is created
+        :param populate_min_records:  if ``True``, build a number of
+            records in each recordset equal to "minrecords" for that
+            recordset.
+        :param silence:  if ``False``, print the XML representation of the
+            new entity to ``stdout``.
 
         :returns:  a new instance of class
             :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`

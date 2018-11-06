@@ -2,17 +2,17 @@
 """
 @author: dvenkat & sorr
 
-This is the main module for :mod:`pyCoalesce`, and provides search functions
-for the Coalesce RESTful API's search controller, CRUD functions for the
-entity, template, and linkage controllers, and a handful of helper functions,
-as well as a class for storing server configurations.  See
-https://github.com/InCadence/coalesce/wiki/REST-API for documentation of the
-API itself.
+This is the main module for :mod:`pyCoalesce`, and provides search
+functions for the Coalesce RESTful API's search controller, CRUD functions
+for the entity, template, and linkage controllers, and a handful of helper
+functions, as well as a class for storing server configurations.  See
+https://github.com/InCadence/coalesce/wiki/REST-API for documentation of
+the API itself.
 
-Note that while the entity and template controllers support both XML and JSON,
-the search and linkage controllers support *only* JSON.
+Note that while the entity and template controllers support both XML and
+JSON, the search and linkage controllers support *only* JSON.
 
-At present, the functions in this module  do not quite cover the entire API:
+At present, the functions in this module do not quite cover the entire API:
 they omit the recordset and field endpoints for the template controller
 (these endpoints provide nothing that can't be obtained by retrieving an
 entire template), and the (rarely used) property contoller.
@@ -74,10 +74,10 @@ OPERATIONS = {
 ENTITY_UPLOAD_OPERATIONS = (u"create", u"update", u"create_template",
                             u"update_template")
 
-# Eventually, the following list of operations should be available through the
-# "property" API, at which point it might be possible to downloaded it rather
-# than hard-code it.  However, hard-coding may still be necessary to specify
-# the proper numbers of arguments.
+# Eventually, the following list of operations should be available through
+# the "property" API, at which point it might be possible to downloaded it
+# rather than hard-code it.  However, hard-coding may still be necessary to
+# specify the proper numbers of arguments.
 SEARCH_OPERATORS = {
         u"EqualTo": 1,
         u"GreaterThan": 1,
@@ -95,8 +95,8 @@ SEARCH_OPERATORS = {
     }
 """
 The keys are the valid search operations, and the values are the number of
-arguments required for each operator (a ``None`` indicates that the operation
-isn't yet implemented in this wrapper).
+arguments required for each operator (a ``None`` indicates that the
+operation isn't yet implemented in this wrapper).
 
 """
 
@@ -110,8 +110,8 @@ LINK_CRUD_OUTPUT_FORMATS = (u"json", u"dict_list", u"api_list")
 class UnexpectedResponseWarning(Warning):
     """
     This warning is used to indicate that an API operation has returned an
-    unexpected status code (typically, a value in the 200's other than 200 or
-    204).
+    unexpected status code (typically, a value in the 200's other than 200
+    or 204).
 
     """
 
@@ -122,7 +122,7 @@ class CoalesceServer(object):
     """
     Provides configuration information for a Coalesce server, so that
     there's no need to input it again for each new request.  Note that
-    this class is _not_ an open connection--it's just a container for
+    this class is *not* an open connection--it's just a container for
     common request parameters.
 
     :ivar URL:  the URL of the Coalesce server
@@ -133,7 +133,7 @@ class CoalesceServer(object):
         "keep-alive".
     :ivar max_attempts:  the number of times to attempt each request,
         using the exponential backoff coded into
-        :func:'pyCoalesce.utilities.API_request.get_response'
+        :func:`pyCoalesce.utilities.API_request.get_response`
 
     """
 
@@ -145,13 +145,13 @@ class CoalesceServer(object):
         """
         :param URL:  the URL of the Coalesce server
         :param CRUD_persistor:  "data" here directs Coalesce to use the
-            default persistor for CRUD operations (this may be different from
-            the search persistor), while any other value directs Coalesce to
-            use the matching secondary persistor.
+            default persistor for CRUD operations (this may be different
+            from the search persistor), while any other value directs
+            Coalesce to use the matching secondary persistor.
         :param search_persistor:  "data" here directs Coalesce to use the
             default persistor for search operations (this may be different
-            from the CRUD persistor), while any other value directs Coalesce
-            to use the matching secondary persistor.
+            from the CRUD persistor), while any other value directs
+            Coalesce to use the matching secondary persistor.
         :param connection:  a request header, with valid values of
             "keep-alive" and "close.  There's probably no reason not to use
             the default for this argument.
@@ -176,15 +176,15 @@ class CoalesceServer(object):
                             'or Unicode string.')
 
         if not isinstance(search_persistor, basestring):
-            raise TypeError('The argument "search_persistor" must be an ASCII ' +
-                            'or Unicode string.')
+            raise TypeError('The argument "search_persistor" must be an ' +
+                            'ASCII or Unicode string.')
 
         self.persistors = {u"CRUD": CRUD_persistor, u"search": search_persistor}
 
         # Set the base headers as a dict.
         if connection not in self._VALID_CONNECTION_TYPES:
             raise ValueError('The connection type must be either ' +
-                             '"keep-alive" or "close."')
+                             'or "close."')
         self.base_headers = {"Connection" : connection}
 
         # Set the maximum number of connection attempts
@@ -202,12 +202,13 @@ def _construct_URL(server_obj = None, operation = "read", key = None,
                    name_source_version = None):
     """
     A helper function to construct the RESTful API endpoint from the
-    configuration constants.  This function doesn't handle the final
-    "json" or "xml" element of some endpoints--since that element changes
-    the format of the server's response, it's best to handle it within
-    the calling functions, which also parses the response.
+    configuration constants.  This function doesn't handle the final "json"
+    or "xml" element of some endpoints--since that element changes the
+    format of the server's response, it's best to handle it within the
+    calling functions, which also parses the response.
 
-    :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer` object
+    :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
+        object
     :param operation:  one of the keys in the constant "OPERATIONS"
     :param key:  a string version of an entity's UUID key
     :param name_source_version:  an entity's name, source, and version (in
@@ -294,25 +295,25 @@ def search(server = None, query = None, sort_by = None,
         object or the URL of a Coalesce server
     :param query:  the search query (the value of "group" in a `Coalesce
         search request object
-        <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`),
-        as dict-like or a JSON object (string).  For the most part, this query
-        must follow the Coalesce format exactly, but operators not in the
-        right form (upper camelcase) are replaced with the proper forms,
-        provided they're included in the
+        <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`_),
+        as dict-like or a JSON object (string).  For the most part, this
+        query must follow the Coalesce format exactly, but operators not
+        in the right form (upper camelcase) are replaced with the proper
+        form, provided they're included in the
         :const:`~pyCoalesce.coalesce_request.SEARCH_OPERATORS` constant.
     :param sort_by:  one or more properties (fields) on which the results
         should be sorted, along with the sort order ("ASC" for ascending,
         "DESC" for descending), as an iterable, a dict-like (for a single
         field), or a JSON object (string).  Each entry must take the form
         `{"propertyName": <recordset>.<field>, "sortOrder": <sort order>}`;
-        for basic entity fields, such as "name" and "dateCreated", give just
-        the field name, with no recordset.
+        for basic entity fields, such as "name" and "dateCreated", give
+        just the field name, with no recordset.
     :param property_names:  an iterable naming the properties (fields) to
         return for each search result.  The values, each in the format
         `<recordset>.<field>`, are passed directly to the appropriate
-        persistor(s) underlying Coalesce, and for most persistors, these names
-        are case-insensitive  Note that the "entityKey" property is always
-        returned, regardless of the value of this argument.
+        persistor(s) underlying Coalesce, and for most persistors, these
+        names are case-insensitive  Note that the "entityKey" property is
+        always returned, regardless of the value of this argument.
     :param page_size:  the number of results to return
     :param page_number:  used to retrieve results deeper in the list.  For
         example, a query with "page_size" 250 and "page_number" 3 returns
@@ -341,9 +342,9 @@ def search(server = None, query = None, sort_by = None,
             search criteria set
         :param fragment_is_criteria:  used by the function to determine
             whether to treat "query_fragment" as a search group or a
-            criteria set; this makes it possible to avoid checking the
-            case of search group operators, which are case-insensitive
-            in the Coalesce RESTful API.
+            criteria set; this makes it possible to avoid checking the case
+            of search group operators, which are case-insensitive in the
+            Coalesce RESTful API.
 
         :returns:  a possibly modified version of the input object
 
@@ -375,8 +376,8 @@ def search(server = None, query = None, sort_by = None,
         return query_fragment
 
 
-    # Set the request parameters.  We use a copy of the base headers so that
-    # the header added here isn't preserved in the server object.
+    # Set the request parameters.  We use a copy of the base headers so
+    # that the header added here isn't preserved in the server object.
 
     if isinstance(server, basestring):
         server_obj = CoalesceServer(server)
@@ -399,9 +400,9 @@ def search(server = None, query = None, sort_by = None,
     headers["Content-type"] = "application/json"
 
 
-    # Form the request.  Note that we don't test the validity of the
-    # query--we let the API do that, which prevents the wrapper from
-    # blocking the usage of new features.
+    # Form the request.  Note that we don't test the validity of the query--
+    # we let the API do that, which prevents the wrapper from blocking the
+    # usage of new features.
     #
     # In the case of a query submitted as a JSON object, converting the
     # JSON to dict and then back again makes this particular coder twitch,
@@ -423,8 +424,8 @@ def search(server = None, query = None, sort_by = None,
         if isinstance(sort_by, basestring):
             sort_by = json.loads(sort_by)
 
-        # If "sort_by" is a single entry rather than list-like, wrap it in a
-        # list.
+        # If "sort_by" is a single entry rather than list-like, wrap it in
+        # a list.
         try:
             sort_by[0]
         except KeyError:
@@ -433,8 +434,8 @@ def search(server = None, query = None, sort_by = None,
         data["sortBy"] = sort_by
 
     # Convert any search operator not in the proper case, recursively
-    # searching through the search criteria sets in the query ("group").  Do
-    # the same for the sort order(s).
+    # searching through the search criteria sets in the query ("group").
+    # Do the same for the sort order(s).
     if check_case:
         data["group"] = _case_operators(data["group"])
         if sort_by:
@@ -470,8 +471,8 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
 
     """
     Constructs a query with a single criteria set, then calls the "search"
-    function using that query.  This mirrors the deprecated simple search in
-    the Java API.
+    function using that query.  This mirrors the deprecated simple search
+    in the Java API.
 
     :param server:  A :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
@@ -485,9 +486,10 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
         (for operators requiring a single argument), an iterable of two
         strings or numbers (for operators requiring a pair of arguments),
         or ``None`` (for operators that take no arguments).
-    :param match_case:  if ``True``, results should match the case of "value".
-        Some of the persistors underlying Coalesce are case-insensitive
-        when matching values, regardless of the value of "match_case."
+    :param match_case:  if ``True``, results should match the case of
+        "value".  Some of the persistors underlying Coalesce are
+        case-insensitive when matching values, regardless of the value of
+        "match_case."
     :param property_names:  an iterable naming the properties (fields) to
         return for each search result.  The values are passed directly to
         the appropriate persistor(s) underlying Coalesce, and for most
@@ -500,8 +502,8 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
         results 501 to 750.
     :param output:  If this argument is "list", return the results as a
         Python :class:`list`; for "full_dict", return the full response,
-        including metadata, as a :class:`dict`.  For "JSON" return the full
-        response, unparsed, including metadata, as a Unicode string.
+        including metadata, as a :class:`dict`.  For "JSON" return the
+        full response, unparsed, including metadata, as a Unicode string.
 
     :returns:  a :class:`list`, :class:`dict`, or JSON object, depending on
         the value of "output".
@@ -564,10 +566,10 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
 
 def _test_key(key):
     """
-    Determines the format of an input UUID key, and, if necessary, transforms
-    the input into a string.  If the input is an iterable or JSON array of
-    keys, the function throws an error, thereby serving as a test for whether
-    the input is a single key or an iterable.
+    Determines the format of an input UUID key, and, if necessary,
+    transforms the input into a string.  If the input is an iterable or
+    JSON array of keys, the function throws an error, thereby serving as a
+    test for whether the input is a single key or an iterable.
 
     :param key:  the key to be tested and transformed into a string
 
@@ -575,9 +577,10 @@ def _test_key(key):
 
     """
 
-    key_error_msg = 'The argument "key" must be a UUID key, as an instance of ' + \
-                     'the class uuid.UUID, or any string or integer that ' + \
-                     'could serve as input for that class\'s class constructor.'
+    key_error_msg = 'The argument "key" must be a UUID key, as an instance ' + \
+                     'of the class uuid.UUID, or any string or integer ' + \
+                     'that could serve as input for that class\'s class ' + \
+                     'constructor.'
 
     if isinstance(key, basestring):
 
@@ -616,47 +619,50 @@ def construct_entity(server = None, template = None, key = None, fields = None):
     """
     A convenience function to retrieve a template from the Coalesce server,
     construct an entity using that template, and (optionally) fill any or
-    all of the entity's fields with specified values.  Returns an instance of
-    :class:`pyCoalesce.classes.coalesce_entity.CoalesceEntity` (which can
-    then be submitted to the server with the "create" function), including the
-    minimum number of records in each recordset, and a template object as an
-    attribute of the entity object.
+    all of the entity's fields with specified values.  Returns an instance
+    of :class:`pyCoalesce.classes.coalesce_entity.CoalesceEntity` (which
+    can then be submitted to the server with the "create" function),
+    including the minimum number of records in each recordset, and a
+    template object as an attribute of the entity object.
 
     This function replaces a "GET" endpoint for the RESTful API's templates
-    controller that produces the equivalent result of returning a new entity
-    that has not yet been saved in a database.  When the server creates such
-    an entity, it assigns keys to fields and other child objects, and these
-    keys prevent the entity from being copied on the client side in order to
-    create multiple entities from the same template without calling the
-    endpoint each time, a problem not shared by entities created through this
-    function.  Alternately, supplying a
+    controller that produces the equivalent result of returning a new
+    entity that has not yet been saved in a database.  When the server
+    creates such an entity, it assigns keys to fields and other child
+    objects, and these keys prevent the entity from being copied on the
+    client side in order to create multiple entities from the same template
+    without calling the endpoint each time, a problem not shared by
+    entities created through this function.  Alternately, supplying a
     :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`
     allows this function to be called multiple times without calling the
     server at all.
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
-        object or the URL of a Coalesce server.  If "template" is an instance of
+        object or the URL of a Coalesce server.  If "template" is an
+        instance of
         :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`,
-        no server is needed; this is one way of avoiding unnecessary calls to
-        the API server when creating multiple entities.
+        no server is needed; this is one way of avoiding unnecessary calls
+        to the API server when creating multiple entities.
     :param template:  a Coalesce template (UUID) key, an iterable containing
         the template's name, source, and version (in that order), or a
         :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`
         object
-    :param key:  a UUID to serve as the key for the new entity, as either an
-        instance of the :class:`uuid.UUID` class, or any string or integer
-        that could serve as input to the :class:`UUID <uuid.UUID>` class
-        constructor.  If this argument is omitted, the server will generate a
-        random key when creating the entity.
+    :param key:  a UUID to serve as the key for the new entity, as either
+        an instance of the :class:`uuid.UUID` class, or any string or
+        integer that could serve as input to the :class:`UUID <uuid.UUID>`
+        class constructor.  If this argument is omitted, the server will
+        generate a random key when creating the entity.
     :param fields:  a dict-like of fields possessed by the new entity, and
-        values to set on those fields.  The keys can be either string (ASCII
-        or Unicode) names (in which case the function searches for each field,
-        and throws an error if duplicates are found) or path lists,
-        alternating between child object type and list index.  The values of
-        the dict-like must be the values to be set on the "value" attribute
-        of each field--use another method for setting other attributes.
+        values to set on those fields.  The keys can be either string
+        (ASCII or Unicode) names (in which case the function searches for
+        each field, and throws an error if duplicates are found) or path
+        lists, alternating between child object type and list index.  The
+        values of the dict-like must be the values to be set on the "value"
+        attribute of each field--use another method for setting other
+        attributes.
 
-    :returns:  an instance of :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`
+    :returns:  an instance of
+        :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`
 
     """
 
@@ -696,35 +702,36 @@ def save_entity(server = None, entity = None, key = None, operation = u"create")
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
-    :param entity:  the entity to upload to the server.  This can be a JSON or
-        XML representation of an entity, a nested dict-like in the same format
-        as a JSON respresentation, or an instance of :class:'CoalesceEntity
-        <pyCoalesce.classes.CoalesceEntity>' (or a subclass); the function
-        automatically detects the input type and adjusts the RESTful endpoint
-        and requests headers accordingly.
+    :param entity:  the entity to upload to the server.  This can be a JSON
+        or XML representation of an entity, a nested dict-like in the same
+        format as a JSON respresentation, or an instance of
+        :class:'CoalesceEntity <pyCoalesce.classes.CoalesceEntity>' (or a
+        subclass); the function automatically detects the input type and
+        adjusts the RESTful endpoint and requests headers accordingly.
     :param key:  a UUID to serve as the key for the entity, as either an
         instance of the :class:`uuid.UUID` class, or any string or integer
         that could serve as input to the :class:`UUID <uuid.UUID>` class
         constructor.  Alternately, the key can be contained in "entity";
-        however, if "entity" contains a key _and_ a key is supplied separately
-        (as the "key" argumet), the two keys must match, or an error will be
-        raised.  When creating a new regular entity, supplying a key (either
-        as part of "entity" or separately) is optional:  if no key is
-        supplied, the server generates one randomly.  In the case of a new
-        template, the server generates a key by hashing the name, source, and
-        version.  Because of this, a key should never be supplied for a new
-        template, and it is important to note that modifying the name, source,
-        and version of a template will change its key, in which case it must
-        be treated as a new template (and any entities created from the
-        template will remain associated with the old version); submiting such
-        a modified template via the update endpoint will result in a server error.
+        however, if "entity" contains a key *and* a key is supplied
+        separately (as the "key" argumet), the two keys must match, or an
+        error will be raised.  When creating a new regular entity,
+        supplying a key (either as part of "entity" or separately) is
+        optional:  if no key is supplied, the server generates one
+        randomly.  In the case of a new template, the server generates a
+        key by hashing the name, source, and version.  Because of this, a
+        key should never be supplied for a new template, and it is
+        important to note that modifying the name, source, and version of
+        a template will change its key, in which case it must be treated as
+        a new template (and any entities created from the template will
+        remain associated with the old version); submiting such a modified
+        template via the update endpoint will result in a server error.
     :param operation:  "create" (POST), "update" (PUT), "create_template"
         (POST), or "update_template" (PUT).
 
-    :returns:  A Python :class:`requests.Response` object.  When an entity is
-        created, the server returns the new entity's key (attribute "text"),
-        with a status code (attribute "status_code") of 200.  When an entity
-        is updated, the server returns a status code of 204.
+    :returns:  A Python :class:`requests.Response` object.  When an entity
+        is created, the server returns the new entity's key (attribute
+        "text"), with a status code (attribute "status_code") of 200.  When
+        an entity is updated, the server returns a status code of 204.
 
     """
 
@@ -744,13 +751,13 @@ def save_entity(server = None, entity = None, key = None, operation = u"create")
 
     # Check the entity input, and it's a Python object, transform it into
     # a JSON or XML string, and set the corresponding API input format.  If
-    # the entity includes a key, extract it.  If a key was supplied as "key"
-    # but not within "entity", insert the key into the entity object.
+    # the entity includes a key, extract it.  If a key was supplied as
+    # "key" but not within "entity", insert the key into the entity object.
 
     entity_error_msg = 'The argument "entity" must be a JSON or XML ' + \
-                       'of an entity, a nested dict-like in the same format ' + \
-                       'as a JSON respresentation, or an instance of ' + \
-                       'CoalesceEntity (or a subclass).'
+                       'of an entity, a nested dict-like in the same ' + \
+                       'format as a JSON respresentation, or an instance ' + \
+                       'of CoalesceEntity (or a subclass).'
 
     if entity:
 
@@ -796,8 +803,8 @@ def save_entity(server = None, entity = None, key = None, operation = u"create")
 
         # Duck test for a "CoalesceEntity" object or similar:  "entity" and
         # its subclasses are the only XSD-based Coalesce objects with a
-        # "linkagesection" attribute.  Note that if we have to add a key, we
-        # use a copy of "entity", to avoid changing the original object.
+        # "linkagesection" attribute.  Note that if we have to add a key,
+        # we use a copy of "entity", to avoid changing the original object.
 
         elif hasattr(entity, "linkagesection"):
 
@@ -856,14 +863,14 @@ def save_entity(server = None, entity = None, key = None, operation = u"create")
                          'values:\n' + unicode(ENTITY_UPLOAD_OPERATIONS))
 
     # Set the request parameters.  Note that "entity_key" may or may not be
-    # used by "_construct_URL", depending on the pattern set for the endpoint
-    # in question.  Note also that, since we'll be adding headers to the base
-    # headers, we copy the base headers, so that the extra header isn't
-    # preserved in the server object.
+    # endpoint used by "_construct_URL", depending on the pattern set for
+    # the in question.  Note also that, since we'll be adding headers to
+    # the base headers, we copy the base headers, so that the extra header
+    # isn't preserved in the server object.
 
     try:
-        API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
-                                 key = entity_key)
+        API_URL = _construct_URL(server_obj =  server_obj,
+                                 operation = operation, key = entity_key)
     except AttributeError as err:
         raise AttributeError(str(err) + '\n.This error can occur if the ' +
                               'argument "server" is not either a URL or a ' +
@@ -888,34 +895,35 @@ def save_entity(server = None, entity = None, key = None, operation = u"create")
 def create(server = None, entity = None, key = None, full_response = False):
 
     """
-    Uploads a new entity to the Coalesce server using the "PUT" method.  This
-    is a wrapper for the "upload_entity" function.
+    Uploads a new entity to the Coalesce server using the "PUT" method.
+    This is a wrapper for the
+    :func:`~pyCoalesce.coalesce_request.save_entity` function.
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
-    :param entity:  the entity to upload to the server.  This can be a JSON or
-        XML representation of an entity, a nested dict-like in the same format
-        as a JSON respresentation, or an instance of
+    :param entity:  the entity to upload to the server.  This can be a JSON
+        or XML representation of an entity, a nested dict-like in the same
+        format as a JSON respresentation, or an instance of
         :class:`~pyCoalesce.classes.coalesce_entityCoalesceEntity` (or a
         subclass); the function automatically detects the input type and
         adjusts the RESTful endpoint and requests headers accordingly.
     :param key:  a UUID to serve as the key for the entity, as either an
         instance of the :class:`uuid.UUID` class, or any string or integer
         that could serve as input to the :class:`UUID <uuid.UUID>` class
-        constructor.  If "entity" already includes a key, this argument must
-        match that key, or an error will be raised.  If no key is supplied
-        (either in this argument or as part of the entity), the server
-        randomly generates one.
+        constructor.  If "entity" already includes a key, this argument
+        must match that key, or an error will be raised.  If no key is
+        supplied (either in this argument or as part of the entity), the
+        server randomly generates one.
     :param full_response:  if ``True``, return the full response from the
         server as a Python :class:`requests.Response` object, rather than a
         boolean.
 
-    :returns:  the UUID key of the new entity if "full_response" is False.  If
-        "full_response" is ``True``, a Python :class:`requests.Response`
+    :returns:  the UUID key of the new entity if "full_response" is False.
+        If "full_response" is ``True``, a Python :class:`requests.Response`
         object is returned instead.  Regardless of the value of
-        "full_response", if the response status code has a value in the 200's
-        other than 200, the function raises a warning.  (Any value outside the
-        200's will raise an exception.)
+        "full_response", if the response status code has a value in the
+        200's other than 200, the function raises a warning.  (Any value
+        outside the 200's will cause an exception.)
 
     """
 
@@ -929,17 +937,19 @@ def create(server = None, entity = None, key = None, full_response = False):
         new_entity_key = response.text
 
         if status != 200:
-            warn("The API server returned an unexpected status code, " + status +
-                 ".  However, the entity might have been created on the server, " +
-                 "or might be created after a delay.", UnexpectedResponseWarning)
+            warn("The API server returned an unexpected status code, " +
+                 status + ".  However, the entity might have been created on " +
+                 "on the server, or might be created after a delay.",
+                 UnexpectedResponseWarning)
 
         return new_entity_key
 
     else:
         if status != 200:
-            warn("The API server returned an unexpected status code, " + status +
-                 ".  However, the entity might have been created on the server, " +
-                 "or might be created after a delay.", UnexpectedResponseWarning)
+            warn("The API server returned an unexpected status code, " +
+                 status + ".  However, the entity might have been created on " +
+                 "the server, or might be created after a delay.",
+                 UnexpectedResponseWarning)
         return response
 
 
@@ -956,8 +966,8 @@ def read(server = None, key = None, output = "dict"):
     :param output:  If this argument is "dict", return the results as a
         Python :class:`dict`; for "entity_object", return the result as an
         instance of class :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`.
-        For "JSON" or "XML" return the full response, unparsed, as a Unicode
-        string in the corresponding format.
+        For "JSON" or "XML" return the full response, unparsed, as a
+        Unicode string in the corresponding format.
 
     :returns:  a :class:`dict`,
         :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`,
@@ -981,8 +991,8 @@ def read(server = None, key = None, output = "dict"):
 
     operation = u"read"
     try:
-        API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
-                                 key = key_str)
+        API_URL = _construct_URL(server_obj =  server_obj,
+                                 operation = operation, key = key_str)
     except AttributeError as err:
         raise AttributeError(str(err) + '\n.This error can occur if the ' +
                               'argument "server" is not either a URL or a ' +
@@ -1019,33 +1029,34 @@ def read(server = None, key = None, output = "dict"):
 
 def update(server = None, entity = None, key = None, full_response = False):
     """
-    Uploads a modified entity to the Coalesce server using the "POST" method.
-    This is a wrapper for the "upload_entity" function.
+    Uploads a modified entity to the Coalesce server using the "POST"
+    method.  This is a wrapper for the "upload_entity" function.
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
     :param entity:  the content of the entity to be updated on the server.
-        This can be a JSON or XML representation of an entity, a nested dict-
-        like in the same format as a JSON respresentation, or an instance of
-        :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity` (or a
-        subclass); the function automatically detects the input type and
-        adjusts the RESTful endpoint and requests headers accordingly.
+        This can be a JSON or XML representation of an entity, a nested
+        dict-like in the same format as a JSON respresentation, or an
+        instance of :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`
+        (or a subclass); the function automatically detects the input type
+        and adjusts the RESTful endpoint and requests headers accordingly.
     :param key:  a UUID to serve as the key for the entity, as either an
         instance of the :class:`uuid.UUID` class, or any string or integer
         that could serve as input to the :class:`UUID <uuid.UUID>` class
-        constructor.  If this argument is not supplied, "modified_entity" must
-        include a key; if this argument is supplied, it must match any key
-        found in "entity", or an error will be raised.
-    :param full_response:  if ``True``, return the full response from the server
-        as a Python :class:`requests.Response` object, rather than a boolean.
+        constructor.  If this argument is not supplied, "modified_entity"
+        must include a key; if this argument is supplied, it must match any
+        key found in "entity", or an error will be raised.
+    :param full_response:  if ``True``, return the full response from the
+        server as a Python :class:`requests.Response` object, rather than
+        a boolean.
 
     :returns:  a boolean if "full_response" is ``False``:  ``True`` if the
         response status code is 204 (indicating a successful update),
         ``False`` otherwise.  If "full_response" is ``True``, a Python
-        :class:`requests.Response` object is returned instead.  Regardless of
-        the value of "full_response", if the response status code has a value
-        in the 200's other than 204, the function raises a warning.  (Any value
-        outside the 200's will raise an exception.)
+        :class:`requests.Response` object is returned instead.  Regardless
+        of the value of "full_response", if the response status code has a
+        value in the 200's other than 204, the function raises a warning.
+        (Any value outside the 200's will cause an exception.)
 
     """
 
@@ -1060,27 +1071,27 @@ def update(server = None, entity = None, key = None, full_response = False):
             return True
 
         else:
-            warn("The API server returned an unexpected status code, " + status +
-                 ".  However, the entity might have been modified on the " +
-                 "server, or might be modified after a delay.",
+            warn("The API server returned an unexpected status code, " +
+                 status + ".  However, the entity might have been modified " +
+                 "on the server, or might be modified after a delay.",
                  UnexpectedResponseWarning)
             return False
 
     else:
         if status != 204:
-            warn("The API server returned an unexpected status code, " + status +
-                 ".  However, the entity might have been modified on the " +
-                 "server, or might be modified after a delay.",
+            warn("The API server returned an unexpected status code, " +
+                 status + ".  However, the entity might have been modified " +
+                 "on the server, or might be modified after a delay.",
                  UnexpectedResponseWarning)
         return response
 
 
 def delete(server = None, keys = None):
     """
-    Marks an entity or entities as deleted on the server.  Until an entity is
-    permanently deleted (an administrative operation, not available through
-    the RESTful API), it can still be accessed, but will not turn up in
-    search results.
+    Marks an entity or entities as deleted on the server.  Until an entity
+    is permanently deleted (an administrative operation, not available
+    through the RESTful API), it can still be accessed, but will not turn
+    up in search results.
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
@@ -1090,9 +1101,9 @@ def delete(server = None, keys = None):
         :class:`UUID <uuid.UUID>` class constructor.
 
     :returns:  ``True`` if the returned status code is 204 (indicating a
-        successful deletion), ``False`` (with a warning) in the unlikely event
-        that the server returns another status code in the 200's.  (Any value
-        outside the 200's will raise an exception.)
+        successful deletion), ``False`` (with a warning) in the unlikely
+        event that the server returns another status code in the 200's.
+        (Any value outside the 200's will cause an exception.)
 
     """
 
@@ -1124,7 +1135,8 @@ def delete(server = None, keys = None):
 
     operation = u"delete"
     try:
-        API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+        API_URL = _construct_URL(server_obj =  server_obj,
+                                 operation = operation)
     except AttributeError as err:
         raise AttributeError(str(err) + '\n.This error can occur if the ' +
                               'argument "server" is not either a URL or a ' +
@@ -1165,22 +1177,23 @@ def create_template(server = None, template = None, full_response = False):
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
-    :param template:  the entity template to create on the server.  This can
-        be a JSON or XML representation of a template, a nested dict-like in
-        the same format as a JSON respresentation, or an instance of
+    :param template:  the entity template to create on the server.  This
+        can be a JSON or XML representation of a template, a nested
+        dict-like in the same format as a JSON respresentation, or an
+        instance of
         :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`
-        (or a subclass); the function automatically detects the input type and
-        adjusts the RESTful endpoint and requests headers accordingly.
+        (or a subclass); the function automatically detects the input type
+        and adjusts the RESTful endpoint and requests headers accordingly.
     :param full_response:  if ``True``, return the full response from the
         server as a Python :class:`requests.Response` object, rather than a
         boolean.
 
-    :returns:  the UUID key of the new entity, as a string, if "full_response"
-        is ``False``.  If "full_response" is ``True``, a Python
-        :class:`requests.Response` object is returned instead.  Regardless of
-        the value of "full_response", if the response status code has a value
-        in the 200's other than 200, the function raises a warning.  (Any
-        value outside the 200's will raise an exception.)
+    :returns:  the UUID key of the new entity, as a string, if
+        "full_response" is ``False``.  If "full_response" is ``True``, a
+        Python :class:`requests.Response` object is returned instead.
+        Regardless of the value of "full_response", if the response status
+        code has a value in the 200's other than 200, the function raises a
+        warning.  (Any value outside the 200's will cause an exception.)
 
     """
 
@@ -1194,17 +1207,19 @@ def create_template(server = None, template = None, full_response = False):
         new_template_key = response.text
 
         if status != 200:
-            warn("The API server returned an unexpected status code, " + status +
-                 ".  However, the entity might have been created on the server, " +
-                 "or might be created after a delay.", UnexpectedResponseWarning)
+            warn("The API server returned an unexpected status code, " +
+                 status + ".  However, the entity might have been created on " +
+                 "the server, or might be created after a delay.",
+                 UnexpectedResponseWarning)
 
         return new_template_key
 
     else:
         if status != 200:
-            warn("The API server returned an unexpected status code, " + status +
-                 ".  However, the entity might have been created on the server, " +
-                 "or might be created after a delay.", UnexpectedResponseWarning)
+            warn("The API server returned an unexpected status code, " +
+                 status + ".  However, the entity might have been created on " +
+                 "the server, or might be created after a delay.",
+                 UnexpectedResponseWarning)
         return response
 
 
@@ -1215,13 +1230,13 @@ def register_template(server = None, key = None):
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
-    :param key:  the UUID key of the template to be registered, as either an
-        instance of the :class:`uuid.UUID` class, or any string or integer
-        that could serve as input to the :class:`UUID <uuid.UUID>` class
-        constructor
+    :param key:  the UUID key of the template to be registered, as either
+        an instance of the :class:`uuid.UUID` class, or any string or
+        integer that could serve as input to the :class:`UUID <uuid.UUID>`
+        class constructor
     :returns:  ``True`` if the server returns "true"; ``False`` otherwise.
         A value of ``False`` is unlikely, since any server response outside
-        the 200's will raise an exception.
+        the 200's will cause an exception.
 
     """
 
@@ -1244,8 +1259,8 @@ def register_template(server = None, key = None):
         server_obj = server
 
     try:
-        API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
-                                 key = key_str)
+        API_URL = _construct_URL(server_obj =  server_obj,
+                                 operation = operation, key = key_str)
     except AttributeError as err:
         raise AttributeError(str(err) + '\n.This error can occur if the ' +
                               'argument "server" is not either a URL or a ' +
@@ -1280,15 +1295,16 @@ def read_template(server = None, template = None, output = "dict"):
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
     :param template:  the template's UUID key, as either an instance of the
-        :class:`uuid.UUID` class, or any string or integer that could serve as
-        input to the :class:`UUID <uuid.UUID>` class constructor; or an
-        iterable containing the template's name, source, and version (in that
-        order)
-    :param output:  If this argument is "dict", return the results as a Python
-        :class:`dict`; for "entity_object", return the result as an instance of
-        class :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`.
-        For "JSON" or "XML" return the full response, unparsed, as a Unicode
-        string in the corresponding format.
+        :class:`uuid.UUID` class, or any string or integer that could serve
+        as input to the :class:`UUID <uuid.UUID>` class constructor; or an
+        iterable containing the template's name, source, and version (in
+        that order)
+    :param output:  If this argument is "dict", return the results as a
+        Python :class:`dict`; for "entity_object", return the result as an
+        instance of class
+        :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`.
+        For "JSON" or "XML" return the full response, unparsed, as a
+        Unicode string in the corresponding format.
 
     :returns:  a :class:`dict`,
         :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`,
@@ -1315,11 +1331,12 @@ def read_template(server = None, template = None, output = "dict"):
                 template_key = _test_key(template)
 
             except ValueError:
-                raise ValueError('The argument "template" must be an instance ' +
-                                 'of the "uuid.UUID" class, or any string or ' +
-                                 'integer that could serve as input to "UUID" ' +
-                                 'class constructor, or an iterable containing ' +
-                                 'the template\'s name, source, and version')
+                raise ValueError('The argument "template" must be an ' +
+                                 'instance of the "uuid.UUID" class, any ' +
+                                 'string or integer that could serve as ' +
+                                 'input to the "UUID" class constructor, or ' +
+                                 'an iterable containing the template\'s ' +
+                                 'name, source, and version')
 
             operation = u"read_template_by_key"
             URL_kwarg = {"key": template_key}
@@ -1334,8 +1351,8 @@ def read_template(server = None, template = None, output = "dict"):
 
     # Set the request parameters.
     try:
-        API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
-                                 **URL_kwarg)
+        API_URL = _construct_URL(server_obj =  server_obj,
+                                 operation = operation, **URL_kwarg)
     except AttributeError as err:
         raise AttributeError(str(err) + '\n.This error can occur if the ' +
                               'argument "server" is not either a URL or a ' +
@@ -1374,9 +1391,9 @@ def get_template_list(server = None, output = "list"):
         object or the URL of a Coalesce server
     :param output:  If this argument is "list", return the results as a
         Python :class:`list` of :class:`dicts <dict>`.  Each :class:`dict`
-        includes the UUID key, name, source, version, creation date, and last-
-        modified date for a single template.  For "JSON", return the response
-        unparsed, as a Unicode JSON object.
+        includes the UUID key, name, source, version, creation date, and
+        last-modified date for a single template.  For "JSON", return the
+        response unparsed, as a Unicode JSON object.
 
     :returns:  a :class:`list` of :class:`dicts <dict>`, or a JSON object,
         depending on the value of "output".
@@ -1392,7 +1409,8 @@ def get_template_list(server = None, output = "list"):
 
     operation = u"get_template_list"
     try:
-        API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+        API_URL = _construct_URL(server_obj =  server_obj,
+                                 operation = operation)
     except AttributeError as err:
         raise AttributeError(str(err) + '\n.This error can occur if the ' +
                               'argument "server" is not either a URL or a ' +
@@ -1428,24 +1446,26 @@ def update_template(server = None, template = None, key = None,
     Updates an entity template on the Coalesce server.  This function is a
     wrapper for the "upload_entity" function.
 
-    Note that, since a template key is a hash of the template's name, source,
-    and version, modifying any of these values produces a new template, with
-    a different key, which must be uploaded via the "create_template"
-    function (and any of the entities created from the old template remain
-    associated with that one).
+    Note that, since a template key is a hash of the template's name,
+    source, and version, modifying any of these values produces a new
+    template, with a different key, which must be uploaded via the
+    :func:`~pyCoalesce..coalesce_request.create_template` function (and
+    any of the entities created from the old template remain associated
+    with that one).
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
-    :param template:  the content of the entity to be updated on the server.
-        This can be a JSON or XML representation of a template, a nested dict-
-        like in the same format as a JSON respresentation, or an instance of
+    :param template:  the content of the entity to be updated on the
+        server.  This can be a JSON or XML representation of a template,
+        a nested dict-like in the same format as a JSON respresentation, or
+        an instance of
         :class:`pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`
-        (or a subclass); the function automatically detects the input type and
-        adjusts the RESTful endpoint and requests headers accordingly.
-    :param key:  the UUID key of the template to be registered, as either an
-        instance of the :class:`uuid.UUID` class, or any string or integer
-        that could serve as input to the :class:`UUID <uuid.UUID>` class
-        constructor.  If this argument is not supplied, the "template"
+        (or a subclass); the function automatically detects the input type
+        and adjusts the RESTful endpoint and requests headers accordingly.
+    :param key:  the UUID key of the template to be registered, as either
+        an instance of the :class:`uuid.UUID` class, or any string or
+        integer that could serve as input to the :class:`UUID <uuid.UUID>`
+        class constructor.  If this argument is not supplied, the "template"
         argument must include a key; if this argument is supplied, it must
         match any key found in "template", or an error will be raised.
     :param full_response:  if ``True``, return the full response from the
@@ -1455,10 +1475,10 @@ def update_template(server = None, template = None, key = None,
     :returns:  a boolean if "full_response" is ``False``:  ``True`` if the
         response status code is 204 (indicating a successful update),
         ``False`` otherwise.  If "full_response" is ``True``, a Python
-        :class:`requests.Response` object is returned instead.  Regardless of
-        the value of "full_response", if the response status code has a value
-        in the 200's other than 204, the function raises a warning.  (Any value
-        outside the 200's will cause an exception.)
+        :class:`requests.Response` object is returned instead.  Regardless
+        of the value of "full_response", if the response status code has a
+        value in the 200's other than 204, the function raises a warning.
+        (Any value outside the 200's will cause an exception.)
 
     """
 
@@ -1473,17 +1493,17 @@ def update_template(server = None, template = None, key = None,
             return True
 
         else:
-            warn("The API server returned an unexpected status code, " + status +
-                 ".  However, the entity might have been modified on the " +
-                 "server, or might be modified after a delay.",
+            warn("The API server returned an unexpected status code, " +
+                 status + ".  However, the entity might have been modified " +
+                 "on the server, or might be modified after a delay.",
                  UnexpectedResponseWarning)
             return False
 
     else:
         if status != 204:
-            warn("The API server returned an unexpected status code, " + status +
-                 ".  However, the entity might have been modified on the " +
-                 "server, or might be modified after a delay.",
+            warn("The API server returned an unexpected status code, " +
+                 status + ".  However, the entity might have been modified " +
+                 "on the server, or might be modified after a delay.",
                  UnexpectedResponseWarning)
         return response
 
@@ -1496,21 +1516,21 @@ def delete_template(server = None, key = None):
     the RESTful API), it can still be accessed, but will not turn up in
     search results.
 
-    For some persistors, template deletes aren't implemented, and attempting
-    to delete a template on such a persistor will result in an error.  Check
-    the error message to verify that this is what occurred.
+    For some persistors, template deletes aren't implemented, and
+    attempting to delete a template on such a persistor will result in an
+    error.  Check the error message to verify that this is what occurred.
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
-    :param key:  the UUID key of the template to be registered, as either an
-        instance of the :class:`uuid.UUID` class, or any string or integer
-        that could serve as input to the :class:`UUID <uuid.UUID>` class
-        constructor.
+    :param key:  the UUID key of the template to be registered, as either
+        an instance of the :class:`uuid.UUID` class, or any string or
+        integer that could serve as input to the :class:`UUID <uuid.UUID>`
+        class constructor.
 
     :returns:  ``True`` if the returned status code is 200 (which should
         indicate a successful deletion), ``False`` (with a warning) if the
-        status code has any other value in the 200's.  (Any values outside the
-        200's will cause an exception.)
+        status code has any other value in the 200's.  (Any value outside
+        the 200's will cause an exception.)
 
     """
 
@@ -1531,8 +1551,8 @@ def delete_template(server = None, key = None):
     else:
         server_obj = server
     try:
-        API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
-                                 key = key_str)
+        API_URL = _construct_URL(server_obj =  server_obj,
+                                 operation = operation, key = key_str)
     except AttributeError as err:
         raise AttributeError(str(err) + '\n.This error can occur if the ' +
                               'argument "server" is not either a URL or a ' +
@@ -1553,8 +1573,9 @@ def delete_template(server = None, key = None):
 
     else:
         warn("The API server returned an unexpected status code, " + status +
-             ".  However, the template might have been deleted on the server, " +
-             "or might be deleted after a delay.", UnexpectedResponseWarning)
+             ".  However, the template might have been deleted on the " +
+             "server, or might be deleted after a delay.",
+             UnexpectedResponseWarning)
         success =  False
 
     return success
@@ -1574,8 +1595,8 @@ def _JSONify_linkage_list(linkages):
     def _test_linkage(linkage):
         """
         Determines the format of an input linkage(s), and, if necessary,
-        transforms the input into a JSON object.  If the input is an iterable
-        of linkages, it may require further processing.
+        transforms the input into a JSON object.  If the input is an
+        iterable of linkages, it may require further processing.
 
         :param linkage:  the linkage(s) to be tested and JSONified
 
@@ -1584,12 +1605,12 @@ def _JSONify_linkage_list(linkages):
 
         """
 
-        link_error_msg = 'The argument "linkages" must be a Coalesce linkage, ' + \
-                         'in the form or an XML or JSON entity, a dict in the ' + \
-                         'same format as a JSON linkage, an instance of ' + \
-                         'CoalesceLinkage (or a subclass), or an instance of ' + \
-                         'CoalesceAPILinkage (or a subclass); or an iterable ' + \
-                         'of such linkages.'
+        link_error_msg = 'The argument "linkages" must be a Coalesce ' + \
+                         'linkage, in the form or an XML or JSON entity, a ' + \
+                         'dict in the same format as a JSON linkage, an ' + \
+                         'instance of CoalesceLinkage (or a subclass), or ' + \
+                         'an instance of CoalesceAPILinkage (or a ' + \
+                         'subclass); or an iterable of such linkages.'
 
         if isinstance(linkage, basestring):
 
@@ -1614,10 +1635,10 @@ def _JSONify_linkage_list(linkages):
                 if linkage[0] == u"[":
 
                     # If it's an array, the array element are probably JSON
-                    # objects--that is, what you get when you serialize Python
-                    # dicts.  However, it's possible (if an edge case) that
-                    # the elements are XML objects, and will thus need further
-                    # processing.
+                    # objects--that is, what you get when you serialize
+                    # Python dicts.  However, it's possible (if an edge
+                    # case) that the elements are XML objects, and will
+                    # thus need further processing.
                     inside_the_link = linkage[1:].strip()
                     if inside_the_link[0] == u"{":
                         parsed_linkage = linkage
@@ -1702,8 +1723,8 @@ def _JSONify_linkage_list(linkages):
         linkage_array = parsed_linkages
 
     # If "parsed_linkages" is a list (or similar iterable), we need to test
-    # the format of the first linkage, and then iterate through the rest and
-    # parse each one.
+    # the format of the first linkage, and then iterate through the rest
+    # and parse each one.
     elif linkage_format == "list":
         linkage_JSON, linkage_format = _test_linkage(linkages[0])
         linkage_array = "[" + linkage_JSON
@@ -1726,10 +1747,10 @@ def create_linkages(server = None, linkages = None):
     Creates one or more linkages between Coalesce entities.  Linkages must
     be submitted in a special format used only for this endpoint--it
     corresponds to the Java GraphLink class, and the
-    :class:`pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` class.  This
-    format's keys match the attribues in the GraphLink class, which correspond
-    to a subset of the full set of keys/attributes in the entity model, but
-    which use different names.
+    :class:`pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` class.
+    This format's keys match the attribues in the GraphLink class, which
+    correspond to a subset of the full set of keys/attributes in the entity
+    model, but which use different names.
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
@@ -1738,13 +1759,13 @@ def create_linkages(server = None, linkages = None):
         :class:`pyCoalesce.classes.coalesce_entity.CoalesceLinkage` (or a
         subclass), or an instance of
         :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` (or a
-        subclass); or an iterable (or JSON array) of such linkage objects, all
-        of the same type
+        subclass); or an iterable (or JSON array) of such linkage objects,
+        all of the same type
 
-    :returns:  ``True`` if the linkages are created successfully (status code
-        204), ``False`` (with a warning) if the status code has any other
-        value in the 200's.  (Any values outside the 200's will cause an
-        exception.)
+    :returns:  ``True`` if the linkages are created successfully (status
+        code 204), ``False`` (with a warning) if the status code has any
+        other value in the 200's.  (Any value outside the 200's will cause
+        an exception.)
 
     """
 
@@ -1757,7 +1778,8 @@ def create_linkages(server = None, linkages = None):
 
     operation = u"create_linkages"
     try:
-        API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+        API_URL = _construct_URL(server_obj =  server_obj,
+                                 operation = operation)
     except AttributeError as err:
         raise AttributeError(str(err) + '\n.This error can occur if the ' +
                               'argument "server" is not either a URL or a ' +
@@ -1781,8 +1803,9 @@ def create_linkages(server = None, linkages = None):
 
     else:
         warn("The API server returned an unexpected status code, " + status +
-             ".  However, the linkages might have been created on the server, " +
-             "or might be created after a delay.", UnexpectedResponseWarning)
+             ".  However, the linkages might have been created on the " +
+             "server, or might be created after a delay.",
+             UnexpectedResponseWarning)
         success =  False
 
     return success
@@ -1790,29 +1813,31 @@ def create_linkages(server = None, linkages = None):
 
 def read_linkages(server = None, key = None, output = "dict_list"):
     """
-    Retrieves all of the linkages for the Coalesce entity with the UUID
-    key matching "key".  Linkages are returned in a special format used
-    only for this endpoint--it corresponds to the Java GraphLink class,
-    and the :class:`pyCoalesce.classes.coalesce_json.CoalesceAPILinkage`
-    class.  This format's keys match the attribues in the GraphLink class,
-    which correspond to a subset of the full set of keys/attributes in the
-    entity model, but which use different names.
+    Retrieves all of the linkages for the Coalesce entity with the UUID key
+    matching "key".  Linkages are returned in a special format used only
+    for this endpoint--it corresponds to the Java GraphLink class, and the
+    :class:`pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` class.
+    This format's keys match the attribues in the GraphLink class, which
+    correspond to a subset of the full set of keys/attributes in the entity
+    model, but which use different names.
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
-    :param key:  the UUID key of the entity whose linkages are to be returned,
-        as either an instance of the :class:`uuid.UUID` class, or any string
-        or integer that could serve as input to the :class:`UUID <uuid.UUID>`
-        class constructor.
-    :param output:  If this argument is "JSON", return the results as a JSON
-        array (string).  If the argument is "dict_list" or "API_list", return
-        the results as a :class:`list` of :class:`dicts <dict>` or instances
-        of :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage`,
+    :param key:  the UUID key of the entity whose linkages are to be
+        returned, as either an instance of the :class:`uuid.UUID` class, or
+        any string or integer that could serve as input to the
+        :class:`UUID <uuid.UUID>` class constructor.
+    :param output:  If this argument is "JSON", return the results as a
+        JSON array (string).  If the argument is "dict_list" or "API_list",
+        return the results as a :class:`list` of :class:`dicts <dict>` or
+        instances of
+        :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage`,
         respectively.
 
     :returns:  The entity's linkages, as either a JSON array (string), or a
         :class:`list` of :class:`dicts <dict>` or
-        :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` objects.
+        :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage`
+        objects.
 
     """
 
@@ -1827,8 +1852,8 @@ def read_linkages(server = None, key = None, output = "dict_list"):
 
     operation = u"read_linkages"
     try:
-        API_URL = _construct_URL(server_obj =  server_obj, operation = operation,
-                                 key = key_str)
+        API_URL = _construct_URL(server_obj =  server_obj,
+                                 operation = operation, key = key_str)
     except AttributeError as err:
         raise AttributeError(str(err) + '\n.This error can occur if the ' +
                               'argument "server" is not either a URL or a ' +
@@ -1839,8 +1864,9 @@ def read_linkages(server = None, key = None, output = "dict_list"):
 
     output = output.lower()
     if not output in LINK_CRUD_OUTPUT_FORMATS:
-        raise ValueError('The argument "output" must take one of the following ' +
-                         'values:\n' + str(LINK_CRUD_OUTPUT_FORMATS) + '.')
+        raise ValueError('The argument "output" must take one of the ' +
+                         'following values:\n' + str(LINK_CRUD_OUTPUT_FORMATS) +
+                         '.')
 
     # Submit the request.
     response = get_response(URL = API_URL, method = method, headers = headers,
@@ -1869,10 +1895,10 @@ def delete_linkages(server = None, linkages = None):
     Marks one or more linkages between Coalesce entities for deletion.
     Linkages must be submitted in a special format used only for this
     endpoint--it corresponds to the Java GraphLink class, and the
-    :class:`pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` class.  This
-    format's keys match the attribues in the GraphLink class, which correspond
-    to a subset of the full set of keys/attributes in the entity model, but
-    which use different names.
+    :class:`pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` class.
+    This format's keys match the attribues in the GraphLink class, which
+    correspond to a subset of the full set of keys/attributes in the entity
+    model, but which use different names.
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
@@ -1881,12 +1907,13 @@ def delete_linkages(server = None, linkages = None):
         :class:`pyCoalesce.classes.coalesce_entity.CoalesceLinkage` (or a
         subclass), or an instance of
         :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` (or a
-        subclass); or an iterable (or JSON array) of such linkage objects, all
-        of the same type
+        subclass); or an iterable (or JSON array) of such linkage objects,
+        all of the same type
 
-    :returns:  True if the linkages are deleted successfully (status code 204),
-        ``False`` (with a warning) if the status code has any other value in
-        the 200's.  (Any values outside the 200's will cause an exception.)
+    :returns:  True if the linkages are deleted successfully (status code
+        204), ``False`` (with a warning) if the status code has any other
+        value in the 200's.  (Any value outside the 200's will cause an
+        exception.)
 
     """
 
@@ -1899,7 +1926,8 @@ def delete_linkages(server = None, linkages = None):
 
     operation = u"delete_linkages"
     try:
-        API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+        API_URL = _construct_URL(server_obj =  server_obj,
+                                 operation = operation)
     except AttributeError as err:
         raise AttributeError(str(err) + '\n.This error can occur if the ' +
                               'argument "server" is not either a URL or a ' +
@@ -1923,8 +1951,9 @@ def delete_linkages(server = None, linkages = None):
 
     else:
         warn("The API server returned an unexpected status code, " + status +
-             ".  However, the linkages might have been deleted on the server, " +
-             "or might be deleted after a delay.", UnexpectedResponseWarning)
+             ".  However, the linkages might have been deleted on the " +
+             "server, or might be deleted after a delay.",
+             UnexpectedResponseWarning)
         success =  False
 
     return success

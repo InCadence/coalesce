@@ -34,10 +34,10 @@
   <div class="section" id="module-pyCoalesce.utilities.API_request">
 <span id="pycoalesce-utilities-api-request-module"></span><h1>pyCoalesce.utilities.API_request module<a class="headerlink" href="#module-pyCoalesce.utilities.API_request" title="Permalink to this headline">¶</a></h1>
 <p>&#64;author: sorr</p>
-<p>This module provides a convenience function for making RESTful requests with
-exponential backoff (that is, if a request results in a transient error, the
-function makes the request again several times, with increasing delays between
-each attempt).</p>
+<p>This module provides a convenience function for making RESTful requests
+with exponential backoff (that is, if a request results in a transient
+error, the function makes the request again several times, with increasing
+delays between each attempt).</p>
 <dl class="function">
 <dt id="pyCoalesce.utilities.API_request.get_response">
 <code class="descclassname">pyCoalesce.utilities.API_request.</code><code class="descname">get_response</code><span class="sig-paren">(</span><em>URL</em>, <em>method='get'</em>, <em>verify=True</em>, <em>cert=None</em>, <em>params=None</em>, <em>data=None</em>, <em>json=None</em>, <em>headers=None</em>, <em>delay=1</em>, <em>max_attempts=8</em><span class="sig-paren">)</span><a class="headerlink" href="#pyCoalesce.utilities.API_request.get_response" title="Permalink to this definition">¶</a></dt>

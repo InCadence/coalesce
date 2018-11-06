@@ -2,10 +2,10 @@
 """
 @author: sorr
 
-This module provides a convenience function for making RESTful requests with
-exponential backoff (that is, if a request results in a transient error, the
-function makes the request again several times, with increasing delays between
-each attempt).
+This module provides a convenience function for making RESTful requests
+with exponential backoff (that is, if a request results in a transient
+error, the function makes the request again several times, with increasing
+delays between each attempt).
 
 """
 
@@ -116,15 +116,16 @@ def get_response(URL, method = "get", verify = True, cert = None, params = None,
                 try:
                     response.raise_for_status()
                 except Exception as err:
-                    logger.warn('Server at ' + URL + ' returned status code "' +
-                                str(status) + '" with the following error ' +
-                                'message:\n' + str(err) + '\nRetrying....')
+                    logger.warn('Server at ' + URL + ' returned status code ' +
+                                '"' + str(status) + '" with the following ' +
+                                'error message:\n' + str(err) +
+                                '\nRetrying....')
                     stderr.flush()
 
             # In some cases, retrying won't do us any good.
             else:
-                logger.warn("Received the following error message from server " +
-                            "at " + URL + ":\n" + response.text)
+                logger.warn("Received the following error message from " +
+                            "server at " + URL + ":\n" + response.text)
                 stderr.flush()
                 response.raise_for_status()
 

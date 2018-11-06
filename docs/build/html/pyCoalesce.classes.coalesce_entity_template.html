@@ -34,18 +34,20 @@
   <div class="section" id="module-pyCoalesce.classes.coalesce_entity_template">
 <span id="pycoalesce-classes-coalesce-entity-template-module"></span><h1>pyCoalesce.classes.coalesce_entity_template module<a class="headerlink" href="#module-pyCoalesce.classes.coalesce_entity_template" title="Permalink to this headline">¶</a></h1>
 <p>This subclass allows the creation of template objects that can be used to
-create new instances of class “entity”, along with their child objects.  The
-subclass can be imported directly from the <a class="reference internal" href="pyCoalesce.classes.html#module-pyCoalesce.classes" title="pyCoalesce.classes"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyCoalesce.classes</span></code></a> module.</p>
+create new instances of class “entity”, along with their child objects.
+The subclass can be imported directly from the <a class="reference internal" href="pyCoalesce.classes.html#module-pyCoalesce.classes" title="pyCoalesce.classes"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyCoalesce.classes</span></code></a>
+module.</p>
 <p>The <a class="reference internal" href="#pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate.new_entity" title="pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate.new_entity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">new_entity()</span></code></a>
-method doesn’t properly with iPython’s auto-reload feature.  This problem can
-be overcome by restarting the kernel and reimporting everything at once.</p>
+method doesn’t properly with iPython’s auto-reload feature.  This problem
+can be overcome by restarting the kernel and reimporting everything at
+once.</p>
 <dl class="class">
 <dt id="pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate">
 <em class="property">class </em><code class="descclassname">pyCoalesce.classes.coalesce_entity_template.</code><code class="descname">CoalesceEntityTemplate</code><span class="sig-paren">(</span><em>key=None</em>, <em>name=None</em>, <em>source=None</em>, <em>version=None</em>, <em>section=None</em>, <em>noindex=None</em>, <em>disablehistory=None</em>, <em>datecreated=None</em>, <em>entityid=None</em>, <em>entityidtype=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.entitySub" title="pyCoalesce.classes.coalesce_entity.entitySub"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyCoalesce.classes.coalesce_entity.entitySub</span></code></a></p>
-<p>Adds a method to create a regular entity from the template, and overrides
-the “build” method to store the XML representation needed to build the
-new entity, thereby avoiding repeated calls of
+<p>Adds a method to create a regular entity from the template, and
+overrides the “build” method to store the XML representation needed to
+build the new entity, thereby avoiding repeated calls of
 <a class="reference internal" href="pyCoalesce.classes.entity_utilities.html#pyCoalesce.classes.entity_utilities.parseString" title="pyCoalesce.classes.entity_utilities.parseString"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyCoalesce.classes.entity_utilities.parseString()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -68,30 +70,32 @@ that uniquely identify the template</li>
 the template</li>
 <li><strong>section</strong> – a list of the template’s <a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.sectionSub" title="pyCoalesce.classes.coalesce_entity.sectionSub"><code class="xref py py-class docutils literal notranslate"><span class="pre">sections</span></code></a>, and by
 extension, the sections of any entity created from the template</li>
-<li><strong>noindex</strong> – a boolean indicating whether or not to index the template
-for search</li>
+<li><strong>noindex</strong> – a boolean indicating whether or not to index the
+template for search</li>
 <li><strong>disablehistory</strong> – a boolean that serves as a default value for the
 same attribute for entities created from the template, specifying
-whether or not each entity’s history of revisions should be retained</li>
+whether or not each entity’s history of revisions should be
+retained</li>
 <li><strong>datecreated</strong> – the date on which the template was created.  If not
 specified, this attribute will be set by the server.</li>
 <li><strong>entityid</strong> – a unique, searchable ID used by some specific
 applications</li>
 <li><strong>entityidtype</strong> – the type of entityid in use</li>
-<li><strong>status</strong> – the current status (active, read only, or deleted) of the
-entity.  While “status” is set by the server, and therefore not
-included in the class constructor, the attribute can be set directly,
-and the server will accept modifications to its value in an entity update.</li>
+<li><strong>status</strong> – the current status (active, read only, or deleted) of
+the entity.  While “status” is set by the server, and therefore not
+included in the class constructor, the attribute can be set
+directly, and the server will accept modifications to its value in
+an entity update.</li>
 <li><strong>lastmodified</strong> – the date on which the template was last modified
 (set by the server)</li>
 <li><strong>modifiedby</strong> – the last user to modify the template (set by the
 server)</li>
-<li><strong>modifiedbyip</strong> – the ip of the last user to modify the template (set
-by the server)</li>
+<li><strong>modifiedbyip</strong> – the ip of the last user to modify the template
+(set by the server)</li>
 <li><strong>linkagesection</strong> – a child object of class
 <a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.CoalesceLinkageSection" title="pyCoalesce.classes.coalesce_entity.CoalesceLinkageSection"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoalesceLinkageSection</span></code></a>
-that contains an entity’s <a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.linkageSub" title="pyCoalesce.classes.coalesce_entity.linkageSub"><code class="xref py py-class docutils literal notranslate"><span class="pre">linkages</span></code></a>; included in templates,
-but not used in any way</li>
+that contains an entity’s <a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.linkageSub" title="pyCoalesce.classes.coalesce_entity.linkageSub"><code class="xref py py-class docutils literal notranslate"><span class="pre">linkages</span></code></a>; included in
+templates, but not used in any way</li>
 </ul>
 </td>
 </tr>
@@ -108,21 +112,22 @@ parent method.</p>
 <dt id="pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate.new_entity">
 <code class="descname">new_entity</code><span class="sig-paren">(</span><em>key=None</em>, <em>populate_min_records=True</em>, <em>silence=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate.new_entity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new instance of class
-<a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.CoalesceEntity" title="pyCoalesce.classes.coalesce_entity.CoalesceEntity"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyCoalesce.classes.coalesce_entity.CoalesceEntity</span></code></a> based on the
-template.  The method adds the template object as an attribute of the
-new entity.</p>
+<a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html#pyCoalesce.classes.coalesce_entity.CoalesceEntity" title="pyCoalesce.classes.coalesce_entity.CoalesceEntity"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyCoalesce.classes.coalesce_entity.CoalesceEntity</span></code></a> based on
+the template.  The method adds the template object as an attribute
+of the new entity.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>key</strong> – a UUID key, as a string.  For most applications, there’s
-no real reason to supply one, since the server returns the key
-when a new entity is created</li>
-<li><strong>populate_min_records</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, build a number of records in
-each recordset equal to “minrecords” for that recordset.</li>
-<li><strong>silence</strong> – if <code class="docutils literal notranslate"><span class="pre">False</span></code>, print the XML representation of the new
-entity to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>.</li>
+<li><strong>key</strong> – a UUID key, as a string.  For most applications,
+there’s no real reason to supply one, since the server returns
+the key when a new entity is created</li>
+<li><strong>populate_min_records</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, build a number of
+records in each recordset equal to “minrecords” for that
+recordset.</li>
+<li><strong>silence</strong> – if <code class="docutils literal notranslate"><span class="pre">False</span></code>, print the XML representation of the
+new entity to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>.</li>
 </ul>
 </td>
 </tr>
