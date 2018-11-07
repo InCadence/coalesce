@@ -44,19 +44,10 @@ public class JobMetricsCollectionAsync implements AutoCloseable {
     private ScheduledExecutorService scheduler;
     private ScheduledFuture<?> future;
     private TimeUnit units = TimeUnit.MINUTES;
-    private String name;
 
     // ----------------------------------------------------------------------//
     // Constructor / Initialization
     // ----------------------------------------------------------------------//
-
-    /**
-     * Constructor
-     */
-    public JobMetricsCollectionAsync(String name)
-    {
-        this.name = name;
-    }
 
     /**
      * Initializes a thread to take snap shots of the metrics collected at a set

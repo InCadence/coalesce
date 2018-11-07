@@ -39,14 +39,14 @@ public final class SecurityBitmaskHelper {
      */
     public static String toString(final boolean[] mask)
     {
-        String result = "";
+        StringBuilder sb = new StringBuilder();
 
         for (boolean tick : mask)
         {
-            result += (tick) ? ON : OFF;
+            sb.append((tick) ? ON : OFF);
         }
 
-        return result;
+        return sb.toString();
     }
 
     /**

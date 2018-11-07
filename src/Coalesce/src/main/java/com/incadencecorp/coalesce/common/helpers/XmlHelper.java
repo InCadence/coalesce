@@ -20,7 +20,14 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,7 +56,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class XmlHelper {
 
     private static ConcurrentHashMap<String, JAXBContext> _jaxbContexts = new ConcurrentHashMap<>();
-    private static final String _syncObject = "";
+    private static final Object SYNC_OBJECT = new Object();
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlHelper.class);
 
     private XmlHelper()
@@ -96,10 +103,8 @@ public final class XmlHelper {
      */
     public static String serialize(Object obj, Charset charset)
     {
-        try
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream())
         {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-
             // Get JAXB Context and Create the Marshaler
             JAXBContext context = getJAXBContextForClass(obj.getClass());
             Marshaller marshaller = context.createMarshaller();
@@ -111,7 +116,7 @@ public final class XmlHelper {
 
             return new String(out.toByteArray(), charset);
         }
-        catch (JAXBException e)
+        catch (JAXBException | IOException e)
         {
             LOGGER.error("Failed: serialize", e);
             return null;
@@ -147,13 +152,20 @@ public final class XmlHelper {
      */
     public static Object deserialize(String xml, String charset, Class<?> classType) throws UnsupportedEncodingException
     {
-        InputStream in = new ByteArrayInputStream(xml.getBytes());
-        Reader reader = new InputStreamReader(in, charset);
+        try (InputStream in = new ByteArrayInputStream(xml.getBytes(charset)))
+        {
+            Reader reader = new InputStreamReader(in, charset);
 
-        InputSource source = new InputSource(reader);
-        source.setEncoding(charset);
+            InputSource source = new InputSource(reader);
+            source.setEncoding(charset);
 
-        return deserialize(source, classType);
+            return deserialize(source, classType);
+        }
+        catch (IOException e)
+        {
+            LOGGER.error("Failed: deserialize", e);
+            return null;
+        }
     }
 
     /**
@@ -168,10 +180,15 @@ public final class XmlHelper {
      */
     public static Object deserialize(String xml, Class<?> classType)
     {
-        InputStream in = new ByteArrayInputStream(xml.getBytes());
-        Reader reader = new InputStreamReader(in);
-
-        return deserialize(new InputSource(reader), classType);
+        try
+        {
+            return deserialize(xml, Charset.defaultCharset(), classType);
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            LOGGER.error("Failed: deserialize", e);
+            return null;
+        }
     }
 
     private static Object deserialize(InputSource source, Class<?> classType)
@@ -209,7 +226,7 @@ public final class XmlHelper {
             // and the first one to get the lock will create and add, the others
             // will find the if() conditional evaluating to true, so it will
             // go get the one that was added.
-            synchronized (_syncObject)
+            synchronized (SYNC_OBJECT)
             {
                 if (!_jaxbContexts.containsKey(className))
                 {
@@ -493,6 +510,11 @@ public final class XmlHelper {
         // }
     }
 
+    public static Document loadXmlFrom(String xml) throws SAXException, IOException
+    {
+        return loadXmlFrom(xml, Charset.defaultCharset());
+    }
+
     /**
      * Returns the {@link org.w3c.dom.Document} representing the XML provided.
      *
@@ -501,12 +523,14 @@ public final class XmlHelper {
      * @throws SAXException
      * @throws IOException
      */
-    public static Document loadXmlFrom(String xml) throws SAXException, IOException
+    public static Document loadXmlFrom(String xml, Charset charset) throws SAXException, IOException
     {
         if (xml == null)
+        {
             throw new NullArgumentException("xml");
+        }
 
-        return loadXmlFrom(new ByteArrayInputStream(xml.getBytes()));
+        return loadXmlFrom(new ByteArrayInputStream(xml.getBytes(charset)));
     }
 
     /**

@@ -99,10 +99,8 @@ public class ResourceEnumerationProviderImpl extends AbstractEnumerationProvider
 
             if (stream != null)
             {
-                try
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(stream)))
                 {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(stream));
-
                     String line;
                     while ((line = in.readLine()) != null)
                     {

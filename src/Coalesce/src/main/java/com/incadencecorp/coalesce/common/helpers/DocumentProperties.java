@@ -565,7 +565,7 @@ public class DocumentProperties {
 
         Element coreElm = xPath.evaluateFirst(startPartXml);
         String partNamePath = coreElm.getAttributeValue("Target");
-        partNamePath.replace("$/", "");
+        partNamePath = partNamePath.replace("$/", "");
         partNames.put(partNamePath, "core");
 
         xPath = XPathFactory.instance().compile("/rel:Relationships/rel:Relationship[@Type='http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties']",
@@ -575,7 +575,7 @@ public class DocumentProperties {
 
         Element appElm = xPath.evaluateFirst(startPartXml);
         partNamePath = appElm.getAttributeValue("Target");
-        partNamePath.replace("$/", "");
+        partNamePath = partNamePath.replace("$/", "");
         partNames.put(partNamePath, "app");
 
         return partNames;

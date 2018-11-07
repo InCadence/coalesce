@@ -617,11 +617,11 @@ public class CoalesceValidator extends CoalesceIterator {
         case INTEGER_LIST_TYPE:
         case ENUMERATION_TYPE:
         case ENUMERATION_LIST_TYPE:
-            result = Integer.compare(Integer.valueOf(value), Integer.valueOf(max));
+            result = Integer.compare(Integer.parseInt(value), Integer.parseInt(max));
             break;
         case LONG_TYPE:
         case LONG_LIST_TYPE:
-            result = Long.compare(Long.valueOf(value), Long.valueOf(max));
+            result = Long.compare(Long.parseLong(value), Long.parseLong(max));
             break;
         default:
             result = Integer.MAX_VALUE;
