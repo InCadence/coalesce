@@ -4,10 +4,10 @@ build/
 bin/
 config/
 .vpprefdata/
+logs/
 
 #Maven
 target/
-logs/
  
 # Eclipse
 .settings/
@@ -18,6 +18,10 @@ logs/
 .idea/
 *.iml
 *.iws
+
+# Distribution
+*.tar.*
+*.gz
 
 #Mac
 .DS_Store

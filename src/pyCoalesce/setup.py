@@ -16,7 +16,7 @@ setuptools.setup(
     install_requires=["simplejson", "xmltodict", "requests", "urllib3"],
     classifiers=(
         "Programming Language :: Python :: 2.7",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache License 2.0",
         "Operating System :: OS Independent",
     ),
 )

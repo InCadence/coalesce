@@ -2,20 +2,21 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Sep  5 16:26:01 2018 by generateDS.py version 2.29.24.
+# Generated Fri Nov  9 11:35:50 2018 by generateDS.py version 2.29.24.
 # Python 2.7.15 |Anaconda, Inc.| (default, May  1 2018, 18:37:09) [MSC v.1500 64 bit (AMD64)]
 #
 # Command line options:
+#   ('-f', '')
 #   ('-o', 'entity.py')
 #
 # Command line arguments:
-#   Entity.xsd
+#   ../../Coalesce/schema/Entity.xsd
 #
 # Command line:
-#   C:/Anaconda2/Scripts/generateDS.py -o "entity.py" Entity.xsd
+#   C:/Anaconda2/Scripts/generateDS.py -f -o "entity.py" ../../Coalesce/schema/Entity.xsd
 #
 # Current working directory (os.getcwd()):
-#   xsd
+#   XSD
 #
 
 import sys
