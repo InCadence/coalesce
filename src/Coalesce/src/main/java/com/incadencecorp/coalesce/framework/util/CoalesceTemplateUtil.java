@@ -366,6 +366,8 @@ public final class CoalesceTemplateUtil {
             coalesceentity.put("coalesceentity.title", ECoalesceFieldDataTypes.STRING_TYPE);
             coalesceentity.put("coalesceentity.deleted", ECoalesceFieldDataTypes.BOOLEAN_TYPE);
             coalesceentity.put("coalesceentity.creator", ECoalesceFieldDataTypes.STRING_TYPE);
+            coalesceentity.put("coalesceentity.entityid", ECoalesceFieldDataTypes.STRING_TYPE);
+            coalesceentity.put("coalesceentity.entityidtype", ECoalesceFieldDataTypes.STRING_TYPE);
             coalesceentity.put("coalesceentity.objectkey", ECoalesceFieldDataTypes.GUID_TYPE);
             coalesceentity.put("coalesceentity.datecreated", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
             coalesceentity.put("coalesceentity.lastmodified", ECoalesceFieldDataTypes.DATE_TIME_TYPE);

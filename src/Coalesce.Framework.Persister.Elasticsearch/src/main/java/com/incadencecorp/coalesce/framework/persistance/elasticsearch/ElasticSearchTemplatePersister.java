@@ -86,6 +86,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     public static final String ENTITY_TITLE_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityTitle());
     public static final String ENTITY_STATUS_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityStatus());
     public static final String ENTITY_ID_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityId());
+    public static final String ENTITY_ID_TYPE_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityIdType());
 
     // Linkage Entity 2 Column Names
     public static final String LINKAGE_ENTITY2_KEY_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageEntityKey());
@@ -434,6 +435,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                        Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.STRING_TYPE)));
         properties.put(ENTITY_STATUS_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
         properties.put(ENTITY_ID_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
+        properties.put(ENTITY_ID_TYPE_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
 
         return properties;
     }

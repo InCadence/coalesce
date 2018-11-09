@@ -22,7 +22,18 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceCoordinateField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceCoordinateListField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLineStringField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
+import com.incadencecorp.coalesce.framework.datamodel.CoalescePolygonField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
+import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
+import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
+import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
@@ -1076,7 +1087,9 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         // Entity Name
         query = new Query(TestEntity.NAME, CoalescePropertyFactory.getEntityKey(entity.getKey()));
-        query.setPropertyNames(new String[] {CoalescePropertyFactory.getFieldProperty(record.getStringField()).getPropertyName()});
+        query.setPropertyNames(new String[] {
+                CoalescePropertyFactory.getFieldProperty(record.getStringField()).getPropertyName()
+        });
         Assert.assertEquals(1, persistor.search(query).getTotal());
 
         // Entity Name
@@ -1389,6 +1402,34 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         }
 
         persistor.saveEntity(false, entity);
+    }
+
+    /**
+     * This test ensures that entities can be found using the entity ID.
+     */
+    @Test
+    public void testFindEntityId() throws Exception
+    {
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        entity.setEntityId("hello");
+        entity.setEntityIdType("world");
+
+        TestRecord record = entity.addRecord1();
+        record.getStringField().setValue("world");
+
+        CoalesceSearchFramework framework = new CoalesceSearchFramework();
+        framework.setAuthoritativePersistor(createPersister());
+        framework.saveCoalesceEntity(entity);
+
+        Assert.assertEquals(entity.getKey(), framework.findEntityId("hello"));
+        Assert.assertEquals(entity.getKey(), framework.findEntityId("hello", TestEntity.NAME));
+        Assert.assertEquals(null, framework.findEntityId("hello", "UNKNOWN"));
+
+        Assert.assertEquals(entity.getKey(),
+                            framework.find(FF.equals(CoalescePropertyFactory.getFieldProperty(record.getStringField()),
+                                                     FF.literal(record.getStringField().getValue()))));
+
     }
 
     private static Filter createFilter(String geomField,
