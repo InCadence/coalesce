@@ -1,4 +1,8 @@
+# Compiled files
+*.pyc
 
-# Distribution
-*.egg
-*.whl
+
+# Distribution files
+/build
+/dist
+/pyCoalesce.egg-info
