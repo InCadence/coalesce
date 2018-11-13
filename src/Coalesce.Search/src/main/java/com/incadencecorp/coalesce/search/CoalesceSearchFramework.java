@@ -22,18 +22,26 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.DefaultNormalizer;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.jobs.CoalesceSearchJob;
 import org.geotools.data.Query;
 import org.geotools.filter.Capabilities;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.rowset.CachedRowSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -50,6 +58,8 @@ import java.util.concurrent.ExecutorService;
 public class CoalesceSearchFramework extends CoalesceFramework {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceSearchFramework.class);
+    private static final FilterFactory2 FF = CoalescePropertyFactory.getFilterFactory();
+
     private final Map<String, ICoalesceSearchPersistor> mapping = new HashMap<>();
 
     /**
@@ -148,6 +158,96 @@ public class CoalesceSearchFramework extends CoalesceFramework {
         }
 
         return results;
+    }
+
+    /**
+     * @param id   entity ID that uniquely identifies an entity
+     * @return the key if the entity is found matching the id and name; otherwise <code>null</code>
+     * @throws CoalesceException on error
+     */
+    public String findEntityId(String id) throws CoalesceException
+    {
+        return findEntityId(id, null);
+    }
+
+    /**
+     * @param id   entity ID that uniquely identifies an entity
+     * @param name of the entities template.
+     * @return the key if the entity is found matching the id and name; otherwise <code>null</code>
+     * @throws CoalesceException on error
+     */
+    public String findEntityId(String id, String name) throws CoalesceException
+    {
+        List<org.opengis.filter.Filter> filters = new ArrayList<>();
+        filters.add(createEquals(CoalescePropertyFactory.getEntityId(), id));
+
+        if (name != null)
+        {
+            filters.add(createEquals(CoalescePropertyFactory.getName(), name));
+        }
+
+        return find(FF.and(filters));
+    }
+
+    /**
+     * @param filter that uniquely identifies an entity.
+     * @return the key of the entity matching the filter.
+     * @throws CoalesceException on error
+     */
+    public String find(Filter filter) throws CoalesceException
+    {
+        LOGGER.debug("Executing: {}", filter.toString());
+
+        String key = null;
+
+        Query query = new Query();
+        query.setFilter(filter);
+
+        SearchResults results = search(query);
+
+        if (results.getStatus() == EResultStatus.SUCCESS)
+        {
+            try (CachedRowSet rowset = results.getResults())
+            {
+                if (rowset.size() > 1)
+                {
+                    LOGGER.warn(
+                            "{} Matches found for {}; may want to reconsider the datamodel or this query for performance.",
+                            rowset.size(),
+                            filter.toString());
+                }
+
+                if (rowset.next())
+                {
+                    key = rowset.getString(1);
+                }
+            }
+            catch (SQLException e)
+            {
+                throw new CoalesceException(e);
+            }
+        }
+        else
+        {
+            throw new CoalesceException("Duplication Check Failed: " + results.getError());
+        }
+
+        return key;
+    }
+
+    private static Filter createEquals(PropertyName name, String value)
+    {
+        Filter filter;
+        if (StringHelper.isNullOrEmpty(value))
+        {
+            filter = FF.or(FF.equals(name, FF.literal(value)), FF.isNull(name));
+        }
+        else
+        {
+            filter = FF.equals(name, FF.literal(value));
+        }
+
+        return filter;
     }
 
     /**

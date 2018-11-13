@@ -267,7 +267,7 @@ public class CoalesceEntitySyncShell {
         // the nodes in LocalFullSyncShell.
         CoalesceEntitySyncShell requiredChangesSyncShell = CoalesceEntitySyncShell.clone(remoteFullSyncShell);
 
-        if (requiredChangesSyncShell.equals(null)) return requiredChangesSyncShell;
+        if (requiredChangesSyncShell == null) return requiredChangesSyncShell;
 
         // Prune Unchanged Nodes
         CoalesceEntitySyncShell.pruneUnchangedNodes(CoalesceEntitySyncShell.generateMap(localFullSyncShell.getCoalesceObjectDocument()),

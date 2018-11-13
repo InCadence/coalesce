@@ -202,6 +202,7 @@ public class TemplateDataController {
             results.add(getField(CoalescePropertyFactory.getDateCreated(), ECoalesceFieldDataTypes.DATE_TIME_TYPE));
             results.add(getField(CoalescePropertyFactory.getLastModified(), ECoalesceFieldDataTypes.DATE_TIME_TYPE));
             results.add(getField(CoalescePropertyFactory.getEntityStatus(), ECoalesceFieldDataTypes.ENUMERATION_TYPE));
+            results.add(getField(CoalescePropertyFactory.getEntityId(), ECoalesceFieldDataTypes.STRING_TYPE));
         }
         else if (recordsetKey.equalsIgnoreCase(COALESCELINKAGE_KEY))
         {

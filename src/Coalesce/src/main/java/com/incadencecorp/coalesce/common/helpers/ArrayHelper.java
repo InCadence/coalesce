@@ -72,7 +72,7 @@ public final class ArrayHelper {
 
         for (int ii = 0; ii < values.length; ii++)
         {
-            results[ii] = Integer.valueOf(values[ii]);
+            results[ii] = Integer.parseInt(values[ii]);
         }
 
         return results;
@@ -88,7 +88,7 @@ public final class ArrayHelper {
 
         for (int ii = 0; ii < values.length; ii++)
         {
-            results[ii] = Long.valueOf(values[ii]);
+            results[ii] = Long.parseLong(values[ii]);
         }
 
         return results;

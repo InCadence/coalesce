@@ -566,7 +566,7 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
             setEntity2Version(value);
             return true;
         case ATTRIBUTE_ENTITY2OBJECTVERSION:
-            setEntity2ObjectVersion(Integer.valueOf(value));
+            setEntity2ObjectVersion(Integer.parseInt(value));
             return true;
         case CoalesceAttributes.ATTRIBUTE_MARKING:
             setClassificationMarking(new Marking(value));

@@ -186,7 +186,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getEntityId()
     {
-        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "entityidtype");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "entityid");
     }
 
     /**
@@ -194,7 +194,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getEntityIdType()
     {
-        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "entityid");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "entityidtype");
     }
 
     /**
