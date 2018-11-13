@@ -164,9 +164,4 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
         return normalized;
     }
 
-    private String getNormalizedPropertyName(PropertyName name)
-    {
-        return getNormalizedPropertyName(name.getPropertyName());
-    }
-
 }

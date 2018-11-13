@@ -76,9 +76,9 @@ public class CoalesceUnitTestSettings extends CoalesceSettings {
         setDefaultApplicationRoot(null);
     }
 
-    public static boolean setSubDirectoryLength(int value)
+    public static void setSubDirectoryLength(int value)
     {
-        return settings.setSetting(getConfigurationFileName(), "Coalesce.FileStore.SubDirectoryLength", value);
+        setSetting( "Coalesce.FileStore.SubDirectoryLength", Integer.toString(value));
     }
 
     public static URL getResource(String resource)

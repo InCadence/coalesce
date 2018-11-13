@@ -828,7 +828,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
     @Override
     public Connection getDBConnection() throws SQLException
     {
-        if (_conn == null || (_conn != null && _conn.isClosed()))
+        if (_conn == null || _conn.isClosed())
         {
             StringBuilder urlBuilder = new StringBuilder(protocol).append(":").append(databaseDriver).append(":");
             urlBuilder.append(subSubProtocol).append(":");

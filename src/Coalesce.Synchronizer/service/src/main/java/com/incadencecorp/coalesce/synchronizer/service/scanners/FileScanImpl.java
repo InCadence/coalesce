@@ -117,22 +117,26 @@ public class FileScanImpl extends AbstractScan {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
                 {
-                    String filename = file.getFileName().toString();
+                    Path filenamePath = file.getFileName();
 
-                    if (GUIDHelper.isValid(filename))
+                    if (filenamePath != null)
                     {
-                        if (LOGGER.isTraceEnabled())
+                        String filename = filenamePath.toString();
+
+                        if (GUIDHelper.isValid(filename))
                         {
-                            LOGGER.trace("\t{}", filename);
-                        }
+                            if (LOGGER.isTraceEnabled())
+                            {
+                                LOGGER.trace("\t{}", filename);
+                            }
 
-                        rows.add(new Object[] {
-                                filename, file.toString()
-                        });
-                    }
-                    else if (LOGGER.isDebugEnabled())
-                    {
-                        LOGGER.debug("\t(INVALID) {}", filename);
+                            rows.add(new Object[] { filename, file.toString()
+                            });
+                        }
+                        else if (LOGGER.isDebugEnabled())
+                        {
+                            LOGGER.debug("\t(INVALID) {}", filename);
+                        }
                     }
 
                     FileVisitResult result;

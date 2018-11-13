@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.services.search.service.data.controllers;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
@@ -458,6 +459,8 @@ public class SearchDataController {
             case PropertyIsNull.NAME:
                 criteriaFilter = ff.isNull(property);
                 break;
+            default:
+                throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT, criteria.getOperator()));
             }
 
             if (criteriaFilter != null)

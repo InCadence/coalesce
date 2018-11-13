@@ -675,7 +675,8 @@ public final class JAXWSUtil {
 
     private static String getConfigName(Path configuration)
     {
-        return configuration.getFileName().toString();
+        Path filename = configuration.getFileName();
+        return filename != null ? filename.toString() : null;
     }
 
     private static String getSpringBusID(Bus bus)

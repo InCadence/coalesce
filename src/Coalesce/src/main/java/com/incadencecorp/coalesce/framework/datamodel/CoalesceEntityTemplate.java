@@ -1,14 +1,17 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
+import com.drew.lang.annotations.NotNull;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import org.apache.commons.io.Charsets;
 import org.joda.time.DateTime;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.UUID;
 
 /*-----------------------------------------------------------------------------'
@@ -204,7 +207,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
 
         if (StringHelper.isNullOrEmpty(result))
         {
-            result = UUID.nameUUIDFromBytes((getName() + getSource() + getVersion()).getBytes()).toString();
+            result = UUID.nameUUIDFromBytes((getName() + getSource() + getVersion()).getBytes(Charsets.UTF_8)).toString();
             setKey(result);
 
         }

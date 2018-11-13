@@ -127,7 +127,7 @@ public class CoalesceUpdaterIterator extends CoalesceIterator<CoalesceEntity> {
                                                          section.getName());
             }
 
-            addResult("Created Section: (%s)", section.getNamePath());
+            addResult("Created Section: (%s)", sectionToUpdate.getNamePath());
         }
 
         return true;

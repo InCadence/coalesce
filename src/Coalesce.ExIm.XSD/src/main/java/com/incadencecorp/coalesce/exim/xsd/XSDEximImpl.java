@@ -244,6 +244,8 @@ public class XSDEximImpl implements CoalesceExim<Document> {
                                     case CoalesceCircleField.ATTRIBUTE_RADIUS:
                                         field.setAttribute(CoalesceCircleField.ATTRIBUTE_RADIUS, value.getTextContent());
                                         break;
+                                    default:
+                                        // Do Nothing
                                     }
                                     value = getNextSiblingElement(value);
                                 }

@@ -235,7 +235,7 @@ public final class DocumentThumbnailHelper {
      */
     public static BufferedImage getThumbnailForMimeType(String mimeType) throws IOException
     {
-        BufferedImage thumbnail = null;
+        BufferedImage thumbnail;
 
         switch (mimeType) {
         case "application/msword":
@@ -274,6 +274,11 @@ public final class DocumentThumbnailHelper {
         case "application/zip":
 
             thumbnail = DocumentThumbnailHelper.getImageForResource("LargeIcon_Zip.png");
+            break;
+
+        default:
+            thumbnail = null;
+            break;
 
         }
 

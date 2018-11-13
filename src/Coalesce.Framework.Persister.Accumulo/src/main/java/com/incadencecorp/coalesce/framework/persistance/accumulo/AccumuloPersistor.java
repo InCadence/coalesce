@@ -6,6 +6,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.persistance.*;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
@@ -225,7 +226,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         {
             LOGGER.error(ex.getLocalizedMessage(), ex);
         }
-        return results != null ? results.toArray(new String[results.size()]) : null;
+        return results.toArray(new String[results.size()]);
     }
 
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
@@ -870,7 +871,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     {
         if (key == null)
         {
-            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "null"));
         }
 
         Range range = new Range(key);
@@ -923,7 +924,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                                                          Authorizations.EMPTY,
                                                          1,
                                                          config);
-            if (entityTemplateKey != null && entityTemplateKey != "")
+            if (!StringHelper.isNullOrEmpty(entityTemplateKey))
             {
                 bd.setRanges(Collections.singleton(Range.exact(new Text(entityTemplateKey))));
 

@@ -317,6 +317,8 @@ public class BlueprintController implements IBlueprintController {
 
                     results.add(link);
                     break;
+                default:
+                    // Do Nothing
                 }
             }
         }
@@ -522,9 +524,7 @@ public class BlueprintController implements IBlueprintController {
         File f = new File(deploy + "/backups/");
         if ( f.isDirectory() ) {
             File [] files = f.listFiles();
-            if ( files.length > 0 ) {
-                return files.length;
-            }
+            return files != null ? files.length : 0;
         }
         else {
            f.mkdir();

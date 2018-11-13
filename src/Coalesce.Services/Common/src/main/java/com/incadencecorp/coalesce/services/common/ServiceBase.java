@@ -104,7 +104,7 @@ public abstract class ServiceBase<T> extends CoalesceExecutorServiceImpl {
      */
     private EJobStatus getJobStatus(String id)
     {
-        return getJobStatus(id);
+        return jobs.getJobStatus(id);
     }
 
     /**
