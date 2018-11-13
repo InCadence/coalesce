@@ -1,0 +1,1 @@
+generateDS.py -fo entity.py ../../Coalesce/schema/Entity.xsd
