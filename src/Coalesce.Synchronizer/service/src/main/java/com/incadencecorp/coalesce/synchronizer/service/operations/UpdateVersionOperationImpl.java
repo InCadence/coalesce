@@ -110,7 +110,7 @@ public class UpdateVersionOperationImpl extends AbstractOperation<AbstractOperat
                         {
                             if (LOGGER.isInfoEnabled())
                             {
-                                sb.append(String.format("Updated (%s), (%s), (%s), (%s)" + CRLF,
+                                sb.append(String.format("Updated (%s), (%s), (%s), (%s)%n",
                                                         entity.getKey(),
                                                         entity.getName(),
                                                         entity.getSource(),
@@ -160,7 +160,7 @@ public class UpdateVersionOperationImpl extends AbstractOperation<AbstractOperat
 
             private CoalesceUpdaterIterator getIterator(CoalesceEntity entity) throws CoalescePersistorException
             {
-                String key = String.format("%s_%s", entity.getName(), entity.getSource(), entity.getVersion());
+                String key = String.format("%s_%s", entity.getName(), entity.getSource());
 
                 if (!ITERATORS.containsKey(key))
                 {

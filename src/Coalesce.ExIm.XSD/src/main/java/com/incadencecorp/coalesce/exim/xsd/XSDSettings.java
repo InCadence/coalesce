@@ -34,18 +34,8 @@ public final class XSDSettings {
     private static final int DEFAULT_MAX_STRING = 20;
     private static final int DEFAULT_MAX_POINTS = 10000;
 
-    private static String config_name = XSDSettings.class.getSimpleName().toLowerCase() + ".properties";
+    private static String config_name = "coalesce.properties";
     private static SettingsBase settings = new SettingsBase(null);
-
-    /**
-     * Default Constructor
-     */
-    private XSDSettings()
-    {
-        // Do Nothing
-        config_name = "coalesce.properties";
-
-    }
 
     /**
      * Configures the settings to use a particular connector.

@@ -131,7 +131,7 @@ public class IntervalDriverImpl extends AbstractDriver {
         // Delay Configured?
         if (parameters.containsKey(SynchronizerParameters.PARAM_DRIVER_DELAY))
         {
-            delay = Integer.valueOf(parameters.get(SynchronizerParameters.PARAM_DRIVER_DELAY));
+            delay = Integer.parseInt(parameters.get(SynchronizerParameters.PARAM_DRIVER_DELAY));
 
             if (delay < 1)
             {

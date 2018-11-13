@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import org.joda.time.DateTime;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
@@ -118,7 +119,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     {
         try
         {
-            if (entitySource != null && entitySource != "")
+            if (!StringHelper.isNullOrEmpty(entitySource))
             {
                 return getCoalesceEntityKeysForEntityIdAndSource(entityId, entityIdType, entityName, entitySource);
             }
@@ -479,13 +480,19 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
         catch (Exception e)
         {
-            conn.rollback();
+            if (conn != null)
+            {
+                conn.rollback();
+            }
 
             throw new CoalescePersistorException("FlattenObject: " + e.getMessage(), e);
         }
         finally
         {
-            conn.close();
+            if (conn != null)
+            {
+                conn.close();
+            }
         }
 
         return isSuccessful;
@@ -1212,7 +1219,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
         if (!coalesceObject.isMarkedDeleted())
         {
-            if (coalesceObject.getType().toLowerCase() == "field")
+            if (coalesceObject.getType().equalsIgnoreCase("field"))
             {
                 if (((CoalesceField<?>) coalesceObject).getDataType() == ECoalesceFieldDataTypes.FILE_TYPE)
                 {

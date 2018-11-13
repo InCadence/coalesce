@@ -121,8 +121,10 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
                     // Clean Up Sub-Directory
                     if (Files.exists(sub))
                     {
-                        File directory = new File(sub.toString());
-                        if (directory.list().length == 0 && !Files.isSameFile(sub, root))
+                        File directory = sub.toFile();
+
+                        String[] files = directory.list();
+                        if ((files == null || files.length == 0) && !Files.isSameFile(sub, root))
                         {
                             if (!directory.delete())
                             {

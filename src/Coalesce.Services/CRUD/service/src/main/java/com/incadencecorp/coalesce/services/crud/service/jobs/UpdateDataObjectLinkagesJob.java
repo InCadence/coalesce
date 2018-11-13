@@ -17,11 +17,6 @@
 
 package com.incadencecorp.coalesce.services.crud.service.jobs;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
@@ -32,6 +27,11 @@ import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkRequest;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkType;
 import com.incadencecorp.coalesce.services.common.jobs.AbstractFrameworkServiceJob;
 import com.incadencecorp.coalesce.services.crud.service.tasks.UpdateDataObjectLinkagesTask;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 public class UpdateDataObjectLinkagesJob extends AbstractFrameworkServiceJob<DataObjectLinkRequest, StringResponse, ResultsType> {
 
@@ -181,18 +181,11 @@ public class UpdateDataObjectLinkagesJob extends AbstractFrameworkServiceJob<Dat
 
         public void combine(DataObjectLinkBucket bucket)
         {
+            keys.addAll(bucket.keys);
+            linkages.addAll(bucket.linkages);
 
-            if (bucket instanceof DataObjectLinkBucket)
-            {
-
-                DataObjectLinkBucket linkBucket = bucket;
-
-                keys.addAll(linkBucket.keys);
-                linkages.addAll(linkBucket.linkages);
-
-                linkBucket.linkages.clear();
-                linkBucket.keys.clear();
-            }
+            bucket.linkages.clear();
+            bucket.keys.clear();
         }
 
         public DataObjectLinkType[] getItems()

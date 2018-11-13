@@ -44,7 +44,7 @@ public class CoalesceMapper extends ObjectMapper {
 
     public void setMixInAnnotations(Class<?> target, Class<?> mixinSource)
     {
-        this.setMixInAnnotations(target, mixinSource);
+        super.addMixInAnnotations(target, mixinSource);
     }
 
 }

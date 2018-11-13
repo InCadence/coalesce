@@ -94,7 +94,7 @@ public abstract class AbstractOperation<T extends AbstractOperationTask> extends
 
         if (params.containsKey(SynchronizerParameters.PARAM_OP_WINDOW_SIZE))
         {
-            window = Integer.valueOf(params.get(SynchronizerParameters.PARAM_OP_WINDOW_SIZE));
+            window = Integer.parseInt(params.get(SynchronizerParameters.PARAM_OP_WINDOW_SIZE));
 
             if (window < 1)
             {

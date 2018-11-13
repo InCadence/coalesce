@@ -104,6 +104,9 @@ public class ReturnTypeMapper implements ICoalesceMapper<String> {
         case BINARY_TYPE:
             clazz = Object.class;
             break;
+        default:
+            clazz = String.class;
+            break;
         }
         
         String result = clazz.getSimpleName();

@@ -228,7 +228,7 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
                 }
 
                 // Back off to allow other threads to close their locks.
-                Thread.sleep(millis * attempt);
+                Thread.sleep((long) millis * attempt);
 
                 if (LOGGER.isDebugEnabled())
                 {

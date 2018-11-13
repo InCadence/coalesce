@@ -48,7 +48,7 @@ public class CoalesceSettings {
     private static String _defaultApplicationName;
     private static String _defaultApplicationRoot;
 
-    protected static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
+    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
 
     /*--------------------------------------------------------------------------
     Parameter Groups
@@ -318,6 +318,16 @@ public class CoalesceSettings {
     public static boolean setImageFormat(String value)
     {
         return settings.setSetting(getConfigurationFileName(), PARAM_FILE_STORE_IMAGE_FORMAT, value);
+    }
+
+    public static void setSetting(String name, String value)
+    {
+        settings.setSetting(getConfigurationFileName(), name, value);
+    }
+
+    public static String getSetting(String name)
+    {
+        return settings.getSetting(getConfigurationFileName(), name, "", false);
     }
 
     /*--------------------------------------------------------------------------
