@@ -142,7 +142,7 @@ public class IntervalDriverImpl extends AbstractDriver {
         // Interval Configured?
         if (parameters.containsKey(SynchronizerParameters.PARAM_DRIVER_INTERVAL))
         {
-            interval = Integer.valueOf(parameters.get(SynchronizerParameters.PARAM_DRIVER_INTERVAL));
+            interval = Integer.parseInt(parameters.get(SynchronizerParameters.PARAM_DRIVER_INTERVAL));
 
             if (interval < 1)
             {
@@ -153,7 +153,7 @@ public class IntervalDriverImpl extends AbstractDriver {
         // Number of Threads Configured?
         if (parameters.containsKey(SynchronizerParameters.PARAM_DRIVER_MAX_THREADS))
         {
-            threads = Integer.valueOf(parameters.get(SynchronizerParameters.PARAM_DRIVER_MAX_THREADS));
+            threads = Integer.parseInt(parameters.get(SynchronizerParameters.PARAM_DRIVER_MAX_THREADS));
 
             if (threads < 1)
             {

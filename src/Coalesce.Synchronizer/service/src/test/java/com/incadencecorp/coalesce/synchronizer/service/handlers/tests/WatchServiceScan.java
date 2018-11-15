@@ -17,10 +17,17 @@
 
 package com.incadencecorp.coalesce.synchronizer.service.handlers.tests;
 
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import com.incadencecorp.coalesce.api.CoalesceParameters;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.FileHelper;
+import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
+import com.incadencecorp.coalesce.synchronizer.api.common.AbstractScan;
+import org.geotools.data.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -41,18 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.RowSetProvider;
-
-import org.geotools.data.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.incadencecorp.coalesce.api.CoalesceParameters;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.helpers.FileHelper;
-import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
-import com.incadencecorp.coalesce.synchronizer.api.common.AbstractScan;
+import static java.nio.file.StandardWatchEventKinds.*;
 
 public class WatchServiceScan extends AbstractScan {
 
@@ -138,11 +134,10 @@ public class WatchServiceScan extends AbstractScan {
 
         try
         {
-            String columns[] = new String[] {
-                    "objectkey", "fullpath"
+            String columns[] = new String[] { "objectkey", "fullpath"
             };
 
-            final Map<String, String> keys = new HashMap<String, String>();
+            final Map<String, String> keys = new HashMap<>();
 
             WatchKey key = service.take();
 
@@ -152,7 +147,7 @@ public class WatchServiceScan extends AbstractScan {
             }
 
             // Dequeueing events
-            Kind<?> kind = null;
+            Kind<?> kind;
             for (WatchEvent<?> watchEvent : key.pollEvents())
             {
                 // Get the type of the event
@@ -186,7 +181,11 @@ public class WatchServiceScan extends AbstractScan {
                                     LOGGER.debug("Adding Entity {}", file);
                                 }
 
-                                keys.put(file.getFileName().toString(), file.toString());
+                                Path filename = file.getFileName();
+                                if (filename != null)
+                                {
+                                    keys.put(filename.toString(), file.toString());
+                                }
                                 return FileVisitResult.CONTINUE;
                             }
                         });
@@ -199,7 +198,11 @@ public class WatchServiceScan extends AbstractScan {
                             LOGGER.debug("Adding Entity {}", newPath);
                         }
 
-                        keys.put(newPath.getFileName().toString(), newPath.toString());
+                        Path filename = newPath.getFileName();
+                        if (filename != null)
+                        {
+                            keys.put(filename.toString(), newPath.toString());
+                        }
                     }
                 }
                 else if (ENTRY_MODIFY == kind)
@@ -214,19 +217,22 @@ public class WatchServiceScan extends AbstractScan {
                             LOGGER.debug("Adding Entity {}", newPath);
                         }
 
-                        keys.put(newPath.getFileName().toString(), newPath.toString());
+                        Path filename = newPath.getFileName();
+                        if (filename != null)
+                        {
+                            keys.put(filename.toString(), newPath.toString());
+                        }
                     }
                 }
             }
 
             key.reset();
 
-            List<Object[]> rows = new ArrayList<Object[]>();
+            List<Object[]> rows = new ArrayList<>();
 
             for (Map.Entry<String, String> entry : keys.entrySet())
             {
-                rows.add(new Object[] {
-                        entry.getKey(), entry.getValue()
+                rows.add(new Object[] { entry.getKey(), entry.getValue()
                 });
             }
 
