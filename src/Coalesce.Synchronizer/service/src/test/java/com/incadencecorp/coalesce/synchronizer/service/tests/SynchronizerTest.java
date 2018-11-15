@@ -266,7 +266,7 @@ public class SynchronizerTest {
         Assert.assertTrue(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource()).equalsIgnoreCase(metadata.getColumnLabel(4)));
     }
 
-    private class MockOperation extends AbstractOperation<AbstractOperationTask> {
+    private static class MockOperation extends AbstractOperation<AbstractOperationTask> {
 
         private Set<String> columns = new HashSet<>();
 
