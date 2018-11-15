@@ -17,7 +17,6 @@
 
 package com.incadencecorp.coalesce.framework.persistance.postgres;
 
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
@@ -32,25 +31,55 @@ import org.geotools.data.postgis.PostgisPSFilterToSql;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.Capabilities;
 import org.geotools.filter.FunctionImpl;
-import org.geotools.filter.capability.FunctionNameImpl;
 import org.geotools.jdbc.JDBCDataStore;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.filter.*;
-import org.opengis.filter.expression.*;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.PropertyIsEqualTo;
+import org.opengis.filter.PropertyIsLike;
+import org.opengis.filter.PropertyIsNotEqualTo;
+import org.opengis.filter.PropertyIsNull;
+import org.opengis.filter.expression.BinaryExpression;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Function;
+import org.opengis.filter.expression.Literal;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.spatial.*;
-import org.opengis.filter.temporal.*;
+import org.opengis.filter.spatial.BBOX;
+import org.opengis.filter.spatial.Beyond;
+import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.filter.spatial.Contains;
+import org.opengis.filter.spatial.Crosses;
+import org.opengis.filter.spatial.DWithin;
+import org.opengis.filter.spatial.Disjoint;
+import org.opengis.filter.spatial.DistanceBufferOperator;
+import org.opengis.filter.spatial.Equals;
+import org.opengis.filter.spatial.Intersects;
+import org.opengis.filter.spatial.Overlaps;
+import org.opengis.filter.spatial.Touches;
+import org.opengis.filter.spatial.Within;
+import org.opengis.filter.temporal.After;
+import org.opengis.filter.temporal.Before;
+import org.opengis.filter.temporal.Begins;
+import org.opengis.filter.temporal.BegunBy;
+import org.opengis.filter.temporal.During;
+import org.opengis.filter.temporal.EndedBy;
+import org.opengis.filter.temporal.Ends;
+import org.opengis.filter.temporal.TContains;
+import org.opengis.filter.temporal.TEquals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
-
-import static org.geotools.filter.capability.FunctionNameImpl.parameter;
 
 /**
  * This class creates the SQL statements to perform structured searches against
@@ -753,9 +782,7 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
 
             if (LOGGER.isDebugEnabled())
             {
-                LOGGER.debug("Converted ({}) Value ({}) => ({})",
-                             currentProperty, expression.getValue(),
-                             literalValue);
+                LOGGER.debug("Converted ({}) Value ({}) => ({})", currentProperty, expression.getValue(), literalValue);
             }
         }
         else
@@ -1094,7 +1121,6 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
     {
 
         String currentTable;
-        String lastTable = null;
 
         StringBuilder sb = new StringBuilder(databaseSchema + ".coalesceentity");
 
@@ -1112,22 +1138,8 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
                 column = "entity1key";
             }
 
-            // First Table
-            if (StringHelper.isNullOrEmpty(lastTable))
-            {
-                // from = currentTable;
-                sb.append(" LEFT JOIN " + currentTable + " ON " + currentTable + "." + column + "=coalesceentity.objectkey");
-
-            }
-            else
-            {
-                // Create Join
-                sb.append(" LEFT JOIN " + currentTable + " ON " + currentTable + "." + column + "="
-                                  + "coalesceentity.objectkey");
-            }
-
-            lastTable = currentTable;
-
+            // Create Join
+            sb.append(" LEFT JOIN " + currentTable + " ON " + currentTable + "." + column + "=coalesceentity.objectkey");
         }
 
         for (String enumParam : enumList)
