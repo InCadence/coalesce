@@ -13,7 +13,7 @@ stages:
   - name: test
     if: branch != release AND !(tag IS present)
   - name: deploy
-    if: (branch = master AND "${TRAVIS_PULL_REQUEST}" = "false") OR tag IS present OR "${TRAVIS_EVENT_TYPE}" = "cron"
+    if: (branch = master AND "${TRAVIS_PULL_REQUEST}" = "false") OR tag IS present OR type = cron
   - name: deploy-karaf
     if: tag IS present
 jobs:
