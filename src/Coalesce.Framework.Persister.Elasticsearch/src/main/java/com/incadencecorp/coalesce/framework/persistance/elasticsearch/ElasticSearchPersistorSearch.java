@@ -17,6 +17,8 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.Capabilities;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,14 +27,21 @@ import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ElasticSearchPersistorSearch extends ElasticSearchPersistor implements ICoalesceSearchPersistor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistorSearch.class);
     private final Map<String, DataStore> datastores = new ConcurrentHashMap<>();
-
+    private final Set<String> keywords = new HashSet<>();
     /**
      * Default constructor using {@link ElasticSearchSettings} for configuration
      */
@@ -47,6 +56,62 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
     public ElasticSearchPersistorSearch(Map<String, String> params)
     {
         super(params);
+    }
+
+    /**
+     * @return a set of fields that are not analyzed for the base indexes indicating that they are keywords.
+     */
+    private Set<String> getKeywords() throws CoalescePersistorException
+    {
+        Set<String> keywords = new HashSet<>();
+
+        keywords.addAll(getKeywords(ElasticSearchPersistor.COALESCE_ENTITY_INDEX,
+                                    ElasticSearchPersistor.COALESCE_ENTITY,
+                                    CoalescePropertyFactory.COALESCE_ENTITY_TABLE));
+
+        keywords.addAll(getKeywords(ElasticSearchPersistor.COALESCE_LINKAGE_INDEX,
+                                    ElasticSearchPersistor.COALESCE_LINKAGE,
+                                    CoalescePropertyFactory.COALESCE_LINKAGE_TABLE));
+
+        if (LOGGER.isInfoEnabled())
+        {
+            LOGGER.info("Keyword Fields: ({})", String.join("\n", keywords));
+        }
+
+        return keywords;
+    }
+
+    /**
+     * @return a set of fields that are not analyzed indicating that they are keywords.
+     */
+    private Set<String> getKeywords(String index, String type, String prefix) throws CoalescePersistorException
+    {
+        Set<String> keywords = new HashSet<>();
+
+        try
+        {
+            DataStore datastore = getDataStore(index);
+            SimpleFeatureType feature = datastore.getSchema(type);
+
+            for (AttributeDescriptor attr : feature.getAttributeDescriptors())
+            {
+                if (attr.getLocalName().startsWith(prefix))
+                {
+                    Object value = attr.getUserData().getOrDefault("analyzed", false);
+
+                    if (value instanceof Boolean && !((Boolean) value))
+                    {
+                        keywords.add(attr.getLocalName());
+                    }
+                }
+            }
+        }
+        catch (IOException | RuntimeException e)
+        {
+            throw new CoalescePersistorException(e.getMessage(), e);
+        }
+
+        return keywords;
     }
 
     @Override
@@ -70,23 +135,15 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
         try
         {
-            ElasticSearchQueryRewriter rewriter = new ElasticSearchQueryRewriter();
-            Query localQuery = rewriter.rewrite(query);
-
-            /*
-            if (LOGGER.isDebugEnabled())
+            if (keywords.isEmpty())
             {
-                Iterator<DataStoreFactorySpi> availableStores = DataStoreFinder.getAvailableDataStores();
-
-                LOGGER.debug("List Available Stores:");
-                while (availableStores.hasNext())
-                {
-                    LOGGER.debug("\t{}", availableStores.next().getClass().getName());
-                }
-
-                LOGGER.info("Selected Store: {}", datastore.getClass().getSimpleName());
+                keywords.addAll(getKeywords());
             }
-            */
+
+            ElasticSearchQueryRewriter rewriter = new ElasticSearchQueryRewriter();
+            rewriter.setKeywords(keywords);
+
+            Query localQuery = rewriter.rewrite(query);
 
             String typeName;
 
