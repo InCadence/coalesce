@@ -18,7 +18,14 @@ package com.incadencecorp.coalesce.framework.persistance.derby;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
@@ -32,7 +39,15 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -104,66 +119,71 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                         + ivarobjectkey + "'";
 
         // prepare the query
-        PreparedStatement stmt = conn.prepareStatement(existsSQL);
-        ResultSet result = stmt.executeQuery();
-
-        int ii = 1;
-
-        if (!result.next())
+        try (PreparedStatement stmt = conn.prepareStatement(existsSQL))
         {
-            // insert
-            StringBuilder sql = new StringBuilder("insert into " + schema + ".coalesceentity (");
-            sql.append(COLUMNS.getKey()).append(", ");
-            sql.append(COLUMNS.getName()).append(", ");
-            sql.append(COLUMNS.getSource()).append(", ");
-            sql.append(COLUMNS.getVersion()).append(", ");
-            sql.append(COLUMNS.getEntityId()).append(",");
-            sql.append(COLUMNS.getEntityIdType()).append(", ");
-            sql.append(COLUMNS.getXml()).append(", ");
-            sql.append(COLUMNS.getDateCreated()).append(", ");
-            sql.append(COLUMNS.getLastModified());
-            sql.append(") values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            ResultSet result = stmt.executeQuery();
+            int ii = 1;
 
-            stmt = conn.prepareStatement(sql.toString());
-            stmt.setObject(ii++, ivarobjectkey);
-            stmt.setObject(ii++, ivarname);
-            stmt.setObject(ii++, ivarsource);
-            stmt.setObject(ii++, ivarversion);
-            stmt.setObject(ii++, ivarentityid);
-            stmt.setObject(ii++, ivarentityidtype);
-            stmt.setObject(ii++, ivarentityxml);
-            stmt.setObject(ii++, dateCreated);
-            stmt.setObject(ii, lastModified);
+            if (!result.next())
+            {
+                // insert
+                StringBuilder sql = new StringBuilder("insert into " + schema + ".coalesceentity (");
+                sql.append(COLUMNS.getKey()).append(", ");
+                sql.append(COLUMNS.getName()).append(", ");
+                sql.append(COLUMNS.getSource()).append(", ");
+                sql.append(COLUMNS.getVersion()).append(", ");
+                sql.append(COLUMNS.getEntityId()).append(",");
+                sql.append(COLUMNS.getEntityIdType()).append(", ");
+                sql.append(COLUMNS.getXml()).append(", ");
+                sql.append(COLUMNS.getDateCreated()).append(", ");
+                sql.append(COLUMNS.getLastModified());
+                sql.append(") values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+                try (PreparedStatement stmt2 = conn.prepareStatement(sql.toString()))
+                {
+                    stmt2.setObject(ii++, ivarobjectkey);
+                    stmt2.setObject(ii++, ivarname);
+                    stmt2.setObject(ii++, ivarsource);
+                    stmt2.setObject(ii++, ivarversion);
+                    stmt2.setObject(ii++, ivarentityid);
+                    stmt2.setObject(ii++, ivarentityidtype);
+                    stmt2.setObject(ii++, ivarentityxml);
+                    stmt2.setObject(ii++, dateCreated);
+                    stmt2.setObject(ii, lastModified);
+
+                    stmt2.executeUpdate();
+                }
+            }
+            else
+            {
+                // update
+                StringBuilder sql = new StringBuilder("update " + schema + ".coalesceentity set ");
+                sql.append(COLUMNS.getName()).append("=?, ");
+                sql.append(COLUMNS.getSource()).append("=?, ");
+                sql.append(COLUMNS.getVersion()).append("=?, ");
+                sql.append(COLUMNS.getEntityId()).append("=?, ");
+                sql.append(COLUMNS.getEntityIdType()).append("=?, ");
+                sql.append(COLUMNS.getXml()).append("=?, ");
+                sql.append(COLUMNS.getDateCreated()).append("=?, ");
+                sql.append(COLUMNS.getLastModified()).append("=?");
+                sql.append(" where ").append(COLUMNS.getKey()).append("=?");
+
+                try (PreparedStatement stmt2 = conn.prepareStatement(sql.toString()))
+                {
+                    stmt2.setObject(ii++, ivarname);
+                    stmt2.setObject(ii++, ivarsource);
+                    stmt2.setObject(ii++, ivarversion);
+                    stmt2.setObject(ii++, ivarentityid);
+                    stmt2.setObject(ii++, ivarentityidtype);
+                    stmt2.setObject(ii++, ivarentityxml);
+                    stmt2.setObject(ii++, dateCreated);
+                    stmt2.setObject(ii++, lastModified);
+                    stmt2.setObject(ii, ivarobjectkey);
+
+                    stmt2.executeUpdate();
+                }
+            }
         }
-        else
-        {
-            // update
-            StringBuilder sql = new StringBuilder("update " + schema + ".coalesceentity set ");
-            sql.append(COLUMNS.getName()).append("=?, ");
-            sql.append(COLUMNS.getSource()).append("=?, ");
-            sql.append(COLUMNS.getVersion()).append("=?, ");
-            sql.append(COLUMNS.getEntityId()).append("=?, ");
-            sql.append(COLUMNS.getEntityIdType()).append("=?, ");
-            sql.append(COLUMNS.getXml()).append("=?, ");
-            sql.append(COLUMNS.getDateCreated()).append("=?, ");
-            sql.append(COLUMNS.getLastModified()).append("=?");
-            sql.append(" where ").append(COLUMNS.getKey()).append("=?");
-
-            stmt = conn.prepareStatement(sql.toString());
-            stmt.setObject(ii++, ivarname);
-            stmt.setObject(ii++, ivarsource);
-            stmt.setObject(ii++, ivarversion);
-            stmt.setObject(ii++, ivarentityid);
-            stmt.setObject(ii++, ivarentityidtype);
-            stmt.setObject(ii++, ivarentityxml);
-            stmt.setObject(ii++, dateCreated);
-            stmt.setObject(ii++, lastModified);
-            stmt.setObject(ii, ivarobjectkey);
-        }
-
-        LOGGER.trace("{}", stmt);
-
-        stmt.executeUpdate();
 
         return true;
     }
@@ -171,14 +191,14 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
     public boolean deleteEntity(String key) throws SQLException
     {
         return executeUpdate("DELETE FROM " + schema + ".coalesceentity WHERE " + COLUMNS.getKey() + "=?",
-                      new CoalesceParameter(key, Types.CHAR)) != 0;
+                             new CoalesceParameter(key, Types.CHAR)) != 0;
     }
 
     public boolean deleteLinkage(String key) throws SQLException
 
     {
         return executeUpdate("DELETE FROM " + schema + ".coalescelinkage WHERE " + COLUMNS.getKey() + "=?",
-                      new CoalesceParameter(key, Types.CHAR)) != 0;
+                             new CoalesceParameter(key, Types.CHAR)) != 0;
     }
 
     public boolean coalesceLinkage_InsertOrUpdate(CoalesceLinkage linkage) throws SQLException
@@ -187,14 +207,12 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         Connection conn = this.getConnection();
 
         // prepare the query
-        ResultSet result = null;
-
         String dateCreated = getDateString(linkage.getDateCreated());
         String lastModified = getDateString(linkage.getLastModified());
 
         try (Statement stmt = conn.createStatement())
         {
-            result = stmt.executeQuery(
+            ResultSet result = stmt.executeQuery(
                     "select name from " + schema + ".coalescelinkage where objectkey='" + linkage.getKey() + "'");
 
             if (!result.next())
@@ -335,61 +353,70 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             String lastModified = getDateString(new DateTime());
 
             // prepare the query
-            Statement stmt = conn.createStatement();
-            ResultSet result = stmt.executeQuery(
-                    "select " + COLUMNS.getName() + " from " + schema + ".coalesceentitytemplate where " + COLUMNS.getName()
-                            + "='" + template.getName() + "' and " + COLUMNS.getSource() + "='" + template.getSource()
-                            + "' and " + COLUMNS.getVersion() + "='" + template.getVersion() + "'");
-            if (!result.next())
+            try (Statement stmt = conn.createStatement())
             {
-                // insert
-                StringBuilder sql2 = new StringBuilder("insert into ").append(schema + ".coalesceentitytemplate (");
-                sql2.append(COLUMNS.getKey()).append(",");
-                sql2.append(COLUMNS.getName()).append(",");
-                sql2.append(COLUMNS.getSource()).append(",");
-                sql2.append(COLUMNS.getVersion()).append(",");
-                sql2.append(COLUMNS.getXml()).append(",");
-                sql2.append(COLUMNS.getDateCreated()).append(",");
-                sql2.append(COLUMNS.getLinkageLastModified());
-                sql2.append(") values (?,?,?,?,?,?,?)");
+                ResultSet result = stmt.executeQuery(
+                        "select " + COLUMNS.getName() + " from " + schema + ".coalesceentitytemplate where "
+                                + COLUMNS.getName() + "='" + template.getName() + "' and " + COLUMNS.getSource() + "='"
+                                + template.getSource() + "' and " + COLUMNS.getVersion() + "='" + template.getVersion()
+                                + "'");
 
-                PreparedStatement stmt2 = conn.prepareStatement(sql2.toString());
-                stmt2.setString(1, template.getKey());
-                stmt2.setString(2, template.getName());
-                stmt2.setString(3, template.getSource());
-                stmt2.setString(4, template.getVersion());
-                stmt2.setString(5, template.toXml());
-                stmt2.setString(6, dateCreated);
-                stmt2.setString(7, lastModified);
-                stmt2.executeUpdate();
-            }
-            else
-            {
-                // update
-                StringBuilder sql3 = new StringBuilder("update " + schema + ".coalesceentitytemplate set ");
-                sql3.append(COLUMNS.getName()).append("=?,");
-                sql3.append(COLUMNS.getSource()).append("=?,");
-                sql3.append(COLUMNS.getVersion()).append("=?,");
-                sql3.append(COLUMNS.getXml()).append("=?,");
-                sql3.append(COLUMNS.getDateCreated()).append("=?,");
-                sql3.append(COLUMNS.getLastModified()).append("=?");
-                sql3.append(" where ");
-                sql3.append(COLUMNS.getName()).append("=? and ");
-                sql3.append(COLUMNS.getSource()).append("=? and ");
-                sql3.append(COLUMNS.getVersion()).append("=?");
+                if (!result.next())
+                {
+                    // insert
+                    StringBuilder sql2 = new StringBuilder("insert into ").append(schema + ".coalesceentitytemplate (");
+                    sql2.append(COLUMNS.getKey()).append(",");
+                    sql2.append(COLUMNS.getName()).append(",");
+                    sql2.append(COLUMNS.getSource()).append(",");
+                    sql2.append(COLUMNS.getVersion()).append(",");
+                    sql2.append(COLUMNS.getXml()).append(",");
+                    sql2.append(COLUMNS.getDateCreated()).append(",");
+                    sql2.append(COLUMNS.getLinkageLastModified());
+                    sql2.append(") values (?,?,?,?,?,?,?)");
 
-                PreparedStatement stmt3 = conn.prepareStatement(sql3.toString());
-                stmt3.setString(1, template.getName());
-                stmt3.setString(2, template.getSource());
-                stmt3.setString(3, template.getVersion());
-                stmt3.setString(4, template.toXml());
-                stmt3.setString(5, dateCreated);
-                stmt3.setString(6, lastModified);
-                stmt3.setString(7, template.getName());
-                stmt3.setString(8, template.getSource());
-                stmt3.setString(9, template.getVersion());
-                stmt3.executeUpdate();
+                    try (PreparedStatement stmt2 = conn.prepareStatement(sql2.toString()))
+                    {
+                        stmt2.setString(1, template.getKey());
+                        stmt2.setString(2, template.getName());
+                        stmt2.setString(3, template.getSource());
+                        stmt2.setString(4, template.getVersion());
+                        stmt2.setString(5, template.toXml());
+                        stmt2.setString(6, dateCreated);
+                        stmt2.setString(7, lastModified);
+                        stmt2.executeUpdate();
+                    }
+                }
+                else
+                {
+                    // update
+                    StringBuilder sql3 = new StringBuilder("update " + schema + ".coalesceentitytemplate set ");
+                    sql3.append(COLUMNS.getName()).append("=?,");
+                    sql3.append(COLUMNS.getSource()).append("=?,");
+                    sql3.append(COLUMNS.getVersion()).append("=?,");
+                    sql3.append(COLUMNS.getXml()).append("=?,");
+                    sql3.append(COLUMNS.getDateCreated()).append("=?,");
+                    sql3.append(COLUMNS.getLastModified()).append("=?");
+                    sql3.append(" where ");
+                    sql3.append(COLUMNS.getName()).append("=? and ");
+                    sql3.append(COLUMNS.getSource()).append("=? and ");
+                    sql3.append(COLUMNS.getVersion()).append("=?");
+
+                    try (PreparedStatement stmt3 = conn.prepareStatement(sql3.toString()))
+                    {
+                        stmt3.setString(1, template.getName());
+                        stmt3.setString(2, template.getSource());
+                        stmt3.setString(3, template.getVersion());
+                        stmt3.setString(4, template.toXml());
+                        stmt3.setString(5, dateCreated);
+                        stmt3.setString(6, lastModified);
+                        stmt3.setString(7, template.getName());
+                        stmt3.setString(8, template.getSource());
+                        stmt3.setString(9, template.getVersion());
+                        stmt3.executeUpdate();
+                    }
+                }
             }
+
         }
         catch (SQLException e)
         {
@@ -483,92 +510,95 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
         try
         {
-
             Connection conn = this.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet result = stmt.executeQuery(
-                    "select " + COLUMNS.getKey() + " from " + schema + "." + NORMALIZER.normalize(tableName) + " where "
-                            + COLUMNS.getKey() + "='" + parameters.get(0).getValue() + "'");
-
-            StringBuilder sql = new StringBuilder();
-
-            if (!result.next())
+            try (Statement stmt = conn.createStatement())
             {
-                // insert
-                sql.append("insert into ").append(schema).append(".").append(NORMALIZER.normalize(tableName)).append(" (");
-                first = true;
-                for (CoalesceParameter parameter : parameters)
+                ResultSet result = stmt.executeQuery(
+                        "select " + COLUMNS.getKey() + " from " + schema + "." + NORMALIZER.normalize(tableName) + " where "
+                                + COLUMNS.getKey() + "='" + parameters.get(0).getValue() + "'");
+
+                StringBuilder sql = new StringBuilder();
+
+                if (!result.next())
                 {
-                    if (!first)
+                    // insert
+                    sql.append("insert into ").append(schema).append(".").append(NORMALIZER.normalize(tableName)).append(" (");
+                    first = true;
+                    for (CoalesceParameter parameter : parameters)
                     {
-                        sql.append(",");
+                        if (!first)
+                        {
+                            sql.append(",");
+                        }
+                        else
+                        {
+                            first = false;
+                        }
+                        sql.append(NORMALIZER.normalize(parameter.getName()));
                     }
-                    else
+                    sql.append(") values (");
+                    first = true;
+                    for (CoalesceParameter parameter : parameters)
                     {
-                        first = false;
+                        if (!first)
+                        {
+                            sql.append(",");
+                        }
+                        else
+                        {
+                            first = false;
+                        }
+                        if (parameter.getType() == Types.OTHER || parameter.getType() == Types.VARCHAR
+                                || parameter.getType() == Types.CHAR)
+                        {
+                            sql.append(quote(parameter.getValue()));
+                        }
+                        else
+                        {
+                            sql.append(parameter.getValue());
+                        }
                     }
-                    sql.append(NORMALIZER.normalize(parameter.getName()));
+                    sql.append(")");
                 }
-                sql.append(") values (");
-                first = true;
-                for (CoalesceParameter parameter : parameters)
+                else
                 {
-                    if (!first)
+                    // update
+                    sql.append("update ").append(schema).append(".").append(NORMALIZER.normalize(tableName)).append(" set ");
+                    for (CoalesceParameter parameter : parameters)
                     {
-                        sql.append(",");
+                        if (!first)
+                        {
+                            sql.append(",");
+                        }
+                        else
+                        {
+                            first = false;
+                        }
+                        sql.append(NORMALIZER.normalize(parameter.getName())).append(" = ");
+
+                        if (parameter.getType() == Types.OTHER || parameter.getType() == Types.VARCHAR
+                                || parameter.getType() == Types.CHAR)
+                        {
+                            sql.append(quote(parameter.getValue()));
+                        }
+                        else
+                        {
+                            sql.append(parameter.getValue());
+                        }
                     }
-                    else
-                    {
-                        first = false;
-                    }
-                    if (parameter.getType() == Types.OTHER || parameter.getType() == Types.VARCHAR
-                            || parameter.getType() == Types.CHAR)
-                    {
-                        sql.append(quote(parameter.getValue()));
-                    }
-                    else
-                    {
-                        sql.append(parameter.getValue());
-                    }
+
+                    sql.append(" WHERE ").append(COLUMNS.getKey()).append("=").append(quote(parameters.get(0).getValue()));
                 }
-                sql.append(")");
+
+                //*/
+
+                LOGGER.trace("Insert Record SQL: {}", sql);
+                try (Statement stmt2 = conn.createStatement())
+                {
+                    stmt2.executeUpdate(sql.toString());
+                }
+                success = true;
             }
-            else
-            {
-                // update
-                sql.append("update ").append(schema).append(".").append(NORMALIZER.normalize(tableName)).append(" set ");
-                for (CoalesceParameter parameter : parameters)
-                {
-                    if (!first)
-                    {
-                        sql.append(",");
-                    }
-                    else
-                    {
-                        first = false;
-                    }
-                    sql.append(NORMALIZER.normalize(parameter.getName())).append(" = ");
-
-                    if (parameter.getType() == Types.OTHER || parameter.getType() == Types.VARCHAR
-                            || parameter.getType() == Types.CHAR)
-                    {
-                        sql.append(quote(parameter.getValue()));
-                    }
-                    else
-                    {
-                        sql.append(parameter.getValue());
-                    }
-                }
-
-                sql.append(" WHERE ").append(COLUMNS.getKey()).append("=").append(quote(parameters.get(0).getValue()));
-            }
-
-            //*/
-
-            LOGGER.trace("Insert Record SQL: {}", sql);
-            stmt = conn.createStatement();
-            stmt.executeUpdate(sql.toString());
-            success = true;
         }
         catch (SQLException e)
         {

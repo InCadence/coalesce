@@ -602,7 +602,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
 
         String[] columns;
 
-        if (COLUMNS_CACHE.contains(tablename))
+        if (COLUMNS_CACHE.containsKey(tablename))
         {
 
             columns = COLUMNS_CACHE.get(tablename);

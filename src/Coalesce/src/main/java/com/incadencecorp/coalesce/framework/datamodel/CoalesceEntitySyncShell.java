@@ -1,22 +1,22 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -37,6 +37,8 @@ import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 
 public class CoalesceEntitySyncShell {
 
+    private static Logger LOGGER = LoggerFactory.getLogger(CoalesceEntitySyncShell.class);
+
     // -----------------------------------------------------------------------//
     // protected Member Variables
     // -----------------------------------------------------------------------//
@@ -51,10 +53,9 @@ public class CoalesceEntitySyncShell {
     /**
      * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based of an
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
-     * 
+     *
      * @param entity The {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} to create the shell from
      * @return The new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
-     * 
      * @throws SAXException
      * @throws IOException
      */
@@ -65,11 +66,10 @@ public class CoalesceEntitySyncShell {
 
     /**
      * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based of an (XML) String.
-     * 
+     *
      * @param entitySyncShellXml (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} to
-     *            create the shell from
+     *                           create the shell from
      * @return The new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
-     * 
      * @throws SAXException
      * @throws IOException
      */
@@ -81,11 +81,10 @@ public class CoalesceEntitySyncShell {
     /**
      * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based of an org.w3c.dom
      * Document.
-     * 
+     *
      * @param doc org.w3c.dom Document Document of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
      *            to create the shell from
      * @return The new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
-     * 
      * @throws SAXException
      * @throws IOException
      */
@@ -95,7 +94,8 @@ public class CoalesceEntitySyncShell {
         CoalesceEntitySyncShell entitySyncShell = new CoalesceEntitySyncShell();
 
         // Initialize
-        if (!entitySyncShell.initialize(doc)) return null;
+        if (!entitySyncShell.initialize(doc))
+            return null;
 
         // return
         return entitySyncShell;
@@ -108,10 +108,9 @@ public class CoalesceEntitySyncShell {
     /**
      * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based off
      * an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
-     * 
+     *
      * @param entity {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} to initialize the shell from
      * @return boolean indicating success/failure
-     * 
      * @throws SAXException
      * @throws IOException
      */
@@ -123,11 +122,10 @@ public class CoalesceEntitySyncShell {
     /**
      * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based off
      * an (XML) String.
-     * 
+     *
      * @param entityXml String (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} to
-     *            initialize the shell from
+     *                  initialize the shell from
      * @return boolean indicating success/failure
-     * 
      * @throws SAXException
      * @throws IOException
      */
@@ -139,7 +137,7 @@ public class CoalesceEntitySyncShell {
     /**
      * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based off
      * an org.w3c.dom Document.
-     * 
+     *
      * @param doc org.w3c.dom Document Document of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
      *            to create the shell from
      * @return boolean indicating success/failure
@@ -163,7 +161,7 @@ public class CoalesceEntitySyncShell {
     /**
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}'s (org.w3c.dom Document)
      * Document.
-     * 
+     *
      * @return org.w3c.dom Document of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      */
     public Document getCoalesceObjectDocument()
@@ -174,9 +172,9 @@ public class CoalesceEntitySyncShell {
     /**
      * Sets the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}'s (org.w3c.dom Document)
      * Document and EntityNode.
-     * 
+     *
      * @param value org.w3c.dom Document Document to assign to the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
+     *              {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      */
     public void setCoalesceObjectDocument(Document value)
     {
@@ -187,7 +185,7 @@ public class CoalesceEntitySyncShell {
     /**
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}'s (org.w3c.dom Node)
      * EntityNode.
-     * 
+     *
      * @return org.w3c.dom Node of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      */
     public Node getEntityNode()
@@ -198,9 +196,9 @@ public class CoalesceEntitySyncShell {
     /**
      * Sets the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}'s (org.w3c.dom Node)
      * EntityNode.
-     * 
+     *
      * @param value org.w3c.dom Node to assign to the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
+     *              {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      * @throws ParserConfigurationException
      */
     public void setEntityNode(Node value) throws ParserConfigurationException
@@ -220,7 +218,7 @@ public class CoalesceEntitySyncShell {
     /**
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}'s (XML) String of the
      * Document.
-     * 
+     *
      * @return (XML) String of the Document.
      */
     public String toXml()
@@ -235,7 +233,7 @@ public class CoalesceEntitySyncShell {
     /**
      * Creates and returns a clone/copy of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      * passed in as a param.
-     * 
+     *
      * @param syncShell {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} (original).
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} (clone/copy).
      */
@@ -253,11 +251,11 @@ public class CoalesceEntitySyncShell {
     /**
      * Returns a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} containing the
      * LocalFullSyncShell changed nodes from the RemoteFullSyncShell.
-     * 
-     * @param localFullSyncShell {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} local copy.
+     *
+     * @param localFullSyncShell  {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} local copy.
      * @param remoteFullSyncShell {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} original.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} local copy's changes from the
-     *         original.
+     * original.
      */
     public static CoalesceEntitySyncShell getRequiredChangesSyncShell(CoalesceEntitySyncShell localFullSyncShell,
                                                                       CoalesceEntitySyncShell remoteFullSyncShell)
@@ -281,99 +279,92 @@ public class CoalesceEntitySyncShell {
 
     /**
      * Remove nodes that do not require an update; called by GetRequiredChangesSyncShell.
-     * 
+     *
      * @param nodeToPrune Node to check for updates.
      * @return boolean indicator of success/failure.
      */
     private static boolean pruneNodes(Node nodeToPrune)
     {
-        try
+        boolean isSuccess = false;
+
+        // TODO: Make sure the Node/Attribute "switch" is ok
+        // Prune Unnecessary Attributes
+        if (nodeToPrune.getAttributes() != null)
         {
-            boolean isSuccess = false;
-
-            // TODO: Make sure the Node/Attribute "switch" is ok
-            // Prune Unnecessary Attributes
-            if (nodeToPrune.getAttributes() != null)
+            if (nodeToPrune.getAttributes().getLength() > 0)
             {
-                if (nodeToPrune.getAttributes().getLength() > 0)
+                ArrayList<String> removeList = new ArrayList<>();
+                NamedNodeMap attributeList = nodeToPrune.getAttributes();
+
+                // Find Attributes to Remove
+                for (int i = 0; i < attributeList.getLength(); i++)
                 {
-                    ArrayList<String> removeList = new ArrayList<>();
-                    NamedNodeMap attributeList = nodeToPrune.getAttributes();
+                    // Get Attribute Name
+                    String attributeName = attributeList.item(i).getNodeName();
 
-                    // Find Attributes to Remove
-                    for (int i = 0; i < attributeList.getLength(); i++)
+                    switch (attributeName.toUpperCase())
                     {
-                        // Get Attribute Name
-                        String attributeName = attributeList.item(i).getNodeName();
-
-                        switch (attributeName.toUpperCase()) {
-                        case "KEY":
-                        case "LASTMODIFIED":
-                        case "HASH":
-                            // Keep
-                            break;
-                        default:
-                            // Mark for Deletion
-                            removeList.add(attributeName);
-                        }
-                    }
-
-                    // Remove Attributes
-                    for (String attributeName : removeList)
-                    {
-                        attributeList.removeNamedItem(attributeName);
+                    case "KEY":
+                    case "LASTMODIFIED":
+                    case "HASH":
+                        // Keep
+                        break;
+                    default:
+                        // Mark for Deletion
+                        removeList.add(attributeName);
                     }
                 }
-            }
 
-            // Prune Unnecessary Nodes
-            if (nodeToPrune.hasChildNodes())
-            {
-                if (nodeToPrune.getChildNodes().getLength() > 0)
+                // Remove Attributes
+                for (String attributeName : removeList)
                 {
-                    ArrayList<Node> removeList = new ArrayList<>();
-                    NodeList children = nodeToPrune.getChildNodes();
-
-                    // Find Nodes to Remove
-                    // for (Node ChildNode : NodeToPrune.getChildNodes()){
-                    for (int i = 0; i < children.getLength(); i++)
-                    {
-                        Node childNode = children.item(i);
-
-                        switch (childNode.getNodeType()) {
-                        case Node.ELEMENT_NODE:
-                            // Keep
-                            break;
-                        default:
-                            // Add to Remove List
-                            removeList.add(childNode);
-                        }
-                    }
-
-                    // Remove
-                    for (Node childNode : removeList)
-                    {
-                        nodeToPrune.removeChild(childNode);
-                    }
+                    attributeList.removeNamedItem(attributeName);
                 }
             }
-
-            // Recurse Child Nodes
-            for (int i = 0; i < nodeToPrune.getChildNodes().getLength(); i++)
-            {
-                Node childNode = nodeToPrune.getChildNodes().item(i);
-                isSuccess = pruneNodes(childNode);
-            }
-
-            // return Success
-            return isSuccess;
-
         }
-        catch (Exception ex)
+
+        // Prune Unnecessary Nodes
+        if (nodeToPrune.hasChildNodes())
         {
-            // return Failed Error
-            return false;
+            if (nodeToPrune.getChildNodes().getLength() > 0)
+            {
+                ArrayList<Node> removeList = new ArrayList<>();
+                NodeList children = nodeToPrune.getChildNodes();
+
+                // Find Nodes to Remove
+                // for (Node ChildNode : NodeToPrune.getChildNodes()){
+                for (int i = 0; i < children.getLength(); i++)
+                {
+                    Node childNode = children.item(i);
+
+                    switch (childNode.getNodeType())
+                    {
+                    case Node.ELEMENT_NODE:
+                        // Keep
+                        break;
+                    default:
+                        // Add to Remove List
+                        removeList.add(childNode);
+                    }
+                }
+
+                // Remove
+                for (Node childNode : removeList)
+                {
+                    nodeToPrune.removeChild(childNode);
+                }
+            }
         }
+
+        // Recurse Child Nodes
+        for (int i = 0; i < nodeToPrune.getChildNodes().getLength(); i++)
+        {
+            Node childNode = nodeToPrune.getChildNodes().item(i);
+            isSuccess = pruneNodes(childNode);
+        }
+
+        // return Success
+        return isSuccess;
     }
 
     private static void pruneUnchangedNodes(HashMap<String, Node> localNodes,
@@ -399,7 +390,8 @@ public class CoalesceEntitySyncShell {
         if (!StringHelper.isNullOrEmpty(key))
         {
             // Evaluate Based on the Coalesce Object Type
-            switch (remoteSyncShellNode.getNodeName().toUpperCase()) {
+            switch (remoteSyncShellNode.getNodeName().toUpperCase())
+            {
             case "FIELD":
             case "LINKAGE":
             case "FIELDHISTORY":
@@ -450,7 +442,8 @@ public class CoalesceEntitySyncShell {
             DateTime oldModified = XmlHelper.getAttributeAsDate(oldNode, "lastmodified");
             DateTime newLastModified = XmlHelper.getAttributeAsDate(newNode, "lastmodified");
 
-            switch (oldModified.compareTo(newLastModified)) {
+            switch (oldModified.compareTo(newLastModified))
+            {
             case 0:
             case 1:
                 isNewer = false;
