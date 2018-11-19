@@ -164,6 +164,11 @@ public class CoalesceSchedulerServiceImpl implements ICoalesceExecutorService, A
         return _pool.scheduleAtFixedRate(command, initialDelay, period, unit);
     }
 
+    public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit)
+    {
+        return _pool.scheduleWithFixedDelay(command, initialDelay, delay, unit);
+    }
+
     @Override
     public void close()
     {
