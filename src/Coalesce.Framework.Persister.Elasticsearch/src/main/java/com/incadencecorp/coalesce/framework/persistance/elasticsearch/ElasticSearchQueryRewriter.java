@@ -42,7 +42,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Walks through a Filter, re-writing any property names removing the tablename from the property along with the /
@@ -51,6 +50,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
     private final Set<String> features = new HashSet<>();
     private final ICoalesceNormalizer normalizer;
+    private final Set<String> keywords = new HashSet<>();
 
     /**
      * Standard java logger
@@ -67,6 +67,11 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         super(CommonFactoryFinder.getFilterFactory2());
 
         this.normalizer = normalizer;
+    }
+
+    public void setKeywords(Set<String> keywords)
+    {
+        this.keywords.addAll(keywords);
     }
 
     @Override
@@ -116,8 +121,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
         LOGGER.trace("({}): ({})", property, type);
 
-        return (type == ECoalesceFieldDataTypes.STRING_TYPE) && !(property.startsWith("coalesceentity")
-                || property.startsWith("coalescelinkage"));
+        return (type == ECoalesceFieldDataTypes.STRING_TYPE) && !keywords.contains(property);
     }
 
     @Override

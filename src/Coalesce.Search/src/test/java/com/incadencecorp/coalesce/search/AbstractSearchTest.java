@@ -1412,7 +1412,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     {
         TestEntity entity = new TestEntity();
         entity.initialize();
-        entity.setEntityId("hello");
+        entity.setEntityId(UUID.randomUUID().toString());
         entity.setEntityIdType("world");
 
         TestRecord record = entity.addRecord1();
@@ -1422,13 +1422,14 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         framework.setAuthoritativePersistor(createPersister());
         framework.saveCoalesceEntity(entity);
 
-        Assert.assertEquals(entity.getKey(), framework.findEntityId("hello"));
-        Assert.assertEquals(entity.getKey(), framework.findEntityId("hello", TestEntity.NAME));
-        Assert.assertEquals(null, framework.findEntityId("hello", "UNKNOWN"));
+        Assert.assertEquals(entity.getKey(), framework.findEntityId(entity.getEntityId()));
+        Assert.assertEquals(entity.getKey(), framework.findEntityId(entity.getEntityId(), TestEntity.NAME));
+        Assert.assertEquals(null, framework.findEntityId(entity.getEntityId(), "UNKNOWN"));
+        Assert.assertEquals(entity.getKey(), framework.find(CoalescePropertyFactory.getEntityKey(entity.getKey())));
 
-        Assert.assertEquals(entity.getKey(),
-                            framework.find(FF.equals(CoalescePropertyFactory.getFieldProperty(record.getStringField()),
-                                                     FF.literal(record.getStringField().getValue()))));
+        entity.markAsDeleted();
+
+        framework.saveCoalesceEntity(true, entity);
 
     }
 
