@@ -29,6 +29,7 @@ import java.util.Map;
  * This implementation can either mark entities returned by the scanner as deleted or physically delete them from the database.
  *
  * @author Derek Clemenzi
+ * @see #PARAM_MARK_AS_DELETED
  */
 public class DeleteOperationImpl extends AbstractOperation<AbstractOperationTask> {
 
