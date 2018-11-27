@@ -74,6 +74,7 @@ import javax.sql.rowset.CachedRowSet;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -282,7 +283,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         record.getLongField().setValue(Long.MAX_VALUE);
         record.getLongListField().setValue(new long[] { 3, 4, Long.MIN_VALUE, Long.MAX_VALUE });
         record.getStringField().setValue("Test String");
-        record.getStringListField().setValue(new String[] { "A", "B", "C" });
+        record.getStringListField().setValue(new String[] { "A", "B", "C", ",", "\\" });
         record.getFloatField().setValue(Float.MAX_VALUE);
         record.getFloatListField().setValue(new float[] { 3.145964f, Float.MIN_VALUE, Float.MAX_VALUE });
         record.getDoubleField().setValue(Double.MAX_VALUE);

@@ -1,16 +1,17 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
-import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.geotools.feature.FeatureIterator;
-import org.json.JSONArray;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.PropertyName;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Wraps a FeatureIterator to iterate over columns
@@ -19,7 +20,6 @@ public class FeatureColumnIterator implements Iterator<Object[]> {
 
     private FeatureIterator<?> featureIterator;
     private List<String> properties;
-    private ICoalesceNormalizer normalizer = new ElasticSearchNormalizer();
 
     public FeatureColumnIterator(FeatureIterator<?> featureIterator, List<PropertyName> properties)
     {
@@ -29,7 +29,7 @@ public class FeatureColumnIterator implements Iterator<Object[]> {
         // Normalize
         for (PropertyName property : properties)
         {
-            this.properties.add(CoalescePropertyFactory.getColumnName(normalizer, property));
+            this.properties.add(CoalescePropertyFactory.getColumnName(new ElasticSearchNormalizer(), property));
         }
     }
 
@@ -61,7 +61,9 @@ public class FeatureColumnIterator implements Iterator<Object[]> {
                 }
                 else if (value instanceof String && ((String) value).startsWith("[") && ((String) value).endsWith("]"))
                 {
-                    value = StringUtils.join(new JSONArray((String) value).iterator(), ",");
+                    String[] values = ((String) value).substring(1, ((String) value).length() - 1).split("(, )");
+                    value = StringUtils.join(Arrays.stream(values).parallel().map(StringEscapeUtils::escapeCsv).collect(
+                            Collectors.toList()), ",");
                 }
             }
             else
