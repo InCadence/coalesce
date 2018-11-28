@@ -68,7 +68,7 @@ export class EntityView extends React.Component {
             <label>Created</label>
           </Col>
           <Col xs={4}>
-            {data != null ? data.dateCreatedAsString : ''}
+            {data != null ? data.dateCreated : ''}
           </Col>
           <Col xs={2}>
             <label>Source</label>
@@ -82,7 +82,7 @@ export class EntityView extends React.Component {
             <label>Last Modified</label>
           </Col>
           <Col xs={4}>
-            {data != null ? data.lastModifiedAsString : ''}
+            {data != null ? data.lastModified : ''}
           </Col>
           <Col xs={2}>
             <label>Version</label>
