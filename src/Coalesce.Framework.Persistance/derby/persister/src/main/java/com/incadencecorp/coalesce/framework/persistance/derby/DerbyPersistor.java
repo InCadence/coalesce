@@ -989,7 +989,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     {
         if (query.getStartIndex() == null)
         {
-            query.setStartIndex(1);
+            query.setStartIndex(0);
         }
 
         SearchResults results = new SearchResults();
@@ -1000,7 +1000,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         {
             // Create SQL Query
             DerbyCoalescePreparedFilter preparedFilter = new DerbyCoalescePreparedFilter(_schema);
-            preparedFilter.setPageNumber(query.getStartIndex());
+            preparedFilter.setOffset(query.getStartIndex());
             preparedFilter.setPageSize(query.getMaxFeatures());
             preparedFilter.setSortBy(query.getSortBy());
             preparedFilter.setPropertNames(query.getPropertyNames());
@@ -1020,17 +1020,18 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                                                                          this.getSchema(),
                                                                          "memory"))
             {
-                String sql = String.format("SELECT DISTINCT %s FROM %s %s %s",
+                String sql = String.format("SELECT DISTINCT %s FROM %s %s %s %s",
                                            preparedFilter.getColumns(),
                                            preparedFilter.getFrom(),
                                            where,
-                                           preparedFilter.getSorting());
+                                           preparedFilter.getSorting(),
+                                           preparedFilter.getOffsetClause());
 
                 LOGGER.debug("Executing: {}", sql);
 
                 // Get Hits
                 CachedRowSet hits = RowSetProvider.newFactory().createCachedRowSet();
-                hits.populate(conn.executeQuery(sql, params));
+                hits.populate(conn.executeQuery(sql, query.getMaxFeatures(), params));
 
                 hits.last();
                 int numberOfHits = hits.getRow();
