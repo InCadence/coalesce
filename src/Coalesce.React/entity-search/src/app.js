@@ -23,6 +23,8 @@ export class App extends React.Component {
     this.createQuery = this.createQuery.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleSpinner = this.handleSpinner.bind(this);
+    this.handlePageUpdate = this.handlePageUpdate.bind(this);
+    this.handlePageSizeUpdate = this.handlePageSizeUpdate.bind(this);
 
     var cache = {};
 
@@ -36,6 +38,8 @@ export class App extends React.Component {
       key: DEFAULT,
       results: null,
       properties: [],
+      pageSize: 200,
+      pageNum: 1,
       query: this.createQuery()
     }
   }
@@ -109,6 +113,14 @@ export class App extends React.Component {
 
   handleUpdate(data, properties) {
     this.setState(() => {return {query: data, properties: properties}});
+  }
+
+  handlePageUpdate(page) {
+    this.setState(() => {return {pageNum: page}});
+  }
+
+  handlePageSizeUpdate(size) {
+    this.setState(() => {return {pageSize: size}});
   }
 
   handleTemplateLoad(key) {
@@ -217,6 +229,10 @@ export class App extends React.Component {
                 data={query}
                 handleError={this.handleError}
                 handleUpdate={this.handleUpdate}
+                handlePageUpdate={this.handlePageUpdate}
+                handlePageSizeUpdate={this.handlePageSizeUpdate}
+                pageNum={this.state.pageNum}
+                pageSize={this.state.pageSize}
               />
 
             }
@@ -270,8 +286,8 @@ export class App extends React.Component {
     // Create Query
     var query = {
       "type": this.state.key ? this.state.cache[this.state.key].name : undefined,
-      "pageSize": 200,
-      "pageNumber": 1,
+      "pageSize": this.state.pageSize,
+      "pageNumber": this.state.pageNum,
       "propertyNames": [],
       "group": this.state.query
     };
@@ -293,14 +309,6 @@ export class App extends React.Component {
         }
       })
     }
-
-    this.state.query.criteria.forEach(function (criteria) {
-      if (criteria.value2)
-      {
-        criteria.value = criteria.value + " " + criteria.value2;
-        criteria.value2 = undefined;
-      }
-    })
 
     console.log("Index search", this.state.query);
 

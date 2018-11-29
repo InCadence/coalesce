@@ -426,7 +426,7 @@ public class SearchDataController {
                 criteriaFilter = ff.like(property, criteria.getValue());
                 break;
             case PropertyIsBetween.NAME:
-                String[] values = criteria.getValue().split(" ");
+                String[] values = criteria.getValues().toArray(new String[0]);
                 if (values.length != 2)
                 {
                     throw new CoalesceException(
@@ -435,7 +435,7 @@ public class SearchDataController {
                 criteriaFilter = ff.between(property, ff.literal(values[0]), ff.literal(values[1]));
                 break;
             case During.NAME:
-                String[] times = criteria.getValue().split(" ");
+                String[] times = criteria.getValues().toArray(new String[0]);
                 if (times.length != 2)
                 {
                     throw new CoalesceException(

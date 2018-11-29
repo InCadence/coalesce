@@ -127,12 +127,38 @@ class FilterCreator extends React.Component {
             </div>
             <Divider />
             <ExpansionPanelActions  style={{padding: '5px'}}>
+              {!this.props.isChild &&
+                <FieldInput
+                   label="Page"
+                   field={{
+                    key: "pageNum",
+                    value: this.props.pageNum
+                   }}
+                   dataType="INTEGER_TYPE"
+                   onChange={(value) => {
+                     this.props.handlePageUpdate(value);
+                   }}
+                 />
+              }
+              {!this.props.isChild &&
+              <FieldInput
+                 label="Page Size"
+                 field={{
+                   key: "pageSize",
+                   value: this.props.pageSize
+                 }}
+                 dataType="INTEGER_TYPE"
+                 onChange={(value) => {
+                   this.props.handlePageSizeUpdate(value);
+                 }}
+               />
+              }
               <IconButton icon="/images/svg/add.svg" title="Add Criteria" onClick={this.handleAddCriteria} />
               <IconButton icon="/images/svg/new.svg" title="Add Sub Grouping" onClick={this.handleAddGroup}/>
               {this.props.isChild &&
               <IconButton icon="/images/svg/remove.svg" title="Remove Grouping" onClick={this.handleRemoveGroup} />
               }
-            </ExpansionPanelActions>
+              </ExpansionPanelActions>
           </ExpansionPanel>
     )
   }
@@ -452,31 +478,44 @@ function createColumns(that, recordsets) {
 
         if (cell.original.operator === "Between" || cell.original.operator === "During") {
 
+          cell.original.value = undefined;
+          if (!cell.original.values || cell.original.values.length != 2)
+          {
+            cell.original.values = ["", ""]
+          }
           return (
             <Row>
               <Col xs={6}>
                 <FieldInput
-                  field={cell.original}
+                  field={{
+                    key: cell.original.key + "_1",
+                    value: cell.original.values[0]
+                  }}
                   hint={hint}
                   dataType={dataType}
                   attr="value"
                   showLabels={false}
+                  onChange={(value) => cell.original.values[0] = value}
                 />
               </Col>
               <Col xs={6}>
                 <FieldInput
-                  field={cell.original}
+                  field={{
+                    key: cell.original.key + "_2",
+                    value: cell.original.values[1]
+                  }}
                   hint={hint}
                   dataType={dataType}
-                  attr="value2"
+                  attr="value"
                   showLabels={false}
+                  onChange={(value) => cell.original.values[1] = value}
                 />
               </Col>
             </Row>
           )
         } else {
 
-          cell.original.value2 = undefined;
+          cell.original.values = undefined;
 
           return (
             <FieldInput
