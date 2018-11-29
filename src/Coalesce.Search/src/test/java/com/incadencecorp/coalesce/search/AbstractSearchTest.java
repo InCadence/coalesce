@@ -48,6 +48,8 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKTReader;
 import org.geotools.data.Query;
+import org.geotools.factory.Hints;
+import org.geotools.feature.visitor.Aggregate;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -266,6 +268,55 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         entity.markAsDeleted();
 
         framework.saveCoalesceEntity(true, entity);
+    }
+
+    @Test
+    public void testAggregation() throws Exception
+    {
+
+        String aggs = "{\"ByEntityId\":{" + "\"terms\":{" + "\"field\": \"coalesceentity.entityid\"," + "\"min_doc_count\":2"
+                + "}," + "\"aggs\":{" + "\"ByName\":{" + "\"terms\":{" + "\"field\": \"coalesceentity.name\","
+                + "\"min_doc_count\":2" + "}," + "\"aggs\":{" + "\"dedup_docs\":{" + "\"top_hits\":{" + "\"sort\":[" + "{"
+                + "\"coalesceentity.lastmodified\":{" + "\"order\":\"desc\"" + "}" + "}" + "]," + "\"_source\":{"
+                + "\"includes\":[\"coalesceentity.lastmodified\"]" + "}," + "\"size\":10" + "}}" + "}" + "}" + "}" + "}}";
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        entity.setEntityId(UUID.randomUUID().toString());
+        entity.setEntityIdType("world");
+
+        TestRecord record = entity.addRecord1();
+        record.getStringField().setValue("world");
+
+        CoalesceSearchFramework framework = new CoalesceSearchFramework();
+        framework.setAuthoritativePersistor(createPersister());
+        framework.saveCoalesceEntity(entity);
+
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getEntityKey());
+
+        List<Filter> filters = new ArrayList<>();
+        filters.add(FF.not(FF.isNull(CoalescePropertyFactory.getEntityId())));
+        filters.add(FF.not(FF.equals(CoalescePropertyFactory.getEntityId(), FF.literal(""))));
+
+        // Create Query
+        Query query = new Query();
+        query.setFilter(FF.and(filters));
+        query.setProperties(props);
+        query.getHints().put(Hints.VIRTUAL_TABLE_PARAMETERS, Collections.singletonMap("a", aggs));
+        query.setMaxFeatures(200);
+
+        try (CachedRowSet results = framework.search(query).getResults())
+        {
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+            results.getString(1);
+        }
+
+        entity.markAsDeleted();
+
+        framework.saveCoalesceEntity(true, entity);
+
+        Aggregate.COUNT.create(CoalescePropertyFactory.getEntityId());
     }
 
     /**
