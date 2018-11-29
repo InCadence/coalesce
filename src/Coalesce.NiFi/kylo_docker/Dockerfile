@@ -40,8 +40,8 @@ RUN echo "Install NiFi" && /opt/kylo/setup/nifi/install-nifi.sh && echo "Install
 COPY scripts/*.nar /opt/nifi/current/lib2
 
 RUN echo "Creating the dropzone folder" && mkdir -p /var/dropzone
-RUN chown nifi:nifi /var/dropzone && chmod 774 /var/dropzone/ 
- 
+RUN chown nifi:nifi /var/dropzone && chmod 774 /var/dropzone/
+
 RUN echo "Creating the sample data folder" && mkdir -p /var/sampledata
 
 COPY sample_data/* /var/sampledata/
