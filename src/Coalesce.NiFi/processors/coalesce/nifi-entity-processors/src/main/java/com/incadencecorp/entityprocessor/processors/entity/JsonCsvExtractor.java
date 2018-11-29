@@ -17,8 +17,6 @@
 package com.incadencecorp.entityprocessor.processors.entity;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch;
 import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
 import org.elasticsearch.index.IndexNotFoundException;
@@ -52,13 +50,12 @@ import java.util.*;
 
 @Tags({"weewoo petard"})
 @CapabilityDescription("Provide a description")
-@SeeAlso({})
-@ReadsAttributes({@ReadsAttribute(attribute="", description="")})
-@WritesAttributes({@WritesAttribute(attribute="", description="")})
+@SeeAlso()
+@ReadsAttributes({@ReadsAttribute(attribute="")})
+@WritesAttributes({@WritesAttribute(attribute="")})
 public class JsonCsvExtractor extends AbstractProcessor {
 
     private ElasticSearchPersistor persistor;
-    private Map<String, String> params;
     private CoalesceSearchFramework csf;
 
     public static final PropertyDescriptor IS_AUTHORITATIVE = new PropertyDescriptor
@@ -157,7 +154,7 @@ public class JsonCsvExtractor extends AbstractProcessor {
 
     @Override
     protected void init(final ProcessorInitializationContext context) {
-        final List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
+        final List<PropertyDescriptor> descriptors = new ArrayList<>();
         descriptors.add(IS_AUTHORITATIVE);
         descriptors.add(CLUSTER_NAME);
         descriptors.add(HOSTS);
@@ -170,7 +167,7 @@ public class JsonCsvExtractor extends AbstractProcessor {
         descriptors.add(CSV_SEPARATOR);
         this.descriptors = Collections.unmodifiableList(descriptors);
 
-        final Set<Relationship> relationships = new HashSet<Relationship>();
+        final Set<Relationship> relationships = new HashSet<>();
         relationships.add(SUCCESS);
         relationships.add(FAILURE);
         this.relationships = Collections.unmodifiableSet(relationships);
@@ -186,8 +183,8 @@ public class JsonCsvExtractor extends AbstractProcessor {
         return descriptors;
     }
 
-    public void updatePersistor(final ProcessContext context) {
-        this.params = new HashMap<>();
+    private void updatePersistor(final ProcessContext context) {
+        Map<String, String> params = new HashMap<>();
 
         params.put("elastic.isAuthoritative", context.getProperty(IS_AUTHORITATIVE).getValue());
         params.put("elastic.clustername", context.getProperty(CLUSTER_NAME).getValue());
@@ -245,7 +242,7 @@ public class JsonCsvExtractor extends AbstractProcessor {
                 String jsonString = context.getProperty(TEMPLATE_JSON).getValue();
                 String splitToken = context.getProperty(CSV_SEPARATOR).getValue();
 
-                Map<String, String> properties = new HashMap<String, String>();
+                Map<String, String> properties = new HashMap<>();
                 properties.put("json", jsonString);
                 properties.put("split", splitToken);
                 ((IExtractor) g).setFramework(this.csf);
@@ -256,7 +253,7 @@ public class JsonCsvExtractor extends AbstractProcessor {
 
 
                 String columnNames = b.readLine();
-                String line = "";
+                String line;
                 while((line = b.readLine()) != null) {
                     //getLogger().log(LogLevel.ERROR, line);
                     entities = ((FSI_EntityExtractor)g).extract(filename, String.join(splitToken, line));
