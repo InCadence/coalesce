@@ -1,20 +1,21 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ *  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *  Notwithstanding any contractor copyright notice, the Government has Unlimited
+ *  Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ *  of this work other than as specifically authorized by these DFARS Clauses may
+ *  violate Government rights in this work.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ *  Unlimited Rights. The Government has the right to use, modify, reproduce,
+ *  perform, display, release or disclose this computer software and to have or
+ *  authorize others to do so.
+ *
+ *  Distribution Statement D. Distribution authorized to the Department of
+ *  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ *
  */
-package com.incadencecorp.entityprocessor.processors.entity;
+package com.incadencecorp.coalesce.nifi.processors.entity.impl;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch;
@@ -41,7 +42,7 @@ import org.apache.nifi.processor.util.StandardValidators;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
 import com.incadencecorp.coalesce.ingest.api.IExtractor;
-import com.incadencecorp.coalesce.ingest.fsi.FSI_EntityExtractor;
+import com.incadencecorp.coalesce.ingest.plugins.fsi.FSI_EntityExtractor;
 
 
 
@@ -235,7 +236,8 @@ public class JsonCsvExtractor extends AbstractProcessor {
 //        }
 
         try {
-            Class extractorClass = Thread.currentThread().getContextClassLoader().loadClass("com.incadencecorp.coalesce.ingest.fsi.FSI_EntityExtractor");
+            Class extractorClass = Thread.currentThread().getContextClassLoader().loadClass(
+                    "com.incadencecorp.coalesce.ingest.plugins.fsi.FSI_EntityExtractor");
             Object g = extractorClass.newInstance();
             if(g instanceof IExtractor) {
 
