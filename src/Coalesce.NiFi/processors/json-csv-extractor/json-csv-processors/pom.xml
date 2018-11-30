@@ -72,12 +72,20 @@
             <version>${nifi.version}</version>
             <scope>test</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
             <artifactId>persister-derby</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.25</version>
+            <scope>test</scope>
+        </dependency>
+        -->
 
     </dependencies>
 </project>
