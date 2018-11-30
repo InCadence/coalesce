@@ -18,37 +18,48 @@
 
 package com.incadencecorp.coalesce.ingest.plugins.fsi;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceDoubleField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
-import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.ingest.api.IExtractor;
 import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-//import com.incadencecorp.oe.common.utils.PmesiiUtil;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
-
+/**
+ * methods that must be called before the extract method:
+ * setFramework
+ */
 public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtractor {
 
-    /**
-     * methods that must be called before the extract method:
-     * setFramework
-     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(FSI_EntityExtractor.class);
+
+    public static final String PARAM_JSON = "json";
+    public static final String PARAM_SPLIT = "split";
 
     private CoalesceSearchFramework framework;
     private String separator;
     private Map<String, CoalesceEntityTemplate> entityTemplates;
     private JSONArray templatesArray;
 
-    //
-
-    ///CoalesceTemplateUtil.getRecordsets()
     @Override
     public void setFramework(CoalesceSearchFramework framework)
     {
@@ -61,7 +72,6 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         return new ArrayList<>();
     }
 
-    //TODO: Parsing Polygons, Coordinates, Lists,
     @Override
     public List<CoalesceEntity> extract(String filename, String line) throws CoalesceException
     {
@@ -85,8 +95,12 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
             CoalesceRecordset rs = entity.getCoalesceRecordsetForNamePath(entity.getName(),
                                                                           entity.getSectionsAsList().get(0).getName(),
                                                                           recordName);
-            assert rs != null;
-            CoalesceRecord cr = rs.getItem(0);
+            if (rs == null)
+            {
+                throw new CoalesceException(String.format(CoalesceErrors.NOT_FOUND, "Recordset", recordName));
+            }
+
+            CoalesceRecord cr = rs.getHasRecords() ? rs.getItem(0) : rs.addNew();
 
             Map<String, ECoalesceFieldDataTypes> typesMap = CoalesceTemplateUtil.getTemplateDataTypes(templateKey);
             Object[] fieldsMapKeys = fieldsMap.keySet().toArray();
@@ -96,7 +110,15 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
                 fieldsIndex = fieldsIndex.replace("\"", "");
                 String column = (String) fieldsMap.get(fieldsIndex);
 
+                // TODO I don't think this is right please review your code.
                 ECoalesceFieldDataTypes type = typesMap.get(fieldsMapKey);  //Example return of .get: "source varchar(256)"
+
+                if (type == null)
+                {
+                    throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT_REASON,
+                                                              fieldsMapKey,
+                                                              "Unknown Type"));
+                }
                 int index = Integer.parseInt(fieldsIndex);
 
                 setFieldValue(type, cr, column, fields, index);
@@ -107,7 +129,9 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         return entities;
     }
 
-    public void setFieldValue(ECoalesceFieldDataTypes type, CoalesceRecord cr, String column, String[] fields, int index) {
+    //TODO: Parsing Polygons, Coordinates, Lists,
+    private void setFieldValue(ECoalesceFieldDataTypes type, CoalesceRecord cr, String column, String[] fields, int index)
+    {
         switch (type)
         {
         case STRING_TYPE:
@@ -201,12 +225,13 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
     {
         super.setProperties(params);
 
-        if (params.containsKey("json"))
+        if (params.containsKey(PARAM_JSON))
         {
-            String jsonString = params.get("json");
+            String jsonString = params.get(PARAM_JSON);
 
             try
             {
+                // TODO Remove the JSON parser and instead create a POJO and use ObjectMapper to deserialize
                 JSONParser parser = new JSONParser();
                 JSONObject json = (JSONObject) parser.parse(jsonString);
                 this.templatesArray = (JSONArray) json.get("templates");
@@ -215,7 +240,8 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
                 {
                     JSONObject template = (JSONObject) aTemplatesArray;
                     String templateKey = (String) template.get("templateKey");
-                    System.out.println(templateKey);
+
+                    LOGGER.debug("Template Specified: {}", templateKey);
 
                     CoalesceEntityTemplate entityTemplate = this.framework.getCoalesceEntityTemplate(templateKey);
                     entityTemplates.put(templateKey, entityTemplate);
@@ -225,16 +251,13 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
             }
             catch (ParseException | CoalescePersistorException e)
             {
-                e.printStackTrace();
-
+                throw new RuntimeException(e);
             }
         }
-        if (params.containsKey("split"))
-        {
-            this.separator = params.get("split");
-        }
 
-        System.out.println("RECORDSETS WIT: " + CoalesceTemplateUtil.getRecordsets().size());
+        this.separator = params.getOrDefault(PARAM_SPLIT, ",");
+
+        LOGGER.debug("RECORDSETS WITH: {}", CoalesceTemplateUtil.getRecordsets().size());
     }
 
 }
