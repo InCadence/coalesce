@@ -66,6 +66,53 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         _conn.setAutoCommit(autocommit);
     }
 
+    public final ResultSet executeQuery(final String sql, Integer max, final CoalesceParameter... parameters) throws SQLException
+    {
+        ResultSet results = null;
+        openDataConnection();
+
+        if (LOGGER.isTraceEnabled())
+        {
+            LOGGER.trace("Executing: {}", sql);
+        }
+
+        PreparedStatement stmt = _conn.prepareStatement(sql);
+        if (max != null)
+        {
+            stmt.setMaxRows(max);
+        }
+
+        if (parameters != null)
+        {
+            if (LOGGER.isTraceEnabled() && parameters.length > 0)
+            {
+                LOGGER.trace("Parameters:");
+            }
+
+            // Add Parameters
+            for (int ii = 0; ii < parameters.length; ii++)
+            {
+                if (LOGGER.isTraceEnabled())
+                {
+                    LOGGER.trace("\t{}:{}", parameters[ii].getValue(), parameters[ii].getType());
+                }
+
+                stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType());
+            }
+        }
+
+        if (LOGGER.isTraceEnabled())
+        {
+            LOGGER.trace("Prepared Statement: " + stmt.toString());
+        }
+
+        results = stmt.executeQuery();
+
+        // stmt.close(); // Cannot close here or ResultSet is closed. Possible
+        // resource leak.
+        return results;
+    }
+
     /**
      * Returns the results from the executed SQL Command.
      *

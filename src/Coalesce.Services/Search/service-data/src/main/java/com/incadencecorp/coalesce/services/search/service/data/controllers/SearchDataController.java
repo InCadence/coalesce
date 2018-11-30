@@ -40,7 +40,17 @@ import org.geotools.referencing.CRS;
 import org.geotools.temporal.object.DefaultInstant;
 import org.geotools.temporal.object.DefaultPeriod;
 import org.geotools.temporal.object.DefaultPosition;
-import org.opengis.filter.*;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.PropertyIsEqualTo;
+import org.opengis.filter.PropertyIsGreaterThan;
+import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
+import org.opengis.filter.PropertyIsLessThan;
+import org.opengis.filter.PropertyIsLessThanOrEqualTo;
+import org.opengis.filter.PropertyIsLike;
+import org.opengis.filter.PropertyIsNotEqualTo;
+import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.capability.FilterCapabilities;
 import org.opengis.filter.capability.GeometryOperand;
 import org.opengis.filter.capability.Operator;
@@ -64,7 +74,13 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Converts a list of options into an OGC filter and passes it along to a search
@@ -158,7 +174,8 @@ public class SearchDataController {
             query.setFilter(filter);
             query.setProperties(properties);
             query.setSortBy(sortBy);
-            query.setStartIndex(searchQuery.getPageNumber());
+            query.setStartIndex(
+                    searchQuery.getPageNumber() > 0 ? (searchQuery.getPageNumber() - 1) * searchQuery.getPageSize() : 0);
             query.setMaxFeatures(searchQuery.getPageSize());
 
             return createResponse(framework.searchBulk(searchQuery.getCapabilities(), query).get(0), properties);
@@ -409,7 +426,7 @@ public class SearchDataController {
                 criteriaFilter = ff.like(property, criteria.getValue());
                 break;
             case PropertyIsBetween.NAME:
-                String[] values = criteria.getValue().split(" ");
+                String[] values = criteria.getValues().toArray(new String[0]);
                 if (values.length != 2)
                 {
                     throw new CoalesceException(
@@ -418,7 +435,7 @@ public class SearchDataController {
                 criteriaFilter = ff.between(property, ff.literal(values[0]), ff.literal(values[1]));
                 break;
             case During.NAME:
-                String[] times = criteria.getValue().split(" ");
+                String[] times = criteria.getValues().toArray(new String[0]);
                 if (times.length != 2)
                 {
                     throw new CoalesceException(

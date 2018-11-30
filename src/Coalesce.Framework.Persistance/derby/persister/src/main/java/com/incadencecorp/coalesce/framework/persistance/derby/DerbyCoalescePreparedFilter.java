@@ -20,7 +20,6 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.postgres.CoalesceIndexInfo;
-import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLSettings;
 import com.incadencecorp.coalesce.framework.persistance.postgres.QueryHelper;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.EFilterEnumerationModes;
@@ -106,7 +105,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     private final List<String> enumList = new ArrayList<String>();
     private FilterFactory factory;
 
-    private int pageNumber;
+    private int offset;
     private int pageSize;
     private Capabilities capability;
 
@@ -134,13 +133,13 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
     /**
      * @param schema
-     * @param pageNumber
+     * @param offset
      * @param pageSize
      * @param includeDeleted
      * @param dialect
      */
     public DerbyCoalescePreparedFilter(String schema,
-                                       int pageNumber,
+                                       int offset,
                                        int pageSize,
                                        boolean includeDeleted,
                                        PostGISPSDialect dialect)
@@ -152,7 +151,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
         currentSRID = SSRID;
         SRIDs.add(currentSRID);
 
-        setPageNumber(pageNumber);
+        setOffset(offset);
         setPageSize(pageSize);
 
         capability = createCapabilities();
@@ -930,15 +929,9 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
      *
      * @param value
      */
-    public void setPageNumber(int value)
+    public void setOffset(int value)
     {
-
-        if (value < 1)
-        {
-            value = 1;
-        }
-
-        pageNumber = value;
+        offset = value < 0 ? 0 : value;
     }
 
     /**
@@ -1060,16 +1053,16 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     }
 
     /**
-     * @return the filtering portion of the SQL
+     * @return the offset portion of the SQL
      */
-    public String getLimit()
+    public String getOffsetClause()
     {
 
         String limit = "";
 
-        if (pageSize > 0)
+        if (offset > 0)
         {
-            limit = String.format("LIMIT %s OFFSET %s", pageSize, (pageNumber - 1) * pageSize);
+            limit = String.format(" OFFSET %s ROWS", offset);
         }
 
         return limit;

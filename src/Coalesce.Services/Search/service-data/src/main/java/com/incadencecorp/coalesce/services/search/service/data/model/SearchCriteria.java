@@ -17,6 +17,9 @@
 
 package com.incadencecorp.coalesce.services.search.service.data.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class SearchCriteria {
 
@@ -24,65 +27,75 @@ public class SearchCriteria {
     private String recordset;
     private String field;
     private String operator;
-    private String value;
+    private List<String> values = new ArrayList<>();
     private boolean isNot;
     private boolean matchCase;
-    
+
     public String getKey()
     {
         return key;
     }
-    
+
     public void setKey(String key)
     {
         this.key = key;
     }
-    
+
     public String getRecordset()
     {
         return recordset;
     }
-    
+
     public void setRecordset(String recordset)
     {
         this.recordset = recordset;
     }
-    
+
     public String getField()
     {
         return field;
     }
-    
+
     public void setField(String field)
     {
         this.field = field;
     }
-    
+
     public String getOperator()
     {
         return operator;
     }
-    
+
     public void setOperator(String value)
     {
         this.operator = value;
     }
-    
+
     public String getValue()
     {
-        return value;
+        return values.size() >= 1 ? values.get(0) : null;
     }
-    
+
     public void setValue(String value)
     {
-        this.value = value;
+        setValues(Collections.singletonList(value));
     }
-    
+
+    public void setValues(List<String> values)
+    {
+        this.values.addAll(values);
+    }
+
+    public List<String> getValues()
+    {
+        return values;
+    }
+
     public boolean isMatchCase()
     {
         return matchCase;
     }
-    
+
     public void setMatchCase(boolean matchCase)
     {
         this.matchCase = matchCase;

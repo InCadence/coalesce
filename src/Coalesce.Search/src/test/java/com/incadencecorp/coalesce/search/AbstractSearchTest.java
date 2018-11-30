@@ -137,6 +137,74 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     }
 
     /**
+     * This test ensures that the persisters implement paging correctly using the offset.
+     */
+    @Test
+    public void testPaging() throws Exception
+    {
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+        entity1.setLastModified(now);
+
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize();
+        entity2.setLastModified(now.minusDays(1));
+
+        TestEntity entity3 = new TestEntity();
+        entity3.initialize();
+        entity3.setLastModified(now.minusDays(2));
+
+        TestEntity entity4 = new TestEntity();
+        entity4.initialize();
+        entity4.setLastModified(now.minusDays(3));
+
+        TestEntity entity5 = new TestEntity();
+        entity5.initialize();
+        entity5.setLastModified(now.minusDays(4));
+
+        CoalesceSearchFramework framework = new CoalesceSearchFramework();
+        framework.setAuthoritativePersistor(createPersister());
+        framework.saveCoalesceEntity(entity1, entity2, entity3, entity4, entity5);
+
+        List<Filter> filters = new ArrayList<>();
+        filters.add(CoalescePropertyFactory.getEntityKey(entity1.getKey()));
+        filters.add(CoalescePropertyFactory.getEntityKey(entity2.getKey()));
+        filters.add(CoalescePropertyFactory.getEntityKey(entity3.getKey()));
+        filters.add(CoalescePropertyFactory.getEntityKey(entity4.getKey()));
+        filters.add(CoalescePropertyFactory.getEntityKey(entity5.getKey()));
+
+        Query query = new Query();
+        query.setFilter(FF.or(filters));
+        query.setProperties(Collections.singletonList(CoalescePropertyFactory.getLastModified()));
+        query.setSortBy(new SortBy[] {
+                FF.sort(CoalescePropertyFactory.getLastModified().getPropertyName(), SortOrder.DESCENDING)
+        });
+        query.setStartIndex(0);
+        query.setMaxFeatures(2);
+
+        LOGGER.info(entity1.getKey());
+        LOGGER.info(entity2.getKey());
+        LOGGER.info(entity3.getKey());
+        LOGGER.info(entity4.getKey());
+        LOGGER.info(entity5.getKey());
+
+        verifyOrder(framework.search(query), entity1.getKey(), entity2.getKey());
+
+        query.setStartIndex(query.getMaxFeatures());
+        verifyOrder(framework.search(query), entity3.getKey(), entity4.getKey());
+
+        query.setStartIndex(2 * query.getMaxFeatures());
+        verifyOrder(framework.search(query), entity5.getKey());
+
+        entity1.markAsDeleted();
+        entity2.markAsDeleted();
+        entity3.markAsDeleted();
+
+        framework.saveCoalesceEntity(true, entity1, entity2, entity3, entity4, entity5);
+    }
+
+    /**
      * This test ensures that you are able to request the record key to be returned as a property.
      */
     @Test
@@ -155,7 +223,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         properties.add(CoalescePropertyFactory.getRecordKey(entity.getRecordset1().getName()));
 
         Query searchQuery = new Query();
-        searchQuery.setStartIndex(1);
+        searchQuery.setStartIndex(0);
         searchQuery.setMaxFeatures(200);
         searchQuery.setFilter(CoalescePropertyFactory.getEntityKey(entity.getKey()));
         searchQuery.setProperties(properties);
@@ -199,7 +267,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
                                   FF.literal(record.getGuidField().getValue()));
 
         Query searchQuery = new Query();
-        searchQuery.setStartIndex(1);
+        searchQuery.setStartIndex(0);
         searchQuery.setMaxFeatures(200);
         searchQuery.setFilter(FF.and(filter, CoalescePropertyFactory.getEntityKey(entity.getKey())));
 
@@ -237,7 +305,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
                                   FF.literal(record.getBooleanField().getValue()));
 
         Query searchQuery = new Query();
-        searchQuery.setStartIndex(1);
+        searchQuery.setStartIndex(0);
         searchQuery.setMaxFeatures(200);
         searchQuery.setFilter(FF.and(filter, CoalescePropertyFactory.getEntityKey(entity.getKey())));
         searchQuery.setPropertyNames(new String[] { CoalescePropertyFactory.getEntityKey().getPropertyName() });
@@ -558,7 +626,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         // Create Query
         Query searchQuery = new Query();
-        searchQuery.setStartIndex(1);
+        searchQuery.setStartIndex(0);
         searchQuery.setMaxFeatures(200);
         searchQuery.setProperties(properties);
         searchQuery.setFilter(FF.or(filters));
@@ -582,7 +650,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
     private void verifyOrder(SearchResults results, String... keys) throws SQLException
     {
-        Assert.assertEquals(keys.length, results.getTotal());
+        Assert.assertEquals(keys.length, results.getResults().size());
 
         CachedRowSet rowset = results.getResults();
 
@@ -636,7 +704,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         sortBy[0] = FF.sort(properties.get(3).getPropertyName(), SortOrder.ASCENDING);
 
         Query searchQuery = new Query();
-        searchQuery.setStartIndex(1);
+        searchQuery.setStartIndex(0);
         searchQuery.setMaxFeatures(200);
         searchQuery.setSortBy(sortBy);
         searchQuery.setProperties(properties);
@@ -714,7 +782,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
                               FF.equals(CoalescePropertyFactory.getName(), FF.literal(TestEntity.NAME)));
 
         Query searchQuery = new Query();
-        searchQuery.setStartIndex(1);
+        searchQuery.setStartIndex(0);
         searchQuery.setMaxFeatures(200);
         searchQuery.setFilter(query);
 
@@ -753,7 +821,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         properties.add(CoalescePropertyFactory.getEntityKey());
 
         Query searchQuery = new Query();
-        searchQuery.setStartIndex(1);
+        searchQuery.setStartIndex(0);
         searchQuery.setMaxFeatures(200);
         searchQuery.setFilter(CoalescePropertyFactory.getEntityKey(entity.getKey()));
         searchQuery.setProperties(properties);
@@ -798,7 +866,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Expression value = FF.literal(record.getStringField().getValue());
 
         Query searchQuery = new Query();
-        searchQuery.setStartIndex(1);
+        searchQuery.setStartIndex(0);
         searchQuery.setMaxFeatures(200);
         searchQuery.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()),
                                      FF.equal(value, property, true)));
@@ -851,7 +919,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Expression value = FF.literal(record.getStringField().getValue().toLowerCase());
 
         Query searchQuery = new Query();
-        searchQuery.setStartIndex(1);
+        searchQuery.setStartIndex(0);
         searchQuery.setMaxFeatures(200);
         searchQuery.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()),
                                      FF.equal(property, value, true)));

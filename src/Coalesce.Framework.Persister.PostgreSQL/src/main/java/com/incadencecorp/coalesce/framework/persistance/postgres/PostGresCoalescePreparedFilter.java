@@ -128,7 +128,7 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
     private final List<String> enumList = new ArrayList<>();
     private FilterFactory factory;
 
-    private int pageNumber;
+    private int offset;
     private int pageSize;
     private Capabilities capability;
 
@@ -157,13 +157,13 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
 
     /**
      * @param schema
-     * @param pageNumber
+     * @param offset
      * @param pageSize
      * @param includeDeleted
      * @param dialect
      */
     public PostGresCoalescePreparedFilter(String schema,
-                                          int pageNumber,
+                                          int offset,
                                           int pageSize,
                                           boolean includeDeleted,
                                           PostGISPSDialect dialect)
@@ -175,7 +175,7 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
         currentSRID = SSRID;
         SRIDs.add(currentSRID);
 
-        setPageNumber(pageNumber);
+        setOffset(offset);
         setPageSize(pageSize);
 
         capability = createCapabilities();
@@ -936,15 +936,9 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
      *
      * @param value
      */
-    public void setPageNumber(int value)
+    public void setOffset(int value)
     {
-
-        if (value < 1)
-        {
-            value = 1;
-        }
-
-        pageNumber = value;
+        offset = value < 0 ? 0 : value;
     }
 
     /**
@@ -1102,16 +1096,14 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
      */
     public String getLimit()
     {
-
         String limit = "";
 
         if (pageSize > 0)
         {
-            limit = String.format("LIMIT %s OFFSET %s", pageSize, (pageNumber - 1) * pageSize);
+            limit = String.format("LIMIT %s OFFSET %s", pageSize, offset);
         }
 
         return limit;
-
     }
 
     /**

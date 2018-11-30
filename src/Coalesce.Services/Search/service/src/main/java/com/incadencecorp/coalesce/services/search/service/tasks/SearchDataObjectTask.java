@@ -17,29 +17,12 @@
 
 package com.incadencecorp.coalesce.services.search.service.tasks;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.rowset.CachedRowSet;
-import javax.xml.parsers.ParserConfigurationException;
-
-import com.incadencecorp.coalesce.search.api.SearchResults;
-import org.geotools.data.Query;
-import org.geotools.filter.SortByImpl;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
-import org.xml.sax.SAXException;
-
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.filter.FilterUtil;
 import com.incadencecorp.coalesce.services.api.search.HitType;
@@ -47,6 +30,21 @@ import com.incadencecorp.coalesce.services.api.search.QueryResultType;
 import com.incadencecorp.coalesce.services.api.search.QueryResultsType;
 import com.incadencecorp.coalesce.services.api.search.QueryType;
 import com.incadencecorp.coalesce.services.api.search.SortByType;
+import org.geotools.data.Query;
+import org.geotools.filter.SortByImpl;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.sort.SortOrder;
+import org.xml.sax.SAXException;
+
+import javax.sql.rowset.CachedRowSet;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsType, ICoalesceSearchPersistor> {
 
@@ -71,7 +69,8 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
                 SortByType sort = parameters.getParams().getSortBy().get(ii);
                 PropertyName property = CoalescePropertyFactory.getFilterFactory().property(sort.getPropertyName());
 
-                switch (sort.getSortOrder()) {
+                switch (sort.getSortOrder())
+                {
                 case ASC:
                     sortby[ii] = new SortByImpl(property, SortOrder.ASCENDING);
                     break;
@@ -83,7 +82,8 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
 
             Query query = new Query("coalesce", FilterUtil.fromXml(parameters.getParams().getFilter()));
             query.setPropertyNames(properties);
-            query.setStartIndex(parameters.getParams().getPageNumber());
+            query.setStartIndex(parameters.getParams().getPageNumber() > 0 ? (parameters.getParams().getPageNumber() - 1)
+                    * parameters.getParams().getPageSize() : 0);
             query.setMaxFeatures(parameters.getParams().getPageSize());
             query.setSortBy(sortby);
 

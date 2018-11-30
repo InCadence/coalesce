@@ -56,7 +56,7 @@ public class Neo4jSearchPersister extends Neo4JPersistor implements ICoalesceSea
     {
         if (query.getStartIndex() == null)
         {
-            query.setStartIndex(1);
+            query.setStartIndex(0);
         }
 
         SearchResults results = new SearchResults();
@@ -190,9 +190,7 @@ public class Neo4jSearchPersister extends Neo4JPersistor implements ICoalesceSea
 
         if (query.getMaxFeatures() > 0)
         {
-            int offset = query.getMaxFeatures() * (query.getStartIndex() - 1);
-
-            limit = String.format("SKIP %s LIMIT %s", offset, query.getMaxFeatures());
+            limit = String.format("SKIP %s LIMIT %s", query.getStartIndex(), query.getMaxFeatures());
         }
 
         return limit;

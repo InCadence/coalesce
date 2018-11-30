@@ -328,7 +328,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     {
         if (query.getStartIndex() == null)
         {
-            query.setStartIndex(1);
+            query.setStartIndex(0);
         }
 
         SearchResults results = new SearchResults();
@@ -339,7 +339,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
         {
             // Create SQL Query
             PostGresCoalescePreparedFilter preparedFilter = new PostGresCoalescePreparedFilter(PostGreSQLSettings.getDatabaseSchema());
-            preparedFilter.setPageNumber(query.getStartIndex());
+            preparedFilter.setOffset(query.getStartIndex());
             preparedFilter.setPageSize(query.getMaxFeatures());
             preparedFilter.setSortBy(query.getSortBy());
             preparedFilter.setPropertNames(query.getPropertyNames());

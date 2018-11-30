@@ -141,12 +141,6 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         //create a new filter with the rewritten property names
         Query newQuery = new Query(original);
 
-        // Convert to 0 Indexed Paging
-        if (original.getStartIndex() != null && original.getStartIndex() > 0)
-        {
-            newQuery.setStartIndex(original.getStartIndex() - 1);
-        }
-
         // See if a valid feature name was set in the query.  If
         // so make sure it is the first in the list
         if (!StringHelper.isNullOrEmpty(newQuery.getTypeName()) && !newQuery.getTypeName().equalsIgnoreCase("coalesce"))
