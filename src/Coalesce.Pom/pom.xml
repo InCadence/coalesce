@@ -24,6 +24,7 @@
         <module>../Coalesce.Core.Feature</module>
         <module>../pyCoalesce</module>
         <module>../Coalesce.Ingest</module>
+        <module>../Coalesce.NiFi</module>
     </modules>
 
     <!-- Build flags to skip components -->

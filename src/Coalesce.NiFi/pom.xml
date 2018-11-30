@@ -21,6 +21,10 @@
     <packaging>pom</packaging>
     <name>Coalesce NiFi Parent</name>
 
+    <properties>
+        <nifi.version>1.7.1</nifi.version>
+    </properties>
+
     <parent>
         <groupId>com.incadencecorp.coalesce</groupId>
         <artifactId>coalesce-pom</artifactId>

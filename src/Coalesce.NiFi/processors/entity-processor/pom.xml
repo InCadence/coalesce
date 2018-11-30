@@ -23,9 +23,10 @@
     <name>Coalesce NiFi Entity Processor Parent</name>
 
     <parent>
-        <groupId>org.apache.nifi</groupId>
-        <artifactId>nifi-nar-bundles</artifactId>
-        <version>1.7.1</version>
+        <groupId>com.incadencecorp.coalesce.nifi</groupId>
+        <artifactId>coalesce-nifi-processor-parent</artifactId>
+        <version>0.0.33-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
 
     <modules>
