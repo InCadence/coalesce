@@ -27,7 +27,6 @@ import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.geotools.data.Query;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.Hints;
 import org.geotools.filter.visitor.DuplicatingFilterVisitor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -38,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -201,10 +199,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
             newQuery.setSortBy(sorts);
         }
 
-        Hints hints = new Hints();
-        hints.put(Hints.VIRTUAL_TABLE_PARAMETERS, Collections.singletonMap("q", Collections.EMPTY_MAP.toString()));
-
-        newQuery.setHints(hints);
+        newQuery.setHints(original.getHints());
 
         // Now go through the features used and figure out what is the key feature
 

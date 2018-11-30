@@ -24,7 +24,6 @@ import com.incadencecorp.coalesce.mapper.impl.JavaMapperImpl;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.opengis.filter.expression.PropertyName;
 
-import java.io.Closeable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -45,9 +44,9 @@ public class CoalesceResultSet extends CoalesceResultSetAbstract {
     private int row = -1;
 
     /**
-     * @param resultset
+     * @param resultset to check
      * @return the column containing the entity keys.
-     * @throws SQLException
+     * @throws SQLException on error
      */
     public static int getEntityKeyColumn(ResultSet resultset) throws SQLException
     {
@@ -73,8 +72,8 @@ public class CoalesceResultSet extends CoalesceResultSetAbstract {
     /**
      * Creates a result sets for the provided data and columns.
      *
-     * @param data
-     * @param columns
+     * @param data iterator containing the data
+     * @param columns columns represented by the iterator
      */
     public CoalesceResultSet(Iterator<Object[]> data, List<CoalesceColumnMetadata> columns)
     {
@@ -86,8 +85,8 @@ public class CoalesceResultSet extends CoalesceResultSetAbstract {
     /**
      * Creates a result sets for the provided data and columns as Strings.
      *
-     * @param data
-     * @param columns
+     * @param data iterator containing the data
+     * @param columns columns represented by the iterator
      */
     public CoalesceResultSet(Iterator<Object[]> data, String... columns)
     {
@@ -157,10 +156,6 @@ public class CoalesceResultSet extends CoalesceResultSetAbstract {
             if (data instanceof AutoCloseable)
             {
                 ((AutoCloseable) data).close();
-            }
-            else if (data instanceof Closeable)
-            {
-                ((Closeable) data).close();
             }
         }
         catch (Exception e)
