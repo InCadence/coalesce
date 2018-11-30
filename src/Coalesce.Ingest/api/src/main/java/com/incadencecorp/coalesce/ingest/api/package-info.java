@@ -16,6 +16,6 @@
  -----------------------------------------------------------------------------*/
 
 /**
- * Contains API definitions for extending the OE ingest tool
+ * Contains API definitions for implementing Coalesce ingest plugins.
  */
 package com.incadencecorp.coalesce.ingest.api;
