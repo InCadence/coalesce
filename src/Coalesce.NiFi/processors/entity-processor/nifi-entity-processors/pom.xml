@@ -13,19 +13,42 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <artifactId>nifi-entity-processors</artifactId>
+    <packaging>jar</packaging>
+    <name>Coalesce NiFi Entity Processor Impl</name>
 
     <parent>
         <groupId>com.incadencecorp.entityprocessor</groupId>
         <artifactId>entity-processor</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.0.33-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>nifi-entity-processors</artifactId>
-    <packaging>jar</packaging>
-
     <dependencies>
+
+        <!-- Coalesce Dependencies -->
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.ingest</groupId>
+            <artifactId>ingest-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- TODO These dependencies should be injected at runtime -->
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-framework-persister-elasticsearch</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.ingest</groupId>
+            <artifactId>plugins-fsi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- NiFi Dependencies -->
         <dependency>
             <groupId>org.apache.nifi</groupId>
             <artifactId>nifi-api</artifactId>
@@ -35,6 +58,8 @@
             <artifactId>nifi-utils</artifactId>
             <version>1.7.1</version>
         </dependency>
+
+        <!-- Test Dependencies -->
         <dependency>
             <groupId>org.apache.nifi</groupId>
             <artifactId>nifi-mock</artifactId>
@@ -51,25 +76,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.incadencecorp.coalesce</groupId>
-            <artifactId>coalesce-framework-persister-elasticsearch</artifactId>
-            <version>0.0.32-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.incadencecorp.oe.ingest</groupId>
-            <artifactId>ingest-api</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.incadencecorp.coalesce.ingest</groupId>
-            <artifactId>plugins-fsi</artifactId>
-            <version>0.0.32-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.incadencecorp.oe.ingest.plugins</groupId>
-            <artifactId>plugins-gdelt</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
-        </dependency>
+
     </dependencies>
 </project>
