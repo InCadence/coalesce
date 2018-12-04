@@ -22,13 +22,7 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceDoubleField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.ingest.api.IExtractor;
 import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
@@ -39,10 +33,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * methods that must be called before the extract method:
@@ -91,7 +82,7 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
 
             CoalesceEntityTemplate entityTemplate = entityTemplates.get(templateKey);
             CoalesceEntity entity = entityTemplate.createNewEntity();
-            System.out.println(entityTemplates.size());
+
             CoalesceRecordset rs = entity.getCoalesceRecordsetForNamePath(entity.getName(),
                                                                           entity.getSectionsAsList().get(0).getName(),
                                                                           recordName);
@@ -111,7 +102,12 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
                 String column = (String) fieldsMap.get(fieldsIndex);
 
                 // TODO I don't think this is right please review your code.
-                ECoalesceFieldDataTypes type = typesMap.get(fieldsMapKey);  //Example return of .get: "source varchar(256)"
+                ECoalesceFieldDataTypes type;
+
+                int index = Integer.parseInt(fieldsIndex);
+
+                type = typesMap.get(recordName + "." + column);
+
 
                 if (type == null)
                 {
@@ -119,11 +115,11 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
                                                               fieldsMapKey,
                                                               "Unknown Type"));
                 }
-                int index = Integer.parseInt(fieldsIndex);
 
                 setFieldValue(type, cr, column, fields, index);
-                entities.add(entity);
+
             }
+            entities.add(entity);
         }
 
         return entities;
@@ -132,6 +128,11 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
     //TODO: Parsing Polygons, Coordinates, Lists,
     private void setFieldValue(ECoalesceFieldDataTypes type, CoalesceRecord cr, String column, String[] fields, int index)
     {
+//        System.out.println("---------------------------------");
+//        for(String f : cr.getFieldNames()) {
+//            System.out.println(f);
+//        }
+//        System.out.println("---------------------------------");
         switch (type)
         {
         case STRING_TYPE:

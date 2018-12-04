@@ -18,16 +18,19 @@
 
 package com.incadencecorp.coalesce.ingest.plugins.fsi.tests;
 
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.ingest.plugins.fsi.FSI_EntityExtractor;
 import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,8 +61,9 @@ public class FSI_EntityExtractorTest {
         extractor.setProperties(params);
 
         // TODO This does not work
-        extractor.extract("unknown", "1,2,3");
-
+        List<CoalesceEntity> entities = extractor.extract("unknown", "1,false,3.0");
+        System.out.println(entities.size());
+        assertTrue(entities.size() == 1);
     }
 
 }
