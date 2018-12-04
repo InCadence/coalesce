@@ -128,11 +128,6 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
     //TODO: Parsing Polygons, Coordinates, Lists,
     private void setFieldValue(ECoalesceFieldDataTypes type, CoalesceRecord cr, String column, String[] fields, int index)
     {
-//        System.out.println("---------------------------------");
-//        for(String f : cr.getFieldNames()) {
-//            System.out.println(f);
-//        }
-//        System.out.println("---------------------------------");
         switch (type)
         {
         case STRING_TYPE:
