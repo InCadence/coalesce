@@ -80,21 +80,21 @@ public class CoalesceSettings {
     Threading Parameters
     --------------------------------------------------------------------------*/
 
-    private static final String PARAM_COALESCE_THREADING = COALESCE + ".threads";
-    private static final String PARAM_CORE_COUNT = PARAM_COALESCE_THREADING + ".numberOfCores";
-    private static final String PARAM_MIN_THREADS = PARAM_COALESCE_THREADING + ".minThreads";
-    private static final String PARAM_MAX_THREADS = PARAM_COALESCE_THREADING + ".maxThreads";
+    private static final String PARAM_COALESCE_THREADING = COALESCE + "threads.";
+    private static final String PARAM_CORE_COUNT = PARAM_COALESCE_THREADING + "numberOfCores";
+    private static final String PARAM_MIN_THREADS = PARAM_COALESCE_THREADING + "minThreads";
+    private static final String PARAM_MAX_THREADS = PARAM_COALESCE_THREADING + "maxThreads";
     /**
      * {@value #PARAM_THREAD_TIMOUT} specifies in seconds when terminating executor pools how long to wait on thread
      * completions before sending an interrupt. Default {@value #DEFAULT_THREAD_TIMOUT}.
      */
-    public static final String PARAM_THREAD_TIMOUT = PARAM_COALESCE_THREADING + ".timeout";
+    public static final String PARAM_THREAD_TIMOUT = PARAM_COALESCE_THREADING + "timeout";
 
     /**
      * {@value #PARAM_KEEP_ALIVE_TIME} specifies in seconds how long a thread should remain around to be reused within a
      * executor pool before being cleaned up. Default {@value #DEFAULT_KEEP_ALIVE_TIME}.
      */
-    public static final String PARAM_KEEP_ALIVE_TIME = PARAM_COALESCE_THREADING + ".keepAliveTime";
+    public static final String PARAM_KEEP_ALIVE_TIME = PARAM_COALESCE_THREADING + "keepAliveTime";
 
     /*--------------------------------------------------------------------------
     Security Parameters
