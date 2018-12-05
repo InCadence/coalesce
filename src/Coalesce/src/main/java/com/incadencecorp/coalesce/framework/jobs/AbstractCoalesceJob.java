@@ -17,7 +17,11 @@
 
 package com.incadencecorp.coalesce.framework.jobs;
 
-import com.incadencecorp.coalesce.api.*;
+import com.incadencecorp.coalesce.api.EJobStatus;
+import com.incadencecorp.coalesce.api.EResultStatus;
+import com.incadencecorp.coalesce.api.ICoalesceJob;
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
@@ -96,7 +100,14 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
         }
         catch (CoalesceException | InterruptedException e)
         {
-            LOGGER.error("(FAILED) Job", e);
+            if (e instanceof InterruptedException || e.getCause() instanceof InterruptedException)
+            {
+                LOGGER.info("(FAILED) Job Interrupted");
+            }
+            else
+            {
+                LOGGER.error("(FAILED) Job", e);
+            }
 
             status = EJobStatus.FAILED;
 
@@ -268,7 +279,8 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
     /**
      * Performs the work of the job.
      */
-    protected abstract OUTPUT doWork(ICoalescePrincipal principal, INPUT params) throws CoalesceException, InterruptedException;
+    protected abstract OUTPUT doWork(ICoalescePrincipal principal, INPUT params)
+            throws CoalesceException, InterruptedException;
 
     protected abstract OUTPUT createResponse();
 
