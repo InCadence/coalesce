@@ -422,36 +422,41 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      */
     public boolean saveCoalesceEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
-        for (CoalesceEntity entity : entities)
-        {
-            if (entity.isNew())
-            {
-                entity.setStatus(ECoalesceObjectStatus.ACTIVE);
-            }
-        }
+        boolean isSuccessful = true;
 
-        boolean isSuccessful = getAuthoritativePersistor().saveEntity(allowRemoval, entities);
-
-        if (hasSecondaryPersistors())
+        if (entities != null && entities.length > 0)
         {
-            if (LOGGER.isDebugEnabled())
+            for (CoalesceEntity entity : entities)
             {
-                LOGGER.debug("Creating Job {}", CoalesceSaveEntityJob.class.getName());
+                if (entity.isNew())
+                {
+                    entity.setStatus(ECoalesceObjectStatus.ACTIVE);
+                }
             }
 
-            // Create Parameters
-            CoalesceSaveEntityProperties params = new CoalesceSaveEntityProperties();
-            params.setAllowRemoval(allowRemoval);
-            params.setEntities(entities);
+            isSuccessful = getAuthoritativePersistor().saveEntity(allowRemoval, entities);
 
-            // Create Job
-            CoalesceSaveEntityJob job = new CoalesceSaveEntityJob(params);
-            job.setHandler(_handler);
-            job.setExecutor(this);
-            job.setTarget(getSecondaryPersistors());
+            if (hasSecondaryPersistors())
+            {
+                if (LOGGER.isDebugEnabled())
+                {
+                    LOGGER.debug("Creating Job {}", CoalesceSaveEntityJob.class.getName());
+                }
 
-            // Update Secondary Persistors
-            submit(job);
+                // Create Parameters
+                CoalesceSaveEntityProperties params = new CoalesceSaveEntityProperties();
+                params.setAllowRemoval(allowRemoval);
+                params.setEntities(entities);
+
+                // Create Job
+                CoalesceSaveEntityJob job = new CoalesceSaveEntityJob(params);
+                job.setHandler(_handler);
+                job.setExecutor(this);
+                job.setTarget(getSecondaryPersistors());
+
+                // Update Secondary Persistors
+                submit(job);
+            }
         }
 
         // Update Authoritative Persistor
@@ -468,43 +473,46 @@ public class CoalesceFramework extends CoalesceExecutorServiceImpl {
      */
     public void saveCoalesceEntityAsync(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
-        for (CoalesceEntity entity : entities)
+        if (entities != null && entities.length > 0)
         {
-            if (entity.isNew())
+            for (CoalesceEntity entity : entities)
             {
-                entity.setStatus(ECoalesceObjectStatus.ACTIVE);
+                if (entity.isNew())
+                {
+                    entity.setStatus(ECoalesceObjectStatus.ACTIVE);
+                }
             }
+
+            int ii = 0;
+
+            // Set Target
+            ICoalescePersistor persisters[] = new ICoalescePersistor[getSecondaryPersistors().length + 1];
+            persisters[ii++] = getAuthoritativePersistor();
+
+            for (ICoalescePersistor persister : getSecondaryPersistors())
+            {
+                persisters[ii++] = persister;
+            }
+
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Creating Job {}", CoalesceSaveEntityJob.class.getName());
+            }
+
+            // Create Parameters
+            CoalesceSaveEntityProperties params = new CoalesceSaveEntityProperties();
+            params.setAllowRemoval(allowRemoval);
+            params.setEntities(entities);
+
+            // Create Job
+            CoalesceSaveEntityJob job = new CoalesceSaveEntityJob(params);
+            job.setHandler(_handler);
+            job.setExecutor(this);
+            job.setTarget(persisters);
+
+            // Update Secondary Persistors
+            submit(job);
         }
-
-        int ii = 0;
-
-        // Set Target
-        ICoalescePersistor persisters[] = new ICoalescePersistor[getSecondaryPersistors().length + 1];
-        persisters[ii++] = getAuthoritativePersistor();
-
-        for (ICoalescePersistor persister : getSecondaryPersistors())
-        {
-            persisters[ii++] = persister;
-        }
-
-        if (LOGGER.isDebugEnabled())
-        {
-            LOGGER.debug("Creating Job {}", CoalesceSaveEntityJob.class.getName());
-        }
-
-        // Create Parameters
-        CoalesceSaveEntityProperties params = new CoalesceSaveEntityProperties();
-        params.setAllowRemoval(allowRemoval);
-        params.setEntities(entities);
-
-        // Create Job
-        CoalesceSaveEntityJob job = new CoalesceSaveEntityJob(params);
-        job.setHandler(_handler);
-        job.setExecutor(this);
-        job.setTarget(persisters);
-
-        // Update Secondary Persistors
-        submit(job);
     }
 
     /*--------------------------------------------------------------------------

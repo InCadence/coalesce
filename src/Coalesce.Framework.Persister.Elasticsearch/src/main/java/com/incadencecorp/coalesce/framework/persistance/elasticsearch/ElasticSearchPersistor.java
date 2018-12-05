@@ -27,7 +27,14 @@ import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -102,21 +109,24 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
     @Override
     public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
-        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+        if (entities != null && entities.length > 0)
         {
-            AbstractClient client = conn.getDBConnector(params);
+            try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
+            {
+                AbstractClient client = conn.getDBConnector(params);
 
-            BulkRequest request = iterator.iterate(allowRemoval, entities);
+                BulkRequest request = iterator.iterate(allowRemoval, entities);
 
-            executeCleanup(client, request, entities);
+                executeCleanup(client, request, entities);
 
-            LOGGER.debug("{} Entities Created {} Request", entities.length, request.requests().size());
+                LOGGER.debug("{} Entities Created {} Request", entities.length, request.requests().size());
 
-            executeRequest(client, request, 1);
-        }
-        catch (CoalesceException | InterruptedException e)
-        {
-            throw new CoalescePersistorException(e);
+                executeRequest(client, request, 1);
+            }
+            catch (CoalesceException | InterruptedException e)
+            {
+                throw new CoalescePersistorException(e);
+            }
         }
 
         return true;
@@ -182,7 +192,9 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
             if (original != request.requests().size() || LOGGER.isTraceEnabled())
             {
-                LOGGER.debug("Created {} Delete Request for Phantom Records in {} ms", request.requests().size() - original, watch.getWorkLife());
+                LOGGER.debug("Created {} Delete Request for Phantom Records in {} ms",
+                             request.requests().size() - original,
+                             watch.getWorkLife());
             }
         }
     }
@@ -190,56 +202,58 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
     private void executeRequest(AbstractClient client, BulkRequest request, int attempt)
             throws CoalescePersistorException, InterruptedException
     {
-        try
+        if (!request.requests().isEmpty())
         {
-            BulkResponse response = client.bulk(request).actionGet();
-
-            for (BulkItemResponse item : response.getItems())
+            try
             {
-                LOGGER.trace("({}) ID = {}, Index = {}, Type = {} : {}",
-                             item.status().toString(),
-                             item.getId(),
-                             item.getIndex(),
-                             item.getType(),
-                             LOGGER.isTraceEnabled() ? response : response.getClass().getSimpleName());
+                BulkResponse response = client.bulk(request).actionGet();
 
-                if (item.isFailed())
+                for (BulkItemResponse item : response.getItems())
                 {
-                    // TODO Roll back other changes.
-                    throw new ElasticsearchException("(FAILED) Request Failed: {}" + item.getFailureMessage());
-                }
+                    LOGGER.trace("({}) ID = {}, Index = {}, Type = {} : {}",
+                                 item.status().toString(),
+                                 item.getId(),
+                                 item.getIndex(),
+                                 item.getType(),
+                                 LOGGER.isTraceEnabled() ? response : response.getClass().getSimpleName());
 
+                    if (item.isFailed())
+                    {
+                        // TODO Roll back other changes.
+                        throw new ElasticsearchException("(FAILED) Request Failed: {}" + item.getFailureMessage());
+                    }
+
+                }
+            }
+            catch (NoNodeAvailableException e)
+            {
+                if (attempt > ElasticSearchSettings.getRetryAttempts())
+                {
+                    throw new CoalescePersistorException("(FAILED) Executing Request", e);
+                }
+                else
+                {
+                    int millis = new Random().nextInt(ElasticSearchSettings.getBackoffInterval())
+                            + ElasticSearchSettings.getBackoffInterval();
+
+                    if (LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.debug("Sleeping ({}) for {} ms", Thread.currentThread().getId(), millis);
+                    }
+
+                    // Back off to allow other threads to close their locks.
+                    Thread.sleep((long) millis * attempt);
+
+                    if (LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.debug("Awaken ({})", Thread.currentThread().getId());
+                    }
+
+                    LOGGER.warn("(RETRYING) No Nodes Available - Attempt: {} after backing off for {} ms", attempt, millis);
+                    executeRequest(client, request, ++attempt);
+                }
             }
         }
-        catch (NoNodeAvailableException e)
-        {
-            if (attempt > ElasticSearchSettings.getRetryAttempts())
-            {
-                throw new CoalescePersistorException("(FAILED) Executing Request", e);
-            }
-            else
-            {
-                int millis = new Random().nextInt(ElasticSearchSettings.getBackoffInterval())
-                        + ElasticSearchSettings.getBackoffInterval();
-
-                if (LOGGER.isDebugEnabled())
-                {
-                    LOGGER.debug("Sleeping ({}) for {} ms", Thread.currentThread().getId(), millis);
-                }
-
-                // Back off to allow other threads to close their locks.
-                Thread.sleep((long) millis * attempt);
-
-                if (LOGGER.isDebugEnabled())
-                {
-                    LOGGER.debug("Awaken ({})", Thread.currentThread().getId());
-                }
-
-                LOGGER.warn("(RETRYING) No Nodes Available - Attempt: {} after backing off for {} ms", attempt, millis);
-                executeRequest(client, request, ++attempt);
-            }
-        }
-
     }
 
     @Override
