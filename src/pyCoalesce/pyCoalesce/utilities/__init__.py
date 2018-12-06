@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: sorr
+@author: Scott Orr
 
 This sub-package provides a handful of objects that don't correspond to the
 Coalesce Java classes or the Coalesce RESTful API operations, but which are

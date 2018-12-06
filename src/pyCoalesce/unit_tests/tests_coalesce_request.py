@@ -2,7 +2,9 @@
 """
 Created on Fri Jul  6 11:39:12 2018
 
-@author: dvenkat & sorr
+@author: Dhruva Venkat
+@author: Scott Orr
+
 """
 
 from sys import stdout
@@ -102,6 +104,11 @@ TEMPLATE3_DICT = {
                                             'dataType': 'string',
                                             'defaultClassificationMarking': 'U',
                                             'name': 'Field2'
+                                        },
+                                        {
+                                            'dataType': 'long',
+                                            'defaultClassificationMarking': 'U',
+                                            'name': 'Field3'
                                         }
                                     ]
                                 }
@@ -178,6 +185,11 @@ ENTITY4_DICT = {
                                                    'name': 'Field2',
                                                    'value': 'Larch',
                                                    'datatype': 'string',
+                                               },
+                                               {
+                                                   'name': 'Field3',
+                                                   'value': 6,
+                                                   'datatype': 'long',
                                                }
                                            ]
                                        }
@@ -266,6 +278,46 @@ QUERY3_DICT = {
                       }
                   ],
               }
+REQUEST4_DICT = {
+                    "pageSize": 200,
+                    "propertyNames": [
+                        "testrecordset2.field1"
+                    ],
+                    "group": {
+
+                         "operator": "AND",
+                         "criteria": [
+                             {
+                                 "recordset": "coalesceentity",
+                                 "field": "name",
+                                 "operator": "EqualTo",
+                                 "value": "TestEntity2",
+                                 "matchCase": False
+                             }
+                         ],
+                         "groups": [
+                             {
+                                 "operator": "OR",
+                                 "criteria": [
+                                     {
+                                         "recordset": "testrecordset2",
+                                         "field": "field1",
+                                         "operator": "EqualTo",
+                                         "value": "Sir",
+                                         "matchCase": False
+                                     },
+                                     {
+                                         "recordset": "testrecordset2",
+                                         "field": "field2",
+                                         "operator": "EqualTo",
+                                         "value": "aardvark",
+                                         "matchCase": False
+                                     }
+                                 ]
+                             }
+                         ]
+                     }
+                 }
 
 
 class ServerTest(TestCase):
@@ -777,30 +829,39 @@ class SearchTests(ServerTest):
                                         ["value"]
 
         results1_list = search(server = self.server, query = QUERY1_DICT,
-                               property_names = ["testrecordset2.field1"],
+                               return_property_names = \
+                                   ["testrecordset2.field1"],
                                output = "list")
         results1_first_field = results1_list[0]["values"][0]
         self.assertEqual(results1_first_field, orig3_first_field)
 
         query2_JSON = json.dumps(QUERY2_DICT)
         results2_full_dict = search(server = self.server, query = query2_JSON,
-                                    property_names = ["testrecordset3.field1"],
+                                    return_property_names = \
+                                        ["testrecordset3.field1"],
                                     output = "full_dict")
         results2_first_field = results2_full_dict["hits"][0]["values"][0]
         self.assertEqual(results2_first_field, orig4_first_field)
 
         query3_JSON = json.dumps(QUERY3_DICT)
-        results3_list = search(server = self.server, query = query3_JSON,
-                               sort_by = {"propertyName": "testrecordset2.field1",
-                                          "sortOrder": "ASC"},
-                               property_names = ["testrecordset2.field1"],
-                               output = "list")
+        request3_return_property = "testrecordset2.field1"
+        results3_list, request3 = search(server = self.server,
+                                         query = query3_JSON,
+                                         sort_by =
+                                             {"propertyName": "testrecordset2.field1",
+                                              "sortOrder": "ASC"},
+                                         return_property_names = \
+                                             [request3_return_property],
+                                         output = "list",
+                                         return_request = True)
         results3_first_fields = [hit["values"][0] for hit in results3_list]
         self.assertTrue(results3_first_fields.index(orig3_first_field) <
                         results3_first_fields.index(orig2_first_field))
+        request3_return_property_out = request3["propertyNames"][0]
+        self.assertEqual(request3_return_property, request3_return_property_out)
 
-        results4_JSON = search(server = self.server, query = QUERY1_DICT,
-                               property_names = ["testrecordset2.field1"],
+        results4_JSON = search(server = self.server, query = REQUEST4_DICT,
+                               return_property_names = ["IgnoreThis"],
                                output = "JSON")
         results4_first_field = json.loads(results4_JSON)["hits"][0]["values"][0]
         self.assertEqual(results4_first_field, orig3_first_field)
@@ -818,12 +879,18 @@ class SearchTests(ServerTest):
                                         ["allRecords"][0] \
                                         ["fields"][0] \
                                         ["value"]
+        orig4_third_field = ENTITY4_DICT["sectionsAsList"][0] \
+                                        ["recordsetsAsList"][0] \
+                                        ["allRecords"][0] \
+                                        ["fields"][2] \
+                                        ["value"]
 
         results1_list = search_simple(server = self.server,
                                       recordset = "testrecordset2",
                                       field = "field1", operator = "EqualTo",
                                       value = "Sir",
-                                      property_names = ["testrecordset2.field1"],
+                                      return_property_names = \
+                                          ["testrecordset2.field1"],
                                       output = "list")
         results1_first_field = results1_list[0]["values"][0]
         self.assertEqual(results1_first_field, orig1_first_field)
@@ -832,7 +899,8 @@ class SearchTests(ServerTest):
                                            recordset = "testrecordset3",
                                            field = "field2", operator = "Like",
                                            value = "Larch",
-                                           property_names = ["testrecordset3.field1"],
+                                           return_property_names = \
+                                               ["testrecordset3.field1"],
                                            output = "full_dict")
         results2_first_field = results2_full_dict["hits"][0]["values"][0]
         self.assertEqual(results2_first_field, orig2_first_field)
@@ -841,10 +909,21 @@ class SearchTests(ServerTest):
                                       recordset = "testrecordset2",
                                       field = "field1", operator = "EqualTo",
                                       value = "Sir",
-                                      property_names = ["testrecordset2.field1"],
+                                      return_property_names = \
+                                          ["testrecordset2.field1"],
                                       output = "JSON")
         results3_first_field = json.loads(results3_JSON)["hits"][0]["values"][0]
         self.assertEqual(results3_first_field, orig1_first_field)
+
+        results4_list = search_simple(server = self.server,
+                                      recordset = "testrecordset3",
+                                      field = "field3", operator = "between",
+                                      value = [5, 8],
+                                      return_property_names = \
+                                          ["testrecordset3.field3"],
+                                      output = "list")
+        results4_third_field = results4_list[0]["values"][0]
+        self.assertEqual(results4_third_field, unicode(orig4_third_field))
 
 
 TESTS = (EntityTests("test_create_template"),
@@ -855,10 +934,10 @@ TESTS = (EntityTests("test_create_template"),
          EntityTests("test_linkage_manipulation"),
          EntityTests("test_create_linkages"),
          EntityTests("test_read_linkages"),
-         SearchTests("test_search"), SearchTests("test_search_simple"),
-         EntityTests("test_delete_linkages"), EntityTests("test_delete"),
-         EntityTests("test_update_template"),
-         EntityTests("test_delete_template"))
+         SearchTests("test_search"), SearchTests("test_search_simple"))
+#         EntityTests("test_delete_linkages"), EntityTests("test_delete"),
+#         EntityTests("test_update_template"),
+#         EntityTests("test_delete_template"))
 
 
 def pyCoalesce_test_suite():

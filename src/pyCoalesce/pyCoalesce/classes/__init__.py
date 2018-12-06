@@ -1,5 +1,5 @@
 """
-@author: sorr
+@author: Scott Orr
 
 This subpackage provides XML- and JSON-based representations of the Coalesce
 Java classes, and functions to manipulate them.
@@ -38,7 +38,7 @@ the subpackage, omitting the module name.
 from coalesce_entity import *
 from coalesce_entity_template import CoalesceEntityTemplate
 from entity_utilities import *
-from coalesce_JSON import *
+from coalesce_json import *
 
 __all__ = ["coalesce_entity", "coalesce_entity_template", "entity_utilities",
-           "coalesce_JSON"]
+           "coalesce_json"]

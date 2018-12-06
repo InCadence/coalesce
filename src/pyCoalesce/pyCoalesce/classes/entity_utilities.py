@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+@author: Scott Orr
+
 These functions can be used to create and manipulate the XSD-based classes
 found in :mod:`~pyCoalesce.classes.entity`,
 :mod:`~pyCoalesce.classes.coalesce_entity`, and
@@ -16,8 +18,6 @@ not solve the problem in a few cases.
 
 All functions can be imported directly from the :mod:`pyCoalesce.classes`
 module.
-
-@author: sorr
 
 """
 

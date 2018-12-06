@@ -21,12 +21,12 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 project = u'pyCoalesce'
 copyright = u'2018, InCadence Strategic Solutions'
-author = u'Dhruva Venkat & Scott Orr'
+author = u'Dhruva Venkat, Scott Orr'
 
 # The short X.Y version
 version = u''
 # The full version, including alpha/beta/rc tags
-release = u'0.1'
+release = u'0.2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -162,9 +162,9 @@ texinfo_documents = [
 # -- Extension configuration -------------------------------------------------
 
 
-# The following ugly patch of code is a monkey patch to prevent cross-links 
+# The following ugly patch of code is a monkey patch to prevent cross-links
 # from ivar entries.  Thanks to mzjn
-# (https://stackoverflow.com/users/407651/mzjn), who posted it in 
+# (https://stackoverflow.com/users/407651/mzjn), who posted it in
 # https://stackoverflow.com/questions/31784830/sphinx-ivar-tag-goes-looking-for-cross-references
 
 from docutils import nodes

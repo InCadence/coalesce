@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+@author: Scott Orr
+
 This module provides a JSON-serializable version of Coalesce linkages that,
 unlike the :class:`pyCoalesce.classes.coalesce_entity.CoalesceLinkage`
 class, can be used with the JSON-only Coalesce linkage API.  Both this
@@ -8,8 +10,6 @@ include methods to convert linkages to the other class.
 
 The class can be imported directly from the :mod:`pyCoalesce.classes`
 module.
-
-@author: sorr
 
 """
 

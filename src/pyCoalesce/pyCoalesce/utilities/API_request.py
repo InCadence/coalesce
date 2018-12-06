@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-@author: sorr
+@author: Scott Orr
 
 This module provides a convenience function for making RESTful requests
 with exponential backoff (that is, if a request results in a transient
 error, the function makes the request again several times, with increasing
 delays between each attempt).
+
 
 """
 
