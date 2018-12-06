@@ -22,17 +22,29 @@ import com.incadencecorp.coalesce.api.ICoalesceFilter;
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceCircle;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.filter.CoalesceVersionFilter;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 import org.geotools.data.DataStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.Hints;
-import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.joda.time.DateTime;
 import org.opengis.feature.IllegalAttributeException;
@@ -42,19 +54,16 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.identity.FeatureId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author Derek Clemenzi
  */
-public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, AccumuloFeatureIterator.FeatureCollections>> {
+public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, FeatureCollections>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloFeatureIterator.class);
     private static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2();
@@ -130,15 +139,13 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         return CoalescePropertyFactory.getColumnName(normalizer, name);
     }
 
-    public void iterate(CoalesceEntity entity, Map<String, AccumuloFeatureIterator.FeatureCollections> features)
-            throws CoalesceException
+    public void iterate(CoalesceEntity entity, Map<String, FeatureCollections> features) throws CoalesceException
     {
         processAllElements(entity, features);
     }
 
     @Override
-    protected boolean visitCoalesceEntity(CoalesceEntity entity,
-                                          Map<String, AccumuloFeatureIterator.FeatureCollections> features)
+    protected boolean visitCoalesceEntity(CoalesceEntity entity, Map<String, FeatureCollections> features)
             throws CoalesceException
     {
         String featureName = AccumuloDataConnector.ENTITY_FEATURE_NAME;
@@ -178,7 +185,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         return true;
     }
 
-    private FeatureCollections getCollection(Map<String, AccumuloFeatureIterator.FeatureCollections> features, String name)
+    private FeatureCollections getCollection(Map<String, FeatureCollections> features, String name)
     {
         FeatureCollections collection = features.get(name);
 
@@ -192,8 +199,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
     }
 
     @Override
-    protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section,
-                                                  Map<String, AccumuloFeatureIterator.FeatureCollections> features)
+    protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section, Map<String, FeatureCollections> features)
             throws CoalesceException
     {
         String featureName = AccumuloDataConnector.LINKAGE_FEATURE_NAME;
@@ -301,7 +307,8 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                     }
                     else
                     {
-                        throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT, "Recordset's Entity is Null"));
+                        throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT,
+                                                                  "Recordset's Entity is Null"));
                     }
                 }
                 else
@@ -311,7 +318,9 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
             }
             catch (IOException e)
             {
-                throw new CoalesceException(String.format(CoalesceErrors.INVALID_OBJECT, featureName, datastore.getInfo().getSource()), e);
+                throw new CoalesceException(String.format(CoalesceErrors.INVALID_OBJECT,
+                                                          featureName,
+                                                          datastore.getInfo().getSource()), e);
             }
         }
 
@@ -561,13 +570,6 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                             String.format(CoalesceErrors.INVALID_INPUT_REASON, fieldName, e.getMessage()));
             }
         }
-    }
-
-    public class FeatureCollections {
-
-        public DefaultFeatureCollection featuresToAdd = new DefaultFeatureCollection();
-        public List<FeatureId> keysToDelete = new ArrayList<>();
-
     }
 
 }

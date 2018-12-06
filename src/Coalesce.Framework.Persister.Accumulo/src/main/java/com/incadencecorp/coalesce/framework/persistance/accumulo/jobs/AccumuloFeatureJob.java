@@ -24,6 +24,7 @@ import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloFeatureIterator;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.FeatureCollections;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.tasks.AccumuloDeleteMutationTask;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.tasks.AccumuloFeatureTask;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.tasks.AccumuloWriteMutationTask;
@@ -43,7 +44,7 @@ import java.util.Map;
  */
 public class AccumuloFeatureJob extends AbstractStringResponseJob<AccumuloDataConnector> {
 
-    private Map<String, AccumuloFeatureIterator.FeatureCollections> features;
+    private Map<String, FeatureCollections> features;
     private BatchWriterConfig config;
     private List<Mutation> entityMutations;
     private List<Mutation> indexMutations;
@@ -54,7 +55,7 @@ public class AccumuloFeatureJob extends AbstractStringResponseJob<AccumuloDataCo
         super(conn);
     }
 
-    public void setFeatures(Map<String, AccumuloFeatureIterator.FeatureCollections> value)
+    public void setFeatures(Map<String, FeatureCollections> value)
     {
         this.features = value;
     }
@@ -82,7 +83,7 @@ public class AccumuloFeatureJob extends AbstractStringResponseJob<AccumuloDataCo
         List<AbstractTask<?, CoalesceStringResponseType, ?>> tasks = new ArrayList<>();
 
         // Create Tasks
-        for (Map.Entry<String, AccumuloFeatureIterator.FeatureCollections> entry : features.entrySet())
+        for (Map.Entry<String, FeatureCollections> entry : features.entrySet())
         {
             if (entry.getValue().featuresToAdd.size() > 0 || entry.getValue().keysToDelete.size() > 0)
             {

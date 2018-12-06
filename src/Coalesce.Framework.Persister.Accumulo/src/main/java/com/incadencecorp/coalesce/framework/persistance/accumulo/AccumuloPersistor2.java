@@ -93,7 +93,7 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
         List<Mutation> indexMutations = new ArrayList<>();
         List<String> keysToDelete = new ArrayList<>();
 
-        Map<String, AccumuloFeatureIterator.FeatureCollections> features = new HashMap<>();
+        Map<String, FeatureCollections> features = new HashMap<>();
 
         // Create Mutations & Features
         for (CoalesceEntity entity : entities)

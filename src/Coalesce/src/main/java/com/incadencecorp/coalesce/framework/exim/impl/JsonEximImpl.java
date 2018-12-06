@@ -93,7 +93,7 @@ public class JsonEximImpl implements CoalesceExim<JSONObject> {
      * @author n78554
      *
      */
-    private class JSONToCoalesceIterator extends CoalesceIterator {
+    private static class JSONToCoalesceIterator extends CoalesceIterator {
 
         private JSONObject json;
 

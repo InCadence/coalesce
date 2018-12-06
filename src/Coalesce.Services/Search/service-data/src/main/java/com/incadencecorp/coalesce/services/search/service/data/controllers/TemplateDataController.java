@@ -609,7 +609,7 @@ public class TemplateDataController {
         return result;
     }
 
-    private class TemplateNode {
+    private static class TemplateNode {
 
         private CoalesceEntity entity;
         private CoalesceEntityTemplate template;

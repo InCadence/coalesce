@@ -141,20 +141,20 @@ public class SCIControl {
     public String toString(boolean asPortion)
     {
 
-        String marking = "";
+        StringBuilder marking = new StringBuilder();
 
         for (SCIElement element : getElements())
         {
 
-            if (!StringHelper.isNullOrEmpty(marking))
+            if (marking.length() > 0)
             {
-                marking += "/";
+                marking.append("/");
             }
 
-            marking += element.toString();
+            marking.append(element.toString());
         }
 
-        return marking;
+        return marking.toString();
 
     }
 

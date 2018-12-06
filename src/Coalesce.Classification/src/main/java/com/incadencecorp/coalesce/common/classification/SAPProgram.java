@@ -137,11 +137,11 @@ public class SAPProgram implements Comparable<SAPProgram> {
     @Override
     public String toString()
     {
-        String marking = "";
+        StringBuilder marking = new StringBuilder();
 
         for (Compartment nickname : getCompartments())
         {
-            marking += "-" + nickname.toString();
+            marking.append("-").append(nickname.toString());
         }
 
         return _program + marking;

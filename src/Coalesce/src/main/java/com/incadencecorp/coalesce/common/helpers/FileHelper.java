@@ -8,6 +8,8 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceEncrypter;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceEncrypter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -386,7 +388,10 @@ public final class FileHelper {
             File fileDir = new File(fullDirectory);
             if (!fileDir.exists())
             {
-                fileDir.mkdirs();
+                if (!fileDir.mkdirs())
+                {
+                    LoggerFactory.getLogger(FileHelper.class.getName()).warn("(FAILED) Creating Directory: {}", fileDir);
+                }
             }
         }
 

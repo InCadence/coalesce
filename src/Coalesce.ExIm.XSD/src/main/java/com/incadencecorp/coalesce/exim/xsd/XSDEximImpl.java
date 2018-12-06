@@ -117,7 +117,7 @@ public class XSDEximImpl implements CoalesceExim<Document> {
     Import Methods
     --------------------------------------------------------------------------*/
 
-    private class XSDToCoalesceIterator extends CoalesceIterator<Document> {
+    private static class XSDToCoalesceIterator extends CoalesceIterator<Document> {
 
         private Map<String, String> keysToReplace = new HashMap<>();
 
