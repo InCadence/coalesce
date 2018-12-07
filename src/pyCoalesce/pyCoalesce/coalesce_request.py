@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-@author: dvenkat & sorr
+@author: Dhruva Venkat
+@author: Scott Orr
 
 This is the main module for :mod:`pyCoalesce`, and provides search
 functions for the Coalesce RESTful API's search controller, CRUD functions
@@ -77,7 +78,12 @@ ENTITY_UPLOAD_OPERATIONS = (u"create", u"update", u"create_template",
 # Eventually, the following list of operations should be available through
 # the "property" API, at which point it might be possible to downloaded it
 # rather than hard-code it.  However, hard-coding may still be necessary to
-# specify the proper numbers of arguments.
+# specify the proper numbers of arguments.  The docstring below this
+# constant causes it to show up in the auto-generated Sphinx documentation,
+# something that isn't needed for the other constants (the valid values
+# they define are documented in docstrings of the corresponding functions,
+# but this list is a little long for that treatment, and the operators are
+# used by two different functions, "search" and "search_simple".
 SEARCH_OPERATORS = {
         u"EqualTo": 1,
         u"GreaterThan": 1,
@@ -90,13 +96,24 @@ SEARCH_OPERATORS = {
         u"During": 2,
         u"After": 1,
         u"Before": 1,
-        u"BBOX": None,
+        u"BBOX": 1,
         u"NullCheck": 0
     }
 """
 The keys are the valid search operations, and the values are the number of
-arguments required for each operator (a ``None`` indicates that the
-operation isn't yet implemented in this wrapper).
+arguments required for each operator.  The keys are used to correct cases
+for both the :func:`~pyCoalesce.coalesce_request.search` and
+:func:`~pyCoalesce.coalesce_request.search_simple` functions; providing an
+unlisted operator to :func:`~pyCoalesce.coalesce_request.search_simple`
+will result in an exception, while
+:func:`~pyCoalesce.coalesce_request.search` will pass an unlisted
+operator to the Coalesce API, albeit without any case correction (thus,
+operators newly added to the Coalesce RESTful API can be used before
+they've been listed here).  The (integer) values are used only to check
+inputs for the :func:`~pyCoalesce.coalesce_request.search_simple` function
+(a ``None`` can be used to indicate that an operation isn't yet implemented
+for this function), but provide a useful reference for writing queries for
+the full :func:`~pyCoalesce.coalesce_request.search_simple` function.
 
 """
 
@@ -128,7 +145,7 @@ class CoalesceServer(object):
     :ivar URL:  the URL of the Coalesce server
     :ivar base_headers:  headers that don't need to change between
         requests.  Specifically, this :class:`dict` includes "Connection".
-        "Connection" can be set by the calling application, but there's
+        "Connection" can be set in the constructor call, but there's
         probably no need to set it to "close" rather than the default
         "keep-alive".
     :ivar max_attempts:  the number of times to attempt each request,
@@ -153,8 +170,8 @@ class CoalesceServer(object):
             from the CRUD persistor), while any other value directs
             Coalesce to use the matching secondary persistor.
         :param connection:  a request header, with valid values of
-            "keep-alive" and "close.  There's probably no reason not to use
-            the default for this argument.
+            "keep-alive" and "close".  There's probably no reason not to
+            use the default for this argument.
         :param max_attempts:  the number of times to attempt each request,
             using the exponential backoff coded into
             :func:'pyCoalesce.utilities.API_request.get_response'
@@ -283,8 +300,9 @@ def case_operator(input_operator):
 
 
 def search(server = None, query = None, sort_by = None,
-           property_names = ["coalesceentity.name"], page_size = 200,
-           page_number = 1, output = "list", check_case = True):
+           return_property_names = ["coalesceentity.name"], page_size = 200,
+           page_number = 1, output = "list", check_case = True,
+           return_request = False):
 
     """
     Submits a query using the full Coalesce RESTful API.  The user
@@ -293,13 +311,17 @@ def search(server = None, query = None, sort_by = None,
 
     :param server:  A :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
-    :param query:  the search query (the value of "group" in a `Coalesce
-        search request object
-        <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`_),
-        as dict-like or a JSON object (string).  For the most part, this
-        query must follow the Coalesce format exactly, but operators not
-        in the right form (upper camelcase) are replaced with the proper
-        form, provided they're included in the
+    :param query:  the search query, either the query proper (the value of
+        "group" in a `Coalesce search request object
+        <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`_)
+        or the full request object, as dict-like or a JSON object (string);
+        in the case of a full request object, the other arguments used to
+        from the request ("sort_by", "return_property_names", "page_size",
+        and "page_number") are ignored.  For the most part, the query must
+        follow the Coalesce format exactly, but if "check_case" is
+        ``True``, operators not in the right form (upper camelcase for most
+        search operators, all caps for group operators) are replaced with
+        the proper forms, provided they're included in the
         :const:`~pyCoalesce.coalesce_request.SEARCH_OPERATORS` constant.
     :param sort_by:  one or more properties (fields) on which the results
         should be sorted, along with the sort order ("ASC" for ascending,
@@ -308,12 +330,13 @@ def search(server = None, query = None, sort_by = None,
         `{"propertyName": <recordset>.<field>, "sortOrder": <sort order>}`;
         for basic entity fields, such as "name" and "dateCreated", give
         just the field name, with no recordset.
-    :param property_names:  an iterable naming the properties (fields) to
-        return for each search result.  The values, each in the format
-        `<recordset>.<field>`, are passed directly to the appropriate
-        persistor(s) underlying Coalesce, and for most persistors, these
-        names are case-insensitive  Note that the "entityKey" property is
-        always returned, regardless of the value of this argument.
+    :param return_property_names:  an iterable naming the properties
+        (fields) to return for each search result.  The values, each in the
+        format `<recordset>.<field>`, are passed directly to the
+        appropriate persistor(s) underlying Coalesce, and for most
+        persistors, these names are case-insensitive  Note that the
+        "entityKey" property is always returned, regardless of the value of
+        this argument.
     :param page_size:  the number of results to return
     :param page_number:  used to retrieve results deeper in the list.  For
         example, a query with "page_size" 250 and "page_number" 3 returns
@@ -322,13 +345,23 @@ def search(server = None, query = None, sort_by = None,
         Python :class:`list`; for "full_dict", return the full response,
         including metadata, as a :class:`dict`.  For "JSON" return the full
         response, unparsed, including metadata, as a Unicode string.
-    :param check_case: If this argument is False, do not check search
+    :param check_case:  If this argument is ``False``, do not check search
         operators for the correct case.  Skipping this check improves speed
         (important if an application is making a lot of queries),
         especially for complex queries.
+    :param return_request:  if this argument is ``True``, return the full
+        Coalesce request object, as the second element of a tuple (the
+        search results themselves will be the first element).  If the ouput
+        format for the results is "JSON", return the request as a JSON
+        object (string), otherwise, return it as a Python :class:`dict`.
+        This option is useful for constructing search queries
+        programmatically by making small modifications to the generated
+        request objects; it can also be used for debugging.
 
     :returns:  a :class:`list`, :class:`dict`, or JSON object, depending on
-        the value of "output".
+        the value of "output", possibly followed (as the second element of
+        a tuple) by the full request object, as a :class:`dict`, or JSON
+        object  .
 
     """
 
@@ -336,7 +369,8 @@ def search(server = None, query = None, sort_by = None,
         """
         Recursively find all search operators in a search query, and
         replace any in the wrong case with the correct forms, if those
-        forms are found in a predefined list.
+        forms are found in a predefined list.  Also uppercase group
+        operators ("AND" and "OR").
 
         :param query_fragment:  dict-like; either a search group or a
             search criteria set
@@ -358,8 +392,13 @@ def search(server = None, query = None, sort_by = None,
             except KeyError:
                 pass
 
-        # Otherwise, parse "query_fragment".
+        # Otherwise, "query_fragment" is a search group--parse it.
         else:
+
+            # Check for and fix the group operator.
+            if "operator" in query_fragment:
+                query_fragment["operator"] = \
+                    unicode(query_fragment["operator"]).upper()
 
             # Check for and fix sub-groups.
             if "groups" in query_fragment:
@@ -387,10 +426,12 @@ def search(server = None, query = None, sort_by = None,
     output = output.lower()
     if not output in SEARCH_OUTPUT_FORMATS:
         raise ValueError('The argument "output" must take one of the ' +
-                         'following values:\n' + str(SEARCH_OUTPUT_FORMATS) + '.')
+                         'following values:\n' + str(SEARCH_OUTPUT_FORMATS) +
+                         '.')
     operation = u"search"
     try:
-        API_URL = _construct_URL(server_obj =  server_obj, operation = operation)
+        API_URL = _construct_URL(server_obj =  server_obj,
+                                 operation = operation)
     except AttributeError as err:
         raise AttributeError(str(err) + '\n.This error can occur if the ' +
                               'argument "server" is not either a URL or a ' +
@@ -399,11 +440,10 @@ def search(server = None, query = None, sort_by = None,
     headers = copy(server_obj.base_headers)
     headers["Content-type"] = "application/json"
 
-
     # Form the request.  Note that we don't test the validity of the query--
     # we let the API do that, which prevents the wrapper from blocking the
     # usage of new features.
-    #
+
     # In the case of a query submitted as a JSON object, converting the
     # JSON to dict and then back again makes this particular coder twitch,
     # but doing it this way allows us to make the search operators case-
@@ -411,27 +451,36 @@ def search(server = None, query = None, sort_by = None,
     # dict-like input.
     if isinstance(query, basestring):
         query = json.loads(query)
-    data = {
-            "pageSize": page_size, "pageNumber": page_number,
-            "propertyNames": property_names,
-            "group": query
-           }
 
-    # Add any sorting parameters.
+    # If "query" is a full request object, assign it directly as the
+    # request object ("data").  Otherwise, construct the request object.
 
-    if sort_by:
+    if "group" in query:
+        data = query
 
-        if isinstance(sort_by, basestring):
-            sort_by = json.loads(sort_by)
+    else:
 
-        # If "sort_by" is a single entry rather than list-like, wrap it in
-        # a list.
-        try:
-            sort_by[0]
-        except KeyError:
-            sort_by = [sort_by]
+        data = {
+                "pageSize": page_size, "pageNumber": page_number,
+                "propertyNames": return_property_names,
+                "group": query
+               }
 
-        data["sortBy"] = sort_by
+        # Add any sorting parameters.
+
+        if sort_by:
+
+            if isinstance(sort_by, basestring):
+                sort_by = json.loads(sort_by)
+
+            # If "sort_by" is a single entry rather than list-like, wrap it
+            # in a list.
+            try:
+                sort_by[0]
+            except KeyError:
+                sort_by = [sort_by]
+
+            data["sortBy"] = sort_by
 
     # Convert any search operator not in the proper case, recursively
     # searching through the search criteria sets in the query ("group").
@@ -442,11 +491,11 @@ def search(server = None, query = None, sort_by = None,
             for i, entry in enumerate(sort_by):
                 data["sortBy"][i]["sortOrder"] = entry["sortOrder"].upper()
 
-    # Convert the query to JSON.
-    data_json = json.dumps(data)
+    # Convert the request to JSON.
+    data_JSON = json.dumps(data)
 
     # Submit the request.
-    response = get_response(URL = API_URL, method = method, data = data_json,
+    response = get_response(URL = API_URL, method = method, data = data_JSON,
                             headers = headers, delay = 1, max_attempts = 4)
 
     # Return the type of output specified by "output".
@@ -454,19 +503,32 @@ def search(server = None, query = None, sort_by = None,
     if output == u"list":
         results_list = \
           json.loads(response.text)["hits"]
-        return results_list
+        results = results_list
 
     elif output == u"full_dict":
         results_dict = json.loads(response.text)
-        return results_dict
+        results = results_dict
 
     else: # The requested output format was "JSON".
-        return response.text
+        results = response.text
+
+    # If necessary, return the request object as well.  If "output" is
+    # JSON, return the request in the form of a JSON object; otherwise
+    # return it as a Python dict.
+
+    if return_request:
+        if output == u"JSON":
+            return results, data_JSON
+        else:
+            return results, data
+
+    else:
+        return results
 
 
 def search_simple(server = None, recordset = "coalesceentity", field = "name",
            operator = "Like", value = None, match_case = False,
-           property_names = ["coalesceentity.name"], page_size = 200,
+           return_property_names = ["coalesceentity.name"], page_size = 200,
            page_number = 1, output = "list"):
 
     """
@@ -483,19 +545,20 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
     :param operator:  the search operation; valid values can be found in
         the constant :const:`~pyCoalesce.coalesce_request.SEARCH_OPERATORS`.
     :param value:  the value to search for.  Must be a string or number
-        (for operators requiring a single argument), an iterable of two
-        strings or numbers (for operators requiring a pair of arguments),
-        or ``None`` (for operators that take no arguments).
+        (for operators requiring a single argument), an iterable of strings
+        or numbers (for operators requiring multiple arguments), or
+        ``None`` (for operators that take no arguments).
     :param match_case:  if ``True``, results should match the case of
         "value".  Some of the persistors underlying Coalesce are
         case-insensitive when matching values, regardless of the value of
-        "match_case."
-    :param property_names:  an iterable naming the properties (fields) to
-        return for each search result.  The values are passed directly to
-        the appropriate persistor(s) underlying Coalesce, and for most
-        persistors, these names are case-insensitive.  Note that the
-        "entityKey" (identical to "coelesceentity.objectkey") property is
-        always returned, regardless of the value of this argument.
+        "match_case".
+    :param return_property_names:  an iterable naming the properties
+        (fields) to return for each search result.  The values, each in the
+        format `<recordset>.<field>`, are passed directly to the
+        appropriate persistor(s) underlying Coalesce, and for most
+        persistors, these names are case-insensitive  Note that the
+        "entityKey" property is always returned, regardless of the value of
+        this argument.
     :param page_size:  the number of results to return
     :param page_number:  used to retrieve results deeper in the list.  For
         example, a query with "page_size" 250 and "page_number" 3 returns
@@ -510,10 +573,9 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
 
     """
 
-    # Make sure the operator is in the predefined list.
-    if operator not in SEARCH_OPERATORS:
-        raise ValueError("The search operator must be one of the following:\n" +
-                         str(SEARCH_OPERATORS))
+    # Make sure the operator is cased properly (assuming it's in the
+    # pre-defined list--if it's not, an exception will occur later).
+    operator = case_operator(operator)
 
     # Form the criteria set, less the search value(s).
     criteria = [{
@@ -526,24 +588,43 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
     # Check and parse the search value(s), and add them to the criteria
     # set.  Note that checking value types is beyond the scope of this
     # wrapper.
+
     num_values = SEARCH_OPERATORS[operator]
+
     if num_values:
+
         if num_values == 1:
             criteria[0]["value"] = value
-        elif num_values == 2:
-            try:
-                criteria[0]["value"] = value[0] + u" " + value[1]
-            except:
-                try:
-                    split_value = value.split(" ")
-                    if len(split_value) == 2:
-                        criteria[0]["value"] = value
-                    else:
-                        raise ValueError
-                except (AttributeError, ValueError):
-                    raise TypeError('The "value" argument for search '  +
-                                    'operator "' + operator + '" must be an ' +
-                                    'iterable with exactly two elements.')
+
+        else:
+
+            # If the operator in question takes multiple values, "value"
+            # will be either an iterable of values or a string of space-
+            # separated values.
+
+            invalid_value_msg = 'The "value" argument for search operator "' + \
+                                operator + '" must be an iterable with ' + \
+                                'exactly ' + str(num_values) + ' elements, ' + \
+                                'or the same number of values as a space-' + \
+                                'separated string.'
+
+            if isinstance(value, basestring):
+                split_value = value.split(" ")
+                if len(split_value) == num_values:
+                    criteria[0]["value"] = value
+                else:
+                    raise ValueError(invalid_value_msg)
+
+            elif len(value) == num_values:
+                values_string = unicode (value[0])
+                for position in range(1, num_values):
+                    values_string += u" " + unicode(value[position])
+                criteria[0]["value"] = values_string
+
+            else:
+                raise ValueError(invalid_value_msg)
+
+    # If "num_values" is None.
     else:
         raise ValueError('Search operator "' + operator + '" has not been ' +
                          'implemented in "search_simple".')
@@ -554,11 +635,14 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
              "criteria": criteria
             }
 
-    # Call the full search function.
+    # Call the full search function.  Note that we've already checked the
+    # case of one one user-entered operator, and so we can leave that
+    # argument at the default False in the call to "search".
+
     results = search(server = server, query = query,
-                     property_names = property_names, page_size = page_size,
-                     page_number = page_number, output = output,
-                     check_case = True)
+                     return_property_names = return_property_names,
+                     page_size = page_size, page_number = page_number,
+                     output = output, check_case = False)
 
     # Return the results.
     return results

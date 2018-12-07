@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """
+@author: Scott Orr
 
 This subclass allows the creation of template objects that can be used to
 create new instances of class "entity", along with their child objects.

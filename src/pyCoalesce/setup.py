@@ -5,8 +5,8 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pyCoalesce",
-    version="0.12",
-    author="Dhruva Venkat & Scott Orr",
+    version="0.2",
+    author="Dhruva Venkat, Scott Orr",
     author_email="sorr@incadencecorp.com",
     description="A python wrapper for coalesce objects",
     long_description=long_description,
