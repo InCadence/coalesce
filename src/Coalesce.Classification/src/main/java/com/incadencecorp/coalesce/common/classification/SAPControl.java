@@ -153,17 +153,17 @@ public class SAPControl {
     public String toString(boolean asPortion)
     {
 
-        String marking = "";
+        StringBuilder marking = new StringBuilder();
 
         for (SAPProgram program : getPrograms())
         {
 
-            if (!StringHelper.isNullOrEmpty(marking))
+            if (marking.length() > 0)
             {
-                marking += "/";
+                marking.append("/");
             }
 
-            marking += program.toString();
+            marking.append(program.toString());
         }
 
         if (asPortion)

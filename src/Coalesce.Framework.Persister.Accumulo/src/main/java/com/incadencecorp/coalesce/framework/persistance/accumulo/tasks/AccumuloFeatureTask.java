@@ -23,8 +23,8 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
-import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloFeatureIterator;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloSettings;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.FeatureCollections;
 import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
 import org.geotools.data.DataStore;
@@ -53,13 +53,13 @@ import java.util.Map;
  * @author Derek Clemenzi
  */
 public class AccumuloFeatureTask extends
-        AbstractTask<Map.Entry<String, AccumuloFeatureIterator.FeatureCollections>, CoalesceStringResponseType, DataStore> {
+        AbstractTask<Map.Entry<String, FeatureCollections>, CoalesceStringResponseType, DataStore> {
 
     private static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2();
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloFeatureTask.class);
 
     @Override
-    protected CoalesceStringResponseType doWork(TaskParameters<DataStore, Map.Entry<String, AccumuloFeatureIterator.FeatureCollections>> parameters)
+    protected CoalesceStringResponseType doWork(TaskParameters<DataStore, Map.Entry<String, FeatureCollections>> parameters)
             throws CoalesceException
     {
         CoalesceStringResponseType result = new CoalesceStringResponseType();
@@ -89,7 +89,7 @@ public class AccumuloFeatureTask extends
     }
 
     @Override
-    protected Map<String, String> getParameters(Map.Entry<String, AccumuloFeatureIterator.FeatureCollections> params,
+    protected Map<String, String> getParameters(Map.Entry<String, FeatureCollections> params,
                                                 boolean isTrace)
     {
         return new HashMap<>();

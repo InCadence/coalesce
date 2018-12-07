@@ -142,7 +142,7 @@ public class UpdateDataObjectLinkagesJob extends AbstractFrameworkServiceJob<Dat
     Private Classes
     --------------------------------------------------------------------------*/
 
-    private class DataObjectLinkBucket {
+    private static class DataObjectLinkBucket {
 
         private HashSet<String> keys;
         private List<DataObjectLinkType> linkages;

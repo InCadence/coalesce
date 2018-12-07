@@ -210,7 +210,7 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
     /**
      * Contains the key and initial vector used for encryption. 
      */
-    private class EncoderParameters {
+    private static class EncoderParameters {
 
         private final SecretKey _key;
         private final byte[] _iv;

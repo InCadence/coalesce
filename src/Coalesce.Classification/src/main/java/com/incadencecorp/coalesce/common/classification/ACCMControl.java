@@ -137,17 +137,17 @@ public class ACCMControl {
     public String toString()
     {
 
-        String marking = "";
+        StringBuilder marking = new StringBuilder();
 
         for (ACCMNickname nickname : getNicknames())
         {
 
-            if (!StringHelper.isNullOrEmpty(marking))
+            if (marking.length() > 0)
             {
-                marking += "/";
+                marking.append("/");
             }
 
-            marking += nickname.toString();
+            marking.append(nickname.toString());
         }
 
         return "ACCM-" + marking;

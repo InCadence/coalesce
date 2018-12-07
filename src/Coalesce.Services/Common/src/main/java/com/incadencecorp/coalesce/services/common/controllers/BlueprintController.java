@@ -216,7 +216,10 @@ public class BlueprintController implements IBlueprintController {
 
             Path path = root.resolve(backup);
             File file = path.toFile();
-            file.delete();
+            if (!file.delete())
+            {
+                LOGGER.warn("(FAILED) Deleting File: {}", file);
+            }
         }
         else {
             LOGGER.debug("No more backups available");
@@ -527,7 +530,10 @@ public class BlueprintController implements IBlueprintController {
             return files != null ? files.length : 0;
         }
         else {
-           f.mkdir();
+           if (!f.mkdir())
+           {
+                LOGGER.warn("(FAILED) Deleting File: {}", f);
+           }
         }
         return 1;
     }
