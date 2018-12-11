@@ -78,6 +78,10 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * Attribute that stores the full name of the class that generated this entity.
      */
     public static final String ATTRIBUTE_CLASSNAME = "classname";
+    /**
+     * The time the object was last uploaded to the server.
+     */
+    public static final String ATTRIBUTE_UPLOADEDTOSERVER = "uploadedtoserver";
 
     private Entity _entity;
 
@@ -373,6 +377,28 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     // public Properties
     // -----------------------------------------------------------------------//
 
+    public final void setUploadedToServer(DateTime value)
+    {
+        if (value != null)
+        {
+            // Set Uploaded to Server
+            _entity.setUploadedtoserver(value);
+        }
+    }
+
+    /**
+     * Returns the value of the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
+     * UploadedToServer attribute.
+     *
+     * @return DateTime of the
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     *         's UploadedToServer attribute.
+     *
+     *
+     */
+     public DateTime getUploadedToServer() { return _entity.getUploadedtoserver(); }
+
     /**
      * Returns the {@link CoalesceEntity}'s source attribute value.
      *
@@ -553,7 +579,10 @@ public class CoalesceEntity extends CoalesceObjectHistory {
             // Set LastModified
             DateTime utcNow = JodaDateTimeHelper.nowInUtc();
             if (utcNow != null)
+            {
                 setLastModified(utcNow);
+                setUploadedToServer(utcNow);
+            }
         }
 
     }
@@ -839,7 +868,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     public CoalesceLinkage getLinkage(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
             throws CoalesceException
     {
-        Map<String, CoalesceLinkage> results = getLinkages(Collections.singletonList(forLinkType), forEntityName, forEntitySource);
+        Map<String, CoalesceLinkage> results = getLinkages(Collections.singletonList(forLinkType),
+                                                           forEntityName,
+                                                           forEntitySource);
 
         switch (results.size())
         {
@@ -1261,6 +1292,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
         case ATTRIBUTE_TITLE:
             _entity.setTitle(value);
             return true;
+        case ATTRIBUTE_UPLOADEDTOSERVER:
+            setUploadedToServer(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            return true;
         default:
             return setOtherAttribute(name, value);
         }
@@ -1276,6 +1310,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
         map.put(new QName(ATTRIBUTE_ENTITYID), _entity.getEntityid());
         map.put(new QName(ATTRIBUTE_ENTITYIDTYPE), _entity.getEntityidtype());
         map.put(new QName(ATTRIBUTE_TITLE), _entity.getTitle());
+        map.put(new QName(ATTRIBUTE_UPLOADEDTOSERVER), JodaDateTimeHelper.toXmlDateTimeUTC(getUploadedToServer()));
 
         return map;
     }

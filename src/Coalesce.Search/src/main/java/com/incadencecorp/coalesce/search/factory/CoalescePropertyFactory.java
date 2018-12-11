@@ -46,6 +46,10 @@ public class CoalescePropertyFactory {
      * The name to use for the recordset when specifying fields of a linkage.
      */
     public static final String COALESCE_LINKAGE_TABLE = "coalescelinkage" + SEPERATOR;
+    /**
+     * The name to use for the CoalesceTemplate table.
+     */
+    public static final String COALESCE_TEMPLATE_TABLE = "CoalesceTemplates" + SEPERATOR;
 
     /**
      * Overrides the default factory.
@@ -100,6 +104,15 @@ public class CoalescePropertyFactory {
     }
 
     /**
+     * @return the property used for filtering on Uploaded to Server.
+     *
+     */
+    public static PropertyName getUploadedToServer()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_UPLOADEDTOSERVER);
+    }
+
+    /**
      * @return the property used for filtering on version.
      */
     public static PropertyName getVersion()
@@ -141,6 +154,16 @@ public class CoalescePropertyFactory {
 
     /**
      * @return the property used for filtering on the entity key.
+     */
+    public static PropertyName getTemplateKey() { return getFilterFactory().property( COALESCE_TEMPLATE_TABLE +"templatekey"); }
+
+     /**
+     * @return the property used for filtering on date created.
+     */
+    public static PropertyName getTemplateXml() { return getFilterFactory().property( COALESCE_TEMPLATE_TABLE +"templatexml"); }
+
+
+    /** * @return the property used for filtering on the entity key.
      */
     public static PropertyName getRecordKey(String recordset)
     {
