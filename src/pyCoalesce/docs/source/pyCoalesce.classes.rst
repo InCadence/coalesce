@@ -13,7 +13,7 @@ Submodules
 
    pyCoalesce.classes.coalesce_entity
    pyCoalesce.classes.coalesce_entity_template
-   pyCoalesce.classes.coalesce_JSON
+   pyCoalesce.classes.coalesce_json
    pyCoalesce.classes.entity
    pyCoalesce.classes.entity_utilities
 
