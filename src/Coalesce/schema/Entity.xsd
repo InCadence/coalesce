@@ -13,6 +13,7 @@
 			<xs:complexContent>
 				<xs:extension base="coalesceObjectHistoryType">
 					<xs:sequence>
+						<xs:element name="uploadedtoserver" type="xs:dateTime" />
 						<xs:element ref="linkagesection" />
 						<xs:element ref="section" minOccurs="0" maxOccurs="unbounded" />
 					</xs:sequence>

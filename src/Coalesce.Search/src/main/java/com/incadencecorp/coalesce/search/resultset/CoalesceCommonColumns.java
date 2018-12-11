@@ -28,7 +28,9 @@ import org.opengis.filter.expression.PropertyName;
 public class CoalesceCommonColumns {
 
     private final String ENTITY_KEY_COLUMN_NAME;
+    private final String TEMPLATE_KEY_COLUMN_NAME;
     private final String ENTITY_XML_COLUMN_NAME;
+    private final String TEMPLATE_XML_COLUMN_NAME;
     private final String ENTITY_NAME_COLUMN_NAME;
     private final String ENTITY_SOURCE_COLUMN_NAME;
     private final String ENTITY_VERSION_COLUMN_NAME;
@@ -36,6 +38,7 @@ public class CoalesceCommonColumns {
     private final String ENTITY_ID_TYPE_COLUMN_NAME;
     private final String ENTITY_DATE_CREATED_COLUMN_NAME;
     private final String ENTITY_LAST_MODIFIED_COLUMN_NAME;
+    private final String ENTITY_UPLOADED_TO_SERVER_NAME;
     private final String ENTITY_TITLE_COLUMN_NAME;
     private final String ENTITY_STATUS_COLUMN_NAME;
     private final String ENTITY_SCOPE_COLUMN_NAME;
@@ -59,6 +62,8 @@ public class CoalesceCommonColumns {
 
         ENTITY_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityKey());
         ENTITY_XML_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityXml());
+        TEMPLATE_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getTemplateKey());
+        TEMPLATE_XML_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getTemplateXml());
         ENTITY_NAME_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getName());
         ENTITY_SOURCE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getSource());
         ENTITY_VERSION_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getVersion());
@@ -66,6 +71,7 @@ public class CoalesceCommonColumns {
         ENTITY_ID_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityIdType());
         ENTITY_DATE_CREATED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getDateCreated());
         ENTITY_LAST_MODIFIED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLastModified());
+        ENTITY_UPLOADED_TO_SERVER_NAME = getColumnName(CoalescePropertyFactory.getUploadedToServer());
         ENTITY_TITLE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityTitle());
         ENTITY_STATUS_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityStatus());
         ENTITY_SCOPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityScope());
@@ -81,6 +87,15 @@ public class CoalesceCommonColumns {
         LINKAGE_LINK_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageType());
         LINKAGE_LINK_STATUS_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageStatus());
 
+    }
+    public String getTemplateKey()
+    {
+        return TEMPLATE_KEY_COLUMN_NAME;
+    }
+
+    public String getTemplateXml()
+    {
+        return TEMPLATE_XML_COLUMN_NAME;
     }
 
     public String getKey()
@@ -126,6 +141,11 @@ public class CoalesceCommonColumns {
     public String getLastModified()
     {
         return ENTITY_LAST_MODIFIED_COLUMN_NAME;
+    }
+
+    public String getUploadedToServer()
+    {
+        return ENTITY_UPLOADED_TO_SERVER_NAME;
     }
 
     public String getTitle()
