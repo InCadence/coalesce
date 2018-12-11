@@ -23,6 +23,7 @@
         <module>elasticsearch</module>
         <module>soap</module>
         <module>rest</module>
+        <module>sql</module>
     </modules>
 
 </project>

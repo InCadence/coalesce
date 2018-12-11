@@ -21,16 +21,20 @@ public class ServerConn {
 
     public ServerConn() {
     }
-    
-    private ServerConn(String db, String user, String password, String serverName, int port, Properties properties, boolean integratedSecurity) {
-        this._db = StringUtils.defaultString(db);
-        this._user = StringUtils.defaultString(user);
-        this._password = StringUtils.defaultString(password);
-        this._serverName = StringUtils.defaultString(serverName);
-        this._portNumber = port;
-        this._props = new Properties(properties);
+
+    public ServerConn(String db, String user, String password, String serverName, int port) {
+        this(db, user, password, serverName, port, new Properties(), false);
     }
-    
+
+    private ServerConn(String db, String user, String password, String serverName, int port, Properties properties, boolean integratedSecurity) {
+        this._props = new Properties(properties);
+        setDatabase(StringUtils.defaultString(db));
+        setUser(StringUtils.defaultString(user));
+        setPassword(StringUtils.defaultString(password));
+        setServerName(StringUtils.defaultString(serverName));
+        setPortNumber(port);
+    }
+
     public String getDatabase() {
         return this._db.trim();
     }
