@@ -46,9 +46,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.incadencecorp.coalesce.services.search</groupId>
-            <artifactId>coalesce-search-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-framework-persister-postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>7.0.0.jre8</version>
         </dependency>
 
         <!-- CXF Dependencies -->
@@ -85,26 +89,7 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.incadencecorp.coalesce</groupId>
-            <artifactId>coalesce-framework-persister-postgresql</artifactId>
-        </dependency>
 
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>mssql-jdbc</artifactId>
-            <version>7.0.0.jre8</version>
-        </dependency>
-        <dependency>
-            <groupId>com.incadencecorp.coalesce</groupId>
-            <artifactId>coalesce-search</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.incadencecorp.coalesce</groupId>
-            <artifactId>coalesce-objects</artifactId>
-            <version>0.0.31-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
 
     </dependencies>
 
