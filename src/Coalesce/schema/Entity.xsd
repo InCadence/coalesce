@@ -13,6 +13,7 @@
 			<xs:complexContent>
 				<xs:extension base="coalesceObjectHistoryType">
 					<xs:sequence>
+						<xs:element name="uploadedtoserver" type="xs:dateTime" />
 						<xs:element ref="linkagesection" />
 						<xs:element ref="section" minOccurs="0" maxOccurs="unbounded" />
 					</xs:sequence>
@@ -20,7 +21,6 @@
 					<xs:attribute name="version" type="xs:string" />
 					<xs:attribute name="entityid" type="xs:string" />
 					<xs:attribute name="entityidtype" type="xs:string" />
-					<xs:attribute name="uploadedtoserver" type="xs:dateTime" />
 					<xs:attribute name="title" type="xs:string" />
 				</xs:extension>
 			</xs:complexContent>

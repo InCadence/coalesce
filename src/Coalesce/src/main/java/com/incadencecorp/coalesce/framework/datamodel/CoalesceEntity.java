@@ -22,7 +22,11 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -392,12 +396,13 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * UploadedToServer attribute.
      *
      * @return DateTime of the
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         's UploadedToServer attribute.
-     *
-     *
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     * 's UploadedToServer attribute.
      */
-     public DateTime getUploadedToServer() { return _entity.getUploadedtoserver(); }
+    public DateTime getUploadedToServer()
+    {
+        return _entity.getUploadedtoserver();
+    }
 
     /**
      * Returns the {@link CoalesceEntity}'s source attribute value.
@@ -577,12 +582,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
             _entity.setTitle(value);
 
             // Set LastModified
-            DateTime utcNow = JodaDateTimeHelper.nowInUtc();
-            if (utcNow != null)
-            {
-                setLastModified(utcNow);
-                setUploadedToServer(utcNow);
-            }
+            setLastModified(JodaDateTimeHelper.nowInUtc());
         }
 
     }
