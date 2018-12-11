@@ -14,19 +14,25 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../..'))
+
+# We need the directory of this script, not the directory it was run from.
+file_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(file_dir, '../..'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = u'pyCoalesce'
-copyright = u'2018, InCadence Strategic Solutions'
-author = u'Dhruva Venkat, Scott Orr'
+import re
+
+from ...version import Coalesce_version, project, author, copyright
 
 # The short X.Y version
-version = u''
+version = re.match(("\d+\.\d+\.\d+"), Coalesce_version).group(0)
+
 # The full version, including alpha/beta/rc tags
-release = u'0.2'
+release = Coalesce_version
+
+show_authors = True
 
 
 # -- General configuration ---------------------------------------------------

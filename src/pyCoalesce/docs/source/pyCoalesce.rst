@@ -7,7 +7,7 @@ pyCoalesce package
     :show-inheritance:
 
 API Requests Module
-----------
+-------------------
 
 .. toctree::
 

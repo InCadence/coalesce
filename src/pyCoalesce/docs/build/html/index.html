@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pyCoalesce &#8212; pyCoalesce 0.2 documentation</title>
+    <title>pyCoalesce &#8212; pyCoalesce 0.0.33+snapshot documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -15,7 +15,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pyCoalesce.coalesce_request module" href="pyCoalesce.coalesce_request.html" />
+    <link rel="next" title="pyCoalesce package" href="pyCoalesce.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -31,45 +31,55 @@
           <div class="body" role="main">
             
   <div class="section" id="pycoalesce">
-<h1><a class="reference internal" href="pyCoalesce.html#module-pyCoalesce" title="pyCoalesce"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyCoalesce</span></code></a><a class="headerlink" href="#pycoalesce" title="Permalink to this headline">¶</a></h1>
+<h1>pyCoalesce<a class="headerlink" href="#pycoalesce" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference internal" href="pyCoalesce.html#module-pyCoalesce" title="pyCoalesce"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyCoalesce</span></code></a> is a Python wrapper for the <a class="reference external" href="https://github.com/InCadence/coalesce/wiki/REST-API">Coalesce RESTful API</a>.  The package includes
 functions for interacting with the API’s search and CRUD controllers
-(<a class="reference internal" href="pyCoalesce.coalesce_request.html#module-pyCoalesce.coalesce_request" title="pyCoalesce.coalesce_request"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyCoalesce.coalesce_request</span></code></a>) and objects for working with XML
+(<a class="reference internal" href="pyCoalesce.coalesce_request.html#module-pyCoalesce.coalesce_request" title="pyCoalesce.coalesce_request"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyCoalesce.coalesce_request</span></code></a>) and object classes for working with XML
 representations of Coalesce entities (<a class="reference internal" href="pyCoalesce.classes.html#module-pyCoalesce.classes" title="pyCoalesce.classes"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyCoalesce.classes</span></code></a>).  The Coalesce
 API also supports JSON representations of entities, but, since JSON objects
 closely resemble native Python <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> objects, the
-packages assumes that no special handling is required interacting with the API
-using JSON.</p>
-<div class="toctree-wrapper compound">
-</div>
-<div class="section" id="api-requests-module">
-<h2>API Requests Module<a class="headerlink" href="#api-requests-module" title="Permalink to this headline">¶</a></h2>
+package assumes that no special handling is required for interacting with the
+API using JSON, with the exception of a class for handling JSON representations
+of Coalesce linkages (<a class="reference internal" href="pyCoalesce.classes.coalesce_json.html#pyCoalesce.classes.coalesce_json.CoalesceAPILinkage" title="pyCoalesce.classes.coalesce_json.CoalesceAPILinkage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoalesceAPILinkage</span></code></a>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Version:</th><td class="field-body">0.0.33+snapshot</td>
+</tr>
+</tbody>
+</table>
+<p><em>Code author: Dhruva Venkat, Scott Orr &lt;<a class="reference external" href="mailto:sorr&#37;&#52;&#48;incadencecorp&#46;com">sorr<span>&#64;</span>incadencecorp<span>&#46;</span>com</a>&gt;</em></p>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="pyCoalesce.coalesce_request.html">pyCoalesce.coalesce_request module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyCoalesce.html">pyCoalesce package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyCoalesce.html#api-requests-module">API Requests Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.coalesce_request.html">pyCoalesce.coalesce_request module</a></li>
 </ul>
-</div>
-</div>
-<div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="pyCoalesce.classes.html">pyCoalesce.classes package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pyCoalesce.classes.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html">pyCoalesce.classes.coalesce_entity module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.classes.coalesce_entity_template.html">pyCoalesce.classes.coalesce_entity_template module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.classes.coalesce_JSON.html">pyCoalesce.classes.coalesce_json module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.classes.entity.html">pyCoalesce.classes.entity module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.classes.entity_utilities.html">pyCoalesce.classes.entity_utilities module</a></li>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyCoalesce.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.classes.html">pyCoalesce.classes package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyCoalesce.classes.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="pyCoalesce.classes.coalesce_entity.html">pyCoalesce.classes.coalesce_entity module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="pyCoalesce.classes.coalesce_entity_template.html">pyCoalesce.classes.coalesce_entity_template module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="pyCoalesce.classes.coalesce_json.html">pyCoalesce.classes.coalesce_json module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="pyCoalesce.classes.entity.html">pyCoalesce.classes.entity module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="pyCoalesce.classes.entity_utilities.html">pyCoalesce.classes.entity_utilities module</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="pyCoalesce.utilities.html">pyCoalesce.utilities package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pyCoalesce.utilities.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.utilities.API_request.html">pyCoalesce.utilities.API_request module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.utilities.logger.html">pyCoalesce.utilities.logger module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.utilities.URL_class.html">pyCoalesce.classes.URL_class module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyCoalesce.utilities.html">pyCoalesce.utilities package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyCoalesce.utilities.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="pyCoalesce.utilities.API_request.html">pyCoalesce.utilities.API_request module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="pyCoalesce.utilities.logger.html">pyCoalesce.utilities.logger module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="pyCoalesce.utilities.URL_class.html">pyCoalesce.classes.URL_class module</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -95,11 +105,7 @@ using JSON.</p>
         <div class="sphinxsidebarwrapper">
 <h3><a href="#">Table Of Contents</a></h3>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="pyCoalesce.coalesce_request.html">pyCoalesce.coalesce_request module</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="pyCoalesce.classes.html">pyCoalesce.classes package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyCoalesce.utilities.html">pyCoalesce.utilities package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyCoalesce.html">pyCoalesce package</a></li>
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
