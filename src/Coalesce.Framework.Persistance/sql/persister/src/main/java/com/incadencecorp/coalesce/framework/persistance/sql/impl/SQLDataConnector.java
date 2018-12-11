@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 /**
  * This DataConnector is for a SQL database.
  *
@@ -43,9 +42,7 @@ import java.util.List;
  */
 public class SQLDataConnector extends CoalesceDataConnectorBase {
 
-
     private static Connection conn;
-
 
     private static final SQLNormalizer NORMALIZER = new SQLNormalizer();
     private static final CoalesceCommonColumns COLUMNS = new CoalesceCommonColumns(NORMALIZER);
@@ -60,7 +57,6 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
     private boolean isEmbedded;
     private String _prefix = "";
     private String schema = "dbo";
-
 
     public final static String DERBY_OBJECT_ALREADY_EXISTS_SQL_STATE = "X0Y32";
 
@@ -159,13 +155,9 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
                 "select " + COLUMNS.getName() + " from " + schema + ".coalesceentity where " + COLUMNS.getKey() + "='"
                         + ivarobjectkey + "'";
 
-        // prepare the query
-        PreparedStatement stmt = conn.prepareStatement(existsSQL);
-        ResultSet result = stmt.executeQuery();
-
         int ii = 1;
 
-        if (!result.next())
+        if (!exists(conn, existsSQL))
         {
             // insert
             StringBuilder sql = new StringBuilder("insert into " + schema + ".coalesceentity (");
@@ -181,17 +173,21 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
             sql.append(COLUMNS.getUploadedToServer());
             sql.append(") values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-            stmt = conn.prepareStatement(sql.toString());
-            stmt.setObject(ii++, ivarobjectkey);
-            stmt.setObject(ii++, ivarname);
-            stmt.setObject(ii++, ivarsource);
-            stmt.setObject(ii++, ivarversion);
-            stmt.setObject(ii++, ivarentityid);
-            stmt.setObject(ii++, ivarentityidtype);
-            stmt.setObject(ii++, ivarentityxml);
-            stmt.setObject(ii++, dateCreated);
-            stmt.setObject(ii++, lastModified);
-            stmt.setObject(ii, uploadedToServer);
+            try (PreparedStatement stmt2 = conn.prepareStatement(sql.toString()))
+            {
+                stmt2.setObject(ii++, ivarobjectkey);
+                stmt2.setObject(ii++, ivarname);
+                stmt2.setObject(ii++, ivarsource);
+                stmt2.setObject(ii++, ivarversion);
+                stmt2.setObject(ii++, ivarentityid);
+                stmt2.setObject(ii++, ivarentityidtype);
+                stmt2.setObject(ii++, ivarentityxml);
+                stmt2.setObject(ii++, dateCreated);
+                stmt2.setObject(ii++, lastModified);
+                stmt2.setObject(ii, uploadedToServer);
+
+                stmt2.executeUpdate();
+            }
         }
         else
         {
@@ -208,22 +204,22 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
             sql.append(COLUMNS.getUploadedToServer()).append("=?");
             sql.append(" where ").append(COLUMNS.getKey()).append("=?");
 
-            stmt = conn.prepareStatement(sql.toString());
-            stmt.setObject(ii++, ivarname);
-            stmt.setObject(ii++, ivarsource);
-            stmt.setObject(ii++, ivarversion);
-            stmt.setObject(ii++, ivarentityid);
-            stmt.setObject(ii++, ivarentityidtype);
-            stmt.setObject(ii++, ivarentityxml);
-            stmt.setObject(ii++, dateCreated);
-            stmt.setObject(ii++, lastModified);
-            stmt.setObject(ii++, uploadedToServer);
-            stmt.setObject(ii, ivarobjectkey);
+            try (PreparedStatement stmt2 = conn.prepareStatement(sql.toString()))
+            {
+                stmt2.setObject(ii++, ivarname);
+                stmt2.setObject(ii++, ivarsource);
+                stmt2.setObject(ii++, ivarversion);
+                stmt2.setObject(ii++, ivarentityid);
+                stmt2.setObject(ii++, ivarentityidtype);
+                stmt2.setObject(ii++, ivarentityxml);
+                stmt2.setObject(ii++, dateCreated);
+                stmt2.setObject(ii++, lastModified);
+                stmt2.setObject(ii++, uploadedToServer);
+                stmt2.setObject(ii, ivarobjectkey);
+
+                stmt2.executeUpdate();
+            }
         }
-
-        LOGGER.trace("{}", stmt);
-
-        stmt.executeUpdate();
 
         return true;
     }
@@ -247,111 +243,104 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
         Connection conn = this.getConnection();
 
         // prepare the query
-        ResultSet result = null;
 
         String dateCreated = getDateString(linkage.getDateCreated());
         String lastModified = getDateString(linkage.getLastModified());
 
-        try (Statement stmt = conn.createStatement())
+        if (!exists(conn, "select name from " + schema + ".coalescelinkage where objectkey='" + linkage.getKey() + "'"))
         {
-            result = stmt.executeQuery(
-                    "select name from " + schema + ".coalescelinkage where objectkey='" + linkage.getKey() + "'");
+            // insert
+            StringBuilder sql2 = new StringBuilder("insert into " + schema + ".coalescelinkage (");
+            sql2.append(COLUMNS.getKey()).append(",");
+            sql2.append("Entity1Key,");
+            sql2.append(COLUMNS.getName()).append(",");
+            sql2.append("Entity1Source,");
+            sql2.append("Entity1Version,");
+            sql2.append(COLUMNS.getLinkageType()).append(",");
+            sql2.append(COLUMNS.getLinkageStatus()).append(",");
+            sql2.append(COLUMNS.getEntity2Key()).append(",");
+            sql2.append(COLUMNS.getEntity2Name()).append(",");
+            sql2.append(COLUMNS.getEntity2Source()).append(",");
+            sql2.append(COLUMNS.getEntity2Version()).append(",");
+            sql2.append("ClassificationMarking,");
+            sql2.append("ModifiedBy,");
+            sql2.append("InputLanguage,");
+            sql2.append(COLUMNS.getDateCreated()).append(",");
+            sql2.append(COLUMNS.getLastModified());
+            sql2.append(") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
-            if (!result.next())
+            int ii = 1;
+
+            try (PreparedStatement stmt2 = conn.prepareStatement(sql2.toString()))
             {
-                // insert
-                StringBuilder sql2 = new StringBuilder("insert into " + schema + ".coalescelinkage (");
-                sql2.append(COLUMNS.getKey()).append(",");
-                sql2.append("Entity1Key,");
-                sql2.append(COLUMNS.getName()).append(",");
-                sql2.append("Entity1Source,");
-                sql2.append("Entity1Version,");
-                sql2.append(COLUMNS.getLinkageType()).append(",");
-                sql2.append(COLUMNS.getLinkageStatus()).append(",");
-                sql2.append(COLUMNS.getEntity2Key()).append(",");
-                sql2.append(COLUMNS.getEntity2Name()).append(",");
-                sql2.append(COLUMNS.getEntity2Source()).append(",");
-                sql2.append(COLUMNS.getEntity2Version()).append(",");
-                sql2.append("ClassificationMarking,");
-                sql2.append("ModifiedBy,");
-                sql2.append("InputLanguage,");
-                sql2.append(COLUMNS.getDateCreated()).append(",");
-                sql2.append(COLUMNS.getLastModified());
-                sql2.append(") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                stmt2.setString(ii++, linkage.getKey());
+                stmt2.setString(ii++, linkage.getEntity1Key());
+                stmt2.setString(ii++, linkage.getEntity1Name());
+                stmt2.setString(ii++, linkage.getEntity1Source());
+                stmt2.setString(ii++, linkage.getEntity1Version());
+                stmt2.setString(ii++, linkage.getLinkType().getLabel());
+                stmt2.setString(ii++, linkage.getStatus().toString());
+                stmt2.setString(ii++, linkage.getEntity2Key());
+                stmt2.setString(ii++, linkage.getEntity2Name());
+                stmt2.setString(ii++, linkage.getEntity2Source());
+                stmt2.setString(ii++, linkage.getEntity2Version());
+                stmt2.setString(ii++, linkage.getClassificationMarking().toString());
+                stmt2.setString(ii++, linkage.getModifiedBy());
+                stmt2.setString(ii++, (linkage.getInputLang() != null) ? linkage.getInputLang().toString() : "");
+                stmt2.setString(ii++, dateCreated);
+                stmt2.setString(ii++, lastModified);
 
-                int ii = 1;
+                LOGGER.debug(stmt2.toString());
 
-                try (PreparedStatement stmt2 = conn.prepareStatement(sql2.toString()))
-                {
-                    stmt2.setString(ii++, linkage.getKey());
-                    stmt2.setString(ii++, linkage.getEntity1Key());
-                    stmt2.setString(ii++, linkage.getEntity1Name());
-                    stmt2.setString(ii++, linkage.getEntity1Source());
-                    stmt2.setString(ii++, linkage.getEntity1Version());
-                    stmt2.setString(ii++, linkage.getLinkType().getLabel());
-                    stmt2.setString(ii++, linkage.getStatus().toString());
-                    stmt2.setString(ii++, linkage.getEntity2Key());
-                    stmt2.setString(ii++, linkage.getEntity2Name());
-                    stmt2.setString(ii++, linkage.getEntity2Source());
-                    stmt2.setString(ii++, linkage.getEntity2Version());
-                    stmt2.setString(ii++, linkage.getClassificationMarking().toString());
-                    stmt2.setString(ii++, linkage.getModifiedBy());
-                    stmt2.setString(ii++, (linkage.getInputLang() != null) ? linkage.getInputLang().toString() : "");
-                    stmt2.setString(ii++, dateCreated);
-                    stmt2.setString(ii++, lastModified);
-
-                    LOGGER.debug(stmt2.toString());
-
-                    stmt2.executeUpdate();
-                }
+                stmt2.executeUpdate();
             }
-            else
+        }
+        else
+        {
+            // update
+            StringBuilder sql3 = new StringBuilder("update " + schema + ".coalescelinkage set ");
+            sql3.append("ObjectKey=?,");
+            sql3.append(COLUMNS.getName()).append("=?,");
+            sql3.append(COLUMNS.getSource()).append("=?,");
+            sql3.append(COLUMNS.getVersion()).append("=?,");
+            sql3.append(COLUMNS.getLinkageType()).append("=?,");
+            sql3.append(COLUMNS.getLinkageStatus()).append("=?,");
+            sql3.append(COLUMNS.getEntity2Key()).append("=?,");
+            sql3.append(COLUMNS.getEntity2Name()).append("=?,");
+            sql3.append(COLUMNS.getEntity2Source()).append("=?,");
+            sql3.append(COLUMNS.getEntity2Version()).append("=?,");
+            sql3.append("ClassificationMarking=?,");
+            sql3.append("ModifiedBy=?,");
+            sql3.append("InputLanguage=?,");
+            sql3.append(COLUMNS.getDateCreated()).append("=?,");
+            sql3.append(COLUMNS.getLastModified()).append("=? ");
+            sql3.append("where ").append(COLUMNS.getKey()).append("=?");
+
+            int ii = 1;
+
+            try (PreparedStatement stmt3 = conn.prepareStatement(sql3.toString()))
             {
-                // update
-                StringBuilder sql3 = new StringBuilder("update " + schema + ".coalescelinkage set ");
-                sql3.append("ObjectKey=?,");
-                sql3.append(COLUMNS.getName()).append("=?,");
-                sql3.append(COLUMNS.getSource()).append("=?,");
-                sql3.append(COLUMNS.getVersion()).append("=?,");
-                sql3.append(COLUMNS.getLinkageType()).append("=?,");
-                sql3.append(COLUMNS.getLinkageStatus()).append("=?,");
-                sql3.append(COLUMNS.getEntity2Key()).append("=?,");
-                sql3.append(COLUMNS.getEntity2Name()).append("=?,");
-                sql3.append(COLUMNS.getEntity2Source()).append("=?,");
-                sql3.append(COLUMNS.getEntity2Version()).append("=?,");
-                sql3.append("ClassificationMarking=?,");
-                sql3.append("ModifiedBy=?,");
-                sql3.append("InputLanguage=?,");
-                sql3.append(COLUMNS.getDateCreated()).append("=?,");
-                sql3.append(COLUMNS.getLastModified()).append("=? ");
-                sql3.append("where ").append(COLUMNS.getKey()).append("=?");
+                stmt3.setString(ii++, linkage.getEntity1Key());
+                stmt3.setString(ii++, linkage.getEntity1Name());
+                stmt3.setString(ii++, linkage.getEntity1Source());
+                stmt3.setString(ii++, linkage.getEntity1Version());
+                stmt3.setString(ii++, linkage.getLinkType().getLabel());
+                stmt3.setString(ii++, linkage.getStatus().toString());
+                stmt3.setString(ii++, linkage.getEntity2Key());
+                stmt3.setString(ii++, linkage.getEntity2Name());
+                stmt3.setString(ii++, linkage.getEntity2Source());
+                stmt3.setString(ii++, linkage.getEntity2Version());
+                stmt3.setString(ii++, linkage.getClassificationMarking().toString());
+                stmt3.setString(ii++, linkage.getModifiedBy());
+                stmt3.setString(ii++, (linkage.getInputLang() != null) ? linkage.getInputLang().toString() : "");
+                stmt3.setString(ii++, dateCreated);
+                stmt3.setString(ii++, lastModified);
+                //stmt3.setString(ii++, uploadedToServer);
+                stmt3.setString(ii++, linkage.getKey());
 
-                int ii = 1;
+                LOGGER.debug(stmt3.toString());
 
-                try (PreparedStatement stmt3 = conn.prepareStatement(sql3.toString()))
-                {
-                    stmt3.setString(ii++, linkage.getEntity1Key());
-                    stmt3.setString(ii++, linkage.getEntity1Name());
-                    stmt3.setString(ii++, linkage.getEntity1Source());
-                    stmt3.setString(ii++, linkage.getEntity1Version());
-                    stmt3.setString(ii++, linkage.getLinkType().getLabel());
-                    stmt3.setString(ii++, linkage.getStatus().toString());
-                    stmt3.setString(ii++, linkage.getEntity2Key());
-                    stmt3.setString(ii++, linkage.getEntity2Name());
-                    stmt3.setString(ii++, linkage.getEntity2Source());
-                    stmt3.setString(ii++, linkage.getEntity2Version());
-                    stmt3.setString(ii++, linkage.getClassificationMarking().toString());
-                    stmt3.setString(ii++, linkage.getModifiedBy());
-                    stmt3.setString(ii++, (linkage.getInputLang() != null) ? linkage.getInputLang().toString() : "");
-                    stmt3.setString(ii++, dateCreated);
-                    stmt3.setString(ii++, lastModified);
-                    //stmt3.setString(ii++, uploadedToServer);
-                    stmt3.setString(ii++, linkage.getKey());
-
-                    LOGGER.debug(stmt3.toString());
-
-                    stmt3.executeUpdate();
-                }
+                stmt3.executeUpdate();
             }
         }
 
@@ -392,12 +381,11 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
             String lastModified = getDateString(new DateTime());
 
             // prepare the query
-            Statement stmt = conn.createStatement();
-            ResultSet result = stmt.executeQuery(
-                    "select " + COLUMNS.getName() + " from " + schema + ".coalesceentitytemplate where " + COLUMNS.getName()
-                            + "='" + template.getName() + "' and " + COLUMNS.getSource() + "='" + template.getSource()
-                            + "' and " + COLUMNS.getVersion() + "='" + template.getVersion() + "'");
-            if (!result.next())
+            if (!exists(conn,
+                        "select " + COLUMNS.getName() + " from " + schema + ".coalesceentitytemplate where "
+                                + COLUMNS.getName() + "='" + template.getName() + "' and " + COLUMNS.getSource() + "='"
+                                + template.getSource() + "' and " + COLUMNS.getVersion() + "='" + template.getVersion()
+                                + "'"))
             {
                 // insert
                 StringBuilder sql2 = new StringBuilder("insert into ").append(schema + ".coalesceentitytemplate (");
@@ -411,15 +399,18 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
                 sql2.append(COLUMNS.getLinkageLastModified());
                 sql2.append(") values (?,?,?,?,?,?,?)");
 
-                PreparedStatement stmt2 = conn.prepareStatement(sql2.toString());
-                stmt2.setString(1, template.getKey());
-                stmt2.setString(2, template.getName());
-                stmt2.setString(3, template.getSource());
-                stmt2.setString(4, template.getVersion());
-                stmt2.setString(5, template.toXml("UTF-16"));
-                stmt2.setString(6, dateCreated);
-                stmt2.setString(7, lastModified);
-                stmt2.executeUpdate();
+                try (PreparedStatement stmt2 = conn.prepareStatement(sql2.toString()))
+                {
+                    stmt2.setString(1, template.getKey());
+                    stmt2.setString(2, template.getName());
+                    stmt2.setString(3, template.getSource());
+                    stmt2.setString(4, template.getVersion());
+                    stmt2.setString(5, template.toXml("UTF-16"));
+                    stmt2.setString(6, dateCreated);
+                    stmt2.setString(7, lastModified);
+
+                    stmt2.executeUpdate();
+                }
             }
             else
             {
@@ -436,17 +427,20 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
                 sql3.append(COLUMNS.getSource()).append("=? and ");
                 sql3.append(COLUMNS.getVersion()).append("=?");
 
-                PreparedStatement stmt3 = conn.prepareStatement(sql3.toString());
-                stmt3.setString(1, template.getName());
-                stmt3.setString(2, template.getSource());
-                stmt3.setString(3, template.getVersion());
-                stmt3.setString(4, template.toXml("UTF-16"));
-                stmt3.setString(5, dateCreated);
-                stmt3.setString(6, lastModified);
-                stmt3.setString(7, template.getName());
-                stmt3.setString(8, template.getSource());
-                stmt3.setString(9, template.getVersion());
-                stmt3.executeUpdate();
+                try (PreparedStatement stmt3 = conn.prepareStatement(sql3.toString()))
+                {
+                    stmt3.setString(1, template.getName());
+                    stmt3.setString(2, template.getSource());
+                    stmt3.setString(3, template.getVersion());
+                    stmt3.setString(4, template.toXml("UTF-16"));
+                    stmt3.setString(5, dateCreated);
+                    stmt3.setString(6, lastModified);
+                    stmt3.setString(7, template.getName());
+                    stmt3.setString(8, template.getSource());
+                    stmt3.setString(9, template.getVersion());
+
+                    stmt3.executeUpdate();
+                }
             }
         }
         catch (SQLException e)
@@ -543,14 +537,11 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
         {
 
             Connection conn = this.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet result = stmt.executeQuery(
-                    "select " + COLUMNS.getKey() + " from " + schema + "." + NORMALIZER.normalize(tableName) + " where "
-                            + COLUMNS.getKey() + "='" + parameters.get(0).getValue() + "'");
-
             StringBuilder sql = new StringBuilder();
 
-            if (!result.next())
+            if (!exists(conn,
+                        "select " + COLUMNS.getKey() + " from " + schema + "." + NORMALIZER.normalize(tableName) + " where "
+                                + COLUMNS.getKey() + "='" + parameters.get(0).getValue() + "'"))
             {
                 // insert
                 sql.append("insert into ").append(schema).append(".").append(NORMALIZER.normalize(tableName)).append(" (");
@@ -621,11 +612,14 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
                 sql.append(" WHERE ").append(COLUMNS.getKey()).append("=").append(quote(parameters.get(0).getValue()));
             }
 
+            LOGGER.trace("Insert Record SQL: {}", sql);
+            try (Statement stmt2 = conn.createStatement())
+            {
+                stmt2.executeUpdate(sql.toString());
+            }
+
             //*/
 
-            LOGGER.trace("Insert Record SQL: {}", sql);
-            stmt = conn.createStatement();
-            stmt.executeUpdate(sql.toString());
             success = true;
         }
         catch (SQLException e)
@@ -900,11 +894,11 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
             sb.append("CONSTRAINT CoalesceEntity_pkey PRIMARY KEY (" + COLUMNS.getKey() + ")");
             sb.append(")");
 
-            Statement stmt = conn.createStatement();
-            stmt.execute(sb.toString());
-
+            try (Statement stmt = conn.createStatement())
+            {
+                stmt.execute(sb.toString());
+            }
             LOGGER.debug("CoalesceEntity Table created");
-            stmt.close();
         }
         catch (SQLException e)
         {
@@ -928,11 +922,12 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
             sb.append("CONSTRAINT CoalesceEntityTemplate_pkey PRIMARY KEY (" + COLUMNS.getKey() + ") ");
             sb.append(")");
 
-            Statement stmt = conn.createStatement();
-            stmt.execute(sb.toString());
+            try (Statement stmt = conn.createStatement())
+            {
+                stmt.execute(sb.toString());
+            }
 
             LOGGER.debug("Coalesce Entity Template Table created");
-            stmt.close();
         }
         catch (SQLException e)
         {
@@ -965,10 +960,11 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
             sb.append("CONSTRAINT CoalesceLinkage_pkey PRIMARY KEY (" + COLUMNS.getKey() + ")");
             sb.append(")");
 
-            Statement stmt = conn.createStatement();
-            stmt.execute(sb.toString());
+            try (Statement stmt = conn.createStatement())
+            {
+                stmt.execute(sb.toString());
+            }
             LOGGER.debug("Coalesce Linkage Table created");
-            stmt.close();
 
         }
         catch (SQLException e)
@@ -1006,6 +1002,21 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
             }
 
         }
+    }
+
+    private boolean exists(Connection conn, String sql) throws SQLException
+    {
+        boolean doesExists;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql))
+        {
+            try (ResultSet result = stmt.executeQuery())
+            {
+                doesExists = result.next();
+            }
+        }
+
+        return doesExists;
     }
 
 }
