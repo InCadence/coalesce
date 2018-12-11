@@ -25,7 +25,6 @@ import com.incadencecorp.coalesce.framework.persistance.sql.impl.SQLPersisterImp
 import com.incadencecorp.coalesce.framework.persistance.sql.impl.SQLPersisterImplSettings;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import java.nio.file.Paths;
 import java.util.HashMap;

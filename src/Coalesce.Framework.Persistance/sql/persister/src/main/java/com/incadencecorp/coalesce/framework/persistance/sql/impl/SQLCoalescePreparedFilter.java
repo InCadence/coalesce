@@ -1161,7 +1161,6 @@ public class SQLCoalescePreparedFilter extends PostgisPSFilterToSql implements I
 
         if (propertyNameList != null)
         {
-            Map<String, ECoalesceFieldDataTypes> types = CoalesceTemplateUtil.getDataTypes();
             for (String column : propertyNameList)
             {
                 ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataTypes().get(column);

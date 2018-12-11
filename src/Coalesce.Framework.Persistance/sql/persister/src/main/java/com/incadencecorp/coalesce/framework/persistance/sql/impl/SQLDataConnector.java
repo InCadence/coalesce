@@ -105,7 +105,7 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
 
     public Connection getConn() throws SQLException
     {
-        if (_conn == null || (_conn != null && _conn.isClosed()))
+        if (_conn == null || _conn.isClosed())
         {
             StringBuilder urlBuilder = new StringBuilder(protocol).append(":").append(databaseDriver).append(":");
 
