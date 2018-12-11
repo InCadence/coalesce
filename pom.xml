@@ -64,6 +64,11 @@
                     <artifactId>license-maven-plugin</artifactId>
                     <version>1.16</version>
                 </plugin>
+                <plugin>
+                    <groupId>kr.motd.maven</groupId>
+                    <artifactId>sphinx-maven-plugin</artifactId>
+                    <version>2.3.1</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
