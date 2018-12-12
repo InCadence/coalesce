@@ -1,0 +1,14 @@
+version: "2"
+
+services:
+    accumulo:
+        image: mraad/accumulo
+        container_name: accumulo
+        ports:
+            - "9999:9999"
+            - "9997:9997"
+            - "50095:50095"
+            - "2181:2181"
+        restart: unless-stopped
+        command:
+            - /etc/start-all.sh
