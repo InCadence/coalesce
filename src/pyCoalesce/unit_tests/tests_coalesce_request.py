@@ -199,7 +199,7 @@ ENTITY4_DICT = {
                        }
                    ]
                }
-QUERY1_DICT = {
+FILTER1_DICT = {
                   "operator": "AND",
                   "criteria": [
                       {
@@ -232,7 +232,7 @@ QUERY1_DICT = {
                       }
                   ]
               }
-QUERY2_DICT = {
+FILTER2_DICT = {
                   "operator": "AND",
                   "criteria": [
                       {
@@ -266,7 +266,7 @@ QUERY2_DICT = {
                       }
                   ]
               }
-QUERY3_DICT = {
+FILTER3_DICT = {
                   "operator": "AND",
                   "criteria": [
                       {
@@ -278,7 +278,7 @@ QUERY3_DICT = {
                       }
                   ],
               }
-REQUEST4_DICT = {
+QUERY4_DICT = {
                     "pageSize": 200,
                     "propertyNames": [
                         "testrecordset2.field1"
@@ -828,39 +828,39 @@ class SearchTests(ServerTest):
                                         ["fields"][0] \
                                         ["value"]
 
-        results1_list = search(server = self.server, query = QUERY1_DICT,
+        results1_list = search(server = self.server, query = FILTER1_DICT,
                                return_property_names = \
                                    ["testrecordset2.field1"],
                                output = "list")
         results1_first_field = results1_list[0]["values"][0]
         self.assertEqual(results1_first_field, orig3_first_field)
 
-        query2_JSON = json.dumps(QUERY2_DICT)
-        results2_full_dict = search(server = self.server, query = query2_JSON,
+        filter2_JSON = json.dumps(FILTER2_DICT)
+        results2_full_dict = search(server = self.server, query = filter2_JSON,
                                     return_property_names = \
                                         ["testrecordset3.field1"],
                                     output = "full_dict")
         results2_first_field = results2_full_dict["hits"][0]["values"][0]
         self.assertEqual(results2_first_field, orig4_first_field)
 
-        query3_JSON = json.dumps(QUERY3_DICT)
+        filter3_JSON = json.dumps(FILTER3_DICT)
         request3_return_property = "testrecordset2.field1"
-        results3_list, request3 = search(server = self.server,
-                                         query = query3_JSON,
+        results3_list, query3 = search(server = self.server,
+                                         query = filter3_JSON,
                                          sort_by =
                                              {"propertyName": "testrecordset2.field1",
                                               "sortOrder": "ASC"},
                                          return_property_names = \
                                              [request3_return_property],
                                          output = "list",
-                                         return_request = True)
+                                         return_query = True)
         results3_first_fields = [hit["values"][0] for hit in results3_list]
         self.assertTrue(results3_first_fields.index(orig3_first_field) <
                         results3_first_fields.index(orig2_first_field))
-        request3_return_property_out = request3["propertyNames"][0]
+        request3_return_property_out = query3["propertyNames"][0]
         self.assertEqual(request3_return_property, request3_return_property_out)
 
-        results4_JSON = search(server = self.server, query = REQUEST4_DICT,
+        results4_JSON = search(server = self.server, query = QUERY4_DICT,
                                return_property_names = ["IgnoreThis"],
                                output = "JSON")
         results4_first_field = json.loads(results4_JSON)["hits"][0]["values"][0]
