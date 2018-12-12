@@ -32,7 +32,9 @@
 						</Export-Package>
 						<Import-Package>
 							org.joda.time*;version="[1.6.2, 3)",
-							*;resolution:=optional
+							org.apache.log4j; resolution:=optional,
+							org.apache.log; resolution:=optional,
+							*
 						</Import-Package>
 						<Embed-Dependency>
 							neo4j-jdbc;inline=false,

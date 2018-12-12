@@ -31,7 +31,7 @@
 							org.joda.time*;version="[1.6.2, 3)",
 							org.apache.accumulo.core.*,
 							org.apache.hadoop*,
-							*;resolution:=optional
+							*
 						</Import-Package>
 					</instructions>
 				</configuration>
