@@ -50,6 +50,10 @@
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-databind</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.adobe.xmp</groupId>
+                    <artifactId>xmpcore</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 

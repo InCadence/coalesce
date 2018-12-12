@@ -25,7 +25,7 @@
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
 						<Import-Package>
 							org.joda.time*;version="[1.6.2, 3)",
-							*; resolution:=optional
+							*
 						</Import-Package>
 						<Embed-Dependency>
 							gt-jdbc-postgis,

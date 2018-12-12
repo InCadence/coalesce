@@ -28,7 +28,7 @@
                         </Export-Package>
                         <Import-Package>
 							org.joda.time*;version="[1.6.2, 3)",
-							*; resolution:=optional
+							*
                         </Import-Package>
                         <Embed-Dependency>
                             gt-jdbc-postgis,
