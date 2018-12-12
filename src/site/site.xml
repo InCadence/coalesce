@@ -1,0 +1,17 @@
+<project>
+  
+  <bannerLeft>
+      <name>Coalesce</name>
+  </bannerLeft>
+  
+  <body>
+  
+    <menu name="Code Documentation">
+      <item name="jCoalesce" href="apidocs/index.html" />
+      <item name="pyCoalesce" href="pycoalesce/index.html" />
+    </menu>
+
+    <menu ref="reports"/>
+
+  </body>
+</project>

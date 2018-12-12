@@ -22,6 +22,7 @@
         <module>../Coalesce.Framework.Persistance</module>
         <module>../Coalesce.Plugins</module>
         <module>../Coalesce.Core.Feature</module>
+        <module>../pyCoalesce</module>
     </modules>
 
     <!-- Build flags to skip components -->

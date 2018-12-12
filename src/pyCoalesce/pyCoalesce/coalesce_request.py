@@ -302,7 +302,7 @@ def case_operator(input_operator):
 def search(server = None, query = None, sort_by = None,
            return_property_names = ["coalesceentity.name"], page_size = 200,
            page_number = 1, output = "list", check_case = True,
-           return_request = False):
+           return_query = False):
 
     """
     Submits a query using the full Coalesce RESTful API.  The user
@@ -311,12 +311,12 @@ def search(server = None, query = None, sort_by = None,
 
     :param server:  A :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
-    :param query:  the search query, either the query proper (the value of
+    :param query:  the search query, either the filter object (the value of
         "group" in a `Coalesce search request object
         <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`_)
-        or the full request object, as dict-like or a JSON object (string);
-        in the case of a full request object, the other arguments used to
-        from the request ("sort_by", "return_property_names", "page_size",
+        or the full query object, as dict-like or a JSON object (string);
+        in the case of a full query object, the other arguments used to
+        form the query ("sort_by", "return_property_names", "page_size",
         and "page_number") are ignored.  For the most part, the query must
         follow the Coalesce format exactly, but if "check_case" is
         ``True``, operators not in the right form (upper camelcase for most
@@ -349,14 +349,14 @@ def search(server = None, query = None, sort_by = None,
         operators for the correct case.  Skipping this check improves speed
         (important if an application is making a lot of queries),
         especially for complex queries.
-    :param return_request:  if this argument is ``True``, return the full
-        Coalesce request object, as the second element of a tuple (the
+    :param return_query:  if this argument is ``True``, return the full
+        Coalesce query object, as the second element of a tuple (the
         search results themselves will be the first element).  If the ouput
         format for the results is "JSON", return the request as a JSON
         object (string), otherwise, return it as a Python :class:`dict`.
         This option is useful for constructing search queries
         programmatically by making small modifications to the generated
-        request objects; it can also be used for debugging.
+        query objects; it can also be used for debugging.
 
     :returns:  a :class:`list`, :class:`dict`, or JSON object, depending on
         the value of "output", possibly followed (as the second element of
@@ -440,7 +440,7 @@ def search(server = None, query = None, sort_by = None,
     headers = copy(server_obj.base_headers)
     headers["Content-type"] = "application/json"
 
-    # Form the request.  Note that we don't test the validity of the query--
+    # Form the query.  Note that we don't test the validity of the query--
     # we let the API do that, which prevents the wrapper from blocking the
     # usage of new features.
 
@@ -452,8 +452,8 @@ def search(server = None, query = None, sort_by = None,
     if isinstance(query, basestring):
         query = json.loads(query)
 
-    # If "query" is a full request object, assign it directly as the
-    # request object ("data").  Otherwise, construct the request object.
+    # If "query" is a full query object, assign it directly as the
+    # query ("data").  Otherwise, construct the query object.
 
     if "group" in query:
         data = query
@@ -491,7 +491,7 @@ def search(server = None, query = None, sort_by = None,
             for i, entry in enumerate(sort_by):
                 data["sortBy"][i]["sortOrder"] = entry["sortOrder"].upper()
 
-    # Convert the request to JSON.
+    # Convert the query to JSON.
     data_JSON = json.dumps(data)
 
     # Submit the request.
@@ -512,11 +512,11 @@ def search(server = None, query = None, sort_by = None,
     else: # The requested output format was "JSON".
         results = response.text
 
-    # If necessary, return the request object as well.  If "output" is
-    # JSON, return the request in the form of a JSON object; otherwise
+    # If necessary, return the query object as well.  If "output" is
+    # JSON, return the query in the form of a JSON object; otherwise
     # return it as a Python dict.
 
-    if return_request:
+    if return_query:
         if output == u"JSON":
             return results, data_JSON
         else:

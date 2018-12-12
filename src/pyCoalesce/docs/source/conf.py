@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.join(file_dir, '../..'))
 
 import re
 
-from ...version import Coalesce_version, project, author, copyright
+from version import Coalesce_version, project, author, copyright
 
 # The short X.Y version
 version = re.match(("\d+\.\d+\.\d+"), Coalesce_version).group(0)
