@@ -19,7 +19,9 @@ package com.incadencecorp.coalesce.nifi.processors.entity.csv_extractor;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchSettings;
@@ -43,6 +45,7 @@ import org.apache.nifi.annotation.documentation.SeeAlso;
 import org.apache.nifi.annotation.documentation.Tags;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.flowfile.FlowFile;
+import org.apache.nifi.logging.ComponentLog;
 import org.apache.nifi.logging.LogLevel;
 import org.apache.nifi.processor.AbstractProcessor;
 import org.apache.nifi.processor.ProcessContext;
@@ -62,6 +65,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -80,11 +85,16 @@ import java.util.Set;
 @WritesAttributes({ @WritesAttribute(attribute = "") })
 public class JsonCsvExtractor extends AbstractProcessor {
 
+    private CoalesceSearchFramework framework;
+
     public static final PropertyDescriptor TEMPLATE_JSON = new PropertyDescriptor.Builder().name("json").displayName("JSON Template").description(
             "Copy & Paste JSON template. Format is on the coalesce wiki").required(true).addValidator(StandardValidators.NON_EMPTY_VALIDATOR).build();
 
     public static final PropertyDescriptor CSV_SEPARATOR = new PropertyDescriptor.Builder().name(FSI_EntityExtractor.PARAM_SPLIT).displayName("CSV Separator").description(
             "Default is a comma (,)").required(true).addValidator(StandardValidators.NON_EMPTY_VALIDATOR).build();
+
+    public static final PropertyDescriptor PERSISTOR_CLASSPATHS = new PropertyDescriptor.Builder().name("classpaths").displayName("Persistor Classpaths").description(
+            "One classpath per line (shift+enter is newline), first line is authoritative").required(true).addValidator(StandardValidators.NON_EMPTY_VALIDATOR).build();
 
     public static final Relationship SUCCESS = new Relationship.Builder().name("success").description(
             "Successfully created FlowFile from Coalesce.").build();
@@ -100,7 +110,9 @@ public class JsonCsvExtractor extends AbstractProcessor {
     protected void init(final ProcessorInitializationContext context)
     {
         final List<PropertyDescriptor> descriptors = new ArrayList<>();
+        descriptors.add(TEMPLATE_JSON);
         descriptors.add(CSV_SEPARATOR);
+        descriptors.add(PERSISTOR_CLASSPATHS);
         this.descriptors = Collections.unmodifiableList(descriptors);
 
         final Set<Relationship> relationships = new HashSet<>();
@@ -124,6 +136,7 @@ public class JsonCsvExtractor extends AbstractProcessor {
     @Override
     public void onTrigger(final ProcessContext context, final ProcessSession session) throws ProcessException
     {
+        List<CoalesceEntity> entities = new ArrayList<>();
         FlowFile flowFile = session.get();
         if (flowFile == null)
         {
@@ -147,25 +160,24 @@ public class JsonCsvExtractor extends AbstractProcessor {
                 String splitToken = context.getProperty(CSV_SEPARATOR).getValue();
 
 
+                //pass the json string to the extractor
                 ((IExtractor) g).setProperties(getParameters(context));
+                //get the templates, then pass them to the extractor,
+                //  so the extractor doesn't need to create a persistor to get them
                 getTemplates(jsonString, ((FSI_EntityExtractor) g));
 
+                //read file
                 File file = new File(absolutePath + filename);    //    /testfiles/whatever.csv
                 BufferedReader b = new BufferedReader(new FileReader(file));
 
-                List<CoalesceEntity> entities = new ArrayList<>();
-
                 String columnNames = b.readLine();
                 String line;
-                while ((line = b.readLine()) != null)
-                {
+                while ((line = b.readLine()) != null) {
                     //getLogger().log(LogLevel.ERROR, line);
-                    entities = ((FSI_EntityExtractor) g).extract(filename, String.join(splitToken, line));
-
+                    entities = ((FSI_EntityExtractor) g).extract(filename, line);
                 }
                 for(int i = 0; i < entities.size(); i++) {
                     CoalesceEntity entity = entities.get(i);
-                    flowFile = session.putAttribute(flowFile, "entity"+i, entity.toXml(false));
                 }
             }
             else
@@ -203,13 +215,49 @@ public class JsonCsvExtractor extends AbstractProcessor {
             getLogger().log(LogLevel.ERROR, "CoalesceException: " + e);
         }
 
-        session.transfer(flowFile, SUCCESS);
+        this.framework = new CoalesceSearchFramework();
+        String classpaths = context.getProperty(PERSISTOR_CLASSPATHS).getValue();
+        String[] classpathsSplit = classpaths.split("\n");
+        boolean authPersistorSet = false;
+        Map<String, String> params = getParameters(context);
+        for(String classpath : classpathsSplit) {
+            try {
+                Class persistorClass = Thread.currentThread().getContextClassLoader().loadClass(classpath);
+                Constructor c = persistorClass.getConstructor(Map.class);
+                ICoalescePersistor persistor = (ICoalescePersistor)c.newInstance(params);
+                if(!authPersistorSet) {
+                    framework.setAuthoritativePersistor(persistor);
+                    authPersistorSet = true;
+                }
+                else {
+                    framework.setSecondaryPersistors(persistor);
+                }
+
+            }
+            catch(InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
+                getLogger().log(LogLevel.ERROR, "Exception: ", e);
+            }
+        }
+        if(!authPersistorSet) {
+
+        }
+        else {
+            try {
+                this.framework.saveCoalesceEntity(entities.toArray(new CoalesceEntity[entities.size()]));
+            }
+            catch(CoalescePersistorException e) {
+                getLogger().log(LogLevel.ERROR, "Exception: ", e);
+            }
+        }
+
 
     }
 
-    public void getTemplates(String jsonString, IExtractor g) {
+
+    public void getTemplates(String jsonString, FSI_EntityExtractor g) {
         try
         {
+            HashMap<String, String> templates = new HashMap<>();
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(jsonString);
             JSONArray templatesArray = (JSONArray) json.get("templates");
@@ -219,8 +267,9 @@ public class JsonCsvExtractor extends AbstractProcessor {
                 String templateUri = (String) template.get("templateUri");
 
                 String templateXml = getTemplateXml(templateUri);
-
+                templates.put(templateUri, templateXml);
             }
+            g.setTemplates(templates);
         }
         catch(ParseException e) {
             getLogger().log(LogLevel.ERROR, "ParseException: ", e);
@@ -276,6 +325,7 @@ public class JsonCsvExtractor extends AbstractProcessor {
         for (Map.Entry<PropertyDescriptor, String> entry : context.getProperties().entrySet())
         {
             params.put(entry.getKey().getName(), entry.getValue());
+            getLogger().log(LogLevel.ERROR, entry.getValue());
         }
 
         return params;

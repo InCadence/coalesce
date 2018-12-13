@@ -58,6 +58,8 @@ public class FSI_EntityExtractorTest {
 
         FSI_EntityExtractor extractor = new FSI_EntityExtractor();
         extractor.setFramework(framework);
+        HashMap<String, String> templates = new HashMap<>();
+        templates.put("test1", "a");
         extractor.setProperties(params);
 
         // TODO This does not work

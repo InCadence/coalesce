@@ -40,9 +40,8 @@ RUN echo "Install NiFi" && /opt/kylo/setup/nifi/install-nifi.sh && echo "Install
 COPY scripts/*.nar /opt/nifi/current/lib2
 
 RUN echo "Creating the dropzone folder" && mkdir -p /var/dropzone
-RUN chown nifi:nifi /var/dropzone && chown nifi:nifi /opt/nifi/current/lib2
-RUN chmod 774 /var/dropzone/
-
+RUN chown nifi:nifi /var/dropzone && chmod 774 /var/dropzone/
+ 
 RUN echo "Creating the sample data folder" && mkdir -p /var/sampledata
 
 COPY sample_data/* /var/sampledata/
@@ -108,8 +107,9 @@ COPY scripts/bootstrap.sh /etc/bootstrap.sh
 RUN chown root.root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
 
 ADD conf/nifi.properties /opt/nifi/current/conf
-ADD scripts/*.tar.gz /opt/nifi/current/lib2
-RUN cd /opt/nifi/current/lib2 && find source -name "*.jar" -exec mv -i {} -t . \;
+#ADD scripts/*.tar.gz /opt/nifi/current/lib2/
+#RUN find /opt/nifi/current/lib2 -name "*.jar" -exec mv -i {} -t . \;
+RUN chown nifi:nifi /opt/nifi/current/lib2
 
 ENTRYPOINT ["/etc/bootstrap.sh"]
 CMD tail -f /dev/null
