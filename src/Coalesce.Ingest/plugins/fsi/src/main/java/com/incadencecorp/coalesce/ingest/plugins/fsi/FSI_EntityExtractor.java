@@ -73,14 +73,14 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         for (Object aTemplatesArray : this.templatesArray)
         {
             JSONObject template = (JSONObject) aTemplatesArray;
-            String templateKey = (String) template.get("templateKey");
+            String templateUri = (String) template.get("templateUri");
 
             JSONObject record = (JSONObject) template.get("record");
             String recordName = (String) record.get("name");
 
             JSONObject fieldsMap = (JSONObject) record.get("fields");
 
-            CoalesceEntityTemplate entityTemplate = entityTemplates.get(templateKey);
+            CoalesceEntityTemplate entityTemplate = entityTemplates.get(templateUri);
             CoalesceEntity entity = entityTemplate.createNewEntity();
 
             CoalesceRecordset rs = entity.getCoalesceRecordsetForNamePath(entity.getName(),
@@ -93,7 +93,7 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
 
             CoalesceRecord cr = rs.getHasRecords() ? rs.getItem(0) : rs.addNew();
 
-            Map<String, ECoalesceFieldDataTypes> typesMap = CoalesceTemplateUtil.getTemplateDataTypes(templateKey);
+            Map<String, ECoalesceFieldDataTypes> typesMap = CoalesceTemplateUtil.getTemplateDataTypes(templateUri);
             Object[] fieldsMapKeys = fieldsMap.keySet().toArray();
             for (Object fieldsMapKey : fieldsMapKeys)
             {
@@ -101,7 +101,6 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
                 fieldsIndex = fieldsIndex.replace("\"", "");
                 String column = (String) fieldsMap.get(fieldsIndex);
 
-                // TODO I don't think this is right please review your code.
                 ECoalesceFieldDataTypes type;
 
                 int index = Integer.parseInt(fieldsIndex);
@@ -235,11 +234,11 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
                 for (Object aTemplatesArray : this.templatesArray)
                 {
                     JSONObject template = (JSONObject) aTemplatesArray;
-                    String templateKey = (String) template.get("templateKey");
+                    String templateKey = (String) template.get("templateUri");
 
                     LOGGER.debug("Template Specified: {}", templateKey);
 
-                    CoalesceEntityTemplate entityTemplate = this.framework.getCoalesceEntityTemplate(templateKey);
+                    CoalesceEntityTemplate entityTemplate = CoalesceEntityTemplate.create()
                     entityTemplates.put(templateKey, entityTemplate);
                     CoalesceTemplateUtil.addTemplates(entityTemplate);
 
@@ -254,6 +253,10 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         this.separator = params.getOrDefault(PARAM_SPLIT, ",");
 
         LOGGER.debug("RECORDSETS WITH: {}", CoalesceTemplateUtil.getRecordsets().size());
+    }
+
+    public void setTemplates(HashMap<String, String> templates) {
+
     }
 
 }

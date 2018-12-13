@@ -62,7 +62,7 @@ public class FSI_EntityExtractorTest {
 
         // TODO This does not work
         List<CoalesceEntity> entities = extractor.extract("unknown", "1,false,3.0");
-        assertTrue(entities.size() == 1);
+        assertEquals(1, entities.size() );
     }
 
 }

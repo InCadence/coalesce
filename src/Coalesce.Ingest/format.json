@@ -1,6 +1,6 @@
 {
   "templates": [{
-    "templateKey": "4d9c5078-2ad1-3035-aa79-76471d3f67f4",
+    "templateUri": "http://localhost:8181/cxf/data/templates/cc239b9d-7c9b-33ec-a5ee-545a83904ecd/xml",     
     "record": {
       "name": "metadata",
       "fields": {
