@@ -5,10 +5,19 @@
 
 SERVER=$1
 DIR=$2
+VERSION=$3
+
+if [ -z "${VERSION}" ] ; then
+
+    read -p "Version: " VERSION
+
+fi
+
+
 
 SERVER_DEFAULT="oeservices"
 DIR_DEFAULT="/opt/coalesce"
-FILENAME="coalesce-karaf-dist-0.0.25-SNAPSHOT.tar.gz"
+FILENAME="coalesce-karaf-dist-${VERSION}.tar.gz"
 
 echo 
 
@@ -49,7 +58,10 @@ while true; do
 	echo "3. Stop"
 	echo "4. Remove"
 	echo "5. Deploy Configuration"
-	echo "6. Exit"
+	echo "6. Pull Tarball"
+        echo "7. Build Docker"
+	echo "8. Push Docker"
+	echo "9. Exit"
 
 	read -p ": " input
 
@@ -91,8 +103,16 @@ while true; do
 			scp -r -i ~/BDP_key.pem ${CONFIG_DIR}/images/* root@${SERVER}:${DIR}/images/.
 			ssh -i  ~/BDP_key.pem root@${SERVER} ${DIR}/bin/start clean
 			;;
-
-		6) exit 0;;
+		6)      curl -XGET http://incadencenexus.incadencecorp.com:8081/nexus/service/local/repositories/releases/content/com/incadencecorp/coalesce/dist/coalesce-karaf-dist/${VERSION}/coalesce-karaf-dist-${VERSION}.zip > target/coalesce-karaf-dist-${VERSION}.zip
+			unzip -q target/coalesce-karaf-dist-${VERSION}.zip -d target/tmp
+			tar -czf target/coalesce-karaf-dist-${VERSION}.tar.gz -C target/tmp .
+			rm -rf target/tmp
+			;;
+		7)      mvn dockerfile:build
+			;;
+		8)      mvn dockerfile:push
+			;;
+		9) exit 0;;
 		*) echo Invalid Input
 	esac 
 
