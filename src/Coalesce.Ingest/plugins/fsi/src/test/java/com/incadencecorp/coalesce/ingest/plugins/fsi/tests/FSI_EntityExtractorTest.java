@@ -24,14 +24,19 @@ import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.ingest.plugins.fsi.FSI_EntityExtractor;
 import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * These tests verify proper behaviour of the {@link FSI_EntityExtractor}.
@@ -52,6 +57,16 @@ public class FSI_EntityExtractorTest {
 
         String json = new String(Files.readAllBytes(Paths.get("src", "test", "resources", "format.json")));
 
+        // TODO Replace this with a Java POJO
+        JSONParser parser = new JSONParser();
+        JSONObject root = (JSONObject) parser.parse(json);
+        JSONObject item = (JSONObject) ((JSONArray) root.get("templates")).get(0);
+
+        // Replace relative path with absolute
+        item.put("templateUri", Paths.get(".", new URI((String) item.get("templateUri")).getPath()).toUri().toString());
+
+        json = root.toJSONString();
+
         Map<String, String> params = new HashMap<>();
         params.put(FSI_EntityExtractor.PARAM_JSON, json);
         params.put(FSI_EntityExtractor.PARAM_SPLIT, ",");
@@ -64,7 +79,7 @@ public class FSI_EntityExtractorTest {
 
         // TODO This does not work
         List<CoalesceEntity> entities = extractor.extract("unknown", "1,false,3.0");
-        assertEquals(1, entities.size() );
+        assertEquals(1, entities.size());
     }
 
 }

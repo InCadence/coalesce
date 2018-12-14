@@ -34,6 +34,14 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -53,7 +61,7 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
 
     private CoalesceSearchFramework framework;
     private String separator;
-    private Map<String, CoalesceEntityTemplate> entityTemplates;
+    private final Map<String, CoalesceEntityTemplate> entityTemplates = new HashMap<>();
     private JSONArray templatesArray;
 
     @Override
@@ -239,8 +247,18 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
                 JSONParser parser = new JSONParser();
                 JSONObject json = (JSONObject) parser.parse(jsonString);
                 this.templatesArray = (JSONArray) json.get("templates");
+
+                for (Object aTemplatesArray : this.templatesArray)
+                {
+                    JSONObject template = (JSONObject) aTemplatesArray;
+                    String templateUri = (String) template.get("templateUri");
+
+                    String xml = getTemplateXml(templateUri);
+
+                    entityTemplates.put(templateUri, CoalesceEntityTemplate.create(xml));
+                }
             }
-            catch (ParseException e)
+            catch (ParseException | CoalesceException e)
             {
                 throw new RuntimeException(e);
             }
@@ -251,8 +269,50 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         LOGGER.debug("RECORDSETS WITH: {}", CoalesceTemplateUtil.getRecordsets().size());
     }
 
+    // TODO This was a copy and paste need to refactor to a common library
+    private String getTemplateXml(String templateUri) {
+        try {
+            URI uri = new URI(templateUri);
+            switch(uri.getScheme()) {
+            case "file":
+                return IOUtils.toString(uri, StandardCharsets.UTF_8);
+            case "http":
+            case "https":
+                HttpResponse response = getResponse(new HttpGet(templateUri));
+                switch(response.getStatusLine().getStatusCode()) {
+                case HttpStatus.SC_OK:
+                    return EntityUtils.toString(response.getEntity());
+                default:
+                    break;
+                }
+            }
+        }
+
+        catch(URISyntaxException e) {
+            LOGGER.error("URISyntaxException: ", e);
+        }
+        catch(IOException e) {
+            LOGGER.error("IOException: ", e);
+        }
+        return "ERROR";
+    }
+
+    // TODO This was a copy and paste need to refactor to a common library
+    private HttpResponse getResponse(HttpUriRequest request) {
+        HttpResponse response = null;
+        try {
+            CloseableHttpClient client = HttpClients.createDefault();
+            response = client.execute(request);
+        }
+        catch(IOException e) {
+            LOGGER.error("IOException: ", e);
+        }
+        return response;
+    }
+
+    @Deprecated
     public void setTemplates(HashMap<String, String> templates) {
-        this.entityTemplates = new HashMap<>();
+        //this.entityTemplates = new HashMap<>();
         for (Object oTemplateUri : templates.keySet().toArray())
         {
             String templateUri = (String) oTemplateUri;

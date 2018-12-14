@@ -1,6 +1,6 @@
 {
   "templates": [{
-    "templateKey": "0d75e8ca-204f-3d20-a03d-7e43a889e93f",
+    "templateUri": "file:///src/test/resources/0d75e8ca-204f-3d20-a03d-7e43a889e93f",
     "record": {
       "name": "test1",
       "fields": {
