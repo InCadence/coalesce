@@ -90,7 +90,7 @@ public class FetchTemplate extends AbstractProcessor {
     protected void init(final ProcessorInitializationContext context)
     {
         final List<PropertyDescriptor> descriptors = new ArrayList<>();
-        descriptors.add(TEMPLATE_JSON);
+        //descriptors.add(TEMPLATE_JSON);
         this.descriptors = Collections.unmodifiableList(descriptors);
 
         final Set<Relationship> relationships = new HashSet<>();
