@@ -50,7 +50,6 @@
 
     <modules>
         <module>json-csv-extractor</module>
-        <module>elasticsearch-post</module>
         <module>fetch-template</module>
     </modules>
 
