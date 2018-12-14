@@ -28,7 +28,11 @@
     </parent>
 
     <dependencies>
-
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.nifi</groupId>
+            <artifactId>json-csv-processors</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

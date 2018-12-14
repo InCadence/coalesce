@@ -174,10 +174,7 @@ public class JsonCsvExtractor extends AbstractProcessor {
                 String line;
                 while ((line = b.readLine()) != null) {
                     //getLogger().log(LogLevel.ERROR, line);
-                    entities = ((FSI_EntityExtractor) g).extract(filename, line);
-                }
-                for(int i = 0; i < entities.size(); i++) {
-                    CoalesceEntity entity = entities.get(i);
+                    entities.addAll(((FSI_EntityExtractor) g).extract(filename, line));
                 }
             }
             else

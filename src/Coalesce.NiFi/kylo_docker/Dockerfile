@@ -34,13 +34,13 @@ COPY conf/elasticsearch.yml /etc/elasticsearch/
 
 RUN echo "Install activemq" && /opt/kylo/setup/activemq/install-activemq.sh
 
-RUN echo "Install NiFi" && /opt/kylo/setup/nifi/install-nifi.sh && echo "Install Kylo" && service mysql start && /opt/kylo/setup/nifi/install-kylo-components.sh && rm -f /opt/nifi/nifi-1.0.0-bin.tar.gz
+RUN echo "Install NiFi" && /opt/kylo/setup/nifi/install-nifi.sh && echo "Install Kylo" && service mysql start && /opt/kylo/setup/nifi/install-kylo-components.sh && rm -f /opt/nifi/nifi-1.0.0-bin.tar.gz && mkdir /opt/nifi/current/lib2
 
 ######
 COPY scripts/*.nar /opt/nifi/current/lib2
 
 RUN echo "Creating the dropzone folder" && mkdir -p /var/dropzone
-RUN chown nifi:nifi /var/dropzone && chmod 774 /var/dropzone/
+RUN chown nifi:nifi /var/dropzone && chmod 774 /var/dropzone/ 
  
 RUN echo "Creating the sample data folder" && mkdir -p /var/sampledata
 
@@ -109,7 +109,7 @@ RUN chown root.root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
 ADD conf/nifi.properties /opt/nifi/current/conf
 #ADD scripts/*.tar.gz /opt/nifi/current/lib2/
 #RUN find /opt/nifi/current/lib2 -name "*.jar" -exec mv -i {} -t . \;
-RUN chown nifi:nifi /opt/nifi/current/lib2
+RUN chown nifi:users /opt/nifi/current/lib2 && chown nifi:users /opt/nifi/current/lib2/*
 
 ENTRYPOINT ["/etc/bootstrap.sh"]
 CMD tail -f /dev/null
