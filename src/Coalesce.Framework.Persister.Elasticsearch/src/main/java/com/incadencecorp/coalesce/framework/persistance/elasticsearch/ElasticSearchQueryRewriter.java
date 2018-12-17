@@ -69,6 +69,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
     public void setKeywords(Set<String> keywords)
     {
+        this.keywords.clear();
         this.keywords.addAll(keywords);
     }
 
@@ -132,6 +133,55 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
     public Object visit(PropertyIsNotEqualTo filter, Object extraData)
     {
         return super.visit(filter, Boolean.TRUE);
+    }
+
+    public String getFeatureType(Query query) throws CoalescePersistorException
+    {
+
+        String featureType;
+
+        features.clear();
+
+        if (!StringHelper.isNullOrEmpty(query.getTypeName()) && !query.getTypeName().equalsIgnoreCase("coalesce"))
+        {
+            features.add(normalizer.normalize(query.getTypeName()));
+        }
+
+        query.getFilter().accept(this, null);
+
+        // Convert to Index Names
+        Set<String> types = new HashSet<>();
+
+        for (String feature : features)
+        {
+            if (!feature.equalsIgnoreCase("coalesceentity"))
+            {
+                types.add(getTypeName(feature));
+            }
+        }
+
+        // If there are none use coalesceentity
+        if (types.isEmpty())
+        {
+            featureType = ElasticSearchPersistor.COALESCE_ENTITY_INDEX;
+        }
+        else if (types.size() == 1)
+        {
+            featureType = types.iterator().next();
+        }
+        else
+        {
+            LOGGER.debug("Features:");
+            for (String type : types)
+            {
+                LOGGER.debug("\t{}", type);
+            }
+            throw new CoalescePersistorException("Multiple featuretypes in query is not supported");
+        }
+
+        features.clear();
+
+        return featureType;
     }
 
     public Query rewrite(Query original) throws CoalescePersistorException
