@@ -144,11 +144,12 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
     //TODO: Parsing Polygons, Coordinates, Lists,
     private void setFieldValue(ECoalesceFieldDataTypes type, CoalesceRecord cr, String column, String[] fields, int index)
     {
+        String value = fields[index].replace("\"", "");
         switch (type)
         {
         case STRING_TYPE:
         case URI_TYPE:
-            ((CoalesceStringField) cr.getFieldByName(column)).setValue(fields[index]);
+            ((CoalesceStringField) cr.getFieldByName(column)).setValue(value);
             break;
         //                    case STRING_LIST_TYPE:
         //                        ((CoalesceStringListField)cr.getFieldByName(column)).setValue(fields[index]);
@@ -204,7 +205,7 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         //                        break;
 
         case DOUBLE_TYPE:
-            ((CoalesceDoubleField) cr.getFieldByName(column)).setValue(Double.parseDouble(fields[index]));
+            ((CoalesceDoubleField) cr.getFieldByName(column)).setValue(Double.parseDouble(value));
             break;
 
         //                    case DOUBLE_LIST_TYPE:
@@ -266,7 +267,6 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
 
         this.separator = params.getOrDefault(PARAM_SPLIT, ",");
 
-        LOGGER.debug("RECORDSETS WITH: {}", CoalesceTemplateUtil.getRecordsets().size());
     }
 
     // TODO This was a copy and paste need to refactor to a common library

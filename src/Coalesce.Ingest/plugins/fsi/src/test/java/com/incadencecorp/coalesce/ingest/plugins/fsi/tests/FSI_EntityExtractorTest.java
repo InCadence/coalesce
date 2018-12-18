@@ -77,7 +77,6 @@ public class FSI_EntityExtractorTest {
         templates.put("test1", "a");
         extractor.setProperties(params);
 
-        // TODO This does not work
         List<CoalesceEntity> entities = extractor.extract("unknown", "1,false,3.0");
         assertEquals(1, entities.size());
     }

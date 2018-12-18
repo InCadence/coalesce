@@ -1,0 +1,37 @@
+<entity classname="com.incadencecorp.coalesce.framework.datamodel.TestEntity" lastmodified="2018-12-14T02:26:29.012Z" name="UNIT_TEST" source="DSS" version="1.0">
+    <linkagesection name="Linkages"/>
+    <section name="test section" noindex="false">
+        <recordset maxrecords="0" minrecords="0" name="test1">
+            <fielddefinition datatype="binary" defaultclassificationmarking="U" name="binary"/>
+            <fielddefinition datatype="boolean" defaultclassificationmarking="U" name="boolean"/>
+            <fielddefinition datatype="datetime" defaultclassificationmarking="U" name="date"/>
+            <fielddefinition datatype="double" defaultclassificationmarking="U" name="double"/>
+            <fielddefinition datatype="file" defaultclassificationmarking="U" name="file"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="U" name="float"/>
+            <fielddefinition datatype="geocoordinatelist" defaultclassificationmarking="U" name="geolist"/>
+            <fielddefinition datatype="geocoordinate" defaultclassificationmarking="U" name="geo"/>
+            <fielddefinition datatype="guid" defaultclassificationmarking="U" name="guid"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="U" name="int"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="U" name="string"/>
+            <fielddefinition datatype="uri" defaultclassificationmarking="U" name="uri"/>
+            <fielddefinition datatype="long" defaultclassificationmarking="U" name="long"/>
+            <fielddefinition datatype="polygon" defaultclassificationmarking="U" name="poly"/>
+            <fielddefinition datatype="linestring" defaultclassificationmarking="U" name="line"/>
+            <fielddefinition datatype="circle" defaultclassificationmarking="U" name="circle"/>
+            <fielddefinition datatype="enum" defaultclassificationmarking="U" name="enum">
+                <constraint name="enumenumeration" type="enumeration" value="enum"/>
+            </fielddefinition>
+            <fielddefinition datatype="enumlist" defaultclassificationmarking="U" name="enumlist">
+                <constraint name="enumlistenumeration" type="enumeration" value="enumlist"/>
+            </fielddefinition>
+            <fielddefinition datatype="string" defaultclassificationmarking="U" flatten="false" name="noflatten"/>
+            <fielddefinition datatype="doublelist" defaultclassificationmarking="U" name="doublelist"/>
+            <fielddefinition datatype="integerlist" defaultclassificationmarking="U" name="intlist"/>
+            <fielddefinition datatype="floatlist" defaultclassificationmarking="U" name="floatlist"/>
+            <fielddefinition datatype="longlist" defaultclassificationmarking="U" name="longlist"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="U" name="stringlist"/>
+            <fielddefinition datatype="guidlist" defaultclassificationmarking="U" name="guidlist"/>
+            <fielddefinition datatype="booleanlist" defaultclassificationmarking="U" name="booleanlist"/>
+        </recordset>
+    </section>
+</entity>

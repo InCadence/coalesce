@@ -173,7 +173,6 @@ public class JsonCsvExtractor extends AbstractProcessor {
                 String columnNames = b.readLine();
                 String line;
                 while ((line = b.readLine()) != null) {
-                    //getLogger().log(LogLevel.ERROR, line);
                     entities.addAll(((FSI_EntityExtractor) g).extract(filename, line));
                 }
             }
@@ -201,7 +200,6 @@ public class JsonCsvExtractor extends AbstractProcessor {
         catch (FileNotFoundException e)
         {
             getLogger().log(LogLevel.ERROR, "FileNotFoundException: ", e);
-            getLogger().log(LogLevel.ERROR, absolutePath);
         }
         catch (IOException e)
         {
@@ -322,7 +320,7 @@ public class JsonCsvExtractor extends AbstractProcessor {
         for (Map.Entry<PropertyDescriptor, String> entry : context.getProperties().entrySet())
         {
             params.put(entry.getKey().getName(), entry.getValue());
-            getLogger().log(LogLevel.ERROR, entry.getValue());
+            //getLogger().log(LogLevel.ERROR, entry.getValue());
         }
 
         return params;

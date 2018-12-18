@@ -50,7 +50,6 @@
 
     <modules>
         <module>json-csv-extractor</module>
-        <module>fetch-template</module>
     </modules>
 
 </project>
