@@ -70,9 +70,10 @@ public class ElasticSearchDataConnector implements AutoCloseable {
 
         try
         {
-            Settings.builder().put("cluster.name", props.getProperty(ElasticSearchSettings.PARAM_CLUSTER_NAME));
+            Settings.Builder builder = Settings.builder();
+            builder.put("cluster.name", props.getProperty(ElasticSearchSettings.PARAM_CLUSTER_NAME));
 
-            client = new PreBuiltTransportClient(Settings.builder().build());
+            client = new PreBuiltTransportClient(builder.build());
 
             String hosts = props.getProperty(ElasticSearchSettings.PARAM_HOSTS);
             Stream.of(hosts.split(",")).map(host -> {
