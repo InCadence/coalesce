@@ -35,6 +35,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+                <artifactId>persister-derby-parent</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

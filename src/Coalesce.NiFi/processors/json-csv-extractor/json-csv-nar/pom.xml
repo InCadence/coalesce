@@ -33,6 +33,11 @@
             <artifactId>json-csv-processors</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.4</version>
+        </dependency>
     </dependencies>
 
 </project>

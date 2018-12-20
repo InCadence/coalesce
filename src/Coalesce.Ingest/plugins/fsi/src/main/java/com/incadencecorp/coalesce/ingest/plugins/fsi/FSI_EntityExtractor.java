@@ -41,6 +41,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import sun.rmi.runtime.Log;
 
 import java.io.IOException;
 import java.net.URI;
@@ -122,7 +123,8 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
 
                 int index = Integer.parseInt(fieldsIndex);
 
-                type = typesMap.get(recordName + "." + column);
+                type = typesMap.get(recordName + "." + column.toLowerCase());
+
 
 
                 if (type == null)

@@ -173,7 +173,8 @@ public class JsonCsvExtractor extends AbstractProcessor {
                 String columnNames = b.readLine();
                 String line;
                 while ((line = b.readLine()) != null) {
-                    entities.addAll(((FSI_EntityExtractor) g).extract(filename, line));
+                    List<CoalesceEntity> ent = ((FSI_EntityExtractor) g).extract(filename, line);
+                    entities.addAll(ent);
                 }
             }
             else
@@ -218,8 +219,17 @@ public class JsonCsvExtractor extends AbstractProcessor {
         for(String classpath : classpathsSplit) {
             try {
                 Class persistorClass = Thread.currentThread().getContextClassLoader().loadClass(classpath);
-                Constructor c = persistorClass.getConstructor(Map.class);
-                ICoalescePersistor persistor = (ICoalescePersistor)c.newInstance(params);
+                Constructor c = persistorClass.getConstructor();
+                ICoalescePersistor persistor;
+                try {
+                    c = persistorClass.getConstructor(Map.class);
+                    persistor = (ICoalescePersistor)c.newInstance(params);
+                }
+                catch(NoSuchMethodException e) {
+                    persistor = (ICoalescePersistor)(c.newInstance());
+                }
+
+
                 if(!authPersistorSet) {
                     framework.setAuthoritativePersistor(persistor);
                     authPersistorSet = true;
@@ -233,19 +243,15 @@ public class JsonCsvExtractor extends AbstractProcessor {
                 getLogger().log(LogLevel.ERROR, "Exception: ", e);
             }
         }
-        if(!authPersistorSet) {
-
+        try {
+            this.framework.saveCoalesceEntity(entities.toArray(new CoalesceEntity[entities.size()]));
         }
-        else {
-            try {
-                this.framework.saveCoalesceEntity(entities.toArray(new CoalesceEntity[entities.size()]));
-            }
-            catch(CoalescePersistorException e) {
-                getLogger().log(LogLevel.ERROR, "Exception: ", e);
-            }
+        catch(CoalescePersistorException e) {
+            getLogger().log(LogLevel.ERROR, "Exception: ", e);
         }
 
 
+        session.transfer(flowFile, SUCCESS);
     }
 
 

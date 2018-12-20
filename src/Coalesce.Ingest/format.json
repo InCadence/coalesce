@@ -1,0 +1,25 @@
+{
+  "templates": [{
+    "templateUri": "http://localhost:8181/cxf/data/templates/4d9c5078-2ad1-3035-aa79-76471d3f67f4/xml",
+    "record": {
+      "name": "metadata",
+      "fields": {
+        "0": "Country",
+        "1": "Year",
+        "2": "Rank",
+        "3": "Total",
+        "4": "C1",
+        "5": "C2",
+        "6": "C3",
+        "7": "E1",
+        "8": "E2",
+        "9": "E3",
+        "10": "P1",
+        "11": "P2",
+        "12": "P3",
+        "13": "S1",
+        "14": "S2",
+        "15": "X1"}
+      }
+  }]
+}
