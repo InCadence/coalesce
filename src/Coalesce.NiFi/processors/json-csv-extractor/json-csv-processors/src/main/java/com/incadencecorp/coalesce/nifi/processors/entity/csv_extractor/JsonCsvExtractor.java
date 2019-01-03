@@ -229,7 +229,6 @@ public class JsonCsvExtractor extends AbstractProcessor {
                     persistor = (ICoalescePersistor)(c.newInstance());
                 }
 
-
                 if(!authPersistorSet) {
                     framework.setAuthoritativePersistor(persistor);
                     authPersistorSet = true;

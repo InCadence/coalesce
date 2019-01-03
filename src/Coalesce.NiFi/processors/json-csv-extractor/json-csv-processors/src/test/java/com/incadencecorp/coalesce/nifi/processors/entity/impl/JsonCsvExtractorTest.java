@@ -24,6 +24,7 @@ public class JsonCsvExtractorTest {
     @Test
     public void testOnTrigger() throws Exception {
 
+        final String JSON_FORMAT = "format1.json";
         TestRunner jce = TestRunners.newTestRunner(new JsonCsvExtractor());
         String rootPath = Paths.get("").toAbsolutePath().toString();
         String json = new String(Files.readAllBytes(Paths.get(rootPath,"src", "test", "resources", "format1.json")));

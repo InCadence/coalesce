@@ -6,23 +6,28 @@ import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Pojo {
+public class TemplateJson {
 
-    List<Pojo2> templates;
-    String templateKey;
+    private List<Template> templates;
+    private List<Linkage> linkages;
 
-    public String getTemplateKey()
+    public List<Template> getTemplates()
     {
-        return templateKey;
+        return templates;
     }
 
-    public void setTemplateKey(String templateKey)
+    public void setTemplates(List<Template> templates)
     {
-        this.templateKey = templateKey;
+        this.templates = templates;
     }
 
-    private class Pojo2 {
-        String templateUri;
+    public List<Linkage> getLinkages()
+    {
+        return linkages;
+    }
 
+    public void setLinkages(List<Linkage> linkages)
+    {
+        this.linkages = linkages;
     }
 }
