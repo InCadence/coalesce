@@ -456,6 +456,8 @@ function createColumns(that, recordsets) {
         var dataType = getDataType(recordsets, cell.original);
         var hint = "";
 
+        dataType = dataType.replace("_LIST", "");
+
         switch (dataType) {
           case 'DATE_TIME_TYPE':
             dataType = 'STRING_TYPE';
@@ -464,7 +466,6 @@ function createColumns(that, recordsets) {
           case 'POLYGON_TYPE':
           case 'CIRCLE_TYPE':
           case 'GEOCOORDINATE_TYPE':
-          case 'GEOCOORDINATE_LIST_TYPE':
           case 'LINE_STRING_TYPE':
             hint = "POLYGON ((x1 y1 z1, x2 y2 z2, ...))"
             dataType = 'STRING_TYPE';
