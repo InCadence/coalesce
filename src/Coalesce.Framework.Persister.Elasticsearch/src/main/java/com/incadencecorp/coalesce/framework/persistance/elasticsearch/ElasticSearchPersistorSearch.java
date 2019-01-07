@@ -41,7 +41,8 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchPersistorSearch.class);
     private final Map<String, DataStore> datastores = new ConcurrentHashMap<>();
-    private final Set<String> keywords = new HashSet<>();
+    private final Map<String, Set<String>> keywordCache = new HashMap<>();
+
     /**
      * Default constructor using {@link ElasticSearchSettings} for configuration
      */
@@ -61,24 +62,40 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
     /**
      * @return a set of fields that are not analyzed for the base indexes indicating that they are keywords.
      */
-    private Set<String> getKeywords() throws CoalescePersistorException
+    private Set<String> getKeywords(String index) throws CoalescePersistorException
     {
-        Set<String> keywords = new HashSet<>();
-
-        keywords.addAll(getKeywords(ElasticSearchPersistor.COALESCE_ENTITY_INDEX,
-                                    ElasticSearchPersistor.COALESCE_ENTITY,
-                                    CoalescePropertyFactory.COALESCE_ENTITY_TABLE));
-
-        keywords.addAll(getKeywords(ElasticSearchPersistor.COALESCE_LINKAGE_INDEX,
-                                    ElasticSearchPersistor.COALESCE_LINKAGE,
-                                    CoalescePropertyFactory.COALESCE_LINKAGE_TABLE));
-
-        if (LOGGER.isInfoEnabled())
+        if (!keywordCache.containsKey(index))
         {
-            LOGGER.info("Keyword Fields: ({})", String.join("\n", keywords));
+            Set<String> keywords = new HashSet<>();
+
+            switch (index)
+            {
+            case ElasticSearchPersistor.COALESCE_ENTITY_INDEX:
+                keywords.addAll(getKeywords(ElasticSearchPersistor.COALESCE_ENTITY_INDEX,
+                                            ElasticSearchPersistor.COALESCE_ENTITY,
+                                            CoalescePropertyFactory.COALESCE_ENTITY_TABLE));
+                break;
+            case ElasticSearchPersistor.COALESCE_LINKAGE_INDEX:
+                keywords.addAll(getKeywords(ElasticSearchPersistor.COALESCE_LINKAGE_INDEX,
+                                            ElasticSearchPersistor.COALESCE_LINKAGE,
+                                            CoalescePropertyFactory.COALESCE_LINKAGE_TABLE));
+                break;
+            default:
+                keywords.addAll(getKeywords(index,
+                                            "recordset",
+                                            CoalescePropertyFactory.COALESCE_ENTITY_TABLE));
+                break;
+            }
+
+            if (LOGGER.isInfoEnabled())
+            {
+                LOGGER.info("{} Keyword Fields: ({})", index, String.join("\n", keywords));
+            }
+
+            keywordCache.put(index, keywords);
         }
 
-        return keywords;
+        return keywordCache.get(index);
     }
 
     /**
@@ -135,13 +152,10 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
         try
         {
-            if (keywords.isEmpty())
-            {
-                keywords.addAll(getKeywords());
-            }
-
             ElasticSearchQueryRewriter rewriter = new ElasticSearchQueryRewriter();
-            rewriter.setKeywords(keywords);
+
+            String featureType = rewriter.getFeatureType(query);
+            rewriter.setKeywords(getKeywords(featureType));
 
             Query localQuery = rewriter.rewrite(query);
 
