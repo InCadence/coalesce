@@ -21,6 +21,7 @@ package com.incadencecorp.coalesce.ingest.plugins.fsi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
@@ -79,10 +80,10 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
 
         for (Template template : this.templatesArray)
         {
-            String templateUri = (String) template.getTemplateUri();
+            String templateUri = template.getTemplateUri();
 
             Record record = template.getRecord();
-            String recordName = (String) record.getName();
+            String recordName = record.getName();
 
             HashMap<String, String> fieldsMap = record.getFields();
 
@@ -109,7 +110,7 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
             {
                 String fieldsIndex = (String) fieldsMapKey;
                 fieldsIndex = fieldsIndex.replace("\"", "");
-                String column = (String) fieldsMap.get(fieldsIndex);
+                String column =  fieldsMap.get(fieldsIndex);
 
                 ECoalesceFieldDataTypes type;
 
@@ -137,9 +138,18 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
             }
             for(Linkage link : this.linkagesArray) {
                 String templateUri1 = this.templatesArray.get(Integer.parseInt(link.getEntity1())).getTemplateUri();
-                String templateKey1 = ((CoalesceEntityTemplate)this.entityTemplates.get(templateUri1)).getKey();
-                if(templateKey1.equals(entities.get(i))) {
+                String templateKey1 = this.entityTemplates.get(templateUri1).getKey();
 
+                if(templateKey1.equals(entities.get(i).createNewEntityTemplate().getKey())) {
+                    String templateUri2 = this.templatesArray.get(Integer.parseInt(link.getEntity2())).getTemplateUri();
+                    String templateKey2 = this.entityTemplates.get(templateUri2).getKey();
+                    for(int j = 0; j < entities.size(); j++) {
+                        if(j != i) {
+                            if(templateKey2.equals(entities.get(j).createNewEntityTemplate().getKey())) {
+                                EntityLinkHelper.linkEntitiesUniDirectional(entities.get(i), ELinkTypes.getTypeForLabel(link.getLinkType()), entities.get(j));
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -153,10 +163,10 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         String value = fields[index].replace("\"", "");
         switch (type)
         {
-        case STRING_TYPE:
-        case URI_TYPE:
-            ((CoalesceStringField) cr.getFieldByName(column)).setValue(value);
-            break;
+            case STRING_TYPE:
+            case URI_TYPE:
+                ((CoalesceStringField) cr.getFieldByName(column)).setValue(value);
+                break;
         //                    case STRING_LIST_TYPE:
         //                        ((CoalesceStringListField)cr.getFieldByName(column)).setValue(fields[index]);
         //                        break;
@@ -172,15 +182,10 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         //                        ((CoalesceBooleanListField)cr.getFieldByName(column)).setValue(fields[index]);
         //                        break;
         //
-        //                    case ENUMERATION_TYPE:
-        //                    case INTEGER_TYPE:
-        //                        ((CoalesceIntegerField)cr.getFieldByName(column)).setValue(Integer.parseInt(fields[index]));
-        //                        break;
-        //
-        //                    case ENUMERATION_LIST_TYPE:
-        //                    case INTEGER_LIST_TYPE:
-        //                        ((CoalesceIntegerListField)cr.getFieldByName(column)).setValue(fields[index]);
-        //                        break;
+            case ENUMERATION_TYPE:
+            case INTEGER_TYPE:
+                ((CoalesceIntegerField)cr.getFieldByName(column)).setValue(Integer.parseInt(value));
+                break;
         //
         //                    case GUID_TYPE:
         //                        ((CoalesceGUIDField)cr.getFieldByName(column)).setValue(GUIDHelper.getGuid(fields[index]));
@@ -210,9 +215,9 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         //                        ((CoalesceCircleField)cr.getFieldByName(column)).setValue(fields[index]);
         //                        break;
 
-        case DOUBLE_TYPE:
-            ((CoalesceDoubleField) cr.getFieldByName(column)).setValue(Double.parseDouble(value));
-            break;
+            case DOUBLE_TYPE:
+                ((CoalesceDoubleField) cr.getFieldByName(column)).setValue(Double.parseDouble(value));
+                break;
 
         //                    case DOUBLE_LIST_TYPE:
         //                        ((CoalesceDoubleListField)cr.getFieldByName(column)).setValue(fields[index]);
@@ -234,9 +239,9 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         //                        ((CoalesceLongListField)cr.getFieldByName(column)).setValue(fields[index]);
         //                        break;
 
-        default:
-            break;
-        }
+            default:
+                break;
+            }
     }
 
     @Override

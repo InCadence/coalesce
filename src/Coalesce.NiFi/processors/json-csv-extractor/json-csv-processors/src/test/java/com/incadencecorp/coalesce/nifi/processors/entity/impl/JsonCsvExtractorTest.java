@@ -29,10 +29,8 @@ public class JsonCsvExtractorTest {
         String rootPath = Paths.get("").toAbsolutePath().toString();
         String json = new String(Files.readAllBytes(Paths.get(rootPath,"src", "test", "resources", "format1.json")));
 
-        // TODO Replace this with a Java POJO
         JSONParser parser = new JSONParser();
         JSONObject root = (JSONObject) parser.parse(json);
-        JSONObject item = (JSONObject) ((JSONArray) root.get("templates")).get(0);
 
         // Replace relative path with absolute
         //item.put("templateUri", Paths.get(".", new URI((String) item.get("templateUri")).getPath()).toUri().toString());

@@ -1,5 +1,6 @@
 {
-  "templates": [{
+  "templates": [
+    {
     "templateUri": "http://localhost:8181/cxf/data/templates/4d9c5078-2ad1-3035-aa79-76471d3f67f4/xml",
     "record": {
       "name": "metadata",
@@ -21,5 +22,22 @@
         "14": "S2",
         "15": "X1"}
     }
-  }]
+  },
+  {
+    "templateUri": "http://localhost:8181/cxf/data/templates/fc9366bd-9dd7-39b3-b2f1-2a19085052e8/xml",
+    "record": {
+      "name": "metadata",
+      "fields": {
+        "0": "Country",
+        "1": "Year"
+        }
+    }
+  }],
+  "linkages": [
+    {
+      "entity1": "0",
+      "linkType": "created",
+      "entity2": "1"
+    }
+  ]
 }
