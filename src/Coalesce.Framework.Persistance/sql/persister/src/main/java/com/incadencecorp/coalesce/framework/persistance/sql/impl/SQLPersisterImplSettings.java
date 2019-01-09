@@ -128,6 +128,22 @@ public class SQLPersisterImplSettings {
 
         return serCon;
     }
+    /**
+     * @return Returns database parameters.
+     */
+    public static ServerConn getServerConn(Map<String, String> params)
+    {
+
+        ServerConn serCon = new ServerConn();
+
+        serCon.setServerName(params.get("asid.dbServerName"));
+        serCon.setPortNumber(Integer.parseInt(params.get("asid.dbServerPort")));
+        serCon.setDatabase(params.get("asid.database"));
+        serCon.setUser(params.get("asid.dbUser"));
+        serCon.setPassword(params.get("asid.dbPassword"));
+
+        return serCon;
+    }
 
     public static void  setParameters(Map<String, String> params)
     {

@@ -26,6 +26,7 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 //import com.incadencecorp.coalesce.framework.persistance.sql.impl.SQLDataConnector;
 //import com.incadencecorp.coalesce.framework.persistance.sql.impl.SQLPersisterImplSettings;
 //import com.incadencecorp.coalesce.framework.persistance.sql.mappers.StoredProcedureArgumentMapper;
+import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
@@ -44,6 +45,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -53,27 +55,6 @@ import java.util.concurrent.ConcurrentMap;
 public class SQLSearchPersisterImpl extends SQLPersisterImpl implements ICoalesceSearchPersistor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SQLPersisterImpl.class);
-
-     /*--------------------------------------------------------------------------
-    Private Static Final (Used for SQL Queries)
-    --------------------------------------------------------------------------*/
-
-    private static final String SQL_FIND_PROCEDURE_FORMAT = "SELECT routine_name FROM information_schema.routines WHERE routine_name=? AND specific_schema=?";
-
-    private static final String SQL_GET_COLUMN_NAMES = "SELECT column_name FROM information_schema.columns WHERE "
-            + "table_name = ? AND table_schema=? ORDER BY ordinal_position";
-
-    private static final String SQL_CLEAN_LIST_TABLES = "DELETE FROM %s.fieldtable_%s WHERE entitykey=?";
-
-    private static final String SQL_DELETE_ENTITYKEY = "DELETE FROM %s WHERE entitykey=?";
-
-    private static final String SQL_DELETE_OBJECTKEY = "DELETE FROM %s WHERE objectkey=?";
-
-    private static final ConcurrentMap<String, Boolean> STORED_PROCEDURE_EXTSTS_CACHE = new ConcurrentHashMap<>();
-
-    private static final ConcurrentHashMap<String, String[]> COLUMNS_CACHE = new ConcurrentHashMap<>();
-
-//    private final StoredProcedureArgumentMapper procedureMapper = new StoredProcedureArgumentMapper();
 
     /*--------------------------------------------------------------------------
     Constructors
@@ -88,21 +69,16 @@ public class SQLSearchPersisterImpl extends SQLPersisterImpl implements ICoalesc
     }
 
     /**
-     * Uses {@link SQLPersisterImplSettings} to configure the database settings.
+     * Default Constructor using db parameters
      *
-     * @param userId   User ID used for connection to the DB.
-     * @param password User's password used for connecting to the DB.
+     * @param params Configuration parameters
      */
-    public SQLSearchPersisterImpl(String userId, String password)
+    public SQLSearchPersisterImpl(Map<String, String> params) throws CoalescePersistorException
     {
-
-        SQLPersisterImplSettings.setUserName(userId);
-        SQLPersisterImplSettings.setUserPassword(password);
-
-        setConnectionSettings(SQLPersisterImplSettings.getServerConn());
-        setSchema(SQLPersisterImplSettings.getDatabaseSchema());
-
+        super(params);
     }
+
+
 
     @Override
     public SearchResults search(Query query) throws CoalescePersistorException
@@ -209,18 +185,6 @@ public class SQLSearchPersisterImpl extends SQLPersisterImpl implements ICoalesc
         {
             parameters.add(new CoalesceParameter(value.toString(), Types.CHAR));
         }
-
-        // if (!filter.isIgnoreSecurity())
-        // {
-        //
-        // for (EMasks mask : EMasks.values())
-        // {
-        // parameters.add(new
-        // CoalesceParameter(SecurityBitmaskHelper.toString(code.getMask(mask))));
-        // }
-        //
-        // parameters.add(new CoalesceParameter(userId, Types.CHAR));
-        // }
 
         return parameters;
 

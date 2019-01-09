@@ -54,11 +54,7 @@ public class SQLTemplatePersisterImpl extends CoalescePersistorBase implements I
 
     private static final CoalesceCommonColumns COLUMNS = new CoalesceCommonColumns(NORMALIZER);
     private String _schema;
-    private SQLDataConnector sqlDataConnector;
-
-    /*--------------------------------------------------------------------------
-    Private Static Final (Used for SQL Queries)
-    --------------------------------------------------------------------------*/
+    private SQLDataConnector connector;
     private static final ConcurrentMap<String, Boolean> STORED_PROCEDURE_EXTSTS_CACHE = new ConcurrentHashMap<>();
     protected  Map<String, String> params;
     protected  SQLRegisterIterator iterator;
@@ -69,6 +65,10 @@ public class SQLTemplatePersisterImpl extends CoalescePersistorBase implements I
      */
     public SQLTemplatePersisterImpl()
     {
+        this.params = SQLPersisterImplSettings.getParameters();
+
+        //Get server connection
+        SQLPersisterImplSettings.setParameters(this.params);
         setConnectionSettings(SQLPersisterImplSettings.getServerConn());
         setSchema(SQLPersisterImplSettings.getDatabaseSchema());
     }
@@ -78,13 +78,11 @@ public class SQLTemplatePersisterImpl extends CoalescePersistorBase implements I
      */
     public SQLTemplatePersisterImpl(Map<String, String> params)
     {
-        this.params = SQLPersisterImplSettings.getParameters();
-        this.params.putAll(params);
+        this.params = params;
+        //Get server connection
+        setConnectionSettings(SQLPersisterImplSettings.getServerConn(params));
+        setSchema(params.get("asid.schema"));
 
-        //Set the settings based off of params value
-        SQLPersisterImplSettings.setParameters(this.params);
-        setConnectionSettings(SQLPersisterImplSettings.getServerConn());
-        setSchema(SQLPersisterImplSettings.getDatabaseSchema());
 
         if (LOGGER.isDebugEnabled())
         {
@@ -96,6 +94,15 @@ public class SQLTemplatePersisterImpl extends CoalescePersistorBase implements I
         }
     }
 
+    protected SQLDataConnector getDataConnector() throws CoalescePersistorException
+    {
+        if(connector == null)
+        {
+            connector = new SQLDataConnector(params);
+        }
+
+        return connector;
+    }
 
     /**
      * Set the schema to use when making database calls.
@@ -105,12 +112,6 @@ public class SQLTemplatePersisterImpl extends CoalescePersistorBase implements I
     public void setSchema(String schema)
     {
         _schema = schema;
-    }
-
-    @Override
-    protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
-    {
-        return new SQLDataConnector(getConnectionSettings().getDatabase(),getConnectionSettings().getServerName(),getConnectionSettings().getUser(),getConnectionSettings().getPassword(),getConnectionSettings().getPortNumber(), this.getSchema());
     }
 
     @Override
@@ -135,7 +136,6 @@ public class SQLTemplatePersisterImpl extends CoalescePersistorBase implements I
     @Override
     public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
-       // super.registerTemplate();
         try (CoalesceDataConnectorBase conn = new SQLDataConnector(getConnectionSettings(), this._schema))
         {
             // Create a Database Connection
@@ -323,11 +323,11 @@ public class SQLTemplatePersisterImpl extends CoalescePersistorBase implements I
     @Override
     protected boolean flattenObject(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException {
         boolean isSuccessful = true;
-        SQLDataConnector conn = sqlDataConnector;
+        SQLDataConnector conn = connector;
 
         if (conn == null)
         {
-            conn = (SQLDataConnector) this.getDataConnector();
+            conn = this.getDataConnector();
         }
 
         // Create a Database Connection

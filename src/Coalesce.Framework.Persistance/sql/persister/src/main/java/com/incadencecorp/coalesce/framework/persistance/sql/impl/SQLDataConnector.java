@@ -34,6 +34,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This DataConnector is for a SQL database.
@@ -64,9 +65,7 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
    Initialization
    --------------------------------------------------------------------------*/
 
-    /**
-     *
-     */
+
     public SQLDataConnector(String databaseName,
                             String serverName,
                             String username,
@@ -94,9 +93,14 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
         }
     }
 
-    public SQLDataConnector()
+    public SQLDataConnector(Map<String,String> params) throws CoalescePersistorException
     {
-
+        this(new ServerConn(params.get("asid.dbServerName"),
+                            params.get("asid.dbUser"),
+                            params.get("asid.dbPassword"),
+                            params.get("asid.database"),
+                            Integer.parseInt(params.get("asid.dbServerPort"))
+                            ),params.get("asid.schema"));
     }
 
     public Connection getConn() throws SQLException
