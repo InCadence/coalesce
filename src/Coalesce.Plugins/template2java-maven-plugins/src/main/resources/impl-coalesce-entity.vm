@@ -230,7 +230,8 @@ public class ${classname} extends CoalesceEntity implements I${name}Entity {
     @Override
     public $normalizer.normalize($recordset.getName())CoalesceRecord get$normalizer.normalize($recordset.getName())Record(String key)
     {
-		return new $normalizer.normalize($recordset.getName())CoalesceRecord((CoalesceRecord) ${recordset_name}.getChildCoalesceObject(key));
+        CoalesceRecord record = ${recordset_name}.getRecord(key);
+		return record != null ? new $normalizer.normalize($recordset.getName())CoalesceRecord(record) : null;
     }
 
     @Override

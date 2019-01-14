@@ -215,9 +215,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     @JsonView(Views.Template.class)
     public List<CoalesceFieldDefinition> getFieldDefinitions()
     {
-        return getObjectsAsList(CoalesceFieldDefinition.class,
-                                ECoalesceObjectStatus.DELETED,
-                                ECoalesceObjectStatus.UNKNOWN);
+        return getObjectsAsList(CoalesceFieldDefinition.class, ECoalesceObjectStatus.DELETED, ECoalesceObjectStatus.UNKNOWN);
     }
 
     /**
@@ -237,6 +235,22 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     public List<CoalesceRecord> getRecords()
     {
         return getObjectsAsList(CoalesceRecord.class, ECoalesceObjectStatus.DELETED, ECoalesceObjectStatus.UNKNOWN);
+    }
+
+    /**
+     * @param key of record to return
+     * @return the record or null if not found.
+     */
+    public CoalesceRecord getRecord(String key)
+    {
+        CoalesceObject coalesceObject = getCoalesceObjectForKey(key);
+
+        if (coalesceObject != null && coalesceObject instanceof CoalesceRecord)
+        {
+            return (CoalesceRecord) coalesceObject;
+        }
+
+        return null;
     }
 
     @Override
