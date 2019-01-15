@@ -103,13 +103,13 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
             CoalesceRecord cr = rs.getHasRecords() ? rs.getItem(0) : rs.addNew();
 
             String templateKey = entityTemplate.getKey();
-
             Map<String, ECoalesceFieldDataTypes> typesMap = CoalesceTemplateUtil.getTemplateDataTypes(templateKey);
             Object[] fieldsMapKeys = fieldsMap.keySet().toArray();
             for (Object fieldsMapKey : fieldsMapKeys)
             {
                 String fieldsIndex = (String) fieldsMapKey;
                 fieldsIndex = fieldsIndex.replace("\"", "");
+                System.out.println("\n" + fieldsIndex + "\n");
                 String column =  fieldsMap.get(fieldsIndex);
 
                 ECoalesceFieldDataTypes type;
@@ -120,9 +120,10 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
 
                 if (type == null)
                 {
-                    throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT_REASON,
-                                                              fieldsMapKey,
-                                                              "Unknown Type"));
+                    throw new CoalesceException((String)typesMap.keySet().toArray()[index]);
+//                    throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT_REASON,
+//                                                              fieldsIndex,
+//                                                              "Unknown Type"));
                 }
 
                 setFieldValue(type, cr, column, fields, index);

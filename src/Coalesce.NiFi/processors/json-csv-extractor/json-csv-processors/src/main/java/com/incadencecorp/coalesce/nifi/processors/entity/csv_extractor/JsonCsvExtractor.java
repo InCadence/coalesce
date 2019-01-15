@@ -44,8 +44,8 @@ import org.apache.nifi.annotation.documentation.CapabilityDescription;
 import org.apache.nifi.annotation.documentation.SeeAlso;
 import org.apache.nifi.annotation.documentation.Tags;
 import org.apache.nifi.components.PropertyDescriptor;
+import org.apache.nifi.components.Validator;
 import org.apache.nifi.flowfile.FlowFile;
-import org.apache.nifi.logging.ComponentLog;
 import org.apache.nifi.logging.LogLevel;
 import org.apache.nifi.processor.AbstractProcessor;
 import org.apache.nifi.processor.ProcessContext;
@@ -78,8 +78,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Tags({ "weewoo petard" })
-@CapabilityDescription("Provide a description")
+@Tags({ "weewoo dsfsafdsadf" })
+@CapabilityDescription("New description")
 @SeeAlso()
 @ReadsAttributes({ @ReadsAttribute(attribute = "") })
 @WritesAttributes({ @WritesAttribute(attribute = "") })
@@ -131,6 +131,16 @@ public class JsonCsvExtractor extends AbstractProcessor {
     public final List<PropertyDescriptor> getSupportedPropertyDescriptors()
     {
         return descriptors;
+    }
+
+    @Override
+    protected PropertyDescriptor getSupportedDynamicPropertyDescriptor(final String propertyDescriptorName) {
+        return new PropertyDescriptor.Builder()
+                .name(propertyDescriptorName)
+                .required(false)
+                .addValidator(Validator.VALID)
+                .dynamic(true)
+                .build();
     }
 
     @Override
@@ -208,7 +218,8 @@ public class JsonCsvExtractor extends AbstractProcessor {
         }
         catch (CoalesceException e)
         {
-            getLogger().log(LogLevel.ERROR, "CoalesceException: " + e);
+            e.printStackTrace();
+            getLogger().log(LogLevel.ERROR, "FUCK YOUCoalesceException: " + e);
         }
 
         this.framework = new CoalesceSearchFramework();

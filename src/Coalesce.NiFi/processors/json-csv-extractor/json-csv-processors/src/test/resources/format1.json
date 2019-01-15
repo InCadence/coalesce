@@ -26,7 +26,7 @@
   {
     "templateUri": "http://localhost:8181/cxf/data/templates/fc9366bd-9dd7-39b3-b2f1-2a19085052e8/xml",
     "record": {
-      "name": "metadata",
+      "name": "metadata2",
       "fields": {
         "0": "Country",
         "1": "Year"
