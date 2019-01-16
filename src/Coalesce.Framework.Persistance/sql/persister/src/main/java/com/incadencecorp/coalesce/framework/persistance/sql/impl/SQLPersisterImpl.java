@@ -46,6 +46,7 @@ public class SQLPersisterImpl extends SQLTemplatePersisterImpl implements ICoale
     private static final Logger LOGGER = LoggerFactory.getLogger(SQLPersisterImpl.class);
     private static final SQLNormalizer NORMALIZER = new SQLNormalizer();
     private static final CoalesceCommonColumns COLUMNS = new CoalesceCommonColumns(NORMALIZER);
+    private Map<String,String> params;
 
     private String _schema;
     private ICoalesceCacher _cacher = null;
@@ -55,6 +56,7 @@ public class SQLPersisterImpl extends SQLTemplatePersisterImpl implements ICoale
      */
     public SQLPersisterImpl()
     {
+        this.params = SQLPersisterImplSettings.getParameters();
         setConnectionSettings(SQLPersisterImplSettings.getServerConn());
         setSchema(SQLPersisterImplSettings.getDatabaseSchema());
     }
@@ -67,7 +69,9 @@ public class SQLPersisterImpl extends SQLTemplatePersisterImpl implements ICoale
     public SQLPersisterImpl(Map<String, String> params)
     {
        super(params);
+       this.params = params;
     }
+
     @Override
     public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
@@ -162,7 +166,7 @@ public class SQLPersisterImpl extends SQLTemplatePersisterImpl implements ICoale
     @Override
     public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = this.getDataConnector())
+        try (CoalesceDataConnectorBase conn = new SQLDataConnector(params))
         {
             List<String> xmlList = new ArrayList<>();
             List<CoalesceParameter> parameters = new ArrayList<>();
