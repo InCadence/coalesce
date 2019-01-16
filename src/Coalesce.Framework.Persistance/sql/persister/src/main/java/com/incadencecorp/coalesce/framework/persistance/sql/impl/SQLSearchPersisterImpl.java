@@ -21,6 +21,7 @@ package com.incadencecorp.coalesce.framework.persistance.sql.impl;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 //import com.incadencecorp.coalesce.framework.persistance.sql.impl.SQLDataConnector;
@@ -33,6 +34,8 @@ import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
 import org.geotools.data.Query;
 import org.geotools.data.jdbc.FilterToSQLException;
 import org.geotools.filter.Capabilities;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -183,7 +186,10 @@ public class SQLSearchPersisterImpl extends SQLPersisterImpl implements ICoalesc
         // Add Parameters
         for (Object value : filter.getLiteralValues())
         {
-            parameters.add(new CoalesceParameter(value.toString(), Types.CHAR));
+            DateTime dateTime = new DateTime(value);
+            dateTime.withZone(DateTimeZone.UTC);
+            DateTime theDate = JodaDateTimeHelper.fromXmlDateTimeUTC(dateTime.toString());
+            parameters.add(new CoalesceParameter(theDate));
         }
 
         return parameters;
