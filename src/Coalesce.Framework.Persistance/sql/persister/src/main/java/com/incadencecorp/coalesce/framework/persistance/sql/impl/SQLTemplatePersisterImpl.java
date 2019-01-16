@@ -67,6 +67,7 @@ public class SQLTemplatePersisterImpl extends CoalescePersistorBase implements I
     {
         this.params = SQLPersisterImplSettings.getParameters();
 
+
         SQLPersisterImplSettings.setParameters(this.params);
         setConnectionSettings(SQLPersisterImplSettings.getServerConn());
         setSchema(SQLPersisterImplSettings.getDatabaseSchema());
@@ -82,6 +83,7 @@ public class SQLTemplatePersisterImpl extends CoalescePersistorBase implements I
         setConnectionSettings(SQLPersisterImplSettings.getServerConn(this.params));
         setSchema(this.params.get("asid.schema"));
 
+
         if (LOGGER.isDebugEnabled())
         {
             LOGGER.debug("Parameters: ");
@@ -95,6 +97,7 @@ public class SQLTemplatePersisterImpl extends CoalescePersistorBase implements I
     protected SQLDataConnector getDataConnector() throws CoalescePersistorException
     {
         connector = new SQLDataConnector(params);
+
 
         return connector;
     }
