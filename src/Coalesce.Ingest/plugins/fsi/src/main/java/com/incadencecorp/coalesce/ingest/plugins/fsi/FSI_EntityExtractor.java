@@ -63,7 +63,9 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
     private List<Linkage> linkagesArray;
 
     @Override
-    public void setFramework(CoalesceSearchFramework framework) {} //does nothing
+    public void setFramework(CoalesceSearchFramework framework)
+    {
+    } //does nothing
 
     @Override
     public List<CoalesceEntityTemplate> getTemplatesUsed()
@@ -88,7 +90,6 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
             HashMap<String, String> fieldsMap = record.getFields();
 
             CoalesceEntityTemplate entityTemplate = entityTemplates.get(templateUri);
-
             CoalesceEntity entity = entityTemplate.createNewEntity();
 
             CoalesceRecordset rs = entity.getCoalesceRecordsetForNamePath(entity.getName(),
@@ -109,8 +110,7 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
             {
                 String fieldsIndex = (String) fieldsMapKey;
                 fieldsIndex = fieldsIndex.replace("\"", "");
-                System.out.println("\n" + fieldsIndex + "\n");
-                String column =  fieldsMap.get(fieldsIndex);
+                String column = fieldsMap.get(fieldsIndex);
 
                 ECoalesceFieldDataTypes type;
 
@@ -120,10 +120,10 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
 
                 if (type == null)
                 {
-                    throw new CoalesceException((String)typesMap.keySet().toArray()[index]);
-//                    throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT_REASON,
-//                                                              fieldsIndex,
-//                                                              "Unknown Type"));
+                    throw new CoalesceException((String) typesMap.keySet().toArray()[index]);
+                    //                    throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT_REASON,
+                    //                                                              fieldsIndex,
+                    //                                                              "Unknown Type"));
                 }
 
                 setFieldValue(type, cr, column, fields, index);
@@ -133,21 +133,30 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         }
 
         //set linkages if any now
-        for(int i = 0; i < entities.size(); i++) {
-            if(this.linkagesArray == null || this.linkagesArray.size() == 0) {
+        for (int i = 0; i < entities.size(); i++)
+        {
+            if (this.linkagesArray == null || this.linkagesArray.size() == 0)
+            {
                 break;
             }
-            for(Linkage link : this.linkagesArray) {
+            for (Linkage link : this.linkagesArray)
+            {
                 String templateUri1 = this.templatesArray.get(Integer.parseInt(link.getEntity1())).getTemplateUri();
                 String templateKey1 = this.entityTemplates.get(templateUri1).getKey();
 
-                if(templateKey1.equals(entities.get(i).createNewEntityTemplate().getKey())) {
+                if (templateKey1.equals(entities.get(i).createNewEntityTemplate().getKey()))
+                {
                     String templateUri2 = this.templatesArray.get(Integer.parseInt(link.getEntity2())).getTemplateUri();
                     String templateKey2 = this.entityTemplates.get(templateUri2).getKey();
-                    for(int j = 0; j < entities.size(); j++) {
-                        if(j != i) {
-                            if(templateKey2.equals(entities.get(j).createNewEntityTemplate().getKey())) {
-                                EntityLinkHelper.linkEntitiesUniDirectional(entities.get(i), ELinkTypes.getTypeForLabel(link.getLinkType()), entities.get(j));
+                    for (int j = 0; j < entities.size(); j++)
+                    {
+                        if (j != i)
+                        {
+                            if (templateKey2.equals(entities.get(j).createNewEntityTemplate().getKey()))
+                            {
+                                EntityLinkHelper.linkEntitiesUniDirectional(entities.get(i),
+                                                                            ELinkTypes.getTypeForLabel(link.getLinkType()),
+                                                                            entities.get(j));
                             }
                         }
                     }
@@ -164,10 +173,10 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         String value = fields[index].replace("\"", "");
         switch (type)
         {
-            case STRING_TYPE:
-            case URI_TYPE:
-                ((CoalesceStringField) cr.getFieldByName(column)).setValue(value);
-                break;
+        case STRING_TYPE:
+        case URI_TYPE:
+            ((CoalesceStringField) cr.getFieldByName(column)).setValue(value);
+            break;
         //                    case STRING_LIST_TYPE:
         //                        ((CoalesceStringListField)cr.getFieldByName(column)).setValue(fields[index]);
         //                        break;
@@ -183,10 +192,10 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         //                        ((CoalesceBooleanListField)cr.getFieldByName(column)).setValue(fields[index]);
         //                        break;
         //
-            case ENUMERATION_TYPE:
-            case INTEGER_TYPE:
-                ((CoalesceIntegerField)cr.getFieldByName(column)).setValue(Integer.parseInt(value));
-                break;
+        case ENUMERATION_TYPE:
+        case INTEGER_TYPE:
+            ((CoalesceIntegerField) cr.getFieldByName(column)).setValue(Integer.parseInt(value));
+            break;
         //
         //                    case GUID_TYPE:
         //                        ((CoalesceGUIDField)cr.getFieldByName(column)).setValue(GUIDHelper.getGuid(fields[index]));
@@ -216,9 +225,9 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         //                        ((CoalesceCircleField)cr.getFieldByName(column)).setValue(fields[index]);
         //                        break;
 
-            case DOUBLE_TYPE:
-                ((CoalesceDoubleField) cr.getFieldByName(column)).setValue(Double.parseDouble(value));
-                break;
+        case DOUBLE_TYPE:
+            ((CoalesceDoubleField) cr.getFieldByName(column)).setValue(Double.parseDouble(value));
+            break;
 
         //                    case DOUBLE_LIST_TYPE:
         //                        ((CoalesceDoubleListField)cr.getFieldByName(column)).setValue(fields[index]);
@@ -240,9 +249,9 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         //                        ((CoalesceLongListField)cr.getFieldByName(column)).setValue(fields[index]);
         //                        break;
 
-            default:
-                break;
-            }
+        default:
+            break;
+        }
     }
 
     @Override
@@ -256,8 +265,6 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
 
             try
             {
-                // TODO Remove the JSON parser and instead create a POJO and use ObjectMapper to deserialize
-
                 ObjectMapper mapper = new ObjectMapper();
                 TemplateJson json = mapper.readValue(jsonString, TemplateJson.class);
                 this.templatesArray = json.getTemplates();
@@ -274,16 +281,20 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
     }
 
     @Deprecated //TODO: Remove because it's in the JsonCsvExtractor class
-    private String getTemplateXml(String templateUri) {
-        try {
+    private String getTemplateXml(String templateUri)
+    {
+        try
+        {
             URI uri = new URI(templateUri);
-            switch(uri.getScheme()) {
+            switch (uri.getScheme())
+            {
             case "file":
                 return IOUtils.toString(uri, StandardCharsets.UTF_8);
             case "http":
             case "https":
                 HttpResponse response = getResponse(new HttpGet(templateUri));
-                switch(response.getStatusLine().getStatusCode()) {
+                switch (response.getStatusLine().getStatusCode())
+                {
                 case HttpStatus.SC_OK:
                     return EntityUtils.toString(response.getEntity());
                 default:
@@ -292,44 +303,50 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
             }
         }
 
-        catch(URISyntaxException e) {
+        catch (URISyntaxException e)
+        {
             LOGGER.error("URISyntaxException: ", e);
         }
-        catch(IOException e) {
+        catch (IOException e)
+        {
             LOGGER.error("IOException: ", e);
         }
         return "ERROR";
     }
 
     // TODO This was a copy and paste need to refactor to a common library
-    private HttpResponse getResponse(HttpUriRequest request) {
+    private HttpResponse getResponse(HttpUriRequest request)
+    {
         HttpResponse response = null;
-        try {
+        try
+        {
             CloseableHttpClient client = HttpClients.createDefault();
             response = client.execute(request);
         }
-        catch(IOException e) {
+        catch (IOException e)
+        {
             LOGGER.error("IOException: ", e);
         }
         return response;
     }
 
-    @Deprecated
-    public void setTemplates(HashMap<String, String> templates) {
+    public void setTemplates(HashMap<String, String> templates)
+    {
         //this.entityTemplates = new HashMap<>();
         for (Object oTemplateUri : templates.keySet().toArray())
         {
             String templateUri = (String) oTemplateUri;
             String templateXml = templates.get(templateUri);
-            try {
+            try
+            {
                 CoalesceEntityTemplate entityTemplate = CoalesceEntityTemplate.create(templateXml);
                 entityTemplates.put(templateUri, entityTemplate);
                 CoalesceTemplateUtil.addTemplates(entityTemplate);
             }
-            catch(CoalesceException e) {
+            catch (CoalesceException e)
+            {
                 LOGGER.debug("Template Specified: {}", templateUri);
             }
-
 
         }
     }

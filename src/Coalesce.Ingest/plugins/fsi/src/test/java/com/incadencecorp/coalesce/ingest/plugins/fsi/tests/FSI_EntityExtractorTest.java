@@ -18,18 +18,21 @@
 
 package com.incadencecorp.coalesce.ingest.plugins.fsi.tests;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.ingest.plugins.fsi.FSI_EntityExtractor;
+import com.incadencecorp.coalesce.ingest.plugins.fsi.Template;
+import com.incadencecorp.coalesce.ingest.plugins.fsi.TemplateJson;
 import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
 import org.junit.Test;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -55,26 +58,24 @@ public class FSI_EntityExtractorTest {
         framework.setAuthoritativePersistor(new DerbyPersistor());
         framework.saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(new TestEntity()));
 
-        String json = new String(Files.readAllBytes(Paths.get("src", "test", "resources", "format.json")));
+        String jsonString = new String(Files.readAllBytes(Paths.get("src", "test", "resources", "format.json")));
 
         // TODO Replace this with a Java POJO
-        JSONParser parser = new JSONParser();
-        JSONObject root = (JSONObject) parser.parse(json);
-        JSONObject item = (JSONObject) ((JSONArray) root.get("templates")).get(0);
-
-        // Replace relative path with absolute
-        item.put("templateUri", Paths.get(".", new URI((String) item.get("templateUri")).getPath()).toUri().toString());
-
-        json = root.toJSONString();
+        ObjectMapper mapper = new ObjectMapper();
+        TemplateJson json = mapper.readValue(jsonString, TemplateJson.class);
+        List<Template> templates = json.getTemplates();
+        String newUri = Paths.get(".", new URI(templates.get(0).getTemplateUri()).getPath()).toUri().toString();
+        templates.get(0).setTemplateUri(newUri);
 
         Map<String, String> params = new HashMap<>();
-        params.put(FSI_EntityExtractor.PARAM_JSON, json);
+        params.put(FSI_EntityExtractor.PARAM_JSON, new JSONObject(json).toString());
         params.put(FSI_EntityExtractor.PARAM_SPLIT, ",");
 
         FSI_EntityExtractor extractor = new FSI_EntityExtractor();
         extractor.setFramework(framework);
-        HashMap<String, String> templates = new HashMap<>();
-        templates.put("test1", "a");
+        HashMap<String, String> templatesMap = new HashMap<>();
+        templatesMap.put(newUri, IOUtils.toString(new URI(newUri), StandardCharsets.UTF_8));
+        extractor.setTemplates(templatesMap);
         extractor.setProperties(params);
 
         List<CoalesceEntity> entities = extractor.extract("unknown", "1,false,3.0");
