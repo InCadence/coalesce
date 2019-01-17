@@ -60,7 +60,6 @@ public class FSI_EntityExtractorTest {
 
         String jsonString = new String(Files.readAllBytes(Paths.get("src", "test", "resources", "format.json")));
 
-        // TODO Replace this with a Java POJO
         ObjectMapper mapper = new ObjectMapper();
         TemplateJson json = mapper.readValue(jsonString, TemplateJson.class);
         List<Template> templates = json.getTemplates();
