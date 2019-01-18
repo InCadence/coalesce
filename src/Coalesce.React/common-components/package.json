@@ -1,6 +1,6 @@
 {
   "name": "common-components",
-  "version": "0.0.34",
+  "version": "0.0.35-SNAPSHOT",
   "author": "InCadence",
   "description": "Common components used in Coalesce applications",
   "private": false,
