@@ -13,7 +13,9 @@ stages:
   - name: test
     if: branch != release AND !(tag IS present)
   - name: deploy
-    if: (branch = master AND "${TRAVIS_PULL_REQUEST}" = "false") OR tag IS present OR type = cron
+    if: tag IS present OR type = cron
+  - name: deploy-feature
+    if: tag IS present OR type = cron
   - name: deploy-karaf
     if: tag IS present
 jobs:
@@ -64,9 +66,13 @@ jobs:
         - cp -r src/pyCoalesce/target/site target/site/pycoalesce
         - mvn deploy -f src/Coalesce.Dist/coalesce-javadocs  -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
-    - stage: deploy-karaf
-      name: "Coalesce Karaf"
+    - stage: deploy-feature
+      name: "Coalesce Feature"
       install:
         - mvn deploy -f src/Coalesce.Feature -DskipTests -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+
+    - stage: deploy-karaf
+      name: "Coalesce Karaf"
+      install: skip
       script:
         - mvn deploy -f src/Coalesce.Dist/coalesce-karaf-dist -DskipTests -DskipDocker -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
