@@ -1,0 +1,513 @@
+<?xml version="1.0" ?>
+<template encoding-version="1.0">
+  <description></description>
+  <groupId>61844c2e-0168-1000-82cb-1058d4021537</groupId>
+  <name>IPR Demo</name>
+  <snippet>
+    <connections>
+      <id>61d3a6b7-0168-1000-0000-000000000000</id>
+      <parentGroupId>61844c2e-0168-1000-0000-000000000000</parentGroupId>
+      <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+      <backPressureObjectThreshold>1</backPressureObjectThreshold>
+      <destination>
+        <groupId>61844c2e-0168-1000-0000-000000000000</groupId>
+        <id>61d3456f-0168-1000-0000-000000000000</id>
+        <type>PROCESSOR</type>
+      </destination>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <labelIndex>1</labelIndex>
+      <name></name>
+      <selectedRelationships>success</selectedRelationships>
+      <source>
+        <groupId>61844c2e-0168-1000-0000-000000000000</groupId>
+        <id>61c39a8e-0168-1000-0000-000000000000</id>
+        <type>PROCESSOR</type>
+      </source>
+      <zIndex>0</zIndex>
+    </connections>
+    <connections>
+      <id>61d3b3c9-0168-1000-0000-000000000000</id>
+      <parentGroupId>61844c2e-0168-1000-0000-000000000000</parentGroupId>
+      <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+      <backPressureObjectThreshold>1</backPressureObjectThreshold>
+      <destination>
+        <groupId>61844c2e-0168-1000-0000-000000000000</groupId>
+        <id>61c592dd-0168-1000-0000-000000000000</id>
+        <type>PROCESSOR</type>
+      </destination>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <labelIndex>1</labelIndex>
+      <name></name>
+      <selectedRelationships>success</selectedRelationships>
+      <source>
+        <groupId>61844c2e-0168-1000-0000-000000000000</groupId>
+        <id>61d3456f-0168-1000-0000-000000000000</id>
+        <type>PROCESSOR</type>
+      </source>
+      <zIndex>0</zIndex>
+    </connections>
+    <connections>
+      <id>61fc91bd-0168-1000-0000-000000000000</id>
+      <parentGroupId>61844c2e-0168-1000-0000-000000000000</parentGroupId>
+      <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+      <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+      <destination>
+        <groupId>61844c2e-0168-1000-0000-000000000000</groupId>
+        <id>61fc79ef-0168-1000-0000-000000000000</id>
+        <type>PROCESSOR</type>
+      </destination>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <labelIndex>1</labelIndex>
+      <name></name>
+      <selectedRelationships>success</selectedRelationships>
+      <source>
+        <groupId>61844c2e-0168-1000-0000-000000000000</groupId>
+        <id>61c592dd-0168-1000-0000-000000000000</id>
+        <type>PROCESSOR</type>
+      </source>
+      <zIndex>0</zIndex>
+    </connections>
+    <processors>
+      <id>61c39a8e-0168-1000-0000-000000000000</id>
+      <parentGroupId>61844c2e-0168-1000-0000-000000000000</parentGroupId>
+      <position>
+        <x>0.0</x>
+        <y>2.6116485595703125</y>
+      </position>
+      <config>
+        <bulletinLevel>WARN</bulletinLevel>
+        <comments></comments>
+        <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+        <descriptors>
+          <entry>
+            <key>Input Directory</key>
+            <value>
+              <name>Input Directory</name>
+            </value>
+          </entry>
+          <entry>
+            <key>File Filter</key>
+            <value>
+              <name>File Filter</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Path Filter</key>
+            <value>
+              <name>Path Filter</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Batch Size</key>
+            <value>
+              <name>Batch Size</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Keep Source File</key>
+            <value>
+              <name>Keep Source File</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Recurse Subdirectories</key>
+            <value>
+              <name>Recurse Subdirectories</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Polling Interval</key>
+            <value>
+              <name>Polling Interval</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Ignore Hidden Files</key>
+            <value>
+              <name>Ignore Hidden Files</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Minimum File Age</key>
+            <value>
+              <name>Minimum File Age</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Maximum File Age</key>
+            <value>
+              <name>Maximum File Age</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Minimum File Size</key>
+            <value>
+              <name>Minimum File Size</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Maximum File Size</key>
+            <value>
+              <name>Maximum File Size</name>
+            </value>
+          </entry>
+        </descriptors>
+        <lossTolerant>false</lossTolerant>
+        <penaltyDuration>30 sec</penaltyDuration>
+        <properties>
+          <entry>
+            <key>Input Directory</key>
+            <value>/testfiles</value>
+          </entry>
+          <entry>
+            <key>File Filter</key>
+            <value>[^\.].*</value>
+          </entry>
+          <entry>
+            <key>Path Filter</key>
+          </entry>
+          <entry>
+            <key>Batch Size</key>
+            <value>10</value>
+          </entry>
+          <entry>
+            <key>Keep Source File</key>
+            <value>true</value>
+          </entry>
+          <entry>
+            <key>Recurse Subdirectories</key>
+            <value>true</value>
+          </entry>
+          <entry>
+            <key>Polling Interval</key>
+            <value>0 sec</value>
+          </entry>
+          <entry>
+            <key>Ignore Hidden Files</key>
+            <value>true</value>
+          </entry>
+          <entry>
+            <key>Minimum File Age</key>
+            <value>0 sec</value>
+          </entry>
+          <entry>
+            <key>Maximum File Age</key>
+          </entry>
+          <entry>
+            <key>Minimum File Size</key>
+            <value>0 B</value>
+          </entry>
+          <entry>
+            <key>Maximum File Size</key>
+          </entry>
+        </properties>
+        <runDurationMillis>0</runDurationMillis>
+        <schedulingPeriod>0 sec</schedulingPeriod>
+        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+        <yieldDuration>1 sec</yieldDuration>
+      </config>
+      <name>GetFile</name>
+      <relationships>
+        <autoTerminate>false</autoTerminate>
+        <name>success</name>
+      </relationships>
+      <style></style>
+      <type>org.apache.nifi.processors.standard.GetFile</type>
+    </processors>
+    <processors>
+      <id>61c592dd-0168-1000-0000-000000000000</id>
+      <parentGroupId>61844c2e-0168-1000-0000-000000000000</parentGroupId>
+      <position>
+        <x>442.00000000000006</x>
+        <y>0.0</y>
+      </position>
+      <config>
+        <bulletinLevel>WARN</bulletinLevel>
+        <comments></comments>
+        <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+        <descriptors>
+          <entry>
+            <key>json</key>
+            <value>
+              <name>json</name>
+            </value>
+          </entry>
+          <entry>
+            <key>split</key>
+            <value>
+              <name>split</name>
+            </value>
+          </entry>
+          <entry>
+            <key>classpaths</key>
+            <value>
+              <name>classpaths</name>
+            </value>
+          </entry>
+          <entry>
+            <key>hasHeaders</key>
+            <value>
+              <name>hasHeaders</name>
+            </value>
+          </entry>
+        </descriptors>
+        <lossTolerant>false</lossTolerant>
+        <penaltyDuration>30 sec</penaltyDuration>
+        <properties>
+          <entry>
+            <key>json</key>
+            <value>{
+  "templates": [
+    {
+    "templateUri": "http://192.168.11.51:8181/cxf/data/templates/4d9c5078-2ad1-3035-aa79-76471d3f67f4/xml",
+    "record": {
+      "name": "metadata3",
+      "fields": {
+        "0": "Country",
+        "1": "Year",
+        "2": "Rank",
+        "3": "Total",
+        "4": "C1",
+        "5": "C2",
+        "6": "C3",
+        "7": "E1",
+        "8": "E2",
+        "9": "E3",
+        "10": "P1",
+        "11": "P2",
+        "12": "P3",
+        "13": "S1",
+        "14": "S2",
+        "15": "X1"}
+    }
+  },
+  {
+    "templateUri": "http://192.168.11.51:8181/cxf/data/templates/fc9366bd-9dd7-39b3-b2f1-2a19085052e8/xml",
+    "record": {
+      "name": "metadata2",
+      "fields": {
+        "0": "Country",
+        "1": "Year"
+        }
+    }
+  }],
+  "linkages": [
+    {
+      "entity1": "0",
+      "linkType": "created",
+      "entity2": "1"
+    }
+  ]
+}
+</value>
+          </entry>
+          <entry>
+            <key>split</key>
+            <value>,</value>
+          </entry>
+          <entry>
+            <key>classpaths</key>
+            <value>com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch
+</value>
+          </entry>
+          <entry>
+            <key>hasHeaders</key>
+            <value>true</value>
+          </entry>
+        </properties>
+        <runDurationMillis>0</runDurationMillis>
+        <schedulingPeriod>0 sec</schedulingPeriod>
+        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+        <yieldDuration>1 sec</yieldDuration>
+      </config>
+      <name>JsonCsvExtractor</name>
+      <relationships>
+        <autoTerminate>true</autoTerminate>
+        <name>failure</name>
+      </relationships>
+      <relationships>
+        <autoTerminate>false</autoTerminate>
+        <name>success</name>
+      </relationships>
+      <style></style>
+      <type>com.incadencecorp.coalesce.nifi.processors.entity.csv_extractor.JsonCsvExtractor</type>
+    </processors>
+    <processors>
+      <id>61d3456f-0168-1000-0000-000000000000</id>
+      <parentGroupId>61844c2e-0168-1000-0000-000000000000</parentGroupId>
+      <position>
+        <x>195.00000000000006</x>
+        <y>258.6116485595703</y>
+      </position>
+      <config>
+        <bulletinLevel>WARN</bulletinLevel>
+        <comments></comments>
+        <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+        <descriptors>
+          <entry>
+            <key>Delete Attributes Expression</key>
+            <value>
+              <name>Delete Attributes Expression</name>
+            </value>
+          </entry>
+          <entry>
+            <key>elastic.clustername</key>
+            <value>
+              <name>elastic.clustername</name>
+            </value>
+          </entry>
+          <entry>
+            <key>elastic.datastore.cache.enabled</key>
+            <value>
+              <name>elastic.datastore.cache.enabled</name>
+            </value>
+          </entry>
+          <entry>
+            <key>elastic.hosts</key>
+            <value>
+              <name>elastic.hosts</name>
+            </value>
+          </entry>
+          <entry>
+            <key>elastic.http.host</key>
+            <value>
+              <name>elastic.http.host</name>
+            </value>
+          </entry>
+          <entry>
+            <key>elastic.http.port</key>
+            <value>
+              <name>elastic.http.port</name>
+            </value>
+          </entry>
+          <entry>
+            <key>ssl.enabled</key>
+            <value>
+              <name>ssl.enabled</name>
+            </value>
+          </entry>
+        </descriptors>
+        <lossTolerant>false</lossTolerant>
+        <penaltyDuration>30 sec</penaltyDuration>
+        <properties>
+          <entry>
+            <key>Delete Attributes Expression</key>
+          </entry>
+          <entry>
+            <key>elastic.clustername</key>
+            <value>elasticsearch</value>
+          </entry>
+          <entry>
+            <key>elastic.datastore.cache.enabled</key>
+            <value>false</value>
+          </entry>
+          <entry>
+            <key>elastic.hosts</key>
+            <value>192.168.11.51:9300</value>
+          </entry>
+          <entry>
+            <key>elastic.http.host</key>
+            <value>192.168.11.51</value>
+          </entry>
+          <entry>
+            <key>elastic.http.port</key>
+            <value>9200</value>
+          </entry>
+          <entry>
+            <key>ssl.enabled</key>
+            <value>false</value>
+          </entry>
+        </properties>
+        <runDurationMillis>0</runDurationMillis>
+        <schedulingPeriod>0 sec</schedulingPeriod>
+        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+        <yieldDuration>1 sec</yieldDuration>
+      </config>
+      <name>ElasticSearch Values</name>
+      <relationships>
+        <autoTerminate>false</autoTerminate>
+        <name>success</name>
+      </relationships>
+      <style></style>
+      <type>org.apache.nifi.processors.attributes.UpdateAttribute</type>
+    </processors>
+    <processors>
+      <id>61fc79ef-0168-1000-0000-000000000000</id>
+      <parentGroupId>61844c2e-0168-1000-0000-000000000000</parentGroupId>
+      <position>
+        <x>840.081307673237</x>
+        <y>4.352753066256298</y>
+      </position>
+      <config>
+        <bulletinLevel>WARN</bulletinLevel>
+        <comments></comments>
+        <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+        <descriptors>
+          <entry>
+            <key>Log Level</key>
+            <value>
+              <name>Log Level</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Log Payload</key>
+            <value>
+              <name>Log Payload</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Attributes to Log</key>
+            <value>
+              <name>Attributes to Log</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Attributes to Ignore</key>
+            <value>
+              <name>Attributes to Ignore</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Log prefix</key>
+            <value>
+              <name>Log prefix</name>
+            </value>
+          </entry>
+        </descriptors>
+        <lossTolerant>false</lossTolerant>
+        <penaltyDuration>30 sec</penaltyDuration>
+        <properties>
+          <entry>
+            <key>Log Level</key>
+            <value>info</value>
+          </entry>
+          <entry>
+            <key>Log Payload</key>
+            <value>false</value>
+          </entry>
+          <entry>
+            <key>Attributes to Log</key>
+          </entry>
+          <entry>
+            <key>Attributes to Ignore</key>
+          </entry>
+          <entry>
+            <key>Log prefix</key>
+          </entry>
+        </properties>
+        <runDurationMillis>0</runDurationMillis>
+        <schedulingPeriod>0 sec</schedulingPeriod>
+        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+        <yieldDuration>1 sec</yieldDuration>
+      </config>
+      <name>LogAttribute</name>
+      <relationships>
+        <autoTerminate>true</autoTerminate>
+        <name>success</name>
+      </relationships>
+      <style></style>
+      <type>org.apache.nifi.processors.standard.LogAttribute</type>
+    </processors>
+  </snippet>
+  <timestamp>01/18/2019 12:30:00 EST</timestamp>
+</template>

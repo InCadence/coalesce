@@ -94,7 +94,7 @@ public class JsonCsvExtractor extends AbstractProcessor {
             "(Boolean) Indicates whether or not the data source contains headers").required(true).defaultValue("true").addValidator(StandardValidators.NON_EMPTY_VALIDATOR).build();
 
     public static final PropertyDescriptor CSV_SEPARATOR = new PropertyDescriptor.Builder().name(FSI_EntityExtractor.PARAM_SPLIT).displayName("CSV Separator").description(
-            "Default is a comma (,)").required(true).addValidator(StandardValidators.NON_EMPTY_VALIDATOR).build();
+            "Default is a comma (,)").required(true).defaultValue(",").addValidator(StandardValidators.NON_EMPTY_VALIDATOR).build();
 
     public static final PropertyDescriptor PERSISTOR_CLASSPATHS = new PropertyDescriptor.Builder().name("classpaths").displayName("Persistor Classpaths").description(
             "One classpath per line (shift+enter is newline), first line is authoritative").required(true).addValidator(StandardValidators.NON_EMPTY_VALIDATOR).build();
@@ -153,12 +153,12 @@ public class JsonCsvExtractor extends AbstractProcessor {
         String classpaths = context.getProperty(PERSISTOR_CLASSPATHS).getValue();
         boolean hasHeaders = Boolean.parseBoolean(context.getProperty(PARAM_HAS_HEADERS).getValue());
 
-        CoalesceSearchFramework framework = loadFramework(getParameters(context), classpaths.split("\n"));
-
         List<CoalesceEntity> entities = new ArrayList<>();
         FlowFile flowFile = session.get();
         if (flowFile != null)
         {
+            CoalesceSearchFramework framework = loadFramework(flowFile.getAttributes(), classpaths.split("\n"));
+
             //this file is for the actual csv
             String filename = flowFile.getAttribute("filename");
             Path absolutePath = Paths.get(flowFile.getAttribute("absolute.path"));
