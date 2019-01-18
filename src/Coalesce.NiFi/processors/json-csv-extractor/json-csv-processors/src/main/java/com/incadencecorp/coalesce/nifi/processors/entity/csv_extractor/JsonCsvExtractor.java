@@ -70,6 +70,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -85,10 +87,11 @@ import java.util.Set;
 @WritesAttributes({ @WritesAttribute(attribute = "") })
 public class JsonCsvExtractor extends AbstractProcessor {
 
-    private CoalesceSearchFramework framework;
-
     public static final PropertyDescriptor TEMPLATE_JSON = new PropertyDescriptor.Builder().name("json").displayName("JSON Template").description(
             "Copy & Paste JSON template. Format is on the coalesce wiki").required(true).addValidator(StandardValidators.NON_EMPTY_VALIDATOR).build();
+
+    public static final PropertyDescriptor PARAM_HAS_HEADERS = new PropertyDescriptor.Builder().name("hasHeaders").displayName("Data Contains Headers").description(
+            "(Boolean) Indicates whether or not the data source contains headers").required(true).defaultValue("true").addValidator(StandardValidators.NON_EMPTY_VALIDATOR).build();
 
     public static final PropertyDescriptor CSV_SEPARATOR = new PropertyDescriptor.Builder().name(FSI_EntityExtractor.PARAM_SPLIT).displayName("CSV Separator").description(
             "Default is a comma (,)").required(true).addValidator(StandardValidators.NON_EMPTY_VALIDATOR).build();
@@ -146,89 +149,78 @@ public class JsonCsvExtractor extends AbstractProcessor {
     @Override
     public void onTrigger(final ProcessContext context, final ProcessSession session) throws ProcessException
     {
+        String classpaths = context.getProperty(PERSISTOR_CLASSPATHS).getValue();
+        boolean hasHeaders = Boolean.parseBoolean(context.getProperty(PARAM_HAS_HEADERS).getValue());
+
+        CoalesceSearchFramework framework = loadFramework(getParameters(context), classpaths.split("\n"));
+
         List<CoalesceEntity> entities = new ArrayList<>();
         FlowFile flowFile = session.get();
-        if (flowFile == null)
+        if (flowFile != null)
         {
-            return;
-        }
+            //this file is for the actual csv
+            String filename = flowFile.getAttribute("filename");
+            Path absolutePath = Paths.get(flowFile.getAttribute("absolute.path"));
 
-        //this file is for the actual csv
-        String filename = flowFile.getAttribute("filename");
-        String absolutePath = flowFile.getAttribute("absolute.path");
-
-        String jsonString = context.getProperty(TEMPLATE_JSON).getValue();
-
-        try
-        {
-            // TODO Replace this with a parameter thats passed in
-            Class extractorClass = Thread.currentThread().getContextClassLoader().loadClass(FSI_EntityExtractor.class.getName());
-            Object g = extractorClass.newInstance();
-            if (g instanceof IExtractor)
+            try
             {
-                //the token to split with, usually a comma (,)
-                String splitToken = context.getProperty(CSV_SEPARATOR).getValue();
+                // TODO Replace this with a parameter thats passed in
+                Class extractorClass = Thread.currentThread().getContextClassLoader().loadClass(FSI_EntityExtractor.class.getName());
+                Object extractor = extractorClass.newInstance();
 
-
-                //pass the json string to the extractor
-                ((IExtractor) g).setProperties(getParameters(context));
-                //get the templates, then pass them to the extractor,
-                //  so the extractor doesn't need to create a persistor to get them
-                getTemplates(jsonString, ((FSI_EntityExtractor) g));
-
-                //read file
-                File file = new File(absolutePath + filename);    //    /testfiles/whatever.csv
-                try (BufferedReader b = new BufferedReader(new FileReader(file)))
+                if (extractor instanceof IExtractor)
                 {
-                    String line;
-                    while ((line = b.readLine()) != null)
+                    //pass the json string to the extractor
+                    ((IExtractor) extractor).setProperties(getParameters(context));
+                    ((IExtractor) extractor).setFramework(framework);
+
+                    boolean isFirstLine = true;
+
+                    //read file
+                    File file = absolutePath.resolve(filename).toFile();
+                    try (BufferedReader reader = new BufferedReader(new FileReader(file)))
                     {
-                        List<CoalesceEntity> ent = ((FSI_EntityExtractor) g).extract(filename, line);
-                        entities.addAll(ent);
+                        String line;
+                        while ((line = reader.readLine()) != null)
+                        {
+                            if (!hasHeaders || !isFirstLine)
+                            {
+                                List<CoalesceEntity> ent = ((IExtractor) extractor).extract(filename, line);
+                                entities.addAll(ent);
+                            }
+
+                            isFirstLine = false;
+                        }
                     }
                 }
+                else
+                {
+                    throw new ProcessException(String.format(CoalesceErrors.NOT_INITIALIZED, IExtractor.class.getSimpleName()));
+                }
             }
-            else
+            catch (IndexNotFoundException | ClassNotFoundException | IllegalAccessException | InstantiationException | CoalesceException | IOException e)
             {
-                throw new ProcessException(String.format(CoalesceErrors.NOT_INITIALIZED, IExtractor.class.getSimpleName()));
+                getLogger().log(LogLevel.ERROR, e.getClass().getSimpleName() + ": " + e.getMessage() , e);
             }
-        }
-        catch (IndexNotFoundException e)
-        {
-            getLogger().log(LogLevel.ERROR, "IndexNotFoundException: ", e);
-        }
-        catch (ClassNotFoundException e)
-        {
-            getLogger().log(LogLevel.ERROR, "classnotfound: ", e);
-        }
-        catch (IllegalAccessException e)
-        {
-            getLogger().log(LogLevel.ERROR, "IllegalAccessException: ", e);
-        }
-        catch (InstantiationException e)
-        {
-            getLogger().log(LogLevel.ERROR, "InstantiationException: ", e);
-        }
-        catch (FileNotFoundException e)
-        {
-            getLogger().log(LogLevel.ERROR, "FileNotFoundException: ", e);
-        }
-        catch (IOException e)
-        {
-            getLogger().log(LogLevel.ERROR, "IOException: ", e);
-        }
-        catch (CoalesceException e)
-        {
-            e.printStackTrace();
-            getLogger().log(LogLevel.ERROR, "FUCK YOUCoalesceException: " + e);
-        }
 
-        this.framework = new CoalesceSearchFramework();
-        String classpaths = context.getProperty(PERSISTOR_CLASSPATHS).getValue();
-        String[] classpathsSplit = classpaths.split("\n");
-        boolean authPersistorSet = false;
-        Map<String, String> params = getParameters(context);
-        for(String classpath : classpathsSplit) {
+            try
+            {
+                framework.saveCoalesceEntity(entities.toArray(new CoalesceEntity[entities.size()]));
+            }
+            catch (CoalescePersistorException e)
+            {
+                getLogger().log(LogLevel.ERROR, "Exception: ", e);
+            }
+
+            session.transfer(flowFile, SUCCESS);
+        }
+    }
+
+    private CoalesceSearchFramework loadFramework(Map<String, String> params, String[] classpaths) {
+
+        CoalesceSearchFramework framework = new CoalesceSearchFramework();
+
+        for(String classpath : classpaths) {
             try {
                 Class persistorClass = Thread.currentThread().getContextClassLoader().loadClass(classpath);
                 Constructor c = persistorClass.getConstructor();
@@ -241,9 +233,8 @@ public class JsonCsvExtractor extends AbstractProcessor {
                     persistor = (ICoalescePersistor)(c.newInstance());
                 }
 
-                if(!authPersistorSet) {
+                if(!framework.isInitialized()) {
                     framework.setAuthoritativePersistor(persistor);
-                    authPersistorSet = true;
                 }
                 else {
                     framework.setSecondaryPersistors(persistor);
@@ -254,76 +245,8 @@ public class JsonCsvExtractor extends AbstractProcessor {
                 getLogger().log(LogLevel.ERROR, "Exception: ", e);
             }
         }
-        try {
-            this.framework.saveCoalesceEntity(entities.toArray(new CoalesceEntity[entities.size()]));
-        }
-        catch(CoalescePersistorException e) {
-            getLogger().log(LogLevel.ERROR, "Exception: ", e);
-        }
 
-
-        session.transfer(flowFile, SUCCESS);
-    }
-
-
-    public void getTemplates(String jsonString, FSI_EntityExtractor g) {
-        try
-        {
-            HashMap<String, String> templates = new HashMap<>();
-            JSONParser parser = new JSONParser();
-            JSONObject json = (JSONObject) parser.parse(jsonString);
-            JSONArray templatesArray = (JSONArray) json.get("templates");
-            for (Object aTemplatesArray : templatesArray)
-            {
-                JSONObject template = (JSONObject) aTemplatesArray;
-                String templateUri = (String) template.get("templateUri");
-
-                String templateXml = getTemplateXml(templateUri);
-                templates.put(templateUri, templateXml);
-            }
-            g.setTemplates(templates);
-        }
-        catch(ParseException e) {
-            getLogger().log(LogLevel.ERROR, "ParseException: ", e);
-        }
-    }
-
-    private String getTemplateXml(String templateUri) {
-        try {
-            URI uri = new URI(templateUri);
-            switch(uri.getScheme()) {
-            case "file":
-                return IOUtils.toString(uri, StandardCharsets.UTF_8);
-            case "http":
-            case "https":
-                HttpResponse response = getResponse(new HttpGet(templateUri));
-                switch(response.getStatusLine().getStatusCode()) {
-                case HttpStatus.SC_OK:
-                    return EntityUtils.toString(response.getEntity());
-                default:
-                    break;
-                }
-            }
-        }
-        catch(URISyntaxException e) {
-            getLogger().log(LogLevel.ERROR, "URISyntaxException: ", e);
-        }
-        catch(IOException e) {
-            getLogger().log(LogLevel.ERROR, "IOException: ", e);
-        }
-        return "ERROR";
-    }
-
-    private HttpResponse getResponse(HttpUriRequest request) {
-        HttpResponse response = null;
-        try {
-            CloseableHttpClient client = HttpClients.createDefault();
-            response = client.execute(request);
-        }
-        catch(IOException e) {
-            getLogger().log(LogLevel.ERROR, "IOException: ", e);
-        }
-        return response;
+        return framework;
     }
 
     /**

@@ -72,9 +72,6 @@ public class FSI_EntityExtractorTest {
 
         FSI_EntityExtractor extractor = new FSI_EntityExtractor();
         extractor.setFramework(framework);
-        HashMap<String, String> templatesMap = new HashMap<>();
-        templatesMap.put(newUri, IOUtils.toString(new URI(newUri), StandardCharsets.UTF_8));
-        extractor.setTemplates(templatesMap);
         extractor.setProperties(params);
 
         List<CoalesceEntity> entities = extractor.extract("unknown", "1,false,3.0");

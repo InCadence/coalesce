@@ -23,28 +23,31 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
-import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceDoubleField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceIntegerField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.ingest.api.IExtractor;
 import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
 import org.apache.commons.io.IOUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * methods that must be called before the extract method:
@@ -59,8 +62,7 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
 
     private String separator;
     private final Map<String, CoalesceEntityTemplate> entityTemplates = new HashMap<>(); //uri to CoalesceEntityTemplate
-    private List<Template> templatesArray;
-    private List<Linkage> linkagesArray;
+    private TemplateJson configuration;
 
     @Override
     public void setFramework(CoalesceSearchFramework framework)
@@ -80,7 +82,7 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
         List<CoalesceEntity> entities = new ArrayList<>();
         String[] fields = line.split(this.separator);
 
-        for (Template template : this.templatesArray)
+        for (Template template : configuration.getTemplates())
         {
             String templateUri = template.getTemplateUri();
 
@@ -132,31 +134,30 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
             entities.add(entity);
         }
 
-        //set linkages if any now
-        for (int i = 0; i < entities.size(); i++)
+        if (configuration.getLinkages() != null && !configuration.getLinkages().isEmpty())
         {
-            if (this.linkagesArray == null || this.linkagesArray.size() == 0)
+            //set linkages if any now
+            for (Linkage link : configuration.getLinkages())
             {
-                break;
-            }
-            for (Linkage link : this.linkagesArray)
-            {
-                String templateUri1 = this.templatesArray.get(Integer.parseInt(link.getEntity1())).getTemplateUri();
-                String templateKey1 = this.entityTemplates.get(templateUri1).getKey();
+                String templateUri1 = configuration.getTemplates().get(Integer.parseInt(link.getEntity1())).getTemplateUri();
+                String templateClassname1 = this.entityTemplates.get(templateUri1).getClassName();
+                String templateUri2 = configuration.getTemplates().get(Integer.parseInt(link.getEntity2())).getTemplateUri();
+                String templateClassname2 = this.entityTemplates.get(templateUri2).getClassName();
 
-                if (templateKey1.equals(entities.get(i).createNewEntityTemplate().getKey()))
+                for (CoalesceEntity entity1 : entities)
                 {
-                    String templateUri2 = this.templatesArray.get(Integer.parseInt(link.getEntity2())).getTemplateUri();
-                    String templateKey2 = this.entityTemplates.get(templateUri2).getKey();
-                    for (int j = 0; j < entities.size(); j++)
+                    if (templateClassname1.equals(entity1.getClassName()))
                     {
-                        if (j != i)
+                        for (CoalesceEntity entity2 : entities)
                         {
-                            if (templateKey2.equals(entities.get(j).createNewEntityTemplate().getKey()))
+                            if (!entity1.getKey().equals(entity2.getKey()))
                             {
-                                EntityLinkHelper.linkEntitiesUniDirectional(entities.get(i),
-                                                                            ELinkTypes.getTypeForLabel(link.getLinkType()),
-                                                                            entities.get(j));
+                                if (templateClassname2.equals(entity2.getClassName()))
+                                {
+                                    EntityLinkHelper.linkEntitiesUniDirectional(entity1,
+                                                                                ELinkTypes.getTypeForLabel(link.getLinkType()),
+                                                                                entity2);
+                                }
                             }
                         }
                     }
@@ -266,11 +267,19 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
             try
             {
                 ObjectMapper mapper = new ObjectMapper();
-                TemplateJson json = mapper.readValue(jsonString, TemplateJson.class);
-                this.templatesArray = json.getTemplates();
-                this.linkagesArray = json.getLinkages();
+                configuration = mapper.readValue(jsonString, TemplateJson.class);
+
+                for (Template template : configuration.getTemplates())
+                {
+                    String xml = IOUtils.toString(new URI(template.getTemplateUri()), StandardCharsets.UTF_8);
+                    CoalesceEntityTemplate entityTemplate = CoalesceEntityTemplate.create(xml);
+
+                    entityTemplates.put(template.getTemplateUri(), entityTemplate);
+
+                    CoalesceTemplateUtil.addTemplates(entityTemplate);
+                }
             }
-            catch (IOException e)
+            catch (IOException | URISyntaxException | CoalesceException e)
             {
                 throw new RuntimeException(e);
             }
@@ -278,77 +287,6 @@ public class FSI_EntityExtractor extends CoalesceComponentImpl implements IExtra
 
         this.separator = params.getOrDefault(PARAM_SPLIT, ",");
 
-    }
-
-    @Deprecated //TODO: Remove because it's in the JsonCsvExtractor class
-    private String getTemplateXml(String templateUri)
-    {
-        try
-        {
-            URI uri = new URI(templateUri);
-            switch (uri.getScheme())
-            {
-            case "file":
-                return IOUtils.toString(uri, StandardCharsets.UTF_8);
-            case "http":
-            case "https":
-                HttpResponse response = getResponse(new HttpGet(templateUri));
-                switch (response.getStatusLine().getStatusCode())
-                {
-                case HttpStatus.SC_OK:
-                    return EntityUtils.toString(response.getEntity());
-                default:
-                    break;
-                }
-            }
-        }
-
-        catch (URISyntaxException e)
-        {
-            LOGGER.error("URISyntaxException: ", e);
-        }
-        catch (IOException e)
-        {
-            LOGGER.error("IOException: ", e);
-        }
-        return "ERROR";
-    }
-
-    // TODO This was a copy and paste need to refactor to a common library
-    private HttpResponse getResponse(HttpUriRequest request)
-    {
-        HttpResponse response = null;
-        try
-        {
-            CloseableHttpClient client = HttpClients.createDefault();
-            response = client.execute(request);
-        }
-        catch (IOException e)
-        {
-            LOGGER.error("IOException: ", e);
-        }
-        return response;
-    }
-
-    public void setTemplates(HashMap<String, String> templates)
-    {
-        //this.entityTemplates = new HashMap<>();
-        for (Object oTemplateUri : templates.keySet().toArray())
-        {
-            String templateUri = (String) oTemplateUri;
-            String templateXml = templates.get(templateUri);
-            try
-            {
-                CoalesceEntityTemplate entityTemplate = CoalesceEntityTemplate.create(templateXml);
-                entityTemplates.put(templateUri, entityTemplate);
-                CoalesceTemplateUtil.addTemplates(entityTemplate);
-            }
-            catch (CoalesceException e)
-            {
-                LOGGER.debug("Template Specified: {}", templateUri);
-            }
-
-        }
     }
 
 }
