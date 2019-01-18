@@ -116,6 +116,7 @@ public class JsonCsvExtractor extends AbstractProcessor {
         descriptors.add(TEMPLATE_JSON);
         descriptors.add(CSV_SEPARATOR);
         descriptors.add(PERSISTOR_CLASSPATHS);
+        descriptors.add(PARAM_HAS_HEADERS);
         this.descriptors = Collections.unmodifiableList(descriptors);
 
         final Set<Relationship> relationships = new HashSet<>();
