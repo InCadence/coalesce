@@ -23,7 +23,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.nifi</groupId>
         <artifactId>coalesce-nifi-processor-parent</artifactId>
-        <version>0.0.34-SNAPSHOT</version>
+        <version>0.0.34</version>
         <relativePath>..</relativePath>
     </parent>
 
