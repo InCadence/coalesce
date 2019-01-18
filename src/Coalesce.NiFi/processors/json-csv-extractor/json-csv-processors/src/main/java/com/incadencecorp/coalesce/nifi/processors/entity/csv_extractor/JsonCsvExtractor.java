@@ -178,13 +178,14 @@ public class JsonCsvExtractor extends AbstractProcessor {
 
                 //read file
                 File file = new File(absolutePath + filename);    //    /testfiles/whatever.csv
-                BufferedReader b = new BufferedReader(new FileReader(file));
-
-                String columnNames = b.readLine();
-                String line;
-                while ((line = b.readLine()) != null) {
-                    List<CoalesceEntity> ent = ((FSI_EntityExtractor) g).extract(filename, line);
-                    entities.addAll(ent);
+                try (BufferedReader b = new BufferedReader(new FileReader(file)))
+                {
+                    String line;
+                    while ((line = b.readLine()) != null)
+                    {
+                        List<CoalesceEntity> ent = ((FSI_EntityExtractor) g).extract(filename, line);
+                        entities.addAll(ent);
+                    }
                 }
             }
             else
