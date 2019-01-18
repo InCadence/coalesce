@@ -1,0 +1,12 @@
+{
+  "templates": [{
+    "templateUri": "file:///src/test/resources/0d75e8ca-204f-3d20-a03d-7e43a889e93f",
+    "record": {
+      "name": "test1",
+      "fields": {
+        "0": "int",
+        "1": "boolean",
+        "2": "double"}
+      }
+  }]
+}
