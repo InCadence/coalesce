@@ -43,7 +43,7 @@ jobs:
 
     - stage: deploy
       name: "Coalesce UI"
-      env: CI=false
+      env: CI=true
       install: npm config set cache $HOME/.npm
       script: mvn deploy -f src/Coalesce.React -DskipTests -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
