@@ -68,7 +68,8 @@ jobs:
 
     - stage: deploy-feature
       name: "Coalesce Feature"
-      install:
+      install: skip
+      script:
         - mvn deploy -f src/Coalesce.Feature -DskipTests -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
     - stage: deploy-karaf
