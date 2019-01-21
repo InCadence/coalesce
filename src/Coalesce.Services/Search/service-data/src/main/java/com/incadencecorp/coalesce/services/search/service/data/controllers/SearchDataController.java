@@ -429,8 +429,11 @@ public class SearchDataController {
                 String[] values = criteria.getValues().toArray(new String[0]);
                 if (values.length != 2)
                 {
-                    throw new CoalesceException(
-                            "Expected two values space separated '<from> <to>'; Actual: " + criteria.getValue());
+                    values = criteria.getValue().split(" ");
+                    if (values.length != 2)
+                    {
+                        throw new CoalesceException("Expected two values space separated '<from> <to>'; Actual: " + criteria.getValue());
+                    }
                 }
                 criteriaFilter = ff.between(property, ff.literal(values[0]), ff.literal(values[1]));
                 break;
@@ -438,8 +441,11 @@ public class SearchDataController {
                 String[] times = criteria.getValues().toArray(new String[0]);
                 if (times.length != 2)
                 {
-                    throw new CoalesceException(
-                            "Expected two values space separated '<from> <to>'; Actual: " + criteria.getValue());
+                    times = criteria.getValue().split(" ");
+                    if (times.length != 2)
+                    {
+                        throw new CoalesceException("Expected two values space separated '<from> <to>'; Actual: " + criteria.getValue());
+                    }
                 }
 
                 times[0] = times[0].replaceAll("\"", "");
