@@ -850,7 +850,7 @@ class SearchTests(ServerTest):
                                          sort_by =
                                              {"propertyName": "testrecordset2.field1",
                                               "sortOrder": "ASC"},
-                                         return_property_names = \
+                                         return_property_names =
                                              [request3_return_property],
                                          output = "list",
                                          return_query = True)
@@ -862,9 +862,9 @@ class SearchTests(ServerTest):
 
         results4_list, query4 = search(server = self.server,
                                          query = filter3_JSON,
-                                         sort_by = "propertyName": "testrecordset2.field1",
-                                         sort_order: "ASC",
-                                         return_property_names = \
+                                         sort_by = "testrecordset2.field1",
+                                         sort_order = "ASC",
+                                         return_property_names =
                                              [request3_return_property],
                                          output = "list",
                                          return_query = True)
@@ -874,11 +874,12 @@ class SearchTests(ServerTest):
         request4_return_property_out = query4["propertyNames"][0]
         self.assertEqual(request3_return_property, request4_return_property_out)
 
+        sort_by_JSON = json.dumps({"propertyName": "testrecordset2.field1",
+                                   "sortOrder": "ASC"})
         results5_list, query5 = search(server = self.server,
                                          query = filter3_JSON,
-                                         sort_by =
-                                             '{"propertyName": "testrecordset2.field1", "sortOrder": "ASC"}',
-                                         return_property_names = \
+                                         sort_by = sort_by_JSON,
+                                         return_property_names =
                                              [request3_return_property],
                                          output = "list",
                                          return_query = True)
