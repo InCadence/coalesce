@@ -95,10 +95,10 @@ public class SQLDataConnector extends CoalesceDataConnectorBase {
 
     public SQLDataConnector(Map<String,String> params) throws CoalescePersistorException
     {
-        this(new ServerConn(params.get("asid.dbServerName"),
+        this(new ServerConn(params.get("asid.database"),
                             params.get("asid.dbUser"),
                             params.get("asid.dbPassword"),
-                            params.get("asid.database"),
+                            params.get("asid.dbServerName"),
                             Integer.parseInt(params.get("asid.dbServerPort"))
                             ),params.get("asid.schema"));
     }

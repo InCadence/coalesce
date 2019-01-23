@@ -45,10 +45,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -186,10 +183,16 @@ public class SQLSearchPersisterImpl extends SQLPersisterImpl implements ICoalesc
         // Add Parameters
         for (Object value : filter.getLiteralValues())
         {
-            DateTime dateTime = new DateTime(value);
-            dateTime.withZone(DateTimeZone.UTC);
-            DateTime theDate = JodaDateTimeHelper.fromXmlDateTimeUTC(dateTime.toString());
-            parameters.add(new CoalesceParameter(theDate));
+            if(value instanceof Date)
+            {
+                //DateTime has to be formatted to ISODateTimeFormat  
+                DateTime dateTime = new DateTime(value);
+                dateTime = JodaDateTimeHelper.fromXmlDateTimeUTC(dateTime.toString());
+                parameters.add(new CoalesceParameter(dateTime));
+            }else
+            {
+                parameters.add(new CoalesceParameter(value.toString(), Types.OTHER));
+            }
         }
 
         return parameters;
