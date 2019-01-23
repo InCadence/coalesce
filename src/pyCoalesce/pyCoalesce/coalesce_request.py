@@ -299,10 +299,10 @@ def case_operator(input_operator):
     return unicode(input_operator)
 
 
-def search(server = None, query = None, sort_by = None,
-           return_property_names = ["coalesceentity.name"], page_size = 200,
-           page_number = 1, output = "list", check_case = True,
-           return_query = False):
+def search(server = None, query = None,
+           return_property_names = ["coalesceentity.name"], template = None,
+           sort_by = None, sort_order = "ASC", page_size = 200, page_number = 1,
+           output = "list", check_case = True, return_query = False):
 
     """
     Submits a query using the full Coalesce RESTful API.  The user
@@ -316,20 +316,18 @@ def search(server = None, query = None, sort_by = None,
         <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`_)
         or the full query object, as dict-like or a JSON object (string);
         in the case of a full query object, the other arguments used to
-        form the query ("sort_by", "return_property_names", "page_size",
-        and "page_number") are ignored.  For the most part, the query must
-        follow the Coalesce format exactly, but if "check_case" is
-        ``True``, operators not in the right form (upper camelcase for most
-        search operators, all caps for group operators) are replaced with
-        the proper forms, provided they're included in the
-        :const:`~pyCoalesce.coalesce_request.SEARCH_OPERATORS` constant.
-    :param sort_by:  one or more properties (fields) on which the results
-        should be sorted, along with the sort order ("ASC" for ascending,
-        "DESC" for descending), as an iterable, a dict-like (for a single
-        field), or a JSON object (string).  Each entry must take the form
-        `{"propertyName": <recordset>.<field>, "sortOrder": <sort order>}`;
-        for basic entity fields, such as "name" and "dateCreated", give
-        just the field name, with no recordset.
+        form a query ("sort_by", "sort_order", "return_property_names",
+        "page_size", and "page_number") are ignored.  For the most part,
+        the query must follow the Coalesce format exactly, but if
+        "check_case" is ``True``, operators not in the right form (upper
+        camelcase for most search operators, all caps for group operators)
+        are replaced with the proper forms, provided they're included in
+        the :const:`~pyCoalesce.coalesce_request.SEARCH_OPERATORS`
+        constant.  It's possible to supply an empty query (a value of
+        ``None`` or an empty string or dict), in which case the search will
+        return all records in the recordset implied by one of more values
+        of the "return_property_names" argument, or, failing that, the
+        recordset corresponding to the "template" argument (see below).
     :param return_property_names:  an iterable naming the properties
         (fields) to return for each search result.  The values, each in the
         format `<recordset>.<field>`, are passed directly to the
@@ -337,6 +335,26 @@ def search(server = None, query = None, sort_by = None,
         persistors, these names are case-insensitive  Note that the
         "entityKey" property is always returned, regardless of the value of
         this argument.
+    :param template:  the name of a template whose records should be
+        searched, if the template can't be infered from "query" or
+        "return_property_names".  This value is *required* in such a case,
+        but will be ignored otherwise.  Note that, while each template
+        typically has a single corresponding recordset, the template and
+        recordset have different (albeit usually similar) names.  This name
+        is case-insensitive.  This is the "type" key in the Coalesce
+        RESTful API format, but "type" is a reserved name in Python.
+    :param sort_by:  this argument can take one of two forms:  a single
+        property (field) on which the results should be sorted, as a string
+        in the form `<recordset>.<field>`; or, a list-like or JSON array of
+        of dict-like or JSON objects in the form
+        `{"propertyName": <recordset>.<field>, "sortOrder": <sort order>}`.
+        A single dict-like/JSON object in the latter format will also be
+        accepted.  For basic entity fields, such as "name" and
+        "dateCreated", the field name should be supplied by itself, with no
+        recordset.
+    :param sort_order:  "ASC" for ascending, or "DESC" for descending.
+        This argument is used only if "sort_by" is the name of a single
+        field (rather than a full Coalesce "sortBy" object).
     :param page_size:  the number of results to return
     :param page_number:  used to retrieve results deeper in the list.  For
         example, a query with "page_size" 250 and "page_number" 3 returns
@@ -452,6 +470,10 @@ def search(server = None, query = None, sort_by = None,
     if isinstance(query, basestring):
         query = json.loads(query)
 
+    # If "query" is empty, set it to None.
+    elif len(query) == 0:
+        query = None
+
     # If "query" is a full query object, assign it directly as the
     # query ("data").  Otherwise, construct the query object.
 
@@ -460,24 +482,43 @@ def search(server = None, query = None, sort_by = None,
 
     else:
 
-        data = {
-                "pageSize": page_size, "pageNumber": page_number,
-                "propertyNames": return_property_names,
-                "group": query
-               }
+        data = {"pageSize": page_size, "pageNumber": page_number,
+                "propertyNames": return_property_names}
 
-        # Add any sorting parameters.
+        # If there's a query (filter object), add it.  Otherwise, if a
+        # "template" name was supplied (necessary if there's no query and
+        # no recordset in "return_property_names"), add it.
+        if query:
+            data["group"] = query
+        elif template:
+            data["type"] = template
+
+        # Add any sorting parameters.  We checkfor the (deprecated) earlier
+        # form of the sort-by input, as a dict/JSON object identical to the
+        # form accepted by the Coalesce RESTful API.
 
         if sort_by:
 
-            if isinstance(sort_by, basestring):
-                sort_by = json.loads(sort_by)
+            # Check for a JSON object that needs to be decoded.
 
-            # If "sort_by" is a single entry rather than list-like, wrap it
-            # in a list.
-            try:
-                sort_by[0]
-            except KeyError:
+            if isinstance(sort_by, basestring):
+                try:
+                    sort_by = json.loads(sort_by)
+
+                # If it's a string but not decodeable, treat it as a field
+                # name, and construct the sort-by object.  This is the only
+                # case in which the "sort_order" argument is used.
+                except JSONDecodeError:
+                    sort_order = sort_order.upper()
+                    if not sort_order in SEARCH_SORT_ORDERS:
+                        raise ValueError('The argument "sort_by" must take ' +
+                                         'one of the following values:\n' +
+                                         str(SEARCH_SORT_ORDERS) + '.')
+                    sort_by = \
+                        [{"propertyName": sort_by, "sortOrder": sort_order}]
+
+            # If this a is single sort-by object, wrap it in a list.
+            if "propertyName" in sort_by and "sortOrder" in sort_by:
                 sort_by = [sort_by]
 
             data["sortBy"] = sort_by
@@ -487,8 +528,8 @@ def search(server = None, query = None, sort_by = None,
     # Do the same for the sort order(s).
     if check_case:
         data["group"] = _case_operators(data["group"])
-        if sort_by:
-            for i, entry in enumerate(sort_by):
+        if "sortBy" in data:
+            for i, entry in enumerate(data["sortBy"]):
                 data["sortBy"][i]["sortOrder"] = entry["sortOrder"].upper()
 
     # Convert the query to JSON.
