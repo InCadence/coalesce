@@ -45,7 +45,7 @@ public class DeleteOperationImpl extends AbstractOperation<AbstractOperationTask
     {
         super.setProperties(params);
 
-        allowRemoval = Boolean.parseBoolean(parameters.getOrDefault(PARAM_MARK_AS_DELETED, "false"));
+        allowRemoval = !Boolean.parseBoolean(parameters.getOrDefault(PARAM_MARK_AS_DELETED, "true"));
     }
 
     @Override
