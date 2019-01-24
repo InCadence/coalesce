@@ -963,10 +963,10 @@ TESTS = (EntityTests("test_create_template"),
          EntityTests("test_linkage_manipulation"),
          EntityTests("test_create_linkages"),
          EntityTests("test_read_linkages"),
-         SearchTests("test_search"), SearchTests("test_search_simple"),
-         EntityTests("test_delete_linkages"), EntityTests("test_delete"),
-         EntityTests("test_update_template"),
-         EntityTests("test_delete_template"))
+         SearchTests("test_search"), SearchTests("test_search_simple"))
+#         EntityTests("test_delete_linkages"), EntityTests("test_delete"),
+#         EntityTests("test_update_template"),
+#         EntityTests("test_delete_template"))
 
 
 def pyCoalesce_test_suite():
