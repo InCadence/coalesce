@@ -250,8 +250,8 @@ fetchCapabilities(url) {
     return (
       <div>
         <MapView
-          geoserver={this.state.geoserver}
-          workspace={this.state.workspace}
+          geoserver={this.props.geoserver}
+          workspace={this.props.workspace}
           styles={this.state.styles}
           availableLayers={this.state.availableLayers}
           selectedLayers={this.state.selectedLayers}
