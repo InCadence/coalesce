@@ -432,7 +432,7 @@ public class SearchDataController {
                     values = criteria.getValue().split(" ");
                     if (values.length != 2)
                     {
-                        throw new CoalesceException("Expected two values space separated '<from> <to>'; Actual: " + criteria.getValue());
+                        throw new CoalesceException("Expected an array of two values ('[\"<from>\", \"<to>\"]'), or two values separated by a space; Actual: " + criteria.getValue());
                     }
                 }
                 criteriaFilter = ff.between(property, ff.literal(values[0]), ff.literal(values[1]));
@@ -444,7 +444,7 @@ public class SearchDataController {
                     times = criteria.getValue().split(" ");
                     if (times.length != 2)
                     {
-                        throw new CoalesceException("Expected two values space separated '<from> <to>'; Actual: " + criteria.getValue());
+                        throw new CoalesceException("Expected an array of two values ('[\"<from>\", \"<to>\"]'), or two values separated by a space; Actual: " + criteria.getValue());
                     }
                 }
 
