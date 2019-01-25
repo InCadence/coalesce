@@ -645,7 +645,7 @@ class EntityTests(ServerTest):
         their constructor and output methods.
 
         Note that this method doesn't feature any asserts--it just throws
-        an error is something goes wrong.
+        an error if something goes wrong.
         """
 
         # Set for dict input

@@ -568,7 +568,7 @@ def search(server = None, query = None,
 
 
 def search_simple(server = None, recordset = "coalesceentity", field = "name",
-           operator = "Like", value = None, match_case = False,
+           operator = "Like", value = None, values = None, match_case = False,
            return_property_names = ["coalesceentity.name"], page_size = 200,
            page_number = 1, output = "list"):
 
@@ -588,7 +588,15 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
     :param value:  the value to search for.  Must be a string or number
         (for operators requiring a single argument), an iterable of strings
         or numbers (for operators requiring multiple arguments), or
-        ``None`` (for operators that take no arguments).
+        ``None`` (for operators that take no arguments).  If an operator
+        takes multiple arguments and the "values" argument has been
+        supplied, this argument is ignored.
+    :param values:  multiple values to search for, as an iterable of
+        strings or numbers.  This argument is used only when the search
+        operator takes more than one value (see
+        :const:`~pyCoalesce.coalesce_request.SEARCH_OPERATORS`).  For such
+        operators, the iterable can also be provided as the "value"
+        argument.
     :param match_case:  if ``True``, results should match the case of
         "value".  Some of the persistors underlying Coalesce are
         case-insensitive when matching values, regardless of the value of
@@ -635,13 +643,27 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
     if num_values:
 
         if num_values == 1:
-            criteria[0]["value"] = value
+            if value:
+                criteria[0]["value"] = value
+            else:
+                raise ValueError("Please supply the value to be searched for.")
+
+
 
         else:
 
             # If the operator in question takes multiple values, "value"
             # will be either an iterable of values or a string of space-
-            # separated values.
+            # separated values.  Using space-separated values is
+            # deprecated in both Coalesce and pyCoalesce, and not included
+            # in the documentation for this function.
+
+            if not values:
+                if value:
+                    values = value
+                else:
+                    raise ValueError("Please supply the " + str(num_values) +
+                                     " values to be searched for.")
 
             invalid_value_msg = 'The "value" argument for search operator "' + \
                                 operator + '" must be an iterable with ' + \
@@ -652,15 +674,12 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
             if isinstance(value, basestring):
                 split_value = value.split(" ")
                 if len(split_value) == num_values:
-                    criteria[0]["value"] = value
+                    criteria[0]["values"] = values
                 else:
                     raise ValueError(invalid_value_msg)
 
             elif len(value) == num_values:
-                values_string = unicode (value[0])
-                for position in range(1, num_values):
-                    values_string += u" " + unicode(value[position])
-                criteria[0]["value"] = values_string
+                criteria[0]["values"] = values
 
             else:
                 raise ValueError(invalid_value_msg)
