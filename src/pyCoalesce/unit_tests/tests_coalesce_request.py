@@ -645,7 +645,7 @@ class EntityTests(ServerTest):
         their constructor and output methods.
 
         Note that this method doesn't feature any asserts--it just throws
-        an error is something goes wrong.
+        an error if something goes wrong.
         """
 
         # Set for dict input
@@ -850,7 +850,7 @@ class SearchTests(ServerTest):
                                          sort_by =
                                              {"propertyName": "testrecordset2.field1",
                                               "sortOrder": "ASC"},
-                                         return_property_names = \
+                                         return_property_names =
                                              [request3_return_property],
                                          output = "list",
                                          return_query = True)
@@ -860,11 +860,40 @@ class SearchTests(ServerTest):
         request3_return_property_out = query3["propertyNames"][0]
         self.assertEqual(request3_return_property, request3_return_property_out)
 
-        results4_JSON = search(server = self.server, query = QUERY4_DICT,
+        results4_list, query4 = search(server = self.server,
+                                         query = filter3_JSON,
+                                         sort_by = "testrecordset2.field1",
+                                         sort_order = "ASC",
+                                         return_property_names =
+                                             [request3_return_property],
+                                         output = "list",
+                                         return_query = True)
+        results4_first_fields = [hit["values"][0] for hit in results3_list]
+        self.assertTrue(results4_first_fields.index(orig3_first_field) <
+                        results4_first_fields.index(orig2_first_field))
+        request4_return_property_out = query4["propertyNames"][0]
+        self.assertEqual(request3_return_property, request4_return_property_out)
+
+        sort_by_JSON = json.dumps({"propertyName": "testrecordset2.field1",
+                                   "sortOrder": "ASC"})
+        results5_list, query5 = search(server = self.server,
+                                         query = filter3_JSON,
+                                         sort_by = sort_by_JSON,
+                                         return_property_names =
+                                             [request3_return_property],
+                                         output = "list",
+                                         return_query = True)
+        results5_first_fields = [hit["values"][0] for hit in results3_list]
+        self.assertTrue(results5_first_fields.index(orig3_first_field) <
+                        results5_first_fields.index(orig2_first_field))
+        request5_return_property_out = query5["propertyNames"][0]
+        self.assertEqual(request3_return_property, request5_return_property_out)
+
+        results6_JSON = search(server = self.server, query = QUERY4_DICT,
                                return_property_names = ["IgnoreThis"],
                                output = "JSON")
-        results4_first_field = json.loads(results4_JSON)["hits"][0]["values"][0]
-        self.assertEqual(results4_first_field, orig3_first_field)
+        results6_first_field = json.loads(results6_JSON)["hits"][0]["values"][0]
+        self.assertEqual(results6_first_field, orig3_first_field)
 
 
     def test_search_simple(self):
