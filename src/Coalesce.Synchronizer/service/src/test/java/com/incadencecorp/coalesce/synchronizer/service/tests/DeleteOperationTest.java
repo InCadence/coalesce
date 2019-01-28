@@ -17,13 +17,11 @@
 
 package com.incadencecorp.coalesce.synchronizer.service.tests;
 
-import com.incadencecorp.coalesce.api.IExceptionHandler;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceExecutorServiceImpl;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
-import com.incadencecorp.coalesce.handlers.LoggerExceptionHandlerImpl;
 import com.incadencecorp.coalesce.synchronizer.api.IPersistorOperation;
 import com.incadencecorp.coalesce.synchronizer.api.IPersistorScan;
 import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
@@ -56,7 +54,7 @@ public class DeleteOperationTest {
         Map<String, String> params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS,
                    JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusDays(2)));
-        params.put(DeleteOperationImpl.PARAM_MARK_AS_DELETED, "false");
+        params.put(DeleteOperationImpl.PARAM_MARK_AS_DELETED, Boolean.TRUE.toString());
 
         DerbyPersistor derby = new DerbyPersistor();
 
@@ -82,7 +80,7 @@ public class DeleteOperationTest {
         Assert.assertEquals(ECoalesceObjectStatus.DELETED, derby.getEntity(entity1.getKey())[0].getStatus());
         Assert.assertEquals(ECoalesceObjectStatus.DELETED, derby.getEntity(entity2.getKey())[0].getStatus());
 
-        operation.setProperties(Collections.singletonMap(DeleteOperationImpl.PARAM_MARK_AS_DELETED, "true"));
+        operation.setProperties(Collections.singletonMap(DeleteOperationImpl.PARAM_MARK_AS_DELETED, Boolean.FALSE.toString()));
 
         operation.execute(service, rowset);
 
