@@ -99,6 +99,7 @@
                     <extensions>true</extensions>
                     <configuration>
                         <startLevel>75</startLevel>
+                        <enableGeneration>true</enableGeneration>
                     </configuration>
                 </plugin>
             </plugins>
