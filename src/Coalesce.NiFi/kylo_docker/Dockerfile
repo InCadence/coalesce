@@ -22,25 +22,30 @@ useradd -r -m -s /bin/bash kylo; \
 useradd -r -m -s /bin/bash activemq'
 
 RUN /bin/bash -c 'echo \"Downloading the RPM\";\
-wget http://bit.ly/2oVaQJE -O kylo-0.8.0.1.rpm;\
-rpm -ivh kylo-0.8.0.1.rpm;\
-rm kylo-0.8.0.1.rpm'
+wget http://bit.ly/2RAtzs9 -O kylo-0.9.1.3.rpm;\
+rpm -ivh kylo-0.9.1.3.rpm;\
+rm kylo-0.9.1.3.rpm'
 
 RUN service mysql start && echo "Setup database in MySQL" && /opt/kylo/setup/sql/mysql/setup-mysql.sh localhost root hadoop
 
 RUN echo "Install Elasticsearch" && /opt/kylo/setup/elasticsearch/install-elasticsearch.sh
 
 COPY conf/elasticsearch.yml /etc/elasticsearch/
+RUN echo "Install activemq" && /opt/kylo/setup/activemq/install-activemq.sh /opt/activemq activemq users /opt/java/current
 
-RUN echo "Install activemq" && /opt/kylo/setup/activemq/install-activemq.sh
-
-RUN echo "Install NiFi" && /opt/kylo/setup/nifi/install-nifi.sh && echo "Install Kylo" && service mysql start && /opt/kylo/setup/nifi/install-kylo-components.sh && rm -f /opt/nifi/nifi-1.0.0-bin.tar.gz && mkdir /opt/nifi/current/lib2
+RUN echo "Install NiFi" && /opt/kylo/setup/nifi/install-nifi.sh 1.0.0 /opt/nifi nifi users && echo "Install Kylo" && service mysql start
+RUN /opt/kylo/setup/nifi/install-kylo-components.sh /opt/nifi /opt/kylo/current nifi users && rm -f /opt/nifi/nifi-1.0.0-bin.tar.gz && mkdir /opt/nifi/current/lib2
+RUN /opt/kylo/setup/java/install-java8.sh && /opt/kylo/setup/java/change-nifi-java-home.sh /opt/java/current /opt/nifi/current
 
 ######
 COPY scripts/*.nar /opt/nifi/current/lib2
 
+<<<<<<< HEAD
 RUN echo "Creating the dropzone folder" && mkdir -p /var/dropzone
 RUN chown nifi:nifi /var/dropzone && chmod 774 /var/dropzone/
+=======
+RUN echo "Creating the dropzone folder" && mkdir -p /var/dropzone && chown nifi:nifi /var/dropzone && chmod 774 /var/dropzone/
+>>>>>>> Update Kylo to 0.9.1, upload werks
 
 RUN echo "Creating the sample data folder" && mkdir -p /var/sampledata
 
@@ -65,8 +70,7 @@ RUN echo "Kylo Installation complete" && echo "export PATH=$PATH:/usr/java/defau
 
 # Install hive
 RUN wget https://archive.apache.org/dist/hive/hive-2.1.1/apache-hive-2.1.1-bin.tar.gz && tar xvf apache-hive-2.1.1-bin.tar.gz && rm ./apache-hive-2.1.1-bin.tar.gz
-RUN mv ./apache-hive-2.1.1-bin /usr/local/
-RUN ln -s /usr/local/apache-hive-2.1.1-bin /usr/local/hive
+RUN mv ./apache-hive-2.1.1-bin /usr/local/ && ln -s /usr/local/apache-hive-2.1.1-bin /usr/local/hive
 COPY conf/hive-site.xml /usr/local/hive/conf
 RUN echo "export HIVE_HOME=/usr/local/hive" >> /etc/profile
 RUN echo "export PATH=$PATH:/usr/local/hive/bin">> /etc/profile

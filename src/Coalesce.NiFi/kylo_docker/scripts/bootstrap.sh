@@ -23,7 +23,7 @@ $HADOOP_PREFIX/sbin/start-yarn.sh
 service mysql start
 service elasticsearch start
 service activemq start
-service nifi start
+/opt/nifi/current/bin/nifi.sh start
 service hive-server2 start
 
 
