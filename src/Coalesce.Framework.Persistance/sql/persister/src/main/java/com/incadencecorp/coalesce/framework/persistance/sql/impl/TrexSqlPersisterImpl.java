@@ -2,6 +2,7 @@ package com.incadencecorp.coalesce.framework.persistance.sql.impl;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
@@ -12,6 +13,7 @@ import com.microsoft.sqlserver.jdbc.Geography;
 import com.vividsolutions.jts.geom.Coordinate;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -338,6 +340,41 @@ public class TrexSqlPersisterImpl extends SQLPersisterImpl {
             }
         }
         return isSuccessful;
+    }
+
+    /**
+     * Adds or Updates a Coalesce entity that matches the given parameters.
+     * Updates the Uploaded to Server Column needed for IdentityHub
+     *
+     * @param entity the XsdEntity to be added or updated
+     * @param conn   is the SQLDataConnector database connection
+     * @return True = No Update required.
+     * @throws SQLException
+     */
+    @Override
+    protected boolean persistEntityObject(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
+    {
+        String procedureName = "CoalesceEntity_InsertOrUpdate";
+
+        // Return true if no update is required.
+        if (!checkLastModified(entity, conn))
+        {
+            return true;
+        }
+        List<CoalesceParameter> params = new ArrayList<>();
+        params.add(new CoalesceParameter(entity.getKey(), Types.CHAR));
+        params.add(new CoalesceParameter(entity.getName()));
+        params.add(new CoalesceParameter(entity.getSource()));
+        params.add(new CoalesceParameter(entity.getVersion()));
+        params.add(new CoalesceParameter(entity.getEntityId()));
+        params.add(new CoalesceParameter(entity.getEntityIdType()));
+        params.add(new CoalesceParameter(entity.toXml("UTF-16")));
+        params.add(new CoalesceParameter(entity.getDateCreated().toString(), Types.CHAR));
+        params.add(new CoalesceParameter(entity.getLastModified().toString(), Types.CHAR));
+        params.add(new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.CHAR));
+
+        return conn.executeProcedure(procedureName, params.toArray(new CoalesceParameter[params.size()]))
+                && !entity.isMarkedDeleted();
     }
     /**
      * Adds or Updates a IdentityHub System that matches the given parameters.

@@ -655,7 +655,6 @@ public class SQLPersisterImpl extends SQLTemplatePersisterImpl implements ICoale
         params.add(new CoalesceParameter(entity.toXml("UTF-16")));
         params.add(new CoalesceParameter(entity.getDateCreated().toString(), Types.CHAR));
         params.add(new CoalesceParameter(entity.getLastModified().toString(), Types.CHAR));
-        params.add(new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(),Types.CHAR));
 
         return conn.executeProcedure(procedureName, params.toArray(new CoalesceParameter[params.size()]))
                 && !entity.isMarkedDeleted();

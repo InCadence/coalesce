@@ -17,6 +17,15 @@
 
 package com.incadencecorp.coalesce.synchronizer.service.operations;
 
+import javax.sql.rowset.CachedRowSet;
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
@@ -49,86 +58,103 @@ public class MergeOperationImpl extends AbstractOperation<AbstractOperationTask>
                 boolean results = true;
                 //keys are what we have that is ready to be sent
 
-                // Get from Source
-                CoalesceEntity[] entitiesSource = source.getEntity(keys);
-
                 for (ICoalescePersistor target : targets)
                 {
-                    CoalesceEntity[] entitiesTarget = target.getEntity(keys);
-                    ArrayList<CoalesceEntity> toCopyOrMergeEntities = new ArrayList<>();
-                    if (keys.length != entitiesSource.length)
+                    // Get from Source
+                    CoalesceEntity[] entities = source.getEntity(keys);
+                    CoalesceEntity[] targetEntities = target.getEntity(keys);
+                    CoalesceEntity[] toTarget;
+                    if (keys.length != entities.length)
                     {
-                        for (String key : keys)
+                        if (keys.length != entities.length)
                         {
-                            boolean found = false;
-
-                            for (CoalesceEntity entity : entitiesSource)
+                            for (String key : keys)
                             {
-                                if (entity.getKey().equalsIgnoreCase(key))
+                                boolean found = false;
+
+                                for (CoalesceEntity entity : entities)
                                 {
-                                    found = true;
-                                    break;
+                                    if (!entity.getKey().equalsIgnoreCase(key))
+                                    {
+                                        throw new CoalescePersistorException("Entity " + key + " was not found", null);
+                                    }
                                 }
                             }
-
-                            if (!found)
+                            if (targetEntities.length != 0)
                             {
-                                throw new CoalescePersistorException("Entity " + key + " was not found", null);
+                                toTarget = getEntitiesToTarget(entities, targetEntities);
                             }
-                        }
-                    }
-                    for (CoalesceEntity entitySource : entitiesSource)
-                    {
-                        boolean needsTransfer = true;
-                        for (CoalesceEntity entityTarget : entitiesTarget)
-                        {
-                            if (entitySource.getKey().equalsIgnoreCase(entityTarget.getKey()))
+                            else
                             {
-                                //Check to see if it needs to be merged
-                                int compare = entitySource.getLastModified().compareTo(entityTarget.getLastModified());
-                                //If Source has a more Updated version
-                                if (compare > 0)
+                                toTarget = entities;
+                            }
+                            // Copy to Targets
+                            if (LOGGER.isDebugEnabled())
+                            {
+                                LOGGER.debug("Processing {} key(s) for {}", entities.length, target.getClass().getName());
+                                LOGGER.trace("Details:");
+
+                                for (CoalesceEntity entity : toTarget)
                                 {
-                                    //add to merge option
-                                    break;
-                                }
-                                else if (compare == 0 || compare < 0)
-                                {
-                                    //move on to the next one
-                                    needsTransfer = false;
-                                    break;
+                                    LOGGER.trace("\tMerged Entity: {} {} {}",
+                                                 entity.getName(),
+                                                 entity.getSource(),
+                                                 entity.getKey());
                                 }
                             }
-                        }
-                        if (needsTransfer)
-                        {
-                            toCopyOrMergeEntities.add(entitySource);
+                            target.saveEntity(false, toTarget);
+                            return true;
                         }
                     }
-
-                    CoalesceEntity[] toMerge = new CoalesceEntity[toCopyOrMergeEntities.size()];
-                    toMerge = toCopyOrMergeEntities.toArray(toMerge);
-                    // Copy/Merge to Targets
-                    if (LOGGER.isDebugEnabled())
-                    {
-                        LOGGER.debug("Processing {} key(s)", toMerge.length);
-                        LOGGER.trace("Details:");
-
-                        for (CoalesceEntity entity : toMerge)
-                        {
-                            LOGGER.trace("\t{} {} {}", entity.getName(), entity.getSource(), entity.getKey());
-                        }
-
-                    }
-
-                    results = results && target.saveEntity(false, toMerge);
                 }
-
-                return results;
+                return false;
             }
 
+            public CoalesceEntity[] getEntitiesToTarget(CoalesceEntity[] entities, CoalesceEntity[] targetEntities)
+            {
+                ArrayList<CoalesceEntity> mergedArrayList = new ArrayList<>();
+                try
+                {
+                    for (CoalesceEntity entity : targetEntities)
+                    {
+                        CoalesceEntity MergedEntity;
+                        for (CoalesceEntity sourceEntity : entities)
+                        {
+                            if (entity.getKey().equals(sourceEntity.getKey()))
+                            {
+                                int a = entity.getLastModified().compareTo(sourceEntity.getLastModified());
+                                if (a < 0)
+                                {
+                                    MergedEntity = CoalesceEntity.mergeSyncEntity(entity, sourceEntity, "userId", "ip");
+                                    mergedArrayList.add(MergedEntity);
+                                }
+                                else if (a > 0)
+                                {
+                                    MergedEntity = CoalesceEntity.mergeSyncEntity(sourceEntity, entity, "userId", "ip");
+                                    mergedArrayList.add(MergedEntity);
+                                }
+                            }
+                            else
+                            {
+                                MergedEntity = sourceEntity;
+                                mergedArrayList.add(MergedEntity);
+                            }
+                        }
+                    }
+                }
+                catch (CoalesceException e)
+                {
+                    e.printStackTrace();
+                }
+                CoalesceEntity[] mergedList = new CoalesceEntity[mergedArrayList.size()];
+                for (int i = 0; i < mergedArrayList.size(); i++)
+                {
+                    mergedList[i] = mergedArrayList.get(i);
+                }
+                return mergedList;
+            }
         };
-
     }
-
 }
+
+
