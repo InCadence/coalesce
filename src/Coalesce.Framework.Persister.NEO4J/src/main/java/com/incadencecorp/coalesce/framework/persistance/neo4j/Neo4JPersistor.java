@@ -20,7 +20,14 @@ package com.incadencecorp.coalesce.framework.persistance.neo4j;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFileField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
@@ -37,8 +44,15 @@ import javax.sql.rowset.RowSetProvider;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Neo4j Implementation. Extend and override {@link #getGroups(CoalesceEntity)}
@@ -597,7 +611,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     private void getFieldValues(CoalesceObject coalesceObject, Map<String, CoalesceParameter> results)
     {
         // Is Active?
-        if (coalesceObject.isActive())
+        if (coalesceObject.isActive() && coalesceObject.isFlatten())
         {
             // Yes; Is a CoalesceField?
             if (coalesceObject.getType().equalsIgnoreCase("field"))
@@ -605,7 +619,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
                 // Yes; Check Data Type
                 CoalesceField<?> field = (CoalesceField<?>) coalesceObject;
 
-                if (field.getBaseValue() != null)
+                if (field.getBaseValue() != null || field.getDataType() == ECoalesceFieldDataTypes.FILE_TYPE)
                 {
                     // TODO Replace this with the normalize API
                     String name = normalizeName(field.getName());
@@ -613,8 +627,12 @@ public class Neo4JPersistor extends CoalescePersistorBase {
                     switch (field.getDataType())
                     {
                     case BINARY_TYPE:
-                    case FILE_TYPE:
                         // Ignore these types.
+                        break;
+                    case FILE_TYPE:
+                        results.put(name,
+                                    new CoalesceParameter(((CoalesceFileField) field).getFilename(),
+                                                          MAPPER.map(field.getDataType())));
                         break;
                     default:
                         // Add field value to results
