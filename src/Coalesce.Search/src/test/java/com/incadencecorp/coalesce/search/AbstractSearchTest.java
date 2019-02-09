@@ -204,6 +204,49 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         framework.saveCoalesceEntity(true, entity1, entity2, entity3, entity4, entity5);
     }
 
+    @Test
+    public void testFileType() throws Exception
+    {
+        String filename = "helloworld.txt";
+
+        // Create Entity
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
+        record.getFileField().setValue(filename, UUID.randomUUID().toString());
+
+        // Save Entity
+        T persister = createPersister();
+        persister.saveEntity(false, entity);
+
+        // Create Query
+        List<PropertyName> properties = new ArrayList<>();
+        properties.add(CoalescePropertyFactory.getFieldProperty(record.getFileField()));
+
+        Query searchQuery = new Query();
+        searchQuery.setStartIndex(0);
+        searchQuery.setMaxFeatures(1);
+        searchQuery.setFilter(CoalescePropertyFactory.getEntityKey(entity.getKey()));
+        searchQuery.setProperties(properties);
+
+        SearchResults results = persister.search(searchQuery);
+
+        Assert.assertEquals(1, results.getTotal());
+
+        try (CachedRowSet rowset = results.getResults())
+        {
+            // Verify EntityKey and two requested columns
+            Assert.assertEquals(properties.size() + 1, rowset.getMetaData().getColumnCount());
+            Assert.assertTrue(rowset.next());
+            Assert.assertEquals(entity.getKey(), rowset.getObject(1));
+            Assert.assertEquals(filename, rowset.getObject(2));
+        }
+
+        entity.markAsDeleted();
+
+        persister.saveEntity(true, entity);
+    }
+
     /**
      * This test ensures that you are able to request the record key to be returned as a property.
      */
