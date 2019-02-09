@@ -24,7 +24,19 @@ import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFileField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
@@ -49,7 +61,11 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
 
 public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
 
@@ -419,10 +435,10 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                             CoalesceField<?> field = record.getFieldByName(column);
 
                             // Field Found?
-                            if (field != null)
+                            if (field != null && field.isFlatten())
                             {
                                 // Can flatten Field?
-                                if (field.isFlatten() && !StringHelper.isNullOrEmpty(field.getBaseValue()))
+                                if (!StringHelper.isNullOrEmpty(field.getBaseValue()))
                                 {
                                     value = field.getBaseValue();
 
@@ -431,6 +447,10 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                                         value = JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.fromXmlDateTimeUTC(
                                                 value));
                                     }
+                                }
+                                else if (field.getDataType() == ECoalesceFieldDataTypes.FILE_TYPE)
+                                {
+                                    value = ((CoalesceFileField) field).getFilename();
                                 }
                                 else
                                 {

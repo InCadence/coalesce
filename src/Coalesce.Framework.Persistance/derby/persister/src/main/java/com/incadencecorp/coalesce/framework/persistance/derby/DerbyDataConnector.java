@@ -725,6 +725,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         case LINE_STRING_TYPE:
         case POLYGON_TYPE:
         case CIRCLE_TYPE:
+        case FILE_TYPE:
             return "varchar(256)";
 
         case ENUMERATION_TYPE:
@@ -752,7 +753,6 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         case LONG_TYPE:
             return "bigint";
 
-        case FILE_TYPE:
         case BINARY_TYPE:
         default:
             return null;
