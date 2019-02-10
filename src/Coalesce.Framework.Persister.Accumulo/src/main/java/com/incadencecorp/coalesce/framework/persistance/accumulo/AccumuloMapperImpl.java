@@ -91,6 +91,8 @@ public class AccumuloMapperImpl implements ICoalesceMapper<Class<?>> {
             return Integer.class;
 
         case FILE_TYPE:
+            return String.class;
+
         case BINARY_TYPE:
         default:
             return null;

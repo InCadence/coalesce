@@ -25,6 +25,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceCircle;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFileField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
@@ -423,16 +424,26 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
             String fieldName = normalizer.normalize(recordsetName, field.getName());
             ECoalesceFieldDataTypes dataType = field.getDataType();
 
-            // If there is not a value do not set the attribute.
-            if (field.getBaseValue() != null)
+            if (field.isFlatten())
             {
-                if (field.isListType())
+                if (dataType == ECoalesceFieldDataTypes.FILE_TYPE)
                 {
-                    setFeatureAttribute(feature, fieldName, dataType, field.getBaseValue());
+                    setFeatureAttribute(feature,
+                                        fieldName,
+                                        ECoalesceFieldDataTypes.STRING_TYPE,
+                                        ((CoalesceFileField) field).getFilename());
                 }
-                else
+                else if (field.getBaseValue() != null)
                 {
-                    setFeatureAttribute(feature, fieldName, dataType, field.getValue());
+                    // If there is not a value do not set the attribute.
+                    if (field.isListType())
+                    {
+                        setFeatureAttribute(feature, fieldName, dataType, field.getBaseValue());
+                    }
+                    else
+                    {
+                        setFeatureAttribute(feature, fieldName, dataType, field.getValue());
+                    }
                 }
             }
         }

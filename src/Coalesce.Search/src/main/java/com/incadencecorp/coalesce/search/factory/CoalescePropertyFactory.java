@@ -19,7 +19,12 @@ package com.incadencecorp.coalesce.search.factory;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
-import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
+import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
+import com.incadencecorp.coalesce.framework.datamodel.IFieldEnum;
 import org.geotools.factory.CommonFactoryFinder;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -56,7 +61,7 @@ public class CoalescePropertyFactory {
      *
      * @param value
      */
-    public final static void initialize(FilterFactory2 value)
+    public static void initialize(FilterFactory2 value)
     {
         ff = value;
     }
@@ -64,7 +69,7 @@ public class CoalescePropertyFactory {
     /**
      * @return the filter factory that this class has been initialized with.
      */
-    public final static FilterFactory2 getFilterFactory()
+    public static FilterFactory2 getFilterFactory()
     {
 
         if (ff == null)
@@ -105,7 +110,6 @@ public class CoalescePropertyFactory {
 
     /**
      * @return the property used for filtering on Uploaded to Server.
-     *
      */
     public static PropertyName getUploadedToServer()
     {
@@ -155,15 +159,22 @@ public class CoalescePropertyFactory {
     /**
      * @return the property used for filtering on the entity key.
      */
-    public static PropertyName getTemplateKey() { return getFilterFactory().property( COALESCE_TEMPLATE_TABLE +"templatekey"); }
+    public static PropertyName getTemplateKey()
+    {
+        return getFilterFactory().property(COALESCE_TEMPLATE_TABLE + "templatekey");
+    }
 
-     /**
+    /**
      * @return the property used for filtering on date created.
      */
-    public static PropertyName getTemplateXml() { return getFilterFactory().property( COALESCE_TEMPLATE_TABLE +"templatexml"); }
+    public static PropertyName getTemplateXml()
+    {
+        return getFilterFactory().property(COALESCE_TEMPLATE_TABLE + "templatexml");
+    }
 
-
-    /** * @return the property used for filtering on the entity key.
+    /**
+     * @param recordset name of the record
+     * @return the property used for filtering on the entity key.
      */
     public static PropertyName getRecordKey(String recordset)
     {
@@ -171,16 +182,26 @@ public class CoalescePropertyFactory {
     }
 
     /**
+     * @param recordset name of the record
+     * @param key of the record
+     * @return a filter recordsetname.objectkey = key
+     */
+    public static Filter getRecordKey(String recordset, String key)
+    {
+        return getFilterFactory().equals(getRecordKey(recordset), getFilterFactory().literal(key));
+    }
+
+    /**
      * @param property to test
      * @return whether or not the property name refers to a record key verse a entity key.
      */
-    public static final boolean isRecordPropertyName(String property)
+    public static boolean isRecordPropertyName(String property)
     {
         return property.toLowerCase().endsWith("objectkey") && !property.toLowerCase().startsWith("coalesceentity");
     }
 
     /**
-     * @param key
+     * @param key of the entity
      * @return a filter objectkey = key
      */
     public static Filter getEntityKey(String key)

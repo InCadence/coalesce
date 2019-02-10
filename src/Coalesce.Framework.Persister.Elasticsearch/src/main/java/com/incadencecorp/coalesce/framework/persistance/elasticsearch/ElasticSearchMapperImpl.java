@@ -65,6 +65,7 @@ public class ElasticSearchMapperImpl implements ICoalesceMapper<String> {
         case STRING_LIST_TYPE:
             return "keyword";
 
+        case FILE_TYPE:
         case STRING_TYPE:
             return "text";
 
@@ -75,7 +76,6 @@ public class ElasticSearchMapperImpl implements ICoalesceMapper<String> {
         case LONG_TYPE:
             return "long";
 
-        case FILE_TYPE:
         case BINARY_TYPE:
         default:
             return null;

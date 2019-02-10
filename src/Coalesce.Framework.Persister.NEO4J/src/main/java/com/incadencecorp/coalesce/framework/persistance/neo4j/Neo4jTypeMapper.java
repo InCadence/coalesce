@@ -53,6 +53,7 @@ public class Neo4jTypeMapper implements ICoalesceMapper<Integer> {
             return Types.BOOLEAN;
         case LONG_TYPE:
             return Types.BIGINT;
+        case FILE_TYPE:
         default:
             return Types.CHAR;
         }

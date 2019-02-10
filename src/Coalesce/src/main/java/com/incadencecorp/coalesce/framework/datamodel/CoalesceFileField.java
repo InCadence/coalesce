@@ -2,8 +2,13 @@ package com.incadencecorp.coalesce.framework.datamodel;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.helpers.*;
+import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
+import com.incadencecorp.coalesce.common.helpers.FileHelper;
+import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
+import com.incadencecorp.coalesce.common.helpers.MimeHelper;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,13 +81,28 @@ public class CoalesceFileField extends CoalesceBinaryFieldBase<DocumentPropertie
             }
             else
             {
-                setValue(null, null);
+                setValue((byte[]) null, null);
             }
         }
         catch (IOException e)
         {
             // Rethrow as a runtime exception
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Sets the Field's hash value. Also sets the filename, extension and MIME
+     * type.
+     *
+     * @param filename, field's filename
+     * @param hash,     field's hash value
+     */
+    public void setValue(String filename, String hash)
+    {
+        if (filename != null)
+        {
+            setValue(filename, FilenameUtils.getExtension(filename), hash);
         }
     }
 

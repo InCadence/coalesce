@@ -228,15 +228,20 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
 
         for (CoalesceField field : record.getFields())
         {
-            if (field.isFlatten() && field.getBaseValue() != null)
+            if (field.isFlatten() && (field.getBaseValue() != null || field.getDataType() == ECoalesceFieldDataTypes.FILE_TYPE))
             {
                 String name = normalize(field);
 
                 switch (field.getDataType())
                 {
                 case BINARY_TYPE:
-                case FILE_TYPE:
                     // Ignore these types.
+                    break;
+                case FILE_TYPE:
+                    if (field instanceof CoalesceFileField)
+                    {
+                        source.put(name, ((CoalesceFileField) field).getFilename());
+                    }
                     break;
                 case LINE_STRING_TYPE:
                     source.put(name, createLineString((CoalesceLineStringField) field));
