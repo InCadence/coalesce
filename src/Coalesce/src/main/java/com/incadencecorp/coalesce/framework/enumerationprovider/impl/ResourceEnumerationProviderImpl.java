@@ -76,7 +76,7 @@ public class ResourceEnumerationProviderImpl extends AbstractEnumerationProvider
             {
                 bundle = FrameworkUtil.getBundle(context);
             }
-            catch (Exception e)
+            catch (NoClassDefFoundError e)
             {
                 bundle = null;
             }
