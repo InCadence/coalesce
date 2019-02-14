@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>bundle-hdfs-client</artifactId>
+    <packaging>bundle</packaging>
+    <name>Coalesce HDFS Client OSGi Bundle</name>
+    <description>This OSGi bundle simply wraps the geomesa / accumulo artifacts.</description>
+
+    <parent>
+        <groupId>com.incadencecorp.coalesce.bundles</groupId>
+        <artifactId>coalesce-bundle-parent</artifactId>
+        <version>0.0.35-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <properties>
+        <hadoop.version>2.8.4</hadoop.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Export-Package>
+                            org.apache.hadoop*;version=${hadoop.version},
+                        </Export-Package>
+                        <Import-Package>
+                            *;resolution:=optional
+                        </Import-Package>
+                        <Embed-Dependency>
+                            *;artifactId=!org.osgi.compendium;scope=compile|runtime;type=!pom;inline=false
+                        </Embed-Dependency>
+                        <Include-Resource>
+                            {maven-resources},
+                        </Include-Resource>
+                        <!--
+                            @hadoop-hdfs-client-${hadoop.version}.jar!/META-INF/*,
+                            @hadoop-common-${hadoop.version}.jar!/META-INF/*
+                        -->
+                        <Embed-Transitive>true</Embed-Transitive>
+                    </instructions>
+                </configuration>
+
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs-client</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+    </dependencies>
+
+
+</project>

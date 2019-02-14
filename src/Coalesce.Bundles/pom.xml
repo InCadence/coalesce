@@ -35,6 +35,7 @@
         <module>bundle-geotools</module>
         <module>bundle-geomesa</module>
         <module>bundle-ironhide</module>
+        <module>bundle-hdfs-client</module>
     </modules>
 
 </project>
