@@ -1,0 +1,37 @@
+{
+  "name": "template-mapper",
+  "version": "0.0.35-SNAPSHOT",
+  "title": "Template Mapper",
+  "icon": "/images/svg/template.svg",
+  "private": true,
+  "homepage": "/templatemapper",
+  "dependencies": {
+    "@material-ui/core": "3.0.3",
+    "@material-ui/icons": "3.0.1",
+    "common-components": "file:../common-components",
+    "material-ui": "0.20.0",
+    "mxgraph-js": "^1.0.1",
+    "react": "16.3.0",
+    "react-bootstrap": "0.32.1",
+    "react-dom": "16.3.0",
+    "react-grid-layout": "^0.16.1",
+    "react-icons-kit": "^1.0.7",
+    "react-sidenav": "^2.1.2",
+    "react-sortable-tree": "^1.5.3",
+    "react-spinners": "^0.3.2",
+    "react-table": "^6.8.0",
+    "uuid": "^3.2.1",
+    "wellknown": "0.5.0"
+  },
+  "devDependencies": {
+    "@babel/runtime": "7.0.0-beta.54",
+    "react-scripts": "1.1.4"
+  },
+  "scripts": {
+    "preinstall": "npm install ../common-components/",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
