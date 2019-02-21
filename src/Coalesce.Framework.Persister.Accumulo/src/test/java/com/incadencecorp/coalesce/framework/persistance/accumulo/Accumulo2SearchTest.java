@@ -42,7 +42,7 @@ public class Accumulo2SearchTest extends AbstractSearchTest<AccumuloSearchPersis
     }
 
     /**
-     * TODO Need to resolve COAL-44 before removing this override.
+     * TODO Need to resolve #113 (https://github.com/InCadence/coalesce/issues/113) before removing this override.
      */
     @Override
     public void testUpdateRecordKey() throws Exception
@@ -51,7 +51,7 @@ public class Accumulo2SearchTest extends AbstractSearchTest<AccumuloSearchPersis
     }
 
     /**
-     * TODO Need to resolve; Accumulo GeoMesa appears to ignore the startindex
+     * TODO Need to resolve #71 (https://github.com/InCadence/coalesce/issues/71) before removing this override.
      */
     @Override
     public void testPaging() throws Exception
