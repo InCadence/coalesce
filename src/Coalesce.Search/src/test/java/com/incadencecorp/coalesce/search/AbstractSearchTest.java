@@ -1270,63 +1270,57 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         T persistor = createPersister();
 
         // Create Entity
-        TestEntity entity1 = new TestEntity();
-        entity1.initialize();
-
-        TestEntity entity2 = new TestEntity();
-        entity2.initialize();
-        entity2.addRecord1();
-        entity2.addRecord1();
+        TestEntity entity = new TestEntity();
+        entity.initialize();
 
         // Create Record
-        TestRecord record = entity1.addRecord1();
+        TestRecord record = entity.addRecord1();
         record.getStringField().setValue("Hello World");
 
         // Persist
-        persistor.saveEntity(false, entity1, entity2);
+        persistor.saveEntity(false, entity);
 
         List<PropertyName> props = new ArrayList<>();
         props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
         props.add(CoalescePropertyFactory.getFieldProperty(TestEntity.RECORDSET1, "objectkey"));
 
         List<Filter> filters = new ArrayList<>();
-        filters.add(CoalescePropertyFactory.getEntityKey(entity1.getKey()));
-        filters.add(FF.equals(CoalescePropertyFactory.getFieldProperty(record.getStringField()),
-                              FF.literal(record.getStringField().getValue())));
+        filters.add(CoalescePropertyFactory.getEntityKey(entity.getKey()));
 
         // Create Query
         Query query = new Query(TestEntity.getTest1RecordsetName(), FF.and(filters));
         query.setProperties(props);
 
-        // Search
+        // Verify that the record index was created and discoverable.
         try (CachedRowSet results = persistor.search(query).getResults())
         {
             // One and only 1 result
-            Assert.assertEquals(entity1.getRecordset1().getCount(), results.size());
+            Assert.assertEquals(entity.getRecordset1().getCount(), results.size());
             Assert.assertTrue(results.next());
-            Assert.assertEquals(entity1.getKey(), results.getString(1));
+            Assert.assertEquals(entity.getKey(), results.getString(1));
             Assert.assertEquals(record.getKey(), results.getString(3));
         }
 
-        // Change Record Key
-        record.setKey(UUID.randomUUID().toString());
-        persistor.saveEntity(false, entity1, entity2);
+        // Modify record key creating a Phantom (Orphan) record
+        record.setKey(UUID.randomUUID().toString().toUpperCase());
 
-        // Search
+        // Should clean up the orphaned record
+        persistor.saveEntity(false, entity);
+
+        // Verify that the orphaned record was deleted
         try (CachedRowSet results = persistor.search(query).getResults())
         {
             // One and only 1 result
-            Assert.assertEquals(entity1.getRecordset1().getCount(), results.size());
+            Assert.assertEquals(entity.getRecordset1().getCount(), results.size());
             Assert.assertTrue(results.next());
-            Assert.assertEquals(entity1.getKey(), results.getString(1));
+            Assert.assertEquals(entity.getKey(), results.getString(1));
             Assert.assertEquals(record.getKey(), results.getString(3));
         }
 
         // Cleanup
-        entity1.markAsDeleted();
-        entity2.markAsDeleted();
+        entity.markAsDeleted();
 
-        persistor.saveEntity(true, entity1, entity2);
+        persistor.saveEntity(true, entity);
     }
 
     /**
@@ -1361,7 +1355,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Query query = new Query(TestEntity.getTest1RecordsetName(), FF.and(filters));
         query.setProperties(props);
 
-        // Search
+        // Verify that the record index was created and discoverable.
         try (CachedRowSet results = persistor.search(query).getResults())
         {
             // One and only 1 result
@@ -1371,11 +1365,11 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
             Assert.assertEquals(record.getKey(), results.getString(3));
         }
 
-        // Change Record Key
+        // Marking an entity as deleted should remove all references other then the Coalesce index.
         record.markAsDeleted();
         persistor.saveEntity(false, entity);
 
-        // Search
+        // Verify that the index for the record set has been cleanup.
         try (CachedRowSet results = persistor.search(query).getResults())
         {
             // Should be no results

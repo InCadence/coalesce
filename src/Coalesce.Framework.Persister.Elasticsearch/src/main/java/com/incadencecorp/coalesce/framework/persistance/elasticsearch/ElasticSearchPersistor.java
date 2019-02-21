@@ -16,6 +16,7 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.support.AbstractClient;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
@@ -24,12 +25,14 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -134,63 +137,93 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
 
     private void executeCleanup(AbstractClient client, BulkRequest request, CoalesceEntity... entities)
     {
-        Set<String> indices = new HashSet<>();
-        Set<String> recordKeys = new HashSet<>();
+        Map<String, Set<String>> recordKeys = new HashMap<>();
+        List<String> keys = new ArrayList<>();
 
         // Create List of Indices
         for (DocWriteRequest task : request.requests())
         {
-            recordKeys.add(task.id());
-            indices.add(task.index());
+            // Don't cleanup coalesce index
+            if (!task.index().equalsIgnoreCase(COALESCE_ENTITY_INDEX))
+            {
+                if (!recordKeys.containsKey(task.index()))
+                {
+                    recordKeys.put(task.index(), new HashSet<>());
+                }
+
+                recordKeys.get(task.index()).add(task.id());
+            }
         }
 
-        // Don't cleanup coalesce index
-        indices.remove(COALESCE_ENTITY_INDEX);
-
-        if (indices.size() > 0)
+        if (!recordKeys.isEmpty())
         {
+            int original = request.requests().size();
+
             StopWatch watch = new StopWatch();
             watch.start();
 
-            BoolQueryBuilder builder = QueryBuilders.boolQuery();
-
-            // Only records belonging to one of the entities being updated
             for (CoalesceEntity entity : entities)
             {
-                builder.should().add(QueryBuilders.matchQuery(ElasticSearchPersistor.ENTITY_KEY_COLUMN_NAME,
-                                                              entity.getKey()));
+                keys.add(entity.getKey().toLowerCase());
             }
 
-            int pageSize = 1000;
-            int original = request.requests().size();
+            // Build Query; only records belonging to an entity being updated
+            BoolQueryBuilder query = QueryBuilders.boolQuery();
+            query.should().add(QueryBuilders.termsQuery(ENTITY_KEY_COLUMN_NAME, keys.toArray(new String[keys.size()])));
 
-            SearchResponse response = client.prepareSearch(indices.toArray(new String[indices.size()])).setQuery(builder).setSize(
-                    pageSize).setScroll(new TimeValue(60000)).get();
+            SearchRequestBuilder builder = client.prepareSearch(recordKeys.keySet().toArray(new String[0]));
+            builder.setSource(new SearchSourceBuilder().fetchSource(ENTITY_KEY_COLUMN_NAME, null));
+            builder.setQuery(query);
+            builder.setSize(1000);
+            builder.setScroll(new TimeValue(60000));
 
-            do
+            if (LOGGER.isTraceEnabled())
+            {
+                LOGGER.trace("Query: {} Indices: {}", builder, recordKeys.keySet());
+            }
+
+            SearchResponse response = builder.get();
+
+            while (response.getHits().getHits().length != 0)
             {
                 for (SearchHit hit : response.getHits().getHits())
                 {
                     // Records being updated by this request
-                    if (!recordKeys.contains(hit.getId()))
+                    if (!recordKeys.get(hit.getIndex()).contains(hit.getId()))
                     {
-                        // No; Create Delete Request
-                        DeleteRequest deleteRequest = new DeleteRequest();
-                        deleteRequest.index(hit.getIndex());
-                        deleteRequest.type(hit.getType());
-                        deleteRequest.id(hit.getId());
+                        // This check should not be required
+                        String key = (String) hit.getSource().get(ENTITY_KEY_COLUMN_NAME);
 
-                        request.requests().add(deleteRequest);
+                        // Verify the record belongs to an entity being updated
+                        if (key != null && keys.contains(key))
+                        {
+                            // Create Delete Request
+                            DeleteRequest deleteRequest = new DeleteRequest();
+                            deleteRequest.index(hit.getIndex());
+                            deleteRequest.type(hit.getType());
+                            deleteRequest.id(hit.getId());
+
+                            request.requests().add(deleteRequest);
+
+                            if (LOGGER.isTraceEnabled())
+                            {
+                                LOGGER.trace("Deleting Phantom Record: ({}) From {}", hit.getId(), hit.getIndex());
+                            }
+                        }
+                        else if (LOGGER.isTraceEnabled())
+                        {
+                            // Should never trigger therefore log it as a warning.
+                            LOGGER.warn("Ignoring Phantom Record: ({}) in ({}) From {}", hit.getId(), key, hit.getIndex());
+                        }
                     }
                 }
 
                 response = client.prepareSearchScroll(response.getScrollId()).setScroll(new TimeValue(60000)).get();
             }
-            while (response.getHits().getHits().length != 0);
 
             watch.finish();
 
-            if (original != request.requests().size() || LOGGER.isTraceEnabled())
+            if (LOGGER.isDebugEnabled())
             {
                 LOGGER.debug("Created {} Delete Request for Phantom Records in {} ms",
                              request.requests().size() - original,
