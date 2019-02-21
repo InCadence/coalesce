@@ -36,7 +36,9 @@ jobs:
 
     - stage: test
       name: "Coalesce"
-      install: skip
+      install:
+        - sudo keytool -importcert -v -trustcacerts -alias devforce -keystore "$JAVA_HOME/jre/lib/security/cacerts" -storepass changeit --noprompt -file src/Coalesce.Framework.Persister.Elasticsearch/devforce_DoD_Root.crt
+        - cp .travis.settings.xml $HOME/.m2/settings.xml
       script: mvn verify -fae -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
     - stage: deploy
