@@ -46,6 +46,11 @@ public class ElasticSearchSettings {
     private static final String PARAM_SSL_BASE = "ssl.";
 
     /**
+     * Prefix used to identify index default settings.
+     */
+    public static final String PARAM_INDEX_SETTING_PREFIX = PARAM_ELASTIC_BASE + "index.settings.default.";
+
+    /**
      * (Boolean) Specifies whether or not this persister is authoritative meaning it can be used to READ entities.
      */
     public static final String PARAM_IS_AUTHORITATIVE = PARAM_ELASTIC_BASE + "isAuthoritative";

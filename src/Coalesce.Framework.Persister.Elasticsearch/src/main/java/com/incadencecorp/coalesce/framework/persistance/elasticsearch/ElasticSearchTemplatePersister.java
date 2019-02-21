@@ -43,6 +43,7 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.support.AbstractClient;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.rest.RestStatus;
@@ -52,7 +53,11 @@ import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersister {
 
@@ -94,6 +99,8 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     public static final String LINKAGE_ENTITY2_SOURCE_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageSource());
     public static final String LINKAGE_ENTITY2_VERSION_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageVersion());
 
+    private final HashMap<String, String> defaultSettings = new HashMap<>();
+
     protected final Map<String, String> params;
     protected final ElasticSearchIterator iterator;
     protected final boolean isAuthoritative;
@@ -130,6 +137,14 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
             for (Map.Entry<String, String> param : this.params.entrySet())
             {
                 LOGGER.debug("\t{} = {}", param.getKey(), param.getValue());
+            }
+        }
+
+        for (Map.Entry<String, String> entry : params.entrySet())
+        {
+            if (entry.getKey().startsWith(ElasticSearchSettings.PARAM_INDEX_SETTING_PREFIX))
+            {
+                defaultSettings.put(entry.getKey().replace(ElasticSearchSettings.PARAM_INDEX_SETTING_PREFIX, ""), entry.getValue());
             }
         }
     }
@@ -347,6 +362,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
                 CreateIndexRequest request = new CreateIndexRequest();
                 request.index(index);
+                request.settings(Settings.builder().put(defaultSettings).build());
                 request.mapping("recordset", Collections.singletonMap("properties", source));
 
                 // Add a type / recordset
