@@ -539,6 +539,7 @@ export class GraphView extends React.Component {
             opened={selected != null || adding || editing}
             actions={this.state.actions}
             editable={editable}
+            maxWidth="xl"
             message={
               //if the user is not editing or its not editable
               //checking against boolean values because !editing is true (same as !null if not defined yet)
