@@ -18,17 +18,18 @@ export class App extends React.Component {
       data: null
     };
 
-    this.reloadBlueprint = this.reloadBlueprint.bind(this)
+    this.reloadBlueprint = this.reloadBlueprint.bind(this);
+    this.loadBlueprints = this.loadBlueprints.bind(this);
   }
 
   componentDidMount() {
-    this.loadBlueprint("rest-blueprint.xml");
+    this.loadBlueprints();
   }
 
   render() {
 
     const { data, selected, error, theme, blueprints } = this.state;
-    const that = this;
+
     return (
       <MuiThemeProvider theme={this.props.theme}>
         <Menu logoSrc={this.props.icon} title={`${this.props.title} / ${selected}`} items={[
@@ -37,51 +38,39 @@ export class App extends React.Component {
             name: 'Load',
             img: "/images/svg/load.svg",
             title: 'Load Blueprint',
-            onClick: () => {
-              getBlueprintOptions().then(data => {
-
-                  data.push("Network Diagram");
-
-                  this.setState({
-                    blueprints: data,
-                    data: null
-                  })
-
-              }).catch(function(error) {
-                that.setState({error: `Loading Blueprint: ${error}`});
-              });
-            }
+            onClick: this.loadBlueprints
           },
           {
             id: 'add',
             name: 'Add',
             img: "/images/svg/add.svg",
             title: 'Add Bean',
-            onClick: () => this.setState({actions: 'adding'})
+            onClick: () => this.setState(() => {return {actions: 'adding'}})
           },
           {
             id: 'undo',
             name: 'Undo',
             img: "/images/svg/back.svg",
             title: 'Revert Blueprint',
-            onClick: () => this.setState({actions: 'reverting'})
+            onClick: () => this.setState(() => {return {actions: 'reverting'}})
           },
           ]}/>
           { data != null &&
             <GraphView reloadBlueprint={this.reloadBlueprint} actions={this.state.actions} data={data} title={selected} theme={theme} />
           }
-          <DialogMessage
-            title="Error"
-            opened={error != null}
-            message={error}
-            actions={'error'}
-            onPrimary={() => {this.setState({error: null})}}
-          />
-          {blueprints != null &&
+          {error &&
+            <DialogMessage
+              title="Error"
+              opened={true}
+              message={error}
+              onClose={() => {this.setState({error: undefined})}}
+            />
+          }
+          {blueprints &&
             <DialogOptions
               title="Selection"
-              open={data == null && this.state.error == null}
-              onClose={() => {this.loadBlueprint(selected)}}
+              open={!data && this.state.error == null}
+              onClose={() => {selected === 'Network Diagram' ? this.loadNetwork() : this.loadBlueprint(selected)}}
               options={blueprints.map((blueprint) => {
                 return {
                   key: blueprint,
@@ -89,12 +78,35 @@ export class App extends React.Component {
                   onClick: () => {blueprint === 'Network Diagram' ? this.loadNetwork() : this.loadBlueprint(blueprint)}
                 }
               })}
-
             >
             </DialogOptions>
           }
         </MuiThemeProvider>
     )
+  }
+
+  loadBlueprints() {
+    const that = this;
+    const { blueprints } = that.state;
+
+    if (blueprints) {
+      that.setState(() => {return {
+          data: undefined
+        }});
+    } else {
+      getBlueprintOptions().then(data => {
+
+          data.push("Network Diagram");
+
+          that.setState(() => {return {
+              blueprints: data,
+              data: undefined
+            }});
+
+      }).catch(function(error) {
+        that.setState(() => {return {error: `Loading Blueprint Options: ${error}`}});
+      });
+    }
   }
 
   loadNetwork() {
@@ -112,16 +124,18 @@ export class App extends React.Component {
 
   loadBlueprint(blueprint) {
 
-    getBlueprint(blueprint).then((value) => {
-      this.setState({
-        selected: blueprint,
-        data: this.formatData(value),
-        actions: 'base',
-      });
+    if (blueprint) {
+      getBlueprint(blueprint).then((value) => {
+        this.setState({
+          selected: blueprint,
+          data: this.formatData(value),
+          actions: 'base',
+        });
 
-    }).catch((err) => {
-      this.setState({error: `Loading ${blueprint}: ${err}`})
-    })
+      }).catch((err) => {
+        this.setState({error: `Loading ${blueprint}: ${err}`})
+      })
+    }
 
   }
 

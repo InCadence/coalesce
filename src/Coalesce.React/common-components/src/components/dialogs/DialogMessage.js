@@ -127,6 +127,7 @@ export class DialogMessage extends React.PureComponent {
         scroll="paper"
         aria-labelledby="scroll-dialog-title"
         PaperProps={{style: {width: '100%'}}}
+        maxWidth={this.props.maxWidth}
       >
         <DialogTitle id="scroll-dialog-title">{this.props.title}</DialogTitle>
         <DialogContent>
