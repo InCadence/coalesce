@@ -3,7 +3,6 @@ import Menu from 'common-components/lib/components/menu';
 import { loadTemplates, loadTemplate } from 'common-components/lib/js/templateController.js';
 import { getRootKarafUrl } from 'common-components/lib/js/common';
 import { DialogMessage, DialogLoader, DialogOptions } from 'common-components/lib/components/dialogs'
-import { searchComplex } from 'common-components/lib/js/searchController.js';
 import Button from '@material-ui/core/Button';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -11,9 +10,6 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Template from'./template.js';
 import TextField from '@material-ui/core/TextField';
 
-import uuid from 'uuid';
-
-import {SearchResults} from './results.js'
 
 const karafRootAddr = getRootKarafUrl();
 const DEFAULT = 'CoalesceEntity';
@@ -29,6 +25,8 @@ export class App extends React.Component {
     this.handleBack = this.handleBack.bind(this);
     this.handleCopy = this.handleCopy.bind(this);
     this.handleOnCsvChange = this.handleOnCsvChange.bind(this);
+    this.handleJsonChange = this.handleJsonChange.bind(this);
+    this.handleLinkageLoad = this.handleLinkageLoad.bind(this);
 
     var cache = {};
 
@@ -43,11 +41,11 @@ export class App extends React.Component {
       results: null,
       activeStep: 0,
       templateKeys: [],
-      templatesObject: {},
-      linkagesObject: {},
       csv: "",
       split: [],
     }
+    this.templates = [];
+    this.links = [];
   }
 
   componentDidMount() {
@@ -123,11 +121,9 @@ export class App extends React.Component {
         console.log("APP Loading Template", recordsets);
         that.state.templateKeys.push(key);
         that.setState({
-          key: key,
           promptTemplate: false,
           templateKeys: that.state.templateKeys,
-          }
-        );
+        });
 
         }).catch((err) => {
           that.handleError(`Failed Loading Template: ${key}`);
@@ -136,10 +132,13 @@ export class App extends React.Component {
       console.log("Loading Template (Cached): " + key);
 
       that.setState({
-        key: key,
         promptTemplate: false
         });
     }
+  }
+
+  handleLinkageLoad(name) {
+
   }
 
   handleBack() {
@@ -159,7 +158,6 @@ export class App extends React.Component {
       csv: event.target.value,
       split: split,
     })
-    console.log(split);
   }
 
   handleNext() {
@@ -167,27 +165,72 @@ export class App extends React.Component {
     this.setState({
       activeStep: activeStep + 1,
     });
+    this.createJson()
+  }
+
+  handleJsonChange(index, newJson) {
+      this.templates[index] = newJson;
+
+  }
+
+  createJson() {
+    const {templateKeys, cache} = this.state;
+    this.json = {templates: [], linkages: []};
+    for(var i = 0; i < templateKeys.length; i++) {
+      var rec = cache[templateKeys[i]].recordsets[0]
+      var template = {
+        templateUri: getRootKarafUrl()+"/templates/"+templateKeys[i],
+        record: {
+          name: rec.name,
+          fields: this.templates[i]
+        }
+      }
+      this.json["templates"][i] = template
+    }
   }
 
   render() {
 
-    const { cache, results, activeStep, templateKeys, split } = this.state;
-    const numSteps = 3;
+    const { cache, activeStep, templateKeys, split } = this.state;
 
+    const that = this;
+    var items = [];
+    if(activeStep === 0) {
+      items.push({
+        id: 'select',
+        name: 'Select',
+        img: "/images/svg/template.svg",
+        title: 'Add Template',
+        onClick: () => {
+          this.setState({promptTemplate: true})
+        }
+      });
+    }
+    else if(activeStep === 1) {
+      items.push({
+        id: 'linkage',
+        name: 'Linkage',
+        img: "/images/svg/add.svg",
+        title: 'Add Linkage',
+        onClick: () => {
+          this.setState({promptLinkage: true})
+        }
+      });
+    }
+
+    console.log(cache)
+    var linkList = [];
+    if(this.state.promptLinkage) {
+      for(var i = 0; i < this.state.templateKeys.length; i++) {
+        console.log(cache[this.state.templateKeys[i]].name)
+        linkList.push({name: cache[this.state.templateKeys[i]].name, key: this.state.templateKeys[i], description: "test"});
+      }
+    }
+    console.log(this.state.templates)
    // console.log("App creating new filter creator", cache, key);
     return (
         <div>
-        <Menu logoSrc={this.props.pjson.icon} title={this.props.pjson.title} items={[
-          {
-            id: 'select',
-            name: 'Select',
-            img: "/images/svg/template.svg",
-            title: 'Select Template',
-            onClick: () => {
-              this.setState({promptTemplate: true})
-            }
-          }
-        ]}/>
+        <Menu logoSrc={this.props.pjson.icon} title={this.props.pjson.title} items={items}/>
           <div  style={{padding: '5px', margin: '10px'}}>
           <Stepper activeStep={activeStep}>
               <Step key="Templates">
@@ -204,11 +247,11 @@ export class App extends React.Component {
             <Button variant="contained"
                     onClick={this.handleBack}
                     color="primary"
-                    disabled={activeStep == 0}
+                    disabled={activeStep === 0}
                     >
                     Back
             </Button>
-            {activeStep != 2 &&
+            {activeStep !== 2 &&
               <Button variant="contained"
                       onClick={this.handleNext}
                       color="primary"
@@ -216,7 +259,7 @@ export class App extends React.Component {
                       Next
               </Button>
             }
-            {activeStep == 2 &&
+            {activeStep === 2 &&
               <Button variant="contained"
                       onClick={this.handleCopy}
                       color="primary"
@@ -225,7 +268,7 @@ export class App extends React.Component {
               </Button>
             }
 
-            {activeStep == 0 && <div>
+            {activeStep === 0 && <div>
               <TextField
                 id="standard-full-width"
                 label="CSV"
@@ -243,7 +286,7 @@ export class App extends React.Component {
                </div>
 
             }
-            {activeStep == 0 &&
+            {activeStep === 0 &&
               templateKeys.map(function(key, index) {
               var rec = cache[key].recordsets[0];
               var name = cache[key].name;
@@ -254,14 +297,14 @@ export class App extends React.Component {
                   index={index}
                   tKey={key}
                   recordSet={rec}
+                  onChange={that.handleJsonChange}
                   recName={recName}
                   name={name}
                   split={split}
                 />
               )
-            })}
-
-
+            })
+            }
 
 
             { this.state.error &&
@@ -285,6 +328,15 @@ export class App extends React.Component {
                 onClose={() => {this.setState({promptTemplate: false})}}
                 onClick={this.handleTemplateLoad}
                 options={this.state.templates}
+              />
+            }
+            { this.state.promptLinkage &&
+              <DialogOptions
+                title="Select the template to link FROM"
+                open={true}
+                onClose={() => {this.setState({promptLinkage: false})}}
+                onClick={this.handleLinkageLoad}
+                options={linkList}
               />
             }
           </div>
