@@ -122,7 +122,7 @@ public class AccumuloSettings {
      */
     public static String getZookeepers()
     {
-        return settings.getSetting(config_name, PARAM_ZOOKEEPERS, "localhost", true);
+        return settings.getSetting(config_name, PARAM_ZOOKEEPERS, "localhost", false);
     }
 
     /**
@@ -177,7 +177,7 @@ public class AccumuloSettings {
      */
     public static String getDatabaseName()
     {
-        return settings.getSetting(config_name, PARAM_DATABASE_NAME, "accumulo", true);
+        return settings.getSetting(config_name, PARAM_DATABASE_NAME, "accumulo", false);
     }
 
     /**
@@ -195,7 +195,7 @@ public class AccumuloSettings {
      */
     public static List<String> getAttributeFields()
     {
-        String csv = settings.getSetting(config_name, PARAM_ATTRIBUTE_ROWS, DEFAULT_ATTRIBUTE_ROWS, true);
+        String csv = settings.getSetting(config_name, PARAM_ATTRIBUTE_ROWS, DEFAULT_ATTRIBUTE_ROWS, false);
 
         return Arrays.asList(StringUtils.split(csv, ","));
     }
@@ -212,7 +212,7 @@ public class AccumuloSettings {
 
     public static boolean getPersistLinkageAttr()
     {
-        return settings.getSetting(config_name, PARAM_PERSIST_LINKAGE_ATTR, false, true);
+        return settings.getSetting(config_name, PARAM_PERSIST_LINKAGE_ATTR, false, false);
     }
 
     public static void setPersistLinkageAttr(boolean value)
@@ -222,7 +222,7 @@ public class AccumuloSettings {
 
     public static boolean getPersistSectionAttr()
     {
-        return settings.getSetting(config_name, PARAM_PERSIST_SECTION_ATTR, false, true);
+        return settings.getSetting(config_name, PARAM_PERSIST_SECTION_ATTR, false, false);
     }
 
     public static void setPersistSectionAttr(boolean pERSIST_SECTION_ATTR)
@@ -232,7 +232,7 @@ public class AccumuloSettings {
 
     public static boolean getPersistRecordsetAttr()
     {
-        return settings.getSetting(config_name, PARAM_PERSIST_RECORDSET_ATTR, false, true);
+        return settings.getSetting(config_name, PARAM_PERSIST_RECORDSET_ATTR, false, false);
     }
 
     public static void setPersistRecordsetAttr(boolean persistRecordsetAttr)
@@ -242,7 +242,7 @@ public class AccumuloSettings {
 
     public static boolean getPersistFieldDefAttr()
     {
-        return settings.getSetting(config_name, PARAM_PERSIST_FIELD_DEF_ATTR, false, true);
+        return settings.getSetting(config_name, PARAM_PERSIST_FIELD_DEF_ATTR, false, false);
     }
 
     public static void setPersistFieldDefAttr(boolean persistFieldDefAttr)
@@ -252,7 +252,7 @@ public class AccumuloSettings {
 
     public static boolean getPersistRecordAttr()
     {
-        return settings.getSetting(config_name, PARAM_PERSIST_RECORD_ATTR, false, true);
+        return settings.getSetting(config_name, PARAM_PERSIST_RECORD_ATTR, false, false);
     }
 
     public static void setPersistRecordAttr(boolean persistRecordAttr)
@@ -262,7 +262,7 @@ public class AccumuloSettings {
 
     public static boolean getPersistFieldAttr()
     {
-        return settings.getSetting(config_name, PARAM_PERSIST_FIELD_ATTR, false, true);
+        return settings.getSetting(config_name, PARAM_PERSIST_FIELD_ATTR, false, false);
     }
 
     public static void setPersistFieldAttr(boolean persistFieldAttr)
@@ -275,7 +275,7 @@ public class AccumuloSettings {
      */
     public static boolean overrideFeatures()
     {
-        return settings.getSetting(config_name, PARAM_OVERRIDE_FEATURES, false, true);
+        return settings.getSetting(config_name, PARAM_OVERRIDE_FEATURES, false, false);
     }
 
     /**
@@ -293,7 +293,7 @@ public class AccumuloSettings {
      */
     public static boolean useFeatureWritter()
     {
-        return settings.getSetting(config_name, PARAM_USER_FEATURE_WRITTER, false, true);
+        return settings.getSetting(config_name, PARAM_USER_FEATURE_WRITTER, false, false);
     }
 
     /**
@@ -311,7 +311,7 @@ public class AccumuloSettings {
      */
     public static int getQueryThreads()
     {
-        return settings.getSetting(config_name, PARAM_THREADS_QUERY, DEFAULT_THREAD_COUNT, true);
+        return settings.getSetting(config_name, PARAM_THREADS_QUERY, DEFAULT_THREAD_COUNT, false);
     }
 
     /**
@@ -329,7 +329,7 @@ public class AccumuloSettings {
      */
     public static int getRecordThreads()
     {
-        return settings.getSetting(config_name, PARAM_THREADS_RECORD, DEFAULT_THREAD_COUNT, true);
+        return settings.getSetting(config_name, PARAM_THREADS_RECORD, DEFAULT_THREAD_COUNT, false);
     }
 
     /**
@@ -347,7 +347,7 @@ public class AccumuloSettings {
      */
     public static int getWriteThreads()
     {
-        return settings.getSetting(config_name, PARAM_THREADS_WRITE, DEFAULT_THREAD_COUNT, true);
+        return settings.getSetting(config_name, PARAM_THREADS_WRITE, DEFAULT_THREAD_COUNT, false);
     }
 
     /**
@@ -365,7 +365,7 @@ public class AccumuloSettings {
      */
     public static boolean isMockMode()
     {
-        return settings.getSetting(config_name, PARAM_USE_MOCK, false, true);
+        return settings.getSetting(config_name, PARAM_USE_MOCK, false, false);
     }
 
     /**
@@ -383,7 +383,7 @@ public class AccumuloSettings {
      */
     public static boolean isCompressionEnabled()
     {
-        return settings.getSetting(config_name, PARAM_USE_COMPRESSION, true, true);
+        return settings.getSetting(config_name, PARAM_USE_COMPRESSION, true, false);
     }
 
     /**

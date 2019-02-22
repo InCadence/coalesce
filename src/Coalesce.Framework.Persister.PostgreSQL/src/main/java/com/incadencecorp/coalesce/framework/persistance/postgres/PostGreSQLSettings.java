@@ -41,8 +41,7 @@ public class PostGreSQLSettings {
     Property Names
     --------------------------------------------------------------------------*/
 
-    // TODO Update base parameter to be coalesce within the InCadence repo
-    private static final String PARAM_BASE = "omega.dss.";
+    private static final String PARAM_BASE = "postgres.";
     private static final String PARAM_SRID = PARAM_BASE + "srid";
     private static final String PARAM_PORT = PARAM_BASE + "dbServerPort";
     private static final String PARAM_DATABASE = PARAM_BASE + "database";
@@ -107,7 +106,7 @@ public class PostGreSQLSettings {
      */
     public static String getDatabaseAddress()
     {
-        return settings.getSetting(config_name, PARAM_HOST, "10.0.51.90", true);
+        return settings.getSetting(config_name, PARAM_HOST, "10.0.51.90", false);
     }
 
     /**
@@ -161,7 +160,7 @@ public class PostGreSQLSettings {
      */
     public static String getDatabaseSchema()
     {
-        return settings.getSetting(config_name, PARAM_SCHEMA, "coalesce", true);
+        return settings.getSetting(config_name, PARAM_SCHEMA, "coalesce", false);
     }
 
     /**
@@ -179,7 +178,7 @@ public class PostGreSQLSettings {
      */
     public static String getDatabaseName()
     {
-        return settings.getSetting(config_name, PARAM_DATABASE, "OMEGA", true);
+        return settings.getSetting(config_name, PARAM_DATABASE, "coalesce", false);
     }
 
     /**
@@ -197,7 +196,7 @@ public class PostGreSQLSettings {
      */
     public static int getDatabasePort()
     {
-        return settings.getSetting(config_name, PARAM_PORT, 5444, true);
+        return settings.getSetting(config_name, PARAM_PORT, 5444, false);
     }
 
     /**
@@ -233,7 +232,7 @@ public class PostGreSQLSettings {
      */
     public static int getSRID()
     {
-        return settings.getSetting(config_name, PARAM_SRID, DEFAULT_SRID, true);
+        return settings.getSetting(config_name, PARAM_SRID, DEFAULT_SRID, false);
     }
 
     /**
@@ -254,7 +253,7 @@ public class PostGreSQLSettings {
      */
     public static boolean isUseForeignKeys()
     {
-        return settings.getSetting(config_name, PARAM_USE_FOREIGN_KEYS, DEFAULT_USE_FOREIGN_KEYS, true);
+        return settings.getSetting(config_name, PARAM_USE_FOREIGN_KEYS, DEFAULT_USE_FOREIGN_KEYS, false);
     }
 
     /**
@@ -274,7 +273,7 @@ public class PostGreSQLSettings {
      */
     public static boolean isSSLEnabled()
     {
-        return settings.getSetting(config_name, PARAM_SSL_ENABLED, DEFAULT_SSL_ENABLED, true);
+        return settings.getSetting(config_name, PARAM_SSL_ENABLED, DEFAULT_SSL_ENABLED, false);
     }
 
     /**
@@ -293,7 +292,7 @@ public class PostGreSQLSettings {
      */
     public static boolean isSSLValidate()
     {
-        return settings.getSetting(config_name, PARAM_SSL_CERT_VALIDATION, DEFAULT_SSL_CERT_VALIDATION, true);
+        return settings.getSetting(config_name, PARAM_SSL_CERT_VALIDATION, DEFAULT_SSL_CERT_VALIDATION, false);
     }
 
     /**

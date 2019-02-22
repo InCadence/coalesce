@@ -109,7 +109,7 @@ public class Neo4jSettings {
      */
     public static boolean isEnabled()
     {
-        return settings.getSetting(config_name, PROPERTY_ENABLED, true, true);
+        return settings.getSetting(config_name, PROPERTY_ENABLED, true, false);
     }
 
     /**
@@ -127,7 +127,7 @@ public class Neo4jSettings {
      */
     public static String getDatabaseAddress()
     {
-        return settings.getSetting(config_name, PROPERTY_SERVER_NAME, DEFAULT_ADDRESS, true);
+        return settings.getSetting(config_name, PROPERTY_SERVER_NAME, DEFAULT_ADDRESS, false);
     }
 
     /**
@@ -181,7 +181,7 @@ public class Neo4jSettings {
      */
     public static String getDatabaseName()
     {
-        return settings.getSetting(config_name, PROPERTY_DATABASE_NAME, "", true);
+        return settings.getSetting(config_name, PROPERTY_DATABASE_NAME, "", false);
     }
 
     /**
@@ -199,7 +199,7 @@ public class Neo4jSettings {
      */
     public static int getDatabasePort()
     {
-        return settings.getSetting(config_name, PROPERTY_PORT, DEFAULT_PORT, true);
+        return settings.getSetting(config_name, PROPERTY_PORT, DEFAULT_PORT, false);
     }
 
     /**
@@ -217,7 +217,7 @@ public class Neo4jSettings {
      */
     public static int getRetryAttempts()
     {
-        return settings.getSetting(config_name, PROPERTY_RETRY_ATTEMPTS, DEFAULT_ONERROR_RETRIES, true);
+        return settings.getSetting(config_name, PROPERTY_RETRY_ATTEMPTS, DEFAULT_ONERROR_RETRIES, false);
     }
 
     /**
@@ -235,7 +235,7 @@ public class Neo4jSettings {
      */
     public static int getBackoffInterval()
     {
-        return settings.getSetting(config_name, PROPERTY_BACKOFF_INTERVAL, DEFAULT_ONERROR_BACKOFF_INTERVAL, true);
+        return settings.getSetting(config_name, PROPERTY_BACKOFF_INTERVAL, DEFAULT_ONERROR_BACKOFF_INTERVAL, false);
     }
 
     /**
@@ -253,7 +253,7 @@ public class Neo4jSettings {
      */
     public static boolean isAllowDelete()
     {
-        return settings.getSetting(config_name, PROPERTY_ALLOW_DELETE, DEFAULT_ALLOW_DELETE, true);
+        return settings.getSetting(config_name, PROPERTY_ALLOW_DELETE, DEFAULT_ALLOW_DELETE, false);
     }
 
     /**
@@ -271,7 +271,7 @@ public class Neo4jSettings {
      */
     public static boolean isSSLEnabled()
     {
-        return settings.getSetting(config_name, PARAM_SSL_ENABLED, DEFAULT_SSL_ENABLED, true);
+        return settings.getSetting(config_name, PARAM_SSL_ENABLED, DEFAULT_SSL_ENABLED, false);
     }
 
     /**
@@ -289,7 +289,7 @@ public class Neo4jSettings {
      */
     public static boolean isXMLEnabled()
     {
-        return settings.getSetting(config_name, PARAM_XML_ENABLED, DEFAULT_XML_ENABLED, true);
+        return settings.getSetting(config_name, PARAM_XML_ENABLED, DEFAULT_XML_ENABLED, false);
     }
 
     /**
