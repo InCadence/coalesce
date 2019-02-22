@@ -17,27 +17,25 @@
 
 package com.incadencecorp.coalesce.synchronizer.api.common;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+
+import javax.sql.rowset.CachedRowSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import javax.sql.rowset.CachedRowSet;
-
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-
 /**
  * Abstract task which is the base for all task created by the Synchronizer's
  * operations.
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public abstract class AbstractOperationTask implements Callable<Boolean> {
 
     protected ICoalescePersistor source;
     protected ICoalescePersistor target;
-    protected Map<String, String> params = new HashMap<String, String>();
+    protected Map<String, String> params = new HashMap<>();
     protected String keys[];
     protected CachedRowSet rowset;
 
@@ -49,8 +47,8 @@ public abstract class AbstractOperationTask implements Callable<Boolean> {
 
     /**
      * Sets the parameters.
-     * 
-     * @param params
+     *
+     * @param params configuration parameters
      */
     public void setParameters(Map<String, String> params)
     {
@@ -59,8 +57,8 @@ public abstract class AbstractOperationTask implements Callable<Boolean> {
 
     /**
      * Sets the source used to obtain entities.
-     * 
-     * @param source
+     *
+     * @param source used to obtain entities.
      */
     public final void setSource(ICoalescePersistor source)
     {
@@ -69,8 +67,8 @@ public abstract class AbstractOperationTask implements Callable<Boolean> {
 
     /**
      * Sets the target that the results of this operation should be stored.
-     * 
-     * @param target
+     *
+     * @param target of this operation
      */
     public final void setTarget(ICoalescePersistor target)
     {
@@ -79,8 +77,8 @@ public abstract class AbstractOperationTask implements Callable<Boolean> {
 
     /**
      * Sets the row set which contains the result of a scan.
-     * 
-     * @param rowset
+     *
+     * @param rowset contains the result of a scan.
      */
     public final void setRowset(CachedRowSet rowset)
     {
@@ -89,8 +87,8 @@ public abstract class AbstractOperationTask implements Callable<Boolean> {
 
     /**
      * Sets the subset of keys this task is responsible for.
-     * 
-     * @param subset
+     *
+     * @param subset keys this task is responsible for.
      */
     public final void setSubset(String[] subset)
     {
@@ -103,6 +101,15 @@ public abstract class AbstractOperationTask implements Callable<Boolean> {
     public final String[] getSubset()
     {
         return this.keys;
+    }
+
+    /**
+     * @return the subset of keys which failed to process. Defaults to the full subset and the extending operation needs to
+     * override this to change that behaviour.
+     */
+    public String[] getErrorSubset()
+    {
+        return getSubset();
     }
 
     protected abstract Boolean doWork(String[] keys, CachedRowSet rowset) throws CoalescePersistorException;
