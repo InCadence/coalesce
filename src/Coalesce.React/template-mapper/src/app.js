@@ -137,8 +137,12 @@ export class App extends React.Component {
     }
   }
 
-  handleLinkageLoad(name) {
-
+  handleLinkageLoad(index) {
+    var link = {
+      entity1: index,
+      linkType: 'created',
+      entity2: index
+    }
   }
 
   handleBack() {
@@ -223,9 +227,10 @@ export class App extends React.Component {
     if(this.state.promptLinkage) {
       for(var i = 0; i < this.state.templateKeys.length; i++) {
         console.log(cache[this.state.templateKeys[i]].name)
-        linkList.push({name: cache[this.state.templateKeys[i]].name, key: this.state.templateKeys[i], description: "test"});
+        linkList.push({name: cache[this.state.templateKeys[i]].name, key: i, description: "test"});
       }
     }
+
     console.log(this.state.templates)
    // console.log("App creating new filter creator", cache, key);
     return (
