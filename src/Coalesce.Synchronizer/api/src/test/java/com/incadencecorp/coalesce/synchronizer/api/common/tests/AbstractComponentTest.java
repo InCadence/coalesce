@@ -40,7 +40,7 @@ public class AbstractComponentTest {
      *
      * @throws Exception
      */
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalStateException.class)
     public void testSetupScannerFailure() throws Exception
     {
         MockDriver driver = new MockDriver();
@@ -53,7 +53,7 @@ public class AbstractComponentTest {
      *
      * @throws Exception
      */
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalStateException.class)
     public void testSetupOperationFailure() throws Exception
     {
         CoalesceEntity entity = new CoalesceEntity();

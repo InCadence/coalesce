@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.synchronizer.api.common;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
@@ -50,25 +51,33 @@ public abstract class AbstractDriver extends CoalesceComponentImpl
     {
         if (!isInitialized)
         {
-            Set<String> columns = new LinkedHashSet<>();
-
-            for (IPersistorOperation operation : operations)
+            if (operations == null)
             {
-                columns.addAll(operation.getRequiredColumns());
+                throw new IllegalStateException(String.format(CoalesceErrors.NOT_INITIALIZED, "Operations"));
             }
 
-            if (LOGGER.isTraceEnabled())
+            if (scanner != null)
             {
-                LOGGER.trace(String.format("%s's Required Columns:", scanner.getName()));
+                Set<String> columns = new LinkedHashSet<>();
 
-                for (String column : columns)
+                for (IPersistorOperation operation : operations)
                 {
-                    LOGGER.trace(String.format("\t%s", column));
+                    columns.addAll(operation.getRequiredColumns());
                 }
-            }
 
-            scanner.setReturnedColumns(columns);
-            scanner.setup();
+                if (LOGGER.isTraceEnabled())
+                {
+                    LOGGER.trace(String.format("%s's Required Columns:", scanner.getName()));
+
+                    for (String column : columns)
+                    {
+                        LOGGER.trace(String.format("\t%s", column));
+                    }
+                }
+
+                scanner.setReturnedColumns(columns);
+                scanner.setup();
+            }
 
             doSetup();
             isInitialized = true;
@@ -105,16 +114,7 @@ public abstract class AbstractDriver extends CoalesceComponentImpl
                 if (results.size() > 0)
                 {
                     // Execute Operation(s) on Results
-                    for (IPersistorOperation operation : operations)
-                    {
-                        if (LOGGER.isTraceEnabled())
-                        {
-                            LOGGER.trace("Executing {} Operation", operation.getName());
-                        }
-
-                        operation.execute(this, results);
-                        metrics.finish(operation.getName());
-                    }
+                    executeOperations(metrics, results);
                 }
 
                 scanner.finished(true, results);
@@ -140,6 +140,20 @@ public abstract class AbstractDriver extends CoalesceComponentImpl
             LOGGER.info("{} completed: {}", getName(), metrics.getMeterics());
         }
 
+    }
+
+    protected void executeOperations(PipelineMetrics metrics, CachedRowSet results) throws CoalesceException
+    {
+        for (IPersistorOperation operation : operations)
+        {
+            if (LOGGER.isTraceEnabled())
+            {
+                LOGGER.trace("Executing {} Operation", operation.getName());
+            }
+
+            operation.execute(this, results);
+            metrics.finish(operation.getName());
+        }
     }
 
     @Override

@@ -77,7 +77,12 @@
             <version>1.2</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.notification.direct</groupId>
+            <artifactId>notification-direct-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
