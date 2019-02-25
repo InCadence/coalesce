@@ -20,6 +20,7 @@ package com.incadencecorp.coalesce.synchronizer.api.common;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.ArrayHelper;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
@@ -30,7 +31,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -162,7 +167,7 @@ public abstract class AbstractOperation<T extends AbstractOperationTask> extends
                         LOGGER.debug("Operation Failed");
                     }
 
-                    if (handler == null || !handler.handle(tasks.get(ii).getSubset(), this, e))
+                    if (handler == null || !handler.handle(tasks.get(ii).getErrorSubset(), this, e))
                     {
                         throw e;
                     }
@@ -235,25 +240,24 @@ public abstract class AbstractOperation<T extends AbstractOperationTask> extends
 
                 if (targets != null)
                 {
-                    for (int ii = 0; ii < keys.size() / window + 1; ii++)
-                    {
-                        String[] subset = getSubSet(keys, ii * window, window);
+                    String[][] subsets = ArrayHelper.createChunks(keys.toArray(new String[keys.size()]),
+                                                                  window,
+                                                                  String[][]::new);
 
-                        if (subset.length > 0)
+                    for (String[] subset : subsets)
+                    {
+                        for (ICoalescePersistor target : targets)
                         {
-                            // TODO Load XML First
-                            for (ICoalescePersistor target : targets)
-                            {
-                                T task = createTask();
-                                task.setParameters(parameters);
-                                task.setSource(source);
-                                task.setRowset(rowset);
-                                task.setSubset(subset);
-                                task.setTarget(target);
-                                tasks.add(task);
-                            }
+                            T task = createTask();
+                            task.setParameters(parameters);
+                            task.setSource(source);
+                            task.setRowset(rowset);
+                            task.setSubset(subset);
+                            task.setTarget(target);
+                            tasks.add(task);
                         }
                     }
+
                 }
                 else
                 {
@@ -272,18 +276,6 @@ public abstract class AbstractOperation<T extends AbstractOperationTask> extends
         }
 
         return tasks;
-    }
-
-    private String[] getSubSet(List<String> keys, int offset, int window)
-    {
-        String[] values = new String[((keys.size() - offset) < window) ? (keys.size() - offset) : window];
-
-        for (int ii = 0; ii < values.length; ii++)
-        {
-            values[ii] = keys.get(ii + offset);
-        }
-
-        return values;
     }
 
 }

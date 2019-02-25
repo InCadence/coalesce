@@ -17,30 +17,27 @@
 
 package com.incadencecorp.coalesce.synchronizer.api.common;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import javax.sql.rowset.CachedRowSet;
-
-import org.apache.commons.lang.time.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
+import com.incadencecorp.coalesce.framework.jobs.metrics.PipelineMetrics;
 import com.incadencecorp.coalesce.synchronizer.api.IPersistorDriver;
 import com.incadencecorp.coalesce.synchronizer.api.IPersistorOperation;
 import com.incadencecorp.coalesce.synchronizer.api.IPersistorScan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.sql.rowset.CachedRowSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Abstract implementation which is the base of all drivers.
- * 
+ *
  * @author n78554
  */
-public abstract class AbstractDriver extends CoalesceComponentImpl implements IPersistorDriver, ICoalesceExecutorService,
-        Runnable {
+public abstract class AbstractDriver extends CoalesceComponentImpl
+        implements IPersistorDriver, ICoalesceExecutorService, Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDriver.class);
     private boolean isInitialized = false;
@@ -81,13 +78,12 @@ public abstract class AbstractDriver extends CoalesceComponentImpl implements IP
     @Override
     public void run()
     {
+        PipelineMetrics metrics = new PipelineMetrics();
+
         if (LOGGER.isTraceEnabled())
         {
             LOGGER.trace("Driver {} Started", getName());
         }
-
-        StopWatch watch = new StopWatch();
-        watch.start();
 
         if (LOGGER.isTraceEnabled())
         {
@@ -95,18 +91,19 @@ public abstract class AbstractDriver extends CoalesceComponentImpl implements IP
         }
 
         // Perform Scan
-        try
+        try (CachedRowSet results = scanner.scan())
         {
-            CachedRowSet results = scanner.scan();
+            metrics.finish("scan");
 
             try
             {
-                LOGGER.info("{} completed in {} ms with {} results.", scanner.getName(), watch.getTime(), results.size());
+                if (LOGGER.isInfoEnabled())
+                {
+                    LOGGER.info("{} completed with {} results.", scanner.getName(), results.size());
+                }
 
                 if (results.size() > 0)
                 {
-                    StopWatch operationWatch = new StopWatch();
-
                     // Execute Operation(s) on Results
                     for (IPersistorOperation operation : operations)
                     {
@@ -115,10 +112,8 @@ public abstract class AbstractDriver extends CoalesceComponentImpl implements IP
                             LOGGER.trace("Executing {} Operation", operation.getName());
                         }
 
-                        operationWatch.start();
-                        results = operation.execute(this, results);
-                        LOGGER.info("{} completed in {} ms", operation.getName(), operationWatch.getTime());
-                        operationWatch.reset();
+                        operation.execute(this, results);
+                        metrics.finish(operation.getName());
                     }
                 }
 
@@ -140,9 +135,10 @@ public abstract class AbstractDriver extends CoalesceComponentImpl implements IP
             LOGGER.error("Driver Failed", e);
         }
 
-        watch.stop();
-
-        LOGGER.info("{} completed in {} ms", getName(), watch.getTime());
+        if (LOGGER.isInfoEnabled())
+        {
+            LOGGER.info("{} completed: {}", getName(), metrics.getMeterics());
+        }
 
     }
 
