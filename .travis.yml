@@ -57,7 +57,7 @@ jobs:
       name: "Coalesce Documentation"
       install:
         # Compute Code Coverage / Find Bugs
-        - mvn install -Dfindbugs.skip=false -Djacoco.skip=false -o -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        - mvn install -Dfindbugs.skip=false -Djacoco.skip=false -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
       before_script:
         # Copy Classes
         - mkdir -p target/classes/com
