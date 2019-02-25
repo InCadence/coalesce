@@ -195,7 +195,7 @@ public class CoalesceSettings {
 
     public static boolean getUseIndexing()
     {
-        return settings.getSetting(getConfigurationFileName(), PARAM_FILE_STORE_USE_INDEXING, DEFAULT_USE_INDEXING, true);
+        return settings.getSetting(getConfigurationFileName(), PARAM_FILE_STORE_USE_INDEXING, DEFAULT_USE_INDEXING, false);
     }
 
     public static boolean setUseIndexing(boolean value)
@@ -222,7 +222,7 @@ public class CoalesceSettings {
             defaultValue = "files";
         }
 
-        return settings.getSetting(getConfigurationFileName(), PARAM_FILE_STORE_BASE_PATH, defaultValue, true);
+        return settings.getSetting(getConfigurationFileName(), PARAM_FILE_STORE_BASE_PATH, defaultValue, false);
     }
 
     public static boolean setBinaryFileStoreBasePath(String value)
@@ -282,7 +282,7 @@ public class CoalesceSettings {
 
     public static boolean getUseEncryption()
     {
-        return settings.getSetting(getConfigurationFileName(), PARAM_SECURITY_USE_ENCRYPTION, DEFAULT_USE_ENCRYPTION, true);
+        return settings.getSetting(getConfigurationFileName(), PARAM_SECURITY_USE_ENCRYPTION, DEFAULT_USE_ENCRYPTION, false);
     }
 
     public static boolean setUseEncryption(boolean value)
@@ -292,7 +292,7 @@ public class CoalesceSettings {
 
     public static String getPassPhrase()
     {
-        return settings.getSetting(getConfigurationFileName(), PARAM_SECURITY_PASS_PHRASE, DEFAULT_PASS_PHRASE, true);
+        return settings.getSetting(getConfigurationFileName(), PARAM_SECURITY_PASS_PHRASE, DEFAULT_PASS_PHRASE, false);
     }
 
     public static boolean setPassPhrase(String value)
@@ -302,7 +302,7 @@ public class CoalesceSettings {
 
     public static boolean getAuditSelectStatements()
     {
-        return settings.getSetting(getConfigurationFileName(), PARAM_SECURITY_AUDIT_SELECT_STATEMENTS, true, true);
+        return settings.getSetting(getConfigurationFileName(), PARAM_SECURITY_AUDIT_SELECT_STATEMENTS, true, false);
     }
 
     public static boolean setAuditSelectStatements(boolean value)
@@ -312,7 +312,7 @@ public class CoalesceSettings {
 
     public static String getImageFormat()
     {
-        return settings.getSetting(getConfigurationFileName(), PARAM_FILE_STORE_IMAGE_FORMAT, DEFAULT_IMAGE_FORMAT, true);
+        return settings.getSetting(getConfigurationFileName(), PARAM_FILE_STORE_IMAGE_FORMAT, DEFAULT_IMAGE_FORMAT, false);
     }
 
     public static boolean setImageFormat(String value)
@@ -349,7 +349,7 @@ public class CoalesceSettings {
      */
     public static double getDefaultZValue()
     {
-        return settings.getSetting(getConfigurationFileName(), PARAM_COORD_DEFAULT_Z_AXIS, DEFAULT_Z_AXIS, true);
+        return settings.getSetting(getConfigurationFileName(), PARAM_COORD_DEFAULT_Z_AXIS, DEFAULT_Z_AXIS, false);
     }
 
     /**
@@ -367,7 +367,7 @@ public class CoalesceSettings {
      */
     public static int getNumDecimalsForCoordinates()
     {
-        return settings.getSetting(getConfigurationFileName(), PARAM_COORD_NUM_DECIMALS, DEFAULT_NUM_DECIMALS, true);
+        return settings.getSetting(getConfigurationFileName(), PARAM_COORD_NUM_DECIMALS, DEFAULT_NUM_DECIMALS, false);
     }
     
     /*--------------------------------------------------------------------------
@@ -395,7 +395,7 @@ public class CoalesceSettings {
      */
     public static int getNumberOfCores()
     {
-        return settings.getSetting(getConfigurationFileName(), PARAM_CORE_COUNT, DEFAULT_CORE_COUNT, true);
+        return settings.getSetting(getConfigurationFileName(), PARAM_CORE_COUNT, DEFAULT_CORE_COUNT, false);
     }
 
     /**
@@ -413,7 +413,7 @@ public class CoalesceSettings {
      */
     public static int getMinThreadsPerCore()
     {
-        return settings.getSetting(getConfigurationFileName(), PARAM_MIN_THREADS, DEFAULT_MIN_THREADS, true);
+        return settings.getSetting(getConfigurationFileName(), PARAM_MIN_THREADS, DEFAULT_MIN_THREADS, false);
     }
 
     /**
@@ -431,7 +431,7 @@ public class CoalesceSettings {
      */
     public static int getMaxThreadsPerCore()
     {
-        return settings.getSetting(getConfigurationFileName(), PARAM_MAX_THREADS, DEFAULT_MAX_THREADS, true);
+        return settings.getSetting(getConfigurationFileName(), PARAM_MAX_THREADS, DEFAULT_MAX_THREADS, false);
     }
 
     /**
@@ -449,7 +449,7 @@ public class CoalesceSettings {
      */
     public static int getKeepAliveTime()
     {
-        return settings.getSetting(getConfigurationFileName(), PARAM_KEEP_ALIVE_TIME, DEFAULT_KEEP_ALIVE_TIME, true);
+        return settings.getSetting(getConfigurationFileName(), PARAM_KEEP_ALIVE_TIME, DEFAULT_KEEP_ALIVE_TIME, false);
     }
 
     /**
@@ -465,7 +465,7 @@ public class CoalesceSettings {
      */
     public static int getThreadTimeout()
     {
-        return settings.getSetting(getConfigurationFileName(), PARAM_THREAD_TIMOUT, DEFAULT_THREAD_TIMOUT, true);
+        return settings.getSetting(getConfigurationFileName(), PARAM_THREAD_TIMOUT, DEFAULT_THREAD_TIMOUT, false);
     }
 
     /**
@@ -481,7 +481,7 @@ public class CoalesceSettings {
      */
     public static List<String> getTimePatterns()
     {
-        return Arrays.asList(settings.getSetting(getConfigurationFileName(), PARAM_TIME_PATTERNS, "", true).split(","));
+        return Arrays.asList(settings.getSetting(getConfigurationFileName(), PARAM_TIME_PATTERNS, "", false).split(","));
     }
 
     /**
@@ -533,7 +533,7 @@ public class CoalesceSettings {
          */
         public boolean isRestricted()
         {
-            return settings.getSetting(getConfigurationFileName(), getRestrictedParam(), _restricted, true);
+            return settings.getSetting(getConfigurationFileName(), getRestrictedParam(), _restricted, false);
         }
 
         /**
@@ -551,7 +551,7 @@ public class CoalesceSettings {
          */
         public double getMax()
         {
-            return settings.getSetting(getConfigurationFileName(), getMaxParam(), _max, true);
+            return settings.getSetting(getConfigurationFileName(), getMaxParam(), _max, false);
         }
 
         /**
@@ -569,7 +569,7 @@ public class CoalesceSettings {
          */
         public double getMin()
         {
-            return settings.getSetting(getConfigurationFileName(), getMinParam(), _min, true);
+            return settings.getSetting(getConfigurationFileName(), getMinParam(), _min, false);
         }
 
         /**

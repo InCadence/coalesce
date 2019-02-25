@@ -282,7 +282,7 @@ public class ElasticSearchSettings {
      */
     public static int getBackoffInterval()
     {
-        return settings.getSetting(config_name, PARAM_BACKOFF_INTERVAL, DEFAULT_BACKOFF_INTERVAL, true);
+        return settings.getSetting(config_name, PARAM_BACKOFF_INTERVAL, DEFAULT_BACKOFF_INTERVAL, false);
     }
 
     /**
@@ -300,7 +300,7 @@ public class ElasticSearchSettings {
      */
     public static Boolean isDataStoreCacheEnabled()
     {
-        return settings.getSetting(config_name, PARAM_DATASTORE_CACHE_ENABLED, false, true);
+        return settings.getSetting(config_name, PARAM_DATASTORE_CACHE_ENABLED, false, false);
     }
 
     /**

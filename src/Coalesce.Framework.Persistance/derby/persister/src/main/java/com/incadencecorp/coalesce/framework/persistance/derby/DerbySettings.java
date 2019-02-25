@@ -101,7 +101,7 @@ public class DerbySettings {
      */
     public static String getDatabaseAddress()
     {
-        return settings.getSetting(config_name, DSS_DB_SERVER_NAME, "10.0.51.90", true);
+        return settings.getSetting(config_name, DSS_DB_SERVER_NAME, "10.0.51.90", false);
     }
 
     /**
@@ -155,7 +155,7 @@ public class DerbySettings {
      */
     public static String getDatabaseSchema()
     {
-        return settings.getSetting(config_name, DSS_SCHEMA, "coalesce", true);
+        return settings.getSetting(config_name, DSS_SCHEMA, "coalesce", false);
     }
 
     /**
@@ -173,7 +173,7 @@ public class DerbySettings {
      */
     public static String getDatabaseName()
     {
-        return settings.getSetting(config_name, DSS_DATABASE, "OMEGA", true);
+        return settings.getSetting(config_name, DSS_DATABASE, "OMEGA", false);
     }
 
     /**
@@ -191,7 +191,7 @@ public class DerbySettings {
      */
     public static int getDatabasePort()
     {
-        return settings.getSetting(config_name, DSS_DB_SERVER_PORT, 5444, true);
+        return settings.getSetting(config_name, DSS_DB_SERVER_PORT, 5444, false);
     }
 
     /**
@@ -228,7 +228,7 @@ public class DerbySettings {
      */
     public static int getSRID()
     {
-        return settings.getSetting(config_name, DSS_SRID, SRID, true);
+        return settings.getSetting(config_name, DSS_SRID, SRID, false);
     }
 
     /**
