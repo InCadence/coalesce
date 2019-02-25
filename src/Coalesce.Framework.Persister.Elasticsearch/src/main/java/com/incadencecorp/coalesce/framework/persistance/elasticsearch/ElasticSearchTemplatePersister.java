@@ -144,7 +144,8 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         {
             if (entry.getKey().startsWith(ElasticSearchSettings.PARAM_INDEX_SETTING_PREFIX))
             {
-                defaultSettings.put(entry.getKey().replace(ElasticSearchSettings.PARAM_INDEX_SETTING_PREFIX, ""), entry.getValue());
+                defaultSettings.put(entry.getKey().replace(ElasticSearchSettings.PARAM_INDEX_SETTING_PREFIX, ""),
+                                    entry.getValue());
             }
         }
     }
@@ -428,6 +429,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         mapping.put(FIELD_XML, Collections.singletonMap("enabled", "false"));
 
         CreateIndexRequest request = new CreateIndexRequest();
+        request.settings(Settings.builder().put(defaultSettings).build());
         request.index(COALESCE_ENTITY_INDEX);
         request.mapping(COALESCE_ENTITY, Collections.singletonMap("properties", mapping));
         request.mapping(COALESCE_TEMPLATE, Collections.singletonMap("properties", mapping));
@@ -459,6 +461,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     private CreateIndexRequest createCoalesceLinkageIndexRequest()
     {
         CreateIndexRequest request = new CreateIndexRequest();
+        request.settings(Settings.builder().put(defaultSettings).build());
         request.index(COALESCE_LINKAGE_INDEX);
         request.mapping(COALESCE_LINKAGE, Collections.singletonMap("properties", createLinkageMapping()));
 

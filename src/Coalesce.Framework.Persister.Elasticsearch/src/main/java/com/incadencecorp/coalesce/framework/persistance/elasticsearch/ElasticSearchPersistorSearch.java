@@ -87,9 +87,9 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
                 break;
             }
 
-            if (LOGGER.isInfoEnabled())
+            if (LOGGER.isDebugEnabled())
             {
-                LOGGER.info("{} Keyword Fields: ({})", index, String.join("\n", keywords));
+                LOGGER.debug("{} Keyword Fields: ({})", index, String.join("\n", keywords));
             }
 
             keywordCache.put(index, keywords);
