@@ -28,11 +28,23 @@ import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * This implementation uses the file system to store and retrieve Coalesce
@@ -226,21 +238,34 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     @Override
     public void deleteTemplate(String... keys) throws CoalescePersistorException
     {
-        throw new CoalescePersistorException("Not Implemented");
+        unregisterTemplate(keys);
     }
 
     @Override
     public void unregisterTemplate(String... keys) throws CoalescePersistorException
     {
-        throw new CoalescePersistorException("Not Implemented");
+        Path sub = root.resolve(TEMPLATE_DIRECTORY);
+
+        for (String key : keys)
+        {
+            try
+            {
+                Files.deleteIfExists(sub.resolve(key));
+            }
+            catch (IOException e)
+            {
+                throw new CoalescePersistorException("Failed Deleting Template: " + key, e);
+            }
+        }
     }
 
     @Override
     public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
+        Path sub = root.resolve(TEMPLATE_DIRECTORY);
+
         for (CoalesceEntityTemplate template : templates)
         {
-            Path sub = root.resolve(TEMPLATE_DIRECTORY);
             Path filename = sub.resolve(template.getKey());
 
             try
@@ -260,14 +285,10 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
                 {
                     writer.write(template.toXml());
                 }
-                catch (IOException e)
-                {
-                    throw new CoalescePersistorException("(FAILED) Saving Entity", e);
-                }
             }
             catch (IOException e)
             {
-                throw new CoalescePersistorException("Failed to Record Entity", e);
+                throw new CoalescePersistorException("(FAILED) Saving Template: " + template.getKey(), e);
             }
         }
     }
