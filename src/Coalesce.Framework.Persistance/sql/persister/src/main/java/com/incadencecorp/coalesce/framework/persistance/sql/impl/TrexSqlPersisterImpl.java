@@ -11,6 +11,8 @@ import com.incadencecorp.coalesce.framework.persistance.ECoalesceCacheStates;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.microsoft.sqlserver.jdbc.Geography;
 import com.vividsolutions.jts.geom.Coordinate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -19,13 +21,16 @@ import java.util.Map;
 
 public class TrexSqlPersisterImpl extends SQLPersisterImpl {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrexSqlPersisterImpl.class);
     private ICoalesceCacher _cacher = null;
+    private Map<String,String> params;
 
     public TrexSqlPersisterImpl(Map<String,String> params)
     {
         super(params);
+        this.params = params;
     }
-
+    
     @Override
     public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
@@ -194,7 +199,6 @@ public class TrexSqlPersisterImpl extends SQLPersisterImpl {
         }
         return isSuccessful;
     }
-
     @Override
     protected boolean flattenObject(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
@@ -227,7 +231,6 @@ public class TrexSqlPersisterImpl extends SQLPersisterImpl {
 
         return isSuccessful;
     }
-
     //----------------------------------------------------------------------------
     //Helper Functions
     //----------------------------------------------------------------------------
@@ -508,16 +511,15 @@ public class TrexSqlPersisterImpl extends SQLPersisterImpl {
                     case "OPERATIONAOR":
                         operationAOR = information;
                         break;
-                    case "OPERATIONSTATUS":
-                        operationStatus = information;
-
                     default:
                         break;
                     }
                 }
             }
         }
-
+        coalesceSection = entity.getSection(entity.getName() + "/Live Status Section");
+        coalesceRecordset = coalesceSection.getRecordset(coalesceSection.getName() + "/Live Status Recordset");
+        operationStatus = getCurrentStatusString(coalesceRecordset);
         if(entity.getParent() != null)
         {
             parentKey = new CoalesceParameter(entity.getParent().getKey(),Types.CHAR);
@@ -717,10 +719,17 @@ public class TrexSqlPersisterImpl extends SQLPersisterImpl {
                         missionEndDateTime = information;
                         break;
                     case "MISSIONGEOLOCATION":
-
-                        Coordinate coordinate = (Coordinate) field.getValue();
-                        Geography geography = Geography.point(coordinate.x,coordinate.y,4326);
-                        missionLocation = geography;
+                            Coordinate coordinate = (Coordinate) field.getValue();
+                        Geography geography = null;
+                            if(coordinate == null)
+                            {
+                                geography = Geography.point(0,0,4326);
+                                missionLocation = geography;
+                            }else
+                            {
+                                geography = Geography.point(coordinate.x, coordinate.y, 4326);
+                                missionLocation = geography;
+                            }
                         break;
                     case "EVENTTITLE":
                         if(information != null)
@@ -872,6 +881,51 @@ public class TrexSqlPersisterImpl extends SQLPersisterImpl {
                                      new CoalesceParameter(entity.getLastModified().toString(),Types.CHAR),
                                      new CoalesceParameter(entity.getDateCreated().toString(),Types.CHAR));
 
+    }
+
+    /**
+     * Fixes the linkage table for Trex specifics
+     *
+     * LinkStatus
+     */
+    @Override
+    protected boolean persistLinkageObject(CoalesceLinkage linkage, CoalesceDataConnectorBase conn) throws SQLException
+    {
+        // Return true if no update is required.
+        if (!checkLastModified(linkage, conn))
+        {
+            return true;
+        }
+
+        String linkStatus = linkage.getStatus().toString();
+        if(linkStatus == "ACTIVE")
+        {
+            linkStatus = "1";
+        }else {
+            linkStatus = "2";
+        }
+
+        // Yes; Call Store Procedure
+        return conn.executeProcedure("CoalesceLinkage_InsertOrUpdate",
+                                     new CoalesceParameter(linkage.getKey(), Types.CHAR),
+                                     new CoalesceParameter(linkage.getName()),
+                                     new CoalesceParameter(linkage.getEntity1Key(), Types.CHAR),
+                                     new CoalesceParameter(linkage.getEntity1Name()),
+                                     new CoalesceParameter(linkage.getEntity1Source()),
+                                     new CoalesceParameter(linkage.getEntity1Version()),
+                                     new CoalesceParameter(linkage.getLinkType().getLabel()),
+                                     new CoalesceParameter(linkStatus),
+                                     new CoalesceParameter(linkage.getEntity2Key(), Types.CHAR),
+                                     new CoalesceParameter(linkage.getEntity2Name()),
+                                     new CoalesceParameter(linkage.getEntity2Source()),
+                                     new CoalesceParameter(linkage.getEntity2Version()),
+                                     new CoalesceParameter(linkage.getClassificationMarking().toPortionString()),
+                                     new CoalesceParameter(linkage.getModifiedBy()),
+                                     new CoalesceParameter(linkage.getInputLang().getDisplayName()),
+                                     new CoalesceParameter(linkage.getParent().getKey(), Types.CHAR),
+                                     new CoalesceParameter(linkage.getParent().getType()),
+                                     new CoalesceParameter(linkage.getDateCreated().toString(), Types.CHAR),
+                                     new CoalesceParameter(linkage.getLastModified().toString(), Types.CHAR));
     }
 }
 
