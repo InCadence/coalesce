@@ -9,13 +9,51 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemExpandable from '../ListItemExpandable';
+import Checkbox from '@material-ui/core/Checkbox';
 
 /**
  * Dialog to display selections.
  */
 export class DialogOptions extends React.Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      items: this.props.options
+    }
+
+    this.handledSelect = this.handleSelect.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSelect(key) {
+      const { items } = this.state;
+      const that = this;
+
+      items.forEach((item) => {
+        if (item.key === key) {
+          item.selected = !item.selected;
+
+        }
+      });
+
+      that.setState(() => {return {
+        items: items
+      }});
+  }
+
+  handleSubmit() {
+
+    const { items } = this.state;
+
+    this.props.onClick(items.filter((item) => item.selected).map((item) => item.key));
+
+  }
+
   render() {
+
+    const { items } = this.state;
 
     return (
       <Dialog
@@ -29,13 +67,13 @@ export class DialogOptions extends React.Component {
         <DialogTitle id="scroll-dialog-title">{this.props.title}</DialogTitle>
         <DialogContent>
           <List dense>
-            {this.props.options && this.props.options.map((item) => {return (
+            {items && items.map((item) => {return (
               <ListItemExpandable
                 key={item.key}
+                selected={item.selected}
                 primary={item.name}
-                //secondary={}
                 details={item.description}
-                onClick={item.onClick ? item.onClick : () => this.props.onClick(item.key)}
+                onClick={!this.props.multi ? item.onClick ? item.onClick : () => this.props.onClick(item.key) : () => this.handleSelect(item.key)}
               />
             )})}
             {this.props.children}
@@ -43,11 +81,19 @@ export class DialogOptions extends React.Component {
         </DialogContent>
         <DialogActions>
           <Button
-            color="primary"
+            color={this.props.multi ? "secondary" : "primary"}
             onClick={this.props.onClose}
           >
             Cancel
           </Button>
+          { this.props.multi &&
+            <Button
+              color="primary"
+              onClick={this.handleSubmit}
+            >
+              OK
+            </Button>
+          }
         </DialogActions>
       </Dialog>
     )

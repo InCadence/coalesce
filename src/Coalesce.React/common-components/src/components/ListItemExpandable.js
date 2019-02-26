@@ -31,6 +31,7 @@ export class ListItemExpandable extends React.Component {
           dense
           disableRipple
           key={this.key}
+          selected={this.props.selected}
           button
           onClick={!this.props.details ? this.props.onClick : undefined}
         >
