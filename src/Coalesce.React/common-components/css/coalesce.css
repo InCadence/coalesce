@@ -24,6 +24,16 @@ html {
   padding: 13px 15px;
 }
 
+.navbar-brand {
+	font-size: 20px;
+  font-weight: bold;
+}
+
+.navbar-header svg {
+	margin: 5px;
+}
+
+
 .shadow {
     /* Use -webkit- only if supporting: Chrome < 54, iOS < 9.3, Android < 4.4.4 */
     -webkit-filter: drop-shadow( -5px -5px 5px #000 );
