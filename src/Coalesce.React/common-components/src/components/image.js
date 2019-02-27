@@ -25,7 +25,7 @@ class Image extends React.PureComponent {
 
     const palette = this.props.palette ? this.props.palette : this.props.theme.palette.main;
 
-    if (palette.main && isSvg && window.location.port != 3000) {
+    if (palette.main && isSvg) {
 
       // SVG Does not work with CORS
       view = (

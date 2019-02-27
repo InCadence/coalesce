@@ -77,6 +77,11 @@ export class FieldInput extends React.Component {
 
   handleOnChange(attr, value) {
     const {field} = this.state;
+
+    if (Array.isArray(value) && value.length === 1 && (value[0] === "" || value[0] === undefined)) {
+      value = [];
+    }
+
     field[attr] = value;
 
     //console.log(`${attr}=${value}`);

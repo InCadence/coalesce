@@ -55,6 +55,19 @@ class Menu extends React.PureComponent {
     var home;
     var isTextOnly = this.props.isTextOnly;
 
+    var palette;
+
+    if (this.props.theme) {
+      palette = this.props.theme.palette.icons ? this.props.theme.palette.icons : this.props.theme.palette.primary
+    } else {
+      palette = {
+        contract: null,
+        main: null,
+        dark: null,
+        light: null
+      }
+    }
+
     if (this.props.homeEnabled)
     {
       home = this.renderNavItem({
@@ -73,7 +86,7 @@ class Menu extends React.PureComponent {
               icon={this.props.logoSrc}
               title={`v${process.env.REACT_APP_VERSION}`}
               size={40}
-              palette={this.props.theme.palette.primary}
+              palette={palette}
               style={{float: "left"}}
               square
             />
