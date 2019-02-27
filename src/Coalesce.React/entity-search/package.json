@@ -8,6 +8,7 @@
   "main": "index.js",
   "private": true,
   "homepage": "/search",
+  "proxy": "http://localhost:8181/",
   "dependencies": {
     "@material-ui/core": "3.0.3",
     "@material-ui/icons": "3.0.1",

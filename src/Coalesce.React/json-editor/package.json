@@ -9,6 +9,7 @@
   "license": "ISC",
   "private": true,
   "homepage": "/jsoneditor",
+  "proxy": "http://localhost:8181/",
   "dependencies": {
     "@material-ui/core": "3.0.3",
     "@material-ui/icons": "3.0.1",
