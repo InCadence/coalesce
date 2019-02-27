@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+  ~
+  ~  Notwithstanding any contractor copyright notice, the Government has Unlimited
+  ~  Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+  ~  of this work other than as specifically authorized by these DFARS Clauses may
+  ~  violate Government rights in this work.
+  ~
+  ~  DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+  ~  Unlimited Rights. The Government has the right to use, modify, reproduce,
+  ~  perform, display, release or disclose this computer software and to have or
+  ~  authorize others to do so.
+  ~
+  ~  Distribution Statement D. Distribution authorized to the Department of
+  ~  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+  ~
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean class="com.incadencecorp.coalesce.synchronizer.service.SynchronizerService" destroy-method="stop" id="service"
+          init-method="start">
+        <property name="drivers">
+            <array>
+                <ref bean="driver"/>
+            </array>
+        </property>
+    </bean>
+
+    <bean class="com.incadencecorp.coalesce.synchronizer.service.drivers.DistibutedDriver" id="driver" init-method="setup">
+        <property name="name" value="Re-Index Driver"/>
+        <property name="subscriber">
+            <bean class="com.incadencecorp.coalesce.notification.kafka.impl.KafkaSubscriberImpl" destroy-method="close"
+                  id="sessionSubscriber" scope="singleton">
+                <constructor-arg>
+                    <ref bean="executor"/>
+                </constructor-arg>
+                <property name="properties">
+                    <ref bean="kafkaProperties"/>
+                </property>
+            </bean>
+        </property>
+        <property name="operations">
+            <array>
+                <ref bean="operation"/>
+            </array>
+        </property>
+        <property name="properties">
+            <map>
+                <entry key="com.incadencecorp.driver.interval" value="10"/>
+                <entry key="com.incadencecorp.driver.intervalunits" value="SECONDS"/>
+                <entry key="com.incadencecorp.driver.threads" value="100"/>
+                <entry key="com.incadencecorp.driver.delay" value="10"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean class="java.util.concurrent.ScheduledThreadPoolExecutor" id="executor">
+        <constructor-arg value="300"/>
+        <constructor-arg>
+            <bean class="com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl"/>
+        </constructor-arg>
+    </bean>
+
+    <bean class="java.util.HashMap" id="kafkaProperties">
+        <constructor-arg>
+            <map>
+                <entry key="bootstrap.servers" value="oedevnode09:9092,oedevnode10:9092,oedevnode11:9092"/>
+                <entry key="zookeepers" value="oedevnode00,oedevnode01,oedevnode02"/>
+                <entry key="zookeeper.session.timeout.ms" value="30000"/>
+                <entry key="group.id" value="Spider"/>
+                <entry key="com.incadencecorp.interval" value="2"/>
+                <entry key="kafka.partitions" value="100"/>
+                <entry key="kafka.topics" value="spider/results,spider/session"/>
+                <entry key="key.deserializer" value="org.apache.kafka.common.serialization.StringDeserializer"/>
+                <entry key="value.deserializer" value="org.apache.kafka.common.serialization.StringDeserializer"/>
+                <entry key="key.serializer" value="org.apache.kafka.common.serialization.StringSerializer"/>
+                <entry key="value.serializer" value="org.apache.kafka.common.serialization.StringSerializer"/>
+                <entry key="retention.ms" value="7200000"/>
+                <entry key="session.timeout.ms" value="30000"/>
+                <entry key="max.poll.records" value="10"/>
+                <entry key="max.poll.interval.ms" value="6000000"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <bean class="com.incadencecorp.coalesce.synchronizer.service.operations.CopyOperationImpl" id="operation">
+        <property name="name" value="Re-Index"/>
+        <property name="source" ref="elastic"/>
+        <property name="target">
+            <array>
+                <ref bean="elastic"/>
+            </array>
+        </property>
+        <property name="properties">
+            <map>
+                <entry key="com.incadencecorp.operations.window" value="1000"/>
+            </map>
+        </property>
+<!--
+        <property name="handler">
+            <ref bean="handler"/>
+        </property>
+-->
+    </bean>
+<!--
+    <bean class="com.incadencecorp.coalesce.handlers.FileExceptionHandlerImpl" id="handler">
+        <property name="properties">
+            <map>
+                <entry key="com.incadencecorp.directory" value="sync"/>
+                <entry key="com.incadencecorp.subdirlen" value="2"/>
+            </map>
+        </property>
+    </bean>
+-->
+
+    <!-- ========================== -->
+    <!-- Persisters -->
+    <!-- ========================== -->
+
+    <bean class="com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch" id="elastic">
+        <constructor-arg>
+            <bean class="com.incadencecorp.coalesce.framework.PropertyMapLoader">
+                <constructor-arg ref="connector"/>
+                <constructor-arg value="credentials.properties"/>
+                <property name="properties">
+                    <map>
+                        <entry key="elastic.isAuthoritative" value="true"/>
+                        <entry key="elastic.clustername" value="BDP_oedl.dev.oedl.tradoc.army.mil"/>
+                        <entry key="elastic.hosts"
+                               value="oedevnode06:9301,oedevnode07:9301,oedevnode08:9301,oedevnode09:9301,oedevnode10:9301"/>
+                        <entry key="elastic.http.host" value="oedevnode06.dev.oedl.tradoc.army.mil"/>
+                        <entry key="elastic.http.port" value="9201"/>
+                        <entry key="ssl.enabled" value="true"/>
+                        <entry key="ssl.keystore" value="/etc/pki/java/keystore.jks"/>
+                        <entry key="ssl.truststore" value="./etc/pki/truststore.jks"/>
+                        <entry key="elastic.datastore.cache.enabled" value="true"/>
+                    </map>
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean class="com.incadencecorp.unity.common.connectors.FilePropertyConnector" id="connector"/>
+
+</beans>

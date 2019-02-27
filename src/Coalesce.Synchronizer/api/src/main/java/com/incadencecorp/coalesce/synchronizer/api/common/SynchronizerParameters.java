@@ -84,6 +84,11 @@ public final class SynchronizerParameters {
      */
     public static final String PARAM_OP_DRYRUN = OPS + "dryrun";
 
+    /**
+     * (String) Topic used when distributing work.
+     */
+    public static final String PARAM_OP_TOPIC = OPS + "topic";
+
     /*--------------------------------------------------------------------------
     Scanner Parameters
     --------------------------------------------------------------------------*/
