@@ -8,6 +8,7 @@
   "main": "index.js",
   "private": true,
   "homepage": "/entityeditor",
+  "proxy": "http://localhost:8181/",
   "dependencies": {
     "@babel/runtime": "7.0.0-beta.54",
     "@material-ui/core": "3.0.3",
