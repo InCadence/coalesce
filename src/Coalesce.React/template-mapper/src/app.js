@@ -4,6 +4,7 @@ import { loadTemplates, loadTemplate } from 'common-components/lib/js/templateCo
 import { getRootKarafUrl } from 'common-components/lib/js/common';
 import { DialogMessage, DialogLoader, DialogOptions } from 'common-components/lib/components/dialogs'
 import Button from '@material-ui/core/Button';
+import Linkage from './linkage.js';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -27,6 +28,7 @@ export class App extends React.Component {
     this.handleOnCsvChange = this.handleOnCsvChange.bind(this);
     this.handleJsonChange = this.handleJsonChange.bind(this);
     this.handleLinkageLoad = this.handleLinkageLoad.bind(this);
+    this.handleLinkageChange = this.handleLinkageChange.bind(this);
 
     var cache = {};
 
@@ -137,12 +139,18 @@ export class App extends React.Component {
     }
   }
 
-  handleLinkageLoad(index) {
+  handleLinkageLoad(entityIndex) {
     var link = {
-      entity1: index,
+      entity1: entityIndex,
       linkType: 'created',
-      entity2: index
+      entity2: entityIndex
     }
+    this.links.push(link);
+    this.setState({});
+  }
+
+  handleLinkageChange(linkageIndex, newJson) {
+    this.links[linkageIndex] = newJson;
   }
 
   handleBack() {
@@ -222,16 +230,15 @@ export class App extends React.Component {
       });
     }
 
-    console.log(cache)
     var linkList = [];
-    if(this.state.promptLinkage) {
+    if(activeStep === 1) {
       for(var i = 0; i < this.state.templateKeys.length; i++) {
         console.log(cache[this.state.templateKeys[i]].name)
-        linkList.push({name: cache[this.state.templateKeys[i]].name, key: i, description: "test"});
+        linkList.push({name: cache[this.state.templateKeys[i]].name, key: i, enum: i, label: cache[this.state.templateKeys[i]].name});
       }
     }
+    console.log(linkList)
 
-    console.log(this.state.templates)
    // console.log("App creating new filter creator", cache, key);
     return (
         <div>
@@ -310,7 +317,18 @@ export class App extends React.Component {
               )
             })
             }
-
+            {activeStep === 1 &&
+              that.links.map(function(link_, index) {
+              return(
+                <Linkage
+                  field={link_}
+                  index={index}
+                  options={linkList}
+                  name={cache[templateKeys[parseInt(link_.entity1)]].name}
+                />
+              )
+            })
+            }
 
             { this.state.error &&
               <DialogMessage

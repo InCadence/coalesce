@@ -1,4 +1,8 @@
 import React from 'react';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import FieldInput from 'common-components/lib/components/FieldInput';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -16,12 +20,28 @@ export default class Linkage extends React.Component {
     this.state = {
 
     };
+    const created = "created"
+
+    this.linkTypes = [];
+    this.linkTypes.push({enum: created, label: created});
   }
 
   render() {
-
+    const {name, field, index, options} = this.props;
+    console.log("OPTIONS\n")
+    console.log(options)
     return (
-
+      <Paper elevation={1}>
+        <ExpansionPanel>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
+            {name}
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <FieldInput label={"Link Type"} dataType="ENUMERATION_TYPE" field={field} options={this.linkTypes} attr={"linkTypes"}/>
+            <FieldInput label={"Entity 2"} dataType="ENUMERATION_TYPE" field={field} options={options} attr={"entity2"}/>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+      </Paper>
     )
   }
 }

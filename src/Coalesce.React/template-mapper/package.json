@@ -5,6 +5,7 @@
   "icon": "/images/svg/template.svg",
   "private": true,
   "homepage": "/templatemapper",
+  "proxy": "http://localhost:8181/",
   "dependencies": {
     "@material-ui/core": "3.0.3",
     "@material-ui/icons": "3.0.1",
