@@ -23,16 +23,6 @@ export default class Template extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      name: props.name,
-      recName: props.recName,
-      recordSet: props.recordSet,
-      tKey: props.tKey,
-      json: {},
-      split: props.split,
-    };
-    this.handleChange = this.handleChange.bind(this)
-
   }
 
   handleChange(value) {
@@ -41,9 +31,7 @@ export default class Template extends React.Component {
 
   render() {
 
-    const {name, recName, recordSet, json} = this.state;
-    const {split, index} = this.props;
-
+    const {name, recName, recordSet, field, split, index} = this.props;
     const enume = split.map(function(value, index) {
       return(
         {enum: value, label: value}
@@ -63,9 +51,9 @@ export default class Template extends React.Component {
               </TableHead>
               <TableBody>
                 {
-                  recordSet.definition.map(function(field, i) {
+                  recordSet.definition.map(function(templateField, i) {
                     return <TableRow>
-                            <FieldInput label={field.name} onChange={that.handleChange} dataType="ENUMERATION_TYPE" field={that.state.json} options={enume} attr={`${i}`}/>
+                            <FieldInput label={templateField.name} dataType="ENUMERATION_TYPE" field={field} options={enume} attr={`${i}`}/>
                           </TableRow>
                   })
                 }

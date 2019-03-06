@@ -29,6 +29,7 @@ export class App extends React.Component {
     this.handleJsonChange = this.handleJsonChange.bind(this);
     this.handleLinkageLoad = this.handleLinkageLoad.bind(this);
     this.handleLinkageChange = this.handleLinkageChange.bind(this);
+    this.createJson = this.createJson.bind(this);
 
     var cache = {};
 
@@ -122,6 +123,7 @@ export class App extends React.Component {
 
         console.log("APP Loading Template", recordsets);
         that.state.templateKeys.push(key);
+        that.templates.push({});
         that.setState({
           promptTemplate: false,
           templateKeys: that.state.templateKeys,
@@ -135,22 +137,23 @@ export class App extends React.Component {
 
       that.setState({
         promptTemplate: false
-        });
+      });
     }
   }
 
   handleLinkageLoad(entityIndex) {
     var link = {
-      entity1: entityIndex,
+      entity1: ""+entityIndex,
       linkType: 'created',
-      entity2: entityIndex
+      entity2: ""+entityIndex,
     }
     this.links.push(link);
     this.setState({});
   }
 
   handleLinkageChange(linkageIndex, newJson) {
-    this.links[linkageIndex] = newJson;
+    //this.links[linkageIndex] = newJson;
+    console.log(newJson)
   }
 
   handleBack() {
@@ -182,12 +185,14 @@ export class App extends React.Component {
 
   handleJsonChange(index, newJson) {
       this.templates[index] = newJson;
-
+      console.log(newJson)
   }
 
   createJson() {
     const {templateKeys, cache} = this.state;
     this.json = {templates: [], linkages: []};
+
+    //add in templates
     for(var i = 0; i < templateKeys.length; i++) {
       var rec = cache[templateKeys[i]].recordsets[0]
       var template = {
@@ -199,12 +204,19 @@ export class App extends React.Component {
       }
       this.json["templates"][i] = template
     }
+
+    //add in Linkages
+    for(var i = 0; i < this.links.length; i++) {
+      this.json["linkages"][i] = this.links[i];
+    }
+
+    return JSON.stringify(this.json);
   }
 
   render() {
 
     const { cache, activeStep, templateKeys, split } = this.state;
-
+    var json = "";
     const that = this;
     var items = [];
     if(activeStep === 0) {
@@ -229,15 +241,17 @@ export class App extends React.Component {
         }
       });
     }
+    else if(activeStep === 2) {
+      json = this.createJson();
+    }
 
     var linkList = [];
     if(activeStep === 1) {
       for(var i = 0; i < this.state.templateKeys.length; i++) {
-        console.log(cache[this.state.templateKeys[i]].name)
-        linkList.push({name: cache[this.state.templateKeys[i]].name, key: i, enum: i, label: cache[this.state.templateKeys[i]].name});
+        linkList.push({name: cache[this.state.templateKeys[i]].name, key: i, enum: i.toString(), label: cache[this.state.templateKeys[i]].name});
       }
     }
-    console.log(linkList)
+    //console.log(linkList)
 
    // console.log("App creating new filter creator", cache, key);
     return (
@@ -303,6 +317,7 @@ export class App extends React.Component {
               var rec = cache[key].recordsets[0];
               var name = cache[key].name;
               var recName = rec.name;
+
               return(
                 <Template
                   key={key}
@@ -313,6 +328,7 @@ export class App extends React.Component {
                   recName={recName}
                   name={name}
                   split={split}
+                  field={that.templates[index]}
                 />
               )
             })
@@ -324,10 +340,23 @@ export class App extends React.Component {
                   field={link_}
                   index={index}
                   options={linkList}
+                  onChange={that.handleLinkageChange}
                   name={cache[templateKeys[parseInt(link_.entity1)]].name}
                 />
               )
             })
+            }
+
+            {activeStep === 2 &&
+              <TextField
+                id="outlined-textarea"
+                label="Multiline Placeholder"
+                placeholder="Placeholder"
+                multiline
+                margin="normal"
+                variant="outlined"
+                value={json}
+              />
             }
 
             { this.state.error &&

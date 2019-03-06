@@ -23,13 +23,16 @@ export default class Linkage extends React.Component {
     const created = "created"
 
     this.linkTypes = [];
-    this.linkTypes.push({enum: created, label: created});
+    this.linkTypes.push({enum: created, label: created}, {enum: "test", label: "test"});
+    this.onChange = this.onChange.bind(this);
+  }
+
+  onChange(value) {
+    this.props.onChange(value, this.props.field)
   }
 
   render() {
     const {name, field, index, options} = this.props;
-    console.log("OPTIONS\n")
-    console.log(options)
     return (
       <Paper elevation={1}>
         <ExpansionPanel>
@@ -37,8 +40,8 @@ export default class Linkage extends React.Component {
             {name}
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <FieldInput label={"Link Type"} dataType="ENUMERATION_TYPE" field={field} options={this.linkTypes} attr={"linkTypes"}/>
-            <FieldInput label={"Entity 2"} dataType="ENUMERATION_TYPE" field={field} options={options} attr={"entity2"}/>
+            <FieldInput label={"Link Type"} dataType="ENUMERATION_TYPE" field={field} options={this.linkTypes} attr={"linkType"}/>
+            <FieldInput label={"Entity 2"} dataType="ENUMERATION_TYPE" onChange={this.onChange} field={field} options={options} attr={"entity2"}/>
           </ExpansionPanelDetails>
         </ExpansionPanel>
       </Paper>
