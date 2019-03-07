@@ -10,6 +10,7 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Template from'./template.js';
 import TextField from '@material-ui/core/TextField';
+import ReactJson from 'react-json-view';
 
 
 const karafRootAddr = getRootKarafUrl();
@@ -210,7 +211,7 @@ export class App extends React.Component {
       this.json["linkages"][i] = this.links[i];
     }
 
-    return JSON.stringify(this.json);
+    return this.json;
   }
 
   render() {
@@ -348,15 +349,7 @@ export class App extends React.Component {
             }
 
             {activeStep === 2 &&
-              <TextField
-                id="outlined-textarea"
-                label="Multiline Placeholder"
-                placeholder="Placeholder"
-                multiline
-                margin="normal"
-                variant="outlined"
-                value={json}
-              />
+              <ReactJson enableClipboard src={json}/>
             }
 
             { this.state.error &&

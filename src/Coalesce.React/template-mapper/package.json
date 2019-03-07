@@ -17,6 +17,7 @@
     "react-dom": "16.3.0",
     "react-grid-layout": "^0.16.1",
     "react-icons-kit": "^1.0.7",
+    "react-json-view": "^1.19.1",
     "react-sidenav": "^2.1.2",
     "react-sortable-tree": "^1.5.3",
     "react-spinners": "^0.3.2",
