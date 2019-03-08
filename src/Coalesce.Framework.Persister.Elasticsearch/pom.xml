@@ -73,12 +73,6 @@
         </dependency>
 
         <dependency>
-            <artifactId>joda-time</artifactId>
-            <groupId>joda-time</groupId>
-            <version>2.8</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-main</artifactId>
             <version>${geotools.version}</version>

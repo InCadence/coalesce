@@ -27,6 +27,7 @@
         <accumulo.version>1.7.4</accumulo.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.2.2.RELEASE</spring.version>
+        <joda.version>2.9.7</joda.version>
 
         <dependency.bndlib.version>2.4.0</dependency.bndlib.version>
         <bundle-plugin.version>3.5.0</bundle-plugin.version>
