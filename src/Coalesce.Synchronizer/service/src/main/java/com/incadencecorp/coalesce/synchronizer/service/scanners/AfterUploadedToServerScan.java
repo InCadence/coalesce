@@ -130,7 +130,6 @@ public class AfterUploadedToServerScan extends AbstractScan {
         List<PropertyName> properties = new ArrayList<>();
         properties.addAll(query.getProperties());
         properties.add(CoalescePropertyFactory.getLastModified());
-        //properties.add(CoalescePropertyFactory.getEntityKey());
 
         query.setStartIndex(0);
         query.setMaxFeatures(max);
