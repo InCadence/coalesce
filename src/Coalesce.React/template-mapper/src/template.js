@@ -26,10 +26,12 @@ export default class Template extends React.Component {
   constructor(props) {
     super(props);
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(value) {
-    this.props.onChange(this.props.index, this.state.json)
+    //this.props.onChange(this.props.index, this.state.json)
+    console.log(this.props.field);
   }
 
   handleDelete() {
@@ -58,7 +60,7 @@ export default class Template extends React.Component {
                 {
                   recordSet.definition.map(function(templateField, i) {
                     return <TableRow>
-                            <FieldInput label={templateField.name} dataType="ENUMERATION_TYPE" field={field} options={enume} attr={`${i}`}/>
+                            <FieldInput label={templateField.name} onChange={that.handleChange} dataType="ENUMERATION_TYPE" field={field} options={enume} attr={`${i}`}/>
                            </TableRow>
                   })
                 }

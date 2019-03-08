@@ -4,6 +4,8 @@ import { loadTemplates, loadTemplate } from 'common-components/lib/js/templateCo
 import { getRootKarafUrl } from 'common-components/lib/js/common';
 import { DialogMessage, DialogLoader, DialogOptions } from 'common-components/lib/components/dialogs'
 import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
 import Linkage from './linkage.js';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -26,12 +28,12 @@ export class App extends React.Component {
     this.handleTemplateDelete = this.handleTemplateDelete.bind(this);
     this.handleError = this.handleError.bind(this);
     this.handleBack = this.handleBack.bind(this);
-    this.handleCopy = this.handleCopy.bind(this);
     this.handleOnCsvChange = this.handleOnCsvChange.bind(this);
     this.handleJsonChange = this.handleJsonChange.bind(this);
     this.handleLinkageLoad = this.handleLinkageLoad.bind(this);
     this.handleLinkageDelete = this.handleLinkageDelete.bind(this);
     this.handleLinkageChange = this.handleLinkageChange.bind(this);
+    this.handleJsonLoad = this.handleJsonLoad.bind(this);
     this.createJson = this.createJson.bind(this);
 
     var cache = {};
@@ -145,7 +147,6 @@ export class App extends React.Component {
   }
 
   handleTemplateDelete(index) {
-    console.log("HELLO")
     var key = this.state.templateKeys[index];
     delete this.state.cache[key];
     this.state.templateKeys.splice(index, 1);
@@ -178,10 +179,6 @@ export class App extends React.Component {
     }));
   }
 
-  handleCopy() {
-
-  }
-
   handleOnCsvChange(event) {
     var str = event.target.value;
     var split = str.split(',');
@@ -204,11 +201,40 @@ export class App extends React.Component {
       console.log(newJson)
   }
 
+  handleJsonLoad() {
+    var jsonString = this.state.jsonInput;
+    var json = JSON.parse(jsonString);
+    var templates = json.templates;
+    var links = json.linkages;
+
+    this.templates = [];
+    this.links = [];
+
+    var templateKeys = [];
+
+    //add in templates
+    for(var i = 0; i < templates.length; i++) {
+      var template = templates[i];
+      console.log(template);
+      var key = template["templateUri"].split("/").slice(-1)[0] //get last element, which is just the key
+      templateKeys.push(key);
+      this.handleTemplateLoad(key);
+
+      this.templates.push(template.record.fields);
+    }
+
+    //add in linkages
+    for(i = 0; i < links.length; i++) {
+      this.links.push(links[i]);
+    }
+
+    this.setState({promptJson: false});
+  }
+
   createJson() {
     const {templateKeys, cache} = this.state;
     this.json = {templates: [], linkages: []};
 
-    //add in templates
     for(var i = 0; i < templateKeys.length; i++) {
       var rec = cache[templateKeys[i]].recordsets[0]
       var template = {
@@ -221,7 +247,6 @@ export class App extends React.Component {
       this.json["templates"][i] = template
     }
 
-    //add in Linkages
     for(i = 0; i < this.links.length; i++) {
       this.json["linkages"][i] = this.links[i];
     }
@@ -244,7 +269,17 @@ export class App extends React.Component {
         onClick: () => {
           this.setState({promptTemplate: true})
         }
-      });
+      },
+      {
+        id: 'json',
+        name: 'JSON',
+        img: "/images/svg/edit.svg",
+        title: "Paste in JSON",
+        onClick: () => {
+          this.setState({promptJson: true})
+        }
+      }
+    );
     }
     else if(activeStep === 1) {
       items.push({
@@ -333,7 +368,6 @@ export class App extends React.Component {
               var rec = cache[key].recordsets[0];
               var name = cache[key].name;
               var recName = rec.name;
-
               return(
                 <div>
                 <Template
@@ -409,6 +443,37 @@ export class App extends React.Component {
                 onClick={this.handleLinkageLoad}
                 options={linkList}
               />
+            }
+            { this.state.promptJson &&
+              <Dialog fullWidth maxWidth='lg' open={true} onClose={() => {this.setState({promptJson: false})}}>
+                <DialogContent>
+                <TextField
+                  onChange={(e) => that.setState({jsonInput: e.target.value})}
+                  fullWidth
+                  id="json-input"
+                  label="JSON"
+                  multiline
+                  rowsMax="100"
+                  value={this.state.jsonInput}
+                  margin="normal"
+                  helperText="paste json here"
+                  variant="outlined"
+                />
+                <Button variant="contained"
+                  onClick={() => {this.setState({promptJson: false, jsonInput: ""});}}
+                  color="secondary"
+                >
+                  Cancel
+                </Button>
+                <Button variant="contained"
+                  onClick={this.handleJsonLoad}
+                  color="primary"
+                >
+                  Load
+                </Button>
+                </DialogContent>
+
+              </Dialog>
             }
           </div>
         </div>
