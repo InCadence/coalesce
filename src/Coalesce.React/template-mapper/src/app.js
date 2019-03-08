@@ -23,12 +23,14 @@ export class App extends React.Component {
 
     this.handleNext = this.handleNext.bind(this);
     this.handleTemplateLoad = this.handleTemplateLoad.bind(this);
+    this.handleTemplateDelete = this.handleTemplateDelete.bind(this);
     this.handleError = this.handleError.bind(this);
     this.handleBack = this.handleBack.bind(this);
     this.handleCopy = this.handleCopy.bind(this);
     this.handleOnCsvChange = this.handleOnCsvChange.bind(this);
     this.handleJsonChange = this.handleJsonChange.bind(this);
     this.handleLinkageLoad = this.handleLinkageLoad.bind(this);
+    this.handleLinkageDelete = this.handleLinkageDelete.bind(this);
     this.handleLinkageChange = this.handleLinkageChange.bind(this);
     this.createJson = this.createJson.bind(this);
 
@@ -142,6 +144,15 @@ export class App extends React.Component {
     }
   }
 
+  handleTemplateDelete(index) {
+    console.log("HELLO")
+    var key = this.state.templateKeys[index];
+    delete this.state.cache[key];
+    this.state.templateKeys.splice(index, 1);
+    this.templates.splice(index, 1);
+    this.setState({cache: this.state.cache})
+  }
+
   handleLinkageLoad(entityIndex) {
     var link = {
       entity1: ""+entityIndex,
@@ -149,7 +160,11 @@ export class App extends React.Component {
       entity2: ""+entityIndex,
     }
     this.links.push(link);
-    this.setState({});
+    this.setState({promptLinkage: false});
+  }
+
+  handleLinkageDelete(index) {
+    this.links.splice(index, 1);
   }
 
   handleLinkageChange(linkageIndex, newJson) {
@@ -207,7 +222,7 @@ export class App extends React.Component {
     }
 
     //add in Linkages
-    for(var i = 0; i < this.links.length; i++) {
+    for(i = 0; i < this.links.length; i++) {
       this.json["linkages"][i] = this.links[i];
     }
 
@@ -320,6 +335,7 @@ export class App extends React.Component {
               var recName = rec.name;
 
               return(
+                <div>
                 <Template
                   key={key}
                   index={index}
@@ -330,22 +346,32 @@ export class App extends React.Component {
                   name={name}
                   split={split}
                   field={that.templates[index]}
+                  handleDelete={that.handleTemplateDelete}
                 />
+                <hr/>
+                </div>
               )
             })
             }
             {activeStep === 1 &&
               that.links.map(function(link_, index) {
+              var name = cache[templateKeys[parseInt(link_.entity1)]];
+              if(name) {
+                name = name.name;
+              }
+
               return(
                 <Linkage
                   field={link_}
                   index={index}
                   options={linkList}
+                  parent={that}
                   onChange={that.handleLinkageChange}
-                  name={cache[templateKeys[parseInt(link_.entity1)]].name}
+                  name={name}
+                  handleDelete={that.handleLinkageDelete}
                 />
               )
-            })
+              })
             }
 
             {activeStep === 2 &&

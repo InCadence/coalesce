@@ -1,15 +1,11 @@
 import React from 'react';
+import Button from '@material-ui/core/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import FieldInput from 'common-components/lib/components/FieldInput';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 
 
@@ -18,21 +14,31 @@ export default class Linkage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      name: props.name
     };
     const created = "created"
 
     this.linkTypes = [];
     this.linkTypes.push({enum: created, label: created}, {enum: "test", label: "test"});
     this.onChange = this.onChange.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   onChange(value) {
-    this.props.onChange(value, this.props.field)
+    var parentState = this.props.parent.state;
+    var name = parentState.cache[parentState.templateKeys[parseInt(value)]].name;
+    this.setState({name: name});
+  }
+
+  handleDelete() {
+    this.props.handleDelete(this.props.index);
   }
 
   render() {
-    const {name, field, index, options} = this.props;
+    const {field, options} = this.props;
+    const {name} = this.state;
+
+    const that = this;
     return (
       <Paper elevation={1}>
         <ExpansionPanel>
@@ -40,9 +46,13 @@ export default class Linkage extends React.Component {
             {name}
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
+            <FieldInput label={"Entity 1"} dataType="ENUMERATION_TYPE" onChange={that.onChange} field={field} options={options} attr={"entity1"}/>
             <FieldInput label={"Link Type"} dataType="ENUMERATION_TYPE" field={field} options={this.linkTypes} attr={"linkType"}/>
-            <FieldInput label={"Entity 2"} dataType="ENUMERATION_TYPE" onChange={this.onChange} field={field} options={options} attr={"entity2"}/>
+            <FieldInput label={"Entity 2"} dataType="ENUMERATION_TYPE" field={field} options={options} attr={"entity2"}/>
           </ExpansionPanelDetails>
+            <ExpansionPanelActions>
+              <Button size="small" color="secondary" onClick={that.handleDelete}>Delete</Button>
+            </ExpansionPanelActions>
         </ExpansionPanel>
       </Paper>
     )

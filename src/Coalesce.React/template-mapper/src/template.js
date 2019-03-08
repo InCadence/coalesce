@@ -1,11 +1,13 @@
 import React from 'react';
+import Button from '@material-ui/core/Button';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import FieldInput from 'common-components/lib/components/FieldInput';
 import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 
 // {
@@ -23,42 +25,49 @@ export default class Template extends React.Component {
 
   constructor(props) {
     super(props);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   handleChange(value) {
     this.props.onChange(this.props.index, this.state.json)
   }
 
+  handleDelete() {
+    this.props.handleDelete(this.props.index);
+  }
+
   render() {
 
-    const {name, recName, recordSet, field, split, index} = this.props;
+    const {name, recName, recordSet, field, split} = this.props;
     const enume = split.map(function(value, index) {
       return(
         {enum: value, label: value}
       )
     })
 
-
     const that = this;
 
     return (
           <Paper elevation={1}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>{name+'.'+recName}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
+            <ExpansionPanel>
+              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
+                {name+'.'+recName}
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
+                <Table>
                 {
                   recordSet.definition.map(function(templateField, i) {
                     return <TableRow>
                             <FieldInput label={templateField.name} dataType="ENUMERATION_TYPE" field={field} options={enume} attr={`${i}`}/>
-                          </TableRow>
+                           </TableRow>
                   })
                 }
-              </TableBody>
-            </Table>
+                </Table>
+              </ExpansionPanelDetails>
+              <ExpansionPanelActions>
+                <Button size="small" color="secondary" onClick={that.handleDelete}>Delete</Button>
+              </ExpansionPanelActions>
+            </ExpansionPanel>
           </Paper>
     )
   }
