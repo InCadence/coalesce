@@ -120,6 +120,14 @@
         </dependency>
 
         <dependency>
+            <!-- Required for BundleContext -->
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>${felix.osgi.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>${joda.version}</version>
