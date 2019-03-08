@@ -21,7 +21,5 @@
     <feature name="${project.artifactId}">
         <feature prerequisite="false" dependency="true">cxf</feature>
         <feature prerequisite="false" dependency="true">coalesce-core-feature</feature>
-        <bundle start-level="75">mvn:com.incadencecorp.coalesce.bundles/bundle-geotools/${project.version}
-        </bundle>
     </feature>
 </features>

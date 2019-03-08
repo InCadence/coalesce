@@ -20,5 +20,6 @@
 	<feature name="${project.artifactId}">
 		<feature prerequisite="false" dependency="true">cxf</feature>
 		<feature prerequisite="false" dependency="true">cxf-jackson</feature>
+		<bundle start-level="75">mvn:com.incadencecorp.coalesce.bundles/bundle-geotools/${project.version}</bundle>
 	</feature>
 </features>
