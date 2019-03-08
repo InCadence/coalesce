@@ -898,7 +898,7 @@ public class TrexSqlPersisterImpl extends SQLPersisterImpl {
         }
 
         String linkStatus = linkage.getStatus().toString();
-        if(linkStatus == "ACTIVE")
+        if(linkStatus.equalsIgnoreCase("ACTIVE"))
         {
             linkStatus = "1";
         }else {

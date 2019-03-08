@@ -73,7 +73,7 @@ public class SQLSearchPersisterImpl extends SQLPersisterImpl implements ICoalesc
      *
      * @param params Configuration parameters
      */
-    public SQLSearchPersisterImpl(Map<String, String> params) throws CoalescePersistorException
+    public SQLSearchPersisterImpl(Map<String, String> params)
     {
         super(params);
     }
