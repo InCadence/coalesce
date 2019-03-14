@@ -18,9 +18,9 @@
 package com.incadencecorp.coalesce.plugins.template2java;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.ICoalesceComponent;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
@@ -37,9 +37,11 @@ import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Map;
 
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true)
 public class Template2JavaMojo extends AbstractMojo {
@@ -50,6 +52,9 @@ public class Template2JavaMojo extends AbstractMojo {
     // Directory
     @Parameter(defaultValue = "NoName")
     private String filePersistorName;
+
+    @Parameter
+    private Map<String, String> properties;
 
     @Parameter(defaultValue = "target")
     private String outputDir;
@@ -62,60 +67,106 @@ public class Template2JavaMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException
     {
         LOGGER.info("I'm looking for a persistor ({}) my target is ({})", filePersistorName, outputDir);
-        ICoalescePersistor persistor;
+
         try
         {
             addDependenciesToClasspath();
 
-            Object persister = Class.forName(filePersistorName, true, getClassLoaderFromRealm()).newInstance();
-
-            LOGGER.info("(Loaded) {}", persister.getClass().getSimpleName());
+            ICoalescePersistor persistor = loadPersister(filePersistorName, properties);
             LOGGER.info("Output Directory = ({})", Paths.get(outputDir).toUri().toString());
 
             CoalesceCodeGeneratorIterator it = new CoalesceCodeGeneratorIterator(Paths.get(outputDir));
-            if (persister instanceof ICoalescePersistor)
+
+            for (ObjectMetaData meta : persistor.getEntityTemplateMetadata())
             {
-                persistor = (ICoalescePersistor) persister;
-
-                for (ObjectMetaData meta : persistor.getEntityTemplateMetadata())
+                CoalesceEntityTemplate template;
+                try
                 {
-                    CoalesceEntityTemplate template;
-                    try
-                    {
-                        template = persistor.getEntityTemplate(meta.getKey());
+                    template = persistor.getEntityTemplate(meta.getKey());
 
-                        if (template != null)
+                    if (template != null)
+                    {
+                        LOGGER.info("Generating ({}) ({}) ({})",
+                                    template.getName(),
+                                    template.getSource(),
+                                    template.getKey());
+
+                        if (StringHelper.isNullOrEmpty(template.getClassName()))
                         {
-                            LOGGER.info("Generating ({}) ({}) ({})",
-                                        template.getName(),
-                                        template.getSource(),
-                                        template.getKey());
-
-                            if (StringHelper.isNullOrEmpty(template.getClassName()))
-                            {
-                                LOGGER.warn("No Classname Specified!!!");
-                            }
-
-                            it.generateCode(template);
+                            LOGGER.warn("No Classname Specified!!!");
                         }
-                    }
-                    catch (CoalesceException e)
-                    {
-                        String errorMsg = String.format(CoalesceErrors.INVALID_OBJECT, meta.getKey(), e.getMessage());
-                        LOGGER.error(errorMsg, e);
+
+                        it.generateCode(template);
                     }
                 }
-            }
-            else
-            {
-                LOGGER.warn("(FAILED) Loading Persister ({}): {}", filePersistorName, "Invalid Implementation");
+                catch (CoalesceException e)
+                {
+                    String errorMsg = String.format(CoalesceErrors.INVALID_OBJECT, meta.getKey(), e.getMessage());
+                    LOGGER.error(errorMsg, e);
+                }
             }
         }
-        catch (MojoExecutionException | ClassNotFoundException | InstantiationException | IllegalAccessException | CoalescePersistorException e)
+        catch (CoalesceException e)
         {
             LOGGER.warn("(FAILED) Loading Persister ({})", filePersistorName, e);
             throw new MojoExecutionException("", e);
         }
+
+    }
+
+    private ICoalescePersistor loadPersister(String clasname, Map<String, String> props) throws CoalesceException
+    {
+        ICoalescePersistor persistor;
+        boolean hasProperties = props != null && !props.isEmpty();
+
+        try
+        {
+            Class persistorClass = Class.forName(clasname, true, getClassLoaderFromRealm());
+            LOGGER.info("(Loaded) {}", persistorClass.getSimpleName());
+
+            if (hasProperties && LOGGER.isInfoEnabled())
+            {
+                LOGGER.info("Properties");
+                for (Map.Entry<String, String> entry : props.entrySet())
+                {
+                    LOGGER.info("\t{} = {}", entry.getKey(), entry.getValue());
+                }
+            }
+
+            if (!ICoalescePersistor.class.isAssignableFrom(persistorClass))
+            {
+                throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT, persistorClass.getName()));
+            }
+
+            try
+            {
+                if (hasProperties)
+                {
+                    // Handles the case where persistor has implemented a constructor that takes a map of properties
+                    persistor = (ICoalescePersistor) persistorClass.getConstructor(Map.class).newInstance(props);
+                }
+                else
+                {
+                    persistor = (ICoalescePersistor) (persistorClass.newInstance());
+                }
+            }
+            catch (NoSuchMethodException e)
+            {
+                persistor = (ICoalescePersistor) (persistorClass.newInstance());
+
+                // Handles the case where persistor has implemented the ICoalesceComponent
+                if (persistor instanceof ICoalesceComponent)
+                {
+                    ((ICoalesceComponent) persistor).setProperties(props);
+                }
+            }
+        }
+        catch (ClassNotFoundException | MojoExecutionException | IllegalAccessException | InstantiationException | InvocationTargetException e)
+        {
+            throw new CoalesceException(e);
+        }
+
+        return persistor;
     }
 
     private void addDependenciesToClasspath() throws MojoExecutionException

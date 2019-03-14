@@ -27,6 +27,8 @@ import com.incadencecorp.coalesce.common.helpers.FileHelper;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -54,6 +56,8 @@ import java.util.UUID;
  */
 public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalescePersistor, ICoalesceComponent {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FilePersistorImpl.class);
+
     private static final String TEMPLATE_DIRECTORY = "templates";
     private Path root = FilePersistorSettings.getDirectory();
     private int subDirLen = FilePersistorSettings.getSubDirectoryLength();
@@ -70,18 +74,20 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
         // Last Successful Scan Configured?
         if (parameters.containsKey(CoalesceParameters.PARAM_DIRECTORY))
         {
+            String path = parameters.get(CoalesceParameters.PARAM_DIRECTORY);
+
             try
             {
                 root = Paths.get(FileHelper.getFullPath(parameters.get(CoalesceParameters.PARAM_DIRECTORY)));
-
-                if (!Files.exists(root))
-                {
-                    throw new IllegalArgumentException("Invalid Directory: " + root);
-                }
             }
             catch (URISyntaxException e)
             {
-                throw new IllegalArgumentException(CoalesceParameters.PARAM_DIRECTORY, e);
+                root = new File(path).toPath();
+            }
+
+            if (!Files.exists(root))
+            {
+                throw new IllegalArgumentException("Invalid Directory: " + root);
             }
         }
 
