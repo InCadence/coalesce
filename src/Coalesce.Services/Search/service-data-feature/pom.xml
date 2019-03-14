@@ -21,4 +21,50 @@
 		</plugins>
 	</build>
 
+	<dependencies>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.services.search</groupId>
+            <artifactId>coalesce-search-service-data-jaxrs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-search</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>${cxf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.jaxb.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.jaxb2_commons</groupId>
+            <artifactId>jaxb2-basics</artifactId>
+            <version>1.11.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf.xjc-utils</groupId>
+            <artifactId>cxf-xjc-runtime</artifactId>
+            <version>${cxf.xjc.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
 </project>

@@ -106,10 +106,31 @@
     </build>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20160807</version>
+        </dependency>
+
+        <dependency>
+            <!-- Required for BundleContext -->
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>${felix.osgi.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda.version}</version>
         </dependency>
         <dependency>
             <!-- Required for DocumentProperties -->

@@ -2,12 +2,9 @@
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
 	name="coalesce-services">
 	<feature name="${project.artifactId}">
+        <feature prerequisite="false" dependency="true">cxf-jackson</feature>
         <feature prerequisite="false" dependency="true">cxf-jaxws</feature>
         <feature prerequisite="false" dependency="true">cxf-xjc-runtime</feature>
         <feature prerequisite="false" dependency="true">coalesce-core-feature</feature>
-		<!-- <feature>camel-jms</feature> -->
-		<!-- <feature>activemq-camel</feature> -->
-		<bundle start-level="75">mvn:com.incadencecorp.coalesce.bundles/bundle-geotools/${project.version}
-		</bundle>
 	</feature>
 </features>
