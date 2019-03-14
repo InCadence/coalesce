@@ -14,15 +14,15 @@
 		<feature prerequisite="false" dependency="false">coalesce-frontend</feature>
 		<feature prerequisite="false" dependency="false">coalesce-javadocs</feature>
 	</feature>
+	<!--
 	<feature name="spifly" start-level="99">
 		<bundle>mvn:org.apache.aries.spifly/org.apache.aries.spifly.dynamic.bundle/1.0.8</bundle>
 		<bundle>mvn:org.ow2.asm/asm-all/5.2</bundle>
 		<bundle>mvn:org.apache.aries/org.apache.aries.util/1.1.3</bundle>
-	</feature>	
+	</feature>
+	-->
 	<feature name="coalesce-frontend" version="${project.version}">
-		<feature prerequisite="false" dependency="false">coalesce-crud-service-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-crud-service-data-feature</feature>
-		<feature prerequisite="false" dependency="false">coalesce-search-service-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-react-feature</feature>
 	</feature>
