@@ -8,11 +8,10 @@ import com.incadencecorp.coalesce.framework.datamodel.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.rmi.RemoteException;
-import java.util.List;
 
 /**
  * JaxRS configuration used on {@link EnumerationDataControllerJaxRS}
- * 
+ *
  * @author Derek Clemenzi
  */
 @Path("entity")

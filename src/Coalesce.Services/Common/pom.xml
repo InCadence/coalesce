@@ -35,10 +35,24 @@
             <artifactId>coalesce-services-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-search</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.incadencecorp.coalesce.services.crud</groupId>
             <artifactId>coalesce-crud-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+			<artifactId>persister-derby</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+
     </dependencies>
 
 </project>
