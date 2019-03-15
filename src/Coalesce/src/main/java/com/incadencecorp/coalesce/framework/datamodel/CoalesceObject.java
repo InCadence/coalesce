@@ -876,7 +876,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
         case 1:
 
             // End of the path, is our Base Object named the Name Path?
-            if (getName().equals(names[0]))
+            if (getName().equalsIgnoreCase(names[0]))
             {
                 return this;
             }
@@ -891,12 +891,16 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
             for (CoalesceObject child : _children.values())
             {
-                String childName = child.getName();
-
-                if (childName != null && childName.equals(names[1]))
+                // Ignore History
+                if (!(child instanceof CoalesceHistory))
                 {
-                    coalesceObject = child;
-                    break;
+                    String childName = child.getName();
+
+                    if (childName != null && childName.equalsIgnoreCase(names[1]))
+                    {
+                        coalesceObject = child;
+                        break;
+                    }
                 }
             }
 
