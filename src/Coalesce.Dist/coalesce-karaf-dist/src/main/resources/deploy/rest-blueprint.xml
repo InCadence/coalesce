@@ -69,7 +69,7 @@
 
 
     <bean id="enumerationImpl"
-          class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.EnumerationDataControllerJaxRS">
+          class="com.incadencecorp.coalesce.services.common.jaxrs.EnumerationDataControllerJaxRS">
         <argument ref="crud-client"/>
         <argument ref="search-client"/>
     </bean>

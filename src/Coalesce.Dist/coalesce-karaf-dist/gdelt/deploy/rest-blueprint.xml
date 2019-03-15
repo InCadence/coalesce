@@ -51,7 +51,7 @@
     </bean>
 
     <bean id="enumerationImpl"
-          class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.EnumerationDataControllerJaxRS">
+          class="com.incadencecorp.coalesce.services.common.jaxrs.EnumerationDataControllerJaxRS">
         <argument>
             <bean
                     class="com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl">
