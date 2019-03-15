@@ -485,14 +485,17 @@ def search(server = None, query = None,
         data = {"pageSize": page_size, "pageNumber": page_number,
                 "propertyNames": return_property_names}
 
-        # If there's a query (filter object), add it.  Otherwise, if a
-        # "template" name was supplied (necessary if there's no query and
-        # no recordset in "return_property_names"), add it.
+        # If there's a query (filter object), add it.  If there's no
+        # query, create an empty object to use as the value of "group".
         if not query:
             query = {}
-            if template:
-                data["type"] = template
         data["group"] = query
+
+        # If a "template" name was supplied (necessary if there's no
+        ## query--or a query with only coalesceEntity metadata fields--
+        # and no recordset in "return_property_names"), add it.
+        if template:
+            data["type"] = template
 
         # Add any sorting parameters.  We checkfor the (deprecated) earlier
         # form of the sort-by input, as a dict/JSON object identical to the
