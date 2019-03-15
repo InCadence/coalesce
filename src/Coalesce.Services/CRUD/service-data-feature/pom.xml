@@ -29,12 +29,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.incadencecorp.coalesce.services.search</groupId>
-            <artifactId>coalesce-search-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.incadencecorp.coalesce</groupId>
             <artifactId>coalesce-core</artifactId>
             <version>${project.version}</version>

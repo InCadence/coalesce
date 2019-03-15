@@ -6,6 +6,6 @@
 		<feature prerequisite="false" dependency="true">cxf-jackson</feature>
 		<feature prerequisite="false" dependency="true">cxf-jaxrs</feature>
         <feature prerequisite="false" dependency="true">cxf-xjc-runtime</feature>
-		<feature prerequisite="false" dependency="true">coalesce-search-service-feature</feature>
+		<feature prerequisite="false" dependency="true">coalesce-core-feature</feature>
 	</feature>
 </features>
