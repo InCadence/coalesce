@@ -78,7 +78,15 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
 
             try
             {
-                root = Paths.get(FileHelper.getFullPath(parameters.get(CoalesceParameters.PARAM_DIRECTORY)));
+                if (path.startsWith("/"))
+                {
+                    // Linux Support
+                    root = new File(path).toPath();
+                }
+                else
+                {
+                    root = Paths.get(FileHelper.getFullPath(path));
+                }
             }
             catch (URISyntaxException e)
             {
