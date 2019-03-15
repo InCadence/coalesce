@@ -477,7 +477,7 @@ def search(server = None, query = None,
     # If "query" is a full query object, assign it directly as the
     # query ("data").  Otherwise, construct the query object.
 
-    if "group" in query:
+    if query and "group" in query:
         data = query
 
     else:
@@ -488,10 +488,11 @@ def search(server = None, query = None,
         # If there's a query (filter object), add it.  Otherwise, if a
         # "template" name was supplied (necessary if there's no query and
         # no recordset in "return_property_names"), add it.
-        if query:
-            data["group"] = query
-        elif template:
-            data["type"] = template
+        if not query:
+            query = {}
+            if template:
+                data["type"] = template
+        data["group"] = query
 
         # Add any sorting parameters.  We checkfor the (deprecated) earlier
         # form of the sort-by input, as a dict/JSON object identical to the
