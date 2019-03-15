@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
+	name="coalesce-services">
+	<feature name="${project.artifactId}">
+		<feature prerequisite="false" dependency="true">cxf-jackson</feature>
+		<feature prerequisite="false" dependency="true">cxf-jaxrs</feature>
+        <feature prerequisite="false" dependency="true">cxf-xjc-runtime</feature>
+		<feature prerequisite="false" dependency="true">coalece-core-feature</feature>
+	</feature>
+</features>

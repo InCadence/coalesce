@@ -1,72 +1,80 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>coalesce-services-feature</artifactId>
-	<packaging>feature</packaging>
-	<name>Coalesce Services Feature</name>
-	<description>${project.name}</description>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>coalesce-services-feature</artifactId>
+    <packaging>feature</packaging>
+    <name>Coalesce Services Feature</name>
+    <description>${project.name}</description>
 
-	<parent>
-		<groupId>com.incadencecorp.coalesce.services</groupId>
-		<artifactId>coalesce-services-parent</artifactId>
-		<version>0.0.36-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
+    <parent>
+        <groupId>com.incadencecorp.coalesce.services</groupId>
+        <artifactId>coalesce-services-parent</artifactId>
+        <version>0.0.36-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.karaf.tooling</groupId>
-				<artifactId>karaf-maven-plugin</artifactId>
-				<configuration>
-					<aggregateFeatures>true</aggregateFeatures>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+                <configuration>
+                    <aggregateFeatures>true</aggregateFeatures>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-	<dependencies>
+    <dependencies>
 
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
-			<artifactId>coalesce-crud-service-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.services.crud</groupId>
+            <artifactId>coalesce-crud-service-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
 
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
-			<artifactId>coalesce-crud-service-data-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.services.crud</groupId>
+            <artifactId>coalesce-crud-service-data-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
 
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.services.search</groupId>
-			<artifactId>coalesce-search-service-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.services</groupId>
+            <artifactId>coalesce-services-client-common-jaxrs-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
 
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.services.search</groupId>
-			<artifactId>coalesce-search-service-data-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.services.search</groupId>
+            <artifactId>coalesce-search-service-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
 
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.services.network</groupId>
-			<artifactId>coalesce-network-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.services.search</groupId>
+            <artifactId>coalesce-search-service-data-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
 
-	</dependencies>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.services.network</groupId>
+            <artifactId>coalesce-network-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
+
+    </dependencies>
 
 </project>
