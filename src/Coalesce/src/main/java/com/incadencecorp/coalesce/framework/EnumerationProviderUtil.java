@@ -19,7 +19,7 @@ package com.incadencecorp.coalesce.framework;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.IEnumerationProvider;
-import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEnumerationField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEnumerationFieldBase;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;

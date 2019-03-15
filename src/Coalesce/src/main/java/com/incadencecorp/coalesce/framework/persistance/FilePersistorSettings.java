@@ -19,7 +19,7 @@ package com.incadencecorp.coalesce.framework.persistance;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
-import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;

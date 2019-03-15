@@ -18,7 +18,7 @@
 package com.incadencecorp.coalesce.synchronizer.service.scanners;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
