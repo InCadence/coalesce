@@ -12,23 +12,27 @@ import 'common-components/css/coalesce.css'
 var pjson = require('../package.json');
 document.title = pjson.title;
 
-var enumCols = [
+const enumCols = [
   {
-    key: "metadata.enumname",
+    key: "enummetadata.enumname",
     Header: 'Name',
-    accessor: 'values[0]'
+    accessor: 'values',
+    index: 0,
   },{
-    key: "metadata.description",
+    key: "enummetadata.description",
     Header: 'Description',
-    accessor: 'values[1]'
+    accessor: 'values',
+    index: 1
   },{
     key: "CoalesceEntity.datecreated",
     Header: 'Created',
-    accessor: 'values[2]'
+    accessor: 'values',
+    index: 2
   },{
     key: "CoalesceEntity.lastmodified",
     Header: 'Last Modified',
-    accessor: 'values[3]'
+    accessor: 'values',
+    index: 3
   }
 ]
 
@@ -46,7 +50,7 @@ function loadEnumerations(theme) {
           'operator': 'EqualTo',
           'value': 'Enumeration'
         },{
-          'recordset': 'metadata',
+          'recordset': 'enummetadata',
           'field': 'enumname',
           'operator': 'NullCheck',
           'not': true
