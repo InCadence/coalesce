@@ -349,9 +349,10 @@ def search(server = None, query = None,
         of dict-like or JSON objects in the form
         `{"propertyName": <recordset>.<field>, "sortOrder": <sort order>}`.
         A single dict-like/JSON object in the latter format will also be
-        accepted.  For basic entity fields, such as "name" and
-        "dateCreated", the field name should be supplied by itself, with no
-        recordset.
+        accepted. In some circumstances (in particular, if Derby is the
+        default persistor), the in the case of basic entity fields, such
+        as "name" and "dateCreated", a field name should be supplied by
+        itself, with no recordset.
     :param sort_order:  "ASC" for ascending, or "DESC" for descending.
         This argument is used only if "sort_by" is the name of a single
         field (rather than a full Coalesce "sortBy" object).
@@ -506,12 +507,17 @@ def search(server = None, query = None,
             # Check for a JSON object that needs to be decoded.
 
             if isinstance(sort_by, basestring):
+
                 try:
                     sort_by = json.loads(sort_by)
 
                 # If it's a string but not decodeable, treat it as a field
                 # name, and construct the sort-by object.  This is the only
-                # case in which the "sort_order" argument is used.
+                # case in which the "sort_order" argument is used--in the
+                # case of multiple sort-by fields, each entry in the
+                # "sort_by" argument must include a "sortOrder" value (the
+                # API equivalent of  "sort_order") as well as a
+                # "propertyName" value (the sort-by field name).
                 except JSONDecodeError:
                     sort_order = sort_order.upper()
                     if not sort_order in SEARCH_SORT_ORDERS:
