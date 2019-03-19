@@ -28,7 +28,6 @@
     </parent>
 
     <dependencies>
-
         <!-- Coalesce Dependencies -->
         <dependency>
             <groupId>com.incadencecorp.coalesce.ingest</groupId>
@@ -37,11 +36,7 @@
         </dependency>
 
         <!-- TODO These dependencies should be injected at runtime -->
-        <dependency>
-            <groupId>com.incadencecorp.coalesce</groupId>
-            <artifactId>coalesce-framework-persister-elasticsearch</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
