@@ -35,6 +35,7 @@ import java.util.Map;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 
+import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
 import org.geotools.data.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,7 @@ import com.incadencecorp.coalesce.synchronizer.api.common.AbstractScan;
  *
  * @author n78554
  * @see CoalesceParameters#PARAM_DIRECTORY
+ * @see SynchronizerParameters#PARAM_SCANNER_MAX
  */
 public class FileScanImpl extends AbstractScan {
 
@@ -84,9 +86,9 @@ public class FileScanImpl extends AbstractScan {
             }
         }
 
-        if (parameters.containsKey(CoalesceParameters.PARAM_BLOCK_SIZE))
+        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_MAX))
         {
-            blockSize = Integer.parseInt(parameters.get(CoalesceParameters.PARAM_BLOCK_SIZE));
+            blockSize = Integer.parseInt(parameters.get(SynchronizerParameters.PARAM_SCANNER_MAX));
         }
 
     }
