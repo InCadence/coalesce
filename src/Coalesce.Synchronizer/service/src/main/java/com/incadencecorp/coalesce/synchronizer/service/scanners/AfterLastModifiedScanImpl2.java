@@ -61,6 +61,7 @@ import java.util.concurrent.TimeUnit;
  * @see SynchronizerParameters#PARAM_SCANNER_CQL
  * @see SynchronizerParameters#PARAM_SCANNER_WINDOW
  * @see SynchronizerParameters#PARAM_SCANNER_WINDOW_UNITS
+ * @see SynchronizerParameters#PARAM_SCANNER_MAX
  */
 public class AfterLastModifiedScanImpl2 extends AbstractScan {
 
