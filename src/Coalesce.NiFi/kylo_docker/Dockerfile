@@ -33,19 +33,14 @@ RUN echo "Install Elasticsearch" && /opt/kylo/setup/elasticsearch/install-elasti
 COPY conf/elasticsearch.yml /etc/elasticsearch/
 RUN echo "Install activemq" && /opt/kylo/setup/activemq/install-activemq.sh /opt/activemq activemq users /opt/java/current
 
-RUN echo "Install NiFi" && /opt/kylo/setup/nifi/install-nifi.sh 1.0.0 /opt/nifi nifi users && echo "Install Kylo" && service mysql start
-RUN /opt/kylo/setup/nifi/install-kylo-components.sh /opt/nifi /opt/kylo/current nifi users && rm -f /opt/nifi/nifi-1.0.0-bin.tar.gz && mkdir /opt/nifi/current/lib2
+RUN echo "Install NiFi" && /opt/kylo/setup/nifi/install-nifi.sh 1.1.0 /opt/nifi nifi users && echo "Install Kylo" && service mysql start
+RUN /opt/kylo/setup/nifi/install-kylo-components.sh /opt/nifi /opt/kylo/current nifi users && rm -f /opt/nifi/nifi-1.1.0-bin.tar.gz && mkdir /opt/nifi/current/lib2
 RUN /opt/kylo/setup/java/install-java8.sh && /opt/kylo/setup/java/change-nifi-java-home.sh /opt/java/current /opt/nifi/current
 
 ######
 COPY scripts/*.nar /opt/nifi/current/lib2
 
-<<<<<<< HEAD
-RUN echo "Creating the dropzone folder" && mkdir -p /var/dropzone
-RUN chown nifi:nifi /var/dropzone && chmod 774 /var/dropzone/
-=======
 RUN echo "Creating the dropzone folder" && mkdir -p /var/dropzone && chown nifi:nifi /var/dropzone && chmod 774 /var/dropzone/
->>>>>>> Update Kylo to 0.9.1, upload werks
 
 RUN echo "Creating the sample data folder" && mkdir -p /var/sampledata
 
