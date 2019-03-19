@@ -91,9 +91,18 @@ public class CoalesceFeatureTypeFactory {
             }
         }
 
+        if (!hasGeometry)
+        {
+            builder.add("_geo", mapper.map(ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE));
+            builder.setDefaultGeometry("_geo");
+        }
+
         if (LOGGER.isInfoEnabled())
         {
-            LOGGER.info("Created Feature ({}) w/ {} Fields (Default Geometry: {})", name, fields.size(), builder.getDefaultGeometry());
+            LOGGER.info("Created Feature ({}) w/ {} Fields (Default Geometry: {})",
+                        name,
+                        fields.size(),
+                        builder.getDefaultGeometry());
         }
 
         return builder.buildFeatureType();
