@@ -20,6 +20,8 @@
 		<module>Common-Jaxrs</module>
 		<module>Client-Common</module>
 		<module>Client-Common-Jaxws</module>
+		<module>client-common-jaxrs</module>
+		<module>client-common-jaxrs-feature</module>
 		<module>CRUD</module>
 		<module>Search</module>
 		<module>Manager</module>

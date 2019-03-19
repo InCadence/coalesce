@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.security.Principal;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This utility class allows for multiple implementations of
@@ -65,7 +66,7 @@ public final class EnumerationProviderUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(EnumerationProviderUtil.class);
 
     private static final List<IEnumerationProvider> providers = new ArrayList<>();
-    private static final Map<String, String> lookup = new HashMap<>();
+    private static final Map<String, String> lookup = new ConcurrentHashMap<>();
     private static Principal defaultPrincipal;
 
     private static final Object SYNC_OBJECT = new Object();

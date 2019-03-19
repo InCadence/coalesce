@@ -6,25 +6,30 @@ import { Enums } from './enums'
 import { EnumValues } from './enumValues'
 import { EnumAssociatedValues } from './enumAssociatedValues'
 import { DialogMessage, DialogLoader } from 'common-components/lib/components/dialogs';
+import Paper from '@material-ui/core/Paper';
 
 
 const enumCols = [
   {
-    key: "metadata.enumname",
+    key: "enummetadata.enumname",
     Header: 'Name',
-    accessor: 'values[0]'
+    accessor: 'values',
+    index: 0,
   },{
-    key: "metadata.description",
+    key: "enummetadata.description",
     Header: 'Description',
-    accessor: 'values[1]'
+    accessor: 'values',
+    index: 1
   },{
     key: "CoalesceEntity.datecreated",
     Header: 'Created',
-    accessor: 'values[2]'
+    accessor: 'values',
+    index: 2
   },{
     key: "CoalesceEntity.lastmodified",
     Header: 'Last Modified',
-    accessor: 'values[3]'
+    accessor: 'values',
+    index: 3
   }
 ]
 
@@ -93,6 +98,7 @@ export class App extends React.Component {
     return (
       <MuiThemeProvider theme={this.props.theme}>
         <Menu logoSrc={this.props.icon} title={this.props.title} items={[/* No Options */]}/>
+        <Paper  style={{padding: '5px', margin: '10px'}}>
         { !this.state.enumKey &&
           <Enums
             data={this.props.enums}
@@ -118,6 +124,7 @@ export class App extends React.Component {
             theme={this.props.theme}
           />
         }
+        </Paper>
         { this.state.error &&
           <DialogMessage
             title="Error"

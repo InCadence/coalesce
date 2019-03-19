@@ -1,6 +1,6 @@
 import React from 'react'
 import IconButton from 'common-components/lib/components/IconButton'
-import ReactTable from 'react-table'
+import { SearchResults } from './results.js'
 
 export class EnumAssociatedValues extends React.PureComponent {
 
@@ -18,14 +18,11 @@ export class EnumAssociatedValues extends React.PureComponent {
 
     return (
 
-      <div className="ui-widget">
-        <div className="ui-widget-header">
-        Associated Values
-        </div>
-        <div className="ui-widget-content">
-          <ReactTable
+      <div>
+          <SearchResults
+            title="Associated Values"
             data={items}
-            columns={[
+            properties={[
                 {
                   Header: 'Name',
                   accessor: 'name'
@@ -34,12 +31,12 @@ export class EnumAssociatedValues extends React.PureComponent {
                   accessor: 'value'
                 }
               ]}
+
           />
           <div className='form-buttons'>
             <IconButton icon="/images/svg/back.svg" title="Back" onClick={() => {this.props.loadValues(this.props.enumKey)}} />
             <IconButton icon="/images/svg/edit.svg" title="Edit" onClick={() => {window.open("/entityeditor/?entitykey=" + this.props.enumKey)}} />
           </div>
-        </div>
       </div>
 
     )

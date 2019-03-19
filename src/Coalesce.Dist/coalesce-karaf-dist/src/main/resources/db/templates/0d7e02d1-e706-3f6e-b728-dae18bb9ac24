@@ -3,11 +3,11 @@
         source="Enumeration" version="1.0">
     <linkagesection name="Linkages"/>
     <section name="enumeration" noindex="false">
-        <recordset maxrecords="1" minrecords="1" name="metadata">
+        <recordset maxrecords="1" minrecords="1" name="enummetadata">
             <fielddefinition datatype="string" defaultclassificationmarking="U" name="enumname"/>
             <fielddefinition datatype="string" defaultclassificationmarking="U" name="description"/>
         </recordset>
-        <recordset maxrecords="500" minrecords="0" name="values">
+        <recordset maxrecords="500" minrecords="0" name="enumvalues">
             <fielddefinition datatype="string" defaultclassificationmarking="U" name="value"/>
             <fielddefinition datatype="integer" defaultclassificationmarking="U" name="ordinal"/>
             <fielddefinition datatype="string" defaultclassificationmarking="U" name="description"/>

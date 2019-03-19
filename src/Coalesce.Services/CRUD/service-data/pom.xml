@@ -19,13 +19,8 @@
 			<artifactId>coalesce-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
-			<artifactId>coalesce-crud-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.services.search</groupId>
-			<artifactId>coalesce-search-api</artifactId>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-search</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -36,20 +31,8 @@
 
 		<!-- Test Dependencies -->
 		<dependency>
-			<groupId>com.incadencecorp.coalesce.services.search</groupId>
-			<artifactId>coalesce-search-service</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
 			<artifactId>coalesce-crud-service</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-framework-persister-postgresql</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>

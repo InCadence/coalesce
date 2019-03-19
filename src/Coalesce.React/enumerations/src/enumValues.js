@@ -23,13 +23,10 @@ export class EnumValues extends React.PureComponent {
   render() {
     return (
 
-      <div className="ui-widget">
-        <div className="ui-widget-header">
-        Values
-        </div>
-        <div className="ui-widget-content">
+        <div>
           <SearchResults
-            data={this.props.data}
+            title="Values"
+            data={this.props.data.hits}
             properties={valueCols}
 
             createButtons={(row) => {
@@ -43,7 +40,6 @@ export class EnumValues extends React.PureComponent {
             <IconButton icon="/images/svg/edit.svg" title="Edit" onClick={() => {window.open("/entityeditor/?entitykey=" + this.props.enumKey)}} />
           </div>
         </div>
-      </div>
 
     )
   }
