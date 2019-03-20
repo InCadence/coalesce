@@ -2,10 +2,16 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-import org.apache.accumulo.core.client.*;
+import org.apache.accumulo.core.client.AccumuloException;
+import org.apache.accumulo.core.client.AccumuloSecurityException;
+import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.Instance;
+import org.apache.accumulo.core.client.TableExistsException;
+import org.apache.accumulo.core.client.ZooKeeperInstance;
 import org.apache.accumulo.core.client.mock.MockInstance;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.geotools.data.DataStore;
@@ -75,12 +81,10 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
     public static final String USE_MOCK = "useMock";
     public static final String USE_COMPRESSION = "compression.enabled";
     public static final String RETURN_TOTALS = "returnTotals";
-    public static final String AUTHS = "auths";
 
     // These variables are for connecting to GeoMesa for the search
-    private Map<String, String> dsConf = new HashMap<>();
+    private final Map<String, String> dsConf = new HashMap<>();
     private DataStore dataStore;
-    private Instance instance;
     private Connector connector;
 
     /**
@@ -90,6 +94,26 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
     public AccumuloDataConnector(Map<String, String> params) throws CoalescePersistorException
     {
         dsConf.putAll(params);
+
+        if (StringHelper.isNullOrEmpty(dsConf.get(USER)))
+        {
+            throw new IllegalArgumentException(String.format(CoalesceErrors.NOT_INITIALIZED, USER));
+        }
+
+        if (StringHelper.isNullOrEmpty(dsConf.get(PASSWORD)))
+        {
+            throw new IllegalArgumentException(String.format(CoalesceErrors.NOT_INITIALIZED, PASSWORD));
+        }
+
+        if (StringHelper.isNullOrEmpty(dsConf.get(ZOOKEEPERS)))
+        {
+            throw new IllegalArgumentException(String.format(CoalesceErrors.NOT_INITIALIZED, ZOOKEEPERS));
+        }
+
+        if (StringHelper.isNullOrEmpty(dsConf.get(INSTANCE_ID)))
+        {
+            throw new IllegalArgumentException(String.format(CoalesceErrors.NOT_INITIALIZED, INSTANCE_ID));
+        }
 
         // Set system properties for GeomesaBatchWriter
         Properties props = System.getProperties();
@@ -197,6 +221,8 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
         {
             try
             {
+                Instance instance;
+
                 StopWatch watch = new StopWatch();
                 watch.start();
 
