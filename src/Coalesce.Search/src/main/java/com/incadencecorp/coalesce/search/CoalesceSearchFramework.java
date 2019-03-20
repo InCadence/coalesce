@@ -103,7 +103,7 @@ public class CoalesceSearchFramework extends CoalesceFramework {
      * @return the results of executing the provided query.
      * @throws CoalescePersistorException on error
      */
-    public SearchResults search(Query query) throws CoalescePersistorException
+    public SearchResults search(Query query) throws CoalescePersistorException, InterruptedException
     {
         return searchBulk(EnumSet.of(EPersistorCapabilities.SEARCH), query).get(0);
     }
@@ -116,7 +116,7 @@ public class CoalesceSearchFramework extends CoalesceFramework {
      * @throws CoalescePersistorException on error
      */
     public List<SearchResults> searchBulk(EnumSet<EPersistorCapabilities> requirements, Query... queries)
-            throws CoalescePersistorException
+            throws CoalescePersistorException, InterruptedException
     {
         List<SearchResults> results;
 
@@ -135,7 +135,14 @@ public class CoalesceSearchFramework extends CoalesceFramework {
 
             if (response.getStatus() != EResultStatus.SUCCESS)
             {
-                throw new CoalescePersistorException(response.getError());
+                if (response.getStatus() == EResultStatus.INTERRUPTED)
+                {
+                    throw new InterruptedException(response.getError());
+                }
+                else
+                {
+                    throw new CoalescePersistorException(response.getError());
+                }
             }
             else
             {
@@ -161,11 +168,11 @@ public class CoalesceSearchFramework extends CoalesceFramework {
     }
 
     /**
-     * @param id   entity ID that uniquely identifies an entity
+     * @param id entity ID that uniquely identifies an entity
      * @return the key if the entity is found matching the id and name; otherwise <code>null</code>
      * @throws CoalesceException on error
      */
-    public String findEntityId(String id) throws CoalesceException
+    public String findEntityId(String id) throws CoalesceException, InterruptedException
     {
         return findEntityId(id, null);
     }
@@ -176,7 +183,7 @@ public class CoalesceSearchFramework extends CoalesceFramework {
      * @return the key if the entity is found matching the id and name; otherwise <code>null</code>
      * @throws CoalesceException on error
      */
-    public String findEntityId(String id, String name) throws CoalesceException
+    public String findEntityId(String id, String name) throws CoalesceException, InterruptedException
     {
         List<org.opengis.filter.Filter> filters = new ArrayList<>();
         filters.add(createEquals(CoalescePropertyFactory.getEntityId(), id));
@@ -194,7 +201,7 @@ public class CoalesceSearchFramework extends CoalesceFramework {
      * @return the key of the entity matching the filter.
      * @throws CoalesceException on error
      */
-    public String find(Filter filter) throws CoalesceException
+    public String find(Filter filter) throws CoalesceException, InterruptedException
     {
         LOGGER.debug("Executing: {}", filter.toString());
 

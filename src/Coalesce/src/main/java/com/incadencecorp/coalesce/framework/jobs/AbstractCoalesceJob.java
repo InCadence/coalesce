@@ -100,23 +100,24 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
         }
         catch (CoalesceException | InterruptedException e)
         {
+            TASKOUTPUT result = createResults();
+            result.setError(e.getMessage());
+
             if (e instanceof InterruptedException || e.getCause() instanceof InterruptedException)
             {
                 LOGGER.info("(FAILED) Job Interrupted");
+                result.setStatus(EResultStatus.INTERRUPTED);
+                status = EJobStatus.INTERRUPTED;
             }
             else
             {
                 LOGGER.error("(FAILED) Job", e);
+                result.setStatus(EResultStatus.FAILED);
+                status = EJobStatus.FAILED;
             }
 
-            status = EJobStatus.FAILED;
-
-            TASKOUTPUT result = createResults();
-            result.setStatus(EResultStatus.FAILED);
-            result.setError(e.getMessage());
-
             results = createResponse();
-            results.setStatus(EResultStatus.FAILED);
+            results.setStatus(result.getStatus());
             results.setError(e.getMessage());
             results.getResult().add(result);
         }

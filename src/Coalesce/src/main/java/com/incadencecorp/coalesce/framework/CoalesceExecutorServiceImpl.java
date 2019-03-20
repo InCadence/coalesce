@@ -26,7 +26,14 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * This base implementation manages the {@link ExecutorService} used by extending classes.
@@ -133,14 +140,13 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
             LOGGER.trace("Invoking ({}) Tasks", tasks.size());
         }
 
-        if (_pool.isShutdown())
+        if (!_pool.isShutdown())
         {
-            LOGGER.warn("(FAILED) Invoking Tasks: Pool is Shutdown");
-            return null;
+            return _pool.invokeAll(tasks);
         }
         else
         {
-            return _pool.invokeAll(tasks);
+            throw new InterruptedException("(FAILED) Invoking Tasks: Pool is Shutdown");
         }
     }
 
@@ -148,20 +154,41 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
     public final <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
             throws InterruptedException
     {
-        return _pool.invokeAll(tasks, timeout, unit);
+        if (!_pool.isShutdown())
+        {
+            return _pool.invokeAll(tasks, timeout, unit);
+        }
+        else
+        {
+            throw new InterruptedException("(FAILED) Invoking Tasks: Pool is Shutdown");
+        }
     }
 
     @Override
     public final <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException
     {
-        return _pool.invokeAny(tasks);
+        if (!_pool.isShutdown())
+        {
+            return _pool.invokeAny(tasks);
+        }
+        else
+        {
+            throw new InterruptedException("(FAILED) Invoking Tasks: Pool is Shutdown");
+        }
     }
 
     @Override
     public final <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException
     {
-        return _pool.invokeAny(tasks, timeout, unit);
+        if (!_pool.isShutdown())
+        {
+            return _pool.invokeAny(tasks, timeout, unit);
+        }
+        else
+        {
+            throw new InterruptedException("(FAILED) Invoking Tasks: Pool is Shutdown");
+        }
     }
 
     @Override

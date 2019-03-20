@@ -180,7 +180,7 @@ public class SearchDataController {
 
             return createResponse(framework.searchBulk(searchQuery.getCapabilities(), query).get(0), properties);
         }
-        catch (CoalesceException e)
+        catch (CoalesceException | InterruptedException e)
         {
             throw new RemoteException(e.getMessage(), e);
         }
@@ -270,7 +270,7 @@ public class SearchDataController {
         {
             return createResponse(framework.search(query), properties);
         }
-        catch (CoalesceException e)
+        catch (CoalesceException | InterruptedException e)
         {
             throw new RemoteException("(FAILED) Executing query", e);
         }
