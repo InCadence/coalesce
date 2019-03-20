@@ -46,6 +46,11 @@
             <artifactId>coalesce-core</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-search</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Provided by bundle-ironhide -->
         <dependency>
