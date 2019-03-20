@@ -68,7 +68,7 @@
         <!-- Search API -->
         <dependency>
             <groupId>mil.nga.giat</groupId>
-            <artifactId>gs-web-elasticsearch</artifactId>
+            <artifactId>gt-elasticsearch</artifactId>
             <version>${elasticgeo.version}</version>
         </dependency>
 
