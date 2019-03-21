@@ -43,6 +43,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.jaxb.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.incadencecorp.coalesce.ingest</groupId>
             <artifactId>plugins-fsi</artifactId>
             <version>${project.version}</version>
@@ -72,14 +78,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.25</version>
-            <scope>test</scope>
-        </dependency>
-
 
     </dependencies>
 </project>

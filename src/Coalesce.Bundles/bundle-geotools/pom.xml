@@ -157,17 +157,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-accumulo-datastore_2.11</artifactId>
-            <version>${accumulo.geomesa.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>mil.nga.giat</groupId>
-            <artifactId>gs-web-elasticsearch</artifactId>
-            <version>2.14-INC</version>
-        </dependency>
-
-        <dependency>
             <artifactId>joda-time</artifactId>
             <groupId>joda-time</groupId>
             <version>${joda.version}</version>

@@ -27,22 +27,17 @@
         <dependency>
             <groupId>com.incadencecorp.coalesce</groupId>
             <artifactId>coalesce-framework-persister-accumulo</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.geotools</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.geotools.xsd</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Provided by coalesce-core-feature -->
         <dependency>
             <groupId>com.incadencecorp.coalesce</groupId>
             <artifactId>coalesce-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-search</artifactId>
             <scope>provided</scope>
         </dependency>
 

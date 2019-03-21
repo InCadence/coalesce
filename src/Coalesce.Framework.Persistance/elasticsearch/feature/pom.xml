@@ -46,6 +46,11 @@
             <artifactId>coalesce-core</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-search</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Provided by bundle-ironhide -->
         <dependency>
@@ -55,14 +60,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>${elasticsearch.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>mil.nga.giat</groupId>
-            <artifactId>gs-web-elasticsearch</artifactId>
+            <artifactId>gt-elasticsearch</artifactId>
             <version>${elasticgeo.version}</version>
             <scope>provided</scope>
         </dependency>

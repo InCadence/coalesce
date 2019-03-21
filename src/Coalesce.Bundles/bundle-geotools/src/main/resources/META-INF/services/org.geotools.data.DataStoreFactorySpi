@@ -1,1 +1,3 @@
 org.geotools.data.postgis.PostgisNGDataStoreFactory
+org.locationtech.geomesa.accumulo.data.AccumuloDataStoreFactory
+mil.nga.giat.data.elasticsearch.ElasticDataStoreFactory
