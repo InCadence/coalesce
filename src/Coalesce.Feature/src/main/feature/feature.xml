@@ -22,8 +22,7 @@
 	</feature>
 	-->
 	<feature name="coalesce-frontend" version="${project.version}">
-		<feature prerequisite="false" dependency="false">coalesce-crud-service-data-feature</feature>
-		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
+		<feature prerequisite="false" dependency="false">coalesce-services-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-react-feature</feature>
 	</feature>
 	<feature name="coalesce-javadocs" start-level="75" version="${project.version}">

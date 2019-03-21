@@ -87,18 +87,16 @@
                     </startupFeatures>
                     <bootFeatures>
                         <feature>minimal</feature>
-                        <feature>cxf</feature>
-                        <feature>war</feature>
+                        <feature>cxf-jaxrs</feature>
                         <feature>persister-accumulo-feature</feature>
                         <feature>persister-elasticsearch-feature</feature>
                         <feature>persister-derby-feature</feature>
                         <feature>persister-rest-feature</feature>
+                        <feature>coalesce-services-feature</feature>
                         <feature>coalesce-frontend</feature>
                         <feature>coalesce-javadocs</feature>
-                        <feature>coalesce-network-feature</feature>
                         <feature>coalesce-synchronizer-feature</feature>
-                        <feature>notification-adminevent-feature</feature>
-                        <feature>notification-kafka-feature</feature>
+                        <feature>coalesce-notification-feature</feature>
                     </bootFeatures>
                     <installedFeatures>
                         <feature>standard</feature>
@@ -106,6 +104,7 @@
                         <feature>spring</feature>
                         <feature>spring-dm-web</feature>
                         <feature>coalesce-feature</feature>
+                        <feature>cxf</feature>
                     </installedFeatures>
                     <usePathPrefix>false</usePathPrefix>
                 </configuration>
@@ -130,7 +129,6 @@
                             </descriptors>
                             <features>
                                 <feature>coalesce-feature</feature>
-                                <feature>coalesce-example</feature>
                             </features>
                         </configuration>
                     </execution>

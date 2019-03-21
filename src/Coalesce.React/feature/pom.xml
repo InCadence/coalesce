@@ -76,6 +76,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.react</groupId>
+			<artifactId>coalesce-react-template-editor</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.react</groupId>
 			<artifactId>coalesce-react-json-editor</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
