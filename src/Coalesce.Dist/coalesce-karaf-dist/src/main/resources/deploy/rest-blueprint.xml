@@ -67,11 +67,8 @@
           class="com.incadencecorp.coalesce.services.network.controller.jaxrs.impl.NetworkControllerJaxRS">
     </bean>
 
-
-    <bean id="enumerationImpl"
-          class="com.incadencecorp.coalesce.services.common.jaxrs.EnumerationDataControllerJaxRS">
-        <argument ref="crud-client"/>
-        <argument ref="search-client"/>
+    <bean id="enumerationImpl" class="com.incadencecorp.coalesce.services.common.jaxrs.EnumerationDataControllerJaxRS">
+        <argument ref="framework"/>
     </bean>
 
     <bean id="entityImpl"
@@ -106,11 +103,6 @@
     <bean id="crud-client"
           class="com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl">
         <argument ref="framework"/>
-    </bean>
-
-    <bean id="search-client"
-          class="com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl">
-        <argument ref="persister"/>
     </bean>
 
     <!-- ========================== -->
