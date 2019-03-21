@@ -28,7 +28,7 @@
           destroy-method="stop">
         <property name="drivers">
             <array>
-                <ref component-id="myDriver"/>
+                <!--ref component-id="myDriver"/-->
             </array>
         </property>
     </bean>
