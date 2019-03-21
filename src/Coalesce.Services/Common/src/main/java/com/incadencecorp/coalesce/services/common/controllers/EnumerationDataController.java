@@ -121,7 +121,7 @@ public class EnumerationDataController implements IEnumerationDataController {
                 throw new RemoteException(e.getMessage(), e);
             }
         }
-        catch (CoalesceException e)
+        catch (CoalesceException | InterruptedException e)
         {
             error(String.format(CoalesceErrors.FAILED_TASK,
                                 this.getClass().getSimpleName(),
@@ -241,7 +241,7 @@ public class EnumerationDataController implements IEnumerationDataController {
                 throw new RemoteException(e.getMessage(), e);
             }
         }
-        catch (CoalesceException e)
+        catch (CoalesceException | InterruptedException e)
         {
             error(String.format(CoalesceErrors.FAILED_TASK,
                                 this.getClass().getSimpleName(),

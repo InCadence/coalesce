@@ -242,7 +242,7 @@ public class LinkageDataController implements ILinkageDataController {
                     }
                 }
             }
-            catch (CoalesceException | SQLException e)
+            catch (CoalesceException | SQLException | InterruptedException e)
             {
                 // Rethrow
                 throw new RemoteException(e.getMessage(), e);
