@@ -87,6 +87,7 @@
                     </startupFeatures>
                     <bootFeatures>
                         <feature>minimal</feature>
+                        <feature>cxf-commands</feature>
                         <feature>cxf-jaxrs</feature>
                         <feature>persister-accumulo-feature</feature>
                         <feature>persister-elasticsearch-feature</feature>

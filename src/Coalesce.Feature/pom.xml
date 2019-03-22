@@ -75,12 +75,6 @@
 			<type>xml</type>
 			<classifier>features</classifier>
 		</dependency>
-		<!-- Required - Updating the CXF version for some reason is excluding this dependency -->
-		<dependency>
-			<groupId>org.apache.cxf.karaf</groupId>
-			<artifactId>cxf-karaf-commands</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
 
 	</dependencies>
 
