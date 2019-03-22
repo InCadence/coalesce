@@ -24,17 +24,19 @@
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
+                        <DynamicImport-Package>
+                            *
+                        </DynamicImport-Package>
 						<Export-Package>
 							org.apache.accumulo.core.*,
 							org.locationtech.geomesa.*,
 							org.apache.hadoop*,
-							org.apache.commons.configuration*,
 						</Export-Package>
 						<Import-Package>
 							*;resolution:=optional
 						</Import-Package>
 						<Embed-Dependency>
-							*;artifactId=!org.osgi.compendium;groupId=!org.geotools;scope=compile|runtime;type=!pom;inline=false
+							*;artifactId=!org.osgi.compendium;scope=compile|runtime;type=!pom;inline=false
 						</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 <!-- 						<SPI-Provider>org.geotools.data.DataStoreFactorySpi</SPI-Provider> -->
@@ -55,12 +57,25 @@
  			<groupId>org.locationtech.geomesa</groupId>
  			<artifactId>geomesa-accumulo-datastore_2.11</artifactId>
  			<version>${accumulo.geomesa.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.geotools</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.vividsolutions</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
  		</dependency>
+		<!--
  		<dependency>
  			<groupId>org.locationtech.geomesa</groupId>
  			<artifactId>geomesa-utils_2.11</artifactId>
  			<version>${accumulo.geomesa.version}</version>
  		</dependency>
+ 		-->
+
 	</dependencies>
 
 
