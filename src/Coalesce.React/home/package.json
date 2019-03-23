@@ -24,7 +24,7 @@
     "production": "webpack -p"
   },
   "devDependencies": {
-    "@babel/runtime": "7.0.0-beta.54",
+    "@babel/runtime": "7.0.0",
     "react-scripts": "1.1.4"
   }
 }
