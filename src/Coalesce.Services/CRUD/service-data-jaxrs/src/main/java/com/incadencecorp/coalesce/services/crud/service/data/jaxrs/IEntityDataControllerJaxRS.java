@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 import java.rmi.RemoteException;
 
 /**
- * JaxRS configuration used on {@link EnumerationDataControllerJaxRS}
+ * JaxRS configuration used on {@link EntityDataControllerJaxRS}
  *
  * @author Derek Clemenzi
  */
