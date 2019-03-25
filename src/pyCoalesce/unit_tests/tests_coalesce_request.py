@@ -34,9 +34,10 @@ CRUD_PERSISTOR = config.get("Coalesce RESTful API server", "CRUD_persistor")
 SEARCH_PERSISTOR = config.get("Coalesce RESTful API server", "search_persistor")
 
 # Set other constants.
+TEMPLATE1_NAME = 'TestEntity1'
 TEMPLATE1_XML = '<entity ' + \
                    'classname="test1" ' + \
-                   'name="TestEntity1" ' + \
+                   'name="' + TEMPLATE1_NAME + '" ' + \
                    'source="pyCoalesceTest" ' + \
                    'version="0.1"> ' + \
                    '<linkagesection name="Linkages"/> ' + \
@@ -894,6 +895,10 @@ class SearchTests(ServerTest):
                                output = "JSON")
         results6_first_field = json.loads(results6_JSON)["hits"][0]["values"][0]
         self.assertEqual(results6_first_field, orig3_first_field)
+
+        results7 = search(server = self.server, query = {},
+                          template = TEMPLATE1_NAME)
+        self.assertEqual(len(results7), 1)
 
 
     def test_search_simple(self):

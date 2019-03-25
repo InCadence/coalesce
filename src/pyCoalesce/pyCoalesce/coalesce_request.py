@@ -349,9 +349,10 @@ def search(server = None, query = None,
         of dict-like or JSON objects in the form
         `{"propertyName": <recordset>.<field>, "sortOrder": <sort order>}`.
         A single dict-like/JSON object in the latter format will also be
-        accepted.  For basic entity fields, such as "name" and
-        "dateCreated", the field name should be supplied by itself, with no
-        recordset.
+        accepted. In some circumstances (in particular, if Derby is the
+        default persistor), the in the case of basic entity fields, such
+        as "name" and "dateCreated", a field name should be supplied by
+        itself, with no recordset.
     :param sort_order:  "ASC" for ascending, or "DESC" for descending.
         This argument is used only if "sort_by" is the name of a single
         field (rather than a full Coalesce "sortBy" object).
@@ -477,7 +478,7 @@ def search(server = None, query = None,
     # If "query" is a full query object, assign it directly as the
     # query ("data").  Otherwise, construct the query object.
 
-    if "group" in query:
+    if query and "group" in query:
         data = query
 
     else:
@@ -485,12 +486,16 @@ def search(server = None, query = None,
         data = {"pageSize": page_size, "pageNumber": page_number,
                 "propertyNames": return_property_names}
 
-        # If there's a query (filter object), add it.  Otherwise, if a
-        # "template" name was supplied (necessary if there's no query and
-        # no recordset in "return_property_names"), add it.
-        if query:
-            data["group"] = query
-        elif template:
+        # If there's a query (filter object), add it.  If there's no
+        # query, create an empty object to use as the value of "group".
+        if not query:
+            query = {}
+        data["group"] = query
+
+        # If a "template" name was supplied (necessary if there's no
+        ## query--or a query with only coalesceEntity metadata fields--
+        # and no recordset in "return_property_names"), add it.
+        if template:
             data["type"] = template
 
         # Add any sorting parameters.  We checkfor the (deprecated) earlier
@@ -502,12 +507,17 @@ def search(server = None, query = None,
             # Check for a JSON object that needs to be decoded.
 
             if isinstance(sort_by, basestring):
+
                 try:
                     sort_by = json.loads(sort_by)
 
                 # If it's a string but not decodeable, treat it as a field
                 # name, and construct the sort-by object.  This is the only
-                # case in which the "sort_order" argument is used.
+                # case in which the "sort_order" argument is used--in the
+                # case of multiple sort-by fields, each entry in the
+                # "sort_by" argument must include a "sortOrder" value (the
+                # API equivalent of  "sort_order") as well as a
+                # "propertyName" value (the sort-by field name).
                 except JSONDecodeError:
                     sort_order = sort_order.upper()
                     if not sort_order in SEARCH_SORT_ORDERS:
