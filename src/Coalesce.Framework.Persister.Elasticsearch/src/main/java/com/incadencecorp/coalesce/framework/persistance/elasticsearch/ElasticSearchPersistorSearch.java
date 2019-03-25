@@ -64,6 +64,8 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
      */
     private Set<String> getKeywords(String index) throws CoalescePersistorException
     {
+        LOGGER.debug("Loading keywords for index: {}", index);
+
         if (!keywordCache.containsKey(index))
         {
             Set<String> keywords = new HashSet<>();
@@ -78,12 +80,11 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             case ElasticSearchPersistor.COALESCE_LINKAGE_INDEX:
                 keywords.addAll(getKeywords(ElasticSearchPersistor.COALESCE_LINKAGE_INDEX,
                                             ElasticSearchPersistor.COALESCE_LINKAGE,
-                                            CoalescePropertyFactory.COALESCE_LINKAGE_TABLE));
+                                            CoalescePropertyFactory.COALESCE_LINKAGE_TABLE,
+                                            CoalescePropertyFactory.COALESCE_ENTITY_TABLE));
                 break;
             default:
-                keywords.addAll(getKeywords(index,
-                                            "recordset",
-                                            CoalescePropertyFactory.COALESCE_ENTITY_TABLE));
+                keywords.addAll(getKeywords(index, "recordset", CoalescePropertyFactory.COALESCE_ENTITY_TABLE));
                 break;
             }
 
@@ -101,7 +102,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
     /**
      * @return a set of fields that are not analyzed indicating that they are keywords.
      */
-    private Set<String> getKeywords(String index, String type, String prefix) throws CoalescePersistorException
+    private Set<String> getKeywords(String index, String type, String... prefixes) throws CoalescePersistorException
     {
         Set<String> keywords = new HashSet<>();
 
@@ -112,13 +113,16 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
             for (AttributeDescriptor attr : feature.getAttributeDescriptors())
             {
-                if (attr.getLocalName().startsWith(prefix))
+                for (String prefix : prefixes)
                 {
-                    Object value = attr.getUserData().getOrDefault("analyzed", false);
-
-                    if (value instanceof Boolean && !((Boolean) value))
+                    if (attr.getLocalName().startsWith(prefix))
                     {
-                        keywords.add(attr.getLocalName());
+                        Object value = attr.getUserData().getOrDefault("analyzed", false);
+
+                        if (value instanceof Boolean && !((Boolean) value))
+                        {
+                            keywords.add(attr.getLocalName());
+                        }
                     }
                 }
             }
