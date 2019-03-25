@@ -1,18 +1,19 @@
-import React from 'react';
-import { withTheme } from '@material-ui/core/styles';
+import React from "react";
+import {withTheme} from "@material-ui/core/styles";
 
-import {Tabs, Tab} from 'material-ui/Tabs';
-//import Tabs from '@material-ui/core/Tabs';
-//import Tab from '@material-ui/core/Tab';
-import RecordSet from './TemplateRecordset'
-import TabTextField from './TabTextField'
-import { DialogOptions } from 'common-components/lib/components/dialogs';
-import uuid from 'uuid';
-import PropTypes from 'prop-types';
-import Typography from '@material-ui/core/Typography';
+import AppBar from "@material-ui/core/AppBar";
+//import {Tabs, Tab} from 'material-ui/Tabs';
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+
+import RecordSet from "./TemplateRecordset";
+import TabTextField from "./TabTextField";
+import {DialogOptions} from "common-components/lib/components/dialogs";
+import uuid from "uuid";
+import PropTypes from "prop-types";
+import Typography from "@material-ui/core/Typography";
 
 class Section extends React.Component {
-
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
@@ -30,240 +31,272 @@ class Section extends React.Component {
 
     this.state = {
       section: props.data,
-      edit: false,
+      tabIndex: 0,
+      edit: false
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data.key !== this.props.data.key) {
+      this.setState(() => {return {
+        section: nextProps.data,
+        tabIndex: 0,
+        edit: false
+      }})
+    }
+  }
+
   handleChange(attr, value) {
-    console.log('got here');
+    console.log("got here");
     const {section} = this.state;
     section[attr] = value;
     this.setState({
       section: section
-    })
+    });
   }
 
-  handleSectionChange(key, attr, value){
+  handleSectionChange(key, attr, value) {
     const {section} = this.state;
 
-    section.sectionsAsList.forEach(function (item) {
-        if (item.key === key) {
-          item[attr] = value;
-        }
+    section.sectionsAsList.forEach(function(item) {
+      if (item.key === key) {
+        item[attr] = value;
+      }
     });
 
     this.setState({
       section: section
-    })
+    });
   }
 
-  handleRecordsetChange(key, attr, value){
+  handleRecordsetChange(key, attr, value) {
     const {section} = this.state;
 
-    section.recordsetsAsList.forEach(function (item) {
-        if (item.key === key) {
-          item[attr] = value;
-        }
+    section.recordsetsAsList.forEach(function(item) {
+      if (item.key === key) {
+        item[attr] = value;
+      }
     });
 
     this.setState({
       section: section
-    })
+    });
   }
 
   handleAdd(key) {
-    this.setState({editKey: key})
+    this.setState({editKey: key});
   }
 
   handleAddSection() {
     const {section} = this.state;
 
-    for (var ii=0; ii<section.sectionsAsList.length; ii++) {
+    for (var ii = 0; ii < section.sectionsAsList.length; ii++) {
+      var subSection = section.sectionsAsList[ii];
 
-        var subSection = section.sectionsAsList[ii];
-
-        if (subSection.key === this.state.editKey) {
-
-          if (subSection.sectionsAsList == null) {
-            subSection.sectionsAsList = [];
-          }
-
-          subSection.sectionsAsList.push(createSection());
-          break;
+      if (subSection.key === this.state.editKey) {
+        if (subSection.sectionsAsList == null) {
+          subSection.sectionsAsList = [];
         }
-    };
+
+        subSection.sectionsAsList.push(createSection());
+        break;
+      }
+    }
 
     this.setState({
       section: section,
       editKey: null
-    })
+    });
   }
 
   handleDeleteSection(key) {
     const {section} = this.state;
 
-    console.log('Deleting Section: ' + key);
+    console.log("Deleting Section: " + key);
 
-    for (var ii=0; ii<section.sectionsAsList.length; ii++) {
-        if (section.sectionsAsList[ii].key === key) {
-          section.sectionsAsList.splice(ii, 1);
-          break;
-        }
-    };
+    for (var ii = 0; ii < section.sectionsAsList.length; ii++) {
+      if (section.sectionsAsList[ii].key === key) {
+        section.sectionsAsList.splice(ii, 1);
+        break;
+      }
+    }
 
     this.setState({
       section: section
-    })
+    });
   }
 
-  handleAddRecordset(name) {
+  handleAddRecordset(key) {
     const {section} = this.state;
 
-    for (var ii=0; ii<section.sectionsAsList.length; ii++) {
+    for (var ii = 0; ii < section.sectionsAsList.length; ii++) {
+      var subSection = section.sectionsAsList[ii];
 
-        var subSection = section.sectionsAsList[ii];
-
-        if (subSection.key === this.state.editKey) {
-
-          if (subSection.recordsetsAsList == null) {
-            subSection.recordsetsAsList = [];
-          }
-
-          subSection.recordsetsAsList.push(createRecordset());
-          break;
+      if (subSection.key === key) {
+        if (subSection.recordsetsAsList == null) {
+          subSection.recordsetsAsList = [];
         }
-    };
+
+        subSection.recordsetsAsList.push(createRecordset());
+        break;
+      }
+    }
 
     this.setState({
-      section: section,
-      editKey: null
-    })
-
+      section: section
+    });
   }
 
   handleDeleteRecordset(key) {
     const {section} = this.state;
 
-    console.log('Deleting Recordset: ' + key);
+    console.log("Deleting Recordset: " + key);
 
-    for (var ii=0; ii<section.recordsetsAsList.length; ii++) {
-        if (section.recordsetsAsList[ii].key === key) {
-          section.recordsetsAsList.splice(ii, 1);
-          break;
-        }
-    };
+    for (var ii = 0; ii < section.recordsetsAsList.length; ii++) {
+      if (section.recordsetsAsList[ii].key === key) {
+        section.recordsetsAsList.splice(ii, 1);
+        break;
+      }
+    }
 
     this.setState({
       section: section
-    })
+    });
   }
 
   handleAddField(key) {
     const {section} = this.state;
 
-    console.log('Add Recordset Field: ' + key);
+    console.log("Add Recordset Field: " + key);
 
-    for (var ii=0; ii<section.recordsetsAsList.length; ii++) {
-        if (section.recordsetsAsList[ii].key === key) {
-          section.recordsetsAsList[ii].fieldDefinitions.push({
-            key: uuid.v4(),
-            name: "newField",
-            dataType: "STRING_TYPE",
-            flatten: true,
-            noIndex: true,
-            constraints: []
-          })
-          break;
-        }
-    };
+    for (var ii = 0; ii < section.recordsetsAsList.length; ii++) {
+      if (section.recordsetsAsList[ii].key === key) {
+        section.recordsetsAsList[ii].fieldDefinitions.push({
+          key: uuid.v4(),
+          name: "newField",
+          dataType: "STRING_TYPE",
+          flatten: true,
+          noIndex: true,
+          constraints: []
+        });
+        break;
+      }
+    }
 
     this.setState({
       section: section
-    })
+    });
   }
 
   handleEditToggle(e) {
-    this.setState({ edit: !this.state.edit })
+    this.setState({edit: !this.state.edit});
   }
 
   handleTabChange = (event, tabIndex) => {
-    this.setState(() => {return { tabIndex: tabIndex }});
+    this.setState(() => {
+      return {tabIndex: tabIndex};
+    });
   };
 
-  render() {
+  createTabs(section) {
+    const tabs = [];
 
-    const { section, tabIndex } = this.state;
+    if (section) {
+      if (section.sectionsAsList) {
+        section.sectionsAsList.forEach(item => {
+          if (!item.key) {
+            item.key = uuid.v4();
+          }
+
+          tabs.push({
+            isSection: true,
+            data: item
+          });
+        });
+      }
+      if (section.recordsetsAsList) {
+        section.recordsetsAsList.forEach(item => {
+          if (!item.key) {
+            item.key = uuid.v4();
+          }
+
+          tabs.push({
+            isSection: false,
+            data: item
+          });
+        });
+      }
+    }
+
+    return tabs;
+  }
+
+  render() {
+    const {section, tabIndex} = this.state;
     const palette = this.props.theme.palette.primary;
+
+    const tabs = this.createTabs(section);
 
     return (
       <div>
-        <Tabs
-          key={section.key}
-          value={tabIndex}
-          //onChange={this.handleTabChange}
-          //indicatorColor="primary"
-          //textColor="primary"
-          //scrollable
-          //scrollButtons="on"
-          //ScrollButtonComponent="test"
-        >
-          {section.sectionsAsList != null && section.sectionsAsList.map((item) => {
-
-            if (!item.key) {
-              item.key = uuid.v4();
-            }
-
-            return (
-              <Tab
-                key={item.key}
-                style={{backgroundColor: palette.light}}
-                label={
-                  <TabTextField
-                    label="Section Name"
-                    item={item}
-                    onNameChange={this.handleSectionChange}
-                    onAdd={this.handleAdd}
-                    onDelete={this.handleDeleteSection}
-                    palette={palette}
-                  />
-                }
+        {section && (
+          <div>
+            <AppBar position="static">
+              <Tabs
+                key={section.key}
+                variant="fullWidth"
+                value={tabIndex}
+                onChange={this.handleTabChange}
               >
-                <Section data={item} theme={this.props.theme}/>
-              </Tab>
-          )})}
-          {section.recordsetsAsList != null && section.recordsetsAsList.map((item) => {
+                {tabs.map(item => {
+                  return (
+                    <Tab
+                      key={item.data.key}
+                      label={
+                        <TabTextField
+                          label={
+                            item.isSection ? "Section Name" : "Recordset Name"
+                          }
+                          item={item.data}
+                          onNameChange={
+                            item.isSection
+                              ? this.handleSectionChange
+                              : this.handleRecordsetChange
+                          }
+                          onAdd={
+                            item.isSection
+                              ? this.handleAddRecordset
+                              : this.handleAddField
+                          }
+                          onDelete={
+                            item.isSection
+                              ? this.handleDeleteSection
+                              : this.handleDeleteRecordset
+                          }
+                          palette={palette}
+                        />
+                      }
+                    />
+                  );
+                })}
+              </Tabs>
+            </AppBar>
 
-            if (!item.key) {
-              item.key = uuid.v4();
-            }
-
-            return (
-            <Tab
-              key={item.key}
-              style={{backgroundColor: palette.main}}
-              label={
-                <TabTextField
-                  label="Recordset Name"
-                  item={item}
-                  onNameChange={this.handleRecordsetChange}
-                  onAdd={this.handleAddField}
-                  onDelete={this.handleDeleteRecordset}
-                  palette={palette}
-                />
-              }
-            >
-              <RecordSet data={item} />
-            </Tab>
-          )})}
-        </Tabs>
-
+            {tabs[tabIndex] && tabs[tabIndex].isSection && (
+              <Section data={tabs[tabIndex].data} theme={this.props.theme} />
+            )}
+            {tabs[tabIndex] && !tabs[tabIndex].isSection && (
+              <RecordSet data={tabs[tabIndex].data} theme={this.props.theme} />
+            )}
+          </div>
+        )}
 
         <DialogOptions
           title="Select Option"
           open={this.state.editKey != null}
           onClose={() => this.setState({editKey: null})}
           options={[
-/*
+            /*
             {
               key: 'section',
               name: 'Section',
@@ -271,13 +304,12 @@ class Section extends React.Component {
             },
 */
             {
-              key: 'recordset',
-              name: 'Recordset',
+              key: "recordset",
+              name: "Recordset",
               onClick: this.handleAddRecordset
             }
           ]}
-      >
-      </DialogOptions>
+        />
       </div>
     );
   }
@@ -285,14 +317,14 @@ class Section extends React.Component {
 
 function TabContainer(props) {
   return (
-    <Typography component="div" style={{ padding: 8 * 3 }}>
+    <Typography component="div" style={{padding: 8 * 3}}>
       {props.children}
     </Typography>
   );
 }
 
 TabContainer.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired
 };
 
 // TODO Pull the below functions out into their own file in common which can be imported by others.
@@ -300,21 +332,20 @@ TabContainer.propTypes = {
 function createSection() {
   return {
     key: uuid.v4(),
-    name: "ChangeMe",
+    name: "",
     sectionsAsList: [],
     recordsetsAsList: []
-  }
+  };
 }
 
 function createRecordset() {
-
   return {
     key: uuid.v4(),
-    name: "ChangeMe2",
+    name: "",
     fieldDefinitions: [],
     minRecords: 0,
-    maxRecords: 1,
-  }
+    maxRecords: 1
+  };
 }
 
 export default withTheme()(Section);

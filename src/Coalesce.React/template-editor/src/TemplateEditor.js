@@ -4,7 +4,6 @@ import TextField from '@material-ui/core/TextField';
 import ContentClear from '@material-ui/icons/Clear';
 import AvPlaylistAdd from '@material-ui/icons/PlaylistAdd';
 import IconButton from '@material-ui/core/IconButton';
-import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
 import Section from './TemplateSection'
 import uuid from 'uuid';
@@ -124,7 +123,7 @@ class TemplateEditor extends Component {
 function createSection() {
   return {
     key: uuid.v4(),
-    name: "ChangeMe",
+    name: "",
     sectionsAsList: [],
     recordsetsAsList: []
   }
