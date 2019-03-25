@@ -87,7 +87,7 @@
                     </startupFeatures>
                     <bootFeatures>
                         <feature>minimal</feature>
-                        <feature>cxf-commands</feature>
+                        <feature>cxf</feature>
                         <feature>cxf-jaxrs</feature>
                         <feature>persister-accumulo-feature</feature>
                         <feature>persister-elasticsearch-feature</feature>
@@ -106,6 +106,7 @@
                         <feature>spring-dm-web</feature>
                         <feature>coalesce-feature</feature>
                         <feature>cxf</feature>
+                        <feature>cxf-commands</feature>
                     </installedFeatures>
                     <usePathPrefix>false</usePathPrefix>
                 </configuration>
