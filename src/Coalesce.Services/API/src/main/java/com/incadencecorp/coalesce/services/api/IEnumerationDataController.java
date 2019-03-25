@@ -18,8 +18,8 @@
 
 package com.incadencecorp.coalesce.services.api;
 
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.pojo.entity.EnumerationPojoEntity;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.pojo.record.EnumMetadataPojoRecord;
+import com.incadencecorp.coalesce.datamodel.impl.pojo.entity.EnumerationPojoEntity;
+import com.incadencecorp.coalesce.datamodel.impl.pojo.record.EnumMetadataPojoRecord;
 import com.incadencecorp.coalesce.services.api.datamodel.EnumValuesRecord;
 
 import java.rmi.RemoteException;

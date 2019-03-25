@@ -20,8 +20,8 @@ package com.incadencecorp.coalesce.services.api.datamodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.api.record.IEnumValuesRecord;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.pojo.record.EnumValuesPojoRecord;
+import com.incadencecorp.coalesce.datamodel.api.record.IEnumValuesRecord;
+import com.incadencecorp.coalesce.datamodel.impl.pojo.record.EnumValuesPojoRecord;
 
 import java.util.HashMap;
 import java.util.Map;

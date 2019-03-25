@@ -18,7 +18,7 @@
 
 package com.incadencecorp.coalesce.services.common.client.jaxrs.datamodel;
 
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.pojo.record.EnumMetadataPojoRecord;
+import com.incadencecorp.coalesce.datamodel.impl.pojo.record.EnumMetadataPojoRecord;
 
 import java.util.ArrayList;
 
