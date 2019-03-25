@@ -18,7 +18,7 @@
 
 package com.incadencecorp.coalece.services.crud.client.jaxrs.tests;
 
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.pojo.record.EnumMetadataPojoRecord;
+import com.incadencecorp.coalesce.datamodel.impl.pojo.record.EnumMetadataPojoRecord;
 import com.incadencecorp.coalesce.services.api.datamodel.EnumValuesRecord;
 import com.incadencecorp.coalesce.services.common.client.jaxrs.EnumerationClientJaxRS;
 import org.junit.Test;

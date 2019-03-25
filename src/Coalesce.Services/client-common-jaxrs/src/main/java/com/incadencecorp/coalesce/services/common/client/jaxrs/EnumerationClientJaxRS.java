@@ -19,8 +19,8 @@
 package com.incadencecorp.coalesce.services.common.client.jaxrs;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.pojo.entity.EnumerationPojoEntity;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.pojo.record.EnumMetadataPojoRecord;
+import com.incadencecorp.coalesce.datamodel.impl.pojo.entity.EnumerationPojoEntity;
+import com.incadencecorp.coalesce.datamodel.impl.pojo.record.EnumMetadataPojoRecord;
 import com.incadencecorp.coalesce.services.api.IEnumerationDataController;
 import com.incadencecorp.coalesce.services.api.datamodel.EnumValuesRecord;
 import com.incadencecorp.coalesce.services.common.client.jaxrs.datamodel.AsscociatedValueMap;

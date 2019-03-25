@@ -19,7 +19,7 @@
 package com.incadencecorp.coalesce.services.api.providers;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.pojo.record.EnumMetadataPojoRecord;
+import com.incadencecorp.coalesce.datamodel.impl.pojo.record.EnumMetadataPojoRecord;
 import com.incadencecorp.coalesce.framework.enumerationprovider.impl.AbstractEnumerationProvider;
 import com.incadencecorp.coalesce.services.api.IEnumerationDataController;
 import com.incadencecorp.coalesce.services.api.datamodel.EnumValuesRecord;

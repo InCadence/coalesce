@@ -17,10 +17,10 @@
 
 package com.incadencecorp.coalesce.services.common.controllers;
 
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.api.record.IEnumValuesRecord;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.coalesce.entity.EnumerationCoalesceEntity;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.coalesce.record.EnumValuesCoalesceRecord;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.pojo.record.EnumMetadataPojoRecord;
+import com.incadencecorp.coalesce.datamodel.api.record.IEnumValuesRecord;
+import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.EnumerationCoalesceEntity;
+import com.incadencecorp.coalesce.datamodel.impl.coalesce.record.EnumValuesCoalesceRecord;
+import com.incadencecorp.coalesce.datamodel.impl.pojo.record.EnumMetadataPojoRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;

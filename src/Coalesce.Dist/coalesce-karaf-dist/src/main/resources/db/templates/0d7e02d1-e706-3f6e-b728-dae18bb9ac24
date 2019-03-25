@@ -1,4 +1,4 @@
-<entity classname="com.incadencecorp.coalesce.services.crud.service.data.model.impl.coalesce.entity.EnumerationCoalesceEntity"
+<entity classname="com.incadencecorp.coalesce.datamodel.EnumerationCoalesceEntity"
         key="0d7e02d1-e706-3f6e-b728-dae18bb9ac24" lastmodified="2018-09-28T12:15:03.419Z" name="Enumeration"
         source="Enumeration" version="1.0">
     <linkagesection name="Linkages"/>

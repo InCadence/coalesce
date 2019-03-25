@@ -19,12 +19,12 @@ package com.incadencecorp.coalesce.services.common.controllers;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.api.record.IEnumValuesRecord;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.coalesce.entity.EnumerationCoalesceEntity;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.coalesce.record.EnumMetadataCoalesceRecord;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.coalesce.record.EnumValuesCoalesceRecord;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.pojo.entity.EnumerationPojoEntity;
-import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.impl.pojo.record.EnumMetadataPojoRecord;
+import com.incadencecorp.coalesce.datamodel.api.record.IEnumValuesRecord;
+import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.EnumerationCoalesceEntity;
+import com.incadencecorp.coalesce.datamodel.impl.coalesce.record.EnumMetadataCoalesceRecord;
+import com.incadencecorp.coalesce.datamodel.impl.coalesce.record.EnumValuesCoalesceRecord;
+import com.incadencecorp.coalesce.datamodel.impl.pojo.entity.EnumerationPojoEntity;
+import com.incadencecorp.coalesce.datamodel.impl.pojo.record.EnumMetadataPojoRecord;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
 import com.incadencecorp.coalesce.search.api.SearchResults;
