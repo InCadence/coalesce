@@ -18,14 +18,16 @@
 package com.incadencecorp.coalesce.synchronizer.service.tests;
 
 import com.incadencecorp.coalesce.api.CoalesceParameters;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.AbstractFileHandlerTests;
+import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.synchronizer.service.operations.CopyOperationImpl;
 import com.incadencecorp.coalesce.synchronizer.service.operations.ExceptionOperationImpl;
 import com.incadencecorp.coalesce.synchronizer.service.scanners.FileScanImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.sql.rowset.CachedRowSet;
@@ -33,7 +35,13 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * These test exercise the file scanner implementation.
@@ -53,8 +61,7 @@ public class FileScanImplTest extends AbstractFileHandlerTests {
     /**
      * Creates files needed for these unit tests.
      */
-    @BeforeClass
-    public static void initialzie() throws Exception
+    private static void initialzie() throws Exception
     {
         // Create Files
         if (!Files.exists(FILE1_DIR))
@@ -89,9 +96,11 @@ public class FileScanImplTest extends AbstractFileHandlerTests {
     @Test
     public void testFileScan() throws Exception
     {
+        initialzie();
+
         // Create Params
         Map<String, String> params = new HashMap<>();
-        params.put(CoalesceParameters.PARAM_DIRECTORY, "/src/test/resources");
+        params.put(CoalesceParameters.PARAM_DIRECTORY, ROOT.toUri().toString());
 
         // Test Scan
         FileScanImpl scanner = new FileScanImpl();
@@ -113,6 +122,70 @@ public class FileScanImplTest extends AbstractFileHandlerTests {
         Assert.assertTrue(keys.contains(FILE1));
         Assert.assertTrue(keys.contains(FILE2));
 
+        verifyDirectoryCleanup(scanner, results);
+    }
+
+    /**
+     * This test ensures that if required fields are specified that it will pull their content from the source.
+     */
+    @Test
+    public void testRequiredColumns() throws Exception
+    {
+        initialzie();
+
+        // Create Entities
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+        entity1.setKey(FILE1);
+
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize();
+        entity2.setKey(FILE2);
+
+        Map<String, CoalesceEntity> entities = new HashMap<>();
+        entities.put(entity1.getKey(), entity1);
+        entities.put(entity2.getKey(), entity2);
+
+        DerbyPersistor persistor = new DerbyPersistor();
+        persistor.saveEntity(false, entity1, entity2);
+
+        // Create Params
+        Map<String, String> params = new HashMap<>();
+        params.put(CoalesceParameters.PARAM_DIRECTORY, ROOT.toUri().toString());
+
+        Set<String> columns = new HashSet<>();
+        columns.add(CoalescePropertyFactory.getName().toString());
+        columns.add(CoalescePropertyFactory.getSource().toString());
+
+        // Test Scan
+        FileScanImpl scanner = new FileScanImpl();
+        scanner.setProperties(params);
+        scanner.setReturnedColumns(columns);
+        scanner.setSource(persistor);
+
+        CachedRowSet results = scanner.scan();
+
+        Assert.assertEquals(2, results.size());
+
+        results.first();
+
+        do
+        {
+            String key = results.getString(CoalescePropertyFactory.getEntityKey().getPropertyName());
+            String name = results.getString(CoalescePropertyFactory.getName().getPropertyName());
+            String source = results.getString(CoalescePropertyFactory.getSource().getPropertyName());
+
+            Assert.assertTrue(entities.containsKey(key));
+            Assert.assertEquals(entities.get(key).getName(), name);
+            Assert.assertEquals(entities.get(key).getSource(), source);
+        }
+        while (results.next());
+
+        verifyDirectoryCleanup(scanner, results);
+    }
+
+    private void verifyDirectoryCleanup(FileScanImpl scanner, CachedRowSet results) throws Exception
+    {
         Assert.assertTrue(Files.exists(FILE1_DIR));
         Assert.assertTrue(Files.exists(FILE2_DIR));
 
@@ -127,7 +200,28 @@ public class FileScanImplTest extends AbstractFileHandlerTests {
 
         Assert.assertFalse(Files.exists(FILE1_DIR.resolve(FILE1)));
         Assert.assertFalse(Files.exists(FILE2_DIR.resolve(FILE2)));
+    }
 
+    /**
+     * This test ensures that if required columns are specified w/o a source that an {@link IllegalArgumentException} is thrown.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testRequiredColumnsNoSource() throws Exception
+    {
+        // Create Params
+        Map<String, String> params = new HashMap<>();
+        params.put(CoalesceParameters.PARAM_DIRECTORY, ROOT.toUri().toString());
+
+        Set<String> columns = new HashSet<>();
+        columns.add(CoalescePropertyFactory.getName().toString());
+        columns.add(CoalescePropertyFactory.getSource().toString());
+
+        // Test Scan
+        FileScanImpl scanner = new FileScanImpl();
+        scanner.setProperties(params);
+        scanner.setReturnedColumns(columns);
+
+        CachedRowSet results = scanner.scan();
     }
 
 }
