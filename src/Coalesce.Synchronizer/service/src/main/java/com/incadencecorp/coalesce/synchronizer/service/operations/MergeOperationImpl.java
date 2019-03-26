@@ -17,17 +17,16 @@
 
 package com.incadencecorp.coalesce.synchronizer.service.operations;
 
-import javax.sql.rowset.CachedRowSet;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+import com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperation;
+import com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperationTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperation;
-import com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperationTask;
+import javax.sql.rowset.CachedRowSet;
+import java.util.ArrayList;
 
 /**
  * This implementation copies entities from the source to the target(s).
@@ -47,82 +46,89 @@ public class MergeOperationImpl extends AbstractOperation<AbstractOperationTask>
             protected Boolean doWork(String[] keys, CachedRowSet rowset) throws CoalescePersistorException
             {
 
+                boolean results = true;
                 //keys are what we have that is ready to be sent
 
                 // Get from Source
                 CoalesceEntity[] entitiesSource = source.getEntity(keys);
-                CoalesceEntity[] entitiesTarget = target.getEntity(keys);
-                ArrayList<CoalesceEntity> toCopyOrMergeEntities = new ArrayList<>();
-                if (keys.length != entitiesSource.length)
-                {
-                    for (String key : keys)
-                    {
-                        boolean found = false;
 
-                        for (CoalesceEntity entity : entitiesSource)
+                for (ICoalescePersistor target : targets)
+                {
+                    CoalesceEntity[] entitiesTarget = target.getEntity(keys);
+                    ArrayList<CoalesceEntity> toCopyOrMergeEntities = new ArrayList<>();
+                    if (keys.length != entitiesSource.length)
+                    {
+                        for (String key : keys)
                         {
-                            if (entity.getKey().equalsIgnoreCase(key))
+                            boolean found = false;
+
+                            for (CoalesceEntity entity : entitiesSource)
                             {
-                                found = true;
-                                break;
+                                if (entity.getKey().equalsIgnoreCase(key))
+                                {
+                                    found = true;
+                                    break;
+                                }
                             }
-                        }
 
-                        if (!found)
-                        {
-                            throw new CoalescePersistorException("Entity " + key + " was not found", null);
-                        }
-                    }
-                }
-                for (CoalesceEntity entitySource : entitiesSource)
-                {
-                    boolean needsTransfer = true;
-                    for (CoalesceEntity entityTarget : entitiesTarget)
-                    {
-                        if (entitySource.getKey().equalsIgnoreCase(entityTarget.getKey()))
-                        {
-                            //Check to see if it needs to be merged
-                            int compare = entitySource.getLastModified().compareTo(entityTarget.getLastModified());
-                            //If Source has a more Updated version
-                            if (compare > 0  )
+                            if (!found)
                             {
-                                //add to merge option
-                                break;
-                            }else if (compare == 0 || compare < 0 )
-                            {
-                                //move on to the next one
-                                needsTransfer = false;
-                                break;
+                                throw new CoalescePersistorException("Entity " + key + " was not found", null);
                             }
                         }
                     }
-                    if(needsTransfer)
+                    for (CoalesceEntity entitySource : entitiesSource)
                     {
-                        toCopyOrMergeEntities.add(entitySource);
+                        boolean needsTransfer = true;
+                        for (CoalesceEntity entityTarget : entitiesTarget)
+                        {
+                            if (entitySource.getKey().equalsIgnoreCase(entityTarget.getKey()))
+                            {
+                                //Check to see if it needs to be merged
+                                int compare = entitySource.getLastModified().compareTo(entityTarget.getLastModified());
+                                //If Source has a more Updated version
+                                if (compare > 0)
+                                {
+                                    //add to merge option
+                                    break;
+                                }
+                                else if (compare == 0 || compare < 0)
+                                {
+                                    //move on to the next one
+                                    needsTransfer = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (needsTransfer)
+                        {
+                            toCopyOrMergeEntities.add(entitySource);
+                        }
                     }
+
+                    CoalesceEntity[] toMerge = new CoalesceEntity[toCopyOrMergeEntities.size()];
+                    toMerge = toCopyOrMergeEntities.toArray(toMerge);
+                    // Copy/Merge to Targets
+                    if (LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.debug("Processing {} key(s)", toMerge.length);
+                        LOGGER.trace("Details:");
+
+                        for (CoalesceEntity entity : toMerge)
+                        {
+                            LOGGER.trace("\t{} {} {}", entity.getName(), entity.getSource(), entity.getKey());
+                        }
+
+                    }
+
+                    results = results && target.saveEntity(false, toMerge);
                 }
 
-                CoalesceEntity[] toMerge = new CoalesceEntity[toCopyOrMergeEntities.size()];
-                toMerge = toCopyOrMergeEntities.toArray(toMerge);
-                // Copy/Merge to Targets
-                if (LOGGER.isDebugEnabled())
-                {
-                    LOGGER.debug("Processing {} key(s) for {}", toMerge.length, target.getClass().getName());
-                    LOGGER.trace("Details:");
-
-                    for (CoalesceEntity entity : toMerge)
-                    {
-                        LOGGER.trace("\t{} {} {}", entity.getName(), entity.getSource(), entity.getKey());
-                    }
-
-                }
-
-                target.saveEntity(false, toMerge);
-
-                return true;
+                return results;
             }
 
         };
+
     }
 
 }

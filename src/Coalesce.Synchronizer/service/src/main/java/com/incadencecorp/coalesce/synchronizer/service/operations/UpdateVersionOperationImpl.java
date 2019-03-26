@@ -147,7 +147,7 @@ public class UpdateVersionOperationImpl extends AbstractOperation<AbstractOperat
                 {
                     if (!isDryrun)
                     {
-                        target.saveEntity(false, updatedEntities.toArray(new CoalesceEntity[updatedEntities.size()]));
+                        return saveWork(false, updatedEntities.toArray(new CoalesceEntity[updatedEntities.size()]));
                     }
                     else
                     {

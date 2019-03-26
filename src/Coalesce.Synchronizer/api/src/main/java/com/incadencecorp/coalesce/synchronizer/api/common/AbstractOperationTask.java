@@ -18,6 +18,7 @@
 package com.incadencecorp.coalesce.synchronizer.api.common;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 
 import javax.sql.rowset.CachedRowSet;
@@ -34,7 +35,7 @@ import java.util.concurrent.Callable;
 public abstract class AbstractOperationTask implements Callable<Boolean> {
 
     protected ICoalescePersistor source;
-    protected ICoalescePersistor target;
+    protected ICoalescePersistor[] targets;
     protected Map<String, String> params = new HashMap<>();
     protected String keys[];
     protected CachedRowSet rowset;
@@ -68,11 +69,11 @@ public abstract class AbstractOperationTask implements Callable<Boolean> {
     /**
      * Sets the target that the results of this operation should be stored.
      *
-     * @param target of this operation
+     * @param targets of this operation
      */
-    public final void setTarget(ICoalescePersistor target)
+    public final void setTarget(ICoalescePersistor[] targets)
     {
-        this.target = target;
+        this.targets = targets;
     }
 
     /**
@@ -110,6 +111,23 @@ public abstract class AbstractOperationTask implements Callable<Boolean> {
     public String[] getErrorSubset()
     {
         return getSubset();
+    }
+
+    /**
+     * Calls {@link ICoalescePersistor#saveEntity(boolean, CoalesceEntity...)} on each target.
+     *
+     * @see ICoalescePersistor#saveEntity(boolean, CoalesceEntity...)
+     */
+    protected boolean saveWork(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
+    {
+        boolean result = true;
+
+        for (ICoalescePersistor target : targets)
+        {
+            result = result && target.saveEntity(allowRemoval, entities);
+        }
+
+        return result;
     }
 
     protected abstract Boolean doWork(String[] keys, CachedRowSet rowset) throws CoalescePersistorException;

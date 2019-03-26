@@ -56,14 +56,14 @@ public class DeleteOperationImpl extends AbstractOperation<AbstractOperationTask
             @Override
             protected Boolean doWork(String[] keys, CachedRowSet rowset) throws CoalescePersistorException
             {
-                CoalesceEntity[] entities = target.getEntity(keys);
+                CoalesceEntity[] entities = source.getEntity(keys);
 
                 for (CoalesceEntity entity : entities)
                 {
                     entity.markAsDeleted();
                 }
 
-                return target.saveEntity(allowRemoval, entities);
+                return saveWork(allowRemoval, entities);
             }
         };
     }
