@@ -252,6 +252,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
         capabilities.add(EPersistorCapabilities.GEOSPATIAL_SEARCH);
         capabilities.add(EPersistorCapabilities.TEMPORAL_SEARCH);
         capabilities.add(EPersistorCapabilities.LUCENE_SYNTAX);
+        capabilities.add(EPersistorCapabilities.HIGHLIGHT);
 
         return capabilities;
     }

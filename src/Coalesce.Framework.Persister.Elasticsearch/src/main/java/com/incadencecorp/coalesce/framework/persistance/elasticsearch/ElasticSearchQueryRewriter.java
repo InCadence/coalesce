@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -293,7 +294,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
             throw new CoalescePersistorException("Multiple featuretypes in query is not supported");
         }
 
-        if (!highlights.isEmpty())
+        if (com.incadencecorp.coalesce.search.api.QueryHelper.isHighlightingEnabled(original) && !highlights.isEmpty())
         {
             StringBuilder sb = new StringBuilder("{ \"fields\" : { ");
 
@@ -310,7 +311,6 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
             LOGGER.debug("{}", sb);
 
             newQuery.getHints().put(Hints.VIRTUAL_TABLE_PARAMETERS, Collections.singletonMap("highlight", sb.toString()));
-
         }
 
         features.clear();

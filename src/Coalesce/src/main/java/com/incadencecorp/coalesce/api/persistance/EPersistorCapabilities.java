@@ -83,5 +83,9 @@ public enum EPersistorCapabilities
     /**
      * Whether or not this persistor supports lucene syntax.
      */
-    LUCENE_SYNTAX
+    LUCENE_SYNTAX,
+    /**
+     * Whether or not this persistor supports highlighting.
+     */
+    HIGHLIGHT
 }
