@@ -1,0 +1,15 @@
+<entity classname="com.incadencecorp.oe.entities.OEFile" datecreated="2019-02-08T18:02:04.226Z" key="0d6d5362-f78b-3213-84c2-6997a270812d" lastmodified="2019-02-08T18:02:04.226Z" name="OEFile" source="G2Core" version="1">
+    <linkagesection name="Linkages"/>
+    <section name="OE File Details" noindex="false">
+        <recordset maxrecords="1" minrecords="1" name="OE File Metadata">
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="uri"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="filename"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="filesize"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="mimeType"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="Md5Sum"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="bucket"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="path"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="dataSource"/>
+        </recordset>
+    </section>
+</entity>

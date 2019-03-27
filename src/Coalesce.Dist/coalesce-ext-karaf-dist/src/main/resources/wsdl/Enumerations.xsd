@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://coalesce.incadencecorp.com/api" xmlns:tns="http://coalesce.incadencecorp.com/api"
+	elementFormDefault="qualified" attributeFormDefault="qualified">
+
+	<xs:simpleType name="EJobStatus">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NEW" />
+			<xs:enumeration value="PENDING" />
+			<xs:enumeration value="IN_PROGRESS" />
+			<xs:enumeration value="COMPLETE" />
+			<xs:enumeration value="CANCELED" />
+			<xs:enumeration value="FAILED" />
+			<xs:enumeration value="NOT_FOUND" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="EResultStatus">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SUCCESS" />
+			<xs:enumeration value="FAILED" />
+			<xs:enumeration value="FAILED_PENDING" />
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>

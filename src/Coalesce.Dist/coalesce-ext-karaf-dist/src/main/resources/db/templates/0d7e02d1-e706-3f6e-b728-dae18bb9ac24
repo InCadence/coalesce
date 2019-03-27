@@ -1,0 +1,18 @@
+<entity classname="com.incadencecorp.coalesce.datamodel.EnumerationCoalesceEntity"
+        key="0d7e02d1-e706-3f6e-b728-dae18bb9ac24" lastmodified="2018-09-28T12:15:03.419Z" name="Enumeration"
+        source="Enumeration" version="1.0">
+    <linkagesection name="Linkages"/>
+    <section name="enumeration" noindex="false">
+        <recordset maxrecords="1" minrecords="1" name="enummetadata">
+            <fielddefinition datatype="string" defaultclassificationmarking="U" name="enumname"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="U" name="description"/>
+        </recordset>
+        <recordset maxrecords="500" minrecords="0" name="enumvalues">
+            <fielddefinition datatype="string" defaultclassificationmarking="U" name="value"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="U" name="ordinal"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="U" name="description"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="U" name="associatedkeys"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="U" name="associatedvalues"/>
+        </recordset>
+    </section>
+</entity>

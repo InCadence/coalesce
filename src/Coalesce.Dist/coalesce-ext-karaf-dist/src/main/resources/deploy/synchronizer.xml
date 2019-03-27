@@ -1,0 +1,106 @@
+<!--
+  ~  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+  ~
+  ~  Notwithstanding any contractor copyright notice, the Government has Unlimited
+  ~  Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+  ~  of this work other than as specifically authorized by these DFARS Clauses may
+  ~  violate Government rights in this work.
+  ~
+  ~  DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+  ~  Unlimited Rights. The Government has the right to use, modify, reproduce,
+  ~  perform, display, release or disclose this computer software and to have or
+  ~  authorize others to do so.
+  ~
+  ~  Distribution Statement D. Distribution authorized to the Department of
+  ~  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+  ~
+  -->
+
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:http="http://cxf.apache.org/transports/http/configuration"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
+            http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+            http://cxf.apache.org/transports/http/configuration
+            http://cxf.apache.org/schemas/configuration/http-conf.xsd">
+
+    <bean id="service" class="com.incadencecorp.coalesce.synchronizer.service.SynchronizerService" init-method="start"
+          destroy-method="stop">
+        <property name="drivers">
+            <array>
+                <!--ref component-id="myDriver"/-->
+            </array>
+        </property>
+    </bean>
+
+    <bean id="myDriver" class="com.incadencecorp.coalesce.synchronizer.service.drivers.IntervalDriverImpl"
+          init-method="setup">
+        <property name="name" value="Driver"/>
+        <property name="scan" ref="myScanner"/>
+        <property name="operations">
+            <array>
+                <ref component-id="myOperation"/>
+            </array>
+        </property>
+        <property name="properties">
+            <map>
+                <entry key="com.incadencecorp.driver.interval" value="60"/>
+                <entry key="com.incadencecorp.driver.intervalunits" value="SECONDS"/>
+                <entry key="com.incadencecorp.driver.threads" value="100"/>
+                <entry key="com.incadencecorp.driver.delay" value="30"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean class="com.incadencecorp.coalesce.synchronizer.service.scanners.AfterLastModifiedScanImpl2" id="myScanner"
+          init-method="setup">
+        <property name="name" value="Last Modified Scan"/>
+        <property name="source" ref="derby"/>
+        <property name="properties">
+            <map>
+                <entry key="com.incadencecorp.scanners.lastscan" value="2017-11-01T20:20:32.111+00:00"/>
+                <entry key="com.incadencecorp.scanners.days" value="1"/>
+                <entry key="com.incadencecorp.scanners.max" value="50"/>
+                <entry key="com.incadencecorp.scanners.pattern" value=" yyyy-MM-dd HH:mm:ss.S"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="myOperation" class="com.incadencecorp.coalesce.synchronizer.service.operations.CopyOperationImpl">
+        <property name="name" value="Operation"/>
+        <property name="source" ref="derby"/>
+        <property name="target">
+            <array>
+                <ref component-id="rest"/>
+            </array>
+        </property>
+        <property name="properties">
+            <map>
+                <entry key="com.incadencecorp.operations.window" value="4"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- ========================== -->
+    <!-- Persisters -->
+    <!-- ========================== -->
+    <bean id="derby" class="com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor">
+    </bean>
+
+    <bean id="file" class="com.incadencecorp.coalesce.framework.persistance.FilePersistorImpl">
+    </bean>
+
+    <bean id="rest" class="com.incadencecorp.coalesce.framework.persistance.rest.impl.RESTPersisterImpl">
+        <argument>
+            <map>
+                <entry key="com.incadencecorp.coalesce.persister.rest.template.url"
+                       value="http://localhost:8282/cxf/data/templates"/>
+                <entry key="com.incadencecorp.coalesce.persister.rest.entity.url"
+                       value="http://localhost:8282/cxf/data/entity"/>
+                <entry key="com.incadencecorp.coalesce.persister.rest.search.url"
+                       value="http://localhost:8282/cxf/data/search"/>
+            </map>
+        </argument>
+    </bean>
+
+</blueprint>

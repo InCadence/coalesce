@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entity classname="com.incadencecorp.oe.entities.SpiderQuery" key="13654d11-ab3b-30a4-88c7-f795e4a5182d" lastmodified=""
+        name="SpiderQuery" source="BDP" version="1">
+    <linkagesection name="Linkages"/>
+    <section name="Spider" noindex="false">
+        <recordset maxrecords="1" minrecords="1" name="Query">
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Description" name="description"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" defaultvalue="2" label="Count" name="count"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="Search Terms" name="terms"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="Relevant Terms " name="relevantTerms"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" defaultvalue="News" label="Domains" name="domain"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" name="urls"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" name="countryOrigin"/>
+            <fielddefinition datatype="boolean" defaultclassificationmarking="" name="includeContent"/>
+            <fielddefinition datatype="boolean" defaultclassificationmarking="" name="includeTokens"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="Follow Links w/ Terms" name="followTerms"/>
+            <fielddefinition datatype="boolean" defaultclassificationmarking="" label="Only Follow Content Links" name="onlyContentLinks"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="Domain Exclude Filter" name="domainFilter"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="Domain Include Filter" name="domainIncludeFilter"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Return RegEx Filter" name="returnFilter"/>
+            <fielddefinition datatype="datetime" defaultclassificationmarking="" label="Published After" name="publishedAfter"/>
+            <fielddefinition datatype="datetime" defaultclassificationmarking="" label="Published Before" name="publishedBefore"/>
+            <fielddefinition datatype="boolean" defaultclassificationmarking="" defaultvalue="True" label="Return Undated Pages" name="returnUndated"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" defaultvalue="10" label="Max Depth" name="maxDepth"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" defaultvalue="200" label="Max Results" name="maxResults"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Political" name="Pol"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Military" name="Mil"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Economics" name="Eco"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Social" name="Soc"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Information" name="Inf"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Infrastructure" name="Ifr"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Physical Environment" name="Phy"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Time" name="Tim"/>
+        </recordset>
+    </section>
+</entity>

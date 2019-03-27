@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entity classname="com.incadencecorp.oe.entities.Session" key="ee808337-5ac2-339f-b001-0842915b01e5"
+        lastmodified="2018-07-03T10:57:18.680Z" name="Session" source="BDP" version="1">
+    <linkagesection name="Linkages"/>
+    <section name="session" noindex="false">
+        <recordset maxrecords="1" minrecords="1" name="session meta">
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Description" name="description"/>
+            <fielddefinition datatype="boolean" defaultclassificationmarking="" name="Saved"/>
+            <fielddefinition datatype="guid" defaultclassificationmarking="" label="Creator" name="creator"/>
+        </recordset>
+    </section>
+</entity>

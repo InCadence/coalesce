@@ -1,0 +1,40 @@
+<entity classname="com.incadencecorp.oe.entities.SpiderResults" datecreated="" key="ac2a8881-2b19-39a7-aad3-adb956e3a4c5" lastmodified="" name="Spider Results" source="BDP" version="1">
+    <linkagesection name="Linkages"/>
+    <section name="Results" noindex="false">
+        <recordset maxrecords="1" minrecords="1" name="OE Spider">
+            <fielddefinition datatype="datetime" defaultclassificationmarking="" label="Published" name="published"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="URL" name="link"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Source" name="datasource"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Author" name="author"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Summary" name="summary"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Content" name="content"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Content Hash" name="ContentHash"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Political" name="Pol"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Military" name="Mil"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Economics" name="Eco"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Social" name="Soc"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Information" name="Inf"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Infrastructure" name="Ifr"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Physical Environment" name="Phy"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" defaultvalue="0" label="Time" name="Tim"/>
+        </recordset>
+        <recordset maxrecords="0" minrecords="0" name="OE Tika Links">
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Title" name="title"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Inner Text" name="text"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="URL" name="uri"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Relationship" name="rel"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Type" name="linktype"/>
+        </recordset>
+        <recordset maxrecords="0" minrecords="0" name="OE Tika Metadata">
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Key" name="metakey"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Value" name="metavalue"/>
+        </recordset>
+        <recordset maxrecords="0" minrecords="0" name="OE NLP Tokens">
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Word" name="word"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Lemma" name="lemma"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="Type" name="tokentype"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" label="Start Position" name="start"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="" label="End Position" name="end"/>
+        </recordset>
+    </section>
+</entity>

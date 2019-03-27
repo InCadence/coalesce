@@ -1,0 +1,39 @@
+<entity classname="com.incadencecorp.oe.entities.OEDocumentCoalesceEntity" key="688174ea-8753-3e56-9887-92dd733a048f"
+        lastmodified="2018-05-31T17:54:15.339Z" name="OEDocument" source="G2Core" version="0.2">
+    <linkagesection name="Linkages"/>
+    <section name="OEDocumentSection" noindex="false">
+        <recordset maxrecords="1" minrecords="1" name="OEDocumentRecordset">
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="DataSource"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="SourceURI"/>
+            <fielddefinition datatype="datetime" defaultclassificationmarking="" label="" name="DateIngested"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="DocumentTitle"/>
+            <fielddefinition datatype="datetime" defaultclassificationmarking="" label="" name="DocumentDate"/>
+            <fielddefinition datatype="datetime" defaultclassificationmarking="" label="" name="DocumentLastModifiedDate"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="DocumentType"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="DocumentSource"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="Content"/>
+            <fielddefinition datatype="long" defaultclassificationmarking="" label="" name="ContentLength"/>
+            <fielddefinition datatype="long" defaultclassificationmarking="" label="" name="WordCount"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="Md5Sum"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="" label="" name="OntologyReference"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" label="" name="PMESIIPTPolitical"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" label="" name="PMESIIPTMilitary"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" label="" name="PMESIIPTEconomic"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" label="" name="PMESIIPTSocial"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" label="" name="PMESIIPTInformation"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" label="" name="PMESIIPTInfrastructure"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" label="" name="PMESIIPTPhysicalEnvironment"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="" label="" name="PMESIIPTTime"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="" name="NER_DATE"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="" name="NER_LOCATION"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="" name="NER_MONEY"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="" name="NER_ORGANIZATION"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="" name="NER_PERCENT"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="" name="NER_PERSON"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="" name="NER_TIME"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="" name="Categories"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="" label="" name="Tags"/>
+            <fielddefinition datatype="boolean" defaultclassificationmarking="" label="" name="IsSimulation"/>
+        </recordset>
+    </section>
+</entity>

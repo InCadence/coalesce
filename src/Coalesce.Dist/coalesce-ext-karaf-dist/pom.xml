@@ -15,7 +15,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>coalesce-karaf-dist</artifactId>
+    <artifactId>coalesce-ext-karaf-dist</artifactId>
     <packaging>karaf-assembly</packaging>
     <name>Coalesce Karaf Distribution</name>
     <description>This is a self contained distribution of the Coalesce services within Karaf.</description>
@@ -23,12 +23,13 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.dist</groupId>
         <artifactId>coalesce-dist-parent</artifactId>
-        <version>0.0.37-SNAPSHOT</version>
+        <version>0.0.36</version>
         <relativePath>..</relativePath>
     </parent>
 
     <properties>
         <cxf-dosgi.version>2.1.0</cxf-dosgi.version>
+        <oe.version>0.0.7-SNAPSHOT</oe.version>
     </properties>
 
     <build>
@@ -84,12 +85,11 @@
                     </blacklistedBundles>
                     <startupFeatures>
                         <feature>framework</feature>
+                        <feature>minimal</feature>
                     </startupFeatures>
                     <bootFeatures>
-                        <feature>minimal</feature>
                         <feature>cxf</feature>
                         <feature>cxf-jaxrs</feature>
-                        <feature>coalesce-core-feature</feature>
                         <feature>persister-accumulo-feature</feature>
                         <feature>persister-elasticsearch-feature</feature>
                         <feature>persister-derby-feature</feature>
@@ -99,6 +99,9 @@
                         <feature>coalesce-javadocs</feature>
                         <feature>coalesce-synchronizer-feature</feature>
                         <feature>coalesce-notification-feature</feature>
+                        <feature>oe-service-feature</feature>
+                        <feature>oe-react-feature</feature>
+                        <feature>deployer</feature>
                     </bootFeatures>
                     <installedFeatures>
                         <feature>standard</feature>
@@ -128,7 +131,6 @@
                                 </descriptor>
                                 <descriptor>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</descriptor>
                                 <descriptor>mvn:org.apache.cxf.dosgi/cxf-dosgi/${cxf-dosgi.version}/xml/features</descriptor>
-                                <descriptor>mvn:org.apache.karaf.decanter/apache-karaf-decanter/${decanter.version}/xml/features</descriptor>
                             </descriptors>
                             <features>
                                 <feature>coalesce-feature</feature>
@@ -151,7 +153,7 @@
                 </execution>
               </executions>
               <configuration>
-                <repository>incadencecorp/coalesce-karaf</repository>
+                <repository>incadencecorp/coalesce-ext-karaf</repository>
                 <tag>${project.version}</tag>
                 <buildArgs>
                   <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
@@ -203,7 +205,6 @@
             <version>${project.version}</version>
             <type>xml</type>
             <classifier>features</classifier>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf.karaf</groupId>
@@ -223,6 +224,21 @@
             <groupId>org.apache.karaf.decanter</groupId>
             <artifactId>apache-karaf-decanter</artifactId>
             <version>${decanter.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.incadencecorp.oe.services</groupId>
+            <artifactId>oe-service-feature</artifactId>
+            <version>${oe.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.oe.react</groupId>
+            <artifactId>oe-react-feature</artifactId>
+            <version>${oe.version}</version>
             <classifier>features</classifier>
             <type>xml</type>
         </dependency>

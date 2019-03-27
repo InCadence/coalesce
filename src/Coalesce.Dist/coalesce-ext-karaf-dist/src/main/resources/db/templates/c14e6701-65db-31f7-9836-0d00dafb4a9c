@@ -1,0 +1,26 @@
+<entity classname="com.incadencecorp.oe.entities.datamodel.OEContentDetails" key="c14e6701-65db-31f7-9836-0d00dafb4a9c"
+        datecreated="2018-12-03T19:06:30.922Z" lastmodified="2018-12-03T19:06:30.922Z"
+        name="OEContentDetails" source="Tradoc" version="1">
+    <linkagesection name="Linkages"/>
+    <section name="Scores" noindex="false">
+        <recordset maxrecords="0" minrecords="0" name="Paragraphs">
+            <fielddefinition datatype="string" defaultclassificationmarking="U" name="DocumentKey"/>
+
+            <fielddefinition datatype="integer" defaultclassificationmarking="U" label="Start Index" name="start"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="U" label="End Index" name="end"/>
+
+            <fielddefinition datatype="string" defaultclassificationmarking="U" name="Content"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="U" name="ContentLength"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="U" name="WordCount"/>
+
+            <fielddefinition datatype="float" defaultclassificationmarking="U" name="PMESIIPTPolitical"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="U" name="PMESIIPTMilitary"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="U" name="PMESIIPTEconomic"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="U" name="PMESIIPTSocial"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="U" name="PMESIIPTInformation"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="U" name="PMESIIPTInfrastructure"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="U" name="PMESIIPTPhysicalEnvironment"/>
+            <fielddefinition datatype="float" defaultclassificationmarking="U" name="PMESIIPTTime"/>
+        </recordset>
+    </section>
+</entity>
