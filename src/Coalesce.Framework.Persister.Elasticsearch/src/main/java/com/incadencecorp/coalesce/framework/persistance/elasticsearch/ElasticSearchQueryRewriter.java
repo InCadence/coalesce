@@ -27,9 +27,11 @@ import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.geotools.data.Query;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.factory.Hints;
 import org.geotools.filter.visitor.DuplicatingFilterVisitor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsEqualTo;
+import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
@@ -37,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +50,7 @@ import java.util.Set;
 class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
     private final Set<String> features = new HashSet<>();
+    private final Set<String> highlights = new HashSet<>();
     private final ICoalesceNormalizer normalizer;
     private final Set<String> keywords = new HashSet<>();
 
@@ -124,6 +128,17 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
     }
 
     @Override
+    public Object visit(PropertyIsLike filter, Object extraData)
+    {
+        if (filter.getExpression() instanceof PropertyName)
+        {
+            highlights.add(((PropertyName) filter.getExpression()).getPropertyName());
+        }
+
+        return super.visit(filter, extraData);
+    }
+
+    @Override
     public Object visit(PropertyIsEqualTo filter, Object extraData)
     {
         return super.visit(filter, Boolean.TRUE);
@@ -187,6 +202,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
     public Query rewrite(Query original) throws CoalescePersistorException
     {
         features.clear();
+        highlights.clear();
 
         //create a new filter with the rewritten property names
         Query newQuery = new Query(original);
@@ -277,7 +293,28 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
             throw new CoalescePersistorException("Multiple featuretypes in query is not supported");
         }
 
+        if (!highlights.isEmpty())
+        {
+            StringBuilder sb = new StringBuilder("{ \"fields\" : { ");
+
+            for (String field : highlights)
+            {
+                String normalized = getNormalizedPropertyName(field);
+
+                sb.append("\"" + normalized + "\":{}");
+                LOGGER.debug("Highlighting {} => {}", field, normalized);
+            }
+
+            sb.append("}}");
+
+            LOGGER.debug("{}", sb);
+
+            newQuery.getHints().put(Hints.VIRTUAL_TABLE_PARAMETERS, Collections.singletonMap("highlight", sb.toString()));
+
+        }
+
         features.clear();
+        highlights.clear();
 
         return newQuery;
     }
