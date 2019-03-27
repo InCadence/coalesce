@@ -4,7 +4,7 @@
   "title": "Template editor",
   "icon": "/images/svg/template.svg",
   "private": true,
-  "homepage": "/templateeditor",
+  "homepage": "/templatemapper",
   "proxy": "http://localhost:8181/",
   "dependencies": {
     "@material-ui/core": "4.3.2",
