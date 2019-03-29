@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.ingest</groupId>
         <artifactId>ingest-parent</artifactId>
-        <version>0.0.36</version>
+        <version>0.0.37-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
