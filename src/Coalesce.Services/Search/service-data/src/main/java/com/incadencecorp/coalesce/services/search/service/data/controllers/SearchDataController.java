@@ -18,10 +18,12 @@
 package com.incadencecorp.coalesce.services.search.service.data.controllers;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
+import com.incadencecorp.coalesce.search.api.QueryHelper;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.filter.FilterUtil;
@@ -177,6 +179,11 @@ public class SearchDataController {
             query.setStartIndex(
                     searchQuery.getPageNumber() > 0 ? (searchQuery.getPageNumber() - 1) * searchQuery.getPageSize() : 0);
             query.setMaxFeatures(searchQuery.getPageSize());
+
+            if (searchQuery.getCapabilities().contains(EPersistorCapabilities.HIGHLIGHT))
+            {
+                QueryHelper.setHighlightingEnabled(query, true);
+            }
 
             return createResponse(framework.searchBulk(searchQuery.getCapabilities(), query).get(0), properties);
         }
