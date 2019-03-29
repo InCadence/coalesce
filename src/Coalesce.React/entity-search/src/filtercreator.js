@@ -52,6 +52,7 @@ class FilterCreator extends React.Component {
       nextState.data = nextProps.data;
       nextState.properties = createPropertyList(nextProps.recordsets);
       nextState.selectedColumns = [];
+      nextState.selectedCapabilities = [];
     }
 
     return true;
@@ -71,24 +72,57 @@ class FilterCreator extends React.Component {
            </ExpansionPanelSummary>
            <div style={{padding: '5px'}}>
              {!this.props.isChild &&
-               <FieldInput
-                 field={{
-                   key: "columns",
-                   name: "Columns",
-                   label: "Columns to Return",
-                   value: this.state.selectedColumns,
-                   showLabels: true
-                 }}
-                 dataType="ENUMERATION_LIST_TYPE"
-                 attr="value"
-                 options={this.state.properties}
-                 showLabels={true}
-                 onChange={(value) => {
-                   this.setState({selectedColumns: value});
-                   this.props.handleUpdate(this.state.data, value);
-                 }}
-               />
+               <Row>
+                 <Col xs={8}>
+                   <FieldInput
+                     field={{
+                       key: "columns",
+                       name: "Columns",
+                       label: "Columns to Return",
+                       value: this.state.selectedColumns,
+                       showLabels: true
+                     }}
+                     dataType="ENUMERATION_LIST_TYPE"
+                     attr="value"
+                     options={this.state.properties}
+                     showLabels={true}
+                     onChange={(value) => {
+                       this.setState({selectedColumns: value});
+                       this.props.handleUpdate(this.state.data, value);
+                     }}
+                   />
+                 </Col>
+                 <Col xs={4}>
+                   <FieldInput
+                     field={{
+                       key: "capabilities",
+                       name: "Capabilities",
+                       label: "Capabilities",
+                       value: this.state.selectedCapabilities,
+                       showLabels: true
+                     }}
+                     dataType="ENUMERATION_LIST_TYPE"
+                     attr="value"
+                     options={[
+                       {
+                           enum: "HIGHLIGHT",
+                           label: "Highlight"
+                       },
+                       {
+                           enum: "LUCENE_SYNTAX",
+                           label: "Lucene"
+                       }
+                     ]}
+                     showLabels={true}
+                     onChange={(value) => {
+                       this.setState({selectedCapabilities: value});
+                       this.props.handleCapabilityUpdate(value);
+                     }}
+                   />
+                 </Col>
+               </Row>
              }
+
              <FieldInput
                 label="Operator"
                 field={data}

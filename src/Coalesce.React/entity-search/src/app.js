@@ -20,6 +20,7 @@ export class App extends React.Component {
     this.handleTemplateLoad = this.handleTemplateLoad.bind(this);
     this.handleError = this.handleError.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
+    this.handleCapabilityUpdate = this.handleCapabilityUpdate.bind(this);
     this.createQuery = this.createQuery.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleSpinner = this.handleSpinner.bind(this);
@@ -113,6 +114,10 @@ export class App extends React.Component {
 
   handleUpdate(data, properties) {
     this.setState(() => {return {query: data, properties: properties}});
+  }
+
+  handleCapabilityUpdate(value) {
+    this.setState(() => {return {capabilities: value}});
   }
 
   handlePageUpdate(page) {
@@ -229,6 +234,7 @@ export class App extends React.Component {
                 data={query}
                 handleError={this.handleError}
                 handleUpdate={this.handleUpdate}
+                handleCapabilityUpdate = {this.handleCapabilityUpdate}
                 handlePageUpdate={this.handlePageUpdate}
                 handlePageSizeUpdate={this.handlePageSizeUpdate}
                 pageNum={this.state.pageNum}
@@ -295,6 +301,10 @@ export class App extends React.Component {
     if (this.state.query.criteria.length === 0) {
       that.handleError("Please add one or more criteria.");
       return;
+    }
+
+    if (this.state.capabilities && this.state.capabilities.length > 0) {
+      query.capabilities = this.state.capabilities;
     }
 
     // Get Specified columns
