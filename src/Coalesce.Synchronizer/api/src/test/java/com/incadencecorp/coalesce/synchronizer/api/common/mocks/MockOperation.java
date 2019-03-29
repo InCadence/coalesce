@@ -17,11 +17,6 @@
 
 package com.incadencecorp.coalesce.synchronizer.api.common.mocks;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.sql.rowset.CachedRowSet;
-
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
@@ -29,9 +24,13 @@ import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperation;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperationTask;
 
+import javax.sql.rowset.CachedRowSet;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Mock Operation Implementation
- * 
+ *
  * @author n78554
  */
 public class MockOperation extends AbstractOperation<AbstractOperationTask> {
@@ -40,7 +39,7 @@ public class MockOperation extends AbstractOperation<AbstractOperationTask> {
 
     /**
      * Sets the title which will be set by this operation on each entity.
-     * 
+     *
      * @param title
      */
     public void setTitle(String title)
@@ -58,24 +57,20 @@ public class MockOperation extends AbstractOperation<AbstractOperationTask> {
             {
                 if (!StringHelper.isNullOrEmpty(title))
                 {
-                    for (String key : keys)
-                    {
-                        // Change Title
-                        CoalesceEntity[] entities = source.getEntity(key);
+                    // Change Title
+                    CoalesceEntity[] entities = source.getEntity(keys);
 
-                        for (CoalesceEntity entity : entities)
-                        {
-                            entity.setTitle(title);
-                            target.saveEntity(false, entity);
-                        }
+                    for (CoalesceEntity entity : entities)
+                    {
+                        entity.setTitle(title);
                     }
+
+                    return saveWork(false, entities);
                 }
                 else
                 {
                     throw new CoalescePersistorException("Failed", null);
                 }
-
-                return true;
             }
 
         };

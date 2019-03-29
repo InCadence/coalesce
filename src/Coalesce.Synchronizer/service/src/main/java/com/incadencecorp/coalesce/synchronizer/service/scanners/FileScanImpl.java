@@ -17,6 +17,26 @@
 
 package com.incadencecorp.coalesce.synchronizer.service.scanners;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.CoalesceParameters;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.FileHelper;
+import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
+import com.incadencecorp.coalesce.synchronizer.api.common.AbstractScan;
+import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
+import org.geotools.data.Query;
+import org.opengis.filter.Filter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -29,31 +49,15 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.RowSetProvider;
-
-import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
-import org.geotools.data.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.incadencecorp.coalesce.api.CoalesceParameters;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.helpers.FileHelper;
-import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
-import com.incadencecorp.coalesce.synchronizer.api.common.AbstractScan;
-
 /**
  * This implementation checks a directory for files that have been created with
- * their names being keys of entities. You can pair this with the FileHandlerImpl.
- * <p></p>
- * This implementation ignore the specified source.
+ * their names being keys of entities. If required columns are specified then the
+ * source is used to retrieve the metadata. You can pair this with the FileHandlerImpl.
  *
  * @author n78554
  * @see CoalesceParameters#PARAM_DIRECTORY
@@ -96,16 +100,15 @@ public class FileScanImpl extends AbstractScan {
     @Override
     public CachedRowSet doScan(Query query) throws CoalesceException
     {
-        CachedRowSet results;
 
         lastScanned = JodaDateTimeHelper.nowInUtc().getMillis();
-
-        final List<Object[]> rows = new ArrayList<>();
 
         if (LOGGER.isDebugEnabled())
         {
             LOGGER.debug("Scanning Directory: {}", directory);
         }
+
+        final Map<String, String> keysToProcess = new HashMap<>();
 
         try
         {
@@ -132,8 +135,7 @@ public class FileScanImpl extends AbstractScan {
                                 LOGGER.trace("\t{}", filename);
                             }
 
-                            rows.add(new Object[] { filename, file.toString()
-                            });
+                            keysToProcess.put(filename, file.toString());
                         }
                         else if (LOGGER.isDebugEnabled())
                         {
@@ -143,7 +145,7 @@ public class FileScanImpl extends AbstractScan {
 
                     FileVisitResult result;
 
-                    if (blockSize == -1 || rows.size() < blockSize)
+                    if (blockSize == -1 || keysToProcess.size() < blockSize)
                     {
                         result = FileVisitResult.CONTINUE;
                     }
@@ -168,11 +170,31 @@ public class FileScanImpl extends AbstractScan {
 
         if (LOGGER.isTraceEnabled())
         {
-            LOGGER.trace("Total Rows: {}", rows.size());
+            LOGGER.trace("Total Rows: {}", keysToProcess.size());
         }
+
+        return buildRowSet(query, keysToProcess);
+    }
+
+    private CachedRowSet buildRowSet(Query query, Map<String, String> keysToProcess) throws CoalesceException
+    {
+        CachedRowSet results;
 
         List<String> columns = new ArrayList<>();
         columns.add(CoalescePropertyFactory.getEntityKey().getPropertyName());
+
+        List<Object[]> rows;
+
+        if (query.getProperties().isEmpty())
+        {
+            rows = buildRows(keysToProcess);
+        }
+        else
+        {
+            columns.addAll(Arrays.asList(query.getPropertyNames()));
+            rows = buildRows(query, keysToProcess);
+        }
+
         columns.add(COLUMN_PATH);
 
         try
@@ -186,6 +208,76 @@ public class FileScanImpl extends AbstractScan {
         }
 
         return results;
+    }
+
+    private List<Object[]> buildRows(Map<String, String> keysToProcess)
+    {
+        List<Object[]> rows = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : keysToProcess.entrySet())
+        {
+            rows.add(new Object[] { entry.getKey(), entry.getValue()
+            });
+        }
+
+        return rows;
+    }
+
+    private List<Object[]> buildRows(Query query, Map<String, String> keysToProcess) throws CoalescePersistorException
+    {
+        if (getSource() == null)
+        {
+            throw new IllegalArgumentException(String.format(CoalesceErrors.NOT_INITIALIZED,
+                                                             ICoalesceSearchPersistor.class.getSimpleName()));
+        }
+
+        List<Object[]> rows = new ArrayList<>();
+        List<Filter> filters = new ArrayList<>();
+
+        for (String key : keysToProcess.keySet())
+        {
+            filters.add(CoalescePropertyFactory.getEntityKey(key));
+        }
+
+        query.setFilter(CoalescePropertyFactory.getFilterFactory().or(filters));
+
+        SearchResults results = getSource().search(query);
+
+        if (results.isSuccessful())
+        {
+            try (CachedRowSet rowset = results.getResults())
+            {
+                if (rowset.first())
+                {
+                    int columns = rowset.getMetaData().getColumnCount();
+
+                    do
+                    {
+                        Object[] row = new Object[columns + 1];
+
+                        for (int ii = 0; ii < columns; ii++)
+                        {
+                            row[ii] = rowset.getObject(ii + 1);
+                        }
+
+                        row[columns] = keysToProcess.get(rowset.getString(1));
+
+                        rows.add(row);
+                    }
+                    while (rowset.next());
+                }
+            }
+            catch (SQLException e)
+            {
+                throw new CoalescePersistorException(e);
+            }
+        }
+        else
+        {
+            throw new CoalescePersistorException(results.getError());
+        }
+
+        return rows;
     }
 
     @Override

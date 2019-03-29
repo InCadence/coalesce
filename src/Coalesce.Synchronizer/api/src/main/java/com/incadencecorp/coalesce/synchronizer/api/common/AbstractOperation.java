@@ -246,16 +246,13 @@ public abstract class AbstractOperation<T extends AbstractOperationTask> extends
 
                     for (String[] subset : subsets)
                     {
-                        for (ICoalescePersistor target : targets)
-                        {
-                            T task = createTask();
-                            task.setParameters(parameters);
-                            task.setSource(source);
-                            task.setRowset(rowset);
-                            task.setSubset(subset);
-                            task.setTarget(target);
-                            tasks.add(task);
-                        }
+                        T task = createTask();
+                        task.setParameters(parameters);
+                        task.setSource(source);
+                        task.setRowset(rowset);
+                        task.setSubset(subset);
+                        task.setTarget(targets);
+                        tasks.add(task);
                     }
 
                 }

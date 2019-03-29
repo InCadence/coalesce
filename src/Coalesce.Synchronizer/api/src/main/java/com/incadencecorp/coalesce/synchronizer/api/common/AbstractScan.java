@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.synchronizer.api.common;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
@@ -32,7 +33,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.rowset.CachedRowSet;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Abstract implementation to be used as the base of all scanner

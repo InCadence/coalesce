@@ -58,7 +58,10 @@ public class VerifyOperationImpl extends AbstractOperation<AbstractOperationTask
             @Override
             protected Boolean doWork(String[] keys, CachedRowSet rowset) throws CoalescePersistorException
             {
-                missing.addAll(verify(target, keys));
+                for (ICoalescePersistor target : targets)
+                {
+                    missing.addAll(verify(target, keys));
+                }
 
                 if (!missing.isEmpty())
                 {

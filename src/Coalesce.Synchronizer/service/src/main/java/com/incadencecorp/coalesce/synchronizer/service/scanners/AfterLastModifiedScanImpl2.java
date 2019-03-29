@@ -229,8 +229,9 @@ public class AfterLastModifiedScanImpl2 extends AbstractScan {
             if (loader != null && pendingLastScan != null)
             {
                 loader.setProperty(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS, lastScanned);
-                LOGGER.info("Last Successful Scan: {}", lastScanned);
             }
+
+            LOGGER.info("Last Successful Scan: {}", lastScanned);
         }
         else
         {

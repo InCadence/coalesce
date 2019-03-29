@@ -72,7 +72,7 @@ public class CopyOperationImpl extends AbstractOperation<AbstractOperationTask> 
                 // Copy to Targets
                 if (LOGGER.isDebugEnabled())
                 {
-                    LOGGER.debug("Processing {} key(s) for {}", entities.length, target.getClass().getName());
+                    LOGGER.debug("Processing {} key(s)", entities.length);
                     LOGGER.trace("Details:");
 
                     for (CoalesceEntity entity : entities)
@@ -82,7 +82,7 @@ public class CopyOperationImpl extends AbstractOperation<AbstractOperationTask> 
 
                 }
 
-                target.saveEntity(false, entities);
+                saveWork(false, entities);
 
                 return true;
             }
