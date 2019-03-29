@@ -68,7 +68,7 @@ services:
         - coalesce_network
       restart: unless-stopped
     coalesce:
-      image: incadencecorp/coalesce-ext-karaf:0.0.36-SNAPSHOT
+      image: 192.168.11.3:8083/coalesce-ext-karaf:0.0.36
       container_name: coalesce
       depends_on:
         - "elasticsearch"

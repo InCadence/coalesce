@@ -153,7 +153,7 @@
                 </execution>
               </executions>
               <configuration>
-                <repository>incadencecorp/coalesce-ext-karaf</repository>
+                <repository>192.168.11.3:8083/coalesce-ext-karaf</repository>
                 <tag>${project.version}</tag>
                 <buildArgs>
                   <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
