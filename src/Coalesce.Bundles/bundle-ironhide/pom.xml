@@ -28,7 +28,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
         <artifactId>persister-elasticsearch-parent</artifactId>
-        <version>0.0.36-SNAPSHOT</version>
+        <version>0.0.36</version>
         <relativePath>../../Coalesce.Framework.Persistance/elasticsearch</relativePath>
     </parent>
 
@@ -46,7 +46,7 @@
                         <Export-Package>
                             ironhide.client.*;version=${ironhide.version};-split-package:=merge-last,
                             org.elasticsearch.*;version=${elasticsearch.version};-split-package:=merge-last,
-                            mil.nga.giat.data.elasticsearch*;version=${gt.elasticsearch.version}
+                            mil.nga.giat.data.elasticsearch*;version=${elasticgeo.version}
                         </Export-Package>
                         <Import-Package>
                             org.joda.time*;version="[1.6.2, 3)",
