@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.services.network</groupId>
         <artifactId>coalesce-network-parent</artifactId>
-        <version>0.0.36-SNAPSHOT</version>
+        <version>0.0.37-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
