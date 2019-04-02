@@ -650,6 +650,8 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      */
     private boolean checkLastModified(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
+        return true;
+        /*
         boolean isOutOfDate = true;
 
         // Get LastModified from the Database
@@ -674,6 +676,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
 
         return isOutOfDate;
+        //*/
     }
 
     @Override
