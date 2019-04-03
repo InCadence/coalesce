@@ -30,7 +30,6 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
 import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
 import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
 import org.json.JSONArray;
@@ -232,7 +231,7 @@ public class TemplateDataController {
                 {
                     for (CoalesceFieldDefinition fd : recordset.getFieldDefinitions())
                     {
-                        results.add(new FieldData(fd.getKey(), fd.getName(), fd.getDataType()));
+                        results.add(new FieldData(fd));
                     }
                 }
                 else
