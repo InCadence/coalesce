@@ -111,6 +111,7 @@
 					<xs:attribute name="defaultvalue" type="xs:string" />
 					<xs:attribute name="datatype" type="xs:string" />
 					<xs:attribute name="label" type="xs:string" />
+					<xs:attribute name="description" type="xs:string" />
 					<xs:attribute name="disablehistory" type="xs:boolean" />
 				</xs:extension>
 			</xs:complexContent>

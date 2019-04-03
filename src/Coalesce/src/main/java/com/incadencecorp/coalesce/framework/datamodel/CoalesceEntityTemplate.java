@@ -342,6 +342,12 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
 
         for (CoalesceRecordset recordset : section.getRecordsetsAsList())
         {
+            // Prune items that should only be in the templates
+            for (CoalesceFieldDefinition fd : recordset.getFieldDefinitions())
+            {
+                fd.setDescription(null);
+            }
+
             for (int ii = 0; ii < recordset.getMinRecords(); ii++)
             {
                 recordset.addNew();
@@ -428,7 +434,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
 
         if (nodeName.equalsIgnoreCase(Entity.class.getSimpleName()))
         {
-            return  attrName.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_KEY)
+            return attrName.equalsIgnoreCase(CoalesceObject.ATTRIBUTE_KEY)
                     || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_ENTITYID)
                     || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_ENTITYIDTYPE)
                     || attrName.equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_TITLE)

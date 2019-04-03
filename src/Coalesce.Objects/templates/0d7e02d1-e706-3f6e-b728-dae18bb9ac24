@@ -4,7 +4,7 @@
     <linkagesection name="Linkages"/>
     <section name="enumeration" noindex="false">
         <recordset maxrecords="1" minrecords="1" name="enumMetadata">
-            <fielddefinition datatype="string" defaultclassificationmarking="U" name="enumname"/>
+            <fielddefinition datatype="string" description="Hello World" name="enumname"/>
             <fielddefinition datatype="string" defaultclassificationmarking="U" name="description"/>
         </recordset>
         <recordset maxrecords="500" minrecords="0" name="enumValues">
