@@ -99,6 +99,7 @@ export class RecordsetView extends React.Component
     if (definition.status !== "READONLY") {
       col['Cell'] = (cell) => (
         <FieldInput
+          hint={definition.description ? definition.description : undefined}
           field={cell.value}
           showLabels={false}
         />

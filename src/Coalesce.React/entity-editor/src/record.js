@@ -36,7 +36,7 @@ export class  RecordView extends React.Component {
       field.dataType = fd.dataType;
 
       return (
-        <FieldInput key={field.key} field={field} isNullable />
+        <FieldInput key={field.key} field={field} isNullable hint={fd.description ? fd.description : undefined} />
       )
     }
   }
