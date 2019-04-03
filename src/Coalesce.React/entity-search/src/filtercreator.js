@@ -92,7 +92,7 @@ class FilterCreator extends React.Component {
                      }}
                    />
                  </Col>
-                 <Col xs={4}>
+                 <Col xs={3}>
                    <FieldInput
                      field={{
                        key: "capabilities",
