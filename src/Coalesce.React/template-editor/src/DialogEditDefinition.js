@@ -98,6 +98,14 @@ export class DialogEditDefinition extends React.Component {
             value={definition.label}
             onChange={(event) => {this.handleChange("label", event.target.value);}}
           />
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            label="Description"
+            value={definition.description}
+            onChange={(event) => {this.handleChange("description", event.target.value);}}
+          />
           <Select
             fullWidth
             label="Type"

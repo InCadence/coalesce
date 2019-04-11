@@ -17,11 +17,23 @@
 
 package com.incadencecorp.coalesce.services.search.service.data.model;
 
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 
 public class FieldData extends CoalesceObjectImpl {
 
     private ECoalesceFieldDataTypes dataType;
+    private String label;
+    private String description;
+
+    public FieldData(CoalesceFieldDefinition fd)
+    {
+        this(fd.getKey(), fd.getName(), fd.getDataType());
+
+        label = fd.getLabel();
+        description = fd.getDescription();
+    }
+
 
     public FieldData(String key, String name, ECoalesceFieldDataTypes type)
     {
@@ -32,5 +44,15 @@ public class FieldData extends CoalesceObjectImpl {
     public ECoalesceFieldDataTypes getDataType()
     {
         return dataType;
+    }
+
+    public String getLabel()
+    {
+        return label;
+    }
+
+    public String getDescription()
+    {
+        return description;
     }
 }

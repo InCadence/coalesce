@@ -21,7 +21,13 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
-import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
@@ -225,7 +231,7 @@ public class TemplateDataController {
                 {
                     for (CoalesceFieldDefinition fd : recordset.getFieldDefinitions())
                     {
-                        results.add(new FieldData(fd.getKey(), fd.getName(), fd.getDataType()));
+                        results.add(new FieldData(fd));
                     }
                 }
                 else
@@ -489,9 +495,9 @@ public class TemplateDataController {
 
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
-        entity.setName(obj.getString("name"));
-        entity.setSource(obj.getString("source"));
-        entity.setVersion(obj.getString("version"));
+        entity.setName(obj.getString(CoalesceEntity.ATTRIBUTE_NAME));
+        entity.setSource(obj.getString(CoalesceEntity.ATTRIBUTE_SOURCE));
+        entity.setVersion(obj.getString(CoalesceEntity.ATTRIBUTE_VERSION));
         entity.setAttribute(CoalesceEntity.ATTRIBUTE_CLASSNAME, className);
 
         JSONArray jsonSections = obj.getJSONArray("sectionsAsList");
@@ -499,7 +505,7 @@ public class TemplateDataController {
         for (int i = 0; i < jsonSections.length(); i++)
         {
             JSONObject jsonSection = jsonSections.getJSONObject(i);
-            String SectionName = jsonSection.getString("name");
+            String SectionName = jsonSection.getString(CoalesceSection.ATTRIBUTE_NAME);
 
             CoalesceSection section = entity.createSection(SectionName);
 
@@ -508,7 +514,7 @@ public class TemplateDataController {
             for (int j = 0; j < jsonRecordSets.length(); j++)
             {
                 JSONObject jsonRecordSet = jsonRecordSets.getJSONObject(j);
-                String recordsetName = jsonRecordSet.getString("name");
+                String recordsetName = jsonRecordSet.getString(CoalesceRecordset.ATTRIBUTE_NAME);
                 CoalesceRecordset recordset = section.createRecordset(recordsetName);
                 recordset.setMinRecords(jsonRecordSet.getInt("minRecords"));
                 recordset.setMaxRecords(jsonRecordSet.getInt("maxRecords"));
@@ -518,13 +524,15 @@ public class TemplateDataController {
                 for (int k = 0; k < jsonFields.length(); k++)
                 {
                     JSONObject jsonField = jsonFields.getJSONObject(k);
-                    String fieldName = jsonField.getString("name");
+                    String fieldName = jsonField.getString(CoalesceFieldDefinition.ATTRIBUTE_NAME);
                     String fieldType = jsonField.getString("dataType");
-                    String label = getString(jsonField, "label");
+                    String label = getString(jsonField, CoalesceFieldDefinition.ATTRIBUTE_LABEL);
+                    String description = getString(jsonField, CoalesceFieldDefinition.ATTRIBUTE_DESCRIPTION);
                     String defaultValue = getString(jsonField, "defaultValue");
                     ECoalesceFieldDataTypes type = ECoalesceFieldDataTypes.getTypeForCoalesceType(fieldType);
 
-                    recordset.createFieldDefinition(fieldName, type, label, "U", defaultValue);
+                    CoalesceFieldDefinition fd = recordset.createFieldDefinition(fieldName, type, label, "U", defaultValue);
+                    fd.setDescription(description);
                 }
             }
         }

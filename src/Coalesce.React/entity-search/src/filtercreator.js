@@ -92,7 +92,7 @@ class FilterCreator extends React.Component {
                      }}
                    />
                  </Col>
-                 <Col xs={4}>
+                 <Col xs={3}>
                    <FieldInput
                      field={{
                        key: "capabilities",
@@ -232,7 +232,7 @@ class FilterCreator extends React.Component {
     const {data} = this.state;
     var row = this.getRow(data.criteria, key);
 
-    var dataType = getDataType(this.props.recordsets, row);
+    var dataType = getFieldDefinition(this.props.recordsets, row).dataType;
 
     row.field = value;
     row.operator = OPERATORS[dataType][0];
@@ -341,9 +341,9 @@ function createPropertyList(recordsets) {
 
 }
 
-function getDataType(recordsets, criteria) {
+function getFieldDefinition(recordsets, criteria) {
 
-  var dataType = 'STRING_TYPE';
+  var fd = {dataType: 'STRING_TYPE'};
 
   for (var ii=0; ii<recordsets.length; ii++) {
     if (criteria.recordset === recordsets[ii].name) {
@@ -351,7 +351,7 @@ function getDataType(recordsets, criteria) {
           var def = recordsets[ii].definition[jj];
 
           if (def.name === criteria.field) {
-            dataType = def.dataType;
+            fd = def;
             break;
           }
       };
@@ -359,7 +359,7 @@ function getDataType(recordsets, criteria) {
     }
   }
 
-  return dataType;
+  return fd;
 }
 
 function createColumns(that, recordsets) {
@@ -459,7 +459,7 @@ function createColumns(that, recordsets) {
       width: 120,
       Cell: (cell) => {
 
-        var dataType = getDataType(recordsets, cell.original);
+        var dataType = getFieldDefinition(recordsets, cell.original).dataType;
 
         return (
           <FieldInput
@@ -487,8 +487,9 @@ function createColumns(that, recordsets) {
       resizable: false,
       sortable: false,
       Cell: (cell) => {
-        var dataType = getDataType(recordsets, cell.original);
-        var hint = "";
+        var fd = getFieldDefinition(recordsets, cell.original);
+        var dataType = fd.dataType;
+        var hint = fd.description;
 
         dataType = dataType.replace("_LIST", "");
 

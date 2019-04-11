@@ -40,6 +40,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     public static final String ATTRIBUTE_DEFAULT_CLASSIFICATION_MARKING = "defaultclassificationmarking";
     public static final String ATTRIBUTE_DEFAULT_VALUE = "defaultvalue";
     public static final String ATTRIBUTE_LABEL = "label";
+    public static final String ATTRIBUTE_DESCRIPTION = "description";
     public static final String ATTRIBUTE_DATA_TYPE = "datatype";
     public static final String ATTRIBUTE_DISABLE_HISTORY = "disablehistory";
 
@@ -641,6 +642,18 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     public void setLabel(String value)
     {
         _entityFieldDefinition.setLabel(value);
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return _entityFieldDefinition.getDescription();
+    }
+
+    @Override
+    public void setDescription(String value)
+    {
+        _entityFieldDefinition.setDescription(value);
     }
 
     @Override

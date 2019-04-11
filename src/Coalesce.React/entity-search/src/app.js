@@ -2,7 +2,7 @@ import React from 'react'
 import Menu from 'common-components/lib/components/menu'
 import { loadTemplates, loadTemplate } from 'common-components/lib/js/templateController.js';
 import { getRootKarafUrl } from 'common-components/lib/js/common';
-import { DialogMessage, DialogLoader, DialogOptions } from 'common-components/lib/components/dialogs'
+import { DialogMessage, DialogLoader, DialogOptions, DialogFieldLegend } from 'common-components/lib/components/dialogs'
 import { searchComplex } from 'common-components/lib/js/searchController.js';
 import uuid from 'uuid';
 
@@ -193,6 +193,14 @@ export class App extends React.Component {
               this.setState({promptTemplate: true})
             }
           }, {
+            id: 'legend',
+            name: 'Legend',
+            img: "/images/svg/java-docs.svg",
+            title: 'Display Legend',
+            onClick: () => {
+              this.setState({displayLegend: true})
+            }
+          }, {
             id: 'load',
             name: 'Load',
             img: "/images/svg/load.svg",
@@ -272,6 +280,14 @@ export class App extends React.Component {
                 onClose={() => {this.setState({promptTemplate: false})}}
                 onClick={this.handleTemplateLoad}
                 options={this.state.templates}
+              />
+            }
+            { this.state.displayLegend && this.state.key &&
+              <DialogFieldLegend
+                title={`${cache[key].name} Legend`}
+                opened={true}
+                data={cache[key].recordsets}
+                onClose={() => {this.setState({displayLegend: null})}}
               />
             }
           </div>
