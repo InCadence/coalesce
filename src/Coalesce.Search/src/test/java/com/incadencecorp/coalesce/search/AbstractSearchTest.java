@@ -1293,7 +1293,69 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     }
 
     /**
-     * This test ensure that the during operand works as expected.
+     * This test checks the behavior of the "After" operator--it's been observed that some persistors natively
+     * implement "After" to mean "at the same time as or after", while others implement it as "after".
+     */
+    @Test
+    public void testAfterFilter() throws Exception
+    {
+        T persistor = createPersister();
+
+        Assume.assumeTrue(persistor.getCapabilities().contains(EPersistorCapabilities.TEMPORAL_SEARCH));
+
+        TestEntity entity1 = new TestEntity();
+        TestEntity entity2 = new TestEntity();
+        entity1.initialize();
+        entity2.initialize();
+        TestRecord record1 = entity1.addRecord1();
+        TestRecord record2 = entity2.addRecord1();
+
+        // Create Records
+        record1.getDateField().setValue(JodaDateTimeHelper.nowInUtc());
+        record1.getIntegerField().setValue(562505648);
+        record1.getStringField().setValue("EUROPE");
+        record2.getDateField().setValue(record1.getDateField().getValue().plusDays(1));
+        record2.getIntegerField().setValue(562505649);
+        record2.getStringField().setValue("ASIA");
+
+        // Persist
+        Assert.assertTrue(persistor.saveEntity(false, entity1));
+        Assert.assertTrue(persistor.saveEntity(false, entity2));
+
+        Instant start = new DefaultInstant(new DefaultPosition(record1.getDateField().getValue().toDate()));
+
+        // Create filter
+        Filter filter = FF.after(CoalescePropertyFactory.getFieldProperty(record1.getDateField()), FF.literal(start));
+
+        // Create return properties list
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getFieldProperty(record1.getIntegerField()));
+        props.add(CoalescePropertyFactory.getFieldProperty(record1.getStringField()));
+
+        // Create Query
+        Query query = new Query();
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity1.getKey()), filter));
+        query.setProperties(props);
+
+        // Verify that only record2 is returned
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+            Assert.assertEquals((int) record2.getIntegerField().getValue(), results.getInt(2));
+            Assert.assertEquals(record2.getStringField().getValue(), results.getString(3));
+        }
+
+        // Delete the entities
+        entity1.markAsDeleted();
+        entity2.markAsDeleted();
+
+        persistor.saveEntity(true, entity1);
+        persistor.saveEntity(true, entity2);
+    }
+
+    /**
+     * This test ensures that the during operand works as expected.
      */
     @Test
     public void testDuringFilter() throws Exception
@@ -1376,7 +1438,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Assert.assertTrue(persistor.saveEntity(false, entity));
 
         Filter filter = FF.before(CoalescePropertyFactory.getFieldProperty(record.getDateField()),
-                                 FF.literal(record.getDateField().getValue().plusDays(1).toDate()));
+                                  FF.literal(record.getDateField().getValue().plusDays(1).toDate()));
 
         List<PropertyName> props = new ArrayList<>();
         props.add(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()));
@@ -1397,7 +1459,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         }
 
         filter = FF.before(CoalescePropertyFactory.getFieldProperty(record.getDateField()),
-                          FF.literal(record.getDateField().getValue().minusDays(1).toDate()));
+                           FF.literal(record.getDateField().getValue().minusDays(1).toDate()));
 
         query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), filter));
 
