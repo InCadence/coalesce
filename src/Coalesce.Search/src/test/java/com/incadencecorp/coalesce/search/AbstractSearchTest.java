@@ -1334,7 +1334,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         // Create Query
         Query query = new Query();
-        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity1.getKey()), filter));
+        query.setFilter(filter);
         query.setProperties(props);
 
         // Verify that only record2 is returned
