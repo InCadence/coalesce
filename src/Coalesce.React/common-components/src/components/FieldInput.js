@@ -183,9 +183,8 @@ export class FieldInput extends React.Component {
               )
             }}
             style={style}
-            value={field[attr]}
             defaultValue={field.defaultValue}
-            value={field[attr] ? field[attr].join() : ""}
+            value={field[attr] ? Array.isArray(field[attr]) ? field[attr].join() : field[attr] : ""}
             onChange={event => {
               this.handleOnChange(attr, event.target.value.split(","));
             }}
@@ -235,30 +234,10 @@ export class FieldInput extends React.Component {
         );
         break;
       case "BOOLEAN_TYPE":
-        if (label) {
-          view = (
-            <FormControlLabel
-              label={label}
-              control={
-                <Checkbox
-                  id={field.key}
-                  checked={field[attr] === true}
-                  style={style.root}
-                  disableRipple
-                  defaultChecked={defaultValue}
-                  onChange={event => {
-                    this.handleOnChange(attr, event.target.checked);
-                  }}
-                  onKeyDown={this.props.onKeyDown}
-                />
-              }
-            />
-          );
-        } else {
           view = (
             <Checkbox
               id={field.key}
-              checked={field[attr] === true}
+              checked={field[attr] === true || field[attr] === "true"}
               style={style.root}
               disableRipple
               defaultChecked={defaultValue}
@@ -268,7 +247,15 @@ export class FieldInput extends React.Component {
               onKeyDown={this.props.onKeyDown}
             />
           );
-        }
+
+          if (label) {
+            view = (
+              <FormControlLabel
+                label={label}
+                control={view}
+              />
+            );
+          }
         break;
 
       case "BINARY_TYPE":
