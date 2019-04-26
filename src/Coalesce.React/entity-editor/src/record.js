@@ -1,6 +1,12 @@
 import React from 'react';
 import {FieldInput} from './FieldInput.js'
 
+const my_enum = [
+  {enum: '1', label: "Active"},
+  {enum: '2', label: 'Read Only'},
+  {enum: '3', label: 'Deleted'}
+];
+
 export class  RecordView extends React.Component {
 
   constructor(props) {
@@ -36,7 +42,7 @@ export class  RecordView extends React.Component {
       field.dataType = fd.dataType;
 
       return (
-        <FieldInput key={field.key} field={field} isNullable hint={fd.description ? fd.description : undefined} />
+        <FieldInput key={field.key} field={field} isNullable hint={fd.description ? fd.description : undefined}           options={my_enum}/>
       )
     }
   }

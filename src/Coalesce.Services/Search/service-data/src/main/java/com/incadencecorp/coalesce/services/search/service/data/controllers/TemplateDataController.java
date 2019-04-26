@@ -372,8 +372,10 @@ public class TemplateDataController {
         }
         catch (CoalesceException e)
         {
-            error(String.format(CoalesceErrors.NOT_SAVED, "NEW", CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
-                    e);
+            error(String.format(CoalesceErrors.NOT_SAVED,
+                                "NEW",
+                                CoalesceEntityTemplate.class.getSimpleName(),
+                                e.getMessage()), e);
         }
 
         return result;
@@ -389,8 +391,10 @@ public class TemplateDataController {
         }
         catch (CoalesceException e)
         {
-            error(String.format(CoalesceErrors.NOT_SAVED, "NEW", CoalesceEntityTemplate.class.getSimpleName(), e.getMessage()),
-                    e);
+            error(String.format(CoalesceErrors.NOT_SAVED,
+                                "NEW",
+                                CoalesceEntityTemplate.class.getSimpleName(),
+                                e.getMessage()), e);
         }
 
         return results;
@@ -443,7 +447,8 @@ public class TemplateDataController {
         }
         catch (CoalescePersistorException e)
         {
-            error("Failed to delete the template; template deletion may not be implemented for the persistor in question.", e);
+            error("Failed to delete the template; template deletion may not be implemented for the persistor in question.",
+                  e);
         }
     }
 
@@ -627,8 +632,47 @@ public class TemplateDataController {
             this.entity = new CoalesceEntity();
             this.entity.initialize(template.toXml());
             this.template = template;
+
+            for (CoalesceSection section : this.entity.getSectionsAsList())
+            {
+                populateEnumerationOptions(section);
+            }
         }
 
+        private void populateEnumerationOptions(CoalesceSection section)
+        {
+            for (CoalesceSection subsection : section.getSectionsAsList())
+            {
+                populateEnumerationOptions(subsection);
+            }
+
+            for (CoalesceRecordset recordset : section.getRecordsetsAsList())
+            {
+                for (CoalesceFieldDefinition fd : recordset.getFieldDefinitions())
+                {
+                    if (fd.getDataType() == ECoalesceFieldDataTypes.ENUMERATION_TYPE
+                            || fd.getDataType() == ECoalesceFieldDataTypes.ENUMERATION_LIST_TYPE)
+                    {
+                        fd.
+                    }
+                }
+            }
+        }
+
+        private String getEnumerationName(CoalesceFieldDefinition fd)
+        {
+            String result = getName();
+
+            for (CoalesceConstraint constraint : getFieldDefinition().getConstraints())
+            {
+                if (constraint.getConstraintType() == ConstraintType.ENUMERATION)
+                {
+                    result = constraint.getValue();
+                }
+            }
+
+            return result;
+        }
     }
 
     private void error(String msg) throws RemoteException

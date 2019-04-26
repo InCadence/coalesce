@@ -2,6 +2,7 @@ package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.security.Principal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
@@ -42,6 +43,7 @@ public class CoalesceEnumerationField extends CoalesceEnumerationFieldBase<Integ
      *         {@link EnumerationProviderUtil}.
      * @throws CoalesceDataFormatException
      */
+    @JsonIgnore
     public String getValueAsString() throws CoalesceDataFormatException
     {
         return getValueAsString(null);
@@ -54,6 +56,7 @@ public class CoalesceEnumerationField extends CoalesceEnumerationFieldBase<Integ
      *         {@link EnumerationProviderUtil}.
      * @throws CoalesceDataFormatException
      */
+    @JsonIgnore
     public String getValueAsString(Principal principal) throws CoalesceDataFormatException
     {
         String results = null;
@@ -72,6 +75,7 @@ public class CoalesceEnumerationField extends CoalesceEnumerationFieldBase<Integ
      * @return ordinal value converted to a String using
      *         {@link EnumerationProviderUtil}.
      */
+    @JsonIgnore
     public <E extends Enum<E>> E getValueAsEnumeration(Class<E> clazz)
     {
         return getValueAsEnumeration(null, clazz);
@@ -82,6 +86,7 @@ public class CoalesceEnumerationField extends CoalesceEnumerationFieldBase<Integ
      * @return ordinal value converted to a String using
      *         {@link EnumerationProviderUtil}.
      */
+    @JsonIgnore
     public <E extends Enum<E>> E getValueAsEnumeration(E defaultValue)
     {
         return getValueAsEnumeration(defaultValue, (Class<E>) defaultValue.getClass());

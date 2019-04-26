@@ -13,6 +13,12 @@ Object.assign(ReactTableDefaults, {
 
 const status_enum = [{enum: 'ACTIVE', label: "Active"}, {enum: 'READONLY', label: 'Read Only'}, {enum: 'DELETED', label: 'Deleted'}];
 
+const my_enum = [
+  {enum: '1', label: "Active"},
+  {enum: '2', label: 'Read Only'},
+  {enum: '3', label: 'Deleted'}
+];
+
 export class RecordsetView extends React.Component
 {
   constructor(props) {
@@ -89,6 +95,8 @@ export class RecordsetView extends React.Component
     )
   }
 
+
+
   createHeader(definition) {
     var col = {};
 
@@ -101,6 +109,7 @@ export class RecordsetView extends React.Component
         <FieldInput
           hint={definition.description ? definition.description : undefined}
           field={cell.value}
+          options={my_enum}
           showLabels={false}
         />
       );

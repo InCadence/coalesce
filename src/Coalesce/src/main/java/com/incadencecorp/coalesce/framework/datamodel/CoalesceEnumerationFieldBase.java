@@ -32,7 +32,7 @@ public class CoalesceEnumerationFieldBase<T> extends CoalesceField<T> {
      */
     public String getEnumerationName()
     {
-        String result = null;
+        String result = getName();
 
         for (CoalesceConstraint constraint : getFieldDefinition().getConstraints())
         {

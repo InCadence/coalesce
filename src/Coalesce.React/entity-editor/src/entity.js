@@ -5,6 +5,7 @@ import {RecordView} from './record'
 import {Row, Col} from 'react-bootstrap'
 import {Tabs, Tab} from 'material-ui/Tabs';
 import {FieldInput} from './FieldInput.js'
+import { getEnumeration }  from 'common-components/lib/js/enumerationController'
 
 import { status_enum } from './enumerations.js'
 
@@ -14,6 +15,7 @@ export class EntityView extends React.Component {
     super(props);
     this.state = {
         data: props.data,
+        enums: {},
         isNew: props.isNew
     };
   }
@@ -23,6 +25,8 @@ export class EntityView extends React.Component {
       data: nextProps.data,
       isNew: nextProps.isNew
     })
+
+
   }
 
   setIsNew(isNew) {
