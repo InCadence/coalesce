@@ -37,6 +37,7 @@ import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.QueryHelper;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -134,6 +135,56 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
                 isInitialized = true;
             }
         }
+    }
+
+    @Test
+    public void testHighlighing() throws Exception
+    {
+        T persister = createPersister();
+
+        Assume.assumeTrue(persister.getCapabilities().contains(EPersistorCapabilities.HIGHLIGHT));
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        entity.setEntityId(UUID.randomUUID().toString());
+        entity.setEntityIdType("world");
+
+        TestRecord record = entity.addRecord1();
+        record.getStringField().setValue(
+                "It Hello is a long established Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of  (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, , comes from a line in section 1.10.32. Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, , comes from a line in section 1.10.32. fact that a reader will be distracted by the readable content ong established fact that a reader will be distracted by the readable content ong established fact that a reader will be distracted by the readable content ong established fact that a reader will be distracted by the readable content.ong established fact that a reader will be distracted by the readable content . of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like hello).");
+
+        CoalesceSearchFramework framework = new CoalesceSearchFramework();
+        framework.setAuthoritativePersistor(createPersister());
+        framework.saveCoalesceEntity(entity);
+
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getEntityKey());
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
+
+        List<Filter> filters = new ArrayList<>();
+        filters.add(FF.like(CoalescePropertyFactory.getFieldProperty(record.getStringField()), "Hello"));
+        filters.add(FF.like(CoalescePropertyFactory.getFieldProperty(record.getNoFlattenField()), "Hello"));
+
+        // Create Query
+        Query query = new Query();
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), FF.or(filters)));
+        query.setProperties(props);
+        query.setMaxFeatures(200);
+
+        QueryHelper.setHighlightingEnabled(query, true);
+
+        try (CachedRowSet results = framework.search(query).getResults())
+        {
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+            String content = results.getString(2);
+
+            Assert.assertTrue(content.contains("<em>"));
+        }
+
+        entity.markAsDeleted();
+
+        framework.saveCoalesceEntity(true, entity);
     }
 
     /**
