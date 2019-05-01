@@ -266,7 +266,7 @@ export class FieldInput extends React.Component {
             );
           }
         break;
-        
+
       case "DATE_TIME_TYPE":
         var dateTime;
 
@@ -393,8 +393,8 @@ export class FieldInput extends React.Component {
             style={style.root}
             value={field[attr]}
             defaultValue={defaultValue}
-            onChange={(event, value) => {
-              this.handleOnChange(attr, value);
+            onChange={event => {
+              this.handleOnChange(attr, event.target.value);
             }}
             onKeyDown={this.props.onKeyDown}
           />

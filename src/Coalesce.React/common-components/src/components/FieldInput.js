@@ -282,8 +282,8 @@ export class FieldInput extends React.Component {
             style={style.root}
             value={field[attr]}
             defaultValue={defaultValue}
-            onChange={(event, value) => {
-              this.handleOnChange(attr, value);
+            onChange={event => {
+              this.handleOnChange(attr, event.target.value);
             }}
             onKeyDown={this.props.onKeyDown}
           />
@@ -299,8 +299,8 @@ export class FieldInput extends React.Component {
             style={style.root}
             value={field[attr]}
             defaultValue={defaultValue}
-            onChange={(event, value) => {
-              this.handleOnChange(attr, value);
+            onChange={event => {
+              this.handleOnChange(attr, event.target.value);
             }}
             onKeyDown={this.props.onKeyDown}
           />
@@ -316,8 +316,8 @@ export class FieldInput extends React.Component {
             style={style.root}
             value={field[attr]}
             defaultValue={defaultValue}
-            onChange={(event, value) => {
-              this.handleOnChange(attr, value);
+            onChange={event => {
+              this.handleOnChange(attr, event.target.value);
             }}
             onKeyDown={this.props.onKeyDown}
           />
@@ -348,10 +348,10 @@ export class FieldInput extends React.Component {
                 style={style.root}
                 fullWidth={true}
                 value={geo.coordinates[0]}
-                onChange={(event, value) => {
+                onChange={event => {
                   this.handleOnChange(
                     attr,
-                    `POINT(${value} ${geo.coordinates[1]} ${
+                    `POINT(${event.target.value} ${geo.coordinates[1]} ${
                       geo.coordinates[2]
                     })`
                   );
@@ -369,10 +369,10 @@ export class FieldInput extends React.Component {
                 style={style.root}
                 fullWidth={true}
                 value={geo.coordinates[1]}
-                onChange={(event, value) => {
+                onChange={event => {
                   this.handleOnChange(
                     attr,
-                    `POINT(${geo.coordinates[0]} ${value} ${
+                    `POINT(${geo.coordinates[0]} ${event.target.value} ${
                       geo.coordinates[2]
                     })`
                   );
@@ -390,12 +390,12 @@ export class FieldInput extends React.Component {
                 style={style.root}
                 fullWidth={true}
                 value={geo.coordinates[2]}
-                onChange={(event, value) => {
+                onChange={event => {
                   this.handleOnChange(
                     attr,
                     `POINT(${geo.coordinates[0]} ${
                       geo.coordinates[1]
-                    } ${value})`
+                    } ${event.target.value})`
                   );
                 }}
                 onKeyDown={this.props.onKeyDown}
@@ -425,10 +425,10 @@ export class FieldInput extends React.Component {
                 style={style.root}
                 fullWidth={true}
                 value={center.coordinates[0]}
-                onChange={(event, value) => {
+                onChange={event => {
                   this.handleOnChange(
                     attr,
-                    `POINT(${value} ${center.coordinates[1]} ${
+                    `POINT(${event.target.value} ${center.coordinates[1]} ${
                       center.coordinates[2]
                     })`
                   );
@@ -446,10 +446,10 @@ export class FieldInput extends React.Component {
                 style={style.root}
                 fullWidth={true}
                 value={center.coordinates[1]}
-                onChange={(event, value) => {
+                onChange={event => {
                   this.handleOnChange(
                     attr,
-                    `POINT(${center.coordinates[0]} ${value} ${
+                    `POINT(${center.coordinates[0]} ${event.target.value} ${
                       center.coordinates[2]
                     })`
                   );
@@ -467,12 +467,12 @@ export class FieldInput extends React.Component {
                 style={style.root}
                 fullWidth={true}
                 value={center.coordinates[2]}
-                onChange={(event, value) => {
+                onChange={event => {
                   this.handleOnChange(
                     attr,
                     `POINT(${center.coordinates[0]} ${
                       center.coordinates[1]
-                    } ${value})`
+                    } ${event.targetvalue})`
                   );
                 }}
                 onKeyDown={this.props.onKeyDown}
@@ -488,8 +488,8 @@ export class FieldInput extends React.Component {
                 //helperText={this.props.showLabels ? this.props.hint : undefined}
                 style={style.root}
                 fullWidth={true}
-                onChange={(event, value) => {
-                  this.handleOnChange("radius", value);
+                onChange={event => {
+                  this.handleOnChange("radius", event.target.value);
                 }}
                 onKeyDown={this.props.onKeyDown}
               />
@@ -501,15 +501,15 @@ export class FieldInput extends React.Component {
         view = (
           <TextField
             id={field.key}
-            fullWidth={true}
+            fullWidth
             label={label}
             //helperText={this.props.showLabels ? this.props.hint : undefined}
             //inputProps={{ pattern: "[a-z]" }}
             style={style.root}
             value={field[attr]}
-            defaultValue={defaultValue}
-            onChange={(event, value) => {
-              this.handleOnChange(attr, value);
+            defaultValue={field.defaultValue}
+            onChange={event => {
+              this.handleOnChange(attr, event.target.value);
             }}
             onKeyDown={this.props.onKeyDown}
           />
