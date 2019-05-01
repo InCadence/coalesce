@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -298,12 +297,24 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         {
             StringBuilder sb = new StringBuilder("{ \"fields\" : { ");
 
+            boolean isFirst = true;
+
             for (String field : highlights)
             {
                 String normalized = getNormalizedPropertyName(field);
 
+                if (isFirst)
+                {
+                    isFirst = false;
+                }
+                else
+                {
+                    sb.append(",");
+                }
+
                 sb.append("\"" + normalized + "\":{}");
                 LOGGER.debug("Highlighting {} => {}", field, normalized);
+
             }
 
             sb.append("}}");
