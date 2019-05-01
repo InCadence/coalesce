@@ -30,7 +30,7 @@
         <joda.version>2.9.7</joda.version>
         <slf4j.version>1.7.5</slf4j.version>
 
-        <dependency.bndlib.version>2.4.0</dependency.bndlib.version>
+        <dependency.bndlib.version>3.5.0</dependency.bndlib.version>
         <bundle-plugin.version>3.5.0</bundle-plugin.version>
 
         <jackson.jaxb.version>2.9.1</jackson.jaxb.version>
@@ -64,7 +64,7 @@
                     <dependencies>
                         <dependency>
                             <groupId>biz.aQute.bnd</groupId>
-                            <artifactId>bndlib</artifactId>
+                            <artifactId>biz.aQute.bndlib</artifactId>
                             <version>${dependency.bndlib.version}</version>
                         </dependency>
                     </dependencies>
