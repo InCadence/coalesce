@@ -653,12 +653,13 @@ public class TemplateDataController {
                     if (fd.getDataType() == ECoalesceFieldDataTypes.ENUMERATION_TYPE
                             || fd.getDataType() == ECoalesceFieldDataTypes.ENUMERATION_LIST_TYPE)
                     {
-                        fd.
+                        //fd.
                     }
                 }
             }
         }
 
+        /*
         private String getEnumerationName(CoalesceFieldDefinition fd)
         {
             String result = getName();
@@ -673,6 +674,7 @@ public class TemplateDataController {
 
             return result;
         }
+        */
     }
 
     private void error(String msg) throws RemoteException
