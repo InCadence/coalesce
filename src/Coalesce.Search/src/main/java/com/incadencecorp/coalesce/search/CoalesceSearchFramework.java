@@ -24,6 +24,7 @@ import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.ArrayHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.DefaultNormalizer;
@@ -203,12 +204,28 @@ public class CoalesceSearchFramework extends CoalesceFramework {
      */
     public String find(Filter filter) throws CoalesceException, InterruptedException
     {
-        LOGGER.debug("Executing: {}", filter.toString());
+        FindDetails results = find(filter, new String[0]);
+        return results != null ? results.getKey() : null;
+    }
 
-        String key = null;
+    /**
+     * @param filter that uniquely identifies an entity.
+     * @return the key along with specified properties of the entity matching the filter.
+     * @throws CoalesceException on error
+     */
+    public FindDetails find(Filter filter, String... properties) throws CoalesceException, InterruptedException
+    {
+        FindDetails result = null;
+
+        LOGGER.debug("Executing: {}", filter.toString());
 
         Query query = new Query();
         query.setFilter(filter);
+
+        if (!ArrayHelper.isNullOrEmpty(properties))
+        {
+            query.setPropertyNames(properties);
+        }
 
         SearchResults results = search(query);
 
@@ -224,9 +241,20 @@ public class CoalesceSearchFramework extends CoalesceFramework {
                             filter.toString());
                 }
 
-                if (rowset.next())
+                if (rowset.first())
                 {
-                    key = rowset.getString(1);
+                    int idx = 1;
+
+                    result = new FindDetails();
+                    result.setKey(rowset.getString(idx++));
+
+                    if (properties != null)
+                    {
+                        for (String property : properties)
+                        {
+                            result.put(property, rowset.getString(idx++));
+                        }
+                    }
                 }
             }
             catch (SQLException e)
@@ -239,7 +267,7 @@ public class CoalesceSearchFramework extends CoalesceFramework {
             throw new CoalesceException("Duplication Check Failed: " + results.getError());
         }
 
-        return key;
+        return result;
     }
 
     private static Filter createEquals(PropertyName name, String value)
