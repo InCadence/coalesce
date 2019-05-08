@@ -165,7 +165,7 @@ public class KafkaSubscriberImpl extends CoalesceComponentImpl implements ICoale
     }
 
     @Override
-    public void close() throws Exception
+    public synchronized void close() throws Exception
     {
         for (KafkaConsumer consumer : consumers)
         {

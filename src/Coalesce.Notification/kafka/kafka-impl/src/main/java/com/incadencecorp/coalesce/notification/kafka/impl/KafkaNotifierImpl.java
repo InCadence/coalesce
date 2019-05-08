@@ -226,7 +226,7 @@ public class KafkaNotifierImpl extends CoalesceComponentImpl implements ICoalesc
     }
 
     @Override
-    public void close() throws Exception
+    public synchronized void close() throws Exception
     {
         if (producer != null)
         {
