@@ -19,7 +19,11 @@ package com.incadencecorp.coalesce.common.helpers;
 
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
@@ -29,6 +33,15 @@ import java.util.stream.Collectors;
  * @author n78554
  */
 public final class ArrayHelper {
+
+    /**
+     * @param arr to check.
+     * @return whether or not the array contains elements
+     */
+    public static boolean isNullOrEmpty(Object[] arr)
+    {
+        return arr == null || arr.length == 0;
+    }
 
     /**
      * @param values
