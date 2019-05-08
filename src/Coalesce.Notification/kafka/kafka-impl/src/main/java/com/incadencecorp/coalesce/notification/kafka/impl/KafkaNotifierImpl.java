@@ -21,9 +21,14 @@ package com.incadencecorp.coalesce.notification.kafka.impl;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
-import com.incadencecorp.coalesce.api.subscriber.events.*;
+import com.incadencecorp.coalesce.api.subscriber.events.AuditEvent;
+import com.incadencecorp.coalesce.api.subscriber.events.CrudEvent;
+import com.incadencecorp.coalesce.api.subscriber.events.JobEvent;
+import com.incadencecorp.coalesce.api.subscriber.events.LinkageEvent;
+import com.incadencecorp.coalesce.api.subscriber.events.MetricsEvent;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.enums.EAuditCategory;
 import com.incadencecorp.coalesce.enums.EAuditLevels;
@@ -252,6 +257,9 @@ public class KafkaNotifierImpl extends CoalesceComponentImpl implements ICoalesc
         else
         {
             ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JodaModule());
+            mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
+                                     WRITE_DATES_AS_TIMESTAMPS, false);
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             mapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
 
