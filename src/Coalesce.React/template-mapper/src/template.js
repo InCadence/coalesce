@@ -40,13 +40,23 @@ export default class Template extends React.Component {
 
   render() {
 
-    const {name, recName, recordSet, field, split} = this.props;
-    const enume = split.map(function(value, index) {
-      return(
-        {enum: value, label: value}
-      )
-    })
-
+    const {name, recName, recordSet, field, split, type} = this.props;
+    var enume;
+    if(type === 0) {
+      enume = split.map(function(value, index) {
+        return(
+          {enum: value, label: value}
+        )
+      })
+    }
+    else if(type === 1) {
+      var keys = Object.keys(split)
+      enume = Object.keys(split).map(function(key, index) {
+        return(
+          {enum: key, label: split[key]}
+        )
+      })
+    }
     const that = this;
 
     return (
@@ -60,7 +70,7 @@ export default class Template extends React.Component {
                 {
                   recordSet.definition.map(function(templateField, i) {
                     return <TableRow>
-                            <FieldInput label={templateField.name} onChange={that.handleChange} dataType="ENUMERATION_TYPE" field={field} options={enume} attr={`${i}`}/>
+                            <FieldInput label={templateField.name} onChange={that.handleChange} dataType="ENUMERATION_TYPE" field={field} options={enume} attr={templateField.name}/>
                            </TableRow>
                   })
                 }

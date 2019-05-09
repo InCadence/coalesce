@@ -6,14 +6,17 @@ import { DialogMessage, DialogLoader, DialogOptions } from 'common-components/li
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
+import Input from '@material-ui/core/Input';
 import Linkage from './linkage.js';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select'
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Template from'./template.js';
 import TextField from '@material-ui/core/TextField';
 import ReactJson from 'react-json-view';
-
+import {flatten} from './flat.js';
 
 const karafRootAddr = getRootKarafUrl();
 const DEFAULT = 'CoalesceEntity';
@@ -35,6 +38,8 @@ export class App extends React.Component {
     this.handleLinkageChange = this.handleLinkageChange.bind(this);
     this.handleJsonLoad = this.handleJsonLoad.bind(this);
     this.createJson = this.createJson.bind(this);
+    this.handleOnXmlChange = this.handleOnXmlChange.bind(this);
+    this.handleTypeChange = this.handleTypeChange.bind(this);
 
     var cache = {};
 
@@ -49,8 +54,10 @@ export class App extends React.Component {
       results: null,
       activeStep: 0,
       templateKeys: [],
-      csv: "",
+      value: "",
       split: [],
+      type: 0,
+
     }
     this.templates = [];
     this.links = [];
@@ -183,8 +190,17 @@ export class App extends React.Component {
     var str = event.target.value;
     var split = str.split(',');
     this.setState({
-      csv: event.target.value,
+      value: str,
       split: split,
+    })
+  }
+
+  handleOnXmlChange(event) {
+    var str = event.target.value;
+    var flat = flatten(1, str);
+    this.setState({
+      value: str,
+      split: flat
     })
   }
 
@@ -198,7 +214,6 @@ export class App extends React.Component {
 
   handleJsonChange(index, newJson) {
       this.templates[index] = newJson;
-      console.log(newJson)
   }
 
   handleJsonLoad() {
@@ -254,12 +269,38 @@ export class App extends React.Component {
     return this.json;
   }
 
-  render() {
+  handleTypeChange(event) {
+    var type = event.target.value;
+    var event = {target: {value:this.state.value}}
+    console.log(event.target.value)
+    var split = null;
+    if(type === 0) {
+      this.handleOnCsvChange(event)
+    }
+    else if(type === 1) {
+      this.handleOnXmlChange(event)
+      console.log("xml")
+    }
 
-    const { cache, activeStep, templateKeys, split } = this.state;
+    this.setState({"type": type});
+  }
+
+  render() {
+    const { cache, activeStep, templateKeys, split, type } = this.state;
     var json = "";
     const that = this;
     var items = [];
+
+    var value = null;
+    var onChange = null;
+    if(type == 0) {
+      value = that.state.value;
+      onChange = that.handleOnCsvChange;
+    }
+    else if(type == 1) {
+      value = that.state.value;
+      onChange = that.handleOnXmlChange;
+    }
     if(activeStep === 0) {
       items.push({
         id: 'select',
@@ -296,15 +337,14 @@ export class App extends React.Component {
       json = this.createJson();
     }
 
-    var linkList = [];
+    var linkList = []; //not a linked list, its a list of linkages
     if(activeStep === 1) {
       for(var i = 0; i < this.state.templateKeys.length; i++) {
         linkList.push({name: cache[this.state.templateKeys[i]].name, key: i, enum: i.toString(), label: cache[this.state.templateKeys[i]].name});
       }
     }
-    //console.log(linkList)
 
-   // console.log("App creating new filter creator", cache, key);
+    // console.log("App creating new filter creator", cache, key);
     return (
         <div>
         <Menu logoSrc={this.props.pjson.icon} title={this.props.pjson.title} items={items}/>
@@ -345,23 +385,32 @@ export class App extends React.Component {
               </Button>
             }
 
-            {activeStep === 0 && <div>
-              <TextField
-                id="standard-full-width"
-                label="CSV"
-                style={{ margin: 8 }}
-                placeholder="one, two, three(etc)"
-                helperText="Paste one line of CSV here"
-                fullWidth
-                onChange={this.handleOnCsvChange}
-                margin="normal"
-                value={this.state.csv}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-               </div>
-
+            {activeStep === 0 &&
+              <div>
+                <TextField
+                  id="standard-full-width"
+                  label="Input"
+                  style={{ margin: 8 }}
+                  placeholder=""
+                  helperText="Paste input here"
+                  fullWidth
+                  onChange={onChange}
+                  margin="normal"
+                  value={value}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <Select
+                  value={that.state.type}
+                  onChange={that.handleTypeChange}
+                  name="Input Type"
+                  input={<Input name="age" id="age-helper" />}
+                >
+                  <MenuItem value={0}>CSV</MenuItem>
+                  <MenuItem value={1}>XML</MenuItem>
+                </Select>
+              </div>
             }
             {activeStep === 0 &&
               templateKeys.map(function(key, index) {
@@ -371,6 +420,7 @@ export class App extends React.Component {
               return(
                 <div>
                 <Template
+                  type={type}
                   key={key}
                   index={index}
                   tKey={key}
