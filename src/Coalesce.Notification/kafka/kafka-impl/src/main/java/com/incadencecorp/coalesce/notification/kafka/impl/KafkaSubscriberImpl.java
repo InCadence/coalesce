@@ -19,10 +19,16 @@
 package com.incadencecorp.coalesce.notification.kafka.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.subscriber.ICoalesceEventHandler;
 import com.incadencecorp.coalesce.api.subscriber.ICoalesceSubscriber;
-import com.incadencecorp.coalesce.api.subscriber.events.*;
+import com.incadencecorp.coalesce.api.subscriber.events.AuditEvent;
+import com.incadencecorp.coalesce.api.subscriber.events.CrudEvent;
+import com.incadencecorp.coalesce.api.subscriber.events.JobEvent;
+import com.incadencecorp.coalesce.api.subscriber.events.KeyValuePairEvent;
+import com.incadencecorp.coalesce.api.subscriber.events.LinkageEvent;
+import com.incadencecorp.coalesce.api.subscriber.events.MetricsEvent;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.CoalesceSchedulerServiceImpl;
@@ -82,6 +88,10 @@ public class KafkaSubscriberImpl extends CoalesceComponentImpl implements ICoale
         this.service = new CoalesceSchedulerServiceImpl(service);
 
         setProperties(connector.getSettings(KafkaSubscriberImpl.class.getName() + ".properties"));
+
+        mapper.registerModule(new JodaModule());
+        mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
+                                 WRITE_DATES_AS_TIMESTAMPS, false);
 
         ShutdownAutoCloseable.createShutdownHook(this);
     }
