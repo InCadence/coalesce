@@ -150,6 +150,7 @@ export class FieldInput extends React.Component {
       case "STRING_TYPE":
         view = (
           <TextField
+            {...this.props}
             id={field.key}
             fullWidth
             label={label}
