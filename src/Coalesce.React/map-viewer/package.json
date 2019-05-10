@@ -1,6 +1,6 @@
 {
   "name": "map-viewer",
-  "version": "0.0.37",
+  "version": "0.0.38-SNAPSHOT",
   "description": " This UI is a map visualization of coalesce entities",
   "main": "index.js",
   "author": "InCadence",
