@@ -862,6 +862,12 @@ def save_entity(server = None, entity = None, key = None, operation = u"create")
         :class:'CoalesceEntity <pyCoalesce.classes.CoalesceEntity>' (or a
         subclass); the function automatically detects the input type and
         adjusts the RESTful endpoint and requests headers accordingly.
+        In an update ("PUT") operation, ths entity *must* include not only
+        the updated field(s), but all sections, recordsets, records, and
+        fields in the original, and all of the original's UUID keys (not
+        only the entity's keys, but all section, recordset, record, and
+        field keys).  Failure to match keys will result in the creation of
+        duplicate records within the modified entity.
     :param key:  a UUID to serve as the key for the entity, as either an
         instance of the :class:`uuid.UUID` class, or any string or integer
         that could serve as input to the :class:`UUID <uuid.UUID>` class
@@ -1069,8 +1075,8 @@ def create(server = None, entity = None, key = None, full_response = False):
         supplied (either in this argument or as part of the entity), the
         server randomly generates one.
     :param full_response:  if ``True``, return the full response from the
-        server as a Python :class:`requests.Response` object, rather than a
-        boolean.
+        server as a Python :class:`requests.Response` object, rather than
+        just the entity key.
 
     :returns:  the UUID key of the new entity if "full_response" is False.
         If "full_response" is ``True``, a Python :class:`requests.Response`
@@ -1183,8 +1189,8 @@ def read(server = None, key = None, output = "dict"):
 
 def update(server = None, entity = None, key = None, full_response = False):
     """
-    Uploads a modified entity to the Coalesce server using the "POST"
-    method.  This is a wrapper for the "upload_entity" function.
+    Uploads a modified entity to the Coalesce server using the "PUT"
+    method.  This is a wrapper for the "save_entity" function.
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
@@ -1194,6 +1200,12 @@ def update(server = None, entity = None, key = None, full_response = False):
         instance of :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`
         (or a subclass); the function automatically detects the input type
         and adjusts the RESTful endpoint and requests headers accordingly.
+        This entity *must* include not only the updated field(s), but all
+        sections, recordsets, records, and fields in the original, and all
+        of the original's UUID keys (not only the entity's keys, but all
+        section, recordset, record, and field keys).  Failure to match keys
+        will result in the creation of duplicate records within the
+        modified entity.
     :param key:  a UUID to serve as the key for the entity, as either an
         instance of the :class:`uuid.UUID` class, or any string or integer
         that could serve as input to the :class:`UUID <uuid.UUID>` class
@@ -1339,8 +1351,8 @@ def create_template(server = None, template = None, full_response = False):
         (or a subclass); the function automatically detects the input type
         and adjusts the RESTful endpoint and requests headers accordingly.
     :param full_response:  if ``True``, return the full response from the
-        server as a Python :class:`requests.Response` object, rather than a
-        boolean.
+        server as a Python :class:`requests.Response` object, rather than
+        just the entity key.
 
     :returns:  the UUID key of the new entity, as a string, if
         "full_response" is ``False``.  If "full_response" is ``True``, a
@@ -1606,6 +1618,13 @@ def update_template(server = None, template = None, key = None,
     :func:`~pyCoalesce..coalesce_request.create_template` function (and
     any of the entities created from the old template remain associated
     with that one).
+
+    Updating templates--rather than creating a new template, with a
+    different version number--may have unpredictable consequences,
+    depending on the persistor and its settings (especially caching
+    settings). If a template update is unavoidable, a server/container
+    restart or other measures may be necessary (for example, in
+    Elasticsearch, it may be necessary to delete the index in question).
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
@@ -1902,7 +1921,7 @@ def create_linkages(server = None, linkages = None):
     be submitted in a special format used only for this endpoint--it
     corresponds to the Java GraphLink class, and the
     :class:`pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` class.
-    This format's keys match the attribues in the GraphLink class, which
+    This format's keys match the attributes in the GraphLink class, which
     correspond to a subset of the full set of keys/attributes in the entity
     model, but which use different names.
 
