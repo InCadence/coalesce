@@ -8,9 +8,10 @@ The subclass can be imported directly from the :mod:`pyCoalesce.classes`
 module.
 
 The :meth:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate.new_entity`
-method doesn't properly with iPython's auto-reload feature.  This problem
-can be overcome by restarting the kernel and reimporting everything at
-once.
+method may not work properly with iPython's auto-reload feature.  Steps
+have been taken to correct this problem, but, should it recur, it can
+probably be overcome by restarting the kernel and reimporting everything
+at once.
 
 """
 
