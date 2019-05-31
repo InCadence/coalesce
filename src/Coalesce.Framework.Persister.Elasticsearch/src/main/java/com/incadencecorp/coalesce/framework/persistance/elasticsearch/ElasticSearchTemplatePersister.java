@@ -31,9 +31,10 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.ResourceAlreadyExistsException;
+import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -374,40 +375,52 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 }
                 */
 
-                try
+                if (!doesExists(client, index, COALESCE_ENTITY_INDEX, COALESCE_LINKAGE_INDEX))
                 {
                     response = client.admin().indices().create(request).actionGet();
                     LOGGER.debug("Registered Coalesce Template Index : {}", index, response);
+
+                    if (!doesExists(client, COALESCE_ENTITY_INDEX))
+                    {
+                        response = client.admin().indices().create(createCoalesceEntityIndexRequest()).actionGet();
+
+                        LOGGER.debug("Registered Coalesce Index : {}", template.getName(), response);
+                    }
+
+                    if (!doesExists(client, COALESCE_LINKAGE_INDEX))
+                    {
+                        response = client.admin().indices().create(createCoalesceLinkageIndexRequest()).actionGet();
+
+                        LOGGER.debug("Registered Coalesce Linkage Index : {}", template.getName(), response);
+                    }
                 }
-                catch (ResourceAlreadyExistsException e)
+                else
                 {
                     LOGGER.warn("Template {} Already Registered", index);
                 }
-
-                try
-                {
-                    response = client.admin().indices().create(createCoalesceEntityIndexRequest()).actionGet();
-
-                    LOGGER.debug("Registered Coalesce Index : {}", template.getName(), response);
-                }
-                catch (ResourceAlreadyExistsException e)
-                {
-                    // Do Nothing indexes already exists
-                }
-
-                try
-                {
-                    response = client.admin().indices().create(createCoalesceLinkageIndexRequest()).actionGet();
-
-                    LOGGER.debug("Registered Coalesce Linkage Index : {}", template.getName(), response);
-                }
-                catch (ResourceAlreadyExistsException e)
-                {
-                    // Do Nothing indexes already exists
-                }
-
             }
         }
+    }
+
+    private boolean doesExists(AbstractClient client, String... names)
+    {
+        return doesIndexExists(client, names) || doesAliasExists(client, names);
+    }
+
+    private boolean doesAliasExists(AbstractClient client, String... aliases)
+    {
+        GetAliasesRequest exists = new GetAliasesRequest();
+        exists.aliases(aliases);
+
+        return client.admin().indices().aliasesExist(exists).actionGet().isExists();
+    }
+
+    private boolean doesIndexExists(AbstractClient client, String... indices)
+    {
+        IndicesExistsRequest request = new IndicesExistsRequest();
+        request.indices(indices);
+
+        return client.admin().indices().exists(request).actionGet().isExists();
     }
 
     private void deleteFromElasticSearch(AbstractClient conn, String index, String type, String id)
