@@ -22,6 +22,8 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 
 import javax.sql.rowset.CachedRowSet;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -32,7 +34,7 @@ import java.util.concurrent.Callable;
  *
  * @author n78554
  */
-public abstract class AbstractOperationTask implements Callable<Boolean> {
+public abstract class AbstractOperationTask implements Callable<Boolean>, AutoCloseable {
 
     protected ICoalescePersistor source;
     protected ICoalescePersistor[] targets;
@@ -111,6 +113,19 @@ public abstract class AbstractOperationTask implements Callable<Boolean> {
     public String[] getErrorSubset()
     {
         return getSubset();
+    }
+
+    @Override
+    public void close() throws IOException
+    {
+        try
+        {
+            rowset.close();
+        }
+        catch (SQLException e)
+        {
+            throw new IOException(e);
+        }
     }
 
     /**

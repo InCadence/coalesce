@@ -18,14 +18,23 @@
 package com.incadencecorp.coalesce.synchronizer.api.common.tests;
 
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
-import com.incadencecorp.coalesce.synchronizer.api.common.mocks.*;
+import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockDriver;
+import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockHandler;
+import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockOperation;
+import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockScanner;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.sql.ResultSet;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * These tests exercise the abstract components of the synchronizer service.
@@ -37,8 +46,6 @@ public class AbstractComponentTest {
     /**
      * This test ensures a null pointer exceptions occurs if the scanner and
      * operations are not configured.
-     *
-     * @throws Exception
      */
     @Test(expected = IllegalStateException.class)
     public void testSetupScannerFailure() throws Exception
@@ -50,20 +57,12 @@ public class AbstractComponentTest {
     /**
      * This test ensures a null pointer exception occurs if the operations are
      * not configured.
-     *
-     * @throws Exception
      */
     @Test(expected = IllegalStateException.class)
     public void testSetupOperationFailure() throws Exception
     {
-        CoalesceEntity entity = new CoalesceEntity();
-        entity.initialize();
-
-        DerbyPersistor source = new DerbyPersistor();
-        source.saveEntity(false, entity);
-
         MockScanner scanner = new MockScanner();
-        scanner.setSource(source);
+        scanner.setRows(Collections.singletonList(new Object[1]));
 
         MockDriver driver = new MockDriver();
         driver.setScan(scanner);
@@ -74,31 +73,36 @@ public class AbstractComponentTest {
     /**
      * Verifies that the driver using the MockOperation successfully changes the
      * entity's title.
-     *
-     * @throws Exception
      */
     @Test
     public void testDriver() throws Exception
     {
-        String newTitle = UUID.randomUUID().toString();
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
 
-        CoalesceEntity entity = CoalesceEntity.create("UNIT_TEST", "MockPersister", "1", null, null);
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize();
 
         DerbyPersistor persistor = new DerbyPersistor();
-        persistor.saveEntity(false, entity);
+        persistor.saveEntity(false, entity1, entity2);
 
-        Assert.assertEquals(entity.getTitle(), persistor.getEntity(entity.getKey())[0].getTitle());
+        Assert.assertEquals(entity1.getName(), persistor.getEntity(entity1.getKey())[0].getTitle());
+        Assert.assertEquals(entity2.getName(), persistor.getEntity(entity2.getKey())[0].getTitle());
 
-        createDriver(persistor, newTitle).run();
+        createDriver(persistor, false).run();
 
-        Assert.assertEquals(newTitle, persistor.getEntity(entity.getKey())[0].getTitle());
+        Assert.assertEquals(entity1.getKey(), persistor.getEntity(entity1.getKey())[0].getTitle());
+        Assert.assertEquals(entity2.getKey(), persistor.getEntity(entity2.getKey())[0].getTitle());
+
+        entity1.markAsDeleted();
+        entity2.markAsDeleted();
+
+        persistor.saveEntity(true, entity1, entity2);
     }
 
     /**
      * Setting the title to null will cause the MockOperation to throw an
      * exception which should leave the entity's title unmodified.
-     *
-     * @throws Exception
      */
     @Test
     public void testDriverFailure() throws Exception
@@ -110,15 +114,17 @@ public class AbstractComponentTest {
 
         Assert.assertEquals(entity.getTitle(), persistor.getEntity(entity.getKey())[0].getTitle());
 
-        createDriver(persistor, null).run();
+        createDriver(persistor, true).run();
 
         Assert.assertEquals(entity.getTitle(), persistor.getEntity(entity.getKey())[0].getTitle());
+
+        entity.markAsDeleted();
+
+        persistor.saveEntity(true, entity);
     }
 
     /**
      * This unit test ensure the correct operation of the Mock Scanner.
-     *
-     * @throws Exception
      */
     @Test
     public void testScanner() throws Exception
@@ -126,7 +132,7 @@ public class AbstractComponentTest {
         MockScanner scanner = new MockScanner();
         scanner.setup();
 
-        List<String> columns = new ArrayList<String>();
+        List<String> columns = new ArrayList<>();
         columns.add("objectkey");
         columns.add("2");
 
@@ -136,7 +142,7 @@ public class AbstractComponentTest {
         Object[] row2 = new Object[] { UUID.randomUUID().toString(), "C"
         };
 
-        List<Object[]> rows = new ArrayList<Object[]>();
+        List<Object[]> rows = new ArrayList<>();
         rows.add(row1);
         rows.add(row2);
 
@@ -160,9 +166,9 @@ public class AbstractComponentTest {
         Assert.assertFalse(results.next());
     }
 
-    private MockDriver createDriver(DerbyPersistor persistor, String title) throws Exception
+    private MockDriver createDriver(DerbyPersistor persistor, boolean throwException) throws Exception
     {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_OP_WINDOW_SIZE, "1");
 
         MockScanner scanner = new MockScanner();
@@ -172,9 +178,10 @@ public class AbstractComponentTest {
         MockOperation operation = new MockOperation();
         operation.setSource(persistor);
         operation.setTarget(persistor);
-        operation.setTitle(title);
         operation.setExecutor(null);
+        operation.setThrowException(throwException);
         operation.setHandler(new MockHandler(false));
+        operation.setProperties(params);
 
         MockDriver driver = new MockDriver();
         driver.setScan(scanner);

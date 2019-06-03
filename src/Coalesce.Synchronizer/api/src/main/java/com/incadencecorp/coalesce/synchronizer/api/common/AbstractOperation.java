@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -175,6 +177,19 @@ public abstract class AbstractOperation<T extends AbstractOperationTask> extends
 
                 ii++;
             }
+
+            for (T task : tasks)
+            {
+                try
+                {
+                    task.close();
+                }
+                catch (IOException e)
+                {
+                    LOGGER.warn("(FAILED) Closing RowSet {}", task.getClass().getSimpleName());
+                }
+            }
+
         }
         catch (InterruptedException | ExecutionException e)
         {
@@ -231,30 +246,40 @@ public abstract class AbstractOperation<T extends AbstractOperationTask> extends
                             "Missing Column: " + CoalescePropertyFactory.getEntityKey().getPropertyName());
                 }
 
-                // Obtain list of keys
-                do
-                {
-                    keys.add(rowset.getString(keyIdx));
-                }
-                while (rowset.next());
-
                 if (targets != null)
                 {
+                    // Obtain list of keys
+                    do
+                    {
+                        keys.add(rowset.getString(keyIdx));
+                    }
+                    while (rowset.next());
+
+                    // Reset Cursor
+                    rowset.first();
+
                     String[][] subsets = ArrayHelper.createChunks(keys.toArray(new String[keys.size()]),
                                                                   window,
                                                                   String[][]::new);
 
+                    int startIdx = 1;
+
                     for (String[] subset : subsets)
                     {
+                        CachedRowSet subRowset = RowSetProvider.newFactory().createCachedRowSet();
+                        subRowset.setPageSize(window);
+                        subRowset.populate(rowset, startIdx);
+
+                        startIdx += window;
+
                         T task = createTask();
                         task.setParameters(parameters);
                         task.setSource(source);
-                        task.setRowset(rowset);
+                        task.setRowset(subRowset);
                         task.setSubset(subset);
                         task.setTarget(targets);
                         tasks.add(task);
                     }
-
                 }
                 else
                 {
