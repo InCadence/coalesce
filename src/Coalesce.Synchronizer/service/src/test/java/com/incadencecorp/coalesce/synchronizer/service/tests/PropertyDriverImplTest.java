@@ -46,8 +46,6 @@ public class PropertyDriverImplTest {
     @Test
     public void testDriver() throws Exception
     {
-        String newTitle = "Hello World";
-
         Map<String, String> params = new HashMap<>();
         params.put(SynchronizerParameters.PARAM_DRIVER_INTERVAL_UNITS, TimeUnit.SECONDS.toString());
         params.put(SynchronizerParameters.PARAM_DRIVER_DELAY, "1");
@@ -65,7 +63,6 @@ public class PropertyDriverImplTest {
         scan.setup();
 
         MockOperation operation = new MockOperation();
-        operation.setTitle(newTitle);
         operation.setSource(source);
         operation.setTarget(source);
 
@@ -89,7 +86,7 @@ public class PropertyDriverImplTest {
 
         driver.start();
 
-        Assert.assertEquals(newTitle, source.getEntity(entity.getKey())[0].getTitle());
+        Assert.assertEquals(entity.getKey(), source.getEntity(entity.getKey())[0].getTitle());
 
         driver.stop();
     }

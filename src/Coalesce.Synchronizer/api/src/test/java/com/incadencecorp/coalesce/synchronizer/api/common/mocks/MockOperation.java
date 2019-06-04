@@ -18,13 +18,13 @@
 package com.incadencecorp.coalesce.synchronizer.api.common.mocks;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperation;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperationTask;
 
 import javax.sql.rowset.CachedRowSet;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,16 +35,16 @@ import java.util.Set;
  */
 public class MockOperation extends AbstractOperation<AbstractOperationTask> {
 
-    private String title;
+    private boolean throwException;
 
     /**
-     * Sets the title which will be set by this operation on each entity.
+     * Sets whether the operation should throw an exception.
      *
-     * @param title
+     * @param value
      */
-    public void setTitle(String title)
+    public void setThrowException(boolean value)
     {
-        this.title = title;
+        this.throwException = value;
     }
 
     @Override
@@ -55,21 +55,32 @@ public class MockOperation extends AbstractOperation<AbstractOperationTask> {
             @Override
             protected Boolean doWork(String[] keys, CachedRowSet rowset) throws CoalescePersistorException
             {
-                if (!StringHelper.isNullOrEmpty(title))
+                if (throwException)
+                {
+                    throw new CoalescePersistorException("Hello World");
+                }
+
+                try
                 {
                     // Change Title
                     CoalesceEntity[] entities = source.getEntity(keys);
 
-                    for (CoalesceEntity entity : entities)
+                    if (rowset.first())
                     {
-                        entity.setTitle(title);
+                        int ii = 0;
+
+                        do
+                        {
+                            entities[ii++].setTitle(rowset.getString(1));
+                        }
+                        while (rowset.next());
                     }
 
                     return saveWork(false, entities);
                 }
-                else
+                catch (SQLException e)
                 {
-                    throw new CoalescePersistorException("Failed", null);
+                    throw new CoalescePersistorException(e);
                 }
             }
 
