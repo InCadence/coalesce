@@ -21,6 +21,7 @@ package com.incadencecorp.coalesce.synchronizer.service.operations;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractOperationTask;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractTrexOperation;
 import org.slf4j.Logger;
@@ -45,53 +46,59 @@ public class TrexMergeOperationImpl extends AbstractTrexOperation<AbstractOperat
     {
         return new AbstractOperationTask() {
 
+
             @Override
             protected Boolean doWork(String[] keys, CachedRowSet rowset) throws CoalescePersistorException
             {
-                // Get from Source
-                CoalesceEntity[] entities = source.getEntity(keys);
-                CoalesceEntity[] targetEntities = target.getEntity(keys);
-                CoalesceEntity[] toTarget;
-                if (keys.length != entities.length)
+                for(ICoalescePersistor target:targets)
                 {
-                    for (String key : keys)
+                    // Get from Source
+                    CoalesceEntity[] entities = source.getEntity(keys);
+                    CoalesceEntity[] targetEntities = target.getEntity(keys);
+                    CoalesceEntity[] toTarget;
+                    if (keys.length != entities.length)
                     {
-                        boolean found = false;
-
-                        for (CoalesceEntity entity : entities)
+                        for (String key : keys)
                         {
-                            if (entity.getKey().equalsIgnoreCase(key))
+                            boolean found = false;
+
+                            for (CoalesceEntity entity : entities)
                             {
-                                found = true;
-                                break;
+                                if (entity.getKey().equalsIgnoreCase(key))
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found)
+                            {
+                                throw new CoalescePersistorException("Entity " + key + " was not found", null);
                             }
                         }
-                        if (!found)
+                    }
+                    if (targetEntities.length != 0)
+                    {
+                        toTarget = getEntitiesToTarget(entities, targetEntities);
+                    }
+                    else
+                    {
+                        toTarget = entities;
+                    }
+                    // Copy to Targets
+                    if (LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.debug("Processing {} key(s) for {}", entities.length, target.getClass().getName());
+                        LOGGER.trace("Details:");
+
+                        for (CoalesceEntity entity : toTarget)
                         {
-                            throw new CoalescePersistorException("Entity " + key + " was not found", null);
+                            LOGGER.trace("\tMerged Entity: {} {} {}", entity.getName(), entity.getSource(), entity.getKey());
                         }
                     }
+                    target.saveEntity(false, toTarget);
+                    return true;
                 }
-                if(targetEntities.length != 0)
-                {
-                    toTarget = getEntitiesToTarget(entities, targetEntities);
-                }else
-                {
-                    toTarget = entities;
-                }
-                // Copy to Targets
-                if (LOGGER.isDebugEnabled())
-                {
-                    LOGGER.debug("Processing {} key(s) for {}", entities.length, target.getClass().getName());
-                    LOGGER.trace("Details:");
-
-                    for (CoalesceEntity entity : toTarget)
-                    {
-                        LOGGER.trace("\tMerged Entity: {} {} {}", entity.getName(), entity.getSource(), entity.getKey());
-                    }
-                }
-                target.saveEntity(false, toTarget);
-                return true;
+                return false;
             }
         };
     }

@@ -34,7 +34,9 @@ import org.locationtech.jts.geom.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,6 +59,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         this.normalizer = normalizer;
         this.isAuthoritative = isAuthoritative;
     }
+
 
     public BulkRequest iterate(boolean allowRemoval, CoalesceEntity... entities) throws CoalesceException
     {
@@ -98,6 +101,11 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         }
         source.put(ElasticSearchPersistor.ENTITY_TITLE_COLUMN_NAME, entity.getTitle());
 
+        if(entity.getSource().equalsIgnoreCase("CELLEX"))
+        {
+            param = visitTrex(entity,param);
+        }
+
         DocWriteRequest request;
 
         if (param.allowRemoval)
@@ -115,6 +123,83 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         param.request.add(request);
 
         return true;
+    }
+
+    protected Parameters visitTrex(CoalesceEntity entity, Parameters param) throws CoalesceDataFormatException
+    {
+        Map<String, Object> mapping = new HashMap<>();
+        mapping.putAll(param.common);
+        List<CoalesceSection> sectionList = entity.getSectionsAsList();
+
+        CoalesceSection callsSection = new CoalesceSection();
+        CoalesceSection messagesSection = new CoalesceSection();
+        for (int i = 0; i < sectionList.size();i++)
+        {
+            if (!sectionList.get(i).getName().equalsIgnoreCase("HARMONY DOCUMENTS SECTION")&& !sectionList.get(i).getName().equalsIgnoreCase("CORALREEF DOCUMENTS SECTION"))
+            {
+                if(!sectionList.get(i).getName().equalsIgnoreCase("CELL CALLS SECTION")&& !sectionList.get(i).getName().equalsIgnoreCase("MESSAGES SECTION"))
+                {
+                   mapping.putAll(getCommonMapping(sectionList.get(i).getRecordsetsAsList(),mapping));
+                } else{
+                    if(sectionList.get(i).getName().equalsIgnoreCase("CELL CALLS SECTION"))
+                    {
+                        callsSection = sectionList.get(i);
+                    }else{
+                        messagesSection = sectionList.get(i);
+                    }
+                }
+            }
+        }
+        //Now add mapping to each call record and message record.
+        getCallMessageMapping(callsSection.getRecordsetsAsList(),mapping,param,entity);
+        getCallMessageMapping(messagesSection.getRecordsetsAsList(),mapping,param,entity);
+        return param;
+    }
+
+
+    public Boolean getCallMessageMapping(List<CoalesceRecordset> recordsetList, Map<String, Object> mapping,Parameters param,CoalesceEntity entity)
+            throws CoalesceDataFormatException
+    {
+        for (int j = 0; j < recordsetList.size(); j++)
+        {
+            CoalesceRecordset recordset = recordsetList.get(j);
+            if (recordset.isFlatten())
+            {
+                for (CoalesceRecord record : recordset.getAllRecords())
+                {
+                    if (record.isFlatten())
+                    {
+                        mapping.putAll(createMapping(record));
+                        param.request.add(visitObject(record, param.recordIndex, "entity", mapping));
+
+                    }
+                }
+            }
+        }
+
+
+        return false;
+    }
+
+    public Map<String, Object> getCommonMapping(List<CoalesceRecordset> recordsetList, Map<String, Object> mapping)
+            throws CoalesceDataFormatException
+    {
+        for (int j = 0; j < recordsetList.size(); j++)
+        {
+            CoalesceRecordset recordset = recordsetList.get(j);
+            if (recordset.isFlatten())
+            {
+                for (CoalesceRecord record : recordset.getAllRecords())
+                {
+                    if (record.isFlatten())
+                    {
+                        mapping.putAll(createMapping(record));
+                    }
+                }
+            }
+        }
+
+        return mapping;
     }
 
     @Override

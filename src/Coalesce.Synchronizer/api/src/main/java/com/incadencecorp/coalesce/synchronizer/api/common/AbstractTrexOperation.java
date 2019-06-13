@@ -279,12 +279,13 @@ public abstract class AbstractTrexOperation<T extends AbstractOperationTask> ext
                             // TODO Load XML First
                             for (ICoalescePersistor target : targets)
                             {
+                                ICoalescePersistor[] a = {target};
                                 T task = createTask();
                                 task.setParameters(parameters);
                                 task.setSource(source);
                                 task.setRowset(rowset);
                                 task.setSubset(subset);
-                                task.setTarget(target);
+                                task.setTarget(a);
                                 tasks.add(task);
                             }
                         }

@@ -183,7 +183,7 @@ public class SQLSearchPersisterImpl extends SQLPersisterImpl implements ICoalesc
         // Add Parameters
         for (Object value : filter.getLiteralValues())
         {
-            if(value instanceof Date)
+            if(value instanceof Date || value instanceof DateTime)
             {
                 //DateTime has to be formatted to ISODateTimeFormat  
                 DateTime dateTime = new DateTime(value);

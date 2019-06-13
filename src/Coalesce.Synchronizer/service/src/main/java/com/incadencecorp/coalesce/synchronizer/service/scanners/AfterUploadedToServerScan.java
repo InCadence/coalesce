@@ -142,7 +142,7 @@ public class AfterUploadedToServerScan extends AbstractScan {
             if (result.last())
             {
                 String timestamp = result.getString(properties.size() + 1);
-                pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.parseDateTime(timestamp));
+                //pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.parseDateTime(timestamp));
             }
             result.beforeFirst();
         }
