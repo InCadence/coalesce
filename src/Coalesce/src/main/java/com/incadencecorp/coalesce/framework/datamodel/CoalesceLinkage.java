@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.api.CoalesceAttributes;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
-import org.apache.commons.lang.NullArgumentException;
+
 
 import javax.xml.namespace.QName;
 import java.util.Locale;
@@ -108,7 +108,7 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     public static CoalesceLinkage create(CoalesceLinkageSection parent)
     {
         if (parent == null)
-            throw new NullArgumentException("parent");
+            throw new IllegalArgumentException("parent");
 
         CoalesceLinkage newLinkage = new CoalesceLinkage();
 
@@ -147,9 +147,9 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     protected boolean initialize(CoalesceLinkageSection parent, Linkage linkage)
     {
         if (parent == null)
-            throw new NullArgumentException("parent");
+            throw new IllegalArgumentException("parent");
         if (linkage == null)
-            throw new NullArgumentException("linkage");
+            throw new IllegalArgumentException("linkage");
 
         setParent(parent);
         _entityLinkage = linkage;

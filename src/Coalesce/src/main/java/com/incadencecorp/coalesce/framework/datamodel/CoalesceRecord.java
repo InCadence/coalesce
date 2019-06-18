@@ -3,7 +3,7 @@ package com.incadencecorp.coalesce.framework.datamodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.NullArgumentException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,9 +76,9 @@ public class CoalesceRecord extends CoalesceObjectHistory {
     public static CoalesceRecord create(CoalesceRecordset parent, String name)
     {
         if (parent == null)
-            throw new NullArgumentException("parent");
+            throw new IllegalArgumentException("parent");
         if (name == null)
-            throw new NullArgumentException("name");
+            throw new IllegalArgumentException("name");
         if (StringHelper.isNullOrEmpty(name))
             throw new IllegalArgumentException("name cannot be an empty string");
 
@@ -114,9 +114,9 @@ public class CoalesceRecord extends CoalesceObjectHistory {
     protected boolean initialize(CoalesceRecordset parent, Record record)
     {
         if (parent == null)
-            throw new NullArgumentException("parent");
+            throw new IllegalArgumentException("parent");
         if (record == null)
-            throw new NullArgumentException("record");
+            throw new IllegalArgumentException("record");
 
         // Set References
         setParent(parent);

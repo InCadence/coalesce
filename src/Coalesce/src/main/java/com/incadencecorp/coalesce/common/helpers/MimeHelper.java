@@ -1,6 +1,6 @@
 package com.incadencecorp.coalesce.common.helpers;
 
-import org.apache.commons.lang.NullArgumentException;
+
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -46,7 +46,7 @@ public final class MimeHelper {
      */
     public static String getExtensionForMimeType(String mimeType)
     {
-        if (mimeType == null) throw new NullArgumentException("mimeType");
+        if (mimeType == null) throw new IllegalArgumentException("mimeType");
 
         String extension;
 
@@ -463,7 +463,7 @@ public final class MimeHelper {
      */
     public static String getMimeTypeForExtension(String extension)
     {
-        if (extension == null) throw new NullArgumentException("extension");
+        if (extension == null) throw new IllegalArgumentException("extension");
 
         String mimeType;
 
@@ -1052,7 +1052,7 @@ public final class MimeHelper {
      */
     public static String getFileTypeForMimeType(String mimeType)
     {
-        if (mimeType == null) throw new NullArgumentException("mimeType");
+        if (mimeType == null) throw new IllegalArgumentException("mimeType");
 
         String fileType = "";
 

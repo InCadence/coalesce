@@ -28,7 +28,7 @@ import com.incadencecorp.coalesce.framework.PropertyLoader;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,31 +83,31 @@ public class KafkaFileSubscriberImpl implements ICoalesceSubscriber, Closeable {
     @Override
     public void subscribeToMetrics(ICoalesceEventHandler<MetricsEvent> handler)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("subscribeToMetrics");
     }
 
     @Override
     public void subscribeToCRUD(ICoalesceEventHandler<CrudEvent> handler)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("subscribeToCRUD");
     }
 
     @Override
     public void subscribeLinkages(ICoalesceEventHandler<LinkageEvent> handler)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("subscribeLinkages");
     }
 
     @Override
     public void subscribeAudit(ICoalesceEventHandler<AuditEvent> handler)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("subscribeAudit");
     }
 
     @Override
     public void subscribeJobComplete(ICoalesceEventHandler<JobEvent> handler)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("subscribeJobComplete");
     }
 
     @Override

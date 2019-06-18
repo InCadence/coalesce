@@ -17,7 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import org.apache.commons.lang.NullArgumentException;
+
 import org.apache.xerces.impl.dv.util.Base64;
 
 import com.incadencecorp.coalesce.api.ICoalesceBinaryField;
@@ -82,7 +82,7 @@ abstract public class CoalesceBinaryFieldBase<T> extends CoalesceField<T> implem
         else
         {
             if (dataBytes == null)
-                throw new NullArgumentException("dataBytes");
+                throw new IllegalArgumentException("dataBytes");
 
             setBaseValue(Base64.encode(dataBytes));
             setFilename(filename);

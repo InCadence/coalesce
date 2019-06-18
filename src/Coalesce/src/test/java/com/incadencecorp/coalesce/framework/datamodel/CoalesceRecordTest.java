@@ -4,7 +4,7 @@ import com.incadencecorp.coalesce.api.ICoalesceFieldDefinitionFactory;
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import org.apache.commons.lang.NullArgumentException;
+
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class CoalesceRecordTest {
      * @After public void tearDown() throws Exception { }
      */
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNullParentTest()
     {
         @SuppressWarnings("unused")
@@ -51,7 +51,7 @@ public class CoalesceRecordTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNullNameTest()
     {
         CoalesceRecordset recordset = getMissionRecordset();
@@ -60,7 +60,7 @@ public class CoalesceRecordTest {
         CoalesceRecord record = CoalesceRecord.create(recordset, null);
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNullBothTest()
     {
         @SuppressWarnings("unused")
@@ -139,7 +139,7 @@ public class CoalesceRecordTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNullParentTest()
     {
         CoalesceRecord record = new CoalesceRecord();
@@ -147,7 +147,7 @@ public class CoalesceRecordTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNullRecordTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
@@ -157,7 +157,7 @@ public class CoalesceRecordTest {
         record.initialize(recordset, null);
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNullBothTest()
     {
         @SuppressWarnings("unused")

@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.lang.NullArgumentException;
+
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -46,7 +46,7 @@ public class CoalesceLinkageSectionTest {
      * @After public void tearDown() throws Exception { }
      */
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNullParentTest()
     {
         @SuppressWarnings("unused")
@@ -101,7 +101,7 @@ public class CoalesceLinkageSectionTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNullTest()
     {
         CoalesceLinkageSection linkageSection = new CoalesceLinkageSection();

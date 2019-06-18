@@ -10,7 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.lang.NullArgumentException;
+
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -87,7 +87,7 @@ public class CoalesceLinkageTest {
         Assert.assertNull(entity1.getLinkage(ELinkTypes.CREATED));
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNullParentTest()
     {
         @SuppressWarnings("unused")
@@ -145,14 +145,14 @@ public class CoalesceLinkageTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNullParentTest()
     {
         CoalesceLinkage linkage = new CoalesceLinkage();
         linkage.initialize(null, new Linkage());
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNullLinkageTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
@@ -163,7 +163,7 @@ public class CoalesceLinkageTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNullBothTest()
     {
         CoalesceLinkage linkage = new CoalesceLinkage();

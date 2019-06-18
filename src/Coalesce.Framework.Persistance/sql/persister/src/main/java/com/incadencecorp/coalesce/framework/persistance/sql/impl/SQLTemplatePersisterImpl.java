@@ -27,7 +27,7 @@ import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.persistance.*;
 import com.incadencecorp.coalesce.search.resultset.CoalesceCommonColumns;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,7 +180,7 @@ public class SQLTemplatePersisterImpl extends CoalescePersistorBase implements I
     @Override
     public void unregisterTemplate(String... keys) throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("unregisterTemplate");
     }
 
     @Override

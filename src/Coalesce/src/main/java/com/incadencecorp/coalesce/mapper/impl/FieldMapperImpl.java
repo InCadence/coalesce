@@ -17,7 +17,7 @@
 
 package com.incadencecorp.coalesce.mapper.impl;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import com.incadencecorp.coalesce.api.ICoalesceMapper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceBinaryField;

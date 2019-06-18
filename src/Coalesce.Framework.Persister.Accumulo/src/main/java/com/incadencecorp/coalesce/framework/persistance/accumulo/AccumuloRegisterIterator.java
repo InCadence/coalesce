@@ -24,7 +24,7 @@ import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIteratorDataTypes;
 import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.geotools.factory.Hints;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;

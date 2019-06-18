@@ -22,7 +22,7 @@ import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.geotools.data.Query;
 import org.geotools.filter.Capabilities;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ public class RESTSearchPersisterImpl extends RESTPersisterImpl implements ICoale
     @Override
     public SearchResults search(Query query) throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("search");
     }
 
     @Override

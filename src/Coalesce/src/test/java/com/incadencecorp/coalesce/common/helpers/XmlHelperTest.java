@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.UnsupportedCharsetException;
 
-import org.apache.commons.lang.NullArgumentException;
+
 import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
@@ -225,7 +225,7 @@ public class XmlHelperTest {
     @Test
     public void getAttributeNullNodeTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("xmlNode");
 
         XmlHelper.getAttribute(null, "Test");
@@ -269,7 +269,7 @@ public class XmlHelperTest {
     @Test
     public void getAttributeAsDateNullNodeTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("xmlNode");
 
         XmlHelper.getAttributeAsDate(null, "lastmodified");
@@ -341,7 +341,7 @@ public class XmlHelperTest {
     @Test
     public void setAttributeNullDocTest() throws SAXException, IOException
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("doc");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
@@ -357,7 +357,7 @@ public class XmlHelperTest {
     @Test
     public void setAttributeNullNodeTest() throws SAXException, IOException
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("xmlNode");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
@@ -472,7 +472,7 @@ public class XmlHelperTest {
     @Test
     public void setAttributeAsDateNullDocTest() throws SAXException, IOException
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("doc");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
@@ -488,7 +488,7 @@ public class XmlHelperTest {
     @Test
     public void setAttributeAsDateNullNodeTest() throws SAXException, IOException
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("xmlNode");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
@@ -597,7 +597,7 @@ public class XmlHelperTest {
     @Test
     public void loadXmlFromNullXmlTest() throws SAXException, IOException
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("xml");
 
         XmlHelper.loadXmlFrom((String) null);
@@ -625,7 +625,7 @@ public class XmlHelperTest {
     @Test
     public void loadXmlFromISNullStreamTest() throws SAXException, IOException
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("is");
 
         XmlHelper.loadXmlFrom((InputStream) null);

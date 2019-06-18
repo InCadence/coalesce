@@ -2,7 +2,7 @@ package com.incadencecorp.coalesce.common.helpers;
 
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import org.apache.commons.lang.NullArgumentException;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
@@ -87,12 +87,12 @@ public final class JodaDateTimeHelper {
      *
      * @param value the date string in the form of 'yyyyMMdd'
      * @return the converted date object
-     * @throws NullArgumentException
+     * @throws IllegalArgumentException
      */
     public static DateTime convertyyyyMMddDateStringToDateTime(String value)
     {
         if (value == null)
-            throw new NullArgumentException("value");
+            throw new IllegalArgumentException("value");
 
         try
         {
@@ -119,7 +119,7 @@ public final class JodaDateTimeHelper {
     public static String militaryFormat(DateTime value, boolean dateOnly)
     {
         if (value == null)
-            throw new NullArgumentException("value");
+            throw new IllegalArgumentException("value");
 
         if (dateOnly)
         {
@@ -293,9 +293,9 @@ public final class JodaDateTimeHelper {
                                                  boolean dateOnly)
     {
         if (firstDate == null)
-            throw new NullArgumentException("firstDate");
+            throw new IllegalArgumentException("firstDate");
         if (secondDate == null)
-            throw new NullArgumentException("secondDate");
+            throw new IllegalArgumentException("secondDate");
 
         boolean isFutureDate = false;
         String elapsedString = "";

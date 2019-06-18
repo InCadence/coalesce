@@ -1,6 +1,5 @@
 package com.incadencecorp.coalesce.common.helpers;
 
-import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -260,7 +259,7 @@ public final class XmlHelper {
     public static String getAttribute(Node xmlNode, String name)
     {
         if (xmlNode == null)
-            throw new NullArgumentException("xmlNode");
+            throw new IllegalArgumentException("xmlNode");
 
         if (StringHelper.isNullOrEmpty(name))
             return "";
@@ -291,7 +290,7 @@ public final class XmlHelper {
     public static DateTime getAttributeAsDate(Node xmlNode, String name)
     {
         if (xmlNode == null)
-            throw new NullArgumentException("xmlNode");
+            throw new IllegalArgumentException("xmlNode");
 
         String dateString = getAttribute(xmlNode, name);
 
@@ -318,9 +317,9 @@ public final class XmlHelper {
     public static void setAttribute(Document doc, Node xmlNode, String name, String value)
     {
         if (doc == null)
-            throw new NullArgumentException("doc");
+            throw new IllegalArgumentException("doc");
         if (xmlNode == null)
-            throw new NullArgumentException("xmlNode");
+            throw new IllegalArgumentException("xmlNode");
         if (name == null || StringHelper.isNullOrEmpty(name.trim()))
             throw new IllegalArgumentException("name cannot be null or empty");
 
@@ -527,7 +526,7 @@ public final class XmlHelper {
     {
         if (xml == null)
         {
-            throw new NullArgumentException("xml");
+            throw new IllegalArgumentException("xml");
         }
 
         return loadXmlFrom(new ByteArrayInputStream(xml.getBytes(charset)));
@@ -546,7 +545,7 @@ public final class XmlHelper {
     public static Document loadXmlFrom(InputStream is) throws SAXException, IOException
     {
         if (is == null)
-            throw new NullArgumentException("is");
+            throw new IllegalArgumentException("is");
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);

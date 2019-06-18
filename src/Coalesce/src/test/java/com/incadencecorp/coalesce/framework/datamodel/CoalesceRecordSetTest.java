@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.lang.NullArgumentException;
+
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -108,14 +108,14 @@ public class CoalesceRecordSetTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNullParentTest()
     {
         @SuppressWarnings("unused")
         CoalesceRecordset recordset = CoalesceRecordset.create(null, "New Section");
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNullNameTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
@@ -151,7 +151,7 @@ public class CoalesceRecordSetTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNullBothTest()
     {
 
@@ -244,7 +244,7 @@ public class CoalesceRecordSetTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNullParentTest()
     {
 
@@ -253,7 +253,7 @@ public class CoalesceRecordSetTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initialzeNullRecordsetTest()
     {
         CoalesceEntity entity = new CoalesceEntity();
@@ -265,7 +265,7 @@ public class CoalesceRecordSetTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNullBothTest()
     {
 

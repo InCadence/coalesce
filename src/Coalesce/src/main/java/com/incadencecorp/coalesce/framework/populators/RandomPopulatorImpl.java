@@ -20,7 +20,7 @@ package com.incadencecorp.coalesce.framework.populators;
 import java.util.Random;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
