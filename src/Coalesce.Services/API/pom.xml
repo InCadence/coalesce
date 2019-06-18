@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>coalesce-services-api</artifactId>
-	<packaging>bundle</packaging>
-	<name>Coalesce Services API</name>
-	<description>Coalesce Service APIs</description>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>coalesce-services-api</artifactId>
+    <packaging>bundle</packaging>
+    <name>Coalesce Services API</name>
+    <description>Coalesce Service APIs</description>
 
 	<parent>
 		<groupId>com.incadencecorp.coalesce.services</groupId>
@@ -13,107 +13,132 @@
 		<relativePath>..</relativePath>
 	</parent>
 
-	<build>
-		<resources>
-			<resource>
-				<directory>target/generated-sources/cxf</directory>
-				<includes>
-					<include>**/*.java</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>**/*.gwt.xml</include>
-					<include>**/*.xsd</include>
-					<include>**/*.wsdl</include>
-				</includes>
-			</resource>
-		</resources>
+    <build>
+        <resources>
+            <resource>
+                <directory>target/generated-sources/cxf</directory>
+                <includes>
+                    <include>**/*.java</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.gwt.xml</include>
+                    <include>**/*.xsd</include>
+                    <include>**/*.wsdl</include>
+                </includes>
+            </resource>
+        </resources>
 
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>${maven.bundle.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Bundle-Name>${project.name}</Bundle-Name>
-						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-						<Export-Package>
-							${project.groupId}.*
-						</Export-Package>
-					</instructions>
-				</configuration>
-			</plugin>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${maven.bundle.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>
+                            ${project.groupId}.*
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>${cxf.version}</version>
-				<executions>
-					<execution>
-						<id>generate-sources</id>
-						<phase>generate-sources</phase>
-						<configuration>
-							<defaultOptions>
-								<bindingFiles>
-									<bindingFile>${basedir}/src/main/resources/CoalesceBinding.xjb</bindingFile>
-								</bindingFiles>
-								<extraargs>
-									<extraarg>-xjc-Xsetters</extraarg>
-									<extraarg>-xjc-Xinheritance</extraarg>
-									<extraarg>-nexclude</extraarg>
-									<extraarg>http://coalesce.incadencecorp.com/api</extraarg>
-								</extraargs>
-							</defaultOptions>
-							<wsdlRoot>${basedir}/src/main/resources</wsdlRoot>
-							<includes>
-								<include>*.wsdl</include>
-							</includes>
-							<fork>always</fork>
-						</configuration>
-						<goals>
-							<goal>wsdl2java</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <version>${cxf.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <defaultOptions>
+                                <bindingFiles>
+                                    <bindingFile>${basedir}/src/main/resources/CoalesceBinding.xjb</bindingFile>
+                                </bindingFiles>
+                                <extraargs>
+                                    <extraarg>-xjc-Xsetters</extraarg>
+                                    <extraarg>-xjc-Xinheritance</extraarg>
+                                    <extraarg>-nexclude</extraarg>
+                                    <extraarg>http://coalesce.incadencecorp.com/api</extraarg>
+                                </extraargs>
+                            </defaultOptions>
+                            <wsdlRoot>${basedir}/src/main/resources</wsdlRoot>
+                            <includes>
+                                <include>*.wsdl</include>
+                            </includes>
+                            <fork>always</fork>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-objects</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-objects</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.jvnet.jaxb2_commons</groupId>
-			<artifactId>jaxb2-basics</artifactId>
-			<version>1.11.1</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf.xjc-utils</groupId>
-			<artifactId>cxf-xjc-runtime</artifactId>
-			<version>${cxf.xjc.version}</version>
-			<scope>compile</scope>
-		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>xml-apis</groupId> -->
-<!-- 			<artifactId>xml-apis</artifactId> -->
-<!-- 			<version>1.4.01</version> -->
-<!-- 			<scope>compile</scope> -->
-<!-- 		</dependency> -->
+        <dependency>
+            <groupId>org.jvnet.jaxb2_commons</groupId>
+            <artifactId>jaxb2-basics</artifactId>
+            <version>1.11.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf.xjc-utils</groupId>
+            <artifactId>cxf-xjc-runtime</artifactId>
+            <version>${cxf.xjc.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--
+                <dependency>
+                    <groupId>com.sun.xml.ws</groupId>
+                    <artifactId>jaxws-ri</artifactId>
+                    <version>2.3.0</version>
+                    <type>pom</type>
+                </dependency>
+        -->
+        <dependency>
+            <groupId>javax.jws</groupId>
+            <artifactId>javax.jws-api</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.soap</groupId>
+            <artifactId>javax.xml.soap-api</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.ws</groupId>
+            <artifactId>jaxws-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+
+        <!-- 		<dependency> -->
+        <!-- 			<groupId>xml-apis</groupId> -->
+        <!-- 			<artifactId>xml-apis</artifactId> -->
+        <!-- 			<version>1.4.01</version> -->
+        <!-- 			<scope>compile</scope> -->
+        <!-- 		</dependency> -->
 
 
-	</dependencies>
+    </dependencies>
 
 </project>
