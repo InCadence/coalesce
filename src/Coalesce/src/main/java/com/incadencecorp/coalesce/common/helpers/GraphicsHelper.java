@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.lang.NullArgumentException;
 import org.imgscalr.Scalr;
 
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
@@ -57,7 +56,7 @@ public final class GraphicsHelper {
      */
     public static BufferedImage resampleWithHeight(BufferedImage imageToResample, int height)
     {
-        if (imageToResample == null) throw new NullArgumentException("imageToResample");
+        if (imageToResample == null) throw new IllegalArgumentException("imageToResample");
 
         // Calculate the Width, maintaining the same aspect ratio as the original image.
         return resampleToExact(imageToResample, height, height * imageToResample.getWidth() / imageToResample.getHeight());
@@ -73,7 +72,7 @@ public final class GraphicsHelper {
      */
     public static BufferedImage resampleWithWidth(BufferedImage imageToResample, int width)
     {
-        if (imageToResample == null) throw new NullArgumentException("imageToResample");
+        if (imageToResample == null) throw new IllegalArgumentException("imageToResample");
 
         // Calculate the Height, maintaining the same aspect ratio as the original image.
         return resampleToExact(imageToResample, width * imageToResample.getHeight() / imageToResample.getWidth(), width);
@@ -90,7 +89,7 @@ public final class GraphicsHelper {
      */
     public static BufferedImage resampleToExact(BufferedImage imageToResample, int height, int width)
     {
-        if (imageToResample == null) throw new NullArgumentException("imageToResample");
+        if (imageToResample == null) throw new IllegalArgumentException("imageToResample");
 
         return Scalr.resize(imageToResample, Scalr.Mode.FIT_EXACT, width, height, Scalr.OP_ANTIALIAS);
     }
@@ -214,7 +213,7 @@ public final class GraphicsHelper {
 
     private static double scaleWidthByHeightResampleRatio(BufferedImage imageToResample, int height, int width)
     {
-        if (imageToResample == null) throw new NullArgumentException("imageToResample");
+        if (imageToResample == null) throw new IllegalArgumentException("imageToResample");
 
         double originalWidth = imageToResample.getWidth();
         double originalHeight = imageToResample.getHeight();

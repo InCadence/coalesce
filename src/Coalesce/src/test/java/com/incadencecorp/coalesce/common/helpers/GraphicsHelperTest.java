@@ -13,7 +13,7 @@ import java.nio.file.StandardCopyOption;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.lang.NullArgumentException;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -183,7 +183,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithHeightNullTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("imageToResample");
 
         @SuppressWarnings("unused")
@@ -253,7 +253,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithWidthNullTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("imageToResample");
 
         @SuppressWarnings("unused")
@@ -324,7 +324,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToExactNullTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("imageToResample");
 
         @SuppressWarnings("unused")
@@ -335,7 +335,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleSmallestNullTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("imageToResample");
 
         @SuppressWarnings("unused")
@@ -637,7 +637,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestNullTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("imageToResample");
 
         @SuppressWarnings("unused")

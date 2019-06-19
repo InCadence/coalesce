@@ -5,8 +5,8 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import org.apache.commons.lang.NullArgumentException;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -959,9 +959,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     public boolean setEntityId(String typeParam, String value)
     {
         if (typeParam == null)
-            throw new NullArgumentException("typeParam");
+            throw new IllegalArgumentException("typeParam");
         if (value == null)
-            throw new NullArgumentException("value");
+            throw new IllegalArgumentException("value");
         if (typeParam.trim().equals(""))
             throw new IllegalArgumentException("typeParam cannot be empty");
         if (value.trim().equals(""))

@@ -3,7 +3,7 @@ package com.incadencecorp.coalesce.common.helpers;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
-import org.apache.commons.lang.NullArgumentException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -627,9 +627,9 @@ public final class EntityLinkHelper {
 
     {
         if (entity1 == null)
-            throw new NullArgumentException("entity1");
+            throw new IllegalArgumentException("entity1");
         if (entity2 == null)
-            throw new NullArgumentException("entity2");
+            throw new IllegalArgumentException("entity2");
 
         // Get the LinkageSections for each Entity. Exit if not found.
 

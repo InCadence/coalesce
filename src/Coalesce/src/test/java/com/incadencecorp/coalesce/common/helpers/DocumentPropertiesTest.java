@@ -3,7 +3,7 @@ package com.incadencecorp.coalesce.common.helpers;
 import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.NullArgumentException;
+
 import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -117,7 +117,7 @@ public class DocumentPropertiesTest {
     @Test
     public void initializeNullFilenameTest() throws Exception
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("fullFilename");
 
         DocumentProperties docProps = new DocumentProperties();

@@ -27,7 +27,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.mapper.impl.FieldMapperImpl;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;

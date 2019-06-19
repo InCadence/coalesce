@@ -24,7 +24,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceTemplatePersister;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,7 +174,7 @@ public class RESTTemplatePersisterImpl implements ICoalesceTemplatePersister {
     @Override
     public void unregisterTemplate(String... keys) throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("unregisterTemplate");
     }
 
     @Override

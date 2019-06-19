@@ -30,7 +30,7 @@ import java.util.zip.ZipInputStream;
 //import org.apache.batik.util.SVGConstants;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.NullArgumentException;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -198,7 +198,7 @@ public class DocumentProperties {
 
     private boolean initializeFileInfo(String fullFilename)
     {
-        if (fullFilename == null) throw new NullArgumentException("fullFilename");
+        if (fullFilename == null) throw new IllegalArgumentException("fullFilename");
         if (StringHelper.isNullOrEmpty(fullFilename)) return false;
 
         Path path;

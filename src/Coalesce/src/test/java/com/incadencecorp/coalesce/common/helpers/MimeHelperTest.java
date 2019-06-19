@@ -2,7 +2,7 @@ package com.incadencecorp.coalesce.common.helpers;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.commons.lang.NullArgumentException;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -193,7 +193,7 @@ public class MimeHelperTest {
     @Test
     public void getExtensionForMimeTypeNullTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("mimeType");
 
         MimeHelper.getExtensionForMimeType(null);
@@ -432,7 +432,7 @@ public class MimeHelperTest {
     @Test
     public void getMimeTypeForExtensionNullTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("extension");
 
         MimeHelper.getMimeTypeForExtension(null);
@@ -507,7 +507,7 @@ public class MimeHelperTest {
     @Test
     public void getFileTypeForMimeTypeNullTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("mimeType");
 
         MimeHelper.getFileTypeForMimeType(null);
@@ -563,7 +563,7 @@ public class MimeHelperTest {
     @Test
     public void getFileTypeForExtensionNullTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("extension");
 
         MimeHelper.getFileTypeForExtension(null);

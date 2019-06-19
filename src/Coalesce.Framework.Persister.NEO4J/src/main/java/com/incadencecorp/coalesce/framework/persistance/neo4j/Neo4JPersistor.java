@@ -33,8 +33,8 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -387,7 +387,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         }
         else
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("getEntityXml");
         }
 
         return results.toArray(new String[results.size()]);
@@ -672,20 +672,20 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     @Override
     public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("getEntityTemplate");
     }
 
     @Override
     public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version)
             throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("getEntityTemplate");
     }
 
     @Override
     public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("getEntityTemplateKey");
     }
 
     @Override

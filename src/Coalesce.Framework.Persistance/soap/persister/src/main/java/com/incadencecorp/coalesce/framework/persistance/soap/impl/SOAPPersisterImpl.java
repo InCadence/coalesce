@@ -39,7 +39,7 @@ import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
 import com.incadencecorp.coalesce.services.crud.client.jaxws.CrudJaxwsClientImpl;
 import com.incadencecorp.coalesce.services.search.api.ISearchClient;
 import com.incadencecorp.coalesce.services.search.client.jaxws.SearchJaxwsClientImpl;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.geotools.data.Query;
 import org.geotools.filter.Capabilities;
 import org.opengis.filter.expression.PropertyName;
@@ -271,7 +271,7 @@ public class SOAPPersisterImpl implements ICoalescePersistor, ICoalesceSearchPer
     @Override
     public void deleteTemplate(String... keys) throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("deleteTemplate");
     }
 
     @Override
@@ -283,31 +283,31 @@ public class SOAPPersisterImpl implements ICoalescePersistor, ICoalesceSearchPer
     @Override
     public void unregisterTemplate(String... keys) throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("unregisterTemplate");
     }
 
     @Override
     public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("CoalesceEntityTemplate");
     }
 
     @Override
     public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version)
             throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("CoalesceEntityTemplate");
     }
 
     @Override
     public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("getEntityTemplateKey");
     }
 
     @Override
     public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("getEntityTemplateMetadata");
     }
 }

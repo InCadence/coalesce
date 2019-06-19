@@ -1,6 +1,6 @@
 package com.incadencecorp.coalesce.common.helpers;
 
-import org.apache.commons.lang.NullArgumentException;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
@@ -73,7 +73,7 @@ public class JodaDateTimeHelperTest {
     @Test
     public void convertYYYYMMDDDateStringToDateTimeNullTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("value");
 
         @SuppressWarnings("unused")
@@ -115,7 +115,7 @@ public class JodaDateTimeHelperTest {
     @Test
     public void militaryFormatNullDateTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("value");
 
         @SuppressWarnings("unused")
@@ -125,7 +125,7 @@ public class JodaDateTimeHelperTest {
     @Test
     public void militaryFormatNullDateNoDateTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("value");
 
         @SuppressWarnings("unused")
@@ -176,7 +176,7 @@ public class JodaDateTimeHelperTest {
     @Test
     public void getElapsedGMTTimeStringNullFirstDateTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("firstDate");
 
         JodaDateTimeHelper.getElapsedGMTTimeString(null, JodaDateTimeHelper.nowInUtc(), true, true, true);
@@ -186,7 +186,7 @@ public class JodaDateTimeHelperTest {
     @Test
     public void getElapsedGMTTimeStringNullSecondDateTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("secondDate");
 
         JodaDateTimeHelper.getElapsedGMTTimeString(JodaDateTimeHelper.nowInUtc(), null, true, true, true);
@@ -196,7 +196,7 @@ public class JodaDateTimeHelperTest {
     @Test
     public void getElapsedGMTTimeStringNullBothDatesTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("firstDate");
 
         JodaDateTimeHelper.getElapsedGMTTimeString(null, null, true, true, true);

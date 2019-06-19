@@ -4,7 +4,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 import com.incadencecorp.coalesce.search.api.EFilterEnumerationModes;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.Hints;
 import org.geotools.filter.FilterCapabilities;

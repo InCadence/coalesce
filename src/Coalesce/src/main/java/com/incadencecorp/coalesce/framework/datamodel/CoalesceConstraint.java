@@ -20,14 +20,13 @@ package com.incadencecorp.coalesce.framework.datamodel;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.incadencecorp.coalesce.api.Views;
-import org.apache.commons.lang.NullArgumentException;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
@@ -350,13 +349,13 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
     private static CoalesceConstraint create(CoalesceFieldDefinition parent, String name, ConstraintType type, String value)
     {
         if (parent == null)
-            throw new NullArgumentException("parent");
+            throw new IllegalArgumentException("parent");
         if (name == null)
-            throw new NullArgumentException("name");
+            throw new IllegalArgumentException("name");
         if (StringHelper.isNullOrEmpty(name))
             throw new IllegalArgumentException("name cannot be an empty string");
         if (type == null)
-            throw new NullArgumentException("type");
+            throw new IllegalArgumentException("type");
 
         Constraint newConstraint = new Constraint();
         parent.getDefinitionConstraints().add(newConstraint);

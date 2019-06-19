@@ -2,7 +2,7 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Stores credentials and other settings for database connections.

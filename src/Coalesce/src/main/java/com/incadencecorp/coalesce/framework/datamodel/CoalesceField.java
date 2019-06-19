@@ -27,7 +27,7 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.joda.time.DateTime;
 
 import javax.xml.namespace.QName;

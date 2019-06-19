@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import org.apache.commons.lang.NullArgumentException;
+
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -80,9 +80,9 @@ public class CoalesceSection extends CoalesceObjectHistory {
     {
 
         if (parent == null)
-            throw new NullArgumentException("parent");
+            throw new IllegalArgumentException("parent");
         if (name == null)
-            throw new NullArgumentException("name");
+            throw new IllegalArgumentException("name");
         if (StringHelper.isNullOrEmpty(name.trim()))
             throw new IllegalArgumentException("name cannot be empty");
 
@@ -128,9 +128,9 @@ public class CoalesceSection extends CoalesceObjectHistory {
     {
 
         if (parent == null)
-            throw new NullArgumentException("parent");
+            throw new IllegalArgumentException("parent");
         if (name == null)
-            throw new NullArgumentException("name");
+            throw new IllegalArgumentException("name");
         if (StringHelper.isNullOrEmpty(name.trim()))
             throw new IllegalArgumentException("name cannot be empty");
 
@@ -215,9 +215,9 @@ public class CoalesceSection extends CoalesceObjectHistory {
     {
 
         if (parent == null)
-            throw new NullArgumentException("parent");
+            throw new IllegalArgumentException("parent");
         if (section == null)
-            throw new NullArgumentException("section");
+            throw new IllegalArgumentException("section");
 
         // Set References
         setParent(parent);

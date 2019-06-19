@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import org.apache.commons.lang.NullArgumentException;
+
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     public static CoalesceLinkageSection create(CoalesceEntity parent, boolean noIndex)
     {
         if (parent == null)
-            throw new NullArgumentException("parent");
+            throw new IllegalArgumentException("parent");
 
         if (parent.getLinkageSection() != null)
             return parent.getLinkageSection();
@@ -97,7 +97,7 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     protected boolean initialize(CoalesceEntity parent)
     {
         if (parent == null)
-            throw new NullArgumentException("parent");
+            throw new IllegalArgumentException("parent");
 
         // Set References
         setParent(parent);

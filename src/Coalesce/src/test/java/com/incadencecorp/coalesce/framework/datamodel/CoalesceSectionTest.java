@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.lang.NullArgumentException;
+
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -121,7 +121,7 @@ public class CoalesceSectionTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createSectionNullEntityParentTest()
     {
         CoalesceEntity parent = null;
@@ -129,7 +129,7 @@ public class CoalesceSectionTest {
         CoalesceSection liveSection = CoalesceSection.create(parent, "Live Status Section");
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createSectionNullSectionParentTest()
     {
         CoalesceSection parent = null;
@@ -137,7 +137,7 @@ public class CoalesceSectionTest {
         CoalesceSection liveSection = CoalesceSection.create(parent, "Live Status Section");
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createSectionNullNameTest()
     {
         // Create Entity
@@ -169,7 +169,7 @@ public class CoalesceSectionTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNestedSectionNullNameTest()
     {
         // Create Entity
@@ -242,7 +242,7 @@ public class CoalesceSectionTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createSectionNullBothTestEntity()
     {
         CoalesceEntity parent = null;
@@ -250,7 +250,7 @@ public class CoalesceSectionTest {
         CoalesceSection section = CoalesceSection.create(parent, null);
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createSectionNullBothTestSection()
     {
         CoalesceSection parent = null;
@@ -484,7 +484,7 @@ public class CoalesceSectionTest {
         assertEquals(newSubSection.isNoIndex(), desSubSection.isNoIndex());
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createSectionNoIndexFalseNullParentTest()
     {
         CoalesceEntity parent = null;
@@ -492,7 +492,7 @@ public class CoalesceSectionTest {
         CoalesceSection liveSection = CoalesceSection.create(parent, "Live Status Section", false);
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createSectionNoIndexTrueNullParentTest()
     {
         CoalesceEntity parent = null;
@@ -500,7 +500,7 @@ public class CoalesceSectionTest {
         CoalesceSection liveSection = CoalesceSection.create(parent, "Live Status Section", true);
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNestedSectionNoIndexFalseNullParentTest()
     {
         CoalesceSection parent = null;
@@ -508,7 +508,7 @@ public class CoalesceSectionTest {
         CoalesceSection liveSection = CoalesceSection.create(parent, "Live Status Section", false);
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNestedSectionNoIndexTrueNullParentTest()
     {
         CoalesceSection parent = null;
@@ -516,7 +516,7 @@ public class CoalesceSectionTest {
         CoalesceSection liveSection = CoalesceSection.create(parent, "Live Status Section", true);
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createSectionNoIndexFalseNullNameTest()
     {
         // Create Entity
@@ -532,7 +532,7 @@ public class CoalesceSectionTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNestedSectionNoIndexFalseNullNameTest()
     {
         // Create Entity
@@ -549,7 +549,7 @@ public class CoalesceSectionTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createSectionNoIndexTrueNullNameTest()
     {
         // Create Entity
@@ -565,7 +565,7 @@ public class CoalesceSectionTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNestedSectionNoIndexTrueNullNameTest()
     {
         // Create Entity
@@ -582,7 +582,7 @@ public class CoalesceSectionTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createSectionIndexFalseNullTest()
     {
         CoalesceEntity parent = null;
@@ -590,7 +590,7 @@ public class CoalesceSectionTest {
         CoalesceSection section = CoalesceSection.create(parent, null, false);
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createSectionIndexTrueNullTest()
     {
         CoalesceEntity parent = null;
@@ -598,7 +598,7 @@ public class CoalesceSectionTest {
         CoalesceSection section = CoalesceSection.create(parent, null, true);
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNullParent()
     {
         CoalesceEntity parent = null;
@@ -608,7 +608,7 @@ public class CoalesceSectionTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNestedSectionIndexFalseNullTest()
     {
         CoalesceSection parent = null;
@@ -616,7 +616,7 @@ public class CoalesceSectionTest {
         CoalesceSection section = CoalesceSection.create(parent, null, false);
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createNestedSectionIndexTrueNullTest()
     {
         CoalesceSection parent = null;
@@ -624,7 +624,7 @@ public class CoalesceSectionTest {
         CoalesceSection section = CoalesceSection.create(parent, null, true);
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNestedNullParent()
     {
         CoalesceSection parent = null;
@@ -634,7 +634,7 @@ public class CoalesceSectionTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNullSection()
     {
         // Create Entity
@@ -651,7 +651,7 @@ public class CoalesceSectionTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNullNestedSection()
     {
         // Create Entity
@@ -670,7 +670,7 @@ public class CoalesceSectionTest {
         subsection.initialize(section, null);
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNullBoth()
     {
         CoalesceEntity parent = null;
@@ -680,7 +680,7 @@ public class CoalesceSectionTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void initializeNestedNullBoth()
     {
         CoalesceSection parent = null;
@@ -774,7 +774,7 @@ public class CoalesceSectionTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createRecordsetNullNameTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);

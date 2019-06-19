@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.lang.NullArgumentException;
+
 import org.apache.xerces.impl.dv.util.Base64;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
@@ -2083,7 +2083,7 @@ public class CoalesceEntityTest {
     @Test
     public void setEntityIDNullTypeTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("typeParam");
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
@@ -2100,7 +2100,7 @@ public class CoalesceEntityTest {
     @Test
     public void setEntityIDNullNameTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("value");
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
@@ -2117,7 +2117,7 @@ public class CoalesceEntityTest {
     @Test
     public void setEntityIDNullBothTest()
     {
-        _thrown.expect(NullArgumentException.class);
+        _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("typeParam");
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
