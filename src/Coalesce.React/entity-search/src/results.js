@@ -13,7 +13,7 @@ import Divider from '@material-ui/core/Divider';
 import { toCSV } from 'common-components/lib/js/csv'
 import { saveFile } from 'common-components/lib/js/file'
 
-const MAX_LENGTH = 32000;
+const MAX_LENGTH = undefined;
 
 export class SearchResults extends React.Component {
 
