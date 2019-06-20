@@ -1,30 +1,5 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-
-import org.apache.xerces.impl.dv.util.Base64;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeComparator;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.xml.sax.SAXException;
-
 import com.incadencecorp.coalesce.common.CoalesceAssert;
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
@@ -34,6 +9,23 @@ import com.incadencecorp.coalesce.common.helpers.ArrayHelper;
 import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import org.apache.xerces.impl.dv.util.Base64;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static org.junit.Assert.*;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -59,11 +51,11 @@ public class CoalesceEntityTest {
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }
-     * 
+     *
      * @AfterClass public static void tearDownAfterClass() throws Exception { }
-     * 
+     *
      * @Before public void setUp() throws Exception { }
-     * 
+     *
      * @After public void tearDown() throws Exception { }
      */
 
@@ -331,7 +323,12 @@ public class CoalesceEntityTest {
     @Test
     public void createDetailedWithTitleNullVersionTest()
     {
-        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", null, "Entity Id", "Entity Type", "A New Title");
+        CoalesceEntity entity = CoalesceEntity.create("Operation",
+                                                      "Portal",
+                                                      null,
+                                                      "Entity Id",
+                                                      "Entity Type",
+                                                      "A New Title");
 
         assertEmptyEntity(entity);
 
@@ -416,7 +413,12 @@ public class CoalesceEntityTest {
     @Test
     public void createDetailedWithTitleWhiteSpaceTitleTest()
     {
-        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", "   ");
+        CoalesceEntity entity = CoalesceEntity.create("Operation",
+                                                      "Portal",
+                                                      "1.1.1.1",
+                                                      "Entity Id",
+                                                      "Entity Id Type",
+                                                      "   ");
 
         assertEmptyEntity(entity);
 
@@ -903,8 +905,9 @@ public class CoalesceEntityTest {
 
         String title = entity.getTitle();
 
-        assertEquals("Operation/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle",
-                     title);
+        assertEquals(
+                "Operation/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle",
+                title);
 
     }
 
@@ -1285,7 +1288,8 @@ public class CoalesceEntityTest {
 
         for (CoalesceLinkage linkage : linkages.values())
         {
-            switch (linkage.getLinkType()) {
+            switch (linkage.getLinkType())
+            {
             case HAS_USE_OF:
 
                 assertLinkage(entity.getKey(), linkage.getLinkType(), entity2.getKey(), linkage);
@@ -1643,7 +1647,8 @@ public class CoalesceEntityTest {
 
         for (CoalesceLinkage linkage : linkages.values())
         {
-            switch (linkage.getLinkType()) {
+            switch (linkage.getLinkType())
+            {
             case HAS_USE_OF:
 
                 assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
@@ -1675,7 +1680,8 @@ public class CoalesceEntityTest {
 
         for (CoalesceLinkage linkage : linkages.values())
         {
-            switch (linkage.getLinkType()) {
+            switch (linkage.getLinkType())
+            {
             case IS_PARENT_OF:
 
                 assertLinkage(entities._entity, entities._entity3, linkage.getLinkType(), linkage);
@@ -1712,7 +1718,8 @@ public class CoalesceEntityTest {
 
         for (CoalesceLinkage linkage : linkages.values())
         {
-            switch (linkage.getLinkType()) {
+            switch (linkage.getLinkType())
+            {
             case HAS_USE_OF:
 
                 assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
@@ -1751,7 +1758,8 @@ public class CoalesceEntityTest {
 
         for (CoalesceLinkage linkage : linkages.values())
         {
-            switch (linkage.getLinkType()) {
+            switch (linkage.getLinkType())
+            {
             case HAS_USE_OF:
 
                 assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
@@ -1801,7 +1809,8 @@ public class CoalesceEntityTest {
 
         for (CoalesceLinkage linkage : linkages.values())
         {
-            switch (linkage.getLinkType()) {
+            switch (linkage.getLinkType())
+            {
             case HAS_USE_OF:
 
                 assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
@@ -1841,7 +1850,8 @@ public class CoalesceEntityTest {
 
         for (CoalesceLinkage linkage : linkages.values())
         {
-            switch (linkage.getLinkType()) {
+            switch (linkage.getLinkType())
+            {
             case HAS_USE_OF:
 
                 assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
@@ -1876,7 +1886,8 @@ public class CoalesceEntityTest {
 
         for (CoalesceLinkage linkage : linkages.values())
         {
-            switch (linkage.getLinkType()) {
+            switch (linkage.getLinkType())
+            {
             case HAS_USE_OF:
 
                 assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
@@ -2248,7 +2259,8 @@ public class CoalesceEntityTest {
 
         CoalesceEntity desEntity = CoalesceEntity.create(xml);
 
-        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getCoalesceObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
+        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getCoalesceObjectForNamePath(
+                "Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
 
         assertBinaryField(desRecord, "Binary1", "Binary1");
         assertBinaryField(desRecord, "Binary2", "Binary2");
@@ -2283,7 +2295,8 @@ public class CoalesceEntityTest {
 
         CoalesceEntity desEntity = CoalesceEntity.create(xml);
 
-        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getCoalesceObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
+        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getCoalesceObjectForNamePath(
+                "Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
 
         assertBinaryField(desRecord, "Binary1", "");
         assertBinaryField(desRecord, "Binary2", "");
@@ -2355,7 +2368,8 @@ public class CoalesceEntityTest {
         CoalesceEntity mergedEntity = CoalesceEntity.mergeSyncEntity(entity1, entity2, "user", "ip");
 
         // Get Mission Name Field of Merged Entity
-        CoalesceStringField mergedEntityMissionName = (CoalesceStringField) mergedEntity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceStringField mergedEntityMissionName = (CoalesceStringField) mergedEntity.getCoalesceObjectForNamePath(
+                CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
         // Validate Merge
         assertEquals("Should be the new value", mergedEntityMissionName.getBaseValue());
@@ -2363,7 +2377,7 @@ public class CoalesceEntityTest {
         assertEquals("user", mergedEntityMissionName.getModifiedBy());
         assertEquals("ip", mergedEntityMissionName.getModifiedByIP());
         assertEquals(2, (int) mergedEntityMissionName.getObjectVersion());
-        
+
         CoalesceEntity Updated = new CoalesceEntity();
         Updated.initialize(mergedEntity.toXml());
 
@@ -2501,7 +2515,8 @@ public class CoalesceEntityTest {
         CoalesceEntity mergedEntity = CoalesceEntity.mergeSyncEntity(entity1, entity2, null, null);
 
         // Get Mission Name Field of Merged Entity
-        CoalesceField<?> mergedEntityMissionName = (CoalesceField<?>) mergedEntity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceField<?> mergedEntityMissionName = (CoalesceField<?>) mergedEntity.getCoalesceObjectForNamePath(
+                CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
         // Validate Merge
         assertEquals("1", mergedEntityMissionName.getAttribute("newattr1"));
@@ -2520,13 +2535,15 @@ public class CoalesceEntityTest {
             CoalesceEntity myEntity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_HISTORY);
             CoalesceEntity updatedEntity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_HISTORY);
 
-            CoalesceFieldDefinition fieldDefinition = (CoalesceFieldDefinition) updatedEntity.getCoalesceObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
+            CoalesceFieldDefinition fieldDefinition = (CoalesceFieldDefinition) updatedEntity.getCoalesceObjectForKey(
+                    "1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
             fieldDefinition.setDefaultValue("UpdatedIncidentDescription");
             fieldDefinition.setLastModified(new DateTime());
             updatedEntity.setLastModified(new DateTime());
 
             myEntity = CoalesceEntity.mergeSyncEntity(myEntity, updatedEntity, null, null);
-            CoalesceFieldDefinition myfieldDefinition = (CoalesceFieldDefinition) myEntity.getCoalesceObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
+            CoalesceFieldDefinition myfieldDefinition = (CoalesceFieldDefinition) myEntity.getCoalesceObjectForKey(
+                    "1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
             assertEquals("UpdatedIncidentDescription", myfieldDefinition.getAttribute("defaultvalue"));
 
         }
@@ -2618,7 +2635,7 @@ public class CoalesceEntityTest {
     /**
      * This test ensures that isInitialize() returns properly whether then
      * entity has been initialized.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -2627,12 +2644,12 @@ public class CoalesceEntityTest {
         CoalesceEntity entity = new CoalesceEntity();
 
         Assert.assertFalse(entity.isInitialized());
-        
+
         // Initializing New Entity
         entity.initialize();
 
         Assert.assertTrue(entity.isInitialized());
-        
+
         // Initializing from Existing Entity
         CoalesceEntity entity2 = new CoalesceEntity();
         entity2.initialize(entity);
@@ -2642,9 +2659,8 @@ public class CoalesceEntityTest {
         // Initializing from XML
         CoalesceEntity entity3 = new CoalesceEntity();
         entity3.initialize(entity.toXml());
-        
-        Assert.assertTrue(entity3.isInitialized());
 
+        Assert.assertTrue(entity3.isInitialized());
 
     }
 
@@ -2736,10 +2752,22 @@ public class CoalesceEntityTest {
 
         entities._entity4 = CoalesceEntity.create("Operation", "Portal2", "3.4.5.6", "Id4", "Type4");
 
-        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entities._entity, ELinkTypes.HAS_USE_OF, entities._entity2, false));
-        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entities._entity, ELinkTypes.IS_PARENT_OF, entities._entity3, false));
-        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entities._entity2, ELinkTypes.WAS_CREATED_BY, entities._entity, false));
-        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entities._entity4, ELinkTypes.IS_A_MEMBER_OF, entities._entity, false));
+        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entities._entity,
+                                                              ELinkTypes.HAS_USE_OF,
+                                                              entities._entity2,
+                                                              false));
+        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entities._entity,
+                                                              ELinkTypes.IS_PARENT_OF,
+                                                              entities._entity3,
+                                                              false));
+        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entities._entity2,
+                                                              ELinkTypes.WAS_CREATED_BY,
+                                                              entities._entity,
+                                                              false));
+        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entities._entity4,
+                                                              ELinkTypes.IS_A_MEMBER_OF,
+                                                              entities._entity,
+                                                              false));
 
         return entities;
 
