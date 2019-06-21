@@ -88,7 +88,9 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     public static final String ENTITY_SOURCE_COLUMN_NAME = normalize(CoalescePropertyFactory.getSource());
     public static final String ENTITY_VERSION_COLUMN_NAME = normalize(CoalescePropertyFactory.getVersion());
     public static final String ENTITY_DATE_CREATED_COLUMN_NAME = normalize(CoalescePropertyFactory.getDateCreated());
+    public static final String ENTITY_CREATED_BY_COLUMN_NAME = normalize(CoalescePropertyFactory.getCreatedBy());
     public static final String ENTITY_LAST_MODIFIED_COLUMN_NAME = normalize(CoalescePropertyFactory.getLastModified());
+    public static final String ENTITY_LAST_MODIFIED_BY_COLUMN_NAME = normalize(CoalescePropertyFactory.getLastModifiedBy());
     public static final String ENTITY_TITLE_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityTitle());
     public static final String ENTITY_STATUS_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityStatus());
     public static final String ENTITY_ID_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityId());
@@ -460,6 +462,8 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         properties.put(ENTITY_VERSION_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
         properties.put(ENTITY_DATE_CREATED_COLUMN_NAME,
                        Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.DATE_TIME_TYPE)));
+        properties.put(ENTITY_CREATED_BY_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
+        properties.put(ENTITY_LAST_MODIFIED_BY_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
         properties.put(ENTITY_LAST_MODIFIED_COLUMN_NAME,
                        Collections.singletonMap("type", MAPPER.map(ECoalesceFieldDataTypes.DATE_TIME_TYPE)));
         properties.put(ENTITY_TITLE_COLUMN_NAME,

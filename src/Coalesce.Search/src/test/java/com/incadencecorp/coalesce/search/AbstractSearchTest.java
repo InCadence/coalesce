@@ -137,6 +137,87 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         }
     }
 
+    /**
+     * This test ensures that the createdBy and modifiedBy are stored and searchable.
+     */
+    @Test
+    public void testCreatedBy() throws Exception
+    {
+        String user1 = UUID.randomUUID().toString();
+        String user2 = UUID.randomUUID().toString();
+
+        T persister = createPersister();
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        entity.setModifiedBy(user1);
+        entity.createHistory(user2, "", 1);
+
+        persister.saveEntity(false, entity);
+
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getCreatedBy());
+        props.add(CoalescePropertyFactory.getLastModifiedBy());
+
+        // Verify that the creator and last modified can be returned when accessing the Coalesce index.
+        List<Filter> filters = new ArrayList<>();
+        filters.add(CoalescePropertyFactory.getEntityKey(entity.getKey()));
+
+        Query query = new Query();
+        query.setFilter(FF.and(filters));
+        query.setProperties(props);
+        query.setMaxFeatures(200);
+
+        try (CachedRowSet results = persister.search(query).getResults())
+        {
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+            Assert.assertEquals(user1, results.getString(2));
+            Assert.assertEquals(user2, results.getString(3));
+        }
+
+        // Verify that the creator and last modified by can be return when accessing a recordset index.
+        String value = UUID.randomUUID().toString();
+        entity.addRecord1().getStringField().setValue(value);
+
+        persister.saveEntity(false, entity);
+
+        props.add(CoalescePropertyFactory.getFieldProperty(entity.addRecord1().getStringField()));
+
+        query = new Query();
+        query.setFilter(FF.and(filters));
+        query.setProperties(props);
+        query.setMaxFeatures(200);
+
+        try (CachedRowSet results = persister.search(query).getResults())
+        {
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+            Assert.assertEquals(user1, results.getString(2));
+            Assert.assertEquals(user2, results.getString(3));
+            Assert.assertEquals(value, results.getString(4));
+        }
+
+        // Verify that the creator and last modified can be filtered on
+        filters.add(CoalescePropertyFactory.getCreatedBy(user1));
+        filters.add(CoalescePropertyFactory.getLastModifiedBy(user2));
+
+        query = new Query();
+        query.setFilter(FF.and(filters));
+        query.setMaxFeatures(200);
+
+        try (CachedRowSet results = persister.search(query).getResults())
+        {
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+        }
+
+        // Cleanup
+        entity.markAsDeleted();
+
+        persister.saveEntity(true, entity);
+    }
+
     @Test
     public void testHighlighing() throws Exception
     {

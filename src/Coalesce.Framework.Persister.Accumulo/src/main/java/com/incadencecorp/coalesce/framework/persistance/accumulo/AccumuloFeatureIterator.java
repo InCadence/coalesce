@@ -20,7 +20,6 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.ICoalesceFilter;
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceCircle;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
@@ -34,6 +33,7 @@ import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.filter.CoalesceVersionFilter;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import com.incadencecorp.coalesce.search.resultset.CoalesceCommonColumns;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -76,6 +76,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
     private final String ENTITY_ID_COLUMN_NAME;
     private final String ENTITY_ID_TYPE_COLUMN_NAME;
     private final String ENTITY_DATE_CREATED_COLUMN_NAME;
+    private final String ENTITY_LAST_MODIFIED_BY_COLUMN_NAME;
     private final String ENTITY_LAST_MODIFIED_COLUMN_NAME;
     private final String ENTITY_TITLE_COLUMN_NAME;
     private final String ENTITY_STATUS_COLUMN_NAME;
@@ -95,6 +96,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
     private DataStore datastore;
     private ICoalesceNormalizer normalizer;
     private ICoalesceFilter filter = new CoalesceVersionFilter();
+    private CoalesceCommonColumns columns;
 
     public AccumuloFeatureIterator(DataStore datastore, ICoalesceNormalizer normalizer)
     {
@@ -108,11 +110,12 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
         ENTITY_ID_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityId());
         ENTITY_ID_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityIdType());
         ENTITY_DATE_CREATED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getDateCreated());
+        ENTITY_LAST_MODIFIED_BY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLastModifiedBy());
         ENTITY_LAST_MODIFIED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLastModified());
         ENTITY_TITLE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityTitle());
         ENTITY_STATUS_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityStatus());
         ENTITY_SCOPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityScope());
-        ENTITY_CREATOR_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityCreator());
+        ENTITY_CREATOR_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getCreatedBy());
         ENTITY_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityType());
 
         LINKAGE_ENTITY2_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageEntityKey());
@@ -361,7 +364,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
         }
     }
 
-    private void populateFeature(SimpleFeature feature, CoalesceEntity entity) throws CoalesceException, IOException
+    private void populateFeature(SimpleFeature feature, CoalesceEntity entity)
     {
         populateCommon(feature, entity);
 
@@ -376,7 +379,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
                             entity.getStatus().ordinal());
     }
 
-    private void populateFeature(SimpleFeature feature, CoalesceLinkage linkage) throws CoalesceException, IOException
+    private void populateFeature(SimpleFeature feature, CoalesceLinkage linkage)
     {
         // TODO Is this needed since the FID is the linkage key?
         //setFeatureAttribute(feature, LINKAGE_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, linkage.getKey());
@@ -413,7 +416,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
 
     }
 
-    private void populateFeature(SimpleFeature feature, CoalesceRecord record) throws CoalesceException, IOException
+    private void populateFeature(SimpleFeature feature, CoalesceRecord record) throws CoalesceException
     {
         String recordsetName = record.getParent().getName();
         String statusAttr = normalizer.normalize(recordsetName, "status");
@@ -449,16 +452,21 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
         }
     }
 
-    private void populateCommon(SimpleFeature feature, CoalesceEntity entity) throws CoalesceException, IOException
+    private void populateCommon(SimpleFeature feature, CoalesceEntity entity)
     {
         setFeatureAttribute(feature, ENTITY_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getKey());
         setFeatureAttribute(feature, ENTITY_NAME_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getName());
         setFeatureAttribute(feature, ENTITY_SOURCE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getSource());
         setFeatureAttribute(feature, ENTITY_VERSION_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getVersion());
+        setFeatureAttribute(feature, ENTITY_CREATOR_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getCreatedBy());
         setFeatureAttribute(feature,
                             ENTITY_DATE_CREATED_COLUMN_NAME,
                             ECoalesceFieldDataTypes.DATE_TIME_TYPE,
                             entity.getDateCreated());
+        setFeatureAttribute(feature,
+                            ENTITY_LAST_MODIFIED_BY_COLUMN_NAME,
+                            ECoalesceFieldDataTypes.STRING_TYPE,
+                            entity.getModifiedBy());
         setFeatureAttribute(feature,
                             ENTITY_LAST_MODIFIED_COLUMN_NAME,
                             ECoalesceFieldDataTypes.DATE_TIME_TYPE,
@@ -487,100 +495,102 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
     private void setFeatureAttribute(SimpleFeature feature,
                                      String fieldName,
                                      ECoalesceFieldDataTypes dataType,
-                                     Object fieldValue) throws CoalesceDataFormatException
+                                     Object fieldValue)
     {
-        if (fieldValue == null)
-        {
-            feature.setAttribute(fieldName, null);
-        }
-        else
-        {
-            try
+
+            if (fieldValue == null)
             {
-                switch (dataType)
+                feature.setAttribute(fieldName, null);
+            }
+            else
+            {
+                try
+                {
+                    switch (dataType)
+                    {
+
+                    // These types should be able to be handled directly
+                    case ENUMERATION_TYPE:
+                    case BOOLEAN_TYPE:
+                    case DOUBLE_TYPE:
+                    case FLOAT_TYPE:
+                    case INTEGER_TYPE:
+                    case LONG_TYPE:
+                    case STRING_TYPE:
+                    case URI_TYPE:
+                        feature.setAttribute(fieldName, fieldValue);
+                        break;
+
+                    case STRING_LIST_TYPE:
+                    case DOUBLE_LIST_TYPE:
+                    case INTEGER_LIST_TYPE:
+                    case LONG_LIST_TYPE:
+                    case FLOAT_LIST_TYPE:
+                    case GUID_LIST_TYPE:
+                    case BOOLEAN_LIST_TYPE:
+                    case ENUMERATION_LIST_TYPE:
+                        feature.setAttribute(fieldName, fieldValue);
+                        break;
+
+                    case GUID_TYPE:
+                        String guid = fieldValue.toString();
+                        feature.setAttribute(fieldName, guid);
+                        break;
+
+                    case GEOCOORDINATE_LIST_TYPE:
+                        MultiPoint points = new GeometryFactory().createMultiPoint((Coordinate[]) fieldValue);
+                        feature.setAttribute(fieldName, points);
+                        break;
+
+                    case GEOCOORDINATE_TYPE:
+                        Point point = new GeometryFactory().createPoint((Coordinate) fieldValue);
+                        feature.setAttribute(fieldName, point);
+                        break;
+
+                    case LINE_STRING_TYPE:
+                        feature.setAttribute(fieldName, fieldValue);
+                        break;
+
+                    case POLYGON_TYPE:
+                        feature.setAttribute(fieldName, fieldValue);
+                        break;
+
+                    // Circles will be converted to polygons
+                    case CIRCLE_TYPE:
+                        // Create Polygon
+
+                        CoalesceCircle circle = (CoalesceCircle) fieldValue;
+                        GeometricShapeFactory factory = new GeometricShapeFactory();
+                        factory.setSize(circle.getRadius());
+                        factory.setNumPoints(360); // 1 degree points
+                        factory.setCentre(circle.getCenter());
+                        Polygon shape = factory.createCircle();
+                        feature.setAttribute(fieldName, shape);
+                        break;
+
+                    case DATE_TIME_TYPE:
+                        feature.setAttribute(fieldName, ((DateTime) fieldValue).toDate());
+                        break;
+                    case FILE_TYPE:
+                    case BINARY_TYPE:
+                    default:
+                        break;
+                    }
+
+                    if (LOGGER.isTraceEnabled())
+                    {
+                        LOGGER.trace("Set Feature ({}) = ({})", fieldName, feature.getAttribute(fieldName));
+                    }
+                }
+                catch (IllegalAttributeException e)
                 {
 
-                // These types should be able to be handled directly
-                case ENUMERATION_TYPE:
-                case BOOLEAN_TYPE:
-                case DOUBLE_TYPE:
-                case FLOAT_TYPE:
-                case INTEGER_TYPE:
-                case LONG_TYPE:
-                case STRING_TYPE:
-                case URI_TYPE:
-                    feature.setAttribute(fieldName, fieldValue);
-                    break;
-
-                case STRING_LIST_TYPE:
-                case DOUBLE_LIST_TYPE:
-                case INTEGER_LIST_TYPE:
-                case LONG_LIST_TYPE:
-                case FLOAT_LIST_TYPE:
-                case GUID_LIST_TYPE:
-                case BOOLEAN_LIST_TYPE:
-                case ENUMERATION_LIST_TYPE:
-                    feature.setAttribute(fieldName, fieldValue);
-                    break;
-
-                case GUID_TYPE:
-                    String guid = fieldValue.toString();
-                    feature.setAttribute(fieldName, guid);
-                    break;
-
-                case GEOCOORDINATE_LIST_TYPE:
-                    MultiPoint points = new GeometryFactory().createMultiPoint((Coordinate[]) fieldValue);
-                    feature.setAttribute(fieldName, points);
-                    break;
-
-                case GEOCOORDINATE_TYPE:
-                    Point point = new GeometryFactory().createPoint((Coordinate) fieldValue);
-                    feature.setAttribute(fieldName, point);
-                    break;
-
-                case LINE_STRING_TYPE:
-                    feature.setAttribute(fieldName, fieldValue);
-                    break;
-
-                case POLYGON_TYPE:
-                    feature.setAttribute(fieldName, fieldValue);
-                    break;
-
-                // Circles will be converted to polygons
-                case CIRCLE_TYPE:
-                    // Create Polygon
-
-                    CoalesceCircle circle = (CoalesceCircle) fieldValue;
-                    GeometricShapeFactory factory = new GeometricShapeFactory();
-                    factory.setSize(circle.getRadius());
-                    factory.setNumPoints(360); // 1 degree points
-                    factory.setCentre(circle.getCenter());
-                    Polygon shape = factory.createCircle();
-                    feature.setAttribute(fieldName, shape);
-                    break;
-
-                case DATE_TIME_TYPE:
-                    feature.setAttribute(fieldName, ((DateTime) fieldValue).toDate());
-                    break;
-                case FILE_TYPE:
-                case BINARY_TYPE:
-                default:
-                    break;
-                }
-
-                if (LOGGER.isTraceEnabled())
-                {
-                    LOGGER.trace("Set Feature ({}) = ({})", fieldName, feature.getAttribute(fieldName));
+                    LOGGER.warn("{} => {}",
+                                feature.getName(),
+                                String.format(CoalesceErrors.INVALID_INPUT_REASON, fieldName, e.getMessage()));
                 }
             }
-            catch (IllegalAttributeException e)
-            {
 
-                LOGGER.warn("{} => {}",
-                            feature.getName(),
-                            String.format(CoalesceErrors.INVALID_INPUT_REASON, fieldName, e.getMessage()));
-            }
-        }
     }
 
 }

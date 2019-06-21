@@ -103,9 +103,35 @@ public class CoalescePropertyFactory {
     /**
      * @return the property used for filtering on last modified.
      */
+    public static PropertyName getCreatedBy()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "creator");
+    }
+
+    public static Filter getCreatedBy(String user)
+    {
+        return getFilterFactory().equals(getCreatedBy(), getFilterFactory().literal(user));
+    }
+
+    /**
+     * @return the property used for filtering on last modified.
+     */
     public static PropertyName getLastModified()
     {
         return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_LASTMODIFIED);
+    }
+
+    /**
+     * @return the property used for filtering on last modified.
+     */
+    public static PropertyName getLastModifiedBy()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_MODIFIEDBY);
+    }
+
+    public static Filter getLastModifiedBy(String user)
+    {
+        return getFilterFactory().equals(getLastModifiedBy(), getFilterFactory().literal(user));
     }
 
     /**
@@ -183,7 +209,7 @@ public class CoalescePropertyFactory {
 
     /**
      * @param recordset name of the record
-     * @param key of the record
+     * @param key       of the record
      * @return a filter recordsetname.objectkey = key
      */
     public static Filter getRecordKey(String recordset, String key)
@@ -255,14 +281,6 @@ public class CoalescePropertyFactory {
     public static PropertyName getEntityScope()
     {
         return getFilterFactory().property(COALESCE_ENTITY_TABLE + "scope");
-    }
-
-    /**
-     * @return the property used for filtering on the entity's access scope.
-     */
-    public static PropertyName getEntityCreator()
-    {
-        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "creator");
     }
 
     /*--------------------------------------------------------------------------
