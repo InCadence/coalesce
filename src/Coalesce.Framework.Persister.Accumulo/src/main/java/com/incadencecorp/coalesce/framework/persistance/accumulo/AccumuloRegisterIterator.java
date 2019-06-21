@@ -19,7 +19,12 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIteratorDataTypes;
 import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
@@ -47,6 +52,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
     private final String ENTITY_ID_TYPE_COLUMN_NAME;
     private final String ENTITY_DATE_CREATED_COLUMN_NAME;
     private final String ENTITY_LAST_MODIFIED_COLUMN_NAME;
+    private final String ENTITY_LAST_MODIFIED_BY_COLUMN_NAME;
     private final String ENTITY_TITLE_COLUMN_NAME;
     private final String ENTITY_STATUS_COLUMN_NAME;
     private final String ENTITY_SCOPE_COLUMN_NAME;
@@ -81,10 +87,11 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         ENTITY_ID_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityIdType());
         ENTITY_DATE_CREATED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getDateCreated());
         ENTITY_LAST_MODIFIED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLastModified());
+        ENTITY_LAST_MODIFIED_BY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLastModifiedBy());
         ENTITY_TITLE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityTitle());
         ENTITY_STATUS_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityStatus());
         ENTITY_SCOPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityScope());
-        ENTITY_CREATOR_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityCreator());
+        ENTITY_CREATOR_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getCreatedBy());
         ENTITY_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityType());
 
         LINKAGE_ENTITY2_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageEntityKey());
@@ -122,7 +129,9 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
             fields.putAll(iterator.getDataTypes(recordset));
 
             // Create Feature
-            SimpleFeatureType feature = CoalesceFeatureTypeFactory.createSimpleFeatureType(featureName, fields, new AccumuloMapperImpl());
+            SimpleFeatureType feature = CoalesceFeatureTypeFactory.createSimpleFeatureType(featureName,
+                                                                                           fields,
+                                                                                           new AccumuloMapperImpl());
 
             // Create Indexes
             createIndex(feature, ENTITY_KEY_COLUMN_NAME, EIndex.FULL, ECardinality.HIGH);
@@ -154,7 +163,6 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         fields.put(ENTITY_ID_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(ENTITY_ID_TYPE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(ENTITY_SCOPE_COLUMN_NAME, ECoalesceFieldDataTypes.ENUMERATION_TYPE);
-        fields.put(ENTITY_CREATOR_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(ENTITY_TYPE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(ENTITY_STATUS_COLUMN_NAME, ECoalesceFieldDataTypes.ENUMERATION_TYPE);
 
@@ -224,8 +232,10 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         fields.put(ENTITY_NAME_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(ENTITY_SOURCE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(ENTITY_VERSION_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
+        fields.put(ENTITY_CREATOR_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(ENTITY_DATE_CREATED_COLUMN_NAME, ECoalesceFieldDataTypes.DATE_TIME_TYPE);
         fields.put(ENTITY_LAST_MODIFIED_COLUMN_NAME, ECoalesceFieldDataTypes.DATE_TIME_TYPE);
+        fields.put(ENTITY_LAST_MODIFIED_BY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(ENTITY_TITLE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
 
         return fields;

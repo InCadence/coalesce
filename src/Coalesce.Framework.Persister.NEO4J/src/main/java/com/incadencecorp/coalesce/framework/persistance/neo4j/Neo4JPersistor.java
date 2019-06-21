@@ -89,14 +89,20 @@ public class Neo4JPersistor extends CoalescePersistorBase {
      * @see CoalescePropertyFactory#getLastModified()
      */
     public static final String LASTMODIFIED = getName(CoalescePropertyFactory.getLastModified());
+    public static final String LASTMODIFIED_BY = getName(CoalescePropertyFactory.getLastModifiedBy());
     /**
      * @see CoalescePropertyFactory#getDateCreated()
      */
     public static final String DATECREATED = getName(CoalescePropertyFactory.getDateCreated());
+    public static final String CREATOR = getName(CoalescePropertyFactory.getCreatedBy());
     /**
      * @see CoalescePropertyFactory#getEntityXml()
      */
     public static final String ENTITYXML = getName(CoalescePropertyFactory.getEntityXml());
+
+
+    public static final String ENTITYID = getName(CoalescePropertyFactory.getEntityId());
+    public static final String ENTITYID_TYPE = getName(CoalescePropertyFactory.getEntityIdType());
 
     private static final String CYPHER_MERGE =
             "MERGE (Entity:%1$s {" + KEY + ": {2}})" + " ON CREATE SET Entity.deleted=%3$s, Entity.groups = %4$s, Entity."
@@ -450,8 +456,17 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         fieldValues.put(SOURCE, new CoalesceParameter(entity.getSource(), Types.CHAR));
         fieldValues.put(LASTMODIFIED,
                         new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_LASTMODIFIED), Types.DATE));
+        fieldValues.put(LASTMODIFIED_BY,
+                        new CoalesceParameter(entity.getModifiedBy(), Types.CHAR));
         fieldValues.put(DATECREATED,
                         new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_DATECREATED), Types.DATE));
+        fieldValues.put(CREATOR,
+                        new CoalesceParameter(entity.getCreatedBy(), Types.CHAR));
+
+        fieldValues.put(ENTITYID,
+                        new CoalesceParameter(entity.getEntityId(), Types.CHAR));
+        fieldValues.put(ENTITYID_TYPE,
+                        new CoalesceParameter(entity.getEntityIdType(), Types.CHAR));
 
         if (Neo4jSettings.isXMLEnabled())
         {

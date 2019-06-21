@@ -38,6 +38,7 @@ public class CoalesceCommonColumns {
     private final String ENTITY_ID_TYPE_COLUMN_NAME;
     private final String ENTITY_DATE_CREATED_COLUMN_NAME;
     private final String ENTITY_LAST_MODIFIED_COLUMN_NAME;
+    private final String ENTITY_LAST_MODIFIED_BY_COLUMN_NAME;
     private final String ENTITY_UPLOADED_TO_SERVER_NAME;
     private final String ENTITY_TITLE_COLUMN_NAME;
     private final String ENTITY_STATUS_COLUMN_NAME;
@@ -71,11 +72,12 @@ public class CoalesceCommonColumns {
         ENTITY_ID_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityIdType());
         ENTITY_DATE_CREATED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getDateCreated());
         ENTITY_LAST_MODIFIED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLastModified());
+        ENTITY_LAST_MODIFIED_BY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLastModifiedBy());
         ENTITY_UPLOADED_TO_SERVER_NAME = getColumnName(CoalescePropertyFactory.getUploadedToServer());
         ENTITY_TITLE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityTitle());
         ENTITY_STATUS_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityStatus());
         ENTITY_SCOPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityScope());
-        ENTITY_CREATOR_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityCreator());
+        ENTITY_CREATOR_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getCreatedBy());
         ENTITY_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityType());
 
         LINKAGE_ENTITY2_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageEntityKey());
@@ -88,6 +90,7 @@ public class CoalesceCommonColumns {
         LINKAGE_LINK_STATUS_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageStatus());
 
     }
+
     public String getTemplateKey()
     {
         return TEMPLATE_KEY_COLUMN_NAME;
@@ -141,6 +144,11 @@ public class CoalesceCommonColumns {
     public String getLastModified()
     {
         return ENTITY_LAST_MODIFIED_COLUMN_NAME;
+    }
+
+    public String getLastModifiedBy()
+    {
+        return ENTITY_LAST_MODIFIED_BY_COLUMN_NAME;
     }
 
     public String getUploadedToServer()

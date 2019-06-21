@@ -105,7 +105,9 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                                                  String ivarentityidtype,
                                                  String ivarentityxml,
                                                  DateTime ivardatecreated,
-                                                 DateTime ivarlastmodified) throws SQLException
+                                                 String ivarcreatedby,
+                                                 DateTime ivarlastmodified,
+                                                 String ivarlastmodifiedby) throws SQLException
     {
 
         String dateCreated = getDateString(ivardatecreated);
@@ -136,8 +138,10 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                 sql.append(COLUMNS.getEntityIdType()).append(", ");
                 sql.append(COLUMNS.getXml()).append(", ");
                 sql.append(COLUMNS.getDateCreated()).append(", ");
-                sql.append(COLUMNS.getLastModified());
-                sql.append(") values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                sql.append(COLUMNS.getCreator()).append(", ");
+                sql.append(COLUMNS.getLastModified()).append(", ");
+                sql.append(COLUMNS.getLastModifiedBy());
+                sql.append(") values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
                 try (PreparedStatement stmt2 = conn.prepareStatement(sql.toString()))
                 {
@@ -149,7 +153,9 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                     stmt2.setObject(ii++, ivarentityidtype);
                     stmt2.setObject(ii++, ivarentityxml);
                     stmt2.setObject(ii++, dateCreated);
-                    stmt2.setObject(ii, lastModified);
+                    stmt2.setObject(ii++, ivarcreatedby);
+                    stmt2.setObject(ii++, lastModified);
+                    stmt2.setObject(ii, ivarlastmodifiedby);
 
                     stmt2.executeUpdate();
                 }
@@ -165,7 +171,9 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                 sql.append(COLUMNS.getEntityIdType()).append("=?, ");
                 sql.append(COLUMNS.getXml()).append("=?, ");
                 sql.append(COLUMNS.getDateCreated()).append("=?, ");
-                sql.append(COLUMNS.getLastModified()).append("=?");
+                sql.append(COLUMNS.getCreator()).append("=?, ");
+                sql.append(COLUMNS.getLastModified()).append("=?, ");
+                sql.append(COLUMNS.getLastModifiedBy()).append("=?");
                 sql.append(" where ").append(COLUMNS.getKey()).append("=?");
 
                 try (PreparedStatement stmt2 = conn.prepareStatement(sql.toString()))
@@ -177,7 +185,9 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                     stmt2.setObject(ii++, ivarentityidtype);
                     stmt2.setObject(ii++, ivarentityxml);
                     stmt2.setObject(ii++, dateCreated);
+                    stmt2.setObject(ii++, ivarcreatedby);
                     stmt2.setObject(ii++, lastModified);
+                    stmt2.setObject(ii++, ivarlastmodifiedby);
                     stmt2.setObject(ii, ivarobjectkey);
 
                     stmt2.executeUpdate();
@@ -371,7 +381,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                     sql2.append(COLUMNS.getVersion()).append(",");
                     sql2.append(COLUMNS.getXml()).append(",");
                     sql2.append(COLUMNS.getDateCreated()).append(",");
-                    sql2.append(COLUMNS.getLinkageLastModified());
+                    sql2.append(COLUMNS.getLastModified());
                     sql2.append(") values (?,?,?,?,?,?,?)");
 
                     try (PreparedStatement stmt2 = conn.prepareStatement(sql2.toString()))
@@ -966,7 +976,9 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             sb.append(COLUMNS.getEntityIdType() + " VARCHAR(256),");
             sb.append(COLUMNS.getXml() + " CLOB,");
             sb.append(COLUMNS.getDateCreated() + " timestamp,");
+            sb.append(COLUMNS.getCreator() + " varchar(256),");
             sb.append(COLUMNS.getLastModified() + " timestamp,");
+            sb.append(COLUMNS.getLastModifiedBy() + " varchar(256),");
             sb.append(COLUMNS.getTitle() + " VARCHAR(256),");
             sb.append(COLUMNS.getStatus() + " NUMERIC,");
             sb.append(COLUMNS.getScope() + " VARCHAR(256),");

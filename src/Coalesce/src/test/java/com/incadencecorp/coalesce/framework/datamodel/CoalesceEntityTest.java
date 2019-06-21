@@ -2664,6 +2664,35 @@ public class CoalesceEntityTest {
 
     }
 
+    /**
+     * This test ensures that getting the creator works as expected.
+     */
+    @Test
+    public void testCreator() throws Exception
+    {
+        String user1 = UUID.randomUUID().toString();
+        String user2 = UUID.randomUUID().toString();
+        String user3 = UUID.randomUUID().toString();
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        entity.setModifiedBy(user1);
+
+        Assert.assertEquals(user1, entity.getCreatedBy());
+        Assert.assertEquals(user1, entity.getModifiedBy());
+
+        entity.createHistory(user2, "", 1);
+
+        Assert.assertEquals(user1, entity.getCreatedBy());
+        Assert.assertEquals(user2, entity.getModifiedBy());
+
+        entity.setSuspendHistory(false);
+        entity.createHistory(user3, "", 2);
+
+        Assert.assertEquals(user1, entity.getCreatedBy());
+        Assert.assertEquals(user3, entity.getModifiedBy());
+    }
+
     // -----------------------------------------------------------------------//
     // Private Methods
     // -----------------------------------------------------------------------//

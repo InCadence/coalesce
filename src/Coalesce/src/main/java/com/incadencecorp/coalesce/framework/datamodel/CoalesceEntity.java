@@ -5,7 +5,6 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -442,6 +441,15 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     public void setVersion(String value)
     {
         _entity.setVersion(value);
+    }
+
+    /**
+     * @return the {@link #getModifiedBy()} of the first history entry if there is history otherwise of the entity.
+     */
+    public final String getCreatedBy()
+    {
+        List<History> history = _entity.getHistory();
+        return history.isEmpty() ? _entity.getModifiedby() : history.get(history.size() - 1).getModifiedby();
     }
 
     /**
