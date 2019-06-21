@@ -206,7 +206,9 @@ public class TemplateDataController {
             results.add(getField(CoalescePropertyFactory.getName(), ECoalesceFieldDataTypes.STRING_TYPE));
             results.add(getField(CoalescePropertyFactory.getSource(), ECoalesceFieldDataTypes.STRING_TYPE));
             results.add(getField(CoalescePropertyFactory.getDateCreated(), ECoalesceFieldDataTypes.DATE_TIME_TYPE));
+            results.add(getField(CoalescePropertyFactory.getCreatedBy(), ECoalesceFieldDataTypes.STRING_TYPE));
             results.add(getField(CoalescePropertyFactory.getLastModified(), ECoalesceFieldDataTypes.DATE_TIME_TYPE));
+            results.add(getField(CoalescePropertyFactory.getLastModifiedBy(), ECoalesceFieldDataTypes.STRING_TYPE));
             results.add(getField(CoalescePropertyFactory.getEntityStatus(), ECoalesceFieldDataTypes.ENUMERATION_TYPE));
             results.add(getField(CoalescePropertyFactory.getEntityId(), ECoalesceFieldDataTypes.STRING_TYPE));
         }

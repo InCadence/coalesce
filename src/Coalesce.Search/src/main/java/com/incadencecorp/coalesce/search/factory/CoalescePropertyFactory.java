@@ -256,7 +256,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getEntityId()
     {
-        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "entityid");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_ENTITYID);
     }
 
     /**
@@ -264,7 +264,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getEntityIdType()
     {
-        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "entityidtype");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_ENTITYIDTYPE);
     }
 
     /**
@@ -272,7 +272,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getEntityStatus()
     {
-        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "status");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_STATUS);
     }
 
     /**
