@@ -17,8 +17,13 @@
 
 package com.incadencecorp.coalesce.services.crud.service.data.jaxrs;
 
+import com.incadencecorp.coalesce.api.CoalesceSimplePrincipal;
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
 import com.incadencecorp.coalesce.services.crud.service.data.controllers.LinkageDataController;
+
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
 
 /**
  * JaxRs Implementation
@@ -26,6 +31,9 @@ import com.incadencecorp.coalesce.services.crud.service.data.controllers.Linkage
  * @author Derek Clemenzi
  */
 public class LinkageDataControllerJaxRS extends LinkageDataController implements ILinkageDataControllerJaxRS {
+
+    @Context
+    SecurityContext securityContext;
 
     /**
      * @param framework
@@ -36,7 +44,16 @@ public class LinkageDataControllerJaxRS extends LinkageDataController implements
         super(framework);
     }
 
+    @Override
+    protected ICoalescePrincipal getPrincipal()
     {
-        super(crud, search);
+        if (securityContext != null && securityContext.getUserPrincipal() != null)
+        {
+            return new CoalesceSimplePrincipal(securityContext.getUserPrincipal());
+        }
+        else
+        {
+            return new CoalesceSimplePrincipal("");
+        }
     }
 }
