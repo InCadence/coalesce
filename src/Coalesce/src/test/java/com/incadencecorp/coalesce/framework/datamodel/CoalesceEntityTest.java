@@ -2691,6 +2691,26 @@ public class CoalesceEntityTest {
 
         Assert.assertEquals(user1, entity.getCreatedBy());
         Assert.assertEquals(user3, entity.getModifiedBy());
+
+        entity.clearHistory();
+
+        Assert.assertEquals(user1, entity.getCreatedBy());
+        Assert.assertEquals(user3, entity.getModifiedBy());
+
+        entity = new TestEntity();
+        entity.initialize();
+        Assert.assertNull(entity.getCreatedBy());
+        Assert.assertEquals("", entity.getModifiedBy());
+
+        entity.createHistory(user2, "", 2);
+
+        Assert.assertNull(entity.getCreatedBy());
+        Assert.assertEquals(user2, entity.getModifiedBy());
+
+        entity.clearHistory();
+
+        Assert.assertNull(entity.getCreatedBy());
+        Assert.assertEquals(user2, entity.getModifiedBy());
     }
 
     // -----------------------------------------------------------------------//

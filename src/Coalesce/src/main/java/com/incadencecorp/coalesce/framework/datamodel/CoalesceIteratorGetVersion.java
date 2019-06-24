@@ -83,6 +83,9 @@ public class CoalesceIteratorGetVersion extends CoalesceIterator {
             throw new IllegalArgumentException("Invalid Version");
         }
 
+        // Set internal creator variable before pruning history
+        entity.getCreatedBy();
+
         processAllElements(entity);
 
         entity.setObjectVersion(version);

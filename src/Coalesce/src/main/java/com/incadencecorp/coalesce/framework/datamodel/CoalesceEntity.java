@@ -87,6 +87,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     public static final String ATTRIBUTE_UPLOADEDTOSERVER = "uploadedtoserver";
 
     private Entity _entity;
+    private String creator;
 
     // ----------------------------------------------------------------------//
     // Factory and Initialization
@@ -448,8 +449,20 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      */
     public final String getCreatedBy()
     {
-        List<History> history = _entity.getHistory();
-        return history.isEmpty() ? _entity.getModifiedby() : history.get(history.size() - 1).getModifiedby();
+        if (creator == null)
+        {
+            if (getObjectVersion() == 1)
+            {
+                creator = _entity.getModifiedby();
+            }
+            else
+            {
+                List<History> history = _entity.getHistory();
+                creator = history.isEmpty() ? null : history.get(history.size() - 1).getModifiedby();
+            }
+        }
+
+        return creator;
     }
 
     /**
