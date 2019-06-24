@@ -65,8 +65,6 @@ public class RetrieveDataObjectTask extends AbstractFrameworkTask<DataObjectKeyT
                 result.setStatus(EResultStatus.FAILED);
                 result.setError(String.format(CoalesceErrors.INVALID_OBJECT_VERSION, task.getVer(), task.getKey()));
             }
-
-            result.setStatus(EResultStatus.SUCCESS);
         }
 
         return result;
