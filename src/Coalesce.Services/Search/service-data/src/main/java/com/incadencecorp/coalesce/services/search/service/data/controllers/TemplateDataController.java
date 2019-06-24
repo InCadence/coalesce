@@ -29,6 +29,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
 import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
@@ -476,6 +477,8 @@ public class TemplateDataController {
             LOGGER.info("Saving template {}, Key: {}", template.getName(), template.getKey());
             framework.saveCoalesceEntityTemplate(template);
             templates.put(template.getKey(), new TemplateNode(template));
+
+            CoalesceTemplateUtil.addTemplates(template);
 
             result = template.getKey();
         }

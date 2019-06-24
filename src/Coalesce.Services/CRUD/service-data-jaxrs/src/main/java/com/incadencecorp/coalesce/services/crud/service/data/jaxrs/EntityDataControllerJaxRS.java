@@ -1,7 +1,6 @@
 package com.incadencecorp.coalesce.services.crud.service.data.jaxrs;
 
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.services.crud.service.data.controllers.EntityDataController;
 
 import java.rmi.RemoteException;
@@ -18,9 +17,9 @@ public class EntityDataControllerJaxRS extends EntityDataController implements I
      *
      * @see EntityDataController
      */
-    public EntityDataControllerJaxRS(ICrudClient crud, ICoalescePersistor persister)
+    public EntityDataControllerJaxRS(CoalesceFramework framework)
     {
-        super(crud, persister);
+        super(framework);
     }
 
     @Override

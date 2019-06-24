@@ -18,10 +18,11 @@
 package com.incadencecorp.coalesce.services.crud.service.data.controllers;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.EnumHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
@@ -29,13 +30,14 @@ import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.incadencecorp.coalesce.services.api.Results;
-import com.incadencecorp.coalesce.services.api.common.ResultsType;
+import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkRequest;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkType;
 import com.incadencecorp.coalesce.services.api.crud.ELinkAction;
+import com.incadencecorp.coalesce.services.common.CoalesceRemoteException;
+import com.incadencecorp.coalesce.services.common.ServiceBase;
 import com.incadencecorp.coalesce.services.common.api.ILinkageDataController;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphLink;
-import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
+import com.incadencecorp.coalesce.services.crud.service.data.controllers.jobs.UpdateDataObjectLinkagesJob;
 import org.geotools.data.Query;
 import org.geotools.filter.SortByImpl;
 import org.opengis.filter.expression.PropertyName;
@@ -55,31 +57,16 @@ import java.util.List;
  *
  * @author Derek Clemenzi
  */
-public class LinkageDataController implements ILinkageDataController {
+public class LinkageDataController extends ServiceBase<CoalesceFramework> implements ILinkageDataController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LinkageDataController.class);
 
-    private ICrudClient crud;
-    private CoalesceSearchFramework search;
-
     /**
-     * Default Constructor
-     *
-     * @param crud used for modifying / retrieving linkages
+     * @param framework used for modifying / retrieving linkages
      */
-    public LinkageDataController(ICrudClient crud)
+    public LinkageDataController(CoalesceSearchFramework framework)
     {
-        this(crud, null);
-    }
-
-    /**
-     * @param crud   used for modifying linkages
-     * @param search used for retrieving linkages
-     */
-    public LinkageDataController(ICrudClient crud, CoalesceSearchFramework search)
-    {
-        this.crud = crud;
-        this.search = search;
+        super(framework, framework.getExecutorService());
     }
 
     @Override
@@ -109,7 +96,7 @@ public class LinkageDataController implements ILinkageDataController {
                          link.getTarget());
         }
 
-        processResponse(crud.updateLinkages(tasks.toArray(new DataObjectLinkType[tasks.size()])));
+        verify(performJob(new UpdateDataObjectLinkagesJob(createDataObjectLinkRequest(false, tasks))).getResult());
     }
 
     @Override
@@ -161,7 +148,7 @@ public class LinkageDataController implements ILinkageDataController {
 
         }
 
-        processResponse(crud.updateLinkages(tasks.toArray(new DataObjectLinkType[tasks.size()])));
+        verify(performJob(new UpdateDataObjectLinkagesJob(createDataObjectLinkRequest(false, tasks))).getResult());
     }
 
     @Override
@@ -169,28 +156,30 @@ public class LinkageDataController implements ILinkageDataController {
     {
         List<GraphLink> response = new ArrayList<>();
 
-        if (search == null)
+        if (!(getTarget() instanceof CoalesceSearchFramework))
         {
-            Results<CoalesceEntity> result = crud.retrieveDataObjects(key)[0];
-
-            if (!result.isSuccessful())
+            try
             {
-                throw new RemoteException(result.getError());
-            }
+                CoalesceEntity entity = getTarget().getCoalesceEntity(key);
 
-            for (CoalesceLinkage linkage : result.getResult().getLinkages().values())
-            {
-                if (!linkage.isMarkedDeleted())
+                for (CoalesceLinkage linkage : entity.getLinkages().values())
                 {
-                    GraphLink link = new GraphLink();
-                    link.setSource(linkage.getEntity1Key());
-                    link.setTarget(linkage.getEntity2Key());
-                    link.setLabel(linkage.getLabel());
-                    link.setStatus(linkage.getStatus());
-                    link.setType(linkage.getLinkType());
+                    if (!linkage.isMarkedDeleted())
+                    {
+                        GraphLink link = new GraphLink();
+                        link.setSource(linkage.getEntity1Key());
+                        link.setTarget(linkage.getEntity2Key());
+                        link.setLabel(linkage.getLabel());
+                        link.setStatus(linkage.getStatus());
+                        link.setType(linkage.getLinkType());
 
-                    response.add(link);
+                        response.add(link);
+                    }
                 }
+            }
+            catch (CoalescePersistorException e)
+            {
+                throw new CoalesceRemoteException(e.getMessage(), e);
             }
         }
         else
@@ -213,7 +202,7 @@ public class LinkageDataController implements ILinkageDataController {
                         new SortByImpl(CoalescePropertyFactory.getLastModified(), SortOrder.DESCENDING)
                 });
 
-                SearchResults results = search.search(query);
+                SearchResults results = ((CoalesceSearchFramework) getTarget()).search(query);
 
                 if (!results.isSuccessful())
                 {
@@ -251,25 +240,21 @@ public class LinkageDataController implements ILinkageDataController {
         return response;
     }
 
+    private DataObjectLinkRequest createDataObjectLinkRequest(final boolean async, final List<DataObjectLinkType> tasks)
+    {
+        DataObjectLinkRequest request = new DataObjectLinkRequest();
+
+        request.getLinkagelist().addAll(tasks);
+        request.setAsyncCall(async);
+
+        return request;
+    }
+
     private void verifyNonNullArgument(String name, Object argument) throws RemoteException
     {
         if (argument == null)
         {
             throw new RemoteException(String.format(CoalesceErrors.INVALID_INPUT_REASON, name, "Cannot be null"));
-        }
-    }
-
-    private void processResponse(boolean successful) throws RemoteException
-    {
-        if (!successful)
-        {
-            for (ResultsType result : crud.getLastResult())
-            {
-                if (result.getStatus() != EResultStatus.SUCCESS)
-                {
-                    throw new RemoteException(result.getError());
-                }
-            }
         }
     }
 
