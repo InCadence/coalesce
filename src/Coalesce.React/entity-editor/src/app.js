@@ -46,6 +46,12 @@ export class App extends React.Component {
 
   }
 
+  handleError = (message) => {
+    this.setState({
+      error: message
+    });
+  }
+
   handleSaveEntity() {
     const that = this;
 
@@ -176,7 +182,7 @@ export class App extends React.Component {
       <div>
         <Menu logoSrc={this.props.icon} title={this.props.title} items={menuItems}/>
         <Paper style={{padding: '5px', margin: '10px'}}>
-          <EntityView data={entity} template={template} isNew={isNew} />
+          <EntityView data={entity} template={template} isNew={isNew} onHandleError={this.handleError}/>
           <DialogPrompt
             title="Enter Entity Key"
             value=''
