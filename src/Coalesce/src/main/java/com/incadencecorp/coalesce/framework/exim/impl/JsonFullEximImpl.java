@@ -102,7 +102,8 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
                                                             "allowremove",
                                                             "count",
                                                             "hasactiverecords",
-                                                            "hasrecords");
+                                                            "hasrecords",
+                                                            "createdby");
 
     @Override
     public void importValues(JSONObject values, CoalesceEntity entity) throws CoalesceException

@@ -20,7 +20,15 @@ package com.incadencecorp.coalesce.framework.exim.impl;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
+import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
+import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
@@ -28,6 +36,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -81,6 +91,31 @@ public class JsonFullEximImplTest {
         Assert.assertEquals(record.getStringField().getBaseValue(), record2.getStringField().getBaseValue());
 
         Assert.assertEquals(record.getStringListField().getBaseValue(), record2.getStringListField().getBaseValue());
+    }
+
+    /**
+     * This test ensures that the creator does not make it back into the XML as an other attribute.
+     */
+    @Test
+    public void testCreator() throws Exception
+    {
+        String user = UUID.randomUUID().toString();
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        entity.setModifiedBy(user);
+
+        JsonFullEximImpl exim = new JsonFullEximImpl();
+        exim.setView(Views.Entity.class);
+
+        JSONObject result = exim.exportValues(entity, true);
+        Assert.assertEquals(user, result.getString("createdBy"));
+
+        CoalesceEntity imported = exim.importValues(result, CoalesceEntityTemplate.create(entity));
+
+        Assert.assertNull(imported.getAttribute("createdBy"));
+        Assert.assertNull(imported.getAttribute("createdby"));
+        Assert.assertEquals(user, imported.getCreatedBy());
     }
 
     /**
