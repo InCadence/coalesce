@@ -17,24 +17,40 @@
 package com.incadencecorp.coalesce.services.crud.service.data.controllers;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.api.EResultStatus;
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.exim.impl.JsonFullEximImpl;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.incadencecorp.coalesce.services.api.Results;
-import com.incadencecorp.coalesce.services.api.common.ResultsType;
+import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
+import com.incadencecorp.coalesce.services.api.common.StringResponse;
+import com.incadencecorp.coalesce.services.api.crud.DataObjectKeyRequest;
+import com.incadencecorp.coalesce.services.api.crud.DataObjectKeyType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectStatusActionType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectStatusType;
-import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
+import com.incadencecorp.coalesce.services.api.crud.DataObjectUpdateStatusRequest;
+import com.incadencecorp.coalesce.services.common.CoalesceRemoteException;
+import com.incadencecorp.coalesce.services.common.ServiceBase;
+import com.incadencecorp.coalesce.services.crud.service.data.controllers.jobs.CoalesceRequest;
+import com.incadencecorp.coalesce.services.crud.service.data.controllers.jobs.CreateDataObjectJob;
+import com.incadencecorp.coalesce.services.crud.service.data.controllers.jobs.RetrieveDataObjectJob;
+import com.incadencecorp.coalesce.services.crud.service.data.controllers.jobs.UpdateDataObjectJob;
+import com.incadencecorp.coalesce.services.crud.service.data.controllers.jobs.UpdateDataObjectStatusJob;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -43,23 +59,19 @@ import java.util.Map;
  *
  * @author Derek Clemenzi
  */
-public class EntityDataController {
+public class EntityDataController extends ServiceBase<CoalesceFramework> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EntityDataController.class);
     private final JsonFullEximImpl exim = new JsonFullEximImpl();
 
-    private ICrudClient crud;
-    private ICoalescePersistor persister;
     private Class<?> clazz = Views.Entity.class;
 
     /**
-     * @param crud      used for storing and retrieving Coalesce entities.
-     * @param persister used for retrieving templates.
+     * @param framework used for access the Coalesce data store
      */
-    public EntityDataController(ICrudClient crud, ICoalescePersistor persister)
+    public EntityDataController(CoalesceFramework framework)
     {
-        this.crud = crud;
-        this.persister = persister;
+        super(framework, framework.getExecutorService());
     }
 
     /**
@@ -110,27 +122,25 @@ public class EntityDataController {
         String version = obj.getString(CoalesceEntity.ATTRIBUTE_VERSION);
 
         CoalesceEntity entity = null;
-        CoalesceEntityTemplate template = null;
+        CoalesceEntityTemplate template = CoalesceTemplateUtil.getTemplate(name, source, version);
 
-        // Load Template
-        try
+        if (template != null)
         {
-            template = persister.getEntityTemplate(name, source, version);
+            try
+            {
+                entity = exim.importValues(obj, template);
+            }
+            catch (CoalesceException e)
+            {
+                throw new CoalesceRemoteException(String.format(CoalesceErrors.NOT_SAVED, "Entity", name, e.getMessage()),
+                                                  e);
+            }
         }
-        catch (CoalescePersistorException e)
+        else
         {
-            error(String.format(CoalesceErrors.NOT_FOUND,
-                                "Template",
-                                "name=" + name + ", source=" + source + ", version=" + version), e);
-        }
-
-        try
-        {
-            entity = exim.importValues(obj, template);
-        }
-        catch (CoalesceException e)
-        {
-            error(String.format(CoalesceErrors.NOT_SAVED, "Entity", name, e.getMessage()), e);
+            throw new CoalesceRemoteException(String.format(CoalesceErrors.NOT_FOUND,
+                                                            "Template",
+                                                            "name=" + name + ", source=" + source + ", version=" + version));
         }
 
         return entity;
@@ -159,18 +169,17 @@ public class EntityDataController {
                 }
                 else
                 {
-                    error(String.format(CoalesceErrors.KEY_MISMATCH, entityKey, entity.getKey()));
+                    throw new CoalesceRemoteException(String.format(CoalesceErrors.KEY_MISMATCH, entityKey, entity.getKey()));
                 }
             }
 
-            if (!crud.updateDataObject(entity))
-            {
-                error(crud.getLastResult());
-            }
+            StringResponse response = performJob(new UpdateDataObjectJob(new CoalesceRequest<>(new CoalesceEntity[] { entity
+            })));
+            verify(response.getResult());
         }
         else
         {
-            error("(FAILED) Initializing Entity");
+            throw new CoalesceRemoteException("(FAILED) Initializing Entity");
         }
     }
 
@@ -180,16 +189,15 @@ public class EntityDataController {
 
         if (entity != null)
         {
-            if (!crud.createDataObject(entity))
-            {
-                error(crud.getLastResult());
-            }
+            StringResponse response = performJob(new CreateDataObjectJob(new CoalesceRequest<>(new CoalesceEntity[] { entity
+            })));
+            verify(response.getResult());
 
             key = entity.getKey();
         }
         else
         {
-            error("(FAILED) Initializing Entity");
+            throw new CoalesceRemoteException("(FAILED) Initializing Entity");
         }
 
         return key;
@@ -208,10 +216,9 @@ public class EntityDataController {
             tasks.add(task);
         }
 
-        if (!crud.updateDataObjectStatus(tasks.toArray(new DataObjectStatusType[tasks.size()])))
-        {
-            error(crud.getLastResult());
-        }
+        StringResponse response = performJob(new UpdateDataObjectStatusJob(createUpdateDataObjectStatusRequest(false,
+                                                                                                               tasks)));
+        verify(response.getResult());
     }
 
     public CoalesceSection getSection(String entityKey, String key) throws RemoteException
@@ -234,14 +241,38 @@ public class EntityDataController {
         return retrieveObject(entityKey, key, CoalesceField.class);
     }
 
-    // TODO Not Complete
-    public void setFields(String entityKey, Map<String, String> values) throws RemoteException
+    public void setFields(String key, Map<String, String> values) throws RemoteException
     {
-        CoalesceEntity entity = retrieveEntity(entityKey);
-
-        for (Map.Entry<String, String> kvp : values.entrySet())
+        try
         {
+            CoalesceEntity entity = getTarget().getCoalesceEntity(key);
 
+            for (Map.Entry<String, String> kvp : values.entrySet())
+            {
+                CoalesceObject field = entity.getCoalesceObjectForKey(kvp.getKey());
+
+                if (field instanceof CoalesceField)
+                {
+                    field.setAttribute(CoalesceField.ATTRIBUTE_VALUE, kvp.getValue());
+                }
+                else
+                {
+                    throw new CoalesceRemoteException(String.format(CoalesceErrors.NOT_FOUND, "Field", kvp.getKey()));
+                }
+            }
+
+            try
+            {
+                getTarget().saveCoalesceEntity(entity);
+            }
+            catch (CoalescePersistorException e)
+            {
+                throw new CoalesceRemoteException(String.format(CoalesceErrors.NOT_SAVED, key, "Entity", e.getMessage()), e);
+            }
+        }
+        catch (CoalescePersistorException e)
+        {
+            throw new CoalesceRemoteException(String.format(CoalesceErrors.NOT_FOUND, "Entity", key), e);
         }
     }
 
@@ -251,11 +282,11 @@ public class EntityDataController {
 
         if (result == null)
         {
-            error(String.format(CoalesceErrors.NOT_FOUND, clazz.getSimpleName(), key));
+            throw new CoalesceRemoteException(String.format(CoalesceErrors.NOT_FOUND, clazz.getSimpleName(), key));
         }
         else if (!clazz.isInstance(result))
         {
-            error(String.format(CoalesceErrors.INVALID_INPUT_REASON,
+            throw new CoalesceRemoteException(String.format(CoalesceErrors.INVALID_INPUT_REASON,
                                 key,
                                 "Expected: " + clazz.getSimpleName() + " Actual: " + result.getClass().getSimpleName()));
         }
@@ -273,52 +304,45 @@ public class EntityDataController {
      */
     private CoalesceEntity retrieveEntity(String key) throws RemoteException
     {
-        Results<CoalesceEntity>[] results = crud.retrieveDataObjects(key);
+        DataObjectKeyType task = new DataObjectKeyType();
+        task.setKey(key);
+        task.setVer(-1);
 
-        if (results.length == 0)
+        ICoalesceResponseType<List<ICoalesceResponseType<CoalesceEntity>>> response = performJob(new RetrieveDataObjectJob(
+                createDataObjectKeyRequest(false, task)));
+        List<ICoalesceResponseType<CoalesceEntity>> results = response.getResult();
+
+        verify(results);
+
+        if (results.isEmpty())
         {
-            error(String.format(CoalesceErrors.NOT_FOUND, "Entity", key));
+            throw new CoalesceRemoteException(String.format(CoalesceErrors.NOT_FOUND, "Entity", key));
         }
-        else if (results.length > 1)
+        else if (results.size() > 1)
         {
-            error(String.format(CoalesceErrors.INVALID_OBJECT, "Entity", key));
-        }
-        else if (results[0].getStatus() != EResultStatus.SUCCESS)
-        {
-            LOGGER.debug(results[0].getError());
-            error(String.format(CoalesceErrors.NOT_FOUND, "Entity", key));
+            throw new CoalesceRemoteException(String.format(CoalesceErrors.INVALID_OBJECT, "Entity", key));
         }
 
-        return results[0].getResult();
+        return results.get(0).getResult();
     }
 
-    private void error(ResultsType[] results) throws RemoteException
+    private DataObjectUpdateStatusRequest createUpdateDataObjectStatusRequest(final boolean async,
+                                                                              final List<DataObjectStatusType> tasks)
     {
-        for (ResultsType result : results)
-        {
-            if (result.getStatus() != EResultStatus.SUCCESS)
-            {
-                error(result.getError(), null);
-            }
-        }
+        DataObjectUpdateStatusRequest request = new DataObjectUpdateStatusRequest();
+        request.getTaskList().addAll(tasks);
+        request.setAsyncCall(async);
+
+        return request;
     }
 
-    private void error(String msg) throws RemoteException
+    private DataObjectKeyRequest createDataObjectKeyRequest(final boolean async, final DataObjectKeyType... tasks)
     {
-        error(msg, null);
+        DataObjectKeyRequest request = new DataObjectKeyRequest();
+        request.getKeyList().addAll(Arrays.asList(tasks));
+        request.setAsyncCall(async);
+
+        return request;
     }
 
-    private void error(String msg, Exception e) throws RemoteException
-    {
-        if (e == null)
-        {
-            LOGGER.warn(msg);
-        }
-        else
-        {
-            LOGGER.error(msg, e);
-        }
-
-        throw new RemoteException(msg);
-    }
 }

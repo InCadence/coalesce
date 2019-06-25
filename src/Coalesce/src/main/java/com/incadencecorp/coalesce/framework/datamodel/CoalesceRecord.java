@@ -96,6 +96,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
         }
 
         newRecord.setName(name);
+        newRecord.setObjectVersion(parent.getEntity().getObjectVersion());
 
         //parent.addChildCoalesceObject(newRecord);
 

@@ -31,7 +31,15 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class provides utility functions for handling templates.
@@ -45,21 +53,25 @@ public final class CoalesceTemplateUtil {
     /**
      * Contains the fields for every record set specified by the templates.
      */
-    private static final Map<String, Map<String, ECoalesceFieldDataTypes>> TYPES = new HashMap<>();
+    private static final Map<String, Map<String, ECoalesceFieldDataTypes>> TYPES = new ConcurrentHashMap<>();
 
     /**
      * Contains the master list of fields for every record set specified by the templates.
      */
-    private static final Map<String, ECoalesceFieldDataTypes> MASTER_TYPES = new HashMap<>();
+    private static final Map<String, ECoalesceFieldDataTypes> MASTER_TYPES = new ConcurrentHashMap<>();
 
     /**
      * Contains the record sets specified within the templates
      */
-    private static final Map<String, Set<String>> RECORDSETS = new HashMap<>();
+    private static final Map<String, Set<String>> RECORDSETS = new ConcurrentHashMap<>();
     /**
      * Contains metadata
      */
-    private static final Map<String, ObjectMetaData> META = new HashMap<>();
+    private static final Map<String, ObjectMetaData> META = new ConcurrentHashMap<>();
+    /**
+     * Contains templates
+     */
+    private static final Map<String, CoalesceEntityTemplate> TEMPLATES = new ConcurrentHashMap<>();
 
     private static ICoalesceNormalizer normalizer = new DefaultNormalizer();
     private static CoalesceIteratorDataTypes iterator = new CoalesceIteratorDataTypes(normalizer);
@@ -91,6 +103,13 @@ public final class CoalesceTemplateUtil {
 
         for (CoalesceEntityTemplate template : templates)
         {
+            TEMPLATES.put(template.getKey(), template);
+
+            if (!template.getHashedKey().equals(template.getKey()))
+            {
+                TEMPLATES.put(template.getHashedKey(), template);
+            }
+
             try
             {
                 Map<String, Map<String, ECoalesceFieldDataTypes>> values = iterator.getDataTypes(template);
@@ -196,7 +215,7 @@ public final class CoalesceTemplateUtil {
             LOGGER.trace(String.format("Total Templates: %s", templates.size()));
         }
 
-        addTemplates(templates.toArray(new CoalesceEntityTemplate[templates.size()]));
+        addTemplates(templates.toArray(new CoalesceEntityTemplate[0]));
 
     }
 
@@ -218,7 +237,7 @@ public final class CoalesceTemplateUtil {
     {
         initializeDefaults();
 
-        String parts[] = name.split("[.]");
+        String[] parts = name.split("[.]");
 
         if (parts.length != 2)
         {
@@ -242,6 +261,26 @@ public final class CoalesceTemplateUtil {
         }
 
         return results;
+    }
+
+    /**
+     * @param key of template
+     * @return the template if available; otherwise null
+     */
+    public static CoalesceEntityTemplate getTemplate(String key)
+    {
+        return TEMPLATES.get(key);
+    }
+
+    /**
+     * @param name    of template
+     * @param source  of template
+     * @param version of template
+     * @return the template if available; otherwise null
+     */
+    public static CoalesceEntityTemplate getTemplate(String name, String source, String version)
+    {
+        return TEMPLATES.get(CoalesceEntityTemplate.getHashedKey(name, source, version));
     }
 
     /**

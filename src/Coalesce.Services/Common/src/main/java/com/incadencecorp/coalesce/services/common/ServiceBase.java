@@ -19,13 +19,25 @@ package com.incadencecorp.coalesce.services.common;
 
 import com.incadencecorp.coalesce.api.EJobStatus;
 import com.incadencecorp.coalesce.api.EResultStatus;
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceExecutorServiceImpl;
 import com.incadencecorp.coalesce.framework.jobs.JobManager;
-import com.incadencecorp.coalesce.services.api.common.*;
+import com.incadencecorp.coalesce.services.api.common.BaseRequest;
+import com.incadencecorp.coalesce.services.api.common.BaseResponse;
+import com.incadencecorp.coalesce.services.api.common.JobRequest;
+import com.incadencecorp.coalesce.services.api.common.MultipleResponse;
+import com.incadencecorp.coalesce.services.api.common.ResponseResultsType;
+import com.incadencecorp.coalesce.services.api.common.ResultsType;
+import com.incadencecorp.coalesce.services.api.common.StatusResponse;
+import com.incadencecorp.coalesce.services.api.common.StatusType;
+import com.incadencecorp.coalesce.services.api.common.StringResponse;
 import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -38,6 +50,8 @@ import java.util.concurrent.ExecutorService;
  * @author Derek C.
  */
 public abstract class ServiceBase<T> extends CoalesceExecutorServiceImpl {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceBase.class);
 
     // ----------------------------------------------------------------------//
     // Protected Member Variables
@@ -56,8 +70,8 @@ public abstract class ServiceBase<T> extends CoalesceExecutorServiceImpl {
     /**
      * Construct service while specifying the service and framework to use.
      *
-     * @param target
-     * @param service
+     * @param target  of this service
+     * @param service to execute jobs with
      */
     public ServiceBase(T target, ExecutorService service)
     {
@@ -242,7 +256,7 @@ public abstract class ServiceBase<T> extends CoalesceExecutorServiceImpl {
 
         job.setExecutor(this);
         job.setTarget(getTarget());
-        // TODO job.setPrincipal(principal);
+        job.setPrincipal(getPrincipal());
 
         // Async?
         if (job.isAsync())
@@ -276,7 +290,7 @@ public abstract class ServiceBase<T> extends CoalesceExecutorServiceImpl {
         else
         {
             response = job.call();
-            response.setId(job.getJobId().toString());
+            response.setId(job.getJobId());
             switch (job.getJobStatus())
             {
             case CANCELED:
@@ -324,6 +338,25 @@ public abstract class ServiceBase<T> extends CoalesceExecutorServiceImpl {
     protected final T getTarget()
     {
         return target;
+    }
+
+    /**
+     * Returns the principal used to invoke this service.
+     */
+    protected ICoalescePrincipal getPrincipal()
+    {
+        return null;
+    }
+
+    protected <R extends ICoalesceResponseType<?>> void verify(List<R> results) throws RemoteException
+    {
+        for (ICoalesceResponseType<?> result : results)
+        {
+            if (result.getStatus() != EResultStatus.SUCCESS)
+            {
+                throw new CoalesceRemoteException(result.getError(), null);
+            }
+        }
     }
 
 }

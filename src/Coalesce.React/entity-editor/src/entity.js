@@ -12,6 +12,7 @@ export class EntityView extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
         data: props.data,
         isNew: props.isNew
@@ -19,9 +20,19 @@ export class EntityView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+
+    var revisions = [];
+
+    if (nextProps.data) {
+      for (var ii=1; ii<=nextProps.data.objectVersion; ii++) {
+          revisions.push({enum: ii, label: ii})
+      }
+    }
+
     this.setState({
       data: nextProps.data,
-      isNew: nextProps.isNew
+      isNew: nextProps.isNew,
+      revisions: revisions
     })
   }
 
@@ -35,8 +46,12 @@ export class EntityView extends React.Component {
     this.props.saveEntity(this.state.data, this.state.isNew, this);
   }
 
+  handleError = (message) => {
+    this.props.onHandleError(message);
+  }
+
   render() {
-    const {data} = this.state;
+    const {data, revisions} = this.state;
 
     var template = this.props.template;
 
@@ -46,7 +61,7 @@ export class EntityView extends React.Component {
           <Col xs={2}>
             <label>Title</label>
           </Col>
-          <Col xs={4}>
+          <Col xs={10}>
             {data &&
               <FieldInput
                 field={data}
@@ -56,19 +71,13 @@ export class EntityView extends React.Component {
               />
             }
           </Col>
+        </Row>
+        <Row>
           <Col xs={2}>
             <label>Name</label>
           </Col>
           <Col xs={4}>
             {template != null ? template.name : ''}
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={2}>
-            <label>Created</label>
-          </Col>
-          <Col xs={4}>
-            {data != null ? data.dateCreated : ''}
           </Col>
           <Col xs={2}>
             <label>Source</label>
@@ -79,16 +88,53 @@ export class EntityView extends React.Component {
         </Row>
         <Row>
           <Col xs={2}>
+            <label>Version</label>
+          </Col>
+          <Col xs={4}>
+            {template != null ? template.version : ''}
+          </Col>
+          <Col xs={2}>
+            <label>Revision</label>
+          </Col>
+          <Col xs={4}>
+            {data &&
+              <FieldInput
+                field={data}
+                dataType="ENUMERATION_TYPE"
+                attr="objectVersion"
+                options={revisions}
+                showLabels={false}
+                onChange={this.handleError}
+              />
+            }
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={2}>
+            <label>Created</label>
+          </Col>
+          <Col xs={4}>
+            {data != null ? data.dateCreated : ''}
+          </Col>
+          <Col xs={2}>
+            <label>By</label>
+          </Col>
+          <Col xs={4}>
+            {data != null ? data.createdBy : ''}
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={2}>
             <label>Last Modified</label>
           </Col>
           <Col xs={4}>
             {data != null ? data.lastModified : ''}
           </Col>
           <Col xs={2}>
-            <label>Version</label>
+            <label>By</label>
           </Col>
           <Col xs={4}>
-            {template != null ? template.version : ''}
+            {data != null ? data.modifiedBy : ''}
           </Col>
         </Row>
         <Row>
@@ -98,14 +144,6 @@ export class EntityView extends React.Component {
           <Col xs={4}>
             {data != null ? data.key : ''}
           </Col>
-          <Col xs={2}>
-            <label>Revision</label>
-          </Col>
-          <Col xs={4}>
-            {data != null ? data.objectVersion : ''}
-          </Col>
-        </Row>
-        <Row>
           <Col xs={2}>
             <label>Status</label>
           </Col>
@@ -120,6 +158,9 @@ export class EntityView extends React.Component {
               />
             }
           </Col>
+        </Row>
+        <Row>
+
         </Row>
         { template != null && data != null &&
         <Tabs>

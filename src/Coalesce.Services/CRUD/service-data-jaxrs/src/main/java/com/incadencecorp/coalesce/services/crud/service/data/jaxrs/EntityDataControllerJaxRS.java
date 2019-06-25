@@ -1,9 +1,12 @@
 package com.incadencecorp.coalesce.services.crud.service.data.jaxrs;
 
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
+import com.incadencecorp.coalesce.api.CoalesceSimplePrincipal;
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.services.crud.service.data.controllers.EntityDataController;
 
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
 import java.rmi.RemoteException;
 
 /**
@@ -13,19 +16,35 @@ import java.rmi.RemoteException;
  */
 public class EntityDataControllerJaxRS extends EntityDataController implements IEntityDataControllerJaxRS {
 
+    @Context
+    SecurityContext securityContext;
+
     /**
      * Default Constructor
      *
      * @see EntityDataController
      */
-    public EntityDataControllerJaxRS(ICrudClient crud, ICoalescePersistor persister)
+    public EntityDataControllerJaxRS(CoalesceFramework framework)
     {
-        super(crud, persister);
+        super(framework);
     }
 
     @Override
     public void deleteEntity(String entityKey) throws RemoteException
     {
         this.deleteEntities(new String[] { entityKey });
+    }
+
+    @Override
+    protected ICoalescePrincipal getPrincipal()
+    {
+        if (securityContext != null && securityContext.getUserPrincipal() != null)
+        {
+            return new CoalesceSimplePrincipal(securityContext.getUserPrincipal());
+        }
+        else
+        {
+            return new CoalesceSimplePrincipal("");
+        }
     }
 }

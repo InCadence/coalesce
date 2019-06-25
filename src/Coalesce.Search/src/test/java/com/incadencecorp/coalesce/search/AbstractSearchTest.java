@@ -151,7 +151,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         TestEntity entity = new TestEntity();
         entity.initialize();
         entity.setModifiedBy(user1);
-        entity.createHistory(user2, "", 1);
+        entity.createHistory(user2, "", 2);
 
         persister.saveEntity(false, entity);
 

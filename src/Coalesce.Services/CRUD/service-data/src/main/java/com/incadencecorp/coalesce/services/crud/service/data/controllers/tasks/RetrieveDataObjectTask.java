@@ -1,44 +1,48 @@
-/*-----------------------------------------------------------------------------'
- Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+/*
+ *  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+ *
+ *  Notwithstanding any contractor copyright notice, the Government has Unlimited
+ *  Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ *  of this work other than as specifically authorized by these DFARS Clauses may
+ *  violate Government rights in this work.
+ *
+ *  DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ *  Unlimited Rights. The Government has the right to use, modify, reproduce,
+ *  perform, display, release or disclose this computer software and to have or
+ *  authorize others to do so.
+ *
+ *  Distribution Statement D. Distribution authorized to the Department of
+ *  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ *
+ */
 
- Notwithstanding any contractor copyright notice, the Government has Unlimited
- Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
- of this work other than as specifically authorized by these DFARS Clauses may
- violate Government rights in this work.
-
- DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
- Unlimited Rights. The Government has the right to use, modify, reproduce,
- perform, display, release or disclose this computer software and to have or
- authorize others to do so.
-
- Distribution Statement D. Distribution authorized to the Department of
- Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
- -----------------------------------------------------------------------------*/
-
-package com.incadencecorp.coalesce.services.crud.service.tasks;
-
-import java.util.HashMap;
-import java.util.Map;
+package com.incadencecorp.coalesce.services.crud.service.data.controllers.tasks;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.enums.ECrudOperations;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceIteratorGetVersion;
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
 import com.incadencecorp.coalesce.framework.util.CoalesceNotifierUtil;
-import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectKeyType;
 
-public class RetrieveDataObjectTask extends AbstractFrameworkTask<DataObjectKeyType[], ResultsType> {
+import java.util.HashMap;
+import java.util.Map;
+
+public class RetrieveDataObjectTask
+        extends AbstractFrameworkTask<DataObjectKeyType[], ICoalesceResponseType<CoalesceEntity>> {
 
     @Override
-    protected ResultsType doWork(TaskParameters<CoalesceFramework, DataObjectKeyType[]> parameters) throws CoalesceException
+    protected ICoalesceResponseType<CoalesceEntity> doWork(TaskParameters<CoalesceFramework, DataObjectKeyType[]> parameters)
+            throws CoalesceException
     {
-        ResultsType result = new ResultsType();
+        ICoalesceResponseType<CoalesceEntity> result = createResult();
         CoalesceIteratorGetVersion it = new CoalesceIteratorGetVersion();
         CoalesceFramework framework = parameters.getTarget();
         DataObjectKeyType[] params = parameters.getParams();
@@ -56,8 +60,8 @@ public class RetrieveDataObjectTask extends AbstractFrameworkTask<DataObjectKeyT
             {
                 it.getVersion(entity, task.getVer());
                 result.setStatus(EResultStatus.SUCCESS);
-                result.setResult(entity.toXml());
-                
+                result.setResult(entity);
+
                 CoalesceNotifierUtil.sendCrud(getName(), ECrudOperations.READ, entity);
             }
             else
@@ -73,7 +77,7 @@ public class RetrieveDataObjectTask extends AbstractFrameworkTask<DataObjectKeyT
     @Override
     protected Map<String, String> getParameters(DataObjectKeyType[] params, boolean isTrace)
     {
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
 
         for (DataObjectKeyType type : params)
         {
@@ -84,9 +88,9 @@ public class RetrieveDataObjectTask extends AbstractFrameworkTask<DataObjectKeyT
     }
 
     @Override
-    protected ResultsType createResult()
+    protected ICoalesceResponseType<CoalesceEntity> createResult()
     {
-        return new ResultsType();
+        return new CoalesceResponseType<>();
     }
 
 }

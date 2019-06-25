@@ -6,7 +6,11 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import org.apache.commons.io.Charsets;
 import org.joda.time.DateTime;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -89,9 +93,8 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
      *
      * @param doc org.w3c.dom Document that will be used to create the {@link CoalesceEntityTemplate}
      * @return {@link CoalesceEntityTemplate} created from the {@link CoalesceEntity} entity's Document
-     * @throws CoalesceException on error
      */
-    public static CoalesceEntityTemplate create(Document doc) throws CoalesceException
+    public static CoalesceEntityTemplate create(Document doc)
     {
         // Create a new CoalesceEntityTemplate
         CoalesceEntityTemplate entTemp = new CoalesceEntityTemplate();
@@ -205,12 +208,22 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
 
         if (StringHelper.isNullOrEmpty(result))
         {
-            result = UUID.nameUUIDFromBytes((getName() + getSource() + getVersion()).getBytes(Charsets.UTF_8)).toString();
+            result = getHashedKey();
             setKey(result);
 
         }
 
         return result;
+    }
+
+    public String getHashedKey()
+    {
+        return getHashedKey(getName(), getSource(), getVersion());
+    }
+
+    public static String getHashedKey(String name, String source, String version)
+    {
+        return UUID.nameUUIDFromBytes((name + source + version).getBytes(Charsets.UTF_8)).toString();
     }
 
     /**

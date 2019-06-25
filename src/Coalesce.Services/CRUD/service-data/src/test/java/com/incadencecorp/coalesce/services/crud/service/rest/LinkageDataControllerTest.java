@@ -25,7 +25,6 @@ import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
 import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
 import com.incadencecorp.coalesce.services.common.controllers.datamodel.GraphLink;
-import com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl;
 import com.incadencecorp.coalesce.services.crud.service.data.controllers.LinkageDataController;
 import org.junit.Assert;
 import org.junit.Test;
@@ -51,7 +50,7 @@ public class LinkageDataControllerTest {
         CoalesceSearchFramework framework = new CoalesceSearchFramework();
         framework.setAuthoritativePersistor(new DerbyPersistor());
 
-        LinkageDataController controller = new LinkageDataController(new CrudFrameworkClientImpl(framework), framework);
+        LinkageDataController controller = new LinkageDataController(framework);
 
         // Create Entities
         CoalesceEntity entity1 = CoalesceEntity.create("name", "source", "1.0");
@@ -94,7 +93,7 @@ public class LinkageDataControllerTest {
         CoalesceSearchFramework framework = new CoalesceSearchFramework();
         framework.setAuthoritativePersistor(new DerbyPersistor());
 
-        LinkageDataController controller = new LinkageDataController(new CrudFrameworkClientImpl(framework), framework);
+        LinkageDataController controller = new LinkageDataController(framework);
 
         // Create Entities
         CoalesceEntity entity1 = CoalesceEntity.create("name", "source", "1.0");
@@ -165,14 +164,14 @@ public class LinkageDataControllerTest {
     /**
      * This test ensures that not specifying a linkage type will result in an exception
      */
-    @Test (expected = RemoteException.class)
+    @Test(expected = RemoteException.class)
     public void testTypeNotSet() throws Exception
     {
         // Setup
         CoalesceSearchFramework framework = new CoalesceSearchFramework();
         framework.setAuthoritativePersistor(new DerbyPersistor());
 
-        LinkageDataController controller = new LinkageDataController(new CrudFrameworkClientImpl(framework), framework);
+        LinkageDataController controller = new LinkageDataController(framework);
 
         // Create Task
         GraphLink task = new GraphLink();
