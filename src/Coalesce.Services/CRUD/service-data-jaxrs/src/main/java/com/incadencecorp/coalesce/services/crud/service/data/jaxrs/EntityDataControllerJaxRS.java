@@ -20,8 +20,6 @@ public class EntityDataControllerJaxRS extends EntityDataController implements I
     SecurityContext securityContext;
 
     /**
-     * Default Constructor
-     *
      * @see EntityDataController
      */
     public EntityDataControllerJaxRS(CoalesceFramework framework)
@@ -44,7 +42,7 @@ public class EntityDataControllerJaxRS extends EntityDataController implements I
         }
         else
         {
-            return new CoalesceSimplePrincipal("");
+            return new CoalesceSimplePrincipal();
         }
     }
 }

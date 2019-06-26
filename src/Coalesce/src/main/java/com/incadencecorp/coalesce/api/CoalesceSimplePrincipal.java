@@ -18,9 +18,12 @@
 
 package com.incadencecorp.coalesce.api;
 
+import java.net.UnknownHostException;
 import java.security.Principal;
 
 /**
+ * Implementation of {@link ICoalescePrincipal}
+ *
  * @author Derek Clemenzi
  */
 public class CoalesceSimplePrincipal implements ICoalescePrincipal {
@@ -28,16 +31,38 @@ public class CoalesceSimplePrincipal implements ICoalescePrincipal {
     private String ip;
     private String name;
 
+    /**
+     * Creates a principal for the user running this thread.
+     */
+    public CoalesceSimplePrincipal()
+    {
+        this(System.getProperty("user.name"), getHostIP());
+    }
+
+    /**
+     * Creates a principal for the specified user using the localhost as the IP
+     *
+     * @param name of the user
+     */
     public CoalesceSimplePrincipal(String name)
     {
-        this(name, "");
+        this(name, getHostIP());
     }
 
+    /**
+     * Creates a principal from an existing principal using the localhost as the IP.
+     *
+     * @param principal of user.
+     */
     public CoalesceSimplePrincipal(Principal principal)
     {
-        this(principal.getName(), "");
+        this(principal.getName(), getHostIP());
     }
 
+    /**
+     * @param name of user
+     * @param ip   of user
+     */
     public CoalesceSimplePrincipal(String name, String ip)
     {
         if (name == null)
@@ -66,7 +91,7 @@ public class CoalesceSimplePrincipal implements ICoalescePrincipal {
 
     public boolean equals(Object obj)
     {
-        return !(obj instanceof CoalesceSimplePrincipal) ? false : this.name.equals(((CoalesceSimplePrincipal) obj).name);
+        return obj instanceof CoalesceSimplePrincipal && this.name.equals(((CoalesceSimplePrincipal) obj).name);
     }
 
     public int hashCode()
@@ -77,5 +102,17 @@ public class CoalesceSimplePrincipal implements ICoalescePrincipal {
     public String toString()
     {
         return this.name;
+    }
+
+    private static String getHostIP()
+    {
+        try
+        {
+            return java.net.InetAddress.getLocalHost().getHostAddress();
+        }
+        catch (UnknownHostException e)
+        {
+            return null;
+        }
     }
 }
