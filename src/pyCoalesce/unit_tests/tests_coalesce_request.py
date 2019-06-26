@@ -643,7 +643,7 @@ class EntityTests(ServerTest):
     @classmethod
     def test_linkage_manipulation(cls):
         """
-        Creates one set of test linkages for each types of input, with
+        Creates one set of test linkages for each type of input, with
         three linkages in each set, to allow testing both single-linkage
         and multiple-linkage input.  This also tests the linkage classes
         and their constructor and output methods.
@@ -972,10 +972,10 @@ TESTS = (EntityTests("test_create_template"),
          EntityTests("test_linkage_manipulation"),
          EntityTests("test_create_linkages"),
          EntityTests("test_read_linkages"),
-         SearchTests("test_search"), SearchTests("test_search_simple"))
-#         EntityTests("test_delete_linkages"), EntityTests("test_delete"),
-#         EntityTests("test_update_template"),
-#         EntityTests("test_delete_template"))
+         SearchTests("test_search"), SearchTests("test_search_simple"),
+         EntityTests("test_delete_linkages"), EntityTests("test_delete"),
+         EntityTests("test_update_template"),
+         EntityTests("test_delete_template"))
 
 
 def pyCoalesce_test_suite():
