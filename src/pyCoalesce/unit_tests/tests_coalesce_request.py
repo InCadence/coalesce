@@ -323,7 +323,8 @@ QUERY4_DICT = {
 
 class ServerTest(TestCase):
     """
-    Provides a server for the other TestCase classes.
+    Provides a server object for the other TestCase classes.
+
     """
 
     @classmethod
@@ -336,6 +337,7 @@ class ServerTest(TestCase):
 class EntityTests(ServerTest):
     """
     Methods that set values used by later methods must be class methods.
+
     """
 
     def test_create_template(self):
@@ -385,6 +387,7 @@ class EntityTests(ServerTest):
         """
         This tests read via key; the "test_create_entity" method implicitly
         tests read via name/source/version.
+
         """
 
         orig_template1 = xmltodict.parse(TEMPLATE1_XML)
@@ -640,13 +643,14 @@ class EntityTests(ServerTest):
     @classmethod
     def test_linkage_manipulation(cls):
         """
-        Create one set of test linkages for each types of input, with three
-        linkages in each set, to allow testing both single-linkage and
-        multiple-linkage input.  This also tests the linkage classes and
-        their constructor and output methods.
+        Creates one set of test linkages for each types of input, with
+        three linkages in each set, to allow testing both single-linkage
+        and multiple-linkage input.  This also tests the linkage classes
+        and their constructor and output methods.
 
         Note that this method doesn't feature any asserts--it just throws
         an error if something goes wrong.
+
         """
 
         # Set for dict input

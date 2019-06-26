@@ -16,4 +16,4 @@ itself, which was still a consideration when this wrapper was created.)
 
 To recreate the distribution files, run the following command from this directory (typical options have been included):
 
-python setup.py sdist bdist_egg bdist_wheel
+python setup.py sdist bdist_wheel
