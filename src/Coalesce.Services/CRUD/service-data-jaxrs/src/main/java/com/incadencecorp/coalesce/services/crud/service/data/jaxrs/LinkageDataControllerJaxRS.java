@@ -36,7 +36,6 @@ public class LinkageDataControllerJaxRS extends LinkageDataController implements
     SecurityContext securityContext;
 
     /**
-     * @param framework
      * @see LinkageDataController
      */
     public LinkageDataControllerJaxRS(CoalesceSearchFramework framework)
@@ -53,7 +52,7 @@ public class LinkageDataControllerJaxRS extends LinkageDataController implements
         }
         else
         {
-            return new CoalesceSimplePrincipal("");
+            return new CoalesceSimplePrincipal();
         }
     }
 }

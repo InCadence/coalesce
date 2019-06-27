@@ -18,6 +18,8 @@
 
 package com.incadencecorp.coalesce.services.common;
 
+import com.incadencecorp.coalesce.api.CoalesceSimplePrincipal;
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
@@ -74,7 +76,7 @@ abstract public class AbstractObjectController<T, E extends CoalesceEntity> exte
     {
         try
         {
-            Results<CoalesceEntity> results[] = crud.retrieveDataObjects(key);
+            Results<CoalesceEntity>[] results = crud.retrieveDataObjects(key);
 
             if (results[0].isSuccessful())
             {
@@ -100,7 +102,7 @@ abstract public class AbstractObjectController<T, E extends CoalesceEntity> exte
     @Override
     public T load(String key) throws RemoteException
     {
-        Results<CoalesceEntity> results[] = crud.retrieveDataObjects(key);
+        Results<CoalesceEntity>[] results = crud.retrieveDataObjects(key);
 
         try
         {
@@ -133,6 +135,14 @@ abstract public class AbstractObjectController<T, E extends CoalesceEntity> exte
         {
             throw new RemoteException("Server Error Deleting " + key);
         }
+    }
+
+    /**
+     * @return the principal executing the current thread.
+     */
+    protected ICoalescePrincipal getPrincipal()
+    {
+        return new CoalesceSimplePrincipal();
     }
 
     abstract protected E createEntity();

@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.services.common;
 
+import com.incadencecorp.coalesce.api.CoalesceSimplePrincipal;
 import com.incadencecorp.coalesce.api.EJobStatus;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalescePrincipal;
@@ -345,7 +346,7 @@ public abstract class ServiceBase<T> extends CoalesceExecutorServiceImpl {
      */
     protected ICoalescePrincipal getPrincipal()
     {
-        return null;
+        return new CoalesceSimplePrincipal();
     }
 
     protected <R extends ICoalesceResponseType<?>> void verify(List<R> results) throws RemoteException

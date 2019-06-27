@@ -19,7 +19,6 @@
 package com.incadencecorp.coalesce.services.crud.service.data.controllers.tasks;
 
 import com.incadencecorp.coalesce.api.EResultStatus;
-import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.enums.ECrudOperations;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
@@ -47,8 +46,7 @@ public class CreateDataObjectTask extends AbstractFrameworkTask<CoalesceEntity[]
         {
             // TODO This breaks the SOAP Persister Impl Tests
             //entity.getLinkageSection().clearLinkages();
-            entity.setModifiedBy(parameters.getPrincipalName());
-            entity.setModifiedByIP(parameters.getPrincipalIp());
+            entity.setModifiedBy(parameters.getPrincipal());
 
             Map<String, String> results = new HashMap<>();
             // TODO validator.validate(parameters.getPrincipal(), entity,

@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
@@ -8,7 +9,12 @@ import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import org.joda.time.DateTime;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -221,6 +227,20 @@ public abstract class CoalesceObject implements ICoalesceObject {
     public final void setModifiedBy(String value)
     {
         _object.setModifiedby(value);
+    }
+
+    public final void setModifiedBy(ICoalescePrincipal value)
+    {
+        if (value != null)
+        {
+            _object.setModifiedby(value.getName());
+            _object.setModifiedbyip(value.getIp());
+        }
+        else
+        {
+            _object.setModifiedby(null);
+            _object.setModifiedbyip(null);
+        }
     }
 
     @Override
