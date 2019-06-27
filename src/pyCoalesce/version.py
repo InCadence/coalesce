@@ -31,7 +31,7 @@ try:
 
 # If no POM can be found, provide a default.
 except IOError:
-    Coalesce_version = "0.0.33"
+    Coalesce_version = "0.0.38"
 
 # Get the version string (working around the namespace prefixes of element
 # tags).  We need to convert the external version to a PEP 440-compliant.
