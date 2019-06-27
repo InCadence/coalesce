@@ -214,7 +214,8 @@ def to_XML_string(Coalesce_object, indent_level = 1, pretty_print = True):
     string_file = StringIO()
 
     # Export the Coalesce object to the StringIO object as XML.
-    Coalesce_object.export(string_file, indent_level, pretty_print = pretty_print)
+    Coalesce_object.export(string_file, indent_level,
+                           pretty_print = pretty_print)
 
     # Return the XML as a string.
     return string_file.getvalue()

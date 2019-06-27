@@ -1,8 +1,8 @@
 # Compiled files
 *.pyc
 
-
 # Distribution files
+last_snapshot.txt
 /build
 /dist
 /pyCoalesce.egg-info
