@@ -2,7 +2,7 @@
   "name": "expert-search",
   "title": "Expert Search",
   "icon": "/images/svg/search.svg",
-  "version": "0.0.38",
+  "version": "0.0.39-SNAPSHOT",
   "author": "InCadence",
   "description": "This UI is for search for Coalesce entities.",
   "main": "index.js",

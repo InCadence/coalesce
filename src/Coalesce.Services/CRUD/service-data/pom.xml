@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.incadencecorp.coalesce.services.crud</groupId>
 		<artifactId>coalesce-crud-parent</artifactId>
-		<version>0.0.38</version>
+		<version>0.0.39-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
