@@ -28,7 +28,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce</groupId>
         <artifactId>coalesce-pom</artifactId>
-        <version>0.0.38-SNAPSHOT</version>
+        <version>0.0.38</version>
         <relativePath>../Coalesce.Pom</relativePath>
     </parent>
 
