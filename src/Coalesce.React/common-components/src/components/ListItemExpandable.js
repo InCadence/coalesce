@@ -44,7 +44,7 @@ export class ListItemExpandable extends React.Component {
 
           {this.props.details &&
             <IconButton
-              style={this.props.secondary ? {} : {width: '24px', height: '24px'}}
+              style={this.props.secondary ? {} : {width: '24px', height: '24px', padding: 0}}
               onClick={this.handleToggleExpand}>
               {this.state.expanded ? <ExpandLess /> : <ExpandMore />}
             </IconButton>
