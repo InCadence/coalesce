@@ -59,7 +59,6 @@
     <!-- ========================== -->
 
     <bean id="linkagesImpl" class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.LinkageDataControllerJaxRS">
-        <argument ref="crud-client"/>
         <argument ref="framework"/>
     </bean>
 
@@ -73,8 +72,7 @@
 
     <bean id="entityImpl"
           class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.EntityDataControllerJaxRS">
-        <argument ref="template"/>
-        <argument ref="crud-client"/>
+        <argument ref="framework"/>
     </bean>
 
     <bean id="templateServiceImpl"
@@ -102,11 +100,6 @@
 
     <bean id="searchServiceImpl"
           class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.SearchDataControllerJaxRS">
-        <argument ref="framework"/>
-    </bean>
-
-    <bean id="crud-client"
-          class="com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl">
         <argument ref="framework"/>
     </bean>
 
