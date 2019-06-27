@@ -18,6 +18,8 @@
 package com.incadencecorp.coalesce.services.search.service.data.controllers;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.CoalesceSimplePrincipal;
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -155,6 +157,11 @@ public class SearchDataController {
         try
         {
             Filter filter = getFilter(ff, searchQuery.getGroup());
+
+            if (searchQuery.isUserLimited())
+            {
+                filter = ff.and(filter, CoalescePropertyFactory.getCreatedBy(getPrincipal().getName()));
+            }
 
             // Convert Properties
             List<PropertyName> properties = new ArrayList<>();
@@ -439,7 +446,9 @@ public class SearchDataController {
                     values = criteria.getValue().split(" ");
                     if (values.length != 2)
                     {
-                        throw new CoalesceException("Expected an array of two values ('[\"<from>\", \"<to>\"]'), or two values separated by a space; Actual: " + criteria.getValue());
+                        throw new CoalesceException(
+                                "Expected an array of two values ('[\"<from>\", \"<to>\"]'), or two values separated by a space; Actual: "
+                                        + criteria.getValue());
                     }
                 }
                 criteriaFilter = ff.between(property, ff.literal(values[0]), ff.literal(values[1]));
@@ -451,7 +460,9 @@ public class SearchDataController {
                     times = criteria.getValue().split(" ");
                     if (times.length != 2)
                     {
-                        throw new CoalesceException("Expected an array of two values ('[\"<from>\", \"<to>\"]'), or two values separated by a space; Actual: " + criteria.getValue());
+                        throw new CoalesceException(
+                                "Expected an array of two values ('[\"<from>\", \"<to>\"]'), or two values separated by a space; Actual: "
+                                        + criteria.getValue());
                     }
                 }
 
@@ -521,6 +532,11 @@ public class SearchDataController {
         }
 
         return filter;
+    }
+
+    protected ICoalescePrincipal getPrincipal()
+    {
+        return new CoalesceSimplePrincipal();
     }
 
 }

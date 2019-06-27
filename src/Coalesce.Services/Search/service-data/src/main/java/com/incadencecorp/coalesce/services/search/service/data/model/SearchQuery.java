@@ -16,6 +16,7 @@ public class SearchQuery {
     private List<SortByType> sortBy;
     private List<String> propertyNames;
     private final EnumSet<EPersistorCapabilities> capabilities = EnumSet.of(EPersistorCapabilities.SEARCH);
+    private boolean isUserLimited;
 
     public String getType()
     {
@@ -88,4 +89,13 @@ public class SearchQuery {
         this.capabilities.addAll(values);
     }
 
+    public boolean isUserLimited()
+    {
+        return isUserLimited;
+    }
+
+    public void setUserLimited(boolean userLimited)
+    {
+        isUserLimited = userLimited;
+    }
 }
