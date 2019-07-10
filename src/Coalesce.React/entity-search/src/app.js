@@ -17,16 +17,6 @@ export class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleTemplateLoad = this.handleTemplateLoad.bind(this);
-    this.handleError = this.handleError.bind(this);
-    this.handleUpdate = this.handleUpdate.bind(this);
-    this.handleCapabilityUpdate = this.handleCapabilityUpdate.bind(this);
-    this.createQuery = this.createQuery.bind(this);
-    this.handleSearch = this.handleSearch.bind(this);
-    this.handleSpinner = this.handleSpinner.bind(this);
-    this.handlePageUpdate = this.handlePageUpdate.bind(this);
-    this.handlePageSizeUpdate = this.handlePageSizeUpdate.bind(this);
-
     var cache = {};
 
     cache[DEFAULT] = {
@@ -41,11 +31,12 @@ export class App extends React.Component {
       properties: [],
       pageSize: 200,
       pageNum: 1,
+      sortBy: [{"propertyName": undefined, "sortOrder": "ASC"}],
       query: this.createQuery()
     }
   }
 
-  createQuery(name) {
+  createQuery = (name) => {
 
     if (!name) {
       name = this.state && this.state.key ? this.state.cache[this.state.key].name : '' ;
@@ -104,7 +95,7 @@ export class App extends React.Component {
     });
   }
 
-  handleError(message) {
+  handleError = (message) => {
     this.setState(() => {return {
       error: message,
       loading: null,
@@ -112,23 +103,28 @@ export class App extends React.Component {
     }});
   }
 
-  handleUpdate(data, properties) {
+  handleUpdate = (data, properties) => {
     this.setState(() => {return {query: data, properties: properties}});
   }
 
-  handleCapabilityUpdate(value) {
+  handleSortUpdate = (sortBy) => {
+    console.log(sortBy);
+    this.setState(() => {return {sortBy: sortBy}});
+  }
+
+  handleCapabilityUpdate = (value) => {
     this.setState(() => {return {capabilities: value}});
   }
 
-  handlePageUpdate(page) {
+  handlePageUpdate = (page) => {
     this.setState(() => {return {pageNum: page}});
   }
 
-  handlePageSizeUpdate(size) {
+  handlePageSizeUpdate = (size) => {
     this.setState(() => {return {pageSize: size}});
   }
 
-  handleTemplateLoad(key) {
+  handleTemplateLoad = (key) => {
 
     const that = this;
     const { cache } = this.state;
@@ -179,7 +175,7 @@ export class App extends React.Component {
 
   render() {
 
-    const { cache, key, results, properties, query } = this.state;
+    const { cache, key, results, properties, query, sortBy } = this.state;
    // console.log("App creating new filter creator", cache, key);
     return (
         <div>
@@ -239,12 +235,16 @@ export class App extends React.Component {
                 label={this.state.key ? this.state.cache[this.state.key].name : undefined}
                 maxRows={10}
                 recordsets={cache[key].recordsets}
+                sortBy={sortBy}
+                selectedColumns={properties}
                 data={query}
                 handleError={this.handleError}
                 handleUpdate={this.handleUpdate}
+                handleSortUpdate = {this.handleSortUpdate}
                 handleCapabilityUpdate = {this.handleCapabilityUpdate}
                 handlePageUpdate={this.handlePageUpdate}
                 handlePageSizeUpdate={this.handlePageSizeUpdate}
+                handleSearch={this.handleSearch}
                 pageNum={this.state.pageNum}
                 pageSize={this.state.pageSize}
               />
@@ -277,6 +277,7 @@ export class App extends React.Component {
               <DialogOptions
                 title="Select Template"
                 open={true}
+                sorted
                 onClose={() => {this.setState({promptTemplate: false})}}
                 onClick={this.handleTemplateLoad}
                 options={this.state.templates}
@@ -295,13 +296,13 @@ export class App extends React.Component {
     )
   }
 
-  handleSpinner(value) {
+  handleSpinner = (value) => {
     this.setState(() => {return {
       loading: value
     }})
   }
 
-  handleSearch() {
+  handleSearch = () => {
 
     const that = this;
 
@@ -321,6 +322,10 @@ export class App extends React.Component {
 
     if (this.state.capabilities && this.state.capabilities.length > 0) {
       query.capabilities = this.state.capabilities;
+    }
+
+    if (this.state.sortBy[0].propertyName) {
+      query.sortBy = this.state.sortBy;
     }
 
     // Get Specified columns

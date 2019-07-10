@@ -116,6 +116,7 @@ export class FieldInput extends React.Component {
       case "ENUMERATION_LIST_TYPE":
         view = (
           <Enumeration
+            {...this.props}
             list={true}
             field={field}
             style={style}
@@ -132,6 +133,7 @@ export class FieldInput extends React.Component {
       case "ENUMERATION_TYPE":
         view = (
           <Enumeration
+            {...this.props}
             list={false}
             field={field}
             dense

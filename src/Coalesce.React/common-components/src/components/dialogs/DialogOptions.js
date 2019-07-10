@@ -19,8 +19,20 @@ export class DialogOptions extends React.Component {
   constructor(props) {
     super(props);
 
+    var items = props.options;
+
+    if (items && props.sorted) {
+      items = items.sort(function(a, b){
+          var x = a.name.toLowerCase();
+          var y = b.name.toLowerCase();
+          if (x < y) {return -1;}
+          if (x > y) {return 1;}
+          return 0;
+      })
+    }
+
     this.state = {
-      items: this.props.options
+      items: items
     }
 
     this.handledSelect = this.handleSelect.bind(this);
