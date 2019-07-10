@@ -21,10 +21,30 @@ export class FieldInput extends React.Component {
   constructor(props) {
     super(props);
 
-    var style;
+    this.state = {
+      field: props.field,
+      style: this.createStyle(props)
+    };
+
+    this.handleOnChange = this.handleOnChange.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.field != prevProps.field ||
+        this.props.dataType != prevProps.dataType ||
+        this.props.field.dataType != prevProps.field.dataType) {
+      this.setState({
+        field: this.props.field,
+        style: this.createStyle(this.props)
+      });
+    }
+  }
+
+  createStyle(props) {
+    var type = props.dataType ? props.dataType : props.field.dataType;
 
     if (this.props.showLabels) {
-      style = {
+      return {
         root: {},
         none: {},
         floatingLabel: {
@@ -40,9 +60,7 @@ export class FieldInput extends React.Component {
         }
       };
     } else {
-      var type = props.dataType ? props.dataType : props.field.dataType;
-
-      style = {
+      return {
         root: {
           width: type === "BOOLEAN_TYPE" ? "20px" : undefined,
           lineHeight: "20px",
@@ -57,19 +75,6 @@ export class FieldInput extends React.Component {
         underline: {}
       };
     }
-
-    this.state = {
-      field: props.field,
-      style: style
-    };
-
-    this.handleOnChange = this.handleOnChange.bind(this);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      field: nextProps.field
-    });
   }
 
   handleOnChange(attr, value) {

@@ -21,6 +21,66 @@ export function searchComplex(query)
     });
 }
 
+export function loadHistory() {
+  return fetch(`${karafRootAddr}/search/history`, {
+      method: "GET",
+    }).then(res => {
+      if (!res.ok)
+      {
+        throw Error(res.statusText);
+      }
+      return res.json();
+    }).catch(function(error) {
+      throw Error(error);
+    });
+}
+
+export function loadSavedHistory() {
+  return fetch(`${karafRootAddr}/search/history/saved`, {
+      method: "GET",
+    }).then(res => {
+      if (!res.ok)
+      {
+        throw Error(res.statusText);
+      }
+      return res.json();
+    }).catch(function(error) {
+      throw Error(error);
+    });
+}
+
+export function loadQuery(key) {
+  return fetch(`${karafRootAddr}/search/history/${key}`, {
+      method: "GET",
+    }).then(res => {
+      if (!res.ok)
+      {
+        throw Error(res.statusText);
+      }
+      return res.json();
+    }).catch(function(error) {
+      throw Error(error);
+    });
+}
+
+export function saveQuery(query) {
+  return fetch(`${karafRootAddr}/search/history`, {
+      method: "POST",
+      body: JSON.stringify(query),
+      headers: new Headers({
+        'content-type': 'application/json; charset=utf-8'
+      }),
+    }).then(res => {
+      if (!res.ok)
+      {
+        throw Error(res.statusText);
+      }
+      return res.text();
+    }).catch(function(error) {
+      throw Error(error);
+    });
+}
+
 export const OPERATORS = {
   'STRING_TYPE': ['EqualTo', 'NotEqualTo', 'Like', 'NullCheck'],
   'STRING_LIST_TYPE': ['EqualTo', 'NotEqualTo', 'Like', 'NullCheck'],

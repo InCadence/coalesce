@@ -39,6 +39,26 @@ export class DialogOptions extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.options !== prevProps.options) {
+
+      var items = this.props.options;
+
+      if (items && this.props.sorted) {
+        items = items.sort(function(a, b){
+            var x = a.name.toLowerCase();
+            var y = b.name.toLowerCase();
+            if (x < y) {return -1;}
+            if (x > y) {return 1;}
+            return 0;
+        })
+      }
+
+      this.setState(() => {return {items: items}})
+    }
+  }
+
   handleSelect(key) {
       const { items } = this.state;
       const that = this;
@@ -92,6 +112,14 @@ export class DialogOptions extends React.Component {
           </List>
         </DialogContent>
         <DialogActions>
+          {this.props.onNew &&
+            <Button
+              color="secondary"
+              onClick={this.props.onNew}
+            >
+              {this.props.onNewTitle}
+            </Button>
+          }
           <Button
             color={this.props.multi ? "secondary" : "primary"}
             onClick={this.props.onClose}

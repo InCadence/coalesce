@@ -5,20 +5,9 @@ import java.util.List;
 
 public class SearchGroup {
 
-    private String key;
     private String operator = "AND";
     private List<SearchCriteria> criteria;
     private List<SearchGroup> groups;
-
-    public String getKey()
-    {
-        return key;
-    }
-
-    public void setKey(String key)
-    {
-        this.key = key;
-    }
 
     public String getOperator()
     {

@@ -34,7 +34,9 @@ import java.rmi.RemoteException;
 
 /**
  * @author Derek Clemenzi
+ * @deprecated
  */
+@Deprecated
 abstract public class AbstractObjectController<T, E extends CoalesceEntity> extends CoalesceComponentImpl
         implements IObjectController<T> {
 

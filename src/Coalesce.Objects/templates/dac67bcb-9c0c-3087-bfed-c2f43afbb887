@@ -1,0 +1,20 @@
+<entity classname="com.incadencecorp.coalesce.datamodel.Query" key="dac67bcb-9c0c-3087-bfed-c2f43afbb887"
+        lastmodified="2019-07-10T12:53:10.101Z" name="SearchQuery" source="Coalesce" version="1">
+    <linkagesection name="Linkages"/>
+    <section name="SearchQuery" noindex="false">
+        <recordset maxrecords="1" minrecords="1" name="SearchQuery">
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="U" description="" label="Columns to Return"
+                             name="propertyNames"/>
+            <fielddefinition datatype="stringlist" defaultclassificationmarking="U"
+                             description="List of capabilities required to run the query." label="Capabilities"
+                             name="capabilities"/>
+            <fielddefinition datatype="integer" defaultclassificationmarking="U"
+                             description="Number of results to return per page." label="Page Size" name="pageSize"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="U" label="Type" name="indextype"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="U" label="Sort By" name="sortBy"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="U" label="CQL" name="cql"/>
+            <fielddefinition datatype="string" defaultclassificationmarking="U" label="Criteria" name="criteria"/>
+            <fielddefinition datatype="boolean" defaultclassificationmarking="U" name="Saved"/>
+        </recordset>
+    </section>
+</entity>

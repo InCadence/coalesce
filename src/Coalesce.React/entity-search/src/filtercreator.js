@@ -76,7 +76,6 @@ class FilterCreator extends React.Component {
                     name: "Columns",
                     label: "Columns to Return",
                     value: this.props.selectedColumns,
-                    showLabels: true
                   }}
                   dataType="ENUMERATION_LIST_TYPE"
                   attr="value"
@@ -95,7 +94,6 @@ class FilterCreator extends React.Component {
                     name: "Capabilities",
                     label: "Capabilities",
                     value: this.state.selectedCapabilities,
-                    showLabels: true
                   }}
                   dataType="ENUMERATION_LIST_TYPE"
                   attr="value"
@@ -246,7 +244,7 @@ class FilterCreator extends React.Component {
               square
               icon="/images/svg/remove.svg"
               title="Remove Grouping"
-              onClick={() => {this.props.handleRemoveGroup(this.state.data.key)}}
+              onClick={() => {this.props.handleRemoveGroup(this.state.data)}}
             />
           )}
         </ExpansionPanelActions>
@@ -318,7 +316,6 @@ class FilterCreator extends React.Component {
   handleAddGroup = () => {
     const {data} = this.state;
     var tempTable = {
-      key: uuid.v4(),
       operator: "AND",
       criteria: [
         {
@@ -337,12 +334,12 @@ class FilterCreator extends React.Component {
     this.handleUpdate(data);
   }
 
-  handleRemoveGroup = (key) => {
+  handleRemoveGroup = (group) => {
 
     const {data} = this.state;
 
     for (var ii=0; ii<data.groups.length; ii++) {
-        if (data.groups[ii].key === key) {
+        if (data.groups[ii] == group) {
           data.groups.splice(ii, 1);
 
           // Save State
