@@ -8,25 +8,60 @@ export default class Enumeration extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      elements: this.createOptions()
+    }
+
     this.handleOnChange = this.handleOnChange.bind(this);
+    this.createOptions = this.createOptions.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.options !== prevProps.options) {
+      this.setState(() => {return {elements: this.createOptions()}})
+    }
   }
 
   handleOnChange(event) {
     this.props.onChange(this.props.attr, event.target.value);
   }
 
-  render () {
-    const {field, style, attr} = this.props;
+  createOptions() {
 
-    var options = [];
+    var elements = [];
+    var options = this.props.options;
 
-    if (this.props.options) {
-      options = this.props.options.map((item) => {
-        return (
-          <MenuItem key={item.enum} value={item.enum}>{item.label}</MenuItem>
-        )
+    if (options) {
+
+      if (this.props.sorted) {
+        options = options.sort(function(a, b){
+            var x = a.label.toLowerCase();
+            var y = b.label.toLowerCase();
+            if (x < y) {return -1;}
+            if (x > y) {return 1;}
+            return 0;
+        });
+      }
+
+      elements = options.map((option) => {
+        if (option === Object(option)) {
+          return (
+            <MenuItem key={option.enum} value={option.enum}>{option.label}</MenuItem>
+          )
+        } else {
+          return (
+            <MenuItem key={option} value={option}>{option}</MenuItem>
+          )
+        }
       })
     }
+
+    return elements;
+  }
+
+  render () {
+    const {field, style, attr} = this.props;
+    const { elements } = this.state;
 
     return(
       <FormControl style={{width: "100%"}}>
@@ -44,7 +79,7 @@ export default class Enumeration extends React.Component {
           onChange={this.handleOnChange}
           onKeyDown={this.props.onKeyDown}
         >
-          {options}
+          {elements}
         </Select>
       </FormControl>
 

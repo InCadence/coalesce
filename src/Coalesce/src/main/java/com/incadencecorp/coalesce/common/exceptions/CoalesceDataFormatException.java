@@ -26,12 +26,17 @@ public class CoalesceDataFormatException extends CoalesceException {
 
     /**
      * Constructor function. Sets the message to the parameter passed in.
-     * 
+     *
      * @param message allowed object is {@link String }
      */
     public CoalesceDataFormatException(final String message)
     {
         super(message);
+    }
+
+    public CoalesceDataFormatException(final String message, final Exception e)
+    {
+        super(message, e);
     }
 
 }

@@ -19,6 +19,11 @@
 			<artifactId>coalesce-search-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
+			<artifactId>coalesce-crud-service-data</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- Test Dependencies -->
 		<dependency>

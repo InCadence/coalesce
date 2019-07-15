@@ -1,9 +1,10 @@
 import React from 'react'
 import Menu from 'common-components/lib/components/menu'
 import { loadTemplates, loadTemplate } from 'common-components/lib/js/templateController.js';
-import { getRootKarafUrl } from 'common-components/lib/js/common';
-import { DialogMessage, DialogLoader, DialogOptions, DialogFieldLegend } from 'common-components/lib/components/dialogs'
-import { searchComplex } from 'common-components/lib/js/searchController.js';
+import { getRootKarafUrl, timeDifference } from 'common-components/lib/js/common';
+import { DialogMessage, DialogLoader, DialogOptions, DialogFieldLegend, DialogPrompt } from 'common-components/lib/components/dialogs'
+import { searchComplex, loadHistory, loadSavedHistory, saveQuery } from 'common-components/lib/js/searchController.js';
+
 import uuid from 'uuid';
 
 import FilterCreator from './filtercreator.js'
@@ -17,16 +18,6 @@ export class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleTemplateLoad = this.handleTemplateLoad.bind(this);
-    this.handleError = this.handleError.bind(this);
-    this.handleUpdate = this.handleUpdate.bind(this);
-    this.handleCapabilityUpdate = this.handleCapabilityUpdate.bind(this);
-    this.createQuery = this.createQuery.bind(this);
-    this.handleSearch = this.handleSearch.bind(this);
-    this.handleSpinner = this.handleSpinner.bind(this);
-    this.handlePageUpdate = this.handlePageUpdate.bind(this);
-    this.handlePageSizeUpdate = this.handlePageSizeUpdate.bind(this);
-
     var cache = {};
 
     cache[DEFAULT] = {
@@ -38,20 +29,23 @@ export class App extends React.Component {
       cache: cache,
       key: DEFAULT,
       results: null,
-      properties: [],
-      pageSize: 200,
-      pageNum: 1,
       query: this.createQuery()
     }
   }
 
-  createQuery(name) {
+  createQuery = (name) => {
 
     if (!name) {
       name = this.state && this.state.key ? this.state.cache[this.state.key].name : '' ;
     }
 
     return {
+      type: name,
+      pageSize: 200,
+      pageNumber: 1,
+      propertyNames: [],
+      sortBy: [{"propertyName": undefined, "sortOrder": "ASC"}],
+      group: {
         operator: 'AND',
         criteria: [
           {
@@ -66,6 +60,7 @@ export class App extends React.Component {
         groups: []
        }
      }
+   }
 
   componentDidMount() {
 
@@ -104,7 +99,7 @@ export class App extends React.Component {
     });
   }
 
-  handleError(message) {
+  handleError = (message) => {
     this.setState(() => {return {
       error: message,
       loading: null,
@@ -112,23 +107,45 @@ export class App extends React.Component {
     }});
   }
 
-  handleUpdate(data, properties) {
-    this.setState(() => {return {query: data, properties: properties}});
+  handleUpdate = (data, properties) => {
+    const { query } = this.state;
+
+    query.group = data;
+    query.propertyNames = properties;
+
+    this.setState(() => {return {query: query}});
   }
 
-  handleCapabilityUpdate(value) {
+  handleSortUpdate = (sortBy) => {
+    const { query } = this.state;
+
+    query.sortBy = sortBy;
+
+    this.setState(() => {return {query: query}});
+  }
+
+  handleCapabilityUpdate = (value) => {
     this.setState(() => {return {capabilities: value}});
   }
 
-  handlePageUpdate(page) {
-    this.setState(() => {return {pageNum: page}});
+  handlePageUpdate = (page) => {
+    const { query } = this.state;
+
+    query.pageNumber = page;
+
+    this.setState(() => {return {query: query}});
   }
 
-  handlePageSizeUpdate(size) {
+  handlePageSizeUpdate = (size) => {
+
+    const { query } = this.state;
+
+    query.pageSize = size;
+
     this.setState(() => {return {pageSize: size}});
   }
 
-  handleTemplateLoad(key) {
+  handleTemplateLoad = (key) => {
 
     const that = this;
     const { cache } = this.state;
@@ -159,7 +176,6 @@ export class App extends React.Component {
           key: key,
           query: this.createQuery(cache[key].name),
           promptTemplate: false,
-          properties: []
           }
         );
 
@@ -179,7 +195,7 @@ export class App extends React.Component {
 
   render() {
 
-    const { cache, key, results, properties, query } = this.state;
+    const { cache, key, results, query } = this.state;
    // console.log("App creating new filter creator", cache, key);
     return (
         <div>
@@ -204,26 +220,23 @@ export class App extends React.Component {
             id: 'load',
             name: 'Load',
             img: "/images/svg/load.svg",
-            title: 'Load Saved Criteria Selection',
-            onClick: () => {
-              this.handleError("(Comming Soon!!!) This will allow you to load previously saved criteria.");
-            }
+            title: 'Load Query',
+            onClick: this.handleLoadSavedHistory
           }, {
             id: 'save',
             name: 'Save',
             img: "/images/svg/save.svg",
-            title: 'Save Criteria Selection',
+            title: 'Save Query',
             onClick: () => {
-              this.handleError("(Comming Soon!!!) This will allow you to save criteria.");
+              this.setState(() => {return {promptTitle: true}})
             }
           }, {
             id: 'reset',
             name: 'Reset',
             img: "/images/svg/erase.svg",
-            title: 'Reset Criteria',
+            title: 'Reset Query',
             onClick: () => {
-              this.setState(() => {return {query: this.createQuery(), properties: []}})
-              console.log("Reset Criteria");
+              this.setState(() => {return {query: this.createQuery()}})
             }
           },{
             id: 'search',
@@ -236,24 +249,27 @@ export class App extends React.Component {
           <div  style={{padding: '5px', margin: '10px'}}>
             { cache[key] != null && cache[key].recordsets.length >= 2 &&
               <FilterCreator
-                label={this.state.key ? this.state.cache[this.state.key].name : undefined}
+                label={query.type}
                 maxRows={10}
                 recordsets={cache[key].recordsets}
-                data={query}
+                sortBy={query.sortBy}
+                selectedColumns={query.propertyNames}
+                data={query.group}
                 handleError={this.handleError}
                 handleUpdate={this.handleUpdate}
+                handleSortUpdate = {this.handleSortUpdate}
                 handleCapabilityUpdate = {this.handleCapabilityUpdate}
                 handlePageUpdate={this.handlePageUpdate}
                 handlePageSizeUpdate={this.handlePageSizeUpdate}
-                pageNum={this.state.pageNum}
-                pageSize={this.state.pageSize}
+                handleSearch={this.handleSearch}
+                pageNum={query.pageNumber}
+                pageSize={query.pageSize}
               />
-
             }
             { results != null &&
               <SearchResults
                 data={results}
-                properties={properties}
+                properties={query.propertyNames}
                 handleError={this.handleError}
                 handleSpinner={this.handleSpinner}
                 url={this.props.karafRootAddr}
@@ -277,6 +293,7 @@ export class App extends React.Component {
               <DialogOptions
                 title="Select Template"
                 open={true}
+                sorted
                 onClose={() => {this.setState({promptTemplate: false})}}
                 onClick={this.handleTemplateLoad}
                 options={this.state.templates}
@@ -290,53 +307,188 @@ export class App extends React.Component {
                 onClose={() => {this.setState({displayLegend: null})}}
               />
             }
+            { this.state.history &&
+              <DialogOptions
+                title="Select Query"
+                open={this.state.showHistory}
+                sorted
+                onClose={() => {this.setState({history: undefined})}}
+                onNew={this.state.showAllHistory ? this.handleLoadHistory : undefined}
+                onNewTitle="All"
+                onClick={this.handleLoadQuery}
+                options={this.state.history}
+              />
+            }
+            { this.state.promptTitle &&
+              <DialogPrompt
+                title="Enter Title"
+                opened={true}
+                onSubmit={this.handleSaveQuery}
+                onClose={() => {this.setState(() => {return {promptTitle: false}})}}
+              />
+            }
           </div>
         </div>
     )
   }
 
-  handleSpinner(value) {
+  handleLoadQuery = (key) => {
+
+    const { history, templates, cache } = this.state;
+    var that = this;
+
+    for (var ii=0; ii<history.length; ii++) {
+      var historyRecord = history[ii].query;
+
+      if (historyRecord.key === key) {
+
+        if (historyRecord.sortBy.length == 0) {
+          historyRecord.sortBy.push({"propertyName": undefined, "sortOrder": "ASC"})
+        }
+
+        var templateKey = DEFAULT;
+
+        for (var jj=0; jj<templates.length; jj++) {
+          if (templates[jj].name === historyRecord.type) {
+            templateKey = templates[jj].key;
+            break;
+          }
+        }
+
+        if (cache[templateKey] == null) {
+            loadTemplate(templateKey).then(template => {
+
+                var recordsets = []
+
+                // Get Other Recordsets
+                template.sectionsAsList.forEach(function(section) {
+                  recordsets = recordsets.concat(getRecordsets(section));
+                });
+
+                recordsets = recordsets.concat(cache[DEFAULT].recordsets);
+
+                cache[templateKey] = {
+                  recordsets: recordsets,
+                  name: template.name
+                };
+
+                that.setState(() => {return {
+                  cache: cache
+                }});
+
+            }).catch((err) => {
+              that.handleError(`Failed Loading Template: ${key}`);
+            })
+        }
+
+        historyRecord.pageNumber = 1;
+        historyRecord.cql = undefined;
+        historyRecord.name = undefined;
+
+        this.setState(() => {return {
+          key: templateKey,
+          query: historyRecord,
+          results: undefined,
+          showHistory: false,
+          showAllHistory: false
+        }})
+
+        break;
+      }
+    }
+
+  }
+
+  handleSpinner = (value) => {
     this.setState(() => {return {
       loading: value
     }})
   }
 
-  handleSearch() {
+  handleLoadSavedHistory = () => {
+    const that = this;
+
+    loadSavedHistory().then((history) => {
+      that.setState(() => {return {
+          showHistory: true,
+          showAllHistory: true,
+          history: history.map((item) => {
+              item.name = item.title && item.title !== "SearchQuery" ? item.title : item.query.cql;
+              item.key = item.query.key;
+              return item;
+            })
+      }});
+    }).catch((err) => {
+      that.handleError(`Loading History: ${err}`);
+    })
+  }
+
+  handleLoadHistory = () => {
+    const that = this;
+
+    loadHistory().then((history) => {
+      that.setState(() => {return {
+          showHistory: true,
+          showAllHistory: false,
+          history: history.map((item) => {
+              item.name = item.title && item.title !== "SearchQuery" ? item.title : item.query.cql;
+              item.key = item.query.key;
+              return item;
+            })
+      }});
+    }).catch((err) => {
+      that.handleError(`Loading History: ${err}`);
+    })
+  }
+
+  handleSaveQuery = (title) => {
+
+    const that = this;
+    const { query } = this.state;
+
+    query.type = this.state.key ? this.state.cache[this.state.key].name : undefined;
+
+    if (!query.sortBy[0].propertyName) {
+      query.sortBy[0].propertyName = "CoalesceEntity.LastModified";
+    }
+
+    that.setState(() => {return {loading: "Saving Query"}});
+
+    saveQuery({query: query, title: title}).then(() => {
+      that.setState(() => { return {
+        promptTitle: false,
+        loading: undefined
+      } })
+    }).catch((err) => {
+      that.handleError(`Saving Search: ${err}`);
+    })
+  }
+
+  handleSearch = () => {
 
     const that = this;
 
-    // Create Query
-    var query = {
-      "type": this.state.key ? this.state.cache[this.state.key].name : undefined,
-      "pageSize": this.state.pageSize,
-      "pageNumber": this.state.pageNum,
-      "propertyNames": [],
-      "group": this.state.query
-    };
+    const { query } = this.state;
 
-    if (this.state.query.criteria.length === 0) {
+    query.type = this.state.key ? this.state.cache[this.state.key].name : undefined;
+
+    if (query.group.criteria.length === 0) {
       that.handleError("Please add one or more criteria.");
       return;
     }
 
-    if (this.state.capabilities && this.state.capabilities.length > 0) {
-      query.capabilities = this.state.capabilities;
+    if (!query.sortBy[0].propertyName) {
+      query.sortBy[0].propertyName = "CoalesceEntity.LastModified";
     }
 
     // Get Specified columns
-    if (this.state.properties && this.state.properties.length > 0) {
-      this.state.properties.forEach(function (property) {
-        query.propertyNames.push(property);
-      });
-    } else {
-      this.state.query.criteria.forEach(function (criteria) {
+    if (query.propertyNames && query.propertyNames.length <= 0) {
+      query.group.criteria.forEach(function (criteria) {
         if (!query.propertyNames.includes(criteria.recordset + "." + criteria.field)) {
           query.propertyNames.push(criteria.recordset + "." + criteria.field);
         }
       })
     }
-
-    console.log("Index search", this.state.query);
 
     // Display Spinner
     this.setState(() => {return {
@@ -350,7 +502,6 @@ export class App extends React.Component {
 
       that.setState(() => {return {
         results: response,
-        properties: query.propertyNames,
         loading: null
       }})
     }).catch(function(error) {

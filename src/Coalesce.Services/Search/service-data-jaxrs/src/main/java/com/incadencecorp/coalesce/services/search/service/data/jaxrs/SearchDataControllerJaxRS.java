@@ -18,9 +18,9 @@ public class SearchDataControllerJaxRS extends SearchDataController implements I
     @Context
     SecurityContext securityContext;
 
-    public SearchDataControllerJaxRS(CoalesceSearchFramework value)
+    public SearchDataControllerJaxRS(CoalesceSearchFramework framework)
     {
-        super(value);
+        super(framework);
     }
 
     @Override

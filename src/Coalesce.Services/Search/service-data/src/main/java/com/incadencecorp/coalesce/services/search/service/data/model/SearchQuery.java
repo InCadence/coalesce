@@ -7,16 +7,31 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+/**
+ * Model used for submitting queries. Specify either a group of criteria or a CQL statement.
+ */
 public class SearchQuery {
 
+    private String key;
     private String type;
     private SearchGroup group;
+    private String cql;
     private int pageSize;
     private int pageNumber;
     private List<SortByType> sortBy;
     private List<String> propertyNames;
     private final EnumSet<EPersistorCapabilities> capabilities = EnumSet.of(EPersistorCapabilities.SEARCH);
     private boolean isUserLimited;
+
+    public String getKey()
+    {
+        return key;
+    }
+
+    public void setKey(String key)
+    {
+        this.key = key;
+    }
 
     public String getType()
     {
@@ -36,6 +51,16 @@ public class SearchQuery {
     public void setGroup(SearchGroup group)
     {
         this.group = group;
+    }
+
+    public String getCql()
+    {
+        return cql;
+    }
+
+    public void setCql(String cql)
+    {
+        this.cql = cql;
     }
 
     public int getPageSize()

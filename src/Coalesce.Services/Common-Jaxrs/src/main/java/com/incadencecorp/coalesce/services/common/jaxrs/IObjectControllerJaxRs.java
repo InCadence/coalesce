@@ -30,13 +30,13 @@ import java.rmi.RemoteException;
  */
 public interface IObjectControllerJaxRs<T> extends IObjectController<T> {
 
-    @PUT
+    @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Override
     String save(final T object) throws RemoteException;
 
-    @POST
+    @PUT
     @Path("/{key:" + GUIDHelper.REGEX_UUID + "}")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Override
