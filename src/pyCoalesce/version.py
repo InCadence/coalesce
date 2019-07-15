@@ -15,10 +15,11 @@ package).
 """
 
 from os import path
-import re
 
-from lxml import etree as etree_
-
+try:
+    from lxml import etree as etree_
+except ImportError:
+    from xml.etree import ElementTree as etree_
 
 # Specify the path of the POM file.  We need a path relative to the
 # directory of this script, not the directory it was run from.
@@ -31,20 +32,10 @@ try:
 
 # If no POM can be found, provide a default.
 except IOError:
-    Coalesce_version = "0.0.38"
+    Coalesce_version = "0.0.39.snapshot"
 
 # Get the version string (working around the namespace prefixes of element
-# tags).  We need to convert the external version to a PEP 440-compliant.
-# format.
+# tags).
 else:
-    external_Coalesce_version = \
+    Coalesce_version = \
         POM_XML.xpath("/*[local-name()='project']/*[local-name()='version']")[0].text
-    version_match = \
-        re.match("([0-9]+\.[0-9]+\.[0-9]+)([^a-zA-Z0-9\.]?)([a-zA-Z0-9\.]*)",
-                 external_Coalesce_version)
-    Coalesce_version = version_match.group(1) + "+" + version_match.group(3).lower()
-
-# Add other data.
-project = u'pyCoalesce'
-author = u"Dhruva Venkat, Scott Orr"
-copyright = u'2018, InCadence Strategic Solutions'
