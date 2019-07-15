@@ -459,7 +459,7 @@ class TemplateWorkspace extends Component {
      else {
       widget = <TemplateGraph />;
     }
-*/    
+*/
 
     return <div key={item.i}>{widget}</div>;
   }
@@ -569,6 +569,7 @@ class TemplateWorkspace extends Component {
               title="Select Template"
               open={true}
               multi={true}
+              sorted
               onClose={() => {
                 this.setState({promptTemplate: false});
               }}
