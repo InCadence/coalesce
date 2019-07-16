@@ -18,7 +18,6 @@
 
 package com.incadencecorp.coalesce.services.api.providers;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.datamodel.impl.pojo.record.EnumMetadataPojoRecord;
 import com.incadencecorp.coalesce.framework.enumerationprovider.impl.AbstractEnumerationProvider;
 import com.incadencecorp.coalesce.services.api.IEnumerationDataController;
@@ -57,7 +56,7 @@ public class ServiceEnumerationProviderImpl extends AbstractEnumerationProvider 
                                     convert(controller.getEnumerationValues(enumeration.getKey())));
             }
         }
-        catch (RemoteException | CoalesceDataFormatException e)
+        catch (RemoteException e)
         {
             LOGGER.error("Failed to populate enumeration provider: {}", this.getClass().getSimpleName());
         }
@@ -77,7 +76,7 @@ public class ServiceEnumerationProviderImpl extends AbstractEnumerationProvider 
                 }
             }
         }
-        catch (RemoteException | CoalesceDataFormatException e)
+        catch (RemoteException e)
         {
             LOGGER.error("Failed to populate enumeration provider: {}", this.getClass().getSimpleName());
         }
@@ -91,16 +90,9 @@ public class ServiceEnumerationProviderImpl extends AbstractEnumerationProvider 
 
         for (EnumValuesRecord value : records)
         {
-            try
+            if (value.getOrdinal() > maxOrdinal)
             {
-                if (value.getOrdinal() > maxOrdinal)
-                {
-                    maxOrdinal = value.getOrdinal();
-                }
-            }
-            catch (CoalesceDataFormatException e)
-            {
-                LOGGER.warn("Failed Reading Ordinal", e);
+                maxOrdinal = value.getOrdinal();
             }
         }
 
@@ -108,14 +100,7 @@ public class ServiceEnumerationProviderImpl extends AbstractEnumerationProvider 
 
         for (EnumValuesRecord value : records)
         {
-            try
-            {
-                values[value.getOrdinal()] = value.getValue();
-            }
-            catch (CoalesceDataFormatException e)
-            {
-                LOGGER.warn("Failed Setting Value", e);
-            }
+            values[value.getOrdinal()] = value.getValue();
         }
 
         return Arrays.asList(values);

@@ -63,8 +63,8 @@ public interface ${classname} {
 	
 	/**
 	* Sets this record's key.
-        *
-        * @param value
+    *
+    * @param value to set
 	*/
 	void setKey(String value);
 
@@ -81,17 +81,17 @@ public interface ${classname} {
 #foreach($fd in $definitions)
     /**
     * @return the $fd.getName() field's value.
-    * @throws CoalesceDataFormatException
+    * @throws CoalesceDataFormatException on error
     */
     $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())() throws CoalesceDataFormatException;
 
     /**
     * Sets the $fd.getName() field's value.
     *
-    * @param value
+    * @param value to set
 #if($fd.getDataType() == "LINE_STRING_TYPE" || $fd.getDataType() == "GEOCOORDINATE_LIST_TYPE" || $fd.getDataType() == "GEOCOORDINATE_TYPE" || 
     $fd.getDataType() == "POLYGON_TYPE" || $fd.getDataType() == "CIRCLE_TYPE")
-    * @throws CoalesceDataFormatException;  
+    * @throws CoalesceDataFormatException on error
     */
     void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value) throws CoalesceDataFormatException; 
 #else
