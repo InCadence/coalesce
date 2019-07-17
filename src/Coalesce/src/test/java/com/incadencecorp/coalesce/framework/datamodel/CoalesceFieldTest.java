@@ -4,14 +4,28 @@ import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.incadencecorp.coalesce.common.helpers.*;
+import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.MimeHelper;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKTWriter;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.joda.time.DateTime;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.File;
@@ -130,6 +144,29 @@ public class CoalesceFieldTest {
         CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_KEY, field.getKey());
+
+    }
+
+    /**
+     * This test ensures that a field with a default value set will return that value instead of null.
+     */
+    @Test
+    public void testDefaultValue() throws Exception
+    {
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        TestRecord record = entity.addRecord1();
+
+        // Verify Null
+        Assert.assertNull(record.getIntegerField().getValue());
+
+        // Verify that getting the value did not affect the field
+        Assert.assertNull(record.getIntegerField().getValue());
+
+        record.getIntegerField().getFieldDefinition().setDefaultValue("200");
+
+        Assert.assertEquals(200, record.getIntegerField().getValue(), 0);
 
     }
 
