@@ -37,6 +37,7 @@ import com.incadencecorp.coalesce.services.api.search.HitType;
 import com.incadencecorp.coalesce.services.api.search.QueryResult;
 import com.incadencecorp.coalesce.services.api.search.QueryType;
 import com.incadencecorp.coalesce.services.api.search.SortByType;
+import com.incadencecorp.coalesce.services.common.CoalesceRemoteException;
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchCriteria;
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchGroup;
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchQuery;
@@ -270,6 +271,18 @@ public class SearchDataController extends SearchQueryController {
         {
             throw new RemoteException("(FAILED) Executing query", e);
         }
+    }
+
+    public QueryResult requery(String key) throws RemoteException
+    {
+        List<SearchQueryDetails> history = getHistory(CoalescePropertyFactory.getEntityKey(key), 1, 1);
+
+        if (history.isEmpty())
+        {
+            throw new CoalesceRemoteException(String.format(CoalesceErrors.NOT_FOUND, SearchQueryCoalesceEntity.NAME, key));
+        }
+
+        return searchComplex(history.get(0).getQuery());
     }
 
     private QueryResult createResponse(SearchResults searchResults, List<String> properties) throws RemoteException

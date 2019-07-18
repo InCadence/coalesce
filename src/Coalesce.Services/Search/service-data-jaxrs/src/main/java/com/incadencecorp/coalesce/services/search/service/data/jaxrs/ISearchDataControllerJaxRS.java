@@ -1,7 +1,6 @@
 package com.incadencecorp.coalesce.services.search.service.data.jaxrs;
 
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
-import com.incadencecorp.coalesce.services.api.IObjectController;
 import com.incadencecorp.coalesce.services.api.search.QueryResult;
 import com.incadencecorp.coalesce.services.api.search.QueryType;
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchCriteria;
@@ -31,7 +30,7 @@ import java.util.List;
  * @author Derek Clemenzi
  */
 @Path("/search")
-public interface ISearchDataControllerJaxRS  {
+public interface ISearchDataControllerJaxRS {
 
     /**
      * Query API
@@ -90,6 +89,12 @@ public interface ISearchDataControllerJaxRS  {
     @DELETE
     @Path("/history/{key:" + GUIDHelper.REGEX_UUID + "}")
     void delete(@PathParam("key") final String key) throws RemoteException;
+
+    @POST
+    @Path("/history/{key:" + GUIDHelper.REGEX_UUID + "}/run")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    QueryResult requery(@PathParam("key") final String key) throws RemoteException;
 
     /**
      * Capabilities API
