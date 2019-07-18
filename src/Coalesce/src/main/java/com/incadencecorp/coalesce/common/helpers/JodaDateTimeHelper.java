@@ -48,6 +48,8 @@ public final class JodaDateTimeHelper {
         List<DateTimeParser> parsers = new ArrayList<>();
         parsers.add(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss z").getParser());
         parsers.add(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").getParser());
+        parsers.add(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.S").getParser()); // Derby
+        parsers.add(DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss 'GMT' yyyy").getParser()); // Accumulo
         parsers.add(ISODateTimeFormat.basicDate().getParser());
         parsers.add(ISODateTimeFormat.basicDateTime().getParser());
         parsers.add(ISODateTimeFormat.basicDateTime().withZone(DateTimeZone.UTC).getParser());
