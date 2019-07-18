@@ -23,6 +23,7 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEnumerationField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEnumerationFieldBase;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.enumerationprovider.impl.ConstraintEnumerationProviderImpl;
 import com.incadencecorp.coalesce.framework.enumerationprovider.impl.JavaEnumerationProviderImpl;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
@@ -32,7 +33,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -448,6 +453,8 @@ public final class EnumerationProviderUtil {
 
                 providers.add(new JavaEnumerationProviderImpl());
                 providers.add(new ConstraintEnumerationProviderImpl());
+
+                lookup.put("coalesceentity.status", ECoalesceObjectStatus.class.getName());
             }
         }
         catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NumberFormatException e)
@@ -472,6 +479,14 @@ public final class EnumerationProviderUtil {
      */
     public static String lookupEnumeration(String enumeration)
     {
+        synchronized (SYNC_OBJECT)
+        {
+            if (!isInitialized())
+            {
+                initializeFromConnector();
+            }
+        }
+
         while (lookup.containsKey(enumeration))
         {
             enumeration = lookup.get(enumeration);
