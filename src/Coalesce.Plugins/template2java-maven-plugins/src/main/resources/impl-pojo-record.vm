@@ -122,7 +122,7 @@ public class ${classname} implements I${name}Record {
     * Gets $fd.getName() Field
     */
     @Override
-    public $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())() throws CoalesceDataFormatException 
+    public $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())()
     {
     	return $normalizer.normalize($fd.getName())Field;
     }

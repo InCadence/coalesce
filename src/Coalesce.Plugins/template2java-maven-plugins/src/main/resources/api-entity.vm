@@ -69,6 +69,11 @@ public interface ${classname} {
     void setDateCreated(DateTime value);
 
 	/**
+	* Returns the user ID of who created this object.
+	*/
+    String getCreatedBy();
+
+	/**
 	* Returns the date this object was last modified.
 	*/
     DateTime getLastModified();
@@ -108,7 +113,7 @@ public interface ${classname} {
 	/**
 	* Sets the singleton record belong to $recordset.getName(). Only the field's values are copied. History and other attributes are not.
     *
-    * @param record
+    * @param record to clone
 	*/
     void set$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record) throws CoalesceDataFormatException;
     
@@ -122,7 +127,7 @@ public interface ${classname} {
 	/**
 	* @return the specified record.
     *
-    * @param key
+    * @param key of record
 	*/
     I$normalizer.normalize($recordset.getName())Record get$normalizer.normalize($recordset.getName())Record(String key);
 
@@ -139,14 +144,14 @@ public interface ${classname} {
 	/**
 	* Removes the record.
     *
-    * @param record
+    * @param record to remove
 	*/
     void rmv$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record);
 
 	/**
 	* Removes the record by its key.
     *
-    * @param key
+    * @param key of record to remove
 	*/
     void rmv$normalizer.normalize($recordset.getName())Record(String key);
     

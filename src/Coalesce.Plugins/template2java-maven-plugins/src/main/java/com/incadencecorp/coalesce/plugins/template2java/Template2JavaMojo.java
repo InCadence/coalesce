@@ -28,7 +28,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -59,9 +58,9 @@ public class Template2JavaMojo extends AbstractMojo {
     @Parameter(defaultValue = "target")
     private String outputDir;
 
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true )
     private MavenProject project;
-    @Component
+    @Parameter( defaultValue = "${plugin}", readonly = true )
     private PluginDescriptor descriptor;
 
     public void execute() throws MojoExecutionException
@@ -161,7 +160,7 @@ public class Template2JavaMojo extends AbstractMojo {
                 }
             }
         }
-        catch (ClassNotFoundException | MojoExecutionException | IllegalAccessException | InstantiationException | InvocationTargetException e)
+        catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e)
         {
             throw new CoalesceException(e);
         }
@@ -194,7 +193,7 @@ public class Template2JavaMojo extends AbstractMojo {
         }
     }
 
-    private ClassLoader getClassLoaderFromRealm() throws MojoExecutionException
+    private ClassLoader getClassLoaderFromRealm()
     {
         return descriptor.getClassRealm();
     }

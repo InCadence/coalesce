@@ -136,7 +136,7 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
 
         String normalizedName = normalizer.normalize(object.getName());
 
-        if (NumberUtils.isNumber(normalizedName.substring(0, 1)))
+        if (NumberUtils.isCreatable(normalizedName.substring(0, 1)))
         {
             throw new CoalesceException("Recordset names must start with a character");
         }

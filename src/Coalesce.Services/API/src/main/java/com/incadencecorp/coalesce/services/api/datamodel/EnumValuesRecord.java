@@ -41,7 +41,7 @@ public class EnumValuesRecord extends EnumValuesPojoRecord {
         super(record);
     }
 
-    public Map<String, String> getAssociatedValues() throws CoalesceDataFormatException
+    public Map<String, String> getAssociatedValues()
     {
         String[] keys = getAssociatedkeys();
         String[] vals = getAssociatedvalues();
@@ -78,7 +78,7 @@ public class EnumValuesRecord extends EnumValuesPojoRecord {
 
     @JsonIgnore
     @Override
-    public String[] getAssociatedkeys() throws CoalesceDataFormatException
+    public String[] getAssociatedkeys()
     {
         return super.getAssociatedkeys();
     }
@@ -92,7 +92,7 @@ public class EnumValuesRecord extends EnumValuesPojoRecord {
 
     @JsonIgnore
     @Override
-    public String[] getAssociatedvalues() throws CoalesceDataFormatException
+    public String[] getAssociatedvalues()
     {
         return super.getAssociatedvalues();
     }

@@ -63,7 +63,8 @@ public class ${classname} implements I${name}Entity {
 	
 	private String key;
 	private String title;
-	private DateTime dateCreated; 
+	private DateTime dateCreated;
+	private String createdBy;
 	private DateTime lastModified; 
 	private String lastModifiedBy;
 	private ECoalesceObjectStatus status;
@@ -80,6 +81,7 @@ public class ${classname} implements I${name}Entity {
     {
 		setKey(entity.getKey());
 		setDateCreated(entity.getDateCreated());
+		setCreatedBy(entity.getCreatedBy());
 		setLastModified(entity.getLastModified());
 		setModifiedBy(entity.getModifiedBy());
 		setStatus(entity.getStatus());    
@@ -129,7 +131,18 @@ public class ${classname} implements I${name}Entity {
     {
         dateCreated = value;
     }
-    
+
+    @Override
+    public String getCreatedBy()
+    {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String value)
+    {
+        createdBy = value;
+    }
+
     @Override
     public DateTime getLastModified()
     {
@@ -209,9 +222,7 @@ public class ${classname} implements I${name}Entity {
     @Override
     public List<I$normalizer.normalize($recordset.getName())Record> get$normalizer.normalize($recordset.getName())Records()
     {
-		List<I$normalizer.normalize($recordset.getName())Record> result = new ArrayList<>();
-		result.addAll(${recordset_name}s.values());
-        return result;
+        return new ArrayList<>(${recordset_name}s.values());
     }
 
     private void set$normalizer.normalize($recordset.getName())Records(List<$normalizer.normalize($recordset.getName())PojoRecord> values) throws CoalesceDataFormatException
