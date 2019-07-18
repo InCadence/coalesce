@@ -26,6 +26,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
@@ -101,6 +102,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                                                  String ivarname,
                                                  String ivarsource,
                                                  String ivarversion,
+                                                 ECoalesceObjectStatus ivarstatus,
                                                  String ivarentityid,
                                                  String ivarentityidtype,
                                                  String ivarentityxml,
@@ -134,6 +136,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                 sql.append(COLUMNS.getName()).append(", ");
                 sql.append(COLUMNS.getSource()).append(", ");
                 sql.append(COLUMNS.getVersion()).append(", ");
+                sql.append(COLUMNS.getStatus()).append(", ");
                 sql.append(COLUMNS.getEntityId()).append(",");
                 sql.append(COLUMNS.getEntityIdType()).append(", ");
                 sql.append(COLUMNS.getXml()).append(", ");
@@ -141,7 +144,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                 sql.append(COLUMNS.getCreator()).append(", ");
                 sql.append(COLUMNS.getLastModified()).append(", ");
                 sql.append(COLUMNS.getLastModifiedBy());
-                sql.append(") values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                sql.append(") values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
                 try (PreparedStatement stmt2 = conn.prepareStatement(sql.toString()))
                 {
@@ -149,6 +152,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                     stmt2.setObject(ii++, ivarname);
                     stmt2.setObject(ii++, ivarsource);
                     stmt2.setObject(ii++, ivarversion);
+                    stmt2.setObject(ii++, ivarstatus.ordinal());
                     stmt2.setObject(ii++, ivarentityid);
                     stmt2.setObject(ii++, ivarentityidtype);
                     stmt2.setObject(ii++, ivarentityxml);
@@ -167,6 +171,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                 sql.append(COLUMNS.getName()).append("=?, ");
                 sql.append(COLUMNS.getSource()).append("=?, ");
                 sql.append(COLUMNS.getVersion()).append("=?, ");
+                sql.append(COLUMNS.getStatus()).append("=?, ");
                 sql.append(COLUMNS.getEntityId()).append("=?, ");
                 sql.append(COLUMNS.getEntityIdType()).append("=?, ");
                 sql.append(COLUMNS.getXml()).append("=?, ");
@@ -181,6 +186,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                     stmt2.setObject(ii++, ivarname);
                     stmt2.setObject(ii++, ivarsource);
                     stmt2.setObject(ii++, ivarversion);
+                    stmt2.setObject(ii++, ivarstatus.ordinal());
                     stmt2.setObject(ii++, ivarentityid);
                     stmt2.setObject(ii++, ivarentityidtype);
                     stmt2.setObject(ii++, ivarentityxml);
