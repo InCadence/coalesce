@@ -110,7 +110,7 @@ public class CoalescePropertyFactory {
 
     public static Filter getCreatedBy(String user)
     {
-        return getFilterFactory().equals(getCreatedBy(), getFilterFactory().literal(user));
+        return getFilterFactory().equal(getCreatedBy(), getFilterFactory().literal(user), false);
     }
 
     /**
@@ -131,7 +131,7 @@ public class CoalescePropertyFactory {
 
     public static Filter getLastModifiedBy(String user)
     {
-        return getFilterFactory().equals(getLastModifiedBy(), getFilterFactory().literal(user));
+        return getFilterFactory().equal(getLastModifiedBy(), getFilterFactory().literal(user), false);
     }
 
     /**
@@ -167,11 +167,27 @@ public class CoalescePropertyFactory {
     }
 
     /**
+     * @return a filter for the specified source
+     */
+    public static Filter getSource(String source)
+    {
+        return ff.equal(getSource(), ff.literal(source), false);
+    }
+
+    /**
      * @return the property used for filtering on a entity name.
      */
     public static PropertyName getName()
     {
         return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_NAME);
+    }
+
+    /**
+     * @return a filter for the specified name
+     */
+    public static Filter getName(String name)
+    {
+        return ff.equal(getName(), ff.literal(name), false);
     }
 
     /**
@@ -214,7 +230,7 @@ public class CoalescePropertyFactory {
      */
     public static Filter getRecordKey(String recordset, String key)
     {
-        return getFilterFactory().equals(getRecordKey(recordset), getFilterFactory().literal(key));
+        return getFilterFactory().equal(getRecordKey(recordset), getFilterFactory().literal(key), false);
     }
 
     /**
@@ -232,7 +248,7 @@ public class CoalescePropertyFactory {
      */
     public static Filter getEntityKey(String key)
     {
-        return getFilterFactory().equals(getEntityKey(), getFilterFactory().literal(key));
+        return getFilterFactory().equal(getEntityKey(), getFilterFactory().literal(key), false);
     }
 
     /**
@@ -273,6 +289,14 @@ public class CoalescePropertyFactory {
     public static PropertyName getEntityStatus()
     {
         return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_STATUS);
+    }
+
+    /**
+     * @return a filter that excludes entities that have been marked as deleted.
+     */
+    public static Filter getIsActive()
+    {
+        return ff.notEqual(getEntityStatus(), ff.literal(ECoalesceObjectStatus.DELETED.toString()));
     }
 
     /**
@@ -326,7 +350,7 @@ public class CoalescePropertyFactory {
      */
     public static Filter getLinkageEntityKey(String key)
     {
-        return getFilterFactory().equals(getLinkageEntityKey(), getFilterFactory().literal(key));
+        return getFilterFactory().equal(getLinkageEntityKey(), getFilterFactory().literal(key), false);
     }
 
     /**
@@ -368,7 +392,7 @@ public class CoalescePropertyFactory {
      */
     public static Filter getLinkageType(ELinkTypes type)
     {
-        return getFilterFactory().equals(getLinkageType(), getFilterFactory().literal(type.toString().toUpperCase()));
+        return getFilterFactory().equals(getLinkageType(), getFilterFactory().literal(type.getLabel()));
     }
 
     /**
