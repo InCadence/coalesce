@@ -61,7 +61,8 @@ public class CoalesceCodeGeneratorIteratorTest {
         CoalesceRecordset recordset = CoalesceRecordset.create(section, "all data types");
         for (ECoalesceFieldDataTypes type : ECoalesceFieldDataTypes.values())
         {
-            CoalesceFieldDefinition.create(recordset, type.getLabel() + " field", type);
+            CoalesceFieldDefinition fd = CoalesceFieldDefinition.create(recordset, type.getLabel() + " field", type);
+            fd.setDefaultValue("A");
         }
 
         //
