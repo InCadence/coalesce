@@ -60,7 +60,23 @@ public class ${classname} implements I${name}Record {
 	private String key;
 	private ECoalesceObjectStatus status;
 #foreach($fd in $definitions)
+#if($fd.getDefaultValue())
+#if($fd.getDataType() == "INTEGER_TYPE" || $fd.getDataType() == "DOUBLE_TYPE" )
+    private $typemapper.map($fd.getDataType()) $normalizer.normalize($fd.getName())Field = $fd.getDefaultValue();
+#elseif($fd.getDataType() == "BOOLEAN_TYPE")
+    private $typemapper.map($fd.getDataType()) $normalizer.normalize($fd.getName())Field = $fd.getDefaultValue().toLowerCase();
+#elseif($fd.getDataType() == "LONG_TYPE")
+    private $typemapper.map($fd.getDataType()) $normalizer.normalize($fd.getName())Field = $fd.getDefaultValue()L;
+#elseif($fd.getDataType() == "FLOAT_TYPE")
+    private $typemapper.map($fd.getDataType()) $normalizer.normalize($fd.getName())Field = $fd.getDefaultValue()f;
+#elseif($fd.getDataType() == "STRING_TYPE" || $fd.getDataType() == "URI_TYPE" || $fd.getDataType() == "GUID_TYPE")
+    private $typemapper.map($fd.getDataType()) $normalizer.normalize($fd.getName())Field = "${fd.getDefaultValue()}";
+#else
+    private $typemapper.map($fd.getDataType()) $normalizer.normalize($fd.getName())Field; // DefaultValue not supported by Template2Java for for ${fd.getDataType()}
+#end
+#else
     private $typemapper.map($fd.getDataType()) $normalizer.normalize($fd.getName())Field;
+#end
 #end
     
     /*--------------------------------------------------------------------------
