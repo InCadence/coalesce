@@ -377,23 +377,23 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 }
                 */
 
-                if (!doesExists(client, index, COALESCE_ENTITY_INDEX, COALESCE_LINKAGE_INDEX))
+                if (!doesExists(client, index))
                 {
                     response = client.admin().indices().create(request).actionGet();
-                    LOGGER.debug("Registered Coalesce Template Index : {}", index, response);
+                    LOGGER.debug("Registered Coalesce Template Index {}: {}", index, response);
 
                     if (!doesExists(client, COALESCE_ENTITY_INDEX))
                     {
                         response = client.admin().indices().create(createCoalesceEntityIndexRequest()).actionGet();
 
-                        LOGGER.debug("Registered Coalesce Index : {}", template.getName(), response);
+                        LOGGER.debug("Registered Coalesce Index {}: {}", template.getName(), response);
                     }
 
                     if (!doesExists(client, COALESCE_LINKAGE_INDEX))
                     {
                         response = client.admin().indices().create(createCoalesceLinkageIndexRequest()).actionGet();
 
-                        LOGGER.debug("Registered Coalesce Linkage Index : {}", template.getName(), response);
+                        LOGGER.debug("Registered Coalesce Linkage Index {}: {}", template.getName(), response);
                     }
                 }
                 else
