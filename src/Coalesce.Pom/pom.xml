@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce</groupId>
         <artifactId>coalesce-bom</artifactId>
-        <version>0.0.39</version>
+        <version>0.0.40-SNAPSHOT</version>
         <relativePath>../Coalesce.Bom</relativePath>
     </parent>
 
