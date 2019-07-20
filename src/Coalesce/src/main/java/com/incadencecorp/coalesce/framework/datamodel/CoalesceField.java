@@ -446,7 +446,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     @Override
     public String getBaseValue()
     {
-        return _entityField.getValue();
+        return _entityField.getValue() == null ? _definition.getDefaultValue() : _entityField.getValue();
     }
 
     @JsonProperty("value")

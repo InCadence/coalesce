@@ -57,10 +57,10 @@ public final class ${classname} implements ICoalesceFieldEnumDefinitionFactory<E
 #foreach($fd in $definitions)
 #if(!$fd.getLabel())$fd.setLabel("")#end
             case $fd.getName().toUpperCase().replaceAll(" ", "_"):
-#if(!$fd.defaultValue())
+#if(!$fd.getDefaultValue())
                 fd = CoalesceFieldDefinition.create(recordset, "$fd.getName()", ECoalesceFieldDataTypes.$fd.getDataType(), "$fd.getLabel()", "$fd.getDefaultClassificationMarking().toString()", null, $fd.isNoIndex(), $fd.isDisableHistory());
 #end
-#if($fd.defaultValue())
+#if($fd.getDefaultValue())
                 fd = CoalesceFieldDefinition.create(recordset, "$fd.getName()", ECoalesceFieldDataTypes.$fd.getDataType(), "$fd.getLabel()", "$fd.getDefaultClassificationMarking().toString()", "$fd.getDefaultValue()", $fd.isNoIndex(), $fd.isDisableHistory());
 #end
                 break;
