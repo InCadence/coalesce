@@ -73,7 +73,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     private static final String QUESTION_MARK = "?";
     private static final String ST_FROM_TEXT = "ST_GeomFromText(?, %s)";
     private static final String DOT = ".";
-    private static final EFilterEnumerationModes MODE = EFilterEnumerationModes.ENUMVALUE;
+    private static final EFilterEnumerationModes MODE = EFilterEnumerationModes.MIXED;
 
     private static final int SSRID = DerbySettings.getSRID();
     private static final boolean USE_DISPLAY_NAME = false;

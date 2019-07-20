@@ -343,6 +343,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                                                                                       entity.getName(),
                                                                                       entity.getSource(),
                                                                                       entity.getVersion(),
+                                                                                      entity.getStatus(),
                                                                                       entity.getEntityId(),
                                                                                       entity.getEntityIdType(),
                                                                                       entity.toXml(),
