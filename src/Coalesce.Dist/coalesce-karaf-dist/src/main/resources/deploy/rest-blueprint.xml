@@ -52,6 +52,9 @@
                 </property>
             </bean>
         </jaxrs:providers>
+        <jaxrs:inInterceptors>
+            <bean class="com.incadencecorp.coalesce.services.common.jaxrs.interceptors.HeaderSecurityContextInInterceptor"/>
+        </jaxrs:inInterceptors>
     </jaxrs:server>
 
     <!-- ========================== -->

@@ -1,0 +1,122 @@
+version: "2"
+
+volumes:
+  db-backups:
+  geoserver-data:
+
+networks:
+  coalesce_network:
+
+services:
+    db:
+      image: kartoza/postgis:10.0-2.4
+      container_name: coalesce-postgres
+      hostname: postgis
+      volumes:
+        #- ./pg/postgres_data:/var/lib/postgresql
+        - db-backups:/backups
+      ports:
+        - "25432:5432"
+      networks:
+        - coalesce_network
+      environment:
+        - USERNAME=docker
+        - PASS=docker
+        - ALLOW_IP_RANGE=172.20.0.0/24
+      restart: unless-stopped
+    geoserver:
+      image: eeacms/elasticgeo #kartoza/geoserver:2.12.0
+      container_name: coalesce-geoserver
+      hostname: geoserver
+      volumes:
+        - geoserver-data:/opt/geoserver/data_dir
+      ports:
+        - "8080:8080"
+      networks:
+        - coalesce_network
+      links:
+        - db:db
+      restart: unless-stopped
+      user: root
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
+        container_name: coalesce-elasticsearch
+        environment:
+            - cluster.name=elasticsearch
+            - http.host=0.0.0.0
+            - http.port=9200
+            - network.publish_host=0.0.0.0
+            - transport.tcp.port=9300
+            - discovery.type=single-node
+            - xpack.security.enabled=false
+        ports:
+            - "9200:9200"
+            - "9300:9300"
+        networks:
+          - coalesce_network
+        restart: unless-stopped
+    kibana5:
+      image: docker.elastic.co/kibana/kibana:5.4.0
+      container_name: coalesce-kibana
+      environment:
+        - ELASTICSEARCH_URL=http://elasticsearch:9200
+      ports:
+        - "5601:5601"
+      depends_on:
+        - "elasticsearch"
+      networks:
+        - coalesce_network
+      restart: unless-stopped
+
+    zookeeper:
+      image: wurstmeister/zookeeper
+      container_name: coalesce-zookeeper
+      ports:
+        - "2181:2181"
+      networks:
+        - coalesce_network
+      restart: unless-stopped
+
+    kafka:
+      image: wurstmeister/kafka
+      container_name: coalesce-kafka
+      ports:
+        - "9092:9092"
+      networks:
+        - coalesce_network
+      environment:
+        KAFKA_ADVERTISED_HOST_NAME: localhost
+        KAFKA_CREATE_TOPICS: "test:1:1"
+        KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      restart: unless-stopped
+
+    karaf:
+      #image: docker-oebdp.di2e.net/oebdp:0.0.7
+      image: incadencecorp/coalesce-karaf:0.0.39
+      container_name: coalesce-karaf
+      depends_on:
+        - "elasticsearch"
+      ports:
+          - "8101:8101"
+          - "8181:8181"
+          - "5005:5005"
+      networks:
+        - coalesce_network
+      volumes:
+        - ./docker-compose/blueprints:/opt/karaf/deploy
+      restart: unless-stopped
+
+    nginx:
+      image: nginx:1.15-alpine
+      container_name: coalesce-nginx
+      depends_on:
+        - "karaf"
+      ports:
+        - "80:80"
+        - "443:443"
+      networks:
+         - coalesce_network
+      volumes:
+        - ./docker-compose/nginx:/etc/nginx/conf.d
+      restart: unless-stopped
+
