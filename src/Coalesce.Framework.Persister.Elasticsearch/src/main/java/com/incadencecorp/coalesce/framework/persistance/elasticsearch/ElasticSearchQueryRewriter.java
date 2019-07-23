@@ -124,7 +124,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
 
         LOGGER.trace("({}): ({})", property, type);
 
-        return (type == ECoalesceFieldDataTypes.STRING_TYPE) && !keywords.contains(property);
+        return (type == ECoalesceFieldDataTypes.STRING_TYPE || type == ECoalesceFieldDataTypes.GUID_TYPE) && !keywords.contains(property);
     }
 
     @Override
