@@ -88,6 +88,7 @@
                 <property name="templates">
                     <array>
                         <value>0d7e02d1-e706-3f6e-b728-dae18bb9ac24</value>
+                        <value>dac67bcb-9c0c-3087-bfed-c2f43afbb887</value>
                     </array>
                 </property>
             </bean>

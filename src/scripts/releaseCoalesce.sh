@@ -61,7 +61,7 @@ while true; do
 		    echo "Grepping for snapshot versions"
 
 		    grep -ir "${preVersion}" ../ --include="pom.xml"
-		    grep -ir "SNAPSHOT" ../ --include="pom.xml"
+		    grep -ir "\-SNAPSHOT" ../ --include="pom.xml"
 
 		    echo "Done"
 
@@ -131,15 +131,15 @@ while true; do
 done
 
 while true; do
-    read -p "Push to master (yes / no / exit)? " doPush
+    read -p "Push to release (yes / no / exit)? " doPush
     case $doPush in
         y | yes)
-	    echo "pushing code to master"
+	    echo "pushing code to release"
 	    git push origin HEAD:refs/heads/release
 
 
 	    if [ "${isSnapshot}" = false ] ; then
-		echo 'pushing tag to master'
+		echo 'pushing tag'
 		git push origin tag ${tagname}-${version}
 
 	    fi
