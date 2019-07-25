@@ -110,8 +110,17 @@
     <!-- ========================== -->
     <!-- Persisters -->
     <!-- ========================== -->
-    <bean id="persister"
-          class="com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor">
+    <bean class="com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch" id="persister"
+          xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+        <argument>
+            <map>
+                <entry key="ssl.enabled" value="false"/>
+                <entry key="elastic.clustername" value="elasticsearch"/>
+                <entry key="elastic.hosts" value="elasticsearch:9300"/>
+                <entry key="elastic.http.host" value="elasticsearch"/>
+                <entry key="elastic.http.port" value="9200"/>
+            </map>
+        </argument>
     </bean>
 
     <bean id="template"

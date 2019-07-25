@@ -128,14 +128,6 @@
                 </New>
             </Arg>
         </Call>
-        <Call name="addHandler">
-            <Arg>
-                <New class="org.eclipse.jetty.server.handler.MovedContextHandler">
-                    <Set name="contextPath">/</Set>
-                    <Set name="newContextURL">/home</Set>
-                </New>
-            </Arg>
-        </Call>
     </Get>
 
 </Configure>
