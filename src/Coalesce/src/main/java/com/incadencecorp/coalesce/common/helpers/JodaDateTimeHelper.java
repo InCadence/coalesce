@@ -2,11 +2,14 @@ package com.incadencecorp.coalesce.common.helpers;
 
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
-import org.joda.time.format.*;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+import org.joda.time.format.DateTimeParser;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,14 +65,20 @@ public final class JodaDateTimeHelper {
 
         for (String format : CoalesceSettings.getTimePatterns())
         {
-            if (!StringHelper.isNullOrEmpty(format))
+            try
             {
-                parsers.add(DateTimeFormat.forPattern(format).getParser());
+                if (!StringHelper.isNullOrEmpty(format))
+                {
+                    parsers.add(DateTimeFormat.forPattern(format).getParser());
+                }
+            }
+            catch (IllegalArgumentException e)
+            {
+                LOGGER.warn("(FAILED) Parsing Pattern {}: {}", format, e.getMessage());
             }
         }
 
-        return new DateTimeFormatterBuilder().append(null,
-                                                     parsers.toArray(new DateTimeParser[parsers.size()])).toFormatter();
+        return new DateTimeFormatterBuilder().append(null, parsers.toArray(new DateTimeParser[0])).toFormatter();
     }
 
     // Make static class
@@ -89,7 +98,7 @@ public final class JodaDateTimeHelper {
      *
      * @param value the date string in the form of 'yyyyMMdd'
      * @return the converted date object
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException on error
      */
     public static DateTime convertyyyyMMddDateStringToDateTime(String value)
     {
@@ -300,7 +309,7 @@ public final class JodaDateTimeHelper {
             throw new IllegalArgumentException("secondDate");
 
         boolean isFutureDate = false;
-        String elapsedString = "";
+        String elapsedString;
 
         Duration dateDiff = new Duration(firstDate, secondDate);
         long totalSeconds = dateDiff.getStandardSeconds();
@@ -313,15 +322,15 @@ public final class JodaDateTimeHelper {
 
         if (totalSeconds < 60)
         {
-            elapsedString = getLessThanMinuteElapsedTime(elapsedString, totalSeconds, isFutureDate);
+            elapsedString = getLessThanMinuteElapsedTime(totalSeconds, isFutureDate);
         }
         else if (totalSeconds < 3600)
         {
-            elapsedString = getLessThanHourElapsedTime(elapsedString, totalSeconds, isFutureDate);
+            elapsedString = getLessThanHourElapsedTime(totalSeconds, isFutureDate);
         }
         else if (totalSeconds < 86400)
         {
-            elapsedString = getLessThanDayElapsedTime(elapsedString, totalSeconds, isFutureDate);
+            elapsedString = getLessThanDayElapsedTime(totalSeconds, isFutureDate);
         }
         else if (totalSeconds < 172800)
         {
@@ -350,7 +359,7 @@ public final class JodaDateTimeHelper {
         }
         else
         {
-            elapsedString = getYearOrMoreElapsedTime(elapsedString, totalSeconds, isFutureDate);
+            elapsedString = getYearOrMoreElapsedTime(totalSeconds, isFutureDate);
         }
 
         // Trim
@@ -423,7 +432,7 @@ public final class JodaDateTimeHelper {
     /**
      * The formatter used has several default formats which can be extended using {@link CoalesceSettings#setTimePatterns(List)}.
      *
-     * @param value
+     * @param value to parse
      * @return the DateTime object parsed from the argument.
      */
     public static DateTime parseDateTime(String value)
@@ -492,9 +501,9 @@ public final class JodaDateTimeHelper {
     // Private Shared Methods
     // -----------------------------------------------------------------------'
 
-    private static String getLessThanMinuteElapsedTime(String elapsedString, long totalSeconds, boolean isFutureDate)
+    private static String getLessThanMinuteElapsedTime(long totalSeconds, boolean isFutureDate)
     {
-
+        String elapsedString;
         if (totalSeconds == 1)
         {
             elapsedString = "1 second";
@@ -517,9 +526,9 @@ public final class JodaDateTimeHelper {
 
     }
 
-    private static String getLessThanHourElapsedTime(String elapsedString, long totalSeconds, boolean isFutureDate)
+    private static String getLessThanHourElapsedTime(long totalSeconds, boolean isFutureDate)
     {
-
+        String elapsedString;
         long totalMinutes = totalSeconds / 60;
 
         if (totalMinutes == 1)
@@ -544,9 +553,9 @@ public final class JodaDateTimeHelper {
 
     }
 
-    private static String getLessThanDayElapsedTime(String elapsedString, long totalSeconds, boolean isFutureDate)
+    private static String getLessThanDayElapsedTime(long totalSeconds, boolean isFutureDate)
     {
-
+        String elapsedString;
         long totalHours = (totalSeconds / 3600);
 
         if (totalHours == 1)
@@ -571,9 +580,9 @@ public final class JodaDateTimeHelper {
 
     }
 
-    private static String getYearOrMoreElapsedTime(String elapsedString, long totalSeconds, boolean isFutureDate)
+    private static String getYearOrMoreElapsedTime(long totalSeconds, boolean isFutureDate)
     {
-
+        String elapsedString;
         long totalYears = totalSeconds / 31536000;
 
         if (totalYears == 1)
