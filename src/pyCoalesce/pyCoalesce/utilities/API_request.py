@@ -92,13 +92,12 @@ def get_response(URL, method = "get", verify = True, cert = None, params = None,
     request = Request(method = method, url = URL, **req_kwargs)
     prepped_req = request.prepare()
 
-#    # Diagnostic code for printing the raw request.
-#    stdout.write('\n{}\n{}\n\n{}\n'.format(
-#                 prepped_req.method + ' ' + prepped_req.url,
-#                 '\n'.join('{}:  {}'.format(k, v)
-#                 for k, v in prepped_req.headers.items()),
-#                 'Request body:  ' + str(prepped_req.body)))
-#    stdout.flush()
+    # Log the raw request for debugging purposes.
+    logger.debug('\n{}\n{}\n{}'.format(
+                 prepped_req.method + ' ' + prepped_req.url,
+                 '\n'.join('{}:  {}'.format(k, v)
+                 for k, v in prepped_req.headers.items()),
+                 'Request body:  ' + str(prepped_req.body)))
 
     # Call the API, using exponential backoff as necessary.
 
@@ -108,6 +107,8 @@ def get_response(URL, method = "get", verify = True, cert = None, params = None,
 
             response = session.send(prepped_req)
             status = response.status_code
+            logger.debug("Request returned with status code " + str(status) +
+                         ".")
 
             if 200 <= status < 300:
                 return response
