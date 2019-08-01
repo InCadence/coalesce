@@ -188,7 +188,7 @@ function getElement(name, data)
   {
     for (var ii=0; ii<data.length; ii++)
     {
-      if (name === data[ii].name)
+      if (name.toLowerCase() === data[ii].name.toLowerCase())
       {
         result = data[ii];
         break;
