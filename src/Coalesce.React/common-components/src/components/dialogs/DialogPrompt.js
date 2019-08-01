@@ -21,7 +21,7 @@ export class DialogPrompt extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange(value) {
+  handleChange(event) {
     this.setState(() => {
       return {
         value: event.target.value
