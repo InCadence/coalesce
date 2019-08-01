@@ -15,7 +15,6 @@ at once.
 
 """
 
-import sys
 from uuid import uuid4
 
 from coalesce_entity import CoalesceEntity

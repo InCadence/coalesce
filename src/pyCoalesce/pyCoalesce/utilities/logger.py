@@ -17,4 +17,10 @@ messages from pyCoalesce modules.
 
 """
 
+# This lets any handlers' levels control what's logged.  Weirdly, setting
+# the level to "NOTSET" (0) doesn't work--it causes the logger in question
+# to inherit the root logger's default value of "WARN" (30), which will
+# pose a problem in applications not using the root logger.
+package_logger.setLevel(1)
+
 package_logger.addHandler(logging.NullHandler())

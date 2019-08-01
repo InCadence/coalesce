@@ -191,13 +191,20 @@ with open("pyCoalesce/version.txt", "w") as version_file:
     version_file.write(version)
 
 # Copy the Coalesce license file; this is used only by Twine (and really
-# shouldn't be necessary, since PyPi doesn't make sure of it).
+# shouldn't be necessary, since PyPi doesn't make use of it).
 copyfile("../../LICENSE", "LICENSE")
 
+# Try importing the current project and author info from "version" as well.
+try:
+    from version import project, author
+except ImportError:
+    project = "pyCoalesce"
+    author = u"Dhruva Venkat, Scott Orr"
+
 setuptools.setup(
-    name = "pyCoalesce",
+    name = project,
     version = version,
-    author = u"Dhruva Venkat, Scott Orr",
+    author = author,
     author_email = "sorr@incadencecorp.com",
     description = "A python wrapper for coalesce objects",
     license = "Apache License 2.0",

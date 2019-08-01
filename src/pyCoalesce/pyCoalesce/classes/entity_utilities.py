@@ -26,8 +26,10 @@ from cStringIO import StringIO
 from copy import copy
 from collections import deque
 
-from lxml import etree as etree_
-
+try:
+    from lxml import etree as etree_
+except ImportError:
+    from xml.etree import ElementTree as etree_
 import entity as supermod
 
 

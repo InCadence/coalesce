@@ -40,7 +40,7 @@ else:
     Coalesce_version = \
         POM_XML.xpath("/*[local-name()='project']/*[local-name()='version']")[0].text
 
-project = u'pyCoalesce'
+# Add other data.
+project = u"pyCoalesce"
 author = u"Dhruva Venkat, Scott Orr"
-copyright = u'2018, InCadence Strategic Solutions'
-
+copyright = u"2018, InCadence Strategic Solutions"
