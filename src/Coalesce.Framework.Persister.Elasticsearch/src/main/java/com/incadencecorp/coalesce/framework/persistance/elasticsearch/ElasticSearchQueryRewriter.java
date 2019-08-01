@@ -86,15 +86,17 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         {
             try
             {
-                if (isStringField(expression))
+                String normalized = getNormalizedPropertyName(expression.getPropertyName());
+
+                if (isStringField(normalized))
                 {
-                    name = ff.property(getNormalizedPropertyName(expression.getPropertyName()) + ".keyword");
+                    name = ff.property(normalized + ".keyword");
 
                     LOGGER.info("Rewriting ({}) => ({})", expression.getPropertyName(), name.getPropertyName());
                 }
                 else
                 {
-                    name = ff.property(getNormalizedPropertyName(expression.getPropertyName()));
+                    name = ff.property(normalized);
                 }
             }
             catch (IllegalArgumentException e)
@@ -111,10 +113,8 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         return super.visit(name, extraData);
     }
 
-    private boolean isStringField(PropertyName name)
+    private boolean isStringField(String property)
     {
-        String property = name.getPropertyName().toLowerCase();
-
         ECoalesceFieldDataTypes type = CoalesceTemplateUtil.getDataType(property);
 
         if (type == null)
@@ -248,7 +248,7 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
             {
                 String name = getNormalizedPropertyName(sorts[i].getPropertyName().getPropertyName());
 
-                if (isStringField(sorts[i].getPropertyName()))
+                if (isStringField(name))
                 {
                     name = name + ".keyword";
                 }
