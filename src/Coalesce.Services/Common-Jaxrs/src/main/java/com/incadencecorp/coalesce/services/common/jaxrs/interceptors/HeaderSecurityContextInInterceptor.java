@@ -18,6 +18,7 @@
 
 package com.incadencecorp.coalesce.services.common.jaxrs.interceptors;
 
+import com.incadencecorp.coalesce.api.CoalesceSimplePrincipal;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import org.apache.cxf.common.security.SimpleGroup;
 import org.apache.cxf.common.security.SimplePrincipal;
@@ -152,8 +153,9 @@ public class HeaderSecurityContextInInterceptor extends AbstractPhaseInterceptor
         {
             // Yes; Get Username
             String username = headers.get(usernameHeader).get(0);
+            CoalesceSimplePrincipal principal = new CoalesceSimplePrincipal(username);
 
-            subject.getPrincipals().add(new SimplePrincipal(username));
+            subject.getPrincipals().add(principal);
 
             // Roles Specified?
             if (headers.containsKey(rolesHeader))
@@ -174,9 +176,11 @@ public class HeaderSecurityContextInInterceptor extends AbstractPhaseInterceptor
                             if (rolesPrefixes.contains(parts[0]))
                             {
                                 subject.getPrincipals().add(new SimpleGroup(parts[1], username));
+                                principal.addRole(parts[1]);
                             }
                             else
                             {
+                                principal.addAttribute(parts[0], parts[1]);
                                 LOGGER.debug("(WARN) Unknown attribute prefix: {}", parts[0]);
                             }
                         }

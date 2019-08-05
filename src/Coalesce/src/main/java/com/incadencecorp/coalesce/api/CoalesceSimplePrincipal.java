@@ -20,6 +20,13 @@ package com.incadencecorp.coalesce.api;
 
 import java.net.UnknownHostException;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementation of {@link ICoalescePrincipal}
@@ -30,6 +37,8 @@ public class CoalesceSimplePrincipal implements ICoalescePrincipal {
 
     private String ip;
     private String name;
+    private Set<String> roles = new HashSet<>();
+    private Map<String, List<String>> attributes = new HashMap<>();
 
     /**
      * Creates a principal for the user running this thread.
@@ -87,6 +96,45 @@ public class CoalesceSimplePrincipal implements ICoalescePrincipal {
     public String getName()
     {
         return this.name;
+    }
+
+    @Override
+    public Set<String> getRoles()
+    {
+        return roles;
+    }
+
+    public void addRole(String role)
+    {
+        this.roles.add(role);
+    }
+
+    public void addRoles(List<String> roles)
+    {
+        this.roles.addAll(roles);
+    }
+
+    @Override
+    public Map<String, List<String>> getAttributes()
+    {
+        return attributes;
+    }
+
+    public void addAttribute(String key, String value)
+    {
+        if (attributes.containsKey(key))
+        {
+            attributes.get(key).add(value);
+        }
+        else
+        {
+            attributes.put(key, Collections.singletonList(value));
+        }
+    }
+
+    public void addAttributes(Map<String, List<String>> attributes)
+    {
+        this.attributes.putAll(attributes);
     }
 
     public boolean equals(Object obj)
