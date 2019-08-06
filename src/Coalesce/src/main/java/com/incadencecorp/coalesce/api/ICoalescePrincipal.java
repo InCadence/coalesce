@@ -18,10 +18,13 @@
 package com.incadencecorp.coalesce.api;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This interface extends {@link Principal} to expose additional user's detail.
- * 
+ *
  * @author Derek Clemenzi
  */
 public interface ICoalescePrincipal extends Principal {
@@ -31,4 +34,13 @@ public interface ICoalescePrincipal extends Principal {
      */
     String getIp();
 
+    /**
+     * @return the roles of this principal has.
+     */
+    Set<String> getRoles();
+
+    /**
+     * @return the attributes associated with this principal.
+     */
+    Map<String, List<String>> getAttributes();
 }
