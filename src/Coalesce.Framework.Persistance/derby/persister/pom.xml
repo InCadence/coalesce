@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
 		<artifactId>persister-derby-parent</artifactId>
-		<version>0.0.40</version>
+		<version>0.0.41-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 

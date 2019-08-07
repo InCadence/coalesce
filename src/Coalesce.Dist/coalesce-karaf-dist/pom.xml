@@ -23,7 +23,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.dist</groupId>
         <artifactId>coalesce-dist-parent</artifactId>
-        <version>0.0.40</version>
+        <version>0.0.41-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
