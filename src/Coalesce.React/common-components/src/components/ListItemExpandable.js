@@ -20,7 +20,6 @@ export class ListItemExpandable extends React.Component {
   }
 
   handleToggleExpand() {
-    console.log('GOT HERE');
     this.setState(state => ({expanded: !state.expanded}));
   }
 
