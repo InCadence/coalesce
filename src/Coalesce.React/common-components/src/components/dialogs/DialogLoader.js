@@ -1,10 +1,8 @@
 import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { HashLoader } from 'react-spinners';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 /**
  * Dialog to display when waiting on a request.
@@ -20,11 +18,11 @@ export class DialogLoader extends React.PureComponent {
       >
         <DialogTitle id="scroll-dialog-title">{this.props.title}</DialogTitle>
         <DialogContent>
-          <center>
-            <HashLoader
-              color={'#FF9900'}
+        <center>
+            <CircularProgress
+              variant="indeterminate"
               size={this.props.size}
-              loading={this.props.opened}
+              thickness={7}
             />
           </center>
         </DialogContent>

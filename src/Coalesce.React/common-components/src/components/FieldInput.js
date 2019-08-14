@@ -8,8 +8,8 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import {withTheme} from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 
-import Enumeration from "common-components/lib/components/fieldInputs/Enumeration";
-import IconButton from "common-components/lib/components/IconButton";
+import Enumeration from "coalesce-components/lib/components/fieldInputs/Enumeration";
+import IconButton from "coalesce-components/lib/components/IconButton";
 
 // TODO Replace Date / Time Pickers
 //import DatePicker from 'material-ui/DatePicker';

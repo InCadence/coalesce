@@ -1,10 +1,11 @@
 import React from 'react';
 import { Navbar, NavItem, Nav } from 'react-bootstrap';
-import { withTheme } from '@material-ui/core/styles';
-import IconButton from 'common-components/lib/components/IconButton';
-import Image from 'common-components/lib/components/image'
 
-require('common-components/bootstrap/css/bootstrap.min.css');
+import { withTheme } from '@material-ui/core/styles';
+import IconButton from 'coalesce-components/lib/components/IconButton';
+import Image from 'coalesce-components/lib/components/image'
+
+require('coalesce-components/bootstrap/css/bootstrap.min.css');
 
 class Menu extends React.PureComponent {
 
@@ -53,8 +54,6 @@ class Menu extends React.PureComponent {
   render () {
 
     var home;
-    var isTextOnly = this.props.isTextOnly;
-
     var palette;
 
     if (this.props.theme) {

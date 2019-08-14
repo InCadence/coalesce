@@ -1,5 +1,4 @@
 import * as React from "react";
-import 'common-components/css/mapping.css'
 import Popup from './popup.js';
 
 // Map Controls

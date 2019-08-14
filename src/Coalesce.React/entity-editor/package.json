@@ -10,10 +10,9 @@
   "homepage": "/entityeditor",
   "proxy": "http://localhost:8181/",
   "dependencies": {
-    "@babel/runtime": "7.0.0",
     "@material-ui/core": "3.0.3",
     "@material-ui/icons": "3.0.1",
-    "common-components": "file:../common-components",
+    "coalesce-components": "file:../common-components",
     "hashmap": "2.3.0",
     "material-ui": "0.20.0",
     "mgrs": "1.0.0",

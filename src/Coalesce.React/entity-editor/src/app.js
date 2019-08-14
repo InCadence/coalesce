@@ -1,10 +1,10 @@
 import React from 'react';
 import { EntityView } from './entity.js'
-import { DialogMessage, DialogOptions, DialogPrompt, DialogLoader } from 'common-components/lib/components/dialogs'
-import { Menu } from 'common-components/lib/components'
+import { DialogMessage, DialogOptions, DialogPrompt, DialogLoader } from 'coalesce-components/lib/components/dialogs'
+import { Menu } from 'coalesce-components/lib/components'
 
-import { loadTemplate, loadTemplates, createNewEntity, loadTemplateByEntity } from 'common-components/lib/js/templateController'
-import { saveEntity, loadEntity } from 'common-components/lib/js/entityController'
+import { loadTemplate, loadTemplates, createNewEntity, loadTemplateByEntity } from 'coalesce-components/lib/js/templateController'
+import { saveEntity, loadEntity } from 'coalesce-components/lib/js/entityController'
 
 import Paper from '@material-ui/core/Paper';
 

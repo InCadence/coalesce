@@ -1,9 +1,9 @@
 import React from "react";
 import {MapView} from './map.js'
-import { searchComplex } from 'common-components/lib/js/searchController'
-import { DialogMessage } from 'common-components/lib/components/dialogs';
+import { searchComplex } from 'coalesce-components/lib/js/searchController'
+import { DialogMessage } from 'coalesce-components/lib/components/dialogs';
 
-import 'common-components/css/coalesce.css'
+import 'coalesce-components/css/coalesce.css'
 import './index.css'
 
 export class App extends React.Component {

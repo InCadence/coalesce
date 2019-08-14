@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactTable from 'react-table'
 
-import { IconButton } from 'common-components/lib/components'
-import { DialogMessage, DialogPrompt } from 'common-components/lib/components/dialogs'
-import { loadEntity } from 'common-components/lib/js/entityController'
+import { IconButton } from 'coalesce-components/lib/components'
+import { DialogMessage, DialogPrompt } from 'coalesce-components/lib/components/dialogs'
+import { loadEntity } from 'coalesce-components/lib/js/entityController'
 
 import uuid from 'uuid';
 import { FieldInput } from './FieldInput'

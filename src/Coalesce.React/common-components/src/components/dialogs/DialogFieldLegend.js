@@ -40,9 +40,9 @@ export class DialogFieldLegend extends React.Component {
                 value={tabIndex}
                 onChange={this.handleTabChange}
               >
-                {this.props.data.map(recordset => {
-                  return <Tab key={recordset.name} label={recordset.name} />;
-                })}
+                {this.props.data.map(recordset => 
+                  <Tab key={recordset.name} label={recordset.name} />
+                )}
               </Tabs>
             </AppBar>
 

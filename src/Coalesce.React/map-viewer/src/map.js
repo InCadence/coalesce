@@ -1,16 +1,23 @@
 import * as React from "react";
 import * as ol from 'openlayers';
-import {FeatureSelection} from './featureselection.js'
-import SlidingPane from 'react-sliding-pane';
-import 'react-sliding-pane/dist/react-sliding-pane.css';
+import { FeatureSelection } from './featureselection.js'
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Checkbox from '@material-ui/core/Checkbox';
+import Drawer from '@material-ui/core/Drawer';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 
 // Map Controls
 import 'openlayers/css/ol.css';
+
+
 
 export class MapView extends React.Component {
 
@@ -27,34 +34,34 @@ export class MapView extends React.Component {
     ol.inherits(createOptionControl, ol.control.Control);
 
     var controls = [new createOptionControl(this),
-                    new ol.control.ScaleLine(),
-                    //new ol.control.OverviewMap(),
-                    new ol.control.Zoom(),
-                    new ol.control.Rotate(),
-                    new ol.control.Attribution({
-                        attributionOptions: {
-                          collapsible: false
-                          }
-                        }),
-                  ];
+    new ol.control.ScaleLine(),
+    //new ol.control.OverviewMap(),
+    new ol.control.Zoom(),
+    new ol.control.Rotate(),
+    new ol.control.Attribution({
+      attributionOptions: {
+        collapsible: false
+      }
+    }),
+    ];
 
     //controls.push(new ol.control.ScaleLine());
 
-/*
-    ol.control.defaults({
-        attributionOptions:
-          collapsible: false
-        })
-      }).extend([
-        new createOptionControl(this)
-      ])
-      */
+    /*
+        ol.control.defaults({
+            attributionOptions:
+              collapsible: false
+            })
+          }).extend([
+            new createOptionControl(this)
+          ])
+          */
 
     //Creates Map
     let map = new ol.Map({
       target: 'map',
       view: new ol.View({
-        center: [0,0],
+        center: [0, 0],
         zoom: 6
       }),
       controls: controls,
@@ -71,33 +78,33 @@ export class MapView extends React.Component {
 
   // Changes the base maps
   changeMapLayerCallback(source) {
-/*
-    const {map, mapLayer} = this.state;
-
-    map.removeLayer(mapLayer);
-    map.getLayers().insertAt(0, source);
-
-    this.setState({
-      mapLayer: source
-    })
-*/
+    /*
+        const {map, mapLayer} = this.state;
+    
+        map.removeLayer(mapLayer);
+        map.getLayers().insertAt(0, source);
+    
+        this.setState({
+          mapLayer: source
+        })
+    */
   }
 
   // Callback to handling adding layers to the map
   addLayerCallBack(feature) {
     this.changeMapLayerCallback(this.state.mapLayer);
-    const {map, singleWMSLayer} = this.state;
+    const { map, singleWMSLayer } = this.state;
 
     var layer;
 
     if (feature.name === 'OSM') {
       feature.layer = new ol.layer.Tile({
-          source: new ol.source.OSM()
-        });
+        source: new ol.source.OSM()
+      });
       layer = feature.layer;
       layer.setVisible(feature.checked);
     } else {
-      switch(feature.type) {
+      switch (feature.type) {
         case 'WMS':
           // Single WMS Layer?
           if (this.state.singleWMSLayer.enabled) {
@@ -146,15 +153,15 @@ export class MapView extends React.Component {
 
   moveLayerCallBack(feature, up, idx) {
 
-    const {map} = this.state;
+    const { map } = this.state;
 
     map.removeLayer(feature.layer);
 
     // Map starts at 1 due to map layer
     if (up) {
-      idx = idx-1;
+      idx = idx - 1;
     } else {
-      idx = idx+1;
+      idx = idx + 1;
     }
 
     map.getLayers().insertAt(idx, feature.layer);
@@ -162,7 +169,7 @@ export class MapView extends React.Component {
 
   // Callback to handling removing layers from the map
   rmvLayerCallBack(feature) {
-    const {map, singleWMSLayer} = this.state;
+    const { map, singleWMSLayer } = this.state;
     if (feature.type === 'WMS' && feature.layer == null) {
 
       if (singleWMSLayer.layer != null) {
@@ -195,7 +202,7 @@ export class MapView extends React.Component {
   }
 
   onWMSLayerChange(e) {
-    const {singleWMSLayer} = this.state;
+    const { singleWMSLayer } = this.state;
 
     singleWMSLayer.enabled = e.target.checked;
 
@@ -204,49 +211,61 @@ export class MapView extends React.Component {
     });
   }
 
-  render(){
+  handleClose = () => {
+    this.setState({ isOptionsOpen: false })
+  }
+
+  render() {
 
     return (
       <div className="row">
-        <SlidingPane
-          isOpen={ this.state.isOptionsOpen }
-          title='Options'
-          from='left'
-          width='350px'
-          onRequestClose={ () => this.setState({ isOptionsOpen: false }) }>
-            <FeatureSelection
-              addfeature={(feature) => this.addLayerCallBack(feature)}
-              rmvfeature={(feature) => this.rmvLayerCallBack(feature)}
-              moveLayer={(feature, up, idx) => this.moveLayerCallBack(feature, up, idx)}
-              availableLayers={this.state.availableLayers}
-              styles={this.state.styles}
-              selectedLayers={this.state.selectedLayers}
-              onError={this.props.onError}
-            />
-            <div className="ui-widget">
-              <div className="ui-widget-header">
-                <label>Misc</label>
-              </div>
-              <div className="ui-widget-content">
-                <List>
-                  <ListItem
-                    key="singleWMS"
-                    dense
-                    role={undefined}
-                  >
-                    <Checkbox
-                      checked={this.state.singleWMSLayer.enabled}
-                      onChange={this.onWMSLayerChange.bind(this)}
-                      tabIndex={-1}
-                      disableRipple
-                      disabled
-                    />
-                    <ListItemText primary="Single WMS Layer" />
-                  </ListItem>
-                </List>
-              </div>
-            </div>
-        </SlidingPane>
+        <Drawer open={this.state.isOptionsOpen} onClose={this.handleClose} >
+          <List>
+            <ListItem >
+              <ListItemText primary="Options" style={{ width: '250px' }} />
+              <ListItemIcon style={{ margin: '0px' }}>
+                <IconButton onClick={this.handleClose}>
+                  <ChevronLeftIcon />
+                </IconButton>
+              </ListItemIcon>
+            </ListItem>
+          </List>
+          <Divider />
+        
+          <FeatureSelection
+            addfeature={(feature) => this.addLayerCallBack(feature)}
+            rmvfeature={(feature) => this.rmvLayerCallBack(feature)}
+            moveLayer={(feature, up, idx) => this.moveLayerCallBack(feature, up, idx)}
+            availableLayers={this.state.availableLayers}
+            styles={this.state.styles}
+            selectedLayers={this.state.selectedLayers}
+            onError={this.props.onError}
+          />
+          <Divider />
+          <AppBar position="static" color="default">
+            <Toolbar>
+              <Typography variant="h6" color="inherit">
+                Misc
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <List>
+            <ListItem
+              key="singleWMS"
+              dense
+              role={undefined}
+            >
+              <Checkbox
+                checked={this.state.singleWMSLayer.enabled}
+                onChange={this.onWMSLayerChange.bind(this)}
+                tabIndex={-1}
+                disableRipple
+                disabled
+              />
+              <ListItemText primary="Single WMS Layer" />
+            </ListItem>
+          </List>
+        </Drawer>
         <div id="map"> </div>
       </div>
     );
@@ -255,14 +274,14 @@ export class MapView extends React.Component {
 }
 
 // This creates the map control to open the options pane
-var createOptionControl = function(view, opt_options) {
+var createOptionControl = function (view, opt_options) {
 
   var options = opt_options || {};
 
   var button = document.createElement('button');
   button.innerHTML = '...';
 
-  var handleRotateNorth = function() {
+  var handleRotateNorth = function () {
     view.setState({ isOptionsOpen: true });
   };
 
@@ -289,11 +308,11 @@ function createBDPHeatmapLayer(url, layer) {
           featureProjection: 'EPSG:4326',
         }
       }),
-      url: function(extent) {
+      url: function (extent) {
         return url + '/wfs?service=WFS&' +
-            'version=2.0.0&request=GetFeature&typename=' + layer + '&' +
-            'outputFormat=application/json&srsname=EPSG:4326';// +
-            //'&bbox=' + extent.join(',');
+          'version=2.0.0&request=GetFeature&typename=' + layer + '&' +
+          'outputFormat=application/json&srsname=EPSG:4326';// +
+        //'&bbox=' + extent.join(',');
       },
       strategy: ol.loadingstrategy.bbox
     }),
@@ -305,13 +324,13 @@ function createBDPWMSLayer(url, layers, tiled) {
 
   var workingLayers = layers.slice();
 
-  for (var ii=0; ii<layers.length; ii++) {
-      workingLayers[ii] = layers[ii];
+  for (var ii = 0; ii < layers.length; ii++) {
+    workingLayers[ii] = layers[ii];
   }
 
   var layer;
 
-  if (tiled != null && tiled == true) {
+  if (tiled) {
     layer = new ol.layer.Tile({
       source: new ol.source.TileWMS({
         params: {
@@ -320,19 +339,19 @@ function createBDPWMSLayer(url, layers, tiled) {
           //STYLES: 'heatmap'
         },
         serverType: 'geoserver',
-        url:  url + '/wms',
+        url: url + '/wms',
         strategy: ol.loadingstrategy.bbox
       }),
     });
   } else {
     layer = new ol.layer.Image({
-          source: new ol.source.ImageWMS({
-            url: url + '/wms',
-            params: {'LAYERS': workingLayers.join(",")},
-            ratio: 1,
-            serverType: 'geoserver'
-          })
-        });
+      source: new ol.source.ImageWMS({
+        url: url + '/wms',
+        params: { 'LAYERS': workingLayers.join(",") },
+        ratio: 1,
+        serverType: 'geoserver'
+      })
+    });
   }
 
   return layer;
@@ -347,12 +366,12 @@ function createBDPWFSLayer(url, feature, style) {
           featureProjection: 'EPSG:4326',
         }
       }),
-      url: function(extent) {
+      url: function (extent) {
         //var coords = ol.proj.transform(extent, 'EPSG:3857', 'EPSG:4326');
         //alert(JSON.stringify(coords));
         return url + '/wfs?service=WFS&' +
-            'version=2.0.0&request=GetFeature&typename=' + feature + '&' +
-            'outputFormat=application/json&srsname=EPSG:4326';// + '&bbox=' + extent.join(',');
+          'version=2.0.0&request=GetFeature&typename=' + feature + '&' +
+          'outputFormat=application/json&srsname=EPSG:4326';// + '&bbox=' + extent.join(',');
       },
       strategy: ol.loadingstrategy.bbox
     }),

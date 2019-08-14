@@ -1,17 +1,19 @@
 import React from 'react';
 import ReactTable from 'react-table'
-import IconButton from 'common-components/lib/components/IconButton'
-import FieldInput from 'common-components/lib/components/FieldInput'
-import { deleteEntities } from 'common-components/lib/js/entityController'
-import { DialogMessage } from 'common-components/lib/components/dialogs'
+
+import IconButton from 'coalesce-components/lib/components/IconButton'
+import FieldInput from 'coalesce-components/lib/components/FieldInput'
+import { deleteEntities } from 'coalesce-components/lib/js/entityController'
+import { DialogMessage } from 'coalesce-components/lib/components/dialogs'
+import { toCSV } from 'coalesce-components/lib/js/csv'
+import { saveFile } from 'coalesce-components/lib/js/file'
+
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import { toCSV } from 'common-components/lib/js/csv'
-import { saveFile } from 'common-components/lib/js/file'
 
 const MAX_LENGTH = undefined;
 

@@ -1,6 +1,5 @@
 import React from 'react'
-import { SearchResults } from './results.js'
-import IconButton from 'common-components/lib/components/IconButton'
+import { CoalesceResults, IconButton } from 'coalesce-components/lib/components'
 
 const valueCols = [
   {
@@ -24,14 +23,14 @@ export class EnumValues extends React.PureComponent {
     return (
 
         <div>
-          <SearchResults
+          <CoalesceResults
             title="Values"
             data={this.props.data.hits}
             properties={valueCols}
 
             createButtons={(row) => {
               return [
-                <IconButton icon="/images/svg/view.svg" title="View Associated Values" onClick={() => this.props.loadAssociatedValues(this.props.enumKey, row._original.associatedValues)}/>,
+                <IconButton key={`${row._original.entityKey}_view`} icon="/images/svg/view.svg" title="View Associated Values" onClick={() => this.props.loadAssociatedValues(this.props.enumKey, row._original.associatedValues)}/>,
               ];
             }}
           />

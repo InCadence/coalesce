@@ -2,15 +2,15 @@ import React from "react";
 import SettingsView from './settings.js'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
-import { DialogMessage, DialogPrompt } from 'common-components/lib/components/dialogs'
+import { DialogMessage, DialogPrompt } from 'coalesce-components/lib/components/dialogs'
 
-import {Menu} from 'common-components/lib/index.js'
-import 'common-components/bootstrap/css/bootstrap.min.css'
+import {Menu} from 'coalesce-components/lib/components'
+import 'coalesce-components/bootstrap/css/bootstrap.min.css'
 
-import { saveProperties } from 'common-components/lib/js/propertyController'
+import { saveProperties } from 'coalesce-components/lib/js/propertyController'
 
 
-import 'common-components/css/coalesce.css'
+import 'coalesce-components/css/coalesce.css'
 
 export class App extends React.Component {
 

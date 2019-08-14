@@ -1,9 +1,9 @@
 import React from 'react'
-import Menu from 'common-components/lib/components/menu'
-import { loadTemplates, loadTemplate } from 'common-components/lib/js/templateController.js';
-import { getRootKarafUrl, timeDifference } from 'common-components/lib/js/common';
-import { DialogMessage, DialogLoader, DialogOptions, DialogFieldLegend, DialogPrompt } from 'common-components/lib/components/dialogs'
-import { searchComplex, loadHistory, loadSavedHistory, saveQuery } from 'common-components/lib/js/searchController.js';
+import Menu from 'coalesce-components/lib/components/menu'
+import { loadTemplates, loadTemplate } from 'coalesce-components/lib/js/templateController.js';
+import { getRootKarafUrl } from 'coalesce-components/lib/js/common';
+import { DialogMessage, DialogLoader, DialogOptions, DialogFieldLegend, DialogPrompt } from 'coalesce-components/lib/components/dialogs'
+import { searchComplex, loadHistory, loadSavedHistory, saveQuery } from 'coalesce-components/lib/js/searchController.js';
 
 import uuid from 'uuid';
 

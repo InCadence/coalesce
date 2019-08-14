@@ -4,9 +4,7 @@ import Dialog from '@material-ui/core/Dialog'
 import {Control} from 'ol/control';
 import {inherits} from 'ol/index.js';
 import PointsTable from './pointstable.js'
-import { IconButton } from 'common-components/lib/components'
-
-import 'common-components/css/mapping.css'
+import { IconButton } from 'coalesce-components/lib/components'
 
 // Map Controls
 import 'ol/ol.css';

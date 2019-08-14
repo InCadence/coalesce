@@ -1,10 +1,13 @@
 import * as React from "react";
+
 import { Graph } from 'react-d3-graph';
-import Paper from '@material-ui/core/Paper';
-import { DialogMessage } from 'common-components/lib/components/dialogs'
-import { getRootKarafUrl } from 'common-components/lib/js/common'
 import ReactTable from 'react-table'
-//import Checkbox from 'material-ui/Checkbox';
+
+import { DialogMessage } from 'coalesce-components/lib/components/dialogs'
+import { getRootKarafUrl } from 'coalesce-components/lib/js/common'
+
+
+import Paper from '@material-ui/core/Paper';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
@@ -16,7 +19,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 
 import { validate } from './fast-xml-parser/validator'
-//var parser = require('fast-xml-parser');
 
 export class GraphView extends React.Component {
 
@@ -468,23 +470,49 @@ export class GraphView extends React.Component {
     editing = actions === 'editing'
     adding = actions === 'adding'
 
+    var onOther = undefined; 
+    var onOtherText = undefined;
     var onSecondary = console.log
+    var onSecondaryText = undefined
     var onPrimary = console.log
+    var onPrimaryText = undefined
+    var confirmation = false; 
+
     if (!this.state.isValid) {
       onSecondary = (() => this.setState({isValid: true}))
       onPrimary = this.attemptRevert
+
+      onPrimaryText = "REVERT"
+
+      confirmation = true;
     }
     else if (base) {
-      onSecondary =  (() => this.onEditToggle(selected))
+      if (editable) {
+      onOther =  (() => this.onEditToggle(selected))
+      }
+      onSecondary = this.onClose
       onPrimary = this.onClose
+
+      onOtherText = "Edit"
+      onPrimaryText = "Close"
     }
     else if (editing) {
+      onOther = (() => this.attemptRemoveNode(this.getNonGuid(selected.id)))
       onSecondary = this.onEditCancel
       onPrimary = this.onClose
+
+      onSecondaryText = "Cancel"
+      onOtherText = "Delete Node"
+      onPrimaryText = "Save"
+
+      confirmation = true;
     }
     else if (adding) {
       onSecondary = this.onAddCancel
       onPrimary = this.onClose
+
+      onPrimaryText = "Add"
+      confirmation = true;
     }
 /*
 <Checkbox
@@ -537,8 +565,8 @@ export class GraphView extends React.Component {
           <DialogMessage
             title="Details"
             opened={selected != null || adding || editing}
-            actions={this.state.actions}
-            editable={editable}
+            //actions={this.state.actions}
+            //editable={editable}
             maxWidth="xl"
             message={
               //if the user is not editing or its not editable
@@ -609,10 +637,14 @@ export class GraphView extends React.Component {
               )
             }
 
-            onTertiary={() => this.attemptRemoveNode(this.getNonGuid(selected.id))}
-            onSecondary={onSecondary}
-            onPrimary={onPrimary}
-            onClose={this.onClose}
+            confirmation={confirmation}
+            onOther={onOther}
+            onOtherText={onOtherText}
+            onClose={onSecondary}
+            onCloseText={onSecondaryText}
+            onClick={onPrimary}
+            onClickText={onPrimaryText}
+            //onClose={this.onClose}
           />
         </Paper>
       )
@@ -623,8 +655,11 @@ export class GraphView extends React.Component {
           <DialogMessage
             title="Details"
             opened={!this.state.isValid}
-            actions={'reverting'}
-            onPrimary={onPrimary}
+            confirmation={confirmation}
+            onClose={onSecondary}
+            onCloseText={onSecondaryText}
+            onClick={onPrimary}
+            onClickText={onPrimaryText}
             >
               The file {this.props.title} is broken and cannot be loaded.
                 You can try and use the revert button, but if it is not able

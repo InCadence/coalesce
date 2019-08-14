@@ -1,20 +1,21 @@
 import React from 'react';
-import {FieldInput} from './FieldInput.js'
 import { withTheme } from '@material-ui/core/styles';
 
-export class  RecordView extends React.PureComponent {
+import {FieldInput} from 'coalesce-components/lib/components/FieldInput.js'
+
+export class RecordView extends React.PureComponent {
 
   render() {
     const {record, definition} = this.props;
 
     return (
-      <div>
+      <React.Fragment>
         {
           definition.map((fd) => {
             return this.renderField(record, fd)
           })
         }
-      </div>
+      </React.Fragment>
     );
   }
 

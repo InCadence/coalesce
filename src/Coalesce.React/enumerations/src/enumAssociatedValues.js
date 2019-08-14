@@ -1,6 +1,6 @@
 import React from 'react'
-import IconButton from 'common-components/lib/components/IconButton'
-import { SearchResults } from './results.js'
+import { CoalesceResults, IconButton } from 'coalesce-components/lib/components'
+
 
 export class EnumAssociatedValues extends React.PureComponent {
 
@@ -11,7 +11,7 @@ export class EnumAssociatedValues extends React.PureComponent {
 
     Object.keys(data).forEach(function (key) {
       items.push({
-        'name': key,
+        'entityKey': key,
         'value': data[key]
       });
     });
@@ -19,14 +19,16 @@ export class EnumAssociatedValues extends React.PureComponent {
     return (
 
       <div>
-          <SearchResults
+          <CoalesceResults
             title="Associated Values"
             data={items}
             properties={[
                 {
+                  key: 'associated.key',
                   Header: 'Name',
-                  accessor: 'name'
+                  accessor: 'entityKey'
                 },{
+                  key: 'associated.value',
                   Header: 'Value',
                   accessor: 'value'
                 }

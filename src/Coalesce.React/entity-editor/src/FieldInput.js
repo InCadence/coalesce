@@ -8,8 +8,8 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import {withTheme} from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 
-import Enumeration from "common-components/lib/components/fieldInputs/Enumeration";
-import IconButton from "common-components/lib/components/IconButton";
+import Enumeration from "coalesce-components/lib/components/fieldInputs/Enumeration";
+import IconButton from "coalesce-components/lib/components/IconButton";
 
 import Point from "./field-inputs/geo/Point.js";
 import Multipoint from "./field-inputs/geo/Multipoint.js";
@@ -336,6 +336,7 @@ export class FieldInput extends React.Component {
             shape="LineString"
             opts={opts}
             showLabels={this.props.showLabels}
+            label={label}
             multi={false}
             handleOnChange={this.handleOnChange}
           />
@@ -347,6 +348,7 @@ export class FieldInput extends React.Component {
             shape="Polygon"
             opts={opts}
             showLabels={this.props.showLabels}
+            label={label}
             multi={false}
             handleOnChange={this.handleOnChange}
           />
@@ -357,6 +359,7 @@ export class FieldInput extends React.Component {
           <Multipoint
             opts={opts}
             showLabels={this.props.showLabels}
+            label={label}
             handleOnChange={this.handleOnChange}
           />
         );
@@ -366,6 +369,7 @@ export class FieldInput extends React.Component {
           <Point
             opts={opts}
             showLabels={this.props.showLabels}
+            label={label}
             handleOnChange={this.handleOnChange}
           />
         );
@@ -377,7 +381,8 @@ export class FieldInput extends React.Component {
             shape="Circle"
             opts={opts}
             showLabels={this.props.showLabels}
-            multi={false}
+            label={label}
+            multi={false} 
             handleOnChange={this.handleOnChange}
           />
         );

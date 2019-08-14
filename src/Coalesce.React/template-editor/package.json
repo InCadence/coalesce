@@ -9,7 +9,7 @@
   "dependencies": {
     "@material-ui/core": "3.0.3",
     "@material-ui/icons": "3.0.1",
-    "common-components": "file:../common-components",
+    "coalesce-components": "file:../common-components",
     "mxgraph-js": "1.0.1",
     "react": "16.8.6",
     "react-bootstrap": "0.32.4",

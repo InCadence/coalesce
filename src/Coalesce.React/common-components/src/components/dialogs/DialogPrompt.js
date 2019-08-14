@@ -1,10 +1,4 @@
 import React from 'react';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { DialogMessage } from './DialogMessage'
 
@@ -19,14 +13,28 @@ export class DialogPrompt extends React.Component {
     this.state = {value: props.value};
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   handleChange(event) {
+    const value = event.target.value;
+
     this.setState(() => {
       return {
-        value: event.target.value
+        value: value
       }
     })
+  }
+
+  handleKeyDown(event) {
+    if (event.key === 'Enter') {
+      this.props.onSubmit(this.state.value);
+    }
+  }
+
+  handleSubmit() {
+    this.props.onSubmit(this.state.value);
   }
 
   render() {
@@ -35,18 +43,14 @@ export class DialogPrompt extends React.Component {
         <DialogMessage
           {...this.props}
           confirmation={true}
-          onClick={() => {this.props.onSubmit(this.state.value)}}
+          onClick={this.handleSubmit}
         >
           <TextField
             autoFocus
             fullWidth={true}
             value={this.state.value}
-            onChange={(event) => {this.handleChange(event.target.value)}}
-            onKeyDown={ (e) => {
-                  if (e.key === 'Enter') {
-                    this.props.onSubmit(this.state.value);
-                  }
-                }}
+            onChange={this.handleChange}
+            onKeyDown={this.handleKeyDown}
           />
         </DialogMessage>
 
