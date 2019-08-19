@@ -478,4 +478,4 @@ FieldInput.defaultProps = {
   showLabels: true
 };
 
-export default withTheme()(FieldInput);
+export default withTheme(FieldInput);
