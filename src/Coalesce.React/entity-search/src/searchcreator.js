@@ -1,6 +1,6 @@
 import React from 'react';
 import { ReactTableDefaults } from 'react-table'
-import IconButton from 'common-components/lib/components/IconButton'
+import IconButton from 'coalesce-components/lib/components/IconButton'
 import {FilterCreator} from './filtercreator.js'
 
 Object.assign(ReactTableDefaults, {

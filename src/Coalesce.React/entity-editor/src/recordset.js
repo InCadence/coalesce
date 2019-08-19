@@ -2,7 +2,7 @@ import React from 'react';
 import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
 import {FieldInput} from './FieldInput.js'
-import IconButton from 'common-components/lib/components/IconButton'
+import IconButton from 'coalesce-components/lib/components/IconButton'
 import uuid from 'uuid';
 
 Object.assign(ReactTableDefaults, {

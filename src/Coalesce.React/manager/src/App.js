@@ -1,8 +1,8 @@
 import * as React from "react";
 
-import { DialogMessage, DialogOptions } from 'common-components/lib/components/dialogs'
-import { Menu } from 'common-components/lib/components'
-import { getRootKarafUrl } from 'common-components/lib/js/common'
+import { DialogMessage, DialogOptions } from 'coalesce-components/lib/components/dialogs'
+import { Menu } from 'coalesce-components/lib/components'
+import { getRootKarafUrl } from 'coalesce-components/lib/js/common'
 
 import { MuiThemeProvider } from '@material-ui/core/styles'
 
@@ -98,6 +98,7 @@ export class App extends React.Component {
 
           data.push("Network Diagram");
 
+          console.log(data);
           that.setState(() => {return {
               blueprints: data,
               data: undefined

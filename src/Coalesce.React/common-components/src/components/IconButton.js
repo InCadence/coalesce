@@ -1,6 +1,6 @@
 import React from 'react';
 import { withTheme } from '@material-ui/core/styles';
-import Image from 'common-components/lib/components/image'
+import Image from 'coalesce-components/lib/components/image'
 
 export class IconButton extends React.PureComponent {
 

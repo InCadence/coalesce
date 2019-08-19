@@ -1,14 +1,13 @@
 import React from "react";
-import { loadJSON, saveJSON } from 'common-components/lib/js/propertyController.js'
-import {Menu} from 'common-components/lib/index.js'
-import { DialogMessage, DialogOptions } from 'common-components/lib/components/dialogs'
+import { loadJSON, saveJSON } from 'coalesce-components/lib/js/propertyController.js'
+import {Menu} from 'coalesce-components/lib/components'
+import { DialogMessage, DialogOptions } from 'coalesce-components/lib/components/dialogs'
 import JsonView from './JsonView'
 
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 
-import 'common-components/css/coalesce.css'
-import 'common-components/css/popup.css'
+import 'coalesce-components/css/coalesce.css'
 
 // TODO These options should be pulled from a configuration file
 const options=[

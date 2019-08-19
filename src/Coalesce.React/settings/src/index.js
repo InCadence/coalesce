@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import App from './app'
 
 import { createMuiTheme } from '@material-ui/core/styles'
-import { loadJSON, loadAllProperties } from 'common-components/lib/js/propertyController'
+import { loadJSON, loadAllProperties } from 'coalesce-components/lib/js/propertyController'
 
 var pjson = require('../package.json');
 document.title = pjson.title;

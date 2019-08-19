@@ -1,7 +1,7 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
-import 'common-components/css/map_popup.css'
-import 'common-components/css/ol.css';
+import 'coalesce-components/css/map_popup.css'
+import 'coalesce-components/css/ol.css';
 import { DialogMap } from '../../map/dialogmap.js'
 import MapMaker from '../../map/mapmaker.js';
 import VectorSource from 'ol/source/Vector';

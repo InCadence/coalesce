@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom';
 import TemplateWorkspace from './TemplateWorkspace';
 //import registerServiceWorker from './registerServiceWorker';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { loadJSON } from 'common-components/lib/js/propertyController'
+import { loadJSON } from 'coalesce-components/lib/js/propertyController'
 
-import 'common-components/bootstrap/css/bootstrap.min.css'
-import 'common-components/css/coalesce.css'
+import 'coalesce-components/bootstrap/css/bootstrap.min.css'
+import 'coalesce-components/css/coalesce.css'
 import './App.css';
 
 var pjson = require('../package.json');

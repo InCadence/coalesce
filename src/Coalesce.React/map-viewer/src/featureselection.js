@@ -1,17 +1,18 @@
 import React from "react";
-import Popup from 'react-popup';
-import {PromptDropdown} from 'common-components/lib/prompt-dropdown.js'
-import {StyleSelection} from './style.js'
-import IconButton from 'common-components/lib/components/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Checkbox from '@material-ui/core/Checkbox';
-import { DialogOptions } from 'common-components/lib/components/dialogs';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+
 import * as ol from 'openlayers';
 
-import 'common-components/css/popup.css'
+import IconButton from 'coalesce-components/lib/components/IconButton';
+import { DialogOptions } from 'coalesce-components/lib/components/dialogs';
+import { DialogFeatures } from "./DialogFeatures.js";
 
 export class FeatureSelection extends React.Component {
 
@@ -20,9 +21,8 @@ export class FeatureSelection extends React.Component {
     this.state = props;
 
     if (props.selectedLayers) {
-      props.selectedLayers.forEach( function(feature) {
-        if (feature.layer == null)
-        {
+      props.selectedLayers.forEach(function (feature) {
+        if (feature.layer == null) {
           props.addfeature(feature);
         }
       });
@@ -31,10 +31,8 @@ export class FeatureSelection extends React.Component {
     this.handleRemoveLayer = this.handleRemoveLayer.bind(this);
   }
 
-  onAddClick() {
-    var that = this;
-
-    const {selectedLayers, availableLayers, styles} = this.state;
+  onAddClick = () => {
+    const { selectedLayers, availableLayers, styles } = this.state;
 
     if (availableLayers.length !== 0) {
 
@@ -45,7 +43,7 @@ export class FeatureSelection extends React.Component {
 
         var found = false;
 
-        for (var ii=0; ii<selectedLayers.length; ii++) {
+        for (var ii = 0; ii < selectedLayers.length; ii++) {
           if (selectedLayers[ii].key === feature.key) {
             found = true;
             break;
@@ -53,44 +51,29 @@ export class FeatureSelection extends React.Component {
         }
 
         if (!found) {
-          filteredLayers.push({key: feature.key, name: feature.name});
+          filteredLayers.push({ key: feature.key, name: feature.name });
         }
       });
 
-      console.log('GOT HERE');
-
-      // Prompt for layer to add
-      Popup.plugins().promptAddFeature(filteredLayers, styles, function (value) {
-
-        if (value.type === "WFS") {
-          // Create client side style
-          if (value.style === 'Custom') {
-            // Prompt for custom style
-            Popup.plugins().promptStyle(styles, function(style) {
-              that.addLayer(value.layer, value.type, value.tiled, createStyle(style));
-            });
-          } else {
-            for (var ii=0; ii<styles.length; ii++)
-            {
-              if (styles[ii].key === value.style) {
-                that.addLayer(value.layer, value.type, value.tiled, createStyle(styles[ii]));
-                break;
-              }
-            }
-          }
-        } else {
-          that.addLayer(value.layer, value.type, value.tiled);
-        }
-
-      });
-    } else {
-      this.props.handleError('No available layers')
+      this.setState({ layers: filteredLayers, styles: styles, promptAddLayer: true });
     }
+  }
+
+  addNewLayer = (value) => {
+
+    const that = this;
+    if (value.type === "WFS") {
+      that.addLayer(value.layer, value.type, value.tiled, createStyle(value.style));
+    } else {
+      console.log(value)
+      that.addLayer(value.layer, value.type, value.tiled);
+    }
+
   }
 
   addLayer(name, type, tiled, style) {
 
-    const {selectedLayers} = this.state;
+    const { selectedLayers } = this.state;
 
     var feature = {
       key: name,
@@ -106,15 +89,16 @@ export class FeatureSelection extends React.Component {
     this.props.addfeature(feature);
 
     this.setState({
+      promptAddLayer: false,
       selectedLayers: selectedLayers
     });
   }
 
   handleRemoveLayer(key) {
 
-    const {selectedLayers} = this.state;
+    const { selectedLayers } = this.state;
 
-    for (var ii=0; ii<selectedLayers.length; ii++) {
+    for (var ii = 0; ii < selectedLayers.length; ii++) {
 
       if (selectedLayers[ii].key === key) {
         this.props.rmvfeature(selectedLayers[ii]);
@@ -130,7 +114,7 @@ export class FeatureSelection extends React.Component {
 
   onChange(feature, e) {
 
-    const {selectedLayers} = this.state;
+    const { selectedLayers } = this.state;
 
     if (e.target.checked) {
       if (feature.layer != null) {
@@ -157,7 +141,7 @@ export class FeatureSelection extends React.Component {
 
   moveLayer(feature, up, e) {
 
-    const {selectedLayers, moveLayer} = this.state;
+    const { selectedLayers, moveLayer } = this.state;
 
     var idx = selectedLayers.indexOf(feature);
 
@@ -167,7 +151,7 @@ export class FeatureSelection extends React.Component {
 
       if (up && idx - 1 >= 0) {
         newIdx = idx - 1;
-      } else if(!up && idx + 1 < selectedLayers.length) {
+      } else if (!up && idx + 1 < selectedLayers.length) {
         newIdx = idx + 1;
       }
 
@@ -185,17 +169,25 @@ export class FeatureSelection extends React.Component {
     }
   }
 
+  toggleDialogRemove = () => {
+    this.setState(() => { return { promptRemoveLayer: !this.state.promptRemoveLayer } });
+  }
+
+  toggleLayerPrompt = () => {
+    this.setState({ promptAddLayer: !this.state.promptAddLayer });
+  }
+
   render() {
 
     var features = [];
 
     if (this.state.selectedLayers != null) {
 
-      for (var ii=0; ii<this.state.selectedLayers.length; ii++) {
+      for (var ii = 0; ii < this.state.selectedLayers.length; ii++) {
         var feature = this.state.selectedLayers[ii];
 
-        var isFirst = ii===0;
-        var isLast = ii===this.state.selectedLayers.length - 1;
+        var isFirst = ii === 0;
+        var isLast = ii === this.state.selectedLayers.length - 1;
 
         features.push(
           <ListItem
@@ -212,21 +204,23 @@ export class FeatureSelection extends React.Component {
             <ListItemText primary={feature.name} secondary={feature.type} />
             <ListItemSecondaryAction>
               {!isFirst &&
-              <IconButton
-                icon="/images/svg/up.svg"
-                title="Move Layer Up"
-                size="24px"
-                onClick={this.moveLayer.bind(this, feature, true)}
-              />
+                <IconButton
+                  icon="/images/svg/up.svg"
+                  title="Move Layer Up"
+                  size="24px"
+                  square
+                  onClick={this.moveLayer.bind(this, feature, true)}
+                />
               }
               {!isLast &&
-              <IconButton
-                icon="/images/svg/down.svg"
-                title="Move Layer Down"
-                size="24px"
-                onClick={this.moveLayer.bind(this, feature, false)}
-              />
-            }
+                <IconButton
+                  icon="/images/svg/down.svg"
+                  title="Move Layer Down"
+                  size="24px"
+                  square
+                  onClick={this.moveLayer.bind(this, feature, false)}
+                />
+              }
             </ListItemSecondaryAction>
           </ListItem>
         )
@@ -234,43 +228,44 @@ export class FeatureSelection extends React.Component {
     }
 
     return (
-      <div className="ui-widget">
-        <div className="ui-widget-header">
-          Layers
-        </div>
-        <div className="ui-widget-content">
-          <List dense>
-            {features}
-          </List>
-          <div className="form-buttons">
+      <React.Fragment>
+        <AppBar position="static" color="default">
+          <Toolbar>
+            <Typography variant="h6" style={{ flexGrow: 1 }}>Layers</Typography>
             <IconButton
               icon="/images/svg/remove.svg"
               title="Remove Layer"
               size="24px"
-              //onClick={this.onRmvClick.bind(this)}
-              onClick={() => this.setState(() => {return {promptRemoveLayer: true}})}
-             />
+              square
+              onClick={this.toggleDialogRemove}
+            />
             <IconButton
               icon="/images/svg/add.svg"
               title="Add Layer"
               size="24px"
-              onClick={this.onAddClick.bind(this)}
+              square
+              onClick={this.onAddClick}
             />
-          </div>
-        </div>
+          </Toolbar>
+        </AppBar>
+        <List dense>
+          {features}
+        </List>
         {this.state.promptRemoveLayer &&
           <DialogOptions
             title="Select Layer to Remove"
             open={true}
-            onClose={() => {this.setState({promptRemoveLayer: false})}}
+            onClose={this.toggleDialogRemove}
             onClick={this.handleRemoveLayer}
             options={this.state.selectedLayers}
           />
         }
-      </div>
+        {this.state.promptAddLayer &&
+          <DialogFeatures data={this.state.layers} styles={this.state.styles} onClick={this.addNewLayer} onClose={this.toggleLayerPrompt} />
+        }
+      </React.Fragment>
     )
   }
-
 }
 
 function createStyle(styleData) {
@@ -295,102 +290,17 @@ function createStyle(styleData) {
   });
 }
 
-function hexToRgbA(hex, alpha){
-    var c;
-    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
-        c= hex.substring(1).split('');
-        if(c.length === 3){
-            c= [c[0], c[0], c[1], c[1], c[2], c[2]];
-        }
-        c= '0x'+c.join('');
-        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',' + alpha + ')';
+
+function hexToRgbA(hex, alpha) {
+  var c;
+  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+    c = hex.substring(1).split('');
+    if (c.length === 3) {
+      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
     }
-    console.log('Bad Hex: ' + hex);
+    c = '0x' + c.join('');
+    return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',' + alpha + ')';
+  }
+  console.log('Bad Hex: ' + hex);
 }
 
-/** Prompt plugin */
-Popup.registerPlugin('promptAddFeature', function (data, styles, callback) {
-
-    var styleOptions = [{
-      'key': 'Custom',
-      'name': 'Custom'
-    }].concat(styles);
-
-    let promptValue = {tiled: false};
-    let layerChange = function (value) {
-        promptValue.layer = value;
-    };
-
-    let typeChange = function (value) {
-        promptValue.type = value;
-    };
-
-    let styleChange = function (value) {
-        promptValue.style = value;
-    };
-
-    let tileChange = function (value) {
-        promptValue.tiled = value.target.checked;
-    };
-
-    this.create({
-        title: 'Select Feature',
-        content: (
-          <div>
-            <label>Layer</label>
-            <PromptDropdown onChange={layerChange} data={data}/>
-            <label>Type</label>
-            <PromptDropdown onChange={typeChange} data={[
-              {key: 'WMS', name:'WMS'},
-              {key: 'WFS', name:'WFS'},
-              {key: 'WPS', name:'WPS'},
-              {key: 'HEATMAP', name:'HEATMAP'}
-            ]}/>
-            <label>Style (WFS Only)</label>
-            <PromptDropdown onChange={styleChange} data={styleOptions} />
-            <label>Tiled (WMS Only)</label>
-            <div className="row">
-              <div className="col-sm-2">
-                <input type="checkbox" className="form-control" onChange={tileChange} />
-              </div>
-            </div>
-          </div>
-        ),
-        buttons: {
-            left: ['cancel'],
-            right: [{
-                text: 'Add',
-                className: 'success',
-                action: function () {
-                    callback(promptValue);
-                    Popup.close();
-                }
-            }]
-        }
-    });
-})
-
-
-Popup.registerPlugin('promptStyle', function (styles, callback) {
-
-    let data = null;
-    let dataChange = function (value) {
-        data = value;
-    };
-
-    this.create({
-        title: 'Select Style',
-        content: <StyleSelection onChange={dataChange} presets={styles} data={styles[0]}/>,
-        buttons: {
-            left: ['cancel'],
-            right: [{
-                text: 'OK',
-                className: 'success',
-                action: function () {
-                    callback(data);
-                    Popup.close();
-                }
-            }]
-        }
-    });
-})

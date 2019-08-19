@@ -11,16 +11,16 @@ import {
   saveTemplate,
   registerTemplate,
   loadTemplateAsXML
-} from "common-components/lib/js/templateController";
-import {saveFile} from "common-components/lib/js/file";
+} from "coalesce-components/lib/js/templateController";
+import {saveFile} from "coalesce-components/lib/js/file";
 
-import {Menu} from "common-components/lib/index";
+import {Menu} from "coalesce-components/lib/components";
 
 import {
   DialogMessage,
   DialogLoader,
   DialogOptions
-} from "common-components/lib/components/dialogs";
+} from "coalesce-components/lib/components/dialogs";
 import RGL, {WidthProvider} from "react-grid-layout";
 
 const ReactGridLayout = WidthProvider(RGL);

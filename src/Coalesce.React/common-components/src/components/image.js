@@ -1,6 +1,6 @@
 import React from 'react';
 import { withTheme } from '@material-ui/core/styles';
-import { getRootKarafUrl } from 'common-components/lib/js/common';
+import { getRootKarafUrl } from 'coalesce-components/lib/js/common';
 import Tooltip from '@material-ui/core/Tooltip';
 
 var rootUrl = getRootKarafUrl("") + '..';

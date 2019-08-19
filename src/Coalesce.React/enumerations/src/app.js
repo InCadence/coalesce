@@ -1,12 +1,14 @@
 import React from 'react'
-import { MuiThemeProvider } from '@material-ui/core/styles'
-import Menu from 'common-components/lib/components/menu'
-import { getEnumerationValues } from 'common-components/lib/js/enumerationController';
+import Paper from '@material-ui/core/Paper';
+
+import Menu from 'coalesce-components/lib/components/menu'
+import { getEnumerationValues } from 'coalesce-components/lib/js/enumerationController';
+import { DialogMessage } from 'coalesce-components/lib/components/dialogs';
+import { searchComplex } from 'coalesce-components/lib/js/searchController';
+
 import { Enums } from './enums'
 import { EnumValues } from './enumValues'
 import { EnumAssociatedValues } from './enumAssociatedValues'
-import { DialogMessage, DialogLoader } from 'common-components/lib/components/dialogs';
-import Paper from '@material-ui/core/Paper';
 
 
 const enumCols = [
@@ -40,52 +42,98 @@ export class App extends React.Component {
 
     this.state = {
       values: [],
-      error: props.error
+      error: props.error,
+      enums: {}
     }
 
-    this.loadValues = this.loadValues.bind(this);
-    this.loadAssociatedValues = this.loadAssociatedValues.bind(this);
-    this.loadEnumerations = this.loadEnumerations.bind(this);
   }
 
-  loadEnumerations() {
+  componentDidMount() {
+    var query = {
+      "pageSize": 200,
+      "pageNumber": 1,
+      "propertyNames": enumCols.map((item) => item.key),
+      "group": {
+        "operator": "AND",
+        "criteria": [{
+          'recordset': 'CoalesceEntity',
+          'field': 'name',
+          'operator': 'EqualTo',
+          'value': 'Enumeration'
+        },{
+          'recordset': 'enummetadata',
+          'field': 'enumname',
+          'operator': 'NullCheck',
+          'not': true
+        }]
+      },
+      "sortBy": [
+          {
+            "propertyName": enumCols[0].key,
+            "sortOrder": "ASC"
+          }
+        ],
+    };
+
+    searchComplex(query).then(response => {
+      this.setState(() => {return {enums: response }})
+    }).catch(err => {
+      this.handleError(err);
+    });
+  }
+
+  handleError = (err) => {
+    this.setState(() => {return {error: err.message }})
+  }
+
+  clearError = () => {
+    this.setState(() => {return {error: undefined }})
+  }
+
+  loadEnumerations = () => {
     this.setState(() => {return {
-      associatedValues: null,
-      enumKey: null
+      associatedValues: undefined,
+      enumKey: undefined
     }});
   }
 
-  loadValues(key) {
+  loadValues = (key) => {
 
     const that = this;
     const { values } = this.state;
 
     if (values[key] == null) {
 
-      that.setState(() => {return {loading: 'Loading Values'}})
-      getEnumerationValues(key).then((values) => {
-        values[key] = {hits: values};
+      values[key] = {hits: undefined};
+
+      that.setState(() => {return {
+        enumKey: key,
+        associatedValues: undefined,
+        values : values
+      }})
+      getEnumerationValues(key).then((results) => {
+        
+        results.forEach(result => result.entityKey = result.key);
+
+        values[key] = {hits: results};
 
         that.setState(() => {return {
-          associatedValues: null,
-          loading: null,
-          enumKey: key,
           values : values
         }});
 
       }).catch((err) => {
-        this.setState(() => {return {error: err.message}})
+        this.handleError(err);
       })
 
     } else {
       that.setState(() => {return {
         enumKey: key,
-        associatedValues: null
+        associatedValues: undefined
       }});
     }
   }
 
-  loadAssociatedValues(key, values) {
+  loadAssociatedValues = (key, values) => {
 
     this.setState(() => {return {
       associatedValues: values
@@ -96,15 +144,14 @@ export class App extends React.Component {
   render() {
 
     return (
-      <MuiThemeProvider theme={this.props.theme}>
+      <React.Fragment>
         <Menu logoSrc={this.props.icon} title={this.props.title} items={[/* No Options */]}/>
         <Paper  style={{padding: '5px', margin: '10px'}}>
         { !this.state.enumKey &&
           <Enums
-            data={this.props.enums}
+            data={this.state.enums}
             columns={enumCols}
             loadValues={this.loadValues}
-            theme={this.props.theme}
           />
         }
         { this.state.enumKey && !this.state.associatedValues &&
@@ -113,7 +160,6 @@ export class App extends React.Component {
             data={this.state.values[this.state.enumKey]}
             loadAssociatedValues={this.loadAssociatedValues}
             loadEnumerations={this.loadEnumerations}
-            theme={this.props.theme}
            />
         }
         { this.state.enumKey && this.state.associatedValues &&
@@ -121,7 +167,6 @@ export class App extends React.Component {
             enumKey={this.state.enumKey}
             data={this.state.associatedValues}
             loadValues={this.loadValues}
-            theme={this.props.theme}
           />
         }
         </Paper>
@@ -130,16 +175,10 @@ export class App extends React.Component {
             title="Error"
             opened={true}
             message={this.state.error}
-            onClose={() => {this.setState({error: null})}}
+            onClose={this.clearError}
           />
         }
-        { this.state.loading &&
-          <DialogLoader
-            title={this.state.loading}
-            opened={true}
-          />
-        }
-      </MuiThemeProvider>
+      </React.Fragment>
     )
   }
 

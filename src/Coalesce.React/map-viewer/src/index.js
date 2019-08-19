@@ -1,10 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from './app'
-import Popup from 'react-popup';
 
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles'
-import { loadJSON, loadProperty } from 'common-components/lib/js/propertyController'
+import { loadJSON, loadProperty } from 'coalesce-components/lib/js/propertyController'
 
 var pjson = require('../package.json');
 document.title = pjson.title;
@@ -36,11 +35,6 @@ function loadApplication(theme) {
 loadJSON('theme').then((theme) => {
   loadApplication(createMuiTheme(theme))
 }).catch((err) => {
-  console.log(`Failed Loading Theme`);
+  console.log(`Failed Loading Theme ${err.mesage}`);
   loadApplication()
 })
-
-ReactDOM.render(
-  <Popup />,
-  document.getElementById('popupContainer')
-);

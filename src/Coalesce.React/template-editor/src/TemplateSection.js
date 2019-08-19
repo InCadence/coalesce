@@ -8,7 +8,7 @@ import Tab from "@material-ui/core/Tab";
 
 import RecordSet from "./TemplateRecordset";
 import TabTextField from "./TabTextField";
-import {DialogOptions} from "common-components/lib/components/dialogs";
+import {DialogOptions} from "coalesce-components/lib/components/dialogs";
 import uuid from "uuid";
 import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";

@@ -1,4 +1,5 @@
 import React from 'react'
+
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -20,7 +21,6 @@ export class ListItemExpandable extends React.Component {
   }
 
   handleToggleExpand() {
-    console.log('GOT HERE');
     this.setState(state => ({expanded: !state.expanded}));
   }
 

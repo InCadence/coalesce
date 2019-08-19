@@ -1,7 +1,5 @@
 import React from 'react';
 
-var karafRootAddr = 'http://' + window.location.hostname + ':8181';
-
 /** The prompt content component */
 export class PromptDropdown extends React.Component {
     constructor(props) {

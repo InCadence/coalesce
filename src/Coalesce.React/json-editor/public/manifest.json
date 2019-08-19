@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "JSON Editor",
+  "name": "JSON Editor for modifing configurations",
   "icons": [],
   "start_url": "./index.html",
   "display": "standalone",

@@ -13,7 +13,7 @@ import ActionInput from "@material-ui/icons/Input";
 import AvPlaylistAdd from "@material-ui/icons/PlaylistAdd";
 import ContentDeleteSweep from "@material-ui/icons/DeleteSweep";
 
-import {DialogPrompt} from "common-components/lib/components/dialogs";
+import {DialogPrompt} from "coalesce-components/lib/components/dialogs";
 
 class TabTextField extends React.Component {
   constructor(props) {
