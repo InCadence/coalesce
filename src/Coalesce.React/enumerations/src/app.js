@@ -1,7 +1,7 @@
 import React from 'react'
 import Paper from '@material-ui/core/Paper';
 
-import Menu from 'coalesce-components/lib/components/menu'
+import { Menu } from 'coalesce-components/lib/components'
 import { getEnumerationValues } from 'coalesce-components/lib/js/enumerationController';
 import { DialogMessage } from 'coalesce-components/lib/components/dialogs';
 import { searchComplex } from 'coalesce-components/lib/js/searchController';

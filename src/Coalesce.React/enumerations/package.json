@@ -10,16 +10,16 @@
   "homepage": "/enumerations",
   "proxy": "http://localhost:8181/",
   "dependencies": {
-    "@material-ui/core": "3.0.3",
-    "@material-ui/icons": "3.0.1",
+    "@material-ui/core": "4.3.2",
+    "@material-ui/icons": "4.2.1",
     "coalesce-components": "file:../common-components",
     "react": "16.8.6",
     "react-bootstrap": "0.32.4",
     "react-dom": "16.8.6"
   },
   "devDependencies": {
-    "@babel/runtime": "7.0.0",
-    "react-scripts": "1.1.4"
+    "@babel/runtime": "7.5.5",
+    "react-scripts": "3.0.1"
   },
   "scripts": {
     "preinstall": "npm install ../common-components/",
@@ -28,5 +28,17 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "production": "webpack -p"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
