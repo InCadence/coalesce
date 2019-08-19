@@ -4,13 +4,12 @@
   "description": " This UI is a map visualization of coalesce entities",
   "main": "index.js",
   "author": "InCadence",
-  "license": "ISC",
   "private": true,
   "homepage": "/map",
   "proxy": "http://localhost:8181/",
   "dependencies": {
-    "@material-ui/core": "3.0.3",
-    "@material-ui/icons": "3.0.1",
+    "@material-ui/core": "4.3.2",
+    "@material-ui/icons": "4.2.1",
     "coalesce-components": "file:../common-components",
     "openlayers": "4.4.2",
     "react": "16.8.6",
@@ -26,7 +25,19 @@
     "production": "webpack -p"
   },
   "devDependencies": {
-    "@babel/runtime": "7.0.0",
-    "react-scripts": "1.1.4"
+    "@babel/runtime": "7.5.5",
+    "react-scripts": "3.0.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
