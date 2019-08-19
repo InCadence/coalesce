@@ -65,4 +65,4 @@ class App extends React.PureComponent {
   }
 }
 
-export default withTheme()(App)
+export default withTheme(App)
