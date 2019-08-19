@@ -9,7 +9,7 @@ import {withTheme} from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 
 import Enumeration from "coalesce-components/lib/components/fieldInputs/Enumeration";
-import IconButton from "coalesce-components/lib/components/IconButton";
+import { IconButton } from "coalesce-components/lib/components";
 
 // TODO Replace Date / Time Pickers
 //import DatePicker from 'material-ui/DatePicker';
@@ -17,7 +17,7 @@ import IconButton from "coalesce-components/lib/components/IconButton";
 
 var parse = require("wellknown");
 
-export class FieldInput extends React.Component {
+class FieldInput extends React.Component {
   constructor(props) {
     super(props);
 
@@ -596,4 +596,4 @@ FieldInput.defaultProps = {
   showLabels: true
 };
 
-export default withTheme()(FieldInput);
+export default withTheme(FieldInput);

@@ -5,7 +5,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
-import ListItemExpandable from '../ListItemExpandable';
+
+import { ListItemExpandable } from "coalesce-components/lib/components";
 
 /**
  * Dialog to display selections.

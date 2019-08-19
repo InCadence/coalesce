@@ -83,4 +83,4 @@ Image.defaultProps = {
   size: '30px'
 }
 
-export default withTheme()(Image);
+export default withTheme(Image);

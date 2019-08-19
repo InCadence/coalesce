@@ -1,7 +1,7 @@
 import React from "react";
 import ReactTable from "react-table";
 
-import { DialogMessage } from './DialogMessage'
+import { DialogMessage } from "coalesce-components/lib/components/dialogs";
 
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";

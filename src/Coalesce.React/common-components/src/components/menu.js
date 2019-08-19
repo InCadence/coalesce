@@ -2,8 +2,7 @@ import React from 'react';
 import { Navbar, NavItem, Nav } from 'react-bootstrap';
 
 import { withTheme } from '@material-ui/core/styles';
-import IconButton from 'coalesce-components/lib/components/IconButton';
-import Image from 'coalesce-components/lib/components/image'
+import { IconButton, Image } from 'coalesce-components/lib/components';
 
 require('coalesce-components/bootstrap/css/bootstrap.min.css');
 
@@ -114,4 +113,4 @@ Menu.defaultProps = {
   isTextOnly: false,
 }
 
-export default withTheme()(Menu);
+export default withTheme(Menu);

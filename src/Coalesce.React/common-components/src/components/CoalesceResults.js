@@ -39,8 +39,7 @@ export class CoalesceResults extends React.Component {
     const { page, rowsPerPage } = this.state;
 
     return (
-
-      <div>
+      <React.Fragment>
         <Toolbar>
           <Typography variant="title">
             {this.props.title}
@@ -108,7 +107,7 @@ export class CoalesceResults extends React.Component {
             <CircularProgress variant="indeterminate" size="100px" thickness={7} />
           </center>
         }
-      </div>
+      </React.Fragment>
     )
   }
 
@@ -119,4 +118,4 @@ CoalesceResults.defaultProps = {
   properties: []
 }
 
-export default withTheme()(CoalesceResults);
+export default withTheme(CoalesceResults);
