@@ -122,4 +122,4 @@ class TabTextField extends React.Component {
   }
 }
 
-export default withTheme()(TabTextField);
+export default withTheme(TabTextField);

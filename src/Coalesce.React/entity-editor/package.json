@@ -10,38 +10,25 @@
   "homepage": "/entityeditor",
   "proxy": "http://localhost:8181/",
   "dependencies": {
-    "@material-ui/core": "3.0.3",
-    "@material-ui/icons": "3.0.1",
+    "@material-ui/core": "4.3.2",
+    "@material-ui/icons": "4.2.1",
     "coalesce-components": "file:../common-components",
     "hashmap": "2.3.0",
     "material-ui": "0.20.0",
     "mgrs": "1.0.0",
-    "ol": "5.1.3",
-    "prop-types": "15.6.0",
+    "ol": "5.3.3",
     "react": "16.8.6",
     "react-bootstrap": "0.32.4",
     "react-dom": "16.8.6",
-    "react-motion": "0.5.2",
-    "react-responsive-modal": "3.0.3",
-    "react-router": "4.2.0",
-    "react-router-dom": "4.2.2",
-    "react-table": "6.6.0",
-    "react-transition-group": "1.2.1",
+    "react-router": "5.0.1",
+    "react-router-dom": "5.0.1",
+    "react-table": "6.8.2",
     "uuid": "3.2.1",
     "wellknown": "0.5.0"
   },
   "devDependencies": {
-    "@babel/runtime": "7.0.0",
-    "babel-polyfill": "6.26.0",
-    "babel-cli": "6.14.0",
-    "babel-core": "6.26.0",
-    "babel-eslint": "7.2.3",
-    "babel-loader": "7.1.2",
-    "babel-preset-env": "1.6.1",
-    "eslint": "4.1.1",
-    "npm-run-all": "4.1.1",
-    "react-scripts": "1.1.4",
-    "webpack": "3.1.0"
+    "@babel/runtime": "7.5.5",
+    "react-scripts": "3.0.1"
   },
   "scripts": {
     "preinstall": "npm install ../common-components/",
@@ -51,10 +38,16 @@
     "eject": "react-scripts eject",
     "production": "webpack -p"
   },
-  "babel": {
-    "presets": [
-      "env",
-      "react"
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
     ]
   }
 }

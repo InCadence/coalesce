@@ -348,4 +348,4 @@ function createRecordset() {
   };
 }
 
-export default withTheme()(Section);
+export default withTheme(Section);

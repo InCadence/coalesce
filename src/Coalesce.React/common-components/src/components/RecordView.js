@@ -40,4 +40,4 @@ export class RecordView extends React.PureComponent {
 
 }
 
-export default withTheme()(RecordView);
+export default withTheme(RecordView);

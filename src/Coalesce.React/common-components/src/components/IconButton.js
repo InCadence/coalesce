@@ -1,8 +1,8 @@
 import React from 'react';
 import { withTheme } from '@material-ui/core/styles';
-import Image from 'coalesce-components/lib/components/image'
+import { Image } from 'coalesce-components/lib/components'
 
-export class IconButton extends React.PureComponent {
+class IconButton extends React.PureComponent {
 
   render() {
     var display = 'inline-block'
@@ -46,4 +46,4 @@ IconButton.defaultProps = {
   enabled: true
 }
 
-export default withTheme()(IconButton);
+export default withTheme(IconButton);

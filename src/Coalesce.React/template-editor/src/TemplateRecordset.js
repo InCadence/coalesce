@@ -109,4 +109,4 @@ class RecordSet extends React.Component {
   }
 }
 
-export default withTheme()(RecordSet);
+export default withTheme(RecordSet);

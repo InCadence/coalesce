@@ -1,6 +1,6 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
-import { DialogMessage } from './DialogMessage'
+import { DialogMessage } from "coalesce-components/lib/components/dialogs";
 
 /**
  * Dialog to prompt a user
