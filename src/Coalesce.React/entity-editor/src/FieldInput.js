@@ -7,7 +7,7 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import {withTheme} from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
-import {makeStyles} from "@material-ui/styles";
+import DateFnsUtils from "@date-io/date-fns";
 
 import Enumeration from "coalesce-components/lib/components/fieldInputs/Enumeration";
 import IconButton from "coalesce-components/lib/components/IconButton";
@@ -15,7 +15,6 @@ import IconButton from "coalesce-components/lib/components/IconButton";
 import Point from "./field-inputs/geo/Point.js";
 import Multipoint from "./field-inputs/geo/Multipoint.js";
 import Shape from "./field-inputs/shape/Shape.js";
-import DateFnsUtils from "@date-io/date-fns";
 
 import {
   DatePicker,
@@ -282,48 +281,15 @@ export class FieldInput extends React.Component {
         }
 
         view = (
-          // <Row>
-          //   <Col xs={6}>
-          //     <DatePicker
-          //       id={field.key + "date"}
-          //       floatingLabelText={
-          //         this.props.showLabels ? label + " Date " : null
-          //       }
-          //       underlineShow={this.props.showLabels}
-          //       style={style.root}
-          //       mode="landscape"
-          //       value={dateTime}
-          //       onChange={(tmp, date) => {
-          //         var newDateTime = dateTime != null ? dateTime : new Date();
-          //         newDateTime.setFullYear(date.getFullYear());
-          //         newDateTime.setMonth(date.getMonth());
-          //         newDateTime.setDate(date.getDate());
-          //         this.handleOnChange(attr, newDateTime.toISOString());
-          //       }}
-          //     />
-          //   </Col>
-          //   <Col xs={6}>
-          //     <TimePicker
-          //       id={field.key + "time"}
-          //       floatingLabelText={this.props.showLabels ? "Time" : null}
-          //       underlineShow={this.props.showLabels}
-          //       style={style.root}
-          //       value={dateTime}
-          //       format="24hr"
-          //       onChange={(tmp, date) => {
-          //         var newDateTime = dateTime != null ? dateTime : new Date();
-          //         newDateTime.setHours(date.getHours());
-          //         newDateTime.setMinutes(date.getMinutes());
-          //         this.handleOnChange(attr, newDateTime.toISOString());
-          //       }}
-          //     />
-          //   </Col>s
-          // </Row>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <DatePicker
+            <Row>
+             <Col xs={6}>
+                      <DatePicker
+              label={this.props.showLabels ? label + " Date " : null}
               value={dateTime}
               orientation="portrait"
               animateYearScrolling="false"
+              fullWidth
               onChange={(date) => {
                       console.log(date);
                       var newDateTime = dateTime != null ? dateTime : new Date();
@@ -332,14 +298,20 @@ export class FieldInput extends React.Component {
                       newDateTime.setDate(date.getDate());
                       this.handleOnChange(attr, newDateTime.toISOString());
                     }} />
-            <TimePicker
+             </Col>
+             <Col xs={6}>           
+             <TimePicker
+             label={this.props.showLabels ? "Time" : null}
              value={dateTime}
+             fullWidth
              onChange={(date) => {
                      var newDateTime = dateTime != null ? dateTime : new Date();
                      newDateTime.setHours(date.getHours());
                      newDateTime.setMinutes(date.getMinutes());
                      this.handleOnChange(attr, newDateTime.toISOString());
                    }} />
+             </Col>
+           </Row>                   
           </MuiPickersUtilsProvider>
         );
         break;
