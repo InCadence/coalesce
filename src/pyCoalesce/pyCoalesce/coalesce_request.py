@@ -770,10 +770,10 @@ def create_search_group(recordset, field, criteria_operator, values):
 
 def add_search_filter(search_group, recordset, field, value, operator):
     """
-    Transform a Coalesce search group by inserting a new criteria set, for
-    example a start-after date.  If the group already has the specified
-    type of criteria set in the top-level criteria list, the function
-    overwrites it with the new one.
+    Transform a Coalesce search group/filter object by inserting a new
+    criteria set, for example, a start-after date.  If the group already
+    has the specified type of criteria set in the top-level criteria list,
+    the function overwrites it with the new one.
 
     :param search_group:  a Coalesce search_group as a :class:`dict` or a
         JSON object (string)
