@@ -719,7 +719,8 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
     return results
 
 
-def create_search_group(recordset, field, criteria_operator, values):
+def create_search_group(recordset, field, criteria_operator = "EqualTo",
+                        values):
     """
     Create a Coalesce search group/filter object (the value of "group" in a
     `Coalesce search request object

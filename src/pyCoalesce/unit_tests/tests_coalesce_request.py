@@ -964,8 +964,53 @@ class SearchTests(ServerTest):
         self.assertEqual(results4_third_field, unicode(orig4_third_field))
 
 
+    def test_search_helpers(self):
+
+        orig2_first_field = ENTITY2_FIELDS["Field1"]
+        orig2_second_field = ENTITY2_FIELDS["Field2"]
+        orig3_first_field = ENTITY3_DICT["sectionsAsList"][0] \
+                                        ["recordsetsAsList"][0] \
+                                        ["allRecords"][0] \
+                                        ["fields"][0] \
+                                        ["value"]
+
+        filter3_criteria = FILTER3_DICT["criteria"][0]
+        recordset3 = filter3_criteria["recordset"]
+        field3 = filter3_criteria["field"]
+        operator3 = filter3_criteria["operator"]
+        value3 = filter3_criteria["value"]
+        query3 = create_search_group(recordset3, field3, operator3, value3)
+        request3_return_property = "testrecordset2.field1"
+        results3_list = search(server = self.server, query = query3,
+                               sort_by =
+                                   {"propertyName": "testrecordset2.field1",
+                                   "sortOrder": "ASC"},
+                               return_property_names =
+                                   [request3_return_property],
+                               output = "list")
+        results3_first_fields = [hit["values"][0] for hit in results3_list]
+        self.assertTrue(results3_first_fields.index(orig3_first_field) <
+                        results3_first_fields.index(orig2_first_field))
+        request3_return_property_out = query3["propertyNames"][0]
+        self.assertEqual(request3_return_property, request3_return_property_out)
+
+        field3a = "Field1"
+        value3a = ENTITY2_FIELDS["Field1"]
+        query3a = add_filter(query3, recordset3, field3a, value3a, operator3)
+        results3a_list = search(server = self.server, query = query3,
+                                sort_by =
+                                    {"propertyName": "testrecordset2.field1",
+                                    "sortOrder": "ASC"},
+                                return_property_names =
+                                    [request3_return_property],
+                                output = "list")
+        results3a_second_field = results3a_list[0]["values"][1]
+        self.assertEqual(results3a_second_field, orig2_second_field)
+
+
 TESTS = (EntityTests("test_create_template"),
-         EntityTests("test_register_template"), EntityTests("test_read_template"),
+         EntityTests("test_register_template"),
+         EntityTests("test_read_template"),
          EntityTests("test_get_template_list"),
          EntityTests("test_construct_entity"), EntityTests("test_create"),
          EntityTests("test_read"), EntityTests("test_update"),
@@ -973,6 +1018,7 @@ TESTS = (EntityTests("test_create_template"),
          EntityTests("test_create_linkages"),
          EntityTests("test_read_linkages"),
          SearchTests("test_search"), SearchTests("test_search_simple"),
+         SearchTests("test_search_helpers"),
          EntityTests("test_delete_linkages"), EntityTests("test_delete"),
          EntityTests("test_update_template"),
          EntityTests("test_delete_template"))
