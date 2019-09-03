@@ -478,7 +478,7 @@ export class App extends React.Component {
     }
 
     if (!query.sortBy[0].propertyName) {
-      query.sortBy[0].propertyName = "CoalesceEntity.LastModified";
+      query.sortBy[0].propertyName = "CoalesceEntity.lastmodified";
     }
 
     // Get Specified columns
