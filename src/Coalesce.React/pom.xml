@@ -62,7 +62,7 @@
                             <configuration>
                                 <executable>npm</executable>
                                 <arguments>
-                                    <argument>install</argument>
+                                    <argument>ci</argument>
                                 </arguments>
                                 <skip>${skipNPM}</skip>
                             </configuration>
