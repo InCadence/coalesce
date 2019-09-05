@@ -26,10 +26,6 @@ target/
 #Mac
 .DS_Store
 
-# React 
-package-lock.json
-node_modules/
-*~
 
 # Derby
 derby.log
