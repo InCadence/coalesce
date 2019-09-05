@@ -34,7 +34,15 @@ CRUD_PERSISTOR = config.get("Coalesce RESTful API server", "CRUD_persistor")
 SEARCH_PERSISTOR = config.get("Coalesce RESTful API server", "search_persistor")
 
 # Set other constants.
+FIELD1_NAME = "Field1"
+FIELD2_NAME = "Field2"
+FIELD3_NAME = "Field3"
+RECORDSET1 = "TestRecordset1"
+RECORDSET2 = "TestRecordset2"
+RECORDSET3 = "TestRecordset3"
 TEMPLATE1_NAME = 'TestEntity1'
+TEMPLATE2_NAME = 'TestEntity2'
+TEMPLATE3_NAME = 'TestEntity3'
 TEMPLATE1_XML = '<entity ' + \
                    'classname="test1" ' + \
                    'name="' + TEMPLATE1_NAME + '" ' + \
@@ -43,43 +51,43 @@ TEMPLATE1_XML = '<entity ' + \
                    '<linkagesection name="Linkages"/> ' + \
                    '<section name="TestSection"> ' + \
                        '<recordset maxrecords="1" minrecords="1" ' + \
-                           'name="TestRecordset1"> ' + \
+                           'name="' + RECORDSET1 + '"> ' + \
                            '<fielddefinition datatype="string" ' + \
                                'defaultclassificationmarking="U" ' + \
-                               'name="Field1"/> ' + \
+                               'name="' + FIELD1_NAME + '"/> ' + \
                            '<fielddefinition datatype="string" ' + \
                                'defaultclassificationmarking="U" ' + \
-                               'name="Field2"/> ' + \
+                               'name="' + FIELD2_NAME + '"/> ' + \
                            '<fielddefinition datatype="string" ' + \
                                'defaultclassificationmarking="U" ' + \
-                               'name="Field3"/> ' + \
+                               'name="' + FIELD3_NAME + '"/> ' + \
                        '</recordset> ' + \
                    '</section> ' + \
                '</entity>'
 TEMPLATE2_XML = '<entity ' + \
                    'classname="test2" ' + \
-                   'name="TestEntity2" ' + \
+                   'name="' + TEMPLATE2_NAME + '" ' + \
                    'source="pyCoalesceTest" ' + \
                    'version="0.1"> ' + \
                    '<linkagesection name="Linkages"/> ' + \
                    '<section name="TestSection"> ' + \
                        '<recordset maxrecords="1" minrecords="1" ' + \
-                           'name="TestRecordset2"> ' + \
+                           'name="' + RECORDSET2 + '"> ' + \
                            '<fielddefinition datatype="string" ' + \
                                'defaultclassificationmarking="U" ' + \
-                               'name="Field1"/> ' + \
+                               'name="' + FIELD1_NAME + '"/> ' + \
                            '<fielddefinition datatype="string" ' + \
                                'defaultclassificationmarking="U" ' + \
-                               'name="Field2"/> ' + \
+                               'name="' + FIELD2_NAME + '"/> ' + \
                            '<fielddefinition datatype="string" ' + \
                                'defaultclassificationmarking="U" ' + \
-                               'name="Field3"/> ' + \
+                               'name="' + FIELD3_NAME + '"/> ' + \
                        '</recordset> ' + \
                    '</section> ' + \
                '</entity>'
 TEMPLATE3_DICT = {
                     'className': 'test3',
-                    'name': 'TestEntity3',
+                    'name': TEMPLATE3_NAME,
                     'source': 'pyCoalesceTest',
                     'version': '0.1',
                     'linkageSection': {
@@ -94,22 +102,22 @@ TEMPLATE3_DICT = {
                                 {
                                     'maxRecords': 1,
                                     'minRecords': 1,
-                                    'name': 'TestRecordset3',
+                                    'name': RECORDSET3,
                                     'fieldDefinitions': [
                                         {
                                             'dataType': 'string',
                                             'defaultClassificationMarking': 'U',
-                                            'name': 'Field1'
+                                            'name': FIELD1_NAME
                                         },
                                         {
                                             'dataType': 'string',
                                             'defaultClassificationMarking': 'U',
-                                            'name': 'Field2'
+                                            'name': FIELD2_NAME
                                         },
                                         {
                                             'dataType': 'long',
                                             'defaultClassificationMarking': 'U',
-                                            'name': 'Field3'
+                                            'name': FIELD3_NAME
                                         }
                                     ]
                                 }
@@ -120,7 +128,7 @@ TEMPLATE3_DICT = {
 ENTITY1_FIELDS = {"Field1": "foo", "Field2": "bar"}
 ENTITY2_FIELDS = {"Field1": "Spam", "Field2": "eggs"}
 ENTITY3_DICT = {
-                   'name': 'TestEntity2',
+                   'name': TEMPLATE2_NAME,
                    'source': 'pyCoalesceTest',
                    'version': '0.1',
                    'linkageSection': {
@@ -134,18 +142,18 @@ ENTITY3_DICT = {
                            'sectionsAsList': [],
                            'recordsetsAsList': [
                                {
-                                   'name': 'TestRecordset2',
+                                   'name': RECORDSET2,
                                    'allRecords': [
                                        {
                                            'name': 'TestRecord',
                                            'fields': [
                                                {
-                                                   'name': 'Field1',
+                                                   'name': FIELD1_NAME,
                                                    'value': 'Sir',
                                                    'datatype': 'string',
                                                },
                                                {
-                                                   'name': 'Field2',
+                                                   'name': FIELD2_NAME,
                                                    'value': 'Robin',
                                                    'datatype': 'string',
                                                }
@@ -158,7 +166,7 @@ ENTITY3_DICT = {
                    ]
                }
 ENTITY4_DICT = {
-                   'name': 'TestEntity3',
+                   'name': TEMPLATE3_NAME,
                    'source': 'pyCoalesceTest',
                    'version': '0.1',
                    'linkageSection': {
@@ -172,23 +180,23 @@ ENTITY4_DICT = {
                            'sectionsAsList': [],
                            'recordsetsAsList': [
                                {
-                                   'name': 'TestRecordset3',
+                                   'name': RECORDSET3,
                                    'allRecords': [
                                        {
                                            'name': 'TestRecord',
                                            'fields': [
                                                {
-                                                   'name': 'Field1',
+                                                   'name': FIELD1_NAME,
                                                    'value': 'The',
                                                    'datatype': 'string',
                                                },
                                                {
-                                                   'name': 'Field2',
+                                                   'name': FIELD2_NAME,
                                                    'value': 'Larch',
                                                    'datatype': 'string',
                                                },
                                                {
-                                                   'name': 'Field3',
+                                                   'name': FIELD3_NAME,
                                                    'value': 6,
                                                    'datatype': 'long',
                                                }
@@ -207,7 +215,7 @@ FILTER1_DICT = {
                           "recordset": "coalesceentity",
                           "field": "name",
                           "operator": "EqualTo",
-                          "value": "TestEntity2",
+                          "value": TEMPLATE2_NAME,
                           "matchCase": False
                       }
                   ],
@@ -216,15 +224,15 @@ FILTER1_DICT = {
                           "operator": "OR",
                           "criteria": [
                               {
-                                  "recordset": "testrecordset2",
-                                  "field": "field1",
+                                  "recordset": RECORDSET2.lower(),
+                                  "field": FIELD1_NAME.lower(),
                                   "operator": "EqualTo",
                                   "value": "Sir",
                                   "matchCase": False
                               },
                               {
-                                  "recordset": "testrecordset2",
-                                  "field": "field2",
+                                  "recordset": RECORDSET2.lower(),
+                                  "field": FIELD2_NAME.lower(),
                                   "operator": "EqualTo",
                                   "value": "aardvark",
                                   "matchCase": False
@@ -240,7 +248,7 @@ FILTER2_DICT = {
                           "recordset": "coalesceentity",
                           "field": "name",
                           "operator": "EqualTo",
-                          "value": "TestEntity3",
+                          "value": TEMPLATE3_NAME,
                           "matchCase": False
                       }
                   ],
@@ -249,16 +257,16 @@ FILTER2_DICT = {
                           "operator": "AND",
                           "criteria": [
                               {
-                                  "recordset": "testrecordset3",
-                                  "field": "field1",
+                                  "recordset": RECORDSET3.lower(),
+                                  "field": FIELD1_NAME.lower(),
                                   "operator": "EqualTo",
                                   "value": "aardvark",
                                   "matchCase": False,
                                   "not": True
                               },
                               {
-                                  "recordset": "testrecordset3",
-                                  "field": "field2",
+                                  "recordset": RECORDSET3.lower(),
+                                  "field": FIELD2_NAME.lower(),
                                   "operator": "Like",
                                   "value": "Larch",
                                   "matchCase": False,
@@ -274,7 +282,7 @@ FILTER3_DICT = {
                           "recordset": "coalesceentity",
                           "field": "name",
                           "operator": "EqualTo",
-                          "value": "TestEntity2",
+                          "value": TEMPLATE2_NAME,
                           "matchCase": False
                       }
                   ],
@@ -282,7 +290,7 @@ FILTER3_DICT = {
 QUERY4_DICT = {
                     "pageSize": 200,
                     "propertyNames": [
-                        "testrecordset2.field1"
+                        "testrecordset2." + FIELD1_NAME.lower()
                     ],
                     "group": {
 
@@ -292,7 +300,7 @@ QUERY4_DICT = {
                                  "recordset": "coalesceentity",
                                  "field": "name",
                                  "operator": "EqualTo",
-                                 "value": "TestEntity2",
+                                 "value": TEMPLATE2_NAME,
                                  "matchCase": False
                              }
                          ],
@@ -301,14 +309,14 @@ QUERY4_DICT = {
                                  "operator": "OR",
                                  "criteria": [
                                      {
-                                         "recordset": "testrecordset2",
-                                         "field": "field1",
+                                         "recordset": RECORDSET2.lower(),
+                                         "field": FIELD1_NAME.lower(),
                                          "operator": "EqualTo",
                                          "value": "Sir",
                                          "matchCase": False
                                      },
                                      {
-                                         "recordset": "testrecordset2",
+                                         "recordset": RECORDSET2.lower(),
                                          "field": "field2",
                                          "operator": "EqualTo",
                                          "value": "aardvark",
@@ -452,13 +460,13 @@ class EntityTests(ServerTest):
 
     def test_update_template(self):
 
-        new_template1_XML = TEMPLATE1_XML.replace("Field3", "FieldX")
+        new_template1_XML = TEMPLATE1_XML.replace(FIELD3_NAME, "FieldX")
         success1 = update_template(server = self.server,
                                    template = new_template1_XML,
                                    key = self.template1_key)
         self.assertTrue(success1)
 
-        new_template2_XML = TEMPLATE2_XML.replace("Field3", "FieldY")
+        new_template2_XML = TEMPLATE2_XML.replace(FIELD3_NAME, "FieldY")
         new_template2 = parseString(new_template2_XML,
                                     object_class = CoalesceEntityTemplate,
                                     silence = True)
@@ -548,12 +556,12 @@ class EntityTests(ServerTest):
                                        key = entity2_UUID,
                                        fields = ENTITY2_FIELDS)
 
-        entity1_field1_path = find_child(cls.entity1, "Field1")[0]
+        entity1_field1_path = find_child(cls.entity1, FIELD1_NAME)[0]
         entity1_field1 = get_child_attrib(cls.entity1, path = entity1_field1_path)
-        self.assertEqual(entity1_field1, ENTITY1_FIELDS["Field1"])
-        entity2_field2_path = find_child(cls.entity2, "Field2")[0]
+        self.assertEqual(entity1_field1, ENTITY1_FIELDS[FIELD1_NAME])
+        entity2_field2_path = find_child(cls.entity2, FIELD2_NAME)[0]
         entity2_field2 = get_child_attrib(cls.entity2, path = entity2_field2_path)
-        self.assertEqual(entity2_field2, ENTITY2_FIELDS["Field2"])
+        self.assertEqual(entity2_field2, ENTITY2_FIELDS[FIELD2_NAME])
 
 
     def test_create(self):
@@ -821,7 +829,7 @@ class SearchTests(ServerTest):
 
     def test_search(self):
 
-        orig2_first_field = ENTITY2_FIELDS["Field1"]
+        orig2_first_field = ENTITY2_FIELDS[FIELD1_NAME]
         orig3_first_field = ENTITY3_DICT["sectionsAsList"][0] \
                                         ["recordsetsAsList"][0] \
                                         ["allRecords"][0] \
@@ -833,66 +841,69 @@ class SearchTests(ServerTest):
                                         ["fields"][0] \
                                         ["value"]
 
+        request1_return_property = RECORDSET2.lower() + "." + \
+                                       FIELD1_NAME.lower()
         results1_list = search(server = self.server, query = FILTER1_DICT,
                                return_property_names = \
-                                   ["testrecordset2.field1"],
+                                   [request1_return_property],
                                output = "list")
         results1_first_field = results1_list[0]["values"][0]
         self.assertEqual(results1_first_field, orig3_first_field)
 
         filter2_JSON = json.dumps(FILTER2_DICT)
+        request2_return_property = \
+            RECORDSET3.lower() + "." + FIELD1_NAME.lower()
         results2_full_dict = search(server = self.server, query = filter2_JSON,
                                     return_property_names = \
-                                        ["testrecordset3.field1"],
+                                        [request2_return_property],
                                     output = "full_dict")
         results2_first_field = results2_full_dict["hits"][0]["values"][0]
         self.assertEqual(results2_first_field, orig4_first_field)
 
         filter3_JSON = json.dumps(FILTER3_DICT)
-        request3_return_property = "testrecordset2.field1"
         results3_list, query3 = search(server = self.server,
                                          query = filter3_JSON,
                                          sort_by =
-                                             {"propertyName": "testrecordset2.field1",
+                                             {"propertyName": request1_return_property,
                                               "sortOrder": "ASC"},
                                          return_property_names =
-                                             [request3_return_property],
+                                             [request1_return_property],
                                          output = "list",
                                          return_query = True)
         results3_first_fields = [hit["values"][0] for hit in results3_list]
         self.assertTrue(results3_first_fields.index(orig3_first_field) <
                         results3_first_fields.index(orig2_first_field))
         request3_return_property_out = query3["propertyNames"][0]
-        self.assertEqual(request3_return_property, request3_return_property_out)
+        self.assertEqual(request1_return_property, request3_return_property_out)
 
         results4_list, query4 = search(server = self.server,
                                          query = filter3_JSON,
-                                         sort_by = "testrecordset2.field1",
+                                         sort_by = request1_return_property,
                                          sort_order = "ASC",
                                          return_property_names =
-                                             [request3_return_property],
+                                             [request1_return_property],
                                          output = "list",
                                          return_query = True)
         results4_first_fields = [hit["values"][0] for hit in results3_list]
         self.assertTrue(results4_first_fields.index(orig3_first_field) <
                         results4_first_fields.index(orig2_first_field))
         request4_return_property_out = query4["propertyNames"][0]
-        self.assertEqual(request3_return_property, request4_return_property_out)
+        self.assertEqual(request1_return_property, request4_return_property_out)
 
-        sort_by_JSON = json.dumps({"propertyName": "testrecordset2.field1",
+        sort_by_JSON = json.dumps({"propertyName": request1_return_property,
                                    "sortOrder": "ASC"})
         results5_list, query5 = search(server = self.server,
                                          query = filter3_JSON,
                                          sort_by = sort_by_JSON,
                                          return_property_names =
-                                             [request3_return_property],
+                                             [request1_return_property],
                                          output = "list",
                                          return_query = True)
         results5_first_fields = [hit["values"][0] for hit in results3_list]
         self.assertTrue(results5_first_fields.index(orig3_first_field) <
                         results5_first_fields.index(orig2_first_field))
         request5_return_property_out = query5["propertyNames"][0]
-        self.assertEqual(request3_return_property, request5_return_property_out)
+        self.assertEqual(request1_return_property, request5_return_property_out)
 
         results6_JSON = search(server = self.server, query = QUERY4_DICT,
                                return_property_names = ["IgnoreThis"],
@@ -923,42 +934,46 @@ class SearchTests(ServerTest):
                                         ["fields"][2] \
                                         ["value"]
 
+        request1_return_property = RECORDSET2 + "." + FIELD1_NAME
         results1_list = search_simple(server = self.server,
-                                      recordset = "testrecordset2",
-                                      field = "field1", operator = "EqualTo",
+                                      recordset = RECORDSET2,
+                                      field = FIELD1_NAME, operator = "EqualTo",
                                       value = "Sir",
                                       return_property_names = \
-                                          ["testrecordset2.field1"],
+                                          [request1_return_property],
                                       output = "list")
         results1_first_field = results1_list[0]["values"][0]
         self.assertEqual(results1_first_field, orig1_first_field)
 
+        request2_return_property = RECORDSET3 + "." + FIELD1_NAME
         results2_full_dict = search_simple(server = self.server,
-                                           recordset = "testrecordset3",
-                                           field = "field2", operator = "Like",
+                                           recordset = RECORDSET3,
+                                           field = FIELD2_NAME,
+                                           operator = "Like",
                                            value = "Larch",
                                            return_property_names = \
-                                               ["testrecordset3.field1"],
+                                               [request2_return_property],
                                            output = "full_dict")
         results2_first_field = results2_full_dict["hits"][0]["values"][0]
         self.assertEqual(results2_first_field, orig2_first_field)
 
         results3_JSON = search_simple(server = self.server,
-                                      recordset = "testrecordset2",
-                                      field = "field1", operator = "EqualTo",
+                                      recordset = RECORDSET2,
+                                      field = FIELD1_NAME, operator = "EqualTo",
                                       value = "Sir",
                                       return_property_names = \
-                                          ["testrecordset2.field1"],
+                                          [request1_return_property],
                                       output = "JSON")
         results3_first_field = json.loads(results3_JSON)["hits"][0]["values"][0]
         self.assertEqual(results3_first_field, orig1_first_field)
 
+        request4_return_property = RECORDSET3 + "." + FIELD3_NAME
         results4_list = search_simple(server = self.server,
-                                      recordset = "testrecordset3",
-                                      field = "field3", operator = "between",
+                                      recordset = RECORDSET3,
+                                      field = FIELD3_NAME, operator = "between",
                                       value = [5, 8],
                                       return_property_names = \
-                                          ["testrecordset3.field3"],
+                                          [request4_return_property],
                                       output = "list")
         results4_third_field = results4_list[0]["values"][0]
         self.assertEqual(results4_third_field, unicode(orig4_third_field))
@@ -966,8 +981,8 @@ class SearchTests(ServerTest):
 
     def test_search_helpers(self):
 
-        orig2_first_field = ENTITY2_FIELDS["Field1"]
-        orig2_second_field = ENTITY2_FIELDS["Field2"]
+        orig2_first_field = ENTITY2_FIELDS[FIELD1_NAME]
+        orig2_second_field = ENTITY2_FIELDS[FIELD2_NAME]
         orig3_first_field = ENTITY3_DICT["sectionsAsList"][0] \
                                         ["recordsetsAsList"][0] \
                                         ["allRecords"][0] \
@@ -975,37 +990,53 @@ class SearchTests(ServerTest):
                                         ["value"]
 
         filter3_criteria = FILTER3_DICT["criteria"][0]
-        recordset3 = filter3_criteria["recordset"]
+        filter3_recordset = filter3_criteria["recordset"]
         field3 = filter3_criteria["field"]
         operator3 = filter3_criteria["operator"]
-        value3 = filter3_criteria["value"]
-        query3 = create_search_group(recordset3, field3, operator3, value3)
-        request3_return_property = "testrecordset2.field1"
-        results3_list = search(server = self.server, query = query3,
-                               sort_by =
-                                   {"propertyName": "testrecordset2.field1",
-                                   "sortOrder": "ASC"},
-                               return_property_names =
-                                   [request3_return_property],
-                               output = "list")
-        results3_first_fields = [hit["values"][0] for hit in results3_list]
-        self.assertTrue(results3_first_fields.index(orig3_first_field) <
-                        results3_first_fields.index(orig2_first_field))
-        request3_return_property_out = query3["propertyNames"][0]
-        self.assertEqual(request3_return_property, request3_return_property_out)
-
-        field3a = "Field1"
-        value3a = ENTITY2_FIELDS["Field1"]
-        query3a = add_filter(query3, recordset3, field3a, value3a, operator3)
-        results3a_list = search(server = self.server, query = query3,
+        values3 = [orig2_first_field, filter3_criteria["value"]]
+        filter3a = create_search_group(filter3_recordset, field3, values3,
+                                       operator3)
+        request3a_return_property = RECORDSET2 + "." + FIELD1_NAME.lower()
+        request3a_return_property_list = [request3a_return_property]
+        results3a_list = search(server = self.server, query = filter3a,
                                 sort_by =
-                                    {"propertyName": "testrecordset2.field1",
+                                    {"propertyName": request3a_return_property,
                                     "sortOrder": "ASC"},
                                 return_property_names =
-                                    [request3_return_property],
+                                    request3a_return_property_list,
                                 output = "list")
-        results3a_second_field = results3a_list[0]["values"][1]
-        self.assertEqual(results3a_second_field, orig2_second_field)
+        results3a_first_fields = [hit["values"][0] for hit in results3a_list]
+        self.assertTrue(results3a_first_fields.index(orig3_first_field) <
+                        results3a_first_fields.index(orig2_first_field))
+        request3a_return_property_out = request3a_return_property_list[0]
+        self.assertEqual(request3a_return_property,
+                         request3a_return_property_out)
+
+        filter3b = add_search_filter(filter3a, RECORDSET2, FIELD1_NAME,
+                                     orig2_first_field, operator3)
+        request3b_return_property = RECORDSET2 + "." + FIELD2_NAME.lower()
+        request3b_return_property_list = [request3a_return_property,
+                                          request3b_return_property]
+        results3b_list = search(server = self.server, query = filter3b,
+                                sort_by =
+                                    {"propertyName": request3b_return_property,
+                                    "sortOrder": "ASC"},
+                                return_property_names =
+                                    request3b_return_property_list,
+                                output = "list")
+        results3b_second_field = results3b_list[0]["values"][1]
+        self.assertEqual(results3b_second_field, orig2_second_field)
+
+        filter3c = add_search_filter(FILTER3_DICT, RECORDSET2, FIELD1_NAME,
+                                     orig2_first_field, operator3)
+        request3c_return_property_list = [request3b_return_property]
+        results3c_list = search(server = self.server, query = filter3c,
+                                return_property_names =
+                                    request3c_return_property_list,
+                                output = "list")
+        results3c_second_field = results3c_list[0]["values"][0]
+        self.assertEqual(results3c_second_field, orig2_second_field)
+
 
 
 TESTS = (EntityTests("test_create_template"),
@@ -1022,7 +1053,6 @@ TESTS = (EntityTests("test_create_template"),
          EntityTests("test_delete_linkages"), EntityTests("test_delete"),
          EntityTests("test_update_template"),
          EntityTests("test_delete_template"))
-
 
 def pyCoalesce_test_suite():
     return TestSuite(TESTS)

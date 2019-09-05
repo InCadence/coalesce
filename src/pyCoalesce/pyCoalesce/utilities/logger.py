@@ -3,7 +3,7 @@
 
 Unless :data:`pyCoalesce.utilities.logger.package_logger` is imported by
 the main app, all log messages for the package are piped to
-:class:`logging.NullHanlder`--that is, there's no output at all.
+:class:`logging.NullHandler`--that is, there's no output at all.
 
 
 """
