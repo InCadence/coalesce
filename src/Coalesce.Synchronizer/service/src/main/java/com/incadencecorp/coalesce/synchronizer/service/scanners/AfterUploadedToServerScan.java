@@ -31,6 +31,8 @@ import org.geotools.temporal.object.DefaultInstant;
 import org.geotools.temporal.object.DefaultPeriod;
 import org.geotools.temporal.object.DefaultPosition;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
@@ -77,6 +79,15 @@ public class AfterUploadedToServerScan extends AbstractScan {
     @Override
     public CachedRowSet doScan(Query query) throws CoalesceException
     {
+
+        if(loader != null)
+        {
+            if(loader.getProperty("com.incadencecorp.scanners.lastscan") != null)
+            {
+                lastScanned = loader.getProperty("com.incadencecorp.scanners.lastscan");
+
+            }
+        }
         // Last Scan Specified?
         if (lastScanned == null)
         {
@@ -84,8 +95,17 @@ public class AfterUploadedToServerScan extends AbstractScan {
             lastScanned = JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusYears(10));
         }
 
-        DateTime start = JodaDateTimeHelper.fromXmlDateTimeUTC(lastScanned);
-
+        if (LOGGER.isInfoEnabled())
+        {
+            LOGGER.info("Last Successful Scan: {}", lastScanned);
+        }
+//        DateTime start = JodaDateTimeHelper.fromXmlDateTimeUTC(lastScanned);
+        DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
+        DateTime start = formatter.parseDateTime(lastScanned);
+        if (LOGGER.isInfoEnabled())
+        {
+            LOGGER.info("Start time: {}", start);
+        }
         if (start == null)
         {
             throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT, lastScanned));
@@ -119,6 +139,7 @@ public class AfterUploadedToServerScan extends AbstractScan {
         {
             // Yes; Append Temporal Filter
             query.setFilter(FF.and(query.getFilter(), temporal));
+
         }
 
         if (LOGGER.isTraceEnabled())
@@ -129,33 +150,30 @@ public class AfterUploadedToServerScan extends AbstractScan {
         // Add Last Modified Property and entity Key
         List<PropertyName> properties = new ArrayList<>();
         properties.addAll(query.getProperties());
-        properties.add(CoalescePropertyFactory.getLastModified());
+        properties.add(CoalescePropertyFactory.getUploadedToServer());
 
         query.setStartIndex(0);
         query.setMaxFeatures(max);
         query.setProperties(properties);
         query.setSortBy(new SortBy[] { new SortByImpl(CoalescePropertyFactory.getLastModified(), SortOrder.ASCENDING) });
 
+        LOGGER.info("Max is: {}", query.getMaxFeatures());
+
         CachedRowSet result = getSource().search(query).getResults();
+        LOGGER.info(String.valueOf(result.size()));
         try
         {
             if (result.last())
             {
                 String timestamp = result.getString(properties.size() + 1);
-                //pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.parseDateTime(timestamp));
+
+                pendingLastScan = JodaDateTimeHelper.parseDateTime(timestamp).toString();
             }
             result.beforeFirst();
         }
         catch (SQLException e)
         {
             throw new CoalesceException(e);
-        }
-        if (LOGGER.isTraceEnabled())
-        {
-            LOGGER.trace("Results of search Specified: {}", result.toString());
-            LOGGER.trace("Window {}",window.toString());
-            LOGGER.trace("Window Unit {}", windowUnit.toString());
-
         }
         return result;
     }
@@ -170,7 +188,7 @@ public class AfterUploadedToServerScan extends AbstractScan {
         {
             lastScanned = parameters.get(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS);
         }
-        else if (loader != null)
+        if (loader != null)
         {
             lastScanned = loader.getProperty(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS);
         }
@@ -235,6 +253,13 @@ public class AfterUploadedToServerScan extends AbstractScan {
             if (loader != null && pendingLastScan != null)
             {
                 loader.setProperty(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS, lastScanned);
+                LOGGER.info("Loader is not null");
+                LOGGER.info("Last Successful Scan: {}", lastScanned);
+            }
+            else if(parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS ) && pendingLastScan != null)
+            {
+                parameters.put(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS,lastScanned);
+                LOGGER.info("Loader is null");
                 LOGGER.info("Last Successful Scan: {}", lastScanned);
             }
         }

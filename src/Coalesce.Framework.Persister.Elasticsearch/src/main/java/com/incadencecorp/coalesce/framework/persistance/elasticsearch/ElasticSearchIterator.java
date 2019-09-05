@@ -104,6 +104,8 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         if(entity.getSource().equalsIgnoreCase("CELLEX"))
         {
             param = visitTrex(entity,param);
+            //This needs to be changed
+            return true;
         }
 
         DocWriteRequest request;

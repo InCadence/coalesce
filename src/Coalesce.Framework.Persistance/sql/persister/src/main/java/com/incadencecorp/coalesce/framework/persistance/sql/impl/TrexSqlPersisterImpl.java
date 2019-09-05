@@ -11,6 +11,9 @@ import com.incadencecorp.coalesce.framework.persistance.ECoalesceCacheStates;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.microsoft.sqlserver.jdbc.Geography;
 import com.vividsolutions.jts.geom.Coordinate;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
@@ -473,12 +476,15 @@ public class TrexSqlPersisterImpl extends SQLPersisterImpl {
     {
         String operationName = null,
                 operationDescription = null,
-                operationStartDate = null,
-                operationEndDate = null,
                 operationAOR = null,
                 operationStatus = null;
 
+        DateTime sd = null,
+                    ed = null;
+
         CoalesceParameter parentKey = new CoalesceParameter(null,Types.NULL);
+        CoalesceParameter startDate = new CoalesceParameter(null,Types.NULL);
+        CoalesceParameter endDate = new CoalesceParameter(null, Types.NULL);
         CoalesceSection coalesceSection = entity.getSection(entity.getName() + "/Operation Information Section");
         CoalesceRecordset coalesceRecordset = coalesceSection.getRecordset(coalesceSection.getName() + "/Operation Information Recordset");
         for(CoalesceRecord record : coalesceRecordset.getRecords())
@@ -501,15 +507,18 @@ public class TrexSqlPersisterImpl extends SQLPersisterImpl {
                     case "OPERATIONDESCRIPTION":
                         operationDescription = information;
                         break;
-                    case "OPERATIONSTARTDATE":
-                        if(field.getValue() != null)
-                            operationStartDate = field.getBaseValue();
-                        break;
-                    case "OPERATIONENDDATE":
-                        operationEndDate = field.getBaseValue();
-                        break;
                     case "OPERATIONAOR":
                         operationAOR = information;
+                        break;
+                    case "OPERATIONSTARTDATE":
+                        if(information == null)
+                            break;
+                        sd = DateTime.parse(information);
+                        break;
+                    case "OPERATIONENDDATE":
+                        if(information== null)
+                            break;
+                        ed = DateTime.parse(information);
                         break;
                     default:
                         break;
@@ -524,14 +533,23 @@ public class TrexSqlPersisterImpl extends SQLPersisterImpl {
         {
             parentKey = new CoalesceParameter(entity.getParent().getKey(),Types.CHAR);
         }
+        if(sd != null)
+        {
+            startDate = new CoalesceParameter(sd);
+        }
+        if(ed != null)
+        {
+            endDate = new CoalesceParameter(ed);
+        }
+
         // Yes; Call Store Procedure
         return conn.executeProcedure("IdentityHubOperation_InsertOrUpdate",
                                      new CoalesceParameter(entity.getKey(),Types.CHAR),
                                      parentKey,
                                      new CoalesceParameter(operationName),
                                      new CoalesceParameter(operationDescription),
-                                     new CoalesceParameter(operationStartDate),
-                                     new CoalesceParameter(operationEndDate),
+                                     startDate,
+                                     endDate,
                                      new CoalesceParameter(operationAOR),
                                      new CoalesceParameter(operationStatus),
                                      new CoalesceParameter(entity.getDateCreated().toString(),Types.CHAR),
@@ -616,8 +634,8 @@ public class TrexSqlPersisterImpl extends SQLPersisterImpl {
                                      new CoalesceParameter(unitStatus),
                                      new CoalesceParameter(isApproved),
                                      new CoalesceParameter(comments),
-                                     new CoalesceParameter(entity.getDateCreated().toString(),Types.CHAR),
-                                     new CoalesceParameter(entity.getLastModified().toString(),Types.CHAR));
+                                     new CoalesceParameter(entity.getLastModified().toString(),Types.CHAR),
+                                     new CoalesceParameter(entity.getDateCreated().toString(),Types.CHAR));
     }
 
     /**

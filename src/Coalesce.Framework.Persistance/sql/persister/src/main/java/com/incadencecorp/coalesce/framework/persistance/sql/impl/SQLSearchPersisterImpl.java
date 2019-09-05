@@ -24,10 +24,6 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
-//import com.incadencecorp.coalesce.framework.persistance.sql.impl.SQLDataConnector;
-//import com.incadencecorp.coalesce.framework.persistance.sql.impl.SQLPersisterImplSettings;
-//import com.incadencecorp.coalesce.framework.persistance.sql.mappers.StoredProcedureArgumentMapper;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
@@ -35,26 +31,23 @@ import org.geotools.data.Query;
 import org.geotools.data.jdbc.FilterToSQLException;
 import org.geotools.filter.Capabilities;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+
 
 /**
  * @author GGaito
  */
 public class SQLSearchPersisterImpl extends SQLPersisterImpl implements ICoalesceSearchPersistor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SQLPersisterImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SQLSearchPersisterImpl.class);
 
     /*--------------------------------------------------------------------------
     Constructors
@@ -114,11 +107,18 @@ public class SQLSearchPersisterImpl extends SQLPersisterImpl implements ICoalesc
 
             try (CoalesceDataConnectorBase conn = new SQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
             {
-                String sql = String.format("SELECT DISTINCT %s FROM %s %s %s ",
+                LOGGER.info("Made it to the sql statement");
+                String sql = String.format("SELECT  TOP %s %s FROM %s %s %s ",
+                                           query.getMaxFeatures(),
                                            preparedFilter.getColumns(),
                                            preparedFilter.getFrom(),
                                            where,
                                            preparedFilter.getSorting());
+//                String sql = String.format("SELECT  %s FROM %s %s %s ",
+//                                           preparedFilter.getColumns(),
+//                                           preparedFilter.getFrom(),
+//                                           where,
+//                                           preparedFilter.getSorting());
 
 
                 // Get Hits
@@ -127,26 +127,31 @@ public class SQLSearchPersisterImpl extends SQLPersisterImpl implements ICoalesc
 
                 hits.last();
                 int numberOfHits = hits.getRow();
+                LOGGER.info("The SQL query is: {}",sql);
+
                 hits.beforeFirst();
 
                 // Hits Exceeds a Page?
-                if (numberOfHits >= query.getMaxFeatures())
-                {
-                    // Yes; Get Total Hits
-                    sql = String.format("SELECT DISTINCT COUNT(*) FROM %s %s", preparedFilter.getFrom(), where);
+//                if (numberOfHits >= query.getMaxFeatures())
+//                {
+//                    results.setTotal(query.getMaxFeatures());
+//                    //clear hits and repopulate with the following
+//                    sql = String.format("SELECT  TOP %s %s FROM %s %s %s ",
+//                                               query.getMaxFeatures(),
+//                                               preparedFilter.getColumns(),
+//                                               preparedFilter.getFrom(),
+//                                               where,
+//                                               preparedFilter.getSorting());
+//
+//                    hits = RowSetProvider.newFactory().createCachedRowSet();
+//                    hits.populate(conn.executeQuery(sql, params));
+//                }
+//                else
+//                {
+//                    results.setTotal(numberOfHits);
+//                }
 
-                    // Get Total Results
-                    ResultSet rowset = conn.executeQuery(sql, params);
-
-                    if (rowset.next())
-                    {
-                        results.setTotal(rowset.getLong(1));
-                    }
-                }
-                else
-                {
-                    results.setTotal(numberOfHits);
-                }
+                results.setTotal(numberOfHits);
 
                 results.setResults(hits);
             }

@@ -968,7 +968,8 @@ public class SQLCoalescePreparedFilter extends PostgisPSFilterToSql implements I
                 if (name.contains(DOT))
                 {
 
-                    name = normalize(name, false).replaceAll("[.]", "");
+                    //made a change here
+                    name = normalize(name, false);//.replaceAll("[.]", "");
 
                     // if (isEnumeration(name)) {
                     // // Drop the record set

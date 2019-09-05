@@ -1,0 +1,16 @@
+diff a/src/Coalesce/src/main/java/com/incadencecorp/coalesce/common/helpers/JodaDateTimeHelper.java b/src/Coalesce/src/main/java/com/incadencecorp/coalesce/common/helpers/JodaDateTimeHelper.java	(rejected hunks)
+@@ -48,8 +48,14 @@
+          List<DateTimeParser> parsers = new ArrayList<>();
+          parsers.add(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss z").getParser());
+          parsers.add(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").getParser());
+++<<<<<<< Updated upstream
+ +        parsers.add(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.S").getParser()); // Derby
+ +        parsers.add(DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss 'GMT' yyyy").getParser()); // Accumulo
+++=======
++         parsers.add(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSS").getParser());
++         parsers.add(DateTimeFormat.forPattern("yyyy-MM-ddTHH:mm:ssZ").getParser());
++         parsers.add(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss:SS").getParser());
+++>>>>>>> Stashed changes
+          parsers.add(ISODateTimeFormat.basicDate().getParser());
+          parsers.add(ISODateTimeFormat.basicDateTime().getParser());
+          parsers.add(ISODateTimeFormat.basicDateTime().withZone(DateTimeZone.UTC).getParser());
