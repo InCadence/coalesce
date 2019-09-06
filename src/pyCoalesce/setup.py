@@ -173,7 +173,7 @@ try:
 except ModuleNotFoundError:
 
     # To obtain the distributed version number, split off the local suffix.
-    version_list = Coalesce_version.split("+" + LOCAL_VERSION_LABEL)
+    version_list = last_version.split("+" + LOCAL_VERSION_LABEL)
     distributed_version = version_list[0]
 
     # Find the last local number, if any.
@@ -197,7 +197,7 @@ copyfile("../../LICENSE", "LICENSE")
 # Try importing the current project and author info from "version" as well.
 try:
     from version import project, author
-except ImportError:
+except ModuleNotFoundError:
     project = "pyCoalesce"
     author = u"Dhruva Venkat, Scott Orr"
 
