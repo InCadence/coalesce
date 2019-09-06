@@ -170,7 +170,7 @@ try:
 # following section can be modified to create a customized pattern for
 # local version numbers.
 
-except ImportError:
+except ModuleNotFoundError:
 
     # To obtain the distributed version number, split off the local suffix.
     version_list = Coalesce_version.split("+" + LOCAL_VERSION_LABEL)
