@@ -170,18 +170,19 @@ try:
 # following section can be modified to create a customized pattern for
 # local version numbers.
 
-except ModuleNotFoundError:
+except ImportError:
 
     # To obtain the distributed version number, split off the local suffix.
-    version_list = last_version.split("+" + LOCAL_VERSION_LABEL)
+    version_list = Coalesce_version.split("+" + LOCAL_VERSION_LABEL)
     distributed_version = version_list[0]
 
     # Find the last local number, if any.
-    last_local_number = version_list[1]
-    if last_local_number:
-        local_number = int(last_local_number) + 1
-    else:
+    try:
+        last_local_number = version_list[1]
+    except IndexError:
         local_number = 1
+    else:
+        local_number = int(last_local_number) + 1
 
     # Construct a new local version number.
     version = distributed_version + "+" + LOCAL_VERSION_LABEL + \
@@ -197,7 +198,7 @@ copyfile("../../LICENSE", "LICENSE")
 # Try importing the current project and author info from "version" as well.
 try:
     from version import project, author
-except ModuleNotFoundError:
+except ImportError:
     project = "pyCoalesce"
     author = u"Dhruva Venkat, Scott Orr"
 
