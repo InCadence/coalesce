@@ -32,7 +32,7 @@ try:
 
 # If no POM can be found, provide a default.
 except IOError:
-    Coalesce_version = "0.0.39.snapshot"
+    Coalesce_version = "0.0.41.snapshot"
 
 # Get the version string (working around the namespace prefixes of element
 # tags).

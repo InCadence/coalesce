@@ -18,7 +18,7 @@ https://github.com/InCadence/coalesce
 
 The pyCoalesce version number corresponds to the Coalesce version number, but 
 is modified to meet PEP 440 and PyPi rules:  release version numbers are 
-identical, but for snapshot versions, "snapshot" is replaced with "preX", where
+identical, but for snapshot versions, "snapshot" is replaced with "devX", where
 "X" is a sequential number incremented whenever a pyCoalesce snapshot is
 distributed.
 
