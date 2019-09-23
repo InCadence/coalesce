@@ -646,59 +646,56 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
                }]
 
     # Check and parse the search value(s), and add them to the criteria
-    # set.  Note that checking value types is beyond the scope of this
-    # wrapper.
+    # set.  If the operator in question requires 0 values (a "NullCheck"),
+    # we skip the "if" block and add nothing to the criteria set.
+    #
+    # Note that checking value types is beyond the scope of this wrapper.
 
-    num_values = SEARCH_OPERATORS[operator]
+    try:
+        num_values = SEARCH_OPERATORS[operator]
+    except KeyError:
+        raise ValueError('Search operator "' + operator + '" has not been ' +
+                         'implemented in "search_simple".')
 
-    if num_values:
-
-        if num_values == 1:
-            if value:
-                criteria[0]["value"] = value
-            else:
-                raise ValueError("Please supply the value to be searched for.")
-
-
-
+    if num_values == 1:
+        if value:
+            criteria[0]["value"] = value
         else:
+            raise ValueError("Please supply the value to be searched for.")
 
-            # If the operator in question takes multiple values, "value"
-            # will be either an iterable of values or a string of space-
-            # separated values.  Using space-separated values is
-            # deprecated in both Coalesce and pyCoalesce, and not included
-            # in the documentation for this function.
+    elif num_values > 1:
 
-            if not values:
-                if value:
-                    values = value
-                else:
-                    raise ValueError("Please supply the " + str(num_values) +
-                                     " values to be searched for.")
+        # If the operator in question takes multiple values, "value" will
+        # be either an iterable of values or a string of space-separated
+        # values.  Using space-separated values is deprecated in both
+        # Coalesce and pyCoalesce, and not included in the documentation
+        # for this function.
 
-            invalid_value_msg = 'The "value" argument for search operator "' + \
-                                operator + '" must be an iterable with ' + \
-                                'exactly ' + str(num_values) + ' elements, ' + \
-                                'or the same number of values as a space-' + \
-                                'separated string.'
+        if not values:
+            if value:
+                values = value
+            else:
+                raise ValueError("Please supply the " + str(num_values) +
+                                 " values to be searched for.")
 
-            if isinstance(value, basestring):
-                split_value = value.split(" ")
-                if len(split_value) == num_values:
-                    criteria[0]["values"] = values
-                else:
-                    raise ValueError(invalid_value_msg)
+        invalid_value_msg = 'The "value" or "values" argument for search ' + \
+                            'operator "' + operator + '" must be an ' + \
+                            'iterable with exactly ' + str(num_values) + \
+                            ' elements, or the same number of values as a ' + \
+                            'space-separated string.'
 
-            elif len(value) == num_values:
+        if isinstance(values, basestring):
+            split_value = value.split(" ")
+            if len(split_value) == num_values:
                 criteria[0]["values"] = values
-
             else:
                 raise ValueError(invalid_value_msg)
 
-    # If "num_values" is None.
-    else:
-        raise ValueError('Search operator "' + operator + '" has not been ' +
-                         'implemented in "search_simple".')
+        elif len(values) == num_values:
+            criteria[0]["values"] = values
+
+        else:
+            raise ValueError(invalid_value_msg)
 
     # Form the search query.
     query = {
@@ -707,7 +704,7 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
             }
 
     # Call the full search function.  Note that we've already checked the
-    # case of one one user-entered operator, and so we can leave that
+    # case of the one user-entered operator, and so we can leave that
     # argument at the default False in the call to "search".
 
     results = search(server = server, query = query,

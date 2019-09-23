@@ -37,6 +37,7 @@ SEARCH_PERSISTOR = config.get("Coalesce RESTful API server", "search_persistor")
 FIELD1_NAME = "Field1"
 FIELD2_NAME = "Field2"
 FIELD3_NAME = "Field3"
+FAKE_FIELD_NAME = "Fake"
 RECORDSET1 = "TestRecordset1"
 RECORDSET2 = "TestRecordset2"
 RECORDSET3 = "TestRecordset3"
@@ -61,6 +62,9 @@ TEMPLATE1_XML = '<entity ' + \
                            '<fielddefinition datatype="string" ' + \
                                'defaultclassificationmarking="U" ' + \
                                'name="' + FIELD3_NAME + '"/> ' + \
+                           '<fielddefinition datatype="string" ' + \
+                               'defaultclassificationmarking="U" ' + \
+                               'name="' + FAKE_FIELD_NAME + '"/> ' + \
                        '</recordset> ' + \
                    '</section> ' + \
                '</entity>'
@@ -918,12 +922,13 @@ class SearchTests(ServerTest):
 
     def test_search_simple(self):
 
-        orig1_first_field = ENTITY3_DICT["sectionsAsList"][0] \
+        orig1_first_field = ENTITY1_FIELDS[FIELD1_NAME]
+        orig2_first_field = ENTITY3_DICT["sectionsAsList"][0] \
                                         ["recordsetsAsList"][0] \
                                         ["allRecords"][0] \
                                         ["fields"][0] \
                                         ["value"]
-        orig2_first_field = ENTITY4_DICT["sectionsAsList"][0] \
+        orig4_first_field = ENTITY4_DICT["sectionsAsList"][0] \
                                         ["recordsetsAsList"][0] \
                                         ["allRecords"][0] \
                                         ["fields"][0] \
@@ -943,7 +948,7 @@ class SearchTests(ServerTest):
                                           [request1_return_property],
                                       output = "list")
         results1_first_field = results1_list[0]["values"][0]
-        self.assertEqual(results1_first_field, orig1_first_field)
+        self.assertEqual(results1_first_field, orig2_first_field)
 
         request2_return_property = RECORDSET3 + "." + FIELD1_NAME
         results2_full_dict = search_simple(server = self.server,
@@ -955,7 +960,7 @@ class SearchTests(ServerTest):
                                                [request2_return_property],
                                            output = "full_dict")
         results2_first_field = results2_full_dict["hits"][0]["values"][0]
-        self.assertEqual(results2_first_field, orig2_first_field)
+        self.assertEqual(results2_first_field, orig4_first_field)
 
         results3_JSON = search_simple(server = self.server,
                                       recordset = RECORDSET2,
@@ -965,7 +970,7 @@ class SearchTests(ServerTest):
                                           [request1_return_property],
                                       output = "JSON")
         results3_first_field = json.loads(results3_JSON)["hits"][0]["values"][0]
-        self.assertEqual(results3_first_field, orig1_first_field)
+        self.assertEqual(results3_first_field, orig2_first_field)
 
         request4_return_property = RECORDSET3 + "." + FIELD3_NAME
         results4_list = search_simple(server = self.server,
@@ -977,6 +982,27 @@ class SearchTests(ServerTest):
                                       output = "list")
         results4_third_field = results4_list[0]["values"][0]
         self.assertEqual(results4_third_field, unicode(orig4_third_field))
+
+        results5_list = search_simple(server = self.server,
+                                      recordset = RECORDSET3,
+                                      field = FIELD3_NAME, operator = "between",
+                                      values = [5, 8],
+                                      return_property_names = \
+                                          [request4_return_property],
+                                      output = "list")
+        results5_third_field = results5_list[0]["values"][0]
+        self.assertEqual(results5_third_field, unicode(orig4_third_field))
+
+        request6_return_property = RECORDSET1 + "." + FIELD1_NAME
+        results6_list = search_simple(server = self.server,
+                                      recordset = RECORDSET1,
+                                      field = FAKE_FIELD_NAME,
+                                      operator = "nullcheck",
+                                      return_property_names = \
+                                          [request6_return_property],
+                                      output = "list")
+        results6_first_field = results6_list[0]["values"][0]
+        self.assertEqual(results6_first_field, unicode(orig1_first_field))
 
 
     def test_search_helpers(self):
