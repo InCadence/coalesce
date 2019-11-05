@@ -2,7 +2,5 @@
 *.pyc
 
 # Distribution files
-/build
-/dist
-/pyCoalesce.egg-info
-/docs/build
+dist/
+pyCoalesce.egg-info/

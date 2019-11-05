@@ -23,7 +23,7 @@ entire template), and the (rarely used) property contoller.
 from sys import stdout, stderr
 from string import Template
 from uuid import UUID
-from copy import copy
+from copy import copy, deepcopy
 from warnings import warn
 
 import simplejson as json
@@ -311,9 +311,10 @@ def search(server = None, query = None,
 
     :param server:  A :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
-    :param query:  the search query, either the filter object (the value of
-        "group" in a `Coalesce search request object
-        <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`_)
+    :param query:  the search query, either the search group/filter object
+        (the value of "group" in a
+        `Coalesce search request object
+            <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`_)
         or the full query object, as dict-like or a JSON object (string);
         in the case of a full query object, the other arguments used to
         form a query ("sort_by", "sort_order", "return_property_names",
@@ -716,6 +717,152 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
 
     # Return the results.
     return results
+
+
+def create_search_group(recordset, field, values,
+                        criteria_operator = "EqualTo"):
+    """
+    Create a Coalesce search group/filter object (the value of "group" in a
+    `Coalesce search request object
+        <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`_)
+    that combines all entered values for a given field, either including or
+    excluding (depending on the value of "criteria_operator") all records
+    matching any of the supplied values.
+
+    :param recordset:  the recordset of the field to be search on
+    :param field:  the field to be searched on
+    :param criteria_operator:  "EqualTo", if the search is to *include*
+        a record matching *any* element of "values", or "NotEqualTo", if
+        the search is to *exclude all* records matching *any* element of
+        "values".
+    :param values:  a :class:`list` or list-like of values to match
+
+    :returns:  a Coalesce search group as a :class:`dict`, or ``None`` if
+        "values" is empty
+
+    """
+
+    # Check to make sure we got an iterable of values, not just a single
+    # one.
+    if isinstance(values, basestring):
+        raise ValueError('The value of "values" must be a list or list-like.')
+
+    # Create the criteria list.
+    criteria = []
+    for value in values:
+        criteria_set = {"recordset": recordset, "field": field,
+                        "operator": criteria_operator, "value": value,
+                        "matchCase": False}
+        criteria.append(criteria_set)
+
+    # Create the search group and return it, or return None if no values
+    # were supplied.
+
+    if len(criteria) > 0:
+        if criteria_operator == "EqualTo":
+            group_operator = "OR"
+        elif criteria_operator == "NotEqualTo":
+            group_operator = "AND"
+        else:
+            raise ValueError('The value of "operator" must be either ' +
+                             '"EqualTo" or "NotEqualTo".')
+        group = {"operator": group_operator, "criteria": criteria}
+
+    else:
+        group = None
+
+    return group
+
+
+def add_search_filter(search_group, recordset, field, value, operator):
+    """
+    Transform a Coalesce search group/filter object by inserting a new
+    criteria set, for example, a start-after date.  The effect is always to
+    make the search query more restrictive, but how this is done depends on
+    the operator of the top-level search group.
+
+    If the operator is "AND", the new filter is inserted into the top-level
+    group, either appending to the exist criteria list, or creating a new
+    list if none exists already.  If the group already has the specified
+    type of criteria set in the top-level criteria list, the function
+    overwrites it with the new one.
+
+    If the current operator is "OR", a new top-level search group is
+    created with an operator of "AND", and with the new filter as the sole
+    member of he top-level criteria list.  The original search group
+    becomes a sub-group of the top-level group.
+
+    :param search_group:  a Coalesce search_group as a :class:`dict` or a
+        JSON object (string)
+    :param recordset:  the recordset of the field to be search on
+    :param field:  the field that holds the value on which to filter
+    :param value:  the filter value
+    :param operator:  the operator to use for the filter
+
+    :returns:  a modified Coalesce search group as a :class:`dict`
+
+    """
+
+    # If the search group is a JSON object, convert it to a dict.
+    if isinstance(search_group, basestring):
+        search_group = json.loads(search_group)
+
+    # Create the new/modified criteria set.
+    new_criteria_set = {"recordset": recordset, "field": field,
+                        "operator": operator, "value": value,
+                        "matchCase": False}
+
+    # Is the top-level search group an "AND" or an "OR" group?
+    group_operator = search_group["operator"]
+
+    # If this is an "AND" group, add the new criteria set to the existing
+    # search group; if the group already has a filter of the given type in
+    # the top-level criteria list, overwrite it.
+    if group_operator.lower() == "and":
+
+        # Copy the search group so that we don't alter the original.
+        new_search_group = deepcopy(search_group)
+
+        # Check for a top-level criteria list.
+        if "criteria" in new_search_group:
+
+            # Check for an existing criteria set, and replace it if it's
+            # found, or add one if it's not.
+
+            filter_found = False
+            top_criteria_list = new_search_group["criteria"]
+
+            for i, current_set in enumerate(top_criteria_list):
+                if current_set["recordset"].lower() == recordset.lower() and \
+                  current_set["field"].lower() == field.lower() and \
+                  current_set["operator"].lower() == operator.lower():
+                    search_group["criteria"][i] = new_criteria_set
+                    filter_found = True
+                    break
+
+            if not filter_found:
+                new_search_group["criteria"].append(new_criteria_set)
+
+        # Otherwise, add a top-level criteria list that contains the new
+        # criteria set.
+        else:
+            new_search_group["criteria"] = [new_criteria_set]
+
+    # If this is an "OR" group, create a new top-level "AND" search group
+    # that contains both the old group and the new filter/criteria set.
+    # Note that we deepcopy the old group, so that changing it later
+    # (outside this function) won't change the new one.
+    elif group_operator.lower() == "or":
+        old_search_group = deepcopy(search_group)
+        new_search_group = {"operator": "AND",
+                            "criteria": [new_criteria_set],
+                            "groups": [old_search_group]}
+
+    else:
+        raise ValueError('"' + group_operator + '" is not a valid search ' +
+                         'group operator.')
+
+    return new_search_group
 
 
 def _test_key(key):
