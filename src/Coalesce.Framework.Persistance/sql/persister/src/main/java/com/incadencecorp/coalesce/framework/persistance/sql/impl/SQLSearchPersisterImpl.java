@@ -114,12 +114,6 @@ public class SQLSearchPersisterImpl extends SQLPersisterImpl implements ICoalesc
                                            preparedFilter.getFrom(),
                                            where,
                                            preparedFilter.getSorting());
-//                String sql = String.format("SELECT  %s FROM %s %s %s ",
-//                                           preparedFilter.getColumns(),
-//                                           preparedFilter.getFrom(),
-//                                           where,
-//                                           preparedFilter.getSorting());
-
 
                 // Get Hits
                 CachedRowSet hits = RowSetProvider.newFactory().createCachedRowSet();
@@ -130,26 +124,6 @@ public class SQLSearchPersisterImpl extends SQLPersisterImpl implements ICoalesc
                 LOGGER.info("The SQL query is: {}",sql);
 
                 hits.beforeFirst();
-
-                // Hits Exceeds a Page?
-//                if (numberOfHits >= query.getMaxFeatures())
-//                {
-//                    results.setTotal(query.getMaxFeatures());
-//                    //clear hits and repopulate with the following
-//                    sql = String.format("SELECT  TOP %s %s FROM %s %s %s ",
-//                                               query.getMaxFeatures(),
-//                                               preparedFilter.getColumns(),
-//                                               preparedFilter.getFrom(),
-//                                               where,
-//                                               preparedFilter.getSorting());
-//
-//                    hits = RowSetProvider.newFactory().createCachedRowSet();
-//                    hits.populate(conn.executeQuery(sql, params));
-//                }
-//                else
-//                {
-//                    results.setTotal(numberOfHits);
-//                }
 
                 results.setTotal(numberOfHits);
 

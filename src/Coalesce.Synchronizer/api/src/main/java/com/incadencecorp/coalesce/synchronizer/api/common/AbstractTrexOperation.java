@@ -165,52 +165,42 @@ public abstract class AbstractTrexOperation<T extends AbstractOperationTask> ext
 
         for(int i = 0;i<tasks.size();i++)
         {
-            if(!done)
+            List<T> individualTask = new ArrayList<>();
+            individualTask.add(tasks.get(i));
+
+            int ii = 0;
+            // Execute Tasks
+            for (Future<Boolean> future : service.invokeAll(individualTask))
             {
-                List<T> individualTask = new ArrayList<>();
-                individualTask.add(tasks.get(i));
-
-                int ii = 0;
-                // Execute Tasks
-                for (Future<Boolean> future : service.invokeAll(individualTask))
+                try
                 {
-                    try
-                    {
-                        // Get Result
-                        results = results && future.get();
-                        if(roundRobinAndSwitchingNodes && i > 0)
-                        {
-                            done = true;
-                        }else if (!roundRobinAndSwitchingNodes)
-                        {
-                            done = true;
-                        }
-
-                    }
-                    catch (ExecutionException e)
-                    {
-                        if (LOGGER.isDebugEnabled())
-                        {
-                            LOGGER.debug("Operation Failed");
-                        }
-                        if(tasks.size()-1>i)
-                        {
-                            if(LOGGER.isDebugEnabled())
-                            {
-                                LOGGER.debug("Could not connect to the DB {}. Moving to the next option.",i);
-                            }
-                            continue;
-                        }
-
-                        if (handler == null || !handler.handle(tasks.get(ii).getSubset(), this, e))
-                        {
-                            throw e;
-                        }
-                    }
-
-                    ii++;
+                    // Get Result
+                    results = results && future.get();
                 }
+                catch (ExecutionException e)
+                {
+                    if (LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.debug("Operation Failed");
+                    }
+                    if(tasks.size()-1>i)
+                    {
+                        if(LOGGER.isDebugEnabled())
+                        {
+                            LOGGER.debug("Could not connect to the DB {}. Moving to the next option.",i);
+                        }
+                        continue;
+                    }
+
+                    if (handler == null || !handler.handle(tasks.get(ii).getSubset(), this, e))
+                    {
+                        throw e;
+                    }
+                }
+
+                ii++;
             }
+
         }
         return results;
     }
