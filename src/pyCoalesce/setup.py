@@ -6,8 +6,13 @@ Copyright 2018-9, InCadence Strategic Solutions
 
 import re
 from shutil import copyfile
+from os.path import isfile
 import setuptools
 
+
+COALESCE_LICENCE_PATH = "../../LICENSE"
+LICENSE_FILENAME = "LICENSE"
+LICENSE_NAME = "Apache License 2.0"
 
 # This constant can be changed to a custom label.
 LOCAL_VERSION_LABEL = "local"
@@ -166,7 +171,8 @@ try:
         version = main_version
 
 # If we can't read in a Coalesce version number, this must be a local
-# installation, and therefore we'll assign a local version number.  The
+# installation, and therefore we'll assign a local version number (note
+# that we can't actually check to see if any code has been changed).  The
 # following section can be modified to create a customized pattern for
 # local version numbers.
 
@@ -177,11 +183,12 @@ except ImportError:
     distributed_version = version_list[0]
 
     # Find the last local number, if any.
-    last_local_number = version_list[1]
-    if last_local_number:
-        local_number = int(last_local_number) + 1
-    else:
+    try:
+        last_local_number = version_list[1]
+    except IndexError:
         local_number = 1
+    else:
+        local_number = int(last_local_number) + 1
 
     # Construct a new local version number.
     version = distributed_version + "+" + LOCAL_VERSION_LABEL + \
@@ -190,9 +197,15 @@ except ImportError:
 with open("pyCoalesce/version.txt", "w") as version_file:
     version_file.write(version)
 
-# Copy the Coalesce license file; this is used only by Twine (and really
-# shouldn't be necessary, since PyPi doesn't make use of it).
-copyfile("../../LICENSE", "LICENSE")
+# Try to copy the Coalesce license file.  If that doesn't work (because
+# we're not inside the main Coalesce repo), keep any license file that
+# already exists, or create a new one containing only the license name.
+try:
+    copyfile(COALESCE_LICENCE_PATH, LICENSE_FILENAME)
+except IOError:
+    if not isfile(LICENSE_FILENAME):
+        with open(LICENSE_FILENAME, "w") as license_file:
+            license_file.write(LICENSE_NAME)
 
 # Try importing the current project and author info from "version" as well.
 try:
@@ -207,7 +220,7 @@ setuptools.setup(
     author = author,
     author_email = "sorr@incadencecorp.com",
     description = "A python wrapper for coalesce objects",
-    license = "Apache License 2.0",
+    license = LICENSE_NAME,
     long_description = long_description,
     long_description_content_type = "text/markdown",
     url = "https://github.com/InCadence/coalesce/wiki",

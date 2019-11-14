@@ -18,7 +18,7 @@ https://github.com/InCadence/coalesce
 
 The pyCoalesce version number corresponds to the Coalesce version number, but 
 is modified to meet PEP 440 and PyPi rules:  release version numbers are 
-identical, but for snapshot versions, "snapshot" is replaced with "preX", where
+identical, but for snapshot versions, "snapshot" is replaced with "devX", where
 "X" is a sequential number incremented whenever a pyCoalesce snapshot is
 distributed.
 
@@ -33,6 +33,9 @@ created in earlier tests, thereby avoiding either repeated creation and
 deletion of entities, or testing against a mocked-up API.  (The latter would
 be unnecessarily time-consuming to create, and wouldn't catch bugs in the API
 itself, which was still a consideration when this wrapper was created.)
+Apprentlyly, a recent change to Coalesce has caused one search est to fail,
+due to the creation of multiple entities with each "create" call.  The test has
+been retained while the issue is under investigation.
 
 To recreate the distribution files, run the following command from this 
 directory (typical options have been included):
