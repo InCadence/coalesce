@@ -705,6 +705,49 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     }
 
     /**
+     * This test verifies that searching for numeric values within a String field does not truncate leading zeroes.
+     */
+    @Test
+    public void testNumericStrings() throws Exception
+    {
+        String value = "040";
+        T persistor = createPersister();
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
+
+        // Create Record
+        record.getStringField().setValue(value);
+
+        // Persist
+        Assert.assertTrue(persistor.saveEntity(false, entity));
+
+        Filter filter = FF.equal(CoalescePropertyFactory.getFieldProperty(record.getStringField()), FF.literal(value), false);
+
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
+
+        // Create Query
+        Query query = new Query();
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), filter));
+        //query.setFilter(CoalescePropertyFactory.getEntityKey(entity.getKey()));
+        query.setProperties(props);
+
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+            Assert.assertEquals(record.getStringField().getValue(), results.getString(2));
+        }
+
+        // Cleanup
+        entity.markAsDeleted();
+
+        persistor.saveEntity(true, entity);
+    }
+
+    /**
      * This test persist an entity that contains linkages and verifies that the linkages can be retrieved doing a search.
      */
     @Test
