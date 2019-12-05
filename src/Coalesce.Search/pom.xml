@@ -65,8 +65,8 @@
             <version>${geotools.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-api</artifactId>
+            <groupId>org.geotools.xsd</groupId>
+            <artifactId>gt-xsd-core</artifactId>
             <version>${geotools.version}</version>
         </dependency>
         <dependency>
@@ -77,6 +77,11 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-cql</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-xml</artifactId>
             <version>${geotools.version}</version>
         </dependency>
 

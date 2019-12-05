@@ -56,10 +56,7 @@ import org.geotools.temporal.object.DefaultInstant;
 import org.geotools.temporal.object.DefaultPeriod;
 import org.geotools.temporal.object.DefaultPosition;
 import org.joda.time.DateTime;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
@@ -1194,7 +1191,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Coordinate point1 = new Coordinate(40, -5);
         Coordinate point2 = new Coordinate(60, 0);
 
-        ReferencedEnvelope bbox = new ReferencedEnvelope(createSquare(point1, point2).getEnvelopeInternal(), crs);
+        ReferencedEnvelope bbox = new ReferencedEnvelope(point1.x, point2.x, point1.y, point2.y, crs);
 
         List<PropertyName> props = new ArrayList<>();
         props.add(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()));
@@ -1216,7 +1213,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         }
 
         // Create bound box filter that excludes the field
-        bbox = new ReferencedEnvelope(createSquare(new Coordinate(59, -5), point2).getEnvelopeInternal(), crs);
+        bbox = new ReferencedEnvelope(59d, point2.x, -5d, point2.y, crs);
         query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()),
                                FF.bbox(CoalescePropertyFactory.getFieldProperty(record.getGeoField()), bbox)));
 
@@ -1688,9 +1685,10 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         // Create Record
         TestRecord record = entity.addRecord1();
-        record.getStringField().setValue("Hello World");
+        record.getStringField().setValue("qwerty");
 
         // Persist
+        persistor.registerTemplate(CoalesceEntityTemplate.create(entity));
         persistor.saveEntity(false, entity);
 
         List<PropertyName> props = new ArrayList<>();
@@ -1716,9 +1714,12 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
             Assert.assertEquals(record.getKey(), results.getString(3));
         }
 
-        // Change Record Key
+        // Delete
         entity.markAsDeleted();
-        persistor.saveEntity(false, entity);
+        persistor.saveEntity(true, entity);
+
+        //ensure that elasticsearch has time to delete the object
+        Thread.sleep(1000);
 
         // Search
         try (CachedRowSet results = persistor.search(query).getResults())
@@ -1727,10 +1728,6 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
             Assert.assertEquals(0, results.size());
         }
 
-        // Cleanup
-        entity.markAsDeleted();
-
-        persistor.saveEntity(true, entity);
     }
 
     /**

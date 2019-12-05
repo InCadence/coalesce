@@ -21,7 +21,6 @@ import java.util.Set;
 
 import javax.xml.transform.TransformerException;
 
-import org.geotools.filter.FilterTransformer;
 import org.geotools.gml.producer.GeometryTransformer;
 import org.geotools.xml.transform.TransformerBase;
 import org.opengis.filter.And;

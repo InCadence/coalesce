@@ -29,8 +29,11 @@ import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.common.geo.builders.ShapeBuilder;
+import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.common.geo.builders.*;
 import org.json.JSONArray;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.util.GeometricShapeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +64,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
     public BulkRequest iterate(boolean allowRemoval, CoalesceEntity... entities) throws CoalesceException
     {
         BulkRequest result = new BulkRequest();
+        result.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
 
         for (CoalesceEntity entity : entities)
         {
@@ -96,6 +100,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
             source.put(ElasticSearchPersistor.FIELD_XML, entity.toXml());
         }
         source.put(ElasticSearchPersistor.ENTITY_TITLE_COLUMN_NAME, entity.getTitle());
+        source.put(ElasticSearchPersistor.DOC_TYPE,ElasticSearchPersistor.COALESCE_ENTITY);
 
         DocWriteRequest request;
 
@@ -103,14 +108,12 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         {
             request = visitObject(entity,
                                   ElasticSearchPersistor.COALESCE_ENTITY_INDEX,
-                                  ElasticSearchPersistor.COALESCE_ENTITY,
                                   source);
         }
         else
         {
             request = new IndexRequest();
             ((IndexRequest) request).index(ElasticSearchPersistor.COALESCE_ENTITY_INDEX);
-            ((IndexRequest) request).type(ElasticSearchPersistor.COALESCE_ENTITY);
             ((IndexRequest) request).id(entity.getKey());
             ((IndexRequest) request).source(source);
         }
@@ -127,10 +130,10 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         {
             Map<String, Object> mapping = createMapping(linkage);
             mapping.putAll(param.common);
+            mapping.put(ElasticSearchPersistor.DOC_TYPE,ElasticSearchPersistor.COALESCE_LINKAGE);
 
             param.request.add(visitObject(linkage,
                                           ElasticSearchPersistor.COALESCE_LINKAGE_INDEX,
-                                          ElasticSearchPersistor.COALESCE_LINKAGE,
                                           mapping));
         }
 
@@ -149,8 +152,9 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
                 {
                     Map<String, Object> mapping = createMapping(record);
                     mapping.putAll(param.common);
+                    mapping.put(ElasticSearchPersistor.DOC_TYPE,"recordset");
 
-                    param.request.add(visitObject(record, param.recordIndex, "recordset", mapping));
+                    param.request.add(visitObject(record, param.recordIndex, mapping));
                 }
             }
         }
@@ -159,13 +163,12 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         return false;
     }
 
-    private DocWriteRequest visitObject(CoalesceObject object, String index, String type, Map<String, Object> source)
+    private DocWriteRequest visitObject(CoalesceObject object, String index, Map<String, Object> source)
     {
         if (!object.isMarkedDeleted() && !object.getEntity().isMarkedDeleted())
         {
             IndexRequest request = new IndexRequest();
             request.index(index);
-            request.type(type);
             request.id(object.getKey());
             request.source(source);
 
@@ -175,7 +178,6 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         {
             DeleteRequest request = new DeleteRequest();
             request.index(index);
-            request.type(type);
             request.id(object.getKey());
 
             return request;
@@ -264,6 +266,11 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
                 case GEOCOORDINATE_LIST_TYPE:
                     source.put(name, createMultiPoint((CoalesceCoordinateListField) field));
                     break;
+
+                    case GUID_TYPE:
+                    case GUID_LIST_TYPE:
+                        source.put(name, field.getBaseValue());
+                        break;
                 default:
                     // Add field value to results
                     source.put(name, field.getValue());
@@ -286,7 +293,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
             coord.put(field.getValue().y);
 
             results = new HashMap<>();
-            results.put("type", ShapeBuilder.GeoShapeType.POINT);
+            results.put("type", PointBuilder.TYPE);
             results.put("coordinates", coord);
         }
 
@@ -303,7 +310,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
             polygon.put(getCoordinates(field.getValue().getCoordinates()));
 
             results = new HashMap<>();
-            results.put("type", ShapeBuilder.GeoShapeType.POLYGON);
+            results.put("type", PolygonBuilder.TYPE);
             results.put("coordinates", polygon);
         }
 
@@ -316,8 +323,11 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
 
         if (field.getValue() != null)
         {
+//            JSONArray line = new JSONArray();
+//            line.put(getCoordinates(field.getValue().getCoordinates()));
+
             results = new HashMap<>();
-            results.put("type", ShapeBuilder.GeoShapeType.LINESTRING);
+            results.put("type", LineStringBuilder.TYPE);
             results.put("coordinates", getCoordinates(field.getValue().getCoordinates()));
         }
 
@@ -331,14 +341,27 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
 
         if (circle != null)
         {
-            JSONArray point = new JSONArray();
-            point.put(circle.getCenter().x);
-            point.put(circle.getCenter().y);
+
+            JSONArray jsonArray = new JSONArray();
+
+            GeometricShapeFactory shapeFactory = new GeometricShapeFactory();
+            shapeFactory.setCentre(new org.locationtech.jts.geom.Coordinate(circle.getCenter().x,circle.getCenter().y));
+            shapeFactory.setSize(circle.getRadius());
+            Polygon polyCircle = shapeFactory.createCircle();
+            jsonArray.put(getLocationtechCoordinates((polyCircle.getCoordinates())));
 
             results = new HashMap<>();
-            results.put("type", ShapeBuilder.GeoShapeType.CIRCLE);
-            results.put("coordinates", point);
-            results.put("radius", circle.getRadius() + "m");
+            results.put("type", PolygonBuilder.TYPE);
+            results.put("coordinates", jsonArray);
+
+//            JSONArray point = new JSONArray();
+//            point.put(circle.getCenter().x);
+//            point.put(circle.getCenter().y);
+//
+//            results = new HashMap<>();
+//            results.put("type", CircleBuilder.TYPE);
+//            results.put("coordinates", point);
+//            results.put("radius", circle.getRadius() + "m");
         }
 
         return results;
@@ -351,13 +374,14 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
         if (field.getValue() != null)
         {
             results = new HashMap<>();
-            results.put("type", ShapeBuilder.GeoShapeType.MULTIPOINT);
+            results.put("type", MultiPointBuilder.TYPE);
             results.put("coordinates", getCoordinates(field.getValue()));
         }
 
         return results;
     }
 
+    @Deprecated
     private JSONArray getCoordinates(Coordinate[] coords)
     {
         JSONArray results = null;
@@ -367,6 +391,27 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
             results = new JSONArray();
 
             for (Coordinate coord : coords)
+            {
+                JSONArray coord2 = new JSONArray();
+                coord2.put(coord.x);
+                coord2.put(coord.y);
+
+                results.put(coord2);
+            }
+        }
+
+        return results;
+    }
+
+    private JSONArray getLocationtechCoordinates(org.locationtech.jts.geom.Coordinate[] coords)
+    {
+        JSONArray results = null;
+
+        if (coords != null && coords.length > 0)
+        {
+            results = new JSONArray();
+
+            for (org.locationtech.jts.geom.Coordinate coord : coords)
             {
                 JSONArray coord2 = new JSONArray();
                 coord2.put(coord.x);

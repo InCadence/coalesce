@@ -433,7 +433,7 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
                 {
                     int srid = currentSRID != null ? currentSRID : -1;
                     int dimension = currentDimension != null ? currentDimension : -1;
-                    dialect.prepareGeometryValue((Geometry) literalValue, dimension, srid, Geometry.class, sb);
+                    //dialect.prepareGeometryValue(literalValue1, dimension, srid, Geometry.class, sb);
                 }
                 else if (encodingFunction)
                 {

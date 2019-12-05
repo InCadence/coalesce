@@ -31,29 +31,35 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.ResourceAlreadyExistsException;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchAction;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.support.AbstractClient;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.CreateIndexResponse;
+import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -65,7 +71,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchTemplatePersister.class);
 
     private static final ElasticSearchMapperImpl MAPPER = new ElasticSearchMapperImpl();
-    private static final ICoalesceNormalizer NORMALIZER = new ElasticSearchNormalizer();
+    protected static final ICoalesceNormalizer NORMALIZER = new ElasticSearchNormalizer();
 
     public static final String COALESCE_ENTITY_INDEX = "coalesce";
     public static final String COALESCE_LINKAGE_INDEX = COALESCE_ENTITY_INDEX + "-linkages";
@@ -73,6 +79,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     public static final String COALESCE_TEMPLATE = "template";
     public static final String COALESCE_LINKAGE = CoalesceLinkage.NAME;
     public static final String FIELD_XML = normalize(CoalescePropertyFactory.getEntityXml());
+    public static final String DOC_TYPE = "type";
 
     // Linkage Column Names
     public static final String LINKAGE_KEY_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageKey());
@@ -158,7 +165,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(params);
+            RestHighLevelClient client = conn.getDBConnector(params);
 
             for (CoalesceEntityTemplate template : templates)
             {
@@ -170,17 +177,21 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 properties.put(ENTITY_DATE_CREATED_COLUMN_NAME, template.getDateCreated());
                 properties.put(ENTITY_LAST_MODIFIED_COLUMN_NAME, template.getLastModified());
                 properties.put(FIELD_XML, template.toXml());
+                properties.put(DOC_TYPE, COALESCE_TEMPLATE);
 
                 IndexRequest request = new IndexRequest();
                 request.index(COALESCE_ENTITY_INDEX);
-                request.type(COALESCE_TEMPLATE);
                 request.id(template.getKey());
                 request.source(properties);
 
-                IndexResponse response = client.index(request).actionGet();
+                IndexResponse response = client.index(request, RequestOptions.DEFAULT);
 
-                LOGGER.debug("Saved XML Index called: coalesceentityindex : {}", response);
+                LOGGER.debug("Saved XML Index called: coalesce-templates : {}", response);
             }
+        }
+        catch (IOException e)
+        {
+            throw new CoalescePersistorException(e.getMessage(), e);
         }
 
     }
@@ -190,7 +201,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(params);
+            RestHighLevelClient client = conn.getDBConnector(params);
             for (String key : keys)
             {
                 deleteFromElasticSearch(client, COALESCE_ENTITY_INDEX, COALESCE_TEMPLATE, key);
@@ -203,7 +214,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(params);
+            RestHighLevelClient client = conn.getDBConnector(params);
             for (String key : keys)
             {
                 deleteFromElasticSearch(client, COALESCE_ENTITY_INDEX, COALESCE_TEMPLATE, key);
@@ -221,14 +232,13 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         {
             try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
             {
-                AbstractClient client = conn.getDBConnector(params);
+                RestHighLevelClient client = conn.getDBConnector(params);
 
                 GetRequest request = new GetRequest();
                 request.index(COALESCE_ENTITY_INDEX);
-                request.type(COALESCE_TEMPLATE);
                 request.id(key);
 
-                GetResponse response = client.get(request).actionGet();
+                GetResponse response = client.get(request, RequestOptions.DEFAULT);
 
                 if (response != null && response.getSource() != null)
                 {
@@ -246,6 +256,10 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                     throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
                 }
 
+            }
+            catch (IOException e)
+            {
+                throw new CoalescePersistorException(e.getMessage(),e);
             }
         }
         else
@@ -277,19 +291,22 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     {
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(params);
+            RestHighLevelClient client = conn.getDBConnector(params);
 
-            BoolQueryBuilder boolQuery = new BoolQueryBuilder().must(QueryBuilders.matchQuery(ENTITY_NAME_COLUMN_NAME,
-                                                                                              name)).must(QueryBuilders.matchQuery(
-                    ENTITY_SOURCE_COLUMN_NAME,
-                    source)).must(QueryBuilders.matchQuery(ENTITY_VERSION_COLUMN_NAME, version));
+            BoolQueryBuilder boolQuery = new BoolQueryBuilder()
+                    .must(QueryBuilders.matchQuery(ENTITY_NAME_COLUMN_NAME, name))
+                    .must(QueryBuilders.matchQuery(ENTITY_SOURCE_COLUMN_NAME, source))
+                    .must(QueryBuilders.matchQuery(ENTITY_VERSION_COLUMN_NAME, version))
+                    .must(QueryBuilders.termQuery(DOC_TYPE,COALESCE_TEMPLATE));
 
-            SearchRequestBuilder searchRequest = client.prepareSearch(COALESCE_ENTITY_INDEX).setTypes(COALESCE_TEMPLATE).setQuery(
-                    boolQuery);
+            SearchRequest searchRequest = new SearchRequest(COALESCE_ENTITY_INDEX);
+            searchRequest.source().query(boolQuery);
+//            SearchRequestBuilder searchRequest = client.prepareSearch(COALESCE_ENTITY_INDEX).setTypes(COALESCE_TEMPLATE).setQuery(
+//                    boolQuery);
 
             //LOGGER.debug("Trying this search: " + searchRequest.toString());
 
-            SearchResponse response = searchRequest.get();
+            SearchResponse response = client.search(searchRequest,RequestOptions.DEFAULT);
 
             SearchHits hits = response.getHits();
 
@@ -310,6 +327,9 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                                                                            + version), e);
             }
         }
+        catch (IOException e){
+            throw new CoalescePersistorException(e.getMessage(),e);
+        }
 
         return null;
     }
@@ -321,12 +341,16 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(params);
+            RestHighLevelClient client = conn.getDBConnector(params);
 
-            SearchRequestBuilder searchRequest = client.prepareSearch(COALESCE_ENTITY_INDEX).setTypes(COALESCE_TEMPLATE).setQuery(
-                    QueryBuilders.matchAllQuery());
+            SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+            sourceBuilder.query(QueryBuilders.matchAllQuery());
 
-            SearchResponse response = searchRequest.get();
+            SearchRequest searchRequest = new SearchRequest(COALESCE_ENTITY_INDEX);
+
+            searchRequest.source().query(QueryBuilders.termQuery(DOC_TYPE,COALESCE_TEMPLATE));
+
+            SearchResponse response = client.search(searchRequest,RequestOptions.DEFAULT);
 
             SearchHits hits = response.getHits();
 
@@ -345,6 +369,10 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         {
             LOGGER.error(e.getDetailedMessage());
         }
+        catch (IOException e)
+        {
+            LOGGER.error(e.getMessage(),e);
+        }
         return metaDatas;
     }
 
@@ -355,7 +383,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(params);
+            RestHighLevelClient client = conn.getDBConnector(params);
 
             CreateIndexResponse response;
 
@@ -364,34 +392,30 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 Map<String, Object> source = createMapping(template);
                 String index = COALESCE_ENTITY_INDEX + "-" + NORMALIZER.normalize(template.getName());
 
-                CreateIndexRequest request = new CreateIndexRequest();
-                request.index(index);
-                request.settings(Settings.builder().put(defaultSettings).build());
-                request.mapping("recordset", Collections.singletonMap("properties", source));
+                CreateIndexRequest request = new CreateIndexRequest(index);
+                request.mapping(Collections.singletonMap("properties", source));
 
-                // Add a type / recordset
-                /*
-                for (String type : CoalesceTemplateUtil.getRecordsets(template.getKey()))
-                {
-                    request.mapping(type, Collections.singletonMap("properties", source));
+                for(Map.Entry<String, String> entry: defaultSettings.entrySet()){
+                    Settings.builder().put(entry.getKey(),entry.getValue());
                 }
-                */
+
+                request.settings(Settings.builder().build());
 
                 if (!doesExists(client, index))
                 {
-                    response = client.admin().indices().create(request).actionGet();
+                    response = client.indices().create(request, RequestOptions.DEFAULT);
                     LOGGER.debug("Registered Coalesce Template Index {}: {}", index, response);
 
                     if (!doesExists(client, COALESCE_ENTITY_INDEX))
                     {
-                        response = client.admin().indices().create(createCoalesceEntityIndexRequest()).actionGet();
+                        response = client.indices().create(createCoalesceEntityIndexRequest(),RequestOptions.DEFAULT);
 
                         LOGGER.debug("Registered Coalesce Index {}: {}", template.getName(), response);
                     }
 
                     if (!doesExists(client, COALESCE_LINKAGE_INDEX))
                     {
-                        response = client.admin().indices().create(createCoalesceLinkageIndexRequest()).actionGet();
+                        response = client.indices().create(createCoalesceLinkageIndexRequest(), RequestOptions.DEFAULT);
 
                         LOGGER.debug("Registered Coalesce Linkage Index {}: {}", template.getName(), response);
                     }
@@ -402,39 +426,45 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 }
             }
         }
+        catch (IOException e){
+            throw new CoalescePersistorException(e.getMessage(),e);
+        }
     }
 
-    private boolean doesExists(AbstractClient client, String... names)
+    private boolean doesExists(RestHighLevelClient client, String... names) throws IOException
     {
         return doesIndexExists(client, names) || doesAliasExists(client, names);
     }
 
-    private boolean doesAliasExists(AbstractClient client, String... aliases)
+    private boolean doesAliasExists(RestHighLevelClient client, String... aliases) throws IOException
     {
-        GetAliasesRequest exists = new GetAliasesRequest();
-        exists.aliases(aliases);
+        GetAliasesRequest exists = new GetAliasesRequest(aliases);
 
-        return client.admin().indices().aliasesExist(exists).actionGet().isExists();
+        return client.indices().existsAlias(exists, RequestOptions.DEFAULT);
     }
 
-    private boolean doesIndexExists(AbstractClient client, String... indices)
+    private boolean doesIndexExists(RestHighLevelClient client, String... indices) throws IOException
     {
-        IndicesExistsRequest request = new IndicesExistsRequest();
-        request.indices(indices);
+        GetIndexRequest request = new GetIndexRequest(indices);
 
-        return client.admin().indices().exists(request).actionGet().isExists();
+        return client.indices().exists(request, RequestOptions.DEFAULT);
     }
 
-    private void deleteFromElasticSearch(AbstractClient conn, String index, String type, String id)
+    private void deleteFromElasticSearch(RestHighLevelClient conn, String index, String type, String id)
     {
         DeleteRequest entityRequest = new DeleteRequest();
         entityRequest.index(index);
-        entityRequest.type(type);
         entityRequest.id(id);
 
-        DeleteResponse entityResponse = conn.delete(entityRequest).actionGet();
-
-        LOGGER.debug("Delete entity for entity {} : {}", index, entityResponse);
+        try
+        {
+            DeleteResponse entityResponse = conn.delete(entityRequest, RequestOptions.DEFAULT);
+            LOGGER.debug("Delete entity for entity {} : {}", index, entityResponse);
+        }
+        catch (IOException e)
+        {
+            LOGGER.error(e.getMessage(),e);
+        }
     }
 
     private CreateIndexRequest createCoalesceEntityIndexRequest()
@@ -443,11 +473,12 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
         mapping.put(FIELD_XML, Collections.singletonMap("enabled", "false"));
 
-        CreateIndexRequest request = new CreateIndexRequest();
-        request.settings(Settings.builder().put(defaultSettings).build());
-        request.index(COALESCE_ENTITY_INDEX);
-        request.mapping(COALESCE_ENTITY, Collections.singletonMap("properties", mapping));
-        request.mapping(COALESCE_TEMPLATE, Collections.singletonMap("properties", mapping));
+        CreateIndexRequest request = new CreateIndexRequest(COALESCE_ENTITY_INDEX);
+        request.mapping(Collections.singletonMap("properties", mapping));
+
+        //TODO do we need this
+        //request.mapping(COALESCE_ENTITY, Collections.singletonMap("properties", mapping));
+        //request.mapping(COALESCE_TEMPLATE, Collections.singletonMap("properties", mapping));
 
         return request;
     }
@@ -471,16 +502,19 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         properties.put(ENTITY_STATUS_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
         properties.put(ENTITY_ID_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
         properties.put(ENTITY_ID_TYPE_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
+        properties.put(DOC_TYPE, Collections.singletonMap("type", "keyword"));
 
         return properties;
     }
 
     private CreateIndexRequest createCoalesceLinkageIndexRequest()
     {
-        CreateIndexRequest request = new CreateIndexRequest();
-        request.settings(Settings.builder().put(defaultSettings).build());
-        request.index(COALESCE_LINKAGE_INDEX);
-        request.mapping(COALESCE_LINKAGE, Collections.singletonMap("properties", createLinkageMapping()));
+        CreateIndexRequest request = new CreateIndexRequest(COALESCE_LINKAGE_INDEX);
+        request.index();
+        request.mapping(Collections.singletonMap("properties", createLinkageMapping()));
+//TODO do we need this
+//        request.mapping(COALESCE_LINKAGE, Collections.singletonMap("properties", createLinkageMapping()));
+
 
         return request;
     }
@@ -504,6 +538,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         properties.put(LINKAGE_LABEL_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
         properties.put(LINKAGE_STATUS_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
         properties.put(LINKAGE_LINK_TYPE_COLUMN_NAME, Collections.singletonMap("type", "keyword"));
+        properties.put(DOC_TYPE, Collections.singletonMap("type", "keyword"));
 
         return properties;
     }
@@ -525,6 +560,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 {
                     Map<String, Object> keywordField = new HashMap<>();
                     keywordField.put("type", "keyword");
+                    //TODO we might not need this...
                     keywordField.put("ignore_above", 256);
 
                     mapping.put("fields", Collections.singletonMap("keyword", keywordField));
