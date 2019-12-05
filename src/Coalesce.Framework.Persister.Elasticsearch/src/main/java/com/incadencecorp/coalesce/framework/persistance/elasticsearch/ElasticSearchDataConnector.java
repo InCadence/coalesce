@@ -2,21 +2,30 @@ package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import com.google.common.net.HostAndPort;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+
 import org.apache.http.HttpHost;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.SSLContexts;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.support.AbstractClient;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.cluster.ClusterName;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLContext;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.KeyStore;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -25,9 +34,11 @@ public class ElasticSearchDataConnector implements AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchDataConnector.class);
 
-    private AbstractClient client;
+    private RestHighLevelClient client;
 
-    public AbstractClient getDBConnector(Map<String, String> props)
+    private SSLContext sslContext;
+
+    public RestHighLevelClient getDBConnector(Map<String, String> props)
     {
         Properties properties = new Properties();
         properties.putAll(props);
@@ -35,7 +46,7 @@ public class ElasticSearchDataConnector implements AutoCloseable {
         return getDBConnector(properties);
     }
 
-    public AbstractClient getDBConnector(Properties props)
+    public RestHighLevelClient getDBConnector(Properties props)
     {
         if (client == null)
         {
@@ -45,7 +56,7 @@ public class ElasticSearchDataConnector implements AutoCloseable {
 
             try
             {
-                client = isSSLEnabled ? createClient(props) : createClient(props);
+                client = isSSLEnabled ? createSSLClient(props) : createClient(props);
             }
             catch (CoalescePersistorException e)
             {
@@ -60,36 +71,43 @@ public class ElasticSearchDataConnector implements AutoCloseable {
     public void close()
     {
         if (client != null)
-            {
+        {
+            try {
                 client.close();
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(),e);
             }
+        }
     }
 
-    private AbstractClient createClient(Properties props) throws CoalescePersistorException
+    private RestHighLevelClient createClient(Properties props) throws CoalescePersistorException
     {
-        TransportClient client;
+        RestHighLevelClient client;
 
         try
         {
-            Settings.Builder builder = Settings.builder();
-            builder.put("cluster.name", props.getProperty(ElasticSearchSettings.PARAM_CLUSTER_NAME));
 
-            client = new PreBuiltTransportClient(builder.build());
+            List<HttpHost> hostList = new ArrayList<>();
 
             String hosts = props.getProperty(ElasticSearchSettings.PARAM_HOSTS);
             Stream.of(hosts.split(",")).map(host -> {
-                HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
+                HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9200);
 
                 try
                 {
-                    return new TransportAddress(InetAddress.getByName(hostAndPort.getHost()), hostAndPort.getPort());
+                    return new HttpHost(InetAddress.getByName(hostAndPort.getHost()),
+                            hostAndPort.getPort());
                 }
                 catch (UnknownHostException e)
                 {
                     LOGGER.warn(e.getMessage(), e);
                     return null;
                 }
-            }).forEach(client::addTransportAddress);
+            }).forEach(hostList::add);
+
+            RestClientBuilder builder = RestClient.builder(hostList.toArray(new HttpHost[hostList.size()]));
+            client = new RestHighLevelClient(builder);
+
         }
         catch (ElasticsearchException ex)
         {
@@ -99,94 +117,95 @@ public class ElasticSearchDataConnector implements AutoCloseable {
         return client;
     }
 
-    private RestClient createRestClient(Properties props) throws CoalescePersistorException
+    private SSLContext getSslContext(Properties props) throws CoalescePersistorException
     {
-        boolean sslEnabled =
-                props.containsKey(ElasticSearchSettings.PARAM_SSL_ENABLED) && Boolean.parseBoolean((String) props.get(
-                        ElasticSearchSettings.PARAM_SSL_ENABLED));
 
-        try
+        if(sslContext == null)
         {
-            Settings.Builder builder = Settings.builder();
-            builder.put(ClusterName.CLUSTER_NAME_SETTING.getKey(),
-                        props.getProperty(ElasticSearchSettings.PARAM_CLUSTER_NAME));
 
-            String hosts = props.getProperty(ElasticSearchSettings.PARAM_HOSTS);
-            String scheme = sslEnabled ? "https" : "http";
-            HttpHost[] hostsArray = Stream.of(hosts.split(",")).map(host -> {
-                HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
-
-                try
-                {
-                    return new HttpHost(InetAddress.getByName(hostAndPort.getHost()), hostAndPort.getPort(), scheme);
-                }
-                catch (UnknownHostException e)
-                {
-                    LOGGER.warn(e.getMessage(), e);
-                    return null;
-                }
-            }).toArray(HttpHost[]::new);
-
-            return RestClient.builder(hostsArray).build();
-        }
-        catch (ElasticsearchException ex)
-        {
-            throw new CoalescePersistorException(ex.getMessage(), ex);
-        }
-    }
-
-/*
-    private AbstractClient createSSLClient(Properties props) throws CoalescePersistorException
-    {
-        IronhideClient client;
-
-        try
-        {
             if (LOGGER.isDebugEnabled())
             {
                 LOGGER.debug("Keystore = {}", props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_FILE));
                 LOGGER.debug("Truststore = {}", props.getProperty(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE));
             }
 
-            Builder clientBuild = IronhideClient.builder().setClusterName(props.getProperty(ElasticSearchSettings.PARAM_CLUSTER_NAME)).clientSSLSettings(
-                    props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_FILE),
-                    props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD),
-                    props.getProperty(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE),
-                    props.getProperty(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));
-
-            String hosts = props.getProperty(ElasticSearchSettings.PARAM_HOSTS);
-
             try
             {
-                Stream.of(hosts.split(",")).map(host -> {
-                    HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
 
-                    try
-                    {
-                        String chost = hostAndPort.getHost();
-                        InetAddress addr = InetAddress.getByName(chost);
-                        return new InetSocketTransportAddress(addr, hostAndPort.getPort());
-                    }
-                    catch (UnknownHostException ex)
-                    {
-                        throw new RuntimeException(ex);
-                    }
+                KeyStore truststore = KeyStore.getInstance("jks");
+                KeyStore keyStore = KeyStore.getInstance("jks");
+                String keyStoreStr = props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_FILE);
+                String trustStoreStr = props.getProperty(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE);
 
-                }).forEach(clientBuild::addTransportAddress);
+                try (InputStream is = Files.newInputStream(Paths.get(keyStoreStr)))
+                {
+                    keyStore.load(is, props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD).toCharArray());
+                }
+                try (InputStream is = Files.newInputStream(Paths.get(trustStoreStr)))
+                {
+                    truststore.load(is, props.getProperty(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD).toCharArray());
+                }
+
+                SSLContextBuilder sslBuilder = SSLContexts.custom()
+                        .loadTrustMaterial(truststore, null).loadKeyMaterial(keyStore, props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD).toCharArray());
+                sslContext = sslBuilder.build();
+
             }
-            catch (RuntimeException e)
-            {
+            catch(Exception e){
+
                 throw new CoalescePersistorException(e);
+
             }
-
-            client = clientBuild.build();
-
-            //			        .addTransportAddress(new InetSocketTransportAddress("bdpnode3", 9300))
-            //			        .addTransportAddress(new InetSocketTransportAddress("bdpnode4", 9300));
-            //			        .addTransportAddress(new InetSocketTransportAddress("bdpnode5", 9300));
 
         }
-        catch (ElasticsearchException | FileNotFoundException ex)
+
+        return sslContext;
+
+    }
+
+    private RestHighLevelClient createSSLClient(Properties props) throws CoalescePersistorException
+    {
+        RestHighLevelClient client;
+
+        try
+        {
+
+            List<HttpHost> hostList = new ArrayList<>();
+
+            String hosts = props.getProperty(ElasticSearchSettings.PARAM_HOSTS);
+            Stream.of(hosts.split(",")).map(host -> {
+                HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9200);
+
+                try
+                {
+                    return new HttpHost(InetAddress.getByName(hostAndPort.getHost()),
+                            hostAndPort.getPort());
+                }
+                catch (UnknownHostException e)
+                {
+                    LOGGER.warn(e.getMessage(), e);
+                    return null;
+                }
+            }).forEach(hostList::add);
+
+            RestClientBuilder clientBuilder = RestClient.builder(hostList.toArray(new HttpHost[hostList.size()]));
+
+            SSLContext context = getSslContext(props);
+
+            clientBuilder.setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback()
+            {
+                @Override
+                public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpAsyncClientBuilder)
+                {
+                    return httpAsyncClientBuilder.setSSLContext(context);
+                }
+            });
+
+
+            client =  new RestHighLevelClient(clientBuilder);
+
+        }
+        catch (ElasticsearchException ex)
         {
             throw new CoalescePersistorException(ex);
 
@@ -194,5 +213,5 @@ public class ElasticSearchDataConnector implements AutoCloseable {
 
         return client;
     }
-*/
+
 }

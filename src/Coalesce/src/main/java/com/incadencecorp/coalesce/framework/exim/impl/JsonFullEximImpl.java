@@ -25,7 +25,7 @@ import com.incadencecorp.coalesce.api.CoalesceExim;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;

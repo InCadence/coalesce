@@ -182,6 +182,11 @@
             <artifactId>commons-text</artifactId>
             <version>1.8</version>
         </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
 
         <!-- Required for the JSON annotations -->
         <dependency>
