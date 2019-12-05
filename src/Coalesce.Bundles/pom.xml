@@ -34,7 +34,7 @@
     <modules>
         <module>bundle-geotools</module>
         <module>bundle-geomesa</module>
-        <module>bundle-ironhide</module>
+        <module>bundle-elasticgeo</module>
         <module>bundle-hdfs-client</module>
         <module>bundle-cosmos</module>
         <module>bundle-mongo</module>

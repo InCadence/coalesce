@@ -289,7 +289,6 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
         Map<String, String> props = new HashMap<>();
         props.put(ElasticDataStoreFactory.HOSTNAME.key, params.get(ElasticSearchSettings.PARAM_HTTP_HOST));
         props.put(ElasticDataStoreFactory.HOSTPORT.key, params.get(ElasticSearchSettings.PARAM_HTTP_PORT));
-        //props.put(ElasticDataStoreFactory.SSL_ENABLED.key, params.get(ElasticSearchSettings.PARAM_SSL_ENABLED));
         props.put(ElasticDataStoreFactory.SSL_REJECT_UNAUTHORIZED.key,
                   params.get(ElasticSearchSettings.PARAM_SSL_REJECT_UNAUTHORIZED));
         props.put(ElasticDataStoreFactory.SOURCE_FILTERING_ENABLED.key, Boolean.TRUE.toString());
@@ -302,6 +301,8 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
             System.setProperty("javax.net.ssl.trustStore", params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_FILE));
             System.setProperty("javax.net.ssl.trustStorePassword",
                                params.get(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD));
+
+            props.put(ElasticDataStoreFactory.HOSTNAME.key, "https://"+params.get(ElasticSearchSettings.PARAM_HTTP_HOST));
         }
 
         // TODO Add support for JOINS.

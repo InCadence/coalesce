@@ -20,10 +20,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.incadencecorp.coalesce.bundles</groupId>
-    <artifactId>bundle-ironhide</artifactId>
+    <artifactId>bundle-elasticgeo</artifactId>
     <packaging>bundle</packaging>
-    <name>Coalesce IronHide OSGi Bundle</name>
-    <description>This OSGi bundle simply wraps the IronHide artifacts.</description>
+    <name>Coalesce Elasticgeo OSGi Bundle</name>
+    <description>This OSGi bundle simply wraps the ElasticGeo artifacts.</description>
 
     <parent>
         <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
@@ -64,13 +64,7 @@
     </build>
 
     <dependencies>
-<!--
-        <dependency>
-            <groupId>ironhide</groupId>
-            <artifactId>ironhide-client</artifactId>
-            <version>${ironhide.version}</version>
-        </dependency>
--->
+
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
@@ -79,6 +73,11 @@
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>transport</artifactId>
+            <version>${elasticsearch.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
             <version>${elasticsearch.version}</version>
         </dependency>
         <dependency>
