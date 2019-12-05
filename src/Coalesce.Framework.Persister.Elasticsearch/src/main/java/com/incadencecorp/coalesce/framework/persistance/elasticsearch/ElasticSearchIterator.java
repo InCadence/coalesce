@@ -61,6 +61,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
     public BulkRequest iterate(boolean allowRemoval, CoalesceEntity... entities) throws CoalesceException
     {
         BulkRequest result = new BulkRequest();
+        result.setRefreshPolicy(ElasticSearchSettings.getIndexRefreshPolicy());
 
         for (CoalesceEntity entity : entities)
         {
