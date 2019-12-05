@@ -3,6 +3,7 @@ package com.incadencecorp.coalesce.framework.persistance;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchSettings;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.support.AbstractClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class ElasticSearchDataConnectorIT {
         Properties props = new Properties();
         props.putAll(ElasticSearchSettings.getParameters());
 
-        AbstractClient client = connector.getDBConnector(props);
+        RestHighLevelClient client = connector.getDBConnector(props);
         connector.close();
         client.close();
     }
@@ -62,7 +63,7 @@ public class ElasticSearchDataConnectorIT {
     @Test
     public void testIronhideConnection() throws Exception
     {
-        AbstractClient client;
+        RestHighLevelClient client;
         ElasticSearchDataConnector connector = new ElasticSearchDataConnector();
         FilePropertyConnector fileConnector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
         fileConnector.setReadOnly(true);

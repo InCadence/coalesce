@@ -52,13 +52,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Provided by bundle-ironhide -->
-        <dependency>
-            <groupId>ironhide</groupId>
-            <artifactId>ironhide-client</artifactId>
-            <version>${ironhide.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!-- Provided by bundle-elasticgeo -->
         <dependency>
             <groupId>mil.nga.giat</groupId>
             <artifactId>gt-elasticsearch</artifactId>
