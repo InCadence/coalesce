@@ -478,6 +478,25 @@ public final class JodaDateTimeHelper {
         return new Date(nowInUtc().getMillis());
     }
 
+    public static DateTime minus(DateTime start, int value, TimeUnit unit)
+    {
+        switch (unit)
+        {
+        case MILLISECONDS:
+            return start.minusMillis(value);
+        case SECONDS:
+            return start.minusSeconds(value);
+        case MINUTES:
+            return start.minusMinutes(value);
+        case HOURS:
+            return start.minusHours(value);
+        case DAYS:
+            return start.minusDays(value);
+        default:
+            throw new IllegalArgumentException("TimeUnit " + unit + " Not Supported");
+        }
+    }
+
     public static DateTime plus(DateTime start, int value, TimeUnit unit)
     {
         switch (unit)
