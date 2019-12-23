@@ -20,8 +20,8 @@ package com.incadencecorp.coalesce.framework.enumerationprovider.impl;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This implementation allows tying a Enumeration field to a java enumeration by
@@ -29,7 +29,6 @@ import java.util.List;
  * classpath for it to work.
  *
  * @author n78554
- *
  */
 public class JavaEnumerationProviderImpl extends AbstractEnumerationProvider {
 
@@ -47,7 +46,26 @@ public class JavaEnumerationProviderImpl extends AbstractEnumerationProvider {
         }
     }
 
-    private List<String> getValues(Class clazz) {
+    @Override
+    public int toPosition(Principal principal, String enumeration, String value) throws IndexOutOfBoundsException
+    {
+        return super.toPosition(principal, enumeration, value.toUpperCase());
+    }
+
+    @Override
+    public boolean isValid(Principal principal, String enumeration, String value)
+    {
+        return super.isValid(principal, enumeration, value.toUpperCase());
+    }
+
+    @Override
+    protected void addEnumeration(Principal principal, String enumeration, List<String> values)
+    {
+        super.addEnumeration(principal, enumeration, values.stream().map(String::toUpperCase).collect(Collectors.toList()));
+    }
+
+    private List<String> getValues(Class clazz)
+    {
 
         List<String> values = new ArrayList<>();
 

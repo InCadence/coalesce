@@ -5,16 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.incadencecorp.coalesce.services.api.datamodel.graphson.Graph;
 import com.incadencecorp.coalesce.services.api.datamodel.graphson.Vertex;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class BlueprintControllerTest {
 
@@ -51,7 +48,9 @@ public class BlueprintControllerTest {
 
     }
 
-    @Test public void testGetXML() throws Exception {
+    @Test
+    public void testGetXML() throws Exception
+    {
         BlueprintController controller = new BlueprintController();
         controller.setDirectory(Paths.get("src", "test", "resources").toString());
 
@@ -61,7 +60,9 @@ public class BlueprintControllerTest {
 
     }
 
-      @Test public void testRemoveBean() throws Exception {
+    @Test
+    public void testRemoveBean() throws Exception
+    {
         BlueprintController controller = new BlueprintController();
         controller.setDirectory(Paths.get("src", "test", "resources").toString());
 
@@ -86,9 +87,10 @@ public class BlueprintControllerTest {
 
         controller.undo(filename);
         controller.undo(filename);
-      }
+    }
 
-    @Test public void testUndo() throws Exception
+    @Test
+    public void testUndo() throws Exception
     {
         BlueprintController controller = new BlueprintController();
         controller.setDirectory(Paths.get("src", "test", "resources").toString());

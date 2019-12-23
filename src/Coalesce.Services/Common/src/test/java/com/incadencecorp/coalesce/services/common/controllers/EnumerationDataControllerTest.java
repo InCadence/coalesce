@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.services.common.controllers;
 
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.datamodel.api.record.IEnumValuesRecord;
 import com.incadencecorp.coalesce.datamodel.impl.coalesce.entity.EnumerationCoalesceEntity;
 import com.incadencecorp.coalesce.datamodel.impl.coalesce.record.EnumValuesCoalesceRecord;
@@ -24,26 +25,23 @@ import com.incadencecorp.coalesce.datamodel.impl.pojo.record.EnumMetadataPojoRec
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
-import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt;
-import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLSettings;
 import com.incadencecorp.coalesce.search.CoalesceSearchFramework;
-import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnumerationDataControllerIT {
+public class EnumerationDataControllerTest {
+
+    private static final Path CONFIG_LOCATION = Paths.get("src", "test", "resources");
 
     @BeforeClass
     public static void initialize() throws Exception
     {
-        FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
-        connector.setReadOnly(true);
-
-        PostGreSQLSettings.setConnector(connector);
+        System.setProperty(CoalesceParameters.COALESCE_CONFIG_LOCATION_PROPERTY, CONFIG_LOCATION.toString());
 
         EnumerationCoalesceEntity entity = new EnumerationCoalesceEntity();
         entity.initialize();
@@ -68,7 +66,7 @@ public class EnumerationDataControllerIT {
             keys.add(enumeration.getKey());
         }
 
-        CoalesceEntity[] entities = persister.getEntity(keys.toArray(new String[keys.size()]));
+        CoalesceEntity[] entities = persister.getEntity(keys.toArray(new String[0]));
 
         for (CoalesceEntity entity : entities)
         {
@@ -87,7 +85,7 @@ public class EnumerationDataControllerIT {
     @Test
     public void testFilterCreation() throws Exception
     {
-        PostGreSQLPersistorExt persister = new PostGreSQLPersistorExt();
+        DerbyPersistor persister = new DerbyPersistor();
 
         CoalesceSearchFramework framework = new CoalesceSearchFramework();
         framework.setAuthoritativePersistor(persister);
