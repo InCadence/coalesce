@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
+          name="coalesce-services">
+    <feature name="${project.artifactId}">
+        <feature prerequisite="false" dependency="true">coalesce-core-feature</feature>
+        <bundle start-level="75">mvn:com.incadencecorp.coalesce.bundles/bundle-cosmos/${project.version}</bundle>
+        <bundle start-level="75">mvn:org.apache.httpcomponents/httpclient-osgi/4.5.3</bundle>
+        <bundle start-level="75">mvn:org.apache.httpcomponents/httpcore-osgi/4.4.6</bundle>
+    </feature>
+</features>

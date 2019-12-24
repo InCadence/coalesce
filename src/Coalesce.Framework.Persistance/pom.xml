@@ -24,6 +24,7 @@
         <module>soap</module>
         <module>rest</module>
         <module>sql</module>
+        <module>cosmos</module>
     </modules>
 
 </project>

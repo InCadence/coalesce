@@ -36,6 +36,7 @@
         <module>bundle-geomesa</module>
         <module>bundle-ironhide</module>
         <module>bundle-hdfs-client</module>
+        <module>bundle-cosmos</module>
     </modules>
 
 </project>
