@@ -151,6 +151,14 @@ public class CoalescePropertyFactory {
     }
 
     /**
+     * @return a filter for the specified source
+     */
+    public static Filter getVersion(String version)
+    {
+        return ff.equal(getVersion(), ff.literal(version), false);
+    }
+
+    /**
      * @return the property used for filtering on version.
      */
     public static PropertyName getDeleted()

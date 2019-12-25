@@ -101,8 +101,6 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
     /**
      * This test attempts to create a entity within the data store.
-     *
-     * @throws Exception
      */
     @Test
     public void testCreation() throws Exception
@@ -124,7 +122,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         TestEntity entity2 = new TestEntity();
         entity2.initialize();
 
-        EntityLinkHelper.linkEntities(entity, ELinkTypes.IS_PARENT_OF, entity2);
+        EntityLinkHelper.linkEntitiesBiDirectional(entity, ELinkTypes.IS_PARENT_OF, entity2);
 
         Assert.assertTrue(persister.saveEntity(true, entity, entity2));
 
@@ -139,8 +137,6 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
     /**
      * This test attempts to create and then update a entity within the data
      * store.
-     *
-     * @throws Exception
      */
     @Test
     public void testUpdates() throws Exception
@@ -184,8 +180,6 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
     /**
      * This test attempts to mark an entity as deleted as well as remove it
      * Completely.
-     *
-     * @throws Exception
      */
     @Test
     public void testDeletion() throws Exception
@@ -193,6 +187,8 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         T persister = createPersister();
 
         Assume.assumeTrue(persister.getCapabilities().contains(EPersistorCapabilities.CREATE));
+        Assume.assumeTrue(persister.getCapabilities().contains(EPersistorCapabilities.READ));
+        Assume.assumeTrue(persister.getCapabilities().contains(EPersistorCapabilities.DELETE));
 
         TestEntity entity = new TestEntity();
         entity.initialize();
@@ -218,8 +214,6 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
     /**
      * This test attempts to retrieve an invalid entity key and should fail.
-     *
-     * @throws Exception
      */
     @Test
     public void testRetrieveInvalidKey() throws Exception
@@ -234,7 +228,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         Assert.assertTrue(persister.saveEntity(false, entity));
 
-        String results[] = persister.getEntityXml(entity.getKey(),
+        String[] results = persister.getEntityXml(entity.getKey(),
                                                   UUID.randomUUID().toString(),
                                                   UUID.randomUUID().toString(),
                                                   UUID.randomUUID().toString());
@@ -245,8 +239,6 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
     /**
      * This test attempts to save a template and retrieve it.
-     *
-     * @throws Exception
      */
     @Test
     public void testTemplates() throws Exception
@@ -265,17 +257,25 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         persister.saveTemplate(template1, template2);
 
         Assert.assertEquals(template1.getKey(), persister.getEntityTemplate(template1.getKey()).getKey());
-        Assert.assertEquals(template2.getKey(), persister.getEntityTemplate(template2.getKey()).getKey());
+        Assert.assertEquals(template2.getKey(),
+                            persister.getEntityTemplate(template2.getName(),
+                                                        template2.getSource(),
+                                                        template2.getVersion()).getKey());
 
         List<ObjectMetaData> metadata = persister.getEntityTemplateMetadata();
+        int templateCount = metadata.size();
 
-        Assert.assertTrue(metadata.size() >= 2);
+        Assert.assertTrue(templateCount >= 2);
+
+        persister.deleteTemplate(template2.getKey());
+
+        metadata = persister.getEntityTemplateMetadata();
+
+        Assert.assertEquals(templateCount - 1, metadata.size());
     }
 
     /**
      * This test verifies that an exception is thrown when attempting to retrieve an invalid template with a key.
-     *
-     * @throws Exception
      */
     @Test
     public void testTemplatesInvalid() throws Exception
@@ -341,7 +341,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         record.getPolygonField().setValue(shape);
 
         // Create Line
-        Coordinate coords[] = { new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2)
+        Coordinate[] coords = { new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2)
         };
         GeometryFactory gf = new GeometryFactory();
         LineString line = gf.createLineString(coords);
@@ -358,40 +358,39 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         record.getIntegerField().setValue(42);
 
         // Check a int list field
-        int intlist[] = { 3, 4, 5, 6
-        };
+        int[] intlist = { 3, 4, 5, 6 };
         record.getIntegerListField().setValue(intlist);
 
         // Long
         record.getLongField().setValue((long) 42);
 
         // Check a long list field
-        long longlist[] = { 3, 4, 5, 6
-        };
+        long[] longlist = { 3, 4, 5, 6 };
+
         record.getLongListField().setValue(longlist);
 
         // String
         record.getStringField().setValue("Test String");
 
         // Check a string list field
-        String stringlist[] = { "A", "B", "C"
-        };
+        String[] stringlist = { "A", "B", "C" };
+
         record.getStringListField().setValue(stringlist);
 
         // Float
         record.getFloatField().setValue(3.145964f);
 
         // Check a float list field
-        float floatlist[] = { (float) 3.145964, (float) 7.87856, (float) 10000.000045566
-        };
+        float[] floatlist = { (float) 3.145964, (float) 7.87856, (float) 10000.000045566 };
+
         record.getFloatListField().setValue(floatlist);
 
         // Double
         record.getDoubleField().setValue(3.145964);
 
         // Check a Double list field
-        double doublelist[] = { 3.145964, 7.87856, 10000.000045566
-        };
+        double[] doublelist = { 3.145964, 7.87856, 10000.000045566 };
+
         record.getDoubleListField().setValue(doublelist);
 
         // Boolean
@@ -432,9 +431,9 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         String pvalue = getFieldValue(record.getPolygonField().getKey());
         String lvalue = getFieldValue(record.getLineField().getKey());
         float fvalue = Float.valueOf(getFieldValue(record.getFloatField().getKey()));
-        String flistvalue[] = (getFieldValue(record.getFloatListField().getKey())).split(",");
+        String[] flistvalue = (getFieldValue(record.getFloatListField().getKey())).split(",");
         double dvalue = Double.valueOf(getFieldValue(record.getDoubleField().getKey()));
-        String dlistvalue[] = (getFieldValue(record.getDoubleListField().getKey())).split(",");
+        String[] dlistvalue = (getFieldValue(record.getDoubleListField().getKey())).split(",");
         boolean bvalue = Boolean.valueOf(getFieldValue(record.getBooleanField().getKey()));
         String mydate = getFieldValue(record.getDateField().getKey());
         DateTime datevalue = JodaDateTimeHelper.fromXmlDateTimeUTC(mydate);
@@ -452,9 +451,9 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         String ptest = new WKTWriter(3).write(shape);
         String ltest = new WKTWriter(3).write(line);
         float ftest = record.getFloatField().getValue();
-        float flisttest[] = record.getFloatListField().getValue();
+        float[] flisttest = record.getFloatListField().getValue();
         double dtest = record.getDoubleField().getValue();
-        double dlisttest[] = record.getDoubleListField().getValue();
+        double[] dlisttest = record.getDoubleListField().getValue();
         boolean btest = record.getBooleanField().getValue();
         DateTime datetest = record.getDateField().getValue();
 
@@ -547,8 +546,8 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
     /**
      * Should be overriden by any persister that supports gettting field values.
      *
-     * @param key
-     * @return
+     * @param key of field
+     * @return the value of the field
      */
     public String getFieldValue(String key) throws CoalescePersistorException
     {

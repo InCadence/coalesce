@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.framework;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +44,8 @@ public class DefaultNormalizer implements ICoalesceNormalizer {
         /**
          * Specifies the maximum length (integer) of the normalized keys
          */
-        MAX_LENGTH("com.incadencecorp.defaultnormalizer.maxlength", "41");
+        MAX_LENGTH("com.incadencecorp.defaultnormalizer.maxlength", "41"),
+        SEPARATOR("com.incadencecorp.defaultnormalizer.separator", ".");
 
         private String name;
         private String defaultValue;
@@ -72,14 +74,14 @@ public class DefaultNormalizer implements ICoalesceNormalizer {
 
     }
 
-    private final Map<String, String> params;
+    private final Map<String, String> params = new HashMap<>();
 
     /**
      * Use default parameters.
      */
     public DefaultNormalizer()
     {
-        this(new HashMap<>());
+        this(Collections.emptyMap());
     }
 
     /**
@@ -89,12 +91,17 @@ public class DefaultNormalizer implements ICoalesceNormalizer {
      */
     public DefaultNormalizer(final Map<String, String> params)
     {
-        if (!params.containsKey(EParameters.MAX_LENGTH.getName()))
+        this.params.putAll(params);
+
+        if (!this.params.containsKey(EParameters.MAX_LENGTH.getName()))
         {
-            params.put(EParameters.MAX_LENGTH.getName(), EParameters.MAX_LENGTH.getDefaultValue());
+            this.params.put(EParameters.MAX_LENGTH.getName(), EParameters.MAX_LENGTH.getDefaultValue());
         }
 
-        this.params = params;
+        if (!this.params.containsKey(EParameters.SEPARATOR.getName()))
+        {
+            this.params.put(EParameters.SEPARATOR.getName(), EParameters.SEPARATOR.getDefaultValue());
+        }
     }
 
     /**
@@ -123,7 +130,7 @@ public class DefaultNormalizer implements ICoalesceNormalizer {
     @Override
     public String normalize(final String recordsetname, final String fieldname)
     {
-        return normalize(recordsetname) + "." + normalize(fieldname);
+        return normalize(recordsetname) + params.get(EParameters.SEPARATOR.getName()) + normalize(fieldname);
     }
 
     @Override
@@ -141,4 +148,5 @@ public class DefaultNormalizer implements ICoalesceNormalizer {
         
         return result;
     }
+
 }
