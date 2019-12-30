@@ -57,6 +57,8 @@ jobs:
       name: "Coalesce Documentation"
       install:
         # Compute Code Coverage / Find Bugs
+        - sudo keytool -importcert -v -trustcacerts -alias devforce -keystore "$JAVA_HOME/jre/lib/security/cacerts" -storepass changeit --noprompt -file src/Coalesce.Framework.Persister.Elasticsearch/devforce_DoD_Root.crt
+        - cp .travis.settings.xml $HOME/.m2/settings.xml
         - mvn install -Dfindbugs.skip=false -Djacoco.skip=false -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
       before_script:
         # Copy Classes
