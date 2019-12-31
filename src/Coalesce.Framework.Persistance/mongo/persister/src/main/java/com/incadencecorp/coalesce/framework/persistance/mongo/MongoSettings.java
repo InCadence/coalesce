@@ -22,7 +22,9 @@ import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
+import com.mongodb.ConnectionString;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,24 +39,40 @@ public class MongoSettings {
     Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private static String config_name = "cosmos-config.properties";
+    private static String config_name = "mongo-config.properties";
     private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
 
     /*--------------------------------------------------------------------------
     Property Names
     --------------------------------------------------------------------------*/
 
-    private static final String PARAM_BASE = "com.incadence.persister.cosmos.";
+    private static final String PARAM_BASE = "com.incadence.persister.mongo.";
     /**
-     * (String) Hostname
+     * (CSV) List of host
      */
     public static final String PARAM_HOST = PARAM_BASE + "host";
     /**
-     * (String) Master key for authentication
+     * (Integer) Port number to connect on.
      */
-    public static final String PARAM_KEY = PARAM_BASE + "key";
+    public static final String PARAM_PORT = PARAM_BASE + "port";
     /**
-     * (Boolean) Specifies whether or not this persister is authoritative meaning it can be used to READ entities.
+     * (String) Service account used to access the database
+     */
+    public static final String PARAM_USER = PARAM_BASE + "user";
+    /**
+     * (String) Service account's password
+     */
+    public static final String PARAM_PASS = PARAM_BASE + "pass";
+    /**
+     * (Boolean) Service account's password
+     */
+    public static final String PARAM_SSL_ENABLED = PARAM_BASE + "ssl";
+    /**
+     * (String) Replication set
+     */
+    public static final String PARAM_REPLICA_SET = PARAM_BASE + "replicaset";
+    /**
+     * (Boolean) Specifies whether or not this persistor is authoritative meaning it can be used to READ entities.
      */
     public static final String PARAM_IS_AUTHORITATIVE = PARAM_BASE + "isAuthoritative";
 
@@ -64,10 +82,17 @@ public class MongoSettings {
 
     private static final String DEFAULT_IS_AUTHORITATIVE = "true";
 
-    // The default values are credentials of the local emulator, which are not used in any production environment.
-    private static final String DEFAULT_HOST = "https://localhost:8081/";
-    private static final String DEFAULT_KEY = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
+    private static final String DEFAULT_SSL_ENABLED = "false";
 
+    private static final String DEFAULT_HOST = "localhost";
+
+    private static final int DEFAULT_PORT = 27017;
+
+    private static final String DEFAULT_USER = "root";
+
+    private static final String DEFAULT_PASS = "changeit";
+
+    private static final boolean SET_IF_NOT_FOUND = false;
 
     /*--------------------------------------------------------------------------
     Initialization
@@ -95,7 +120,7 @@ public class MongoSettings {
      * Configures the settings to use a particular connector and property name.
      *
      * @param connector to use for settings
-     * @param name of configuration file
+     * @param name      of configuration file
      */
     public static void setConnector(final IConfigurationsConnector connector, final String name)
     {
@@ -108,35 +133,122 @@ public class MongoSettings {
     --------------------------------------------------------------------------*/
 
     /**
-     * @return the host name; defaults to {@value DEFAULT_HOST} which is the emulator.
+     * @param params configuration.
+     * @return a connection string based of the parameters passed in.
      */
-    public static String getHost()
+    public static ConnectionString createConnectionString(Map<String, String> params)
     {
-        return settings.getSetting(config_name, PARAM_HOST, DEFAULT_HOST, false);
+        StringBuilder sb = new StringBuilder("mongodb://");
+
+        boolean isFirst = true;
+
+        String user = params.get(PARAM_USER);
+        String pass = params.get(PARAM_PASS);
+        String port = params.get(PARAM_PORT);
+
+        for (String host : params.get(PARAM_HOST).split("[,]"))
+        {
+            if (isFirst)
+            {
+                isFirst = false;
+            }
+            else
+            {
+                sb.append(",");
+            }
+
+            sb.append(user).append(":").append(pass).append("@").append(host).append(":").append(port);
+
+        }
+
+        sb.append("/?ssl=").append(params.get(PARAM_SSL_ENABLED));
+
+        if (params.containsKey(PARAM_REPLICA_SET) && !params.get(PARAM_REPLICA_SET).isEmpty())
+        {
+            sb.append("&replicaSet=").append(params.get(PARAM_REPLICA_SET));
+        }
+
+        return new ConnectionString(sb.toString());
+    }
+
+    /**
+     * @return the hosts; defaults to {@value DEFAULT_HOST}.
+     */
+    public static String[] getHosts()
+    {
+        return settings.getSetting(config_name, PARAM_HOST, DEFAULT_HOST, SET_IF_NOT_FOUND).split("[,]");
+    }
+
+    /**
+     * Sets the hosts.
+     */
+    public static void setHosts(String[] value)
+    {
+        settings.setSetting(config_name, PARAM_HOST, Arrays.toString(value));
+    }
+
+    /**
+     * @return the port; defaults to {@value DEFAULT_PORT}.
+     */
+    public static int getPort()
+    {
+        return settings.getSetting(config_name, PARAM_PORT, DEFAULT_PORT, SET_IF_NOT_FOUND);
     }
 
     /**
      * Sets the host name.
      */
-    public static void setHost(String value)
+    public static void setPort(int value)
     {
-        settings.setSetting(config_name, PARAM_HOST, value);
+        settings.setSetting(config_name, PARAM_PORT, value);
     }
 
     /**
-     * @return the master key; defaults to {@value DEFAULT_KEY} which is the emulator.
+     * @return the host name; defaults to {@value DEFAULT_USER}.
      */
-    public static String getMasterKey()
+    public static String getUser()
     {
-        return settings.getSetting(config_name, PARAM_KEY, DEFAULT_KEY, false);
+        return settings.getSetting(config_name, PARAM_USER, DEFAULT_USER, SET_IF_NOT_FOUND);
+    }
+
+    /**
+     * Sets the host name.
+     */
+    public static void setUser(String value)
+    {
+        settings.setSetting(config_name, PARAM_USER, value);
+    }
+
+    /**
+     * @return the master key; defaults to {@value DEFAULT_PASS}.
+     */
+    public static String getPass()
+    {
+        return settings.getSetting(config_name, PARAM_PASS, DEFAULT_PASS, SET_IF_NOT_FOUND);
     }
 
     /**
      * Sets the master key.
      */
-    public static void setMasterKey(String value)
+    public static void setPass(String value)
     {
-        settings.setSetting(config_name, PARAM_KEY, value);
+        settings.setSetting(config_name, PARAM_PASS, value);
+    }
+
+    /**
+     * @return the replica set.
+     */
+    public static String getReplicaSet()
+    {
+        return settings.getSetting(config_name, PARAM_REPLICA_SET, "", SET_IF_NOT_FOUND);
+    }
+
+    /**
+     * Sets the replica set.
+     */
+    public static void setReplicaSet(String value)
+    {
+        settings.setSetting(config_name, PARAM_REPLICA_SET, value);
     }
 
     /**
@@ -144,7 +256,26 @@ public class MongoSettings {
      */
     public static boolean isAuthoritative()
     {
-        return Boolean.parseBoolean(settings.getSetting(config_name, PARAM_IS_AUTHORITATIVE, DEFAULT_IS_AUTHORITATIVE, false));
+        return Boolean.parseBoolean(settings.getSetting(config_name,
+                                                        PARAM_IS_AUTHORITATIVE,
+                                                        DEFAULT_IS_AUTHORITATIVE,
+                                                        false));
+    }
+
+    /**
+     * Sets whether or not SSL is enabled
+     */
+    public static void setSSLEnabled(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_SSL_ENABLED, value);
+    }
+
+    /**
+     * @return whether or not SSL is enabled
+     */
+    public static boolean isSSLEnabled()
+    {
+        return Boolean.parseBoolean(settings.getSetting(config_name, PARAM_SSL_ENABLED, DEFAULT_SSL_ENABLED, false));
     }
 
     /**
@@ -155,13 +286,18 @@ public class MongoSettings {
         settings.setSetting(config_name, PARAM_IS_AUTHORITATIVE, value);
     }
 
-        public static Map<String, String> getParameters()
+    public static Map<String, String> getParameters()
     {
         Map<String, String> params = new HashMap<>();
 
         params.put(PARAM_IS_AUTHORITATIVE, Boolean.toString(isAuthoritative()));
-        params.put(PARAM_HOST, getHost());
-        params.put(PARAM_KEY, getMasterKey());
+        params.put(PARAM_HOST, settings.getSetting(config_name, PARAM_HOST, DEFAULT_HOST, SET_IF_NOT_FOUND));
+        params.put(PARAM_PORT,
+                   settings.getSetting(config_name, PARAM_PORT, Integer.toString(DEFAULT_PORT), SET_IF_NOT_FOUND));
+        params.put(PARAM_USER, getUser());
+        params.put(PARAM_PASS, getPass());
+        params.put(PARAM_SSL_ENABLED, Boolean.toString(isSSLEnabled()));
+        params.put(PARAM_REPLICA_SET, getReplicaSet());
 
         return params;
     }

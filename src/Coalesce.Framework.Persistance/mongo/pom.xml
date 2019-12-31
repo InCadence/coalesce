@@ -3,9 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.incadencecorp.coalesce.framework.persistance.mongo</groupId>
     <artifactId>persister-mongo-parent</artifactId>
     <packaging>pom</packaging>
+    <name>Coalesce Mongo Parent</name>
 
     <parent>
         <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
@@ -16,6 +16,7 @@
 
     <properties>
         <mongo.version>3.12.0</mongo.version>
+        <mongo.stream.version>1.13.0</mongo.stream.version>
     </properties>
 
     <modules>

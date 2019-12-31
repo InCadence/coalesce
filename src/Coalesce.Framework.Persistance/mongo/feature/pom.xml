@@ -25,7 +25,7 @@
     <description>${project.name}</description>
 
     <parent>
-        <groupId>com.incadencecorp.coalesce.framework.persistance.mongo</groupId>
+        <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
         <artifactId>persister-mongo-parent</artifactId>
         <version>0.0.41-SNAPSHOT</version>
         <relativePath>..</relativePath>
@@ -44,20 +44,14 @@
 
         <dependency>
             <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-            <artifactId>persister-cosmos</artifactId>
+            <artifactId>persister-mongo</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.fasterxml.uuid</groupId>
-            <artifactId>java-uuid-generator</artifactId>
-            <version>3.1.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver-sync</artifactId>
-            <version>${mongo.version}</version>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-mongodb</artifactId>
+            <version>${geotools.version}</version>
             <scope>provided</scope>
         </dependency>
 

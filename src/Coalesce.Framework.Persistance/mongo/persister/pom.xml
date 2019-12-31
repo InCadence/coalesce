@@ -25,7 +25,7 @@
     <description>${project.name}</description>
 
     <parent>
-        <groupId>com.incadencecorp.coalesce.framework.persistance.mongo</groupId>
+        <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
         <artifactId>persister-mongo-parent</artifactId>
         <version>0.0.41-SNAPSHOT</version>
         <relativePath>..</relativePath>
@@ -64,20 +64,29 @@
 
         <dependency>
             <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-core</artifactId>
+            <version>${mongo.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-sync</artifactId>
             <version>${mongo.version}</version>
         </dependency>
+        <!--
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-reactivestreams</artifactId>
+            <version>${mongo.stream.version}</version>
+        </dependency>
+        -->
 
         <dependency>
             <groupId>org.geotools</groupId>
-            <artifactId>gt-jdbc</artifactId>
+            <artifactId>gt-mongodb</artifactId>
             <version>${geotools.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.geotools.jdbc</groupId>
-            <artifactId>gt-jdbc-postgis</artifactId>
-            <version>${geotools.version}</version>
-        </dependency>
+
+
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-geojson</artifactId>

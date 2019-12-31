@@ -23,6 +23,7 @@ import com.incadencecorp.coalesce.framework.persistance.mongo.MongoSearchPersist
 import com.incadencecorp.coalesce.framework.persistance.mongo.MongoSettings;
 import com.incadencecorp.coalesce.search.AbstractSearchTest;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 
 import java.nio.file.Paths;
@@ -43,6 +44,24 @@ public class MongoSearchPersistorIT extends AbstractSearchTest<MongoSearchPersis
 
         MongoSettings.setConnector(connector);
         CoalesceSettings.setConnector(connector);
+    }
+
+    @Override
+    public void test20KRecords() throws Exception
+    {
+        Assume.assumeTrue(false);
+    }
+
+    @Override
+    public void testUpdateRecordKey() throws Exception
+    {
+        Assume.assumeTrue("Handle phantom records", false);
+    }
+
+    @Override
+    public void testReverseOrder() throws Exception
+    {
+        Assume.assumeTrue("Not Supported", false);
     }
 
     @Override
