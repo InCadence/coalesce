@@ -67,6 +67,7 @@ jobs:
       script:
         # Create Site and Deploy
         - mvn site -DskipDocker -Dfindbugs.skip=false -Djacoco.skip=false -Dcheckstyle.skip=false  -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        - mvn site -f src/pyCoalesce -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
         - cp -r src/pyCoalesce/target/site target/site/pycoalesce
         - mvn deploy -f src/Coalesce.Dist/coalesce-javadocs  -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
