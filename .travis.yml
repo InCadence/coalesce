@@ -11,7 +11,7 @@ stages:
   - name: install
     if: branch != release
   - name: test
-    if: branch != release AND !(tag IS present)
+    if: branch != release AND (tag IS present)
   - name: deploy
     if: tag IS present OR type = cron
   - name: deploy-feature
