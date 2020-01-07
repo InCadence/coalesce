@@ -24,7 +24,6 @@ import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceCoordinateField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceCoordinateListField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceDateTimeField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLineStringField;
@@ -1344,6 +1343,116 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         filter = FF.during(CoalescePropertyFactory.getFieldProperty(record.getDateField()),
                            FF.literal(new DefaultPeriod(start, end)));
+
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), filter));
+
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            Assert.assertEquals(0, results.size());
+        }
+
+        entity.markAsDeleted();
+
+        persistor.saveEntity(true, entity);
+    }
+
+    @Test
+    public void testBefore() throws Exception
+    {
+        T persistor = createPersister();
+
+        Assume.assumeTrue(persistor.getCapabilities().contains(EPersistorCapabilities.TEMPORAL_SEARCH));
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
+
+        // Create Record
+        record.getDateField().setValue(JodaDateTimeHelper.nowInUtc());
+        record.getIntegerField().setValue(562505648);
+        record.getStringField().setValue("EUROPE");
+
+        // Persist
+        Assert.assertTrue(persistor.saveEntity(false, entity));
+
+        Filter filter = FF.before(CoalescePropertyFactory.getFieldProperty(record.getDateField()),
+                                 FF.literal(record.getDateField().getValue().plusDays(1).toDate()));
+
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()));
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
+
+        // Create Query
+        Query query = new Query();
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), filter));
+        query.setProperties(props);
+
+        // Verify entity is returned
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+            Assert.assertEquals((int) record.getIntegerField().getValue(), results.getInt(2));
+            Assert.assertEquals(record.getStringField().getValue(), results.getString(3));
+        }
+
+        filter = FF.before(CoalescePropertyFactory.getFieldProperty(record.getDateField()),
+                          FF.literal(record.getDateField().getValue().minusDays(1).toDate()));
+
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), filter));
+
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            Assert.assertEquals(0, results.size());
+        }
+
+        entity.markAsDeleted();
+
+        persistor.saveEntity(true, entity);
+    }
+
+    @Test
+    public void testAfter() throws Exception
+    {
+        T persistor = createPersister();
+
+        Assume.assumeTrue(persistor.getCapabilities().contains(EPersistorCapabilities.TEMPORAL_SEARCH));
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
+
+        // Create Record
+        record.getDateField().setValue(JodaDateTimeHelper.nowInUtc());
+        record.getIntegerField().setValue(562505648);
+        record.getStringField().setValue("EUROPE");
+
+        // Persist
+        Assert.assertTrue(persistor.saveEntity(false, entity));
+
+        Filter filter = FF.after(CoalescePropertyFactory.getFieldProperty(record.getDateField()),
+                                 FF.literal(record.getDateField().getValue().minusDays(1).toDate()));
+
+        List<PropertyName> props = new ArrayList<>();
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()));
+        props.add(CoalescePropertyFactory.getFieldProperty(record.getStringField()));
+
+        // Create Query
+        Query query = new Query();
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), filter));
+        query.setProperties(props);
+
+        // Verify entity is returned
+        try (CachedRowSet results = persistor.search(query).getResults())
+        {
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+            Assert.assertEquals((int) record.getIntegerField().getValue(), results.getInt(2));
+            Assert.assertEquals(record.getStringField().getValue(), results.getString(3));
+        }
+
+        filter = FF.after(CoalescePropertyFactory.getFieldProperty(record.getDateField()),
+                          FF.literal(record.getDateField().getValue().plusDays(1).toDate()));
 
         query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), filter));
 

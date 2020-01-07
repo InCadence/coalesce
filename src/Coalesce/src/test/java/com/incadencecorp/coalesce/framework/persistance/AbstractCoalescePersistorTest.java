@@ -126,12 +126,16 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         Assert.assertTrue(persister.saveEntity(true, entity, entity2));
 
+        if (persister.getCapabilities().contains(EPersistorCapabilities.READ))
+        {
+            Assert.assertEquals(1, persister.getEntityXml(entity.getKey()).length);
+        }
+
         // Cleanup
         entity.markAsDeleted();
         entity2.markAsDeleted();
 
         persister.saveEntity(true, entity, entity2);
-
     }
 
     /**
