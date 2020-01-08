@@ -1,5 +1,5 @@
 import React from 'react';
-import TextField from 'material-ui/TextField';
+import TextField from "@material-ui/core/TextField";
 import 'ol/ol.css';
 import { DialogMap } from '../../map/dialogmap.js'
 import MapMaker from '../../map/mapmaker.js';
@@ -613,7 +613,7 @@ export default class Shape extends React.Component {
               <TextField
                 id={this.field.key}
                 fullWidth={true}
-                floatingLabelText={label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)")}
+                label={this.props.showLabels ? label + " - " + this.props.shape + this.shapeLabeler(" (x1 y1 z1, x2 y2 z2, ...)") : null}
                 underlineShow={this.props.showLabels}
                 style={style.root}
                 value={this.field[this.attr]}
@@ -636,7 +636,7 @@ export default class Shape extends React.Component {
                       <TextField
                         id={'radius' + this.field.key}
                         fullWidth={true}
-                        floatingLabelText={"Circle - RADIUS"}
+                        label={"Circle - RADIUS"}
                         underlineShow={this.props.showLabels}
                         style={style.root}
                         value={this.state.radius}
