@@ -9,6 +9,7 @@ import uuid from 'uuid';
 
 import FilterCreator from './filtercreator.js'
 import {SearchResults} from './results.js'
+import { FeedResults } from './FeedResults'
 
 const karafRootAddr = getRootKarafUrl();
 const DEFAULT = 'CoalesceEntity';
@@ -125,7 +126,11 @@ export class App extends React.Component {
   }
 
   handleCapabilityUpdate = (value) => {
-    this.setState(() => {return {capabilities: value}});
+    const { query } = this.state;
+
+    query.capabilities = value;
+
+    this.setState(() => {return {query: query}});
   }
 
   handlePageUpdate = (page) => {
@@ -254,6 +259,7 @@ export class App extends React.Component {
                 recordsets={cache[key].recordsets}
                 sortBy={query.sortBy}
                 selectedColumns={query.propertyNames}
+                capabilities={query.capabilities}
                 data={query.group}
                 handleError={this.handleError}
                 handleUpdate={this.handleUpdate}
@@ -266,13 +272,22 @@ export class App extends React.Component {
                 pageSize={query.pageSize}
               />
             }
-            { results != null &&
+            { results && query.capabilities.includes("HIGHLIGHT") &&
+              <FeedResults
+                data={results}
+                properties={query.propertyNames}
+                handleError={this.handleError}
+                handleSpinner={this.handleSpinner}
+                onClick={this.handleOnClick}
+              />
+            }
+            {results && !query.capabilities.includes("HIGHLIGHT") &&
               <SearchResults
                 data={results}
                 properties={query.propertyNames}
                 handleError={this.handleError}
                 handleSpinner={this.handleSpinner}
-                url={this.props.karafRootAddr}
+                onClick={this.handleOnClick}
               />
             }
             { this.state.error &&
@@ -330,6 +345,10 @@ export class App extends React.Component {
           </div>
         </div>
     )
+  }
+
+  handleOnClick = (hit) => {
+    window.open(`${this.props.karafRootAddr}/entityeditor/?entitykey=${hit.entityKey}`);
   }
 
   handleLoadQuery = (key) => {

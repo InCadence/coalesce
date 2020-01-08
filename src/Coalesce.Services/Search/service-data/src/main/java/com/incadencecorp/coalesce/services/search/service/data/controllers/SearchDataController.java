@@ -90,10 +90,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Converts a list of options into an OGC filter and passes it along to a search
@@ -357,6 +359,7 @@ public class SearchDataController extends SearchQueryController {
         properties.add(getPropertyName(SearchQueryCoalesceRecord.ESearchQueryFields.CQL).getPropertyName());
         properties.add(getPropertyName(SearchQueryCoalesceRecord.ESearchQueryFields.INDEXTYPE).getPropertyName());
         properties.add(getPropertyName(SearchQueryCoalesceRecord.ESearchQueryFields.PAGESIZE).getPropertyName());
+        properties.add(getPropertyName(SearchQueryCoalesceRecord.ESearchQueryFields.CAPABILITIES).getPropertyName());
         properties.add(getPropertyName(SearchQueryCoalesceRecord.ESearchQueryFields.PROPERTYNAMES).getPropertyName());
         properties.add(getPropertyName(SearchQueryCoalesceRecord.ESearchQueryFields.CRITERIA).getPropertyName());
         properties.add(CoalescePropertyFactory.getEntityTitle().getPropertyName());
@@ -398,6 +401,14 @@ public class SearchDataController extends SearchQueryController {
                         record.setCql(rowset.getString(idx++));
                         record.setType(rowset.getString(idx++));
                         record.setPageSize(rowset.getInt(idx++));
+
+                        List<String> capabilities = Arrays.asList(rowset.getString(idx++).split("[,]"));
+
+                        EnumSet<EPersistorCapabilities> set = capabilities.stream().map(EPersistorCapabilities::valueOf).collect(
+                                Collectors.toCollection(() -> EnumSet.noneOf(
+                                EPersistorCapabilities.class)));
+
+                        record.setCapabilities(set);
 
                         String value = rowset.getString(idx++);
 

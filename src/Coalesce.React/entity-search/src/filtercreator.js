@@ -47,7 +47,6 @@ class FilterCreator extends React.Component {
     if (this.props.data !== nextProps.data) {
       nextState.data = nextProps.data;
       nextState.properties = createPropertyList(nextProps.recordsets);
-      nextState.selectedCapabilities = [];
     }
 
     return true;
@@ -90,12 +89,13 @@ class FilterCreator extends React.Component {
                 />
               </Col>
               <Col xs={2}>
+
                 <FieldInput
                   field={{
                     key: "capabilities",
                     name: "Capabilities",
                     label: "Capabilities",
-                    value: this.state.selectedCapabilities,
+                    value: this.props.capabilities,
                   }}
                   dataType="ENUMERATION_LIST_TYPE"
                   attr="value"
@@ -111,7 +111,6 @@ class FilterCreator extends React.Component {
                   ]}
                   showLabels={true}
                   onChange={value => {
-                    this.setState({selectedCapabilities: value});
                     this.props.handleCapabilityUpdate(value);
                   }}
                 />

@@ -16,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 
 const MAX_LENGTH = undefined;
+const COLUMN_BUTTON_WIDTH = 30;
 
 export class SearchResults extends React.Component {
 
@@ -98,7 +99,7 @@ export class SearchResults extends React.Component {
     const { tabledata, columns } = this.state;
 
     // Derive Headers from columns
-    var headers = columns.filter(column => column.show !== false && column.width !== 34).map((item) => item.accessor);
+    var headers = columns.filter(column => column.show !== false && column.width !== COLUMN_BUTTON_WIDTH).map((item) => item.accessor);
 
     // Map tabledata into CSV rows
     var data = tabledata.filter(item => item.checked).map((item) => {
@@ -194,7 +195,7 @@ export class SearchResults extends React.Component {
         accessor: 'select',
         resizable: false,
         sortable: false,
-        width: 30,
+        width: COLUMN_BUTTON_WIDTH,
         Cell: (cell) => (
           <FieldInput field={cell.original} dataType="BOOLEAN_TYPE" attr="checked" showLabels={false} onChange={this.handleCheck} />
         )
@@ -222,14 +223,14 @@ export class SearchResults extends React.Component {
       accessor: 'button',
       resizable: false,
       sortable: false,
-      width: 30,
+      width: COLUMN_BUTTON_WIDTH,
       Cell: (cell) => (
         <IconButton
           id={cell.row.key}
           icon='/images/svg/view.svg'
           title="View Entity"
           size="20px"
-          onClick={() => window.open(`${this.props.url}/entityeditor/?entitykey=${cell.row.entityKey}`)}
+          onClick={() => this.props.onClick(cell.row)}
           square
         />
       )
@@ -249,7 +250,7 @@ export class SearchResults extends React.Component {
 
       // Add additional column data
       tabledata.forEach(function (hit) {
-        for (var ii=2; ii<columns.length; ii++) {
+        for (var ii=2; ii<columns.length - 1; ii++) {
             hit[columns[ii].accessor] = hit.values[ii-2];
         }
         hit.checked = false;
@@ -263,7 +264,6 @@ export class SearchResults extends React.Component {
 }
 
 SearchResults.defaultProps = {
-  url: 'http://' + window.location.hostname + ':' + window.location.port,
   data: [],
   properties: [],
   editMode: true
