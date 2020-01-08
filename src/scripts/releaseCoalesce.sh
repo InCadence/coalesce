@@ -19,7 +19,14 @@ while true; do
         y | yes)
 		git fetch
 
-                read -p "New Version: " version
+		cleaned=`echo ${version} | sed -e 's/[^0-9][^0-9]*$//'`
+
+  	    build=`echo ${cleaned} | sed -e 's/[0-9]*\.//g'`
+		build=`expr ${build} + 1`
+
+		version=`echo ${cleaned} | sed -e "s/[0-9][0-9]*\([^0-9]*\)$/${build}/"`
+
+		read -p "New Version (${version}): " version
 
                 case $version in
                     *-SNAPSHOT) isSnapshot=true;;

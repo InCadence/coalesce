@@ -24,8 +24,8 @@
         <module>enumerations</module>
         <module>manager</module>
         <module>home</module>
-        <module>feature</module>
         <module>template-editor</module>
+        <module>feature</module>
     </modules>
 
     <build>
