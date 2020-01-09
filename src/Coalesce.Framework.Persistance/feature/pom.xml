@@ -96,6 +96,13 @@
             <type>xml</type>
             <classifier>features</classifier>
         </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+            <artifactId>persister-mongo-feature</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
     </dependencies>
 
 </project>

@@ -25,6 +25,7 @@
         <module>rest</module>
         <module>sql</module>
         <module>cosmos</module>
+        <module>mongo</module>
     </modules>
 
 </project>
