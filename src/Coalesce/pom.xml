@@ -177,6 +177,11 @@
             <artifactId>coalesce-classification</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.8</version>
+        </dependency>
 
         <!-- Required for the JSON annotations -->
         <dependency>
