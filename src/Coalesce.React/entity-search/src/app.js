@@ -272,7 +272,7 @@ export class App extends React.Component {
                 pageSize={query.pageSize}
               />
             }
-            { results && query.capabilities.includes("HIGHLIGHT") &&
+            { results && query.capabilities && query.capabilities.includes("HIGHLIGHT") &&
               <FeedResults
                 data={results}
                 properties={query.propertyNames}
@@ -281,7 +281,7 @@ export class App extends React.Component {
                 onClick={this.handleOnClick}
               />
             }
-            {results && !query.capabilities.includes("HIGHLIGHT") &&
+            {results && (!query.capabilities || !query.capabilities.includes("HIGHLIGHT")) &&
               <SearchResults
                 data={results}
                 properties={query.propertyNames}
