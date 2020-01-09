@@ -1,6 +1,6 @@
 {
   "name": "coalesce-components",
-  "version": "0.0.41-SNAPSHOT",
+  "version": "0.0.42",
   "author": "InCadence",
   "description": "Common components used in Coalesce applications",
   "license": "Apache-2.0",

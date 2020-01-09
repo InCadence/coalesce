@@ -2,7 +2,7 @@
   "name": "enumerations",
   "title": "Enumerations",
   "icon": "/images/svg/enum.svg",
-  "version": "0.0.41-SNAPSHOT",
+  "version": "0.0.42",
   "author": "InCadence",
   "description": "This UI is for creating, viewing, and editing enumerations.",
   "main": "index.js",
