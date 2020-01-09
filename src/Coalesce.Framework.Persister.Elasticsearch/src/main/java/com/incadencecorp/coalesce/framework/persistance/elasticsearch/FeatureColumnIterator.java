@@ -1,8 +1,8 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.PropertyName;

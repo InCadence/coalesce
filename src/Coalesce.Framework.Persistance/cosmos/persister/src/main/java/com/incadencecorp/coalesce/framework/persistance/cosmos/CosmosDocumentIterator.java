@@ -20,7 +20,7 @@ package com.incadencecorp.coalesce.framework.persistance.cosmos;
 
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.microsoft.azure.documentdb.Document;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.geotools.geojson.geom.GeometryJSON;
 import org.json.JSONArray;
