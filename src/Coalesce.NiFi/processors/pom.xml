@@ -23,7 +23,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.nifi</groupId>
         <artifactId>coalesce-nifi-parent</artifactId>
-        <version>0.0.41-SNAPSHOT</version>
+        <version>0.0.42</version>
     </parent>
 
     <dependencyManagement>
@@ -49,6 +49,7 @@
             <plugin>
                 <groupId>org.apache.nifi</groupId>
                 <artifactId>nifi-nar-maven-plugin</artifactId>
+                <version>${nifi.plugin.version}</version>
                 <extensions>true</extensions>
             </plugin>
         </plugins>

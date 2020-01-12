@@ -23,7 +23,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.nifi</groupId>
         <artifactId>json-csv-extractor</artifactId>
-        <version>0.0.41-SNAPSHOT</version>
+        <version>0.0.42</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -58,6 +58,7 @@
         <dependency>
             <groupId>org.apache.nifi</groupId>
             <artifactId>nifi-api</artifactId>
+            <version>${nifi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.nifi</groupId>

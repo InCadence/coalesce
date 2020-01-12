@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce</groupId>
         <artifactId>coalesce-parent</artifactId>
-        <version>0.0.41-SNAPSHOT</version>
+        <version>0.0.42</version>
         <relativePath>../../</relativePath>
     </parent>
 
@@ -191,46 +191,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <repositories>
-        <repository>
-            <id>incadence</id>
-            <name>InCadence Repo</name>
-            <url>http://incadencenexus.incadencecorp.com:8081/nexus/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>boundlessgeo</id>
-            <name>Boundlessgeo Repo</name>
-            <url>https://repo.boundlessgeo.com/main/</url>
-        </repository>
-        <repository>
-            <id>osgeo</id>
-            <name>Open Source Geospatial Foundation Repository</name>
-            <url>http://download.osgeo.org/webdav/geotools/</url>
-        </repository>
-        <repository>
-            <id>neo4j-release-repository</id>
-            <name>Neo4j Maven 2 release repository</name>
-            <url>http://m2.neo4j.org/content/repositories/releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>devforce</id>
-            <name>DevForce repository</name>
-            <url>https://nexus.devforce.disa.mil/repository/releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <modules>
         <module>../Coalesce.Pom</module>

@@ -26,19 +26,14 @@ while true; do
 
 		version=`echo ${cleaned} | sed -e "s/[0-9][0-9]*\([^0-9]*\)$/${build}/"`
 
-		read -p "New Version (${version}): " version
-
-                case $version in
-                    *-SNAPSHOT) isSnapshot=true;;
-                    * ) isSnapshot=false;;
-                esac
+        read -p "New Version (${version}): " version
 
 		echo "Maven Setting version to ${version}..."
 
-                case $version in
-	            *-SNAPSHOT) isSnapshot=true;;
-	            * ) isSnapshot=false;;
-                esac
+        case $version in
+            *-SNAPSHOT) isSnapshot=true;;
+            * ) isSnapshot=false;;
+        esac
 
 		echo "isSnapshot set to: ${isSnapshot}"
 
