@@ -1,6 +1,6 @@
 {
   "name": "template-editor",
-  "version": "0.0.42",
+  "version": "0.0.43-SNAPSHOT",
   "title": "Template editor",
   "icon": "/images/svg/template.svg",
   "private": true,
