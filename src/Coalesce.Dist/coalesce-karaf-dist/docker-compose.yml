@@ -63,7 +63,7 @@ services:
         - "elasticsearch5"
       restart: unless-stopped
     karaf:
-      image: incadencecorp/coalesce-karaf:0.0.32
+      image: incadencecorp/coalesce-karaf:0.0.42
       container_name: coalesce
       ports:
         - "8181:8181"
