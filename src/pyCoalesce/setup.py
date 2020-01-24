@@ -212,7 +212,7 @@ try:
     from version import project, author
 except ImportError:
     project = "pyCoalesce"
-    author = u"Dhruva Venkat, Scott Orr"
+    author = "Dhruva Venkat, Scott Orr"
 
 setuptools.setup(
     name = project,

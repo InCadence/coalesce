@@ -17,8 +17,8 @@ at once.
 
 from uuid import uuid4
 
-from coalesce_entity import CoalesceEntity
-from entity_utilities import parseString, to_XML_string
+from .coalesce_entity import CoalesceEntity
+from .entity_utilities import parseString, to_XML_string
 
 
 #
@@ -124,7 +124,7 @@ class CoalesceEntityTemplate(CoalesceEntity):
         for current_recordset in current_section.recordset:
 
             # Create and populate the new records.
-            for i in xrange(current_recordset.minrecords):
+            for i in range(current_recordset.minrecords):
 
                 current_recordset.create_record_from_definitions()
 

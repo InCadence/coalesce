@@ -22,7 +22,7 @@ module.
 """
 
 import sys
-from cStringIO import StringIO
+from io import StringIO
 from copy import copy
 from collections import deque
 
@@ -30,11 +30,11 @@ try:
     from lxml import etree as etree_
 except ImportError:
     from xml.etree import ElementTree as etree_
-import entity as supermod
+from . import entity as supermod
 
 
-OBJECT_TYPES = [u"field", u"record", u"fielddefinition", u"recordset",
-                u"section"]
+OBJECT_TYPES = ["field", "record", "fielddefinition", "recordset",
+                "section"]
 
 
 def parsexml_(infile, parser = None, **kwargs):
@@ -78,7 +78,7 @@ def parse(inFilename, object_class = None, silence = False):
     try:
         rootObj.build(rootNode)
     except AttributeError:
-        raise ValueError(unicode(object_class) + " is not a Coalesce object.")
+        raise ValueError(str(object_class) + " is not a Coalesce object.")
     # Enable Python to collect the space used by the DOM.
     doc = None
     if not silence:
@@ -106,7 +106,7 @@ def parseEtree(inFilename, object_class = None, silence = False):
     try:
         rootObj.build(rootNode)
     except AttributeError:
-        raise ValueError(unicode(object_class) + " is not a Coalesce object.")
+        raise ValueError(str(object_class) + " is not a Coalesce object.")
     # Enable Python to collect the space used by the DOM.
     doc = None
     mapping = {}
@@ -140,11 +140,10 @@ def parseString(inString, object_class = None, silence = False):
 
     """
 
-    if sys.version_info.major == 2:
-        StringIOHandler = StringIO
-    else:
-        from io import BytesIO
-        StringIOHandler = BytesIO
+    # The original generated code specified "BytesIO" as the handler for
+    # Python 3, but this doesn't actually work with XML, which is text.
+    StringIOHandler = StringIO
+
     parser = None
     doc = parsexml_(StringIOHandler(inString), parser)
     rootNode = doc.getroot()
@@ -160,7 +159,7 @@ def parseString(inString, object_class = None, silence = False):
     try:
         rootObj.build(rootNode)
     except AttributeError:
-        raise ValueError(unicode(object_class) + " is not a Coalesce object.")
+        raise ValueError(str(object_class) + " is not a Coalesce object.")
     # Enable Python to collect the space used by the DOM.
     doc = None
     if not silence:
@@ -187,7 +186,7 @@ def parseLiteral(inFilename, object_class = None, silence = False):
     try:
         rootObj.build(rootNode)
     except AttributeError:
-        raise ValueError(unicode(object_class) + " is not a Coalesce object.")
+        raise ValueError(str(object_class) + " is not a Coalesce object.")
     # Enable Python to collect the space used by the DOM.
     doc = None
     if not silence:
@@ -251,7 +250,7 @@ def find_child(Coalesce_object, name, match_case = False,
 
     # Check input.
 
-    if not isinstance(name, basestring):
+    if not isinstance(name, str):
         raise TypeError('Argument "name" must be an ASCII or Unicode string.')
 
     if not isinstance(match_case, bool):
@@ -269,7 +268,7 @@ def find_child(Coalesce_object, name, match_case = False,
 
     # Check the parent's own name, and initialize a return object.
     if  object_name == name:
-        found = [[u"<root>"]]
+        found = [["<root>"]]
     else:
         found = []
 
@@ -290,15 +289,15 @@ def find_child(Coalesce_object, name, match_case = False,
                 for find in new_finds:
                     find.insert(0, object_type)
                     find.insert(1, i)
-                    if u"<root>" in find:
-                        find.remove(u"<root>")
+                    if "<root>" in find:
+                        find.remove("<root>")
                     new_paths.append(find)
                 found.extend(new_paths)
 
     return found
 
 
-def get_child_attrib(Coalesce_object, path = [u"<root>"], attrib = "value"):
+def get_child_attrib(Coalesce_object, path = ["<root>"], attrib = "value"):
     """
     Retrieves the value of one attribute of a child Coalesce object
     specified by "path".
@@ -318,23 +317,23 @@ def get_child_attrib(Coalesce_object, path = [u"<root>"], attrib = "value"):
     if len(path) == 0:
         raise ValueError("The specified path is empty.")
 
-    if not isinstance(attrib, basestring):
+    if not isinstance(attrib, str):
         raise TypeError('Argument "attrib" must be an ASCII or Unicode string.')
 
     target = Coalesce_object
 
     # We don't need the following loop if we don't need to descend into the
     # child objects.
-    if not path[0] == u"<root>":
+    if not path[0] == "<root>":
 
         # The "pop" operation used below is much slower with a list.
         path_queue = deque(path)
 
         # There are two entries for each level of the hierarchy, the level
         # itself, and the position in the list that makes up that level.
-        path_length = len(path) / 2
+        path_length = int(len(path) / 2)
 
-        for i in xrange(path_length):
+        for i in range(path_length):
             child = path_queue.popleft()
             index = path_queue.popleft()
             target = getattr(target, child)[index]
@@ -344,7 +343,7 @@ def get_child_attrib(Coalesce_object, path = [u"<root>"], attrib = "value"):
     return attrib_value
 
 
-def set_child_attrib(Coalesce_object, path = [u"<root>"], attrib = "value",
+def set_child_attrib(Coalesce_object, path = ["<root>"], attrib = "value",
                      value = None):
     """
     Sets the value of one attribute of a child Coalesce object specified by
@@ -367,23 +366,23 @@ def set_child_attrib(Coalesce_object, path = [u"<root>"], attrib = "value",
     if len(path) == 0:
         raise ValueError("The specified path is empty.")
 
-    if not isinstance(attrib, basestring):
+    if not isinstance(attrib, str):
         raise TypeError('Argument "attrib" must be an ASCII or Unicode string.')
 
     target = Coalesce_object
 
     # We don't need the following loop if we don't need to descend into the
     # child objects.
-    if not path[0] == u"<root>":
+    if not path[0] == "<root>":
 
         # The "pop" operation used below is much slower with a list.
         path_queue = deque(path)
 
         # There are two entries for each level of the hierarchy, the level
         # itself, and the position in the list that makes up that level.
-        path_length = len(path) / 2
+        path_length = int(len(path) / 2)
 
-        for i in xrange(path_length):
+        for i in range(path_length):
             child = path_queue.popleft()
             index = path_queue.popleft()
             target = getattr(target, child)[index]
@@ -432,7 +431,7 @@ def set_entity_fields(Coalesce_entity = None, fields = None, match_case = False)
                         'of class CoalesceEntity or one of its subclasses.')
 
     try:
-        fields_iter = fields.iteritems()
+        fields_iter = fields.items()
     except:
         raise TypeError('The argument "fields" must be a dict-like iterable ' +
                         'with field names or paths as keys and field values ' +
@@ -445,7 +444,7 @@ def set_entity_fields(Coalesce_entity = None, fields = None, match_case = False)
     for key, value in fields_iter:
 
         # If necessary, find the path to the field in question.
-        if isinstance(key, basestring):
+        if isinstance(key, str):
             matches = find_child(Coalesce_entity, key,
                                  include_fielddefinitions = False)
             num_matches = len(matches)

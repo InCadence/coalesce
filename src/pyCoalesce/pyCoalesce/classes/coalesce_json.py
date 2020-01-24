@@ -17,7 +17,7 @@ from sys import stdout, stderr
 from uuid import UUID
 from copy import copy
 
-from coalesce_entity import LINKAGE_TYPES, CoalesceLinkage
+from .coalesce_entity import LINKAGE_TYPES, CoalesceLinkage
 
 
 def _test_key(key):
@@ -36,7 +36,7 @@ def _test_key(key):
                     'integers that could serve as input for that class\'s ' + \
                     'class constructor.'
 
-    if isinstance(key, basestring):
+    if isinstance(key, str):
 
         try:
             UUID(key)
@@ -53,7 +53,7 @@ def _test_key(key):
 
     else:
 
-        key_len = len(unicode(key))
+        key_len = len(str(key))
 
         if key_len == 36:
             key_obj = key
@@ -64,7 +64,7 @@ def _test_key(key):
             except ValueError:
                 raise ValueError(key_error_msg)
 
-    key_str = unicode(key_obj)
+    key_str = str(key_obj)
 
     return key_str
 
@@ -151,7 +151,7 @@ class CoalesceAPILinkage(dict):
     """
 
     _INVALID_KEY_ERROR_MSG = "Only the following keys may be set:\n" + \
-                            unicode(VALID_KEYS + SERVER_KEYS)
+                            str(VALID_KEYS + SERVER_KEYS)
 
 
     def __init__(self, source = None, target = None, label = None,
@@ -208,7 +208,7 @@ class CoalesceAPILinkage(dict):
         # to one.
 
         if label:
-            self["label"] = unicode(label)
+            self["label"] = str(label)
 
         else:
             self["label"] = None
@@ -220,12 +220,12 @@ class CoalesceAPILinkage(dict):
             self["type"] = linkage_type
 
         else:
-            for key, value in LINKAGE_TYPES.iteritems():
+            for key, value in LINKAGE_TYPES.items():
                 if linkage_type == value:
                     self["type"] = key
                     break
             if not "type" in self:
-                raise ValueError('"' + unicode(linkage_type) + '" is not a ' +
+                raise ValueError('"' + str(linkage_type) + '" is not a ' +
                                  'valid linkage type.')
 
         if isinstance(biDirectional, bool):
@@ -270,7 +270,7 @@ class CoalesceAPILinkage(dict):
         input_kwargs = {}
         direct_set_keys = {}
 
-        for key, value in input_copy.iteritems():
+        for key, value in input_copy.items():
 
             if key in cls.VALID_KEYS:
                 if key == "type":
@@ -288,7 +288,7 @@ class CoalesceAPILinkage(dict):
         new_linkage = cls(source, target, **input_kwargs)
 
         # Set any server keys:
-        for key, value in direct_set_keys.iteritems():
+        for key, value in direct_set_keys.items():
             setattr(new_linkage, key, value)
 
         return new_linkage
@@ -328,7 +328,7 @@ class CoalesceAPILinkage(dict):
         """
 
         raise NotImplementedError('The update method is not implemented for ' +
-                                  'class "' + unicode(type(self)) + '".')
+                                  'class "' + str(type(self)) + '".')
 
     def to_XSD(self):
         """

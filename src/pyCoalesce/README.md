@@ -28,6 +28,9 @@ sub-directories contain documentation (and source for creating documentation), a
 script for generating classes from the the Coalesce entity XSD, tests, and 
 distribution tools.
 
+The pyCoalesce package itself has no third-party requirements, but the unit test 
+script (see below) requires simplejson and xmltodict to be installed.
+
 The "unit tests" are not true unit tests:  later tests rely on the entities
 created in earlier tests, thereby avoiding either repeated creation and 
 deletion of entities, or testing against a mocked-up API.  (The latter would

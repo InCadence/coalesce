@@ -138,8 +138,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'pyCoalesce.tex', u'pyCoalesce Documentation',
-     u'Dhruva Venkat \\& Scott Orr', 'manual'),
+    (master_doc, 'pyCoalesce.tex', 'pyCoalesce Documentation',
+     'Dhruva Venkat \\& Scott Orr', 'manual'),
 ]
 
 
@@ -148,7 +148,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'pycoalesce', u'pyCoalesce Documentation',
+    (master_doc, 'pycoalesce', 'pyCoalesce Documentation',
      [author], 1)
 ]
 
@@ -159,7 +159,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'pyCoalesce', u'pyCoalesce Documentation',
+    (master_doc, 'pyCoalesce', 'pyCoalesce Documentation',
      author, 'pyCoalesce', 'One line description of project.',
      'Miscellaneous'),
 ]
@@ -191,7 +191,7 @@ def patched_make_field(self, types, domain, items, env = None):
             # inconsistencies later when references are resolved
             fieldtype = types.pop(fieldarg)
             if len(fieldtype) == 1 and isinstance(fieldtype[0], nodes.Text):
-                typename = u''.join(n.astext() for n in fieldtype)
+                typename = ''.join(n.astext() for n in fieldtype)
                 par.extend(self.make_xrefs(self.typerolename, domain, typename,
                                            addnodes.literal_emphasis))
             else:

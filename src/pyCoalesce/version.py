@@ -41,6 +41,6 @@ else:
         POM_XML.xpath("/*[local-name()='project']/*[local-name()='version']")[0].text
 
 # Add other data.
-project = u"pyCoalesce"
-author = u"Dhruva Venkat, Scott Orr"
-copyright = u"2018, InCadence Strategic Solutions"
+project = "pyCoalesce"
+author = "Dhruva Venkat, Scott Orr"
+copyright = "2018, InCadence Strategic Solutions"

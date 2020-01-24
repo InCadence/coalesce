@@ -8,7 +8,7 @@ Created on Fri Jul  6 11:39:12 2018
 """
 
 from sys import stdout
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 from unittest import TestCase, TestSuite
 from copy import copy
 from uuid import uuid4
@@ -534,21 +534,21 @@ class EntityTests(ServerTest):
         # It's best to create random keys while the test suite is running,
         # so that we don't accidentally access entities from an earlier
         # test.
-        cls.entity1_key = unicode(uuid4())
+        cls.entity1_key = str(uuid4())
         entity2_UUID = uuid4()
-        cls.entity3_key = unicode(uuid4())
-        cls.entity4_key = unicode(uuid4())
+        cls.entity3_key = str(uuid4())
+        cls.entity4_key = str(uuid4())
 
         # The chance of a collision is infinitesimal, but it would make
         # debugging tough.
-        while len(set([cls.entity1_key, unicode(entity2_UUID), cls.entity3_key,
+        while len(set([cls.entity1_key, str(entity2_UUID), cls.entity3_key,
                        cls.entity4_key])) != 4:
-            cls.entity1_key = unicode(uuid4())
+            cls.entity1_key = str(uuid4())
             entity2_UUID = uuid4()
-            cls.entity3_key = unicode(uuid4())
-            cls.entity4_key = unicode(uuid4())
+            cls.entity3_key = str(uuid4())
+            cls.entity4_key = str(uuid4())
 
-        cls.entity2_key = unicode(entity2_UUID)
+        cls.entity2_key = str(entity2_UUID)
 
         cls.entity1 = construct_entity(server = cls.server,
                                        template = cls.template1_key,
@@ -981,7 +981,7 @@ class SearchTests(ServerTest):
                                           [request4_return_property],
                                       output = "list")
         results4_third_field = results4_list[0]["values"][0]
-        self.assertEqual(results4_third_field, unicode(orig4_third_field))
+        self.assertEqual(results4_third_field, str(orig4_third_field))
 
         results5_list = search_simple(server = self.server,
                                       recordset = RECORDSET3,
@@ -991,7 +991,7 @@ class SearchTests(ServerTest):
                                           [request4_return_property],
                                       output = "list")
         results5_third_field = results5_list[0]["values"][0]
-        self.assertEqual(results5_third_field, unicode(orig4_third_field))
+        self.assertEqual(results5_third_field, str(orig4_third_field))
 
         request6_return_property = RECORDSET1 + "." + FIELD1_NAME
         results6_list = search_simple(server = self.server,
@@ -1002,7 +1002,7 @@ class SearchTests(ServerTest):
                                           [request6_return_property],
                                       output = "list")
         results6_first_field = results6_list[0]["values"][0]
-        self.assertEqual(results6_first_field, unicode(orig1_first_field))
+        self.assertEqual(results6_first_field, str(orig1_first_field))
 
 
     def test_search_helpers(self):
