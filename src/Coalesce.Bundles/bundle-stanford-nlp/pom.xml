@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+  ~
+  ~  Notwithstanding any contractor copyright notice, the Government has Unlimited
+  ~  Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+  ~  of this work other than as specifically authorized by these DFARS Clauses may
+  ~  violate Government rights in this work.
+  ~
+  ~  DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+  ~  Unlimited Rights. The Government has the right to use, modify, reproduce,
+  ~  perform, display, release or disclose this computer software and to have or
+  ~  authorize others to do so.
+  ~
+  ~  Distribution Statement D. Distribution authorized to the Department of
+  ~  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+  ~
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>bundle-stanford-nlp</artifactId>
+    <packaging>bundle</packaging>
+    <name>Coalesce NLP OSGi Bundle</name>
+    <description>${project.name}</description>
+
+    <parent>
+        <groupId>com.incadencecorp.coalesce.bundles</groupId>
+        <artifactId>coalesce-bundle-parent</artifactId>
+        <version>0.0.43-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <properties>
+        <stanford.nlp.version>3.9.2</stanford.nlp.version>
+        <lucene.version>4.10.3</lucene.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <DynamicImport-Package>
+                            *
+                        </DynamicImport-Package>
+                        <Export-Package>
+                            edu.stanford.nlp.*;version=${stanford.nlp.version};-split-package:=merge-last;inline=false,
+                            org.ejml.*;version=0.23;inline=false,
+                            de.jollyday.*;version=0.4.9
+                        </Export-Package>
+                        <Embed-Dependency>
+                            stanford-corenlp;inline=false;scope=compile,
+                            stanford-corenlp;classifier=models;inline=false,
+                            stanford-kbp;inline=false;scope=compile,
+                            jollyday;inline=false;scope=compile,
+                            ejml;inline=false;scope=compile,
+                            javax.json;inline=false;scope=compile,
+                            lucene-queryparser;inline=false;scope=compile,
+                            lucene-analyzers-common;inline=false;scope=compile,
+                            lucene-queries;inline=false;scope=compile,
+                            lucene-core;inline=false;scope=compile,
+                            AppleJavaExtensions;inline=false;scope=compile,
+                        </Embed-Dependency>
+                        <Import-Package>
+                            *;resolution:=optional
+                        </Import-Package>
+                        <Embed-Transitive>false</Embed-Transitive>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <!-- Stanford CoreNLP -->
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>${stanford.nlp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>${stanford.nlp.version}</version>
+            <classifier>models</classifier>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>${stanford.nlp.version}</version>
+            <classifier>models-chinese</classifier>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>${stanford.nlp.version}</version>
+            <classifier>models-english</classifier>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>${stanford.nlp.version}</version>
+            <classifier>models-arabic</classifier>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>${stanford.nlp.version}</version>
+            <classifier>models-french</classifier>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>${stanford.nlp.version}</version>
+            <classifier>models-spanish</classifier>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-kbp</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        -->
+
+        <!-- Stanford CoreNLP Embedded Transient Dependencies -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-common</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queries</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.efficient-java-matrix-library</groupId>
+            <artifactId>ejml</artifactId>
+            <version>0.23</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>de.jollyday</groupId>
+            <artifactId>jollyday</artifactId>
+            <version>0.4.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.io7m.xom</groupId>
+            <artifactId>xom</artifactId>
+            <version>1.2.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.apple</groupId>
+            <artifactId>AppleJavaExtensions</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
+        </dependency>
+
+    </dependencies>
+
+</project>
