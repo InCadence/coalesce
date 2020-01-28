@@ -201,6 +201,13 @@
             <version>2.5</version>
         </dependency>
 
+        <!-- Override the version -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda.version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>
