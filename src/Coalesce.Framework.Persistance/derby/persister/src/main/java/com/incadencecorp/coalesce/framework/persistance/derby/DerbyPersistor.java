@@ -449,6 +449,10 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                                     {
                                         value = JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.fromXmlDateTimeUTC(
                                                 value));
+                                    } else if (field.getDataType() == ECoalesceFieldDataTypes.STRING_TYPE
+                                            && value.length() > DerbyDataConnector.MAX_STRING_LENGTH) {
+                                        value = value.substring(0, DerbyDataConnector.MAX_STRING_LENGTH);
+                                        LOGGER.warn("Truncating Field: {}", column);
                                     }
                                 }
                                 else if (field.getDataType() == ECoalesceFieldDataTypes.FILE_TYPE)
