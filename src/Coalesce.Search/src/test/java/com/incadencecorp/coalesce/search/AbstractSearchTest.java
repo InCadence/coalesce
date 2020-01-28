@@ -989,6 +989,19 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         rowset.close();
 
+        // Clear property names and try again.
+        searchQuery.setProperties(Collections.emptyList());
+
+        results = persister.search(searchQuery);
+
+        rowset = results.getResults();
+
+        // 4 Default columns +1 parameter
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()).toLowerCase(),
+                            rowset.getMetaData().getColumnName(1).toLowerCase());
+
+        rowset.close();
+
         // Cleanup
         entity1.markAsDeleted();
         entity2.markAsDeleted();
@@ -1376,7 +1389,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Assert.assertTrue(persistor.saveEntity(false, entity));
 
         Filter filter = FF.before(CoalescePropertyFactory.getFieldProperty(record.getDateField()),
-                                 FF.literal(record.getDateField().getValue().plusDays(1).toDate()));
+                                  FF.literal(record.getDateField().getValue().plusDays(1).toDate()));
 
         List<PropertyName> props = new ArrayList<>();
         props.add(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()));
@@ -1397,7 +1410,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         }
 
         filter = FF.before(CoalescePropertyFactory.getFieldProperty(record.getDateField()),
-                          FF.literal(record.getDateField().getValue().minusDays(1).toDate()));
+                           FF.literal(record.getDateField().getValue().minusDays(1).toDate()));
 
         query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), filter));
 

@@ -78,7 +78,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -141,8 +140,8 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
     private boolean ignoreSecurity;
 
-    private List<String> propertyNameList;
-    private List<SortBy> sortByList;
+    private final List<String> propertyNameList = new ArrayList<>();
+    private final List<SortBy> sortByList = new ArrayList<>();
 
     private Object currentContext;
     private String currentProperty;
@@ -791,10 +790,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
             if (LOGGER.isDebugEnabled())
             {
-                LOGGER.debug("Converted ({}) Value ({}) => ({})",
-                             currentProperty,
-                             expression.getValue(),
-                             literalValue);
+                LOGGER.debug("Converted ({}) Value ({}) => ({})", currentProperty, expression.getValue(), literalValue);
             }
         }
         else
@@ -948,9 +944,6 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
      */
     public void setPropertNames(String... values)
     {
-
-        propertyNameList = new ArrayList<>();
-
         if (values != null)
         {
             for (String name : values)
@@ -965,7 +958,6 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
                 }
             }
         }
-
     }
 
     /**
@@ -973,8 +965,6 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
      */
     public void setSortBy(SortBy... sort)
     {
-        sortByList = new ArrayList<>();
-
         if (sort != null)
         {
             for (SortBy sortBy : sort)
@@ -1138,21 +1128,28 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
         StringBuilder sb = new StringBuilder(String.format(SQL_COLUMNS, databaseSchema, postfix));
 
-        if (propertyNameList != null)
+        for (String column : propertyNameList)
         {
-            for (String column : propertyNameList)
+            String normalizedColumn = column.replaceAll(databaseSchema + "\\.|[.\"]", "");
+
+            if (isEnumeration(column))
             {
-                String normalizedColumn = column.replaceAll(databaseSchema + "\\.|[.\"]", "");
+                column = String.format(getEnumProperty(), enumList.indexOf(column)) + " AS " + normalizedColumn;
+            }
+            else
+            {
+                column = column + " AS " + normalizedColumn;
+            }
 
-                if (isEnumeration(column))
-                {
-                    column = String.format(getEnumProperty(), enumList.indexOf(column)) + " AS " + normalizedColumn;
-                }
-                else
-                {
-                    column = column + " AS " + normalizedColumn;
-                }
+            sb.append(COMMA_SPACE + column + postfix);
+        }
 
+        for (SortBy sortby : sortByList)
+        {
+            String column = sortby.getPropertyName().getPropertyName();
+
+            if (!propertyNameList.contains(column))
+            {
                 sb.append(COMMA_SPACE + column + postfix);
             }
         }
