@@ -80,9 +80,10 @@ class CoalesceEntityTemplate(CoalesceEntity):
         (set by the server)
     :ivar linkagesection:  a child object of class
         :class:`~pyCoalesce.classes.coalesce_entity.CoalesceLinkageSection`
-        that contains an entity's :class:`linkages
-        <pyCoalesce.classes.coalesce_entity.linkageSub>`; included in
-        templates, but not used in any way
+        from :mod:`pyCoalesce.classes.coalesce_entity` that contains an
+        entity's
+        :class:`linkages <pyCoalesce.classes.coalesce_entity.linkageSub>`;
+        included in templates, but not used in any way
 
     """
 
@@ -135,9 +136,10 @@ class CoalesceEntityTemplate(CoalesceEntity):
                    silence = True):
         """
         Creates a new instance of class
-        :class:`pyCoalesce.classes.coalesce_entity.CoalesceEntity` based on
-        the template.  The method adds the template object as an attribute
-        of the new entity.
+        :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity` from
+        :mod:`pyCoalesce.classes.coalesce_entity` based on the template.
+        The method adds the template object as an attribute of the new
+        entity.
 
         :param key:  a UUID key, as a string.  For most applications,
             there's no real reason to supply one, since the server returns
@@ -150,6 +152,7 @@ class CoalesceEntityTemplate(CoalesceEntity):
 
         :returns:  a new instance of class
             :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`
+            from :mod:`pyCoalesce.classes.coalesce_entity`
 
         """
 

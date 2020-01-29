@@ -150,7 +150,8 @@ class CoalesceServer(object):
         "keep-alive".
     :ivar max_attempts:  the number of times to attempt each request,
         using the exponential backoff coded into
-        :func:`pyCoalesce.utilities.API_request.get_response`
+        :func:`~pyCoalesce.utilities.API_request.get_response`
+        from :mod:`pyCoalesce.utilities.API_request`
 
     """
 
@@ -174,7 +175,8 @@ class CoalesceServer(object):
             use the default for this argument.
         :param max_attempts:  the number of times to attempt each request,
             using the exponential backoff coded into
-            :func:'pyCoalesce.utilities.API_request.get_response'
+            :func:`~pyCoalesce.utilities.API_request.get_response`
+            from :mod:`pyCoalesce.utilities.API_request`
 
         """
 
@@ -312,9 +314,8 @@ def search(server = None, query = None,
     :param server:  A :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
     :param query:  the search query, either the search group/filter object
-        (the value of "group" in a
-        `Coalesce search request object
-            <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`_)
+        (the value of "group" in a `Coalesce search request object
+        <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`_)
         or the full query object, as dict-like or a JSON object (string);
         in the case of a full query object, the other arguments used to
         form a query ("sort_by", "sort_order", "return_property_names",
@@ -381,7 +382,7 @@ def search(server = None, query = None,
     :returns:  a :class:`list`, :class:`dict`, or JSON object, depending on
         the value of "output", possibly followed (as the second element of
         a tuple) by the full request object, as a :class:`dict`, or JSON
-        object  .
+        object.
 
     """
 
@@ -721,7 +722,7 @@ def create_search_group(recordset, field, values,
     """
     Create a Coalesce search group/filter object (the value of "group" in a
     `Coalesce search request object
-        <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`_)
+    <https://github.com/InCadence/coalesce/wiki/REST-API#search-query-data-format>`_)
     that combines all entered values for a given field, either including or
     excluding (depending on the value of "criteria_operator") all records
     matching any of the supplied values.
@@ -918,10 +919,11 @@ def construct_entity(server = None, template = None, key = None, fields = None):
     A convenience function to retrieve a template from the Coalesce server,
     construct an entity using that template, and (optionally) fill any or
     all of the entity's fields with specified values.  Returns an instance
-    of :class:`pyCoalesce.classes.coalesce_entity.CoalesceEntity` (which
-    can then be submitted to the server with the "create" function),
-    including the minimum number of records in each recordset, and a
-    template object as an attribute of the entity object.
+    of :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`
+    from :mod:`pyCoalesce.classes.coalesce_entity`, which
+    can then be submitted to the server with the "create" function.  This
+    instance includes the minimum number of records in each recordset, and
+    a template object as an attribute.
 
     This function replaces a "GET" endpoint for the RESTful API's templates
     controller that produces the equivalent result of returning a new
@@ -932,15 +934,16 @@ def construct_entity(server = None, template = None, key = None, fields = None):
     without calling the endpoint each time, a problem not shared by
     entities created through this function.  Alternately, supplying a
     :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`
-    allows this function to be called multiple times without calling the
-    server at all.
+    (also from from :mod:`pyCoalesce.classes.coalesce_entity`) allows this
+    function to be called multiple times without calling the server at all.
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server.  If "template" is an
         instance of
-        :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`,
-        no server is needed; this is one way of avoiding unnecessary calls
-        to the API server when creating multiple entities.
+        :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`
+        from :mod:`pyCoalesce.classes.coalesce_entity`, no server is needed;
+        this is one way of avoiding unnecessary calls to the API server when
+        creating multiple entities.
     :param template:  a Coalesce template (UUID) key, an iterable containing
         the template's name, source, and version (in that order), or a
         :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`
@@ -1208,9 +1211,10 @@ def create(server = None, entity = None, key = None, full_response = False):
     :param entity:  the entity to upload to the server.  This can be a JSON
         or XML representation of an entity, a nested dict-like in the same
         format as a JSON respresentation, or an instance of
-        :class:`~pyCoalesce.classes.coalesce_entityCoalesceEntity` (or a
-        subclass); the function automatically detects the input type and
-        adjusts the RESTful endpoint and requests headers accordingly.
+        :class:`~pyCoalesce.classes.coalesce_entityCoalesceEntity` from
+        :mod:`pyCoalesce.classes.coalesce_entity` (or a subclass); the
+        function automatically detects the input type and adjusts the
+        RESTful endpoint and requests headers accordingly.
     :param key:  a UUID to serve as the key for the entity, as either an
         instance of the :class:`uuid.UUID` class, or any string or integer
         that could serve as input to the :class:`UUID <uuid.UUID>` class
@@ -1269,9 +1273,10 @@ def read(server = None, key = None, output = "dict"):
         constructor
     :param output:  If this argument is "dict", return the results as a
         Python :class:`dict`; for "entity_object", return the result as an
-        instance of class :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`.
-        For "JSON" or "XML" return the full response, unparsed, as a
-        Unicode string in the corresponding format.
+        instance of class :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`
+        from :mod:`pyCoalesce.classes.coalesce_entity`.  For "JSON" or "XML"
+        return the full response, unparsed, as a Unicode string in the
+        corresponding format.
 
     :returns:  a :class:`dict`,
         :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`,
@@ -1342,14 +1347,15 @@ def update(server = None, entity = None, key = None, full_response = False):
         This can be a JSON or XML representation of an entity, a nested
         dict-like in the same format as a JSON respresentation, or an
         instance of :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`
-        (or a subclass); the function automatically detects the input type
-        and adjusts the RESTful endpoint and requests headers accordingly.
-        This entity *must* include not only the updated field(s), but all
-        sections, recordsets, records, and fields in the original, and all
-        of the original's UUID keys (not only the entity's keys, but all
-        section, recordset, record, and field keys).  Failure to match keys
-        will result in the creation of duplicate records within the
-        modified entity.
+        from :mod:`pyCoalesce.classes.coalesce_entity` (or a subclass); the
+        function automatically detects the input type and adjusts the
+        RESTful endpoint and requests headers accordingly.  This entity
+        *must* include not only the updated field(s), but all sections,
+        recordsets, records, and fields in the original, and all of the
+        original's UUID keys (not only the entity's keys, but all section,
+        recordset, record, and field keys).  Failure to match keys will
+        result in the creation of duplicate records within the modified
+        entity.
     :param key:  a UUID to serve as the key for the entity, as either an
         instance of the :class:`uuid.UUID` class, or any string or integer
         that could serve as input to the :class:`UUID <uuid.UUID>` class
@@ -1492,8 +1498,9 @@ def create_template(server = None, template = None, full_response = False):
         dict-like in the same format as a JSON respresentation, or an
         instance of
         :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`
-        (or a subclass); the function automatically detects the input type
-        and adjusts the RESTful endpoint and requests headers accordingly.
+        from :mod:`pyCoalesce.classes.coalesce_entity` (or a subclass);
+        the function automatically detects the input type and adjusts the
+        RESTful endpoint and requests headers accordingly.
     :param full_response:  if ``True``, return the full response from the
         server as a Python :class:`requests.Response` object, rather than
         just the entity key.
@@ -1612,9 +1619,10 @@ def read_template(server = None, template = None, output = "dict"):
     :param output:  If this argument is "dict", return the results as a
         Python :class:`dict`; for "entity_object", return the result as an
         instance of class
-        :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`.
-        For "JSON" or "XML" return the full response, unparsed, as a
-        Unicode string in the corresponding format.
+        :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`
+        from :mod:`pyCoalesce.classes.coalesce_entity`.  For "JSON" or
+        "XML" return the full response, unparsed, as a Unicode string in
+        the corresponding format.
 
     :returns:  a :class:`dict`,
         :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`,
@@ -1759,7 +1767,7 @@ def update_template(server = None, template = None, key = None,
     Note that, since a template key is a hash of the template's name,
     source, and version, modifying any of these values produces a new
     template, with a different key, which must be uploaded via the
-    :func:`~pyCoalesce..coalesce_request.create_template` function (and
+    :func:`~pyCoalesce.coalesce_request.create_template` function (and
     any of the entities created from the old template remain associated
     with that one).
 
@@ -1776,9 +1784,10 @@ def update_template(server = None, template = None, key = None,
         server.  This can be a JSON or XML representation of a template,
         a nested dict-like in the same format as a JSON respresentation, or
         an instance of
-        :class:`pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`
-        (or a subclass); the function automatically detects the input type
-        and adjusts the RESTful endpoint and requests headers accordingly.
+        :class:`~pyCoalesce.classes.coalesce_entity_template.CoalesceEntityTemplate`
+        from :mod:`pyCoalesce.classes.coalesce_entity` (or a subclass); the
+        function automatically detects the input type and adjusts the
+        RESTful endpoint and requests headers accordingly.
     :param key:  the UUID key of the template to be registered, as either
         an instance of the :class:`uuid.UUID` class, or any string or
         integer that could serve as input to the :class:`UUID <uuid.UUID>`
@@ -2064,20 +2073,23 @@ def create_linkages(server = None, linkages = None):
     Creates one or more linkages between Coalesce entities.  Linkages must
     be submitted in a special format used only for this endpoint--it
     corresponds to the Java GraphLink class, and the
-    :class:`pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` class.
-    This format's keys match the attributes in the GraphLink class, which
-    correspond to a subset of the full set of keys/attributes in the entity
-    model, but which use different names.
+    :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` class
+    from :mod:`pyCoalesce.classes.coalesce_json`.  This format's keys match
+    the attributes in the GraphLink class, which correspond to a subset of
+    the full set of keys/attributes in the entity model, but which use
+    different names.
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
     :param linkages:  a Coalesce linkage, in the form XML or JSON entity, a
         :class:`dict` in the same format as a JSON linkage, an instance of
-        :class:`pyCoalesce.classes.coalesce_entity.CoalesceLinkage` (or a
-        subclass), or an instance of
-        :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` (or a
-        subclass); or an iterable (or JSON array) of such linkage objects,
-        all of the same type
+        :class:`~pyCoalesce.classes.coalesce_entity.CoalesceLinkage` from
+        :mod:`pyCoalesce.classes.coalesce_entity` (or a subclass), or an
+        instance of
+        :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` from
+        :mod:`pyCoalesce.classes.coalesce_json` (or a subclass); or an
+        iterable (or JSON array) of such linkage objects, all of the same
+        type
 
     :returns:  ``True`` if the linkages are created successfully (status
         code 204), ``False`` (with a warning) if the status code has any
@@ -2133,10 +2145,11 @@ def read_linkages(server = None, key = None, output = "dict_list"):
     Retrieves all of the linkages for the Coalesce entity with the UUID key
     matching "key".  Linkages are returned in a special format used only
     for this endpoint--it corresponds to the Java GraphLink class, and the
-    :class:`pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` class.
-    This format's keys match the attribues in the GraphLink class, which
-    correspond to a subset of the full set of keys/attributes in the entity
-    model, but which use different names.
+    :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` class from
+    :mod:`pyCoalesce.classes.coalesce_json`.  This format's keys match the
+    attribues in the GraphLink class, which correspond to a subset of the
+    full set of keys/attributes in the entity model, but which use
+    different names.
 
     :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
@@ -2148,8 +2161,8 @@ def read_linkages(server = None, key = None, output = "dict_list"):
         JSON array (string).  If the argument is "dict_list" or "API_list",
         return the results as a :class:`list` of :class:`dicts <dict>` or
         instances of
-        :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage`,
-        respectively.
+        :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` from
+        :mod:`pyCoalesce.classes.coalesce_json`, respectively.
 
     :returns:  The entity's linkages, as either a JSON array (string), or a
         :class:`list` of :class:`dicts <dict>` or
@@ -2212,25 +2225,28 @@ def delete_linkages(server = None, linkages = None):
     Marks one or more linkages between Coalesce entities for deletion.
     Linkages must be submitted in a special format used only for this
     endpoint--it corresponds to the Java GraphLink class, and the
-    :class:`pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` class.
-    This format's keys match the attribues in the GraphLink class, which
-    correspond to a subset of the full set of keys/attributes in the entity
-    model, but which use different names.
+    :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` class from
+    :mod:`pyCoalesce.classes.coalesce_json`.  This format's keys match the
+    attribues in the GraphLink class, which correspond to a subset of the
+    full set of keys/attributes in the entity model, but which use different
+    names.
 
-    :param server:  a :class:`~pyCoalesce.coalesce_request.CoalesceServer`
+    :param server:  a :class:`~.pyCoalesce.coalesce_request.CoalesceServer`
         object or the URL of a Coalesce server
     :param linkages:  a Coalesce linkage, in the form XML or JSON entity, a
         :class:`dict` in the same format as a JSON linkage, an instance of
-        :class:`pyCoalesce.classes.coalesce_entity.CoalesceLinkage` (or a
-        subclass), or an instance of
-        :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` (or a
-        subclass); or an iterable (or JSON array) of such linkage objects,
-        all of the same type
+        :class:`~pyCoalesce.classes.coalesce_entity.CoalesceLinkage` from
+        :mod:`pyCoalesce.classes.coalesce_entity` (or a subclass), or an
+        instance of
+        :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage` from
+        :mod:`pyCoalesce.classes.coalesce_json` (or a subclass); or an
+        iterable (or JSON array) of such linkage objects, all of the same
+        type
 
-    :returns:  True if the linkages are deleted successfully (status code
-        204), ``False`` (with a warning) if the status code has any other
-        value in the 200's.  (Any value outside the 200's will cause an
-        exception.)
+    :returns:  ``True`` if the linkages are deleted successfully (status
+        code 204), ``False`` (with a warning) if the status code has any
+        other value in the 200's.  (Any value outside the 200's will cause
+        an exception.)
 
     """
 

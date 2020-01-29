@@ -2,8 +2,9 @@
 """
 @author: Scott Orr
 
-This class is simple a subclass of :class:`str` with a :meth:`__new__`
-method that adds a check for a valid URL scheme.
+This class is simple a subclass of :class:`str` with a
+:meth:`~pyCoalesce.utilities.URL_class.__new__` method that adds a check for
+ a valid URL scheme.
 
 
 """

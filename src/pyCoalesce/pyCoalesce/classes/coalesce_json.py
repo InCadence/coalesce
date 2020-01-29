@@ -3,10 +3,11 @@
 @author: Scott Orr
 
 This module provides a JSON-serializable version of Coalesce linkages that,
-unlike the :class:`pyCoalesce.classes.coalesce_entity.CoalesceLinkage`
-class, can be used with the JSON-only Coalesce linkage API.  Both this
-class and :class:`~pyCoalesce.classes.coalesce_entity.CoalesceLinkage`
-include methods to convert linkages to the other class.
+unlike the :class:`~pyCoalesce.classes.coalesce_entity.CoalesceLinkage`
+class from :mod:`pyCoalesce.classes.coalesce_entity`, can be used with the
+JSON-only Coalesce linkage API.  Both this class and
+:class:`~pyCoalesce.classes.coalesce_entity.CoalesceLinkage` include methods
+to convert linkages to the other class.
 
 The class can be imported directly from the :mod:`pyCoalesce.classes`
 module.
@@ -111,8 +112,9 @@ class CoalesceAPILinkage(dict):
       by Coalesce, and may be set to any value required by an application.
 
     * "type":  the (string) type of linkage.  The value of this attribute
-      must be one the keys in
-      :const:`pyCoalesce.classes.coalesce_entity.LINKAGE_TYPES`.
+      must be one of the keys in
+      :const:`~pyCoalesce.classes.coalesce_entity.LINKAGE_TYPES` from
+      :mod:`pyCoalesce.classes.coalesce_entity`.
 
     * "isBiDirectional":  a boolean indicating whether or not the server
       should create a second linkage, from the target to the source.  The
@@ -125,7 +127,7 @@ class CoalesceAPILinkage(dict):
       ``None``.  However, the server will accept accept changes to
       "status", and its value can be set directly.  The key can be passed
       through the
-      :meth:`~pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage.from_dict`
+      :meth:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage.from_dict`
       method, allowing a server-set value to be retained for links received
       from the RESTful API.
 
@@ -145,7 +147,7 @@ class CoalesceAPILinkage(dict):
     SERVER_KEYS = ("status",)
     """
     This key may be set only by the server, and therefore isn't included
-    in the :class:`~pyCoalesce.classes.coalesce_JSON.CoalesceAPILinkage`
+    in the :class:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage`
     constructor.
 
     """
@@ -180,7 +182,8 @@ class CoalesceAPILinkage(dict):
             hence unusable as a keyword argument name, and therefore an
             alias is used here.  The value of this attribute must be one of
             the keys in
-            :const:`pyCoalesce.classes.coalesce_entity.LINKAGE_TYPES`.
+            :const:`pyCoalesce.classes.coalesce_entity.LINKAGE_TYPES` from
+            :mod:`pyCoalesce.classes.coalesce_entity`.
 
         :param biDirectional:  a boolean indicating whether or not the
             server should create a second linkage, from the target to the
@@ -252,7 +255,8 @@ class CoalesceAPILinkage(dict):
         For a normal dict subclass, we'd probably just use the update
         method here, but it's not implemented for this class--and anyway,
         we need to check the input values, which is something the
-        :meth:`__init__` method already handles.
+        :meth:`~pyCoalesce.classes.coalesce_json.CoalesceAPILinkage.__init__`
+        method already handles.
 
         """
 
@@ -366,6 +370,7 @@ class CoalesceAPILinkage(dict):
 
         :returns:  the reverse linkage as an instance of class
             :class:`~pyCoalesce.classes.coalesce_entity.CoalesceLinkage`
+            from :mod:`pyCoalesce.classes.coalesce_entity`
 
         """
 
