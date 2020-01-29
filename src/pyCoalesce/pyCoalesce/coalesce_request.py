@@ -662,7 +662,7 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
         if value:
             criteria[0]["value"] = value
         else:
-            raise ValueError("Please supply the value to be searched for.")
+            raise TypeError("Please supply the value to be searched for.")
 
     elif num_values > 1:
 
@@ -676,7 +676,7 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
             if value:
                 values = value
             else:
-                raise ValueError("Please supply the " + str(num_values) +
+                raise TypeError("Please supply the " + str(num_values) +
                                  " values to be searched for.")
 
         invalid_value_msg = 'The "value" or "values" argument for search ' + \
@@ -717,7 +717,7 @@ def search_simple(server = None, recordset = "coalesceentity", field = "name",
     return results
 
 
-def create_search_group(recordset, field, values,
+def create_search_group(recordset = None, field = None, values = None,
                         criteria_operator = "EqualTo"):
     """
     Create a Coalesce search group/filter object (the value of "group" in a
@@ -727,23 +727,50 @@ def create_search_group(recordset, field, values,
     excluding (depending on the value of "criteria_operator") all records
     matching any of the supplied values.
 
-    :param recordset:  the recordset of the field to be search on
-    :param field:  the field to be searched on
+    :param recordset:  the (:class:`str`) recordset of the field to be
+        search on
+    :param field:  the (:class:`str`) field to be searched on
+    :param values:  a :class:`list` or list-like of values to search for.
+        The values themselves should be of simple, JSON-serializable types
+        (e.g., strings, numbers, Boolean).
     :param criteria_operator:  "EqualTo", if the search is to *include*
         a record matching *any* element of "values", or "NotEqualTo", if
         the search is to *exclude all* records matching *any* element of
         "values".
-    :param values:  a :class:`list` or list-like of values to match
 
     :returns:  a Coalesce search group as a :class:`dict`, or ``None`` if
         "values" is empty
 
     """
 
-    # Check to make sure we got an iterable of values, not just a single
-    # one.
-    if isinstance(values, str):
-        raise ValueError('The value of "values" must be a list or list-like.')
+    # Check for valid input for "recordset" and "field".
+    if not isinstance(recordset, str):
+        raise TypeError("Please supply a recordset as a string.")
+    if not isinstance(field, str):
+        raise TypeError("Please supply a field to search on, as a string.")
+
+    # Check for valid input for "values". This includes a check to make sure
+    # we got an iterable of values, not just a single one.
+    values_error_msg = "Please supply a list or list-like of values to " + \
+                       "search for."
+    if not values:
+        raise TypeError(values_error_msg)
+    elif isinstance(values, str):
+        raise TypeError(values_error_msg)
+    else:
+        try:
+            values[0]
+        except:
+            raise TypeError(values_error_msg)
+
+    # Check for valid inpurt for "criteria_operator".
+    if criteria_operator == "EqualTo":
+        group_operator = "OR"
+    elif criteria_operator == "NotEqualTo":
+        group_operator = "AND"
+    else:
+        raise ValueError('The value of "criteria_operator" must be either ' +
+                         '"EqualTo" or "NotEqualTo".')
 
     # Create the criteria list.
     criteria = []
@@ -757,13 +784,6 @@ def create_search_group(recordset, field, values,
     # were supplied.
 
     if len(criteria) > 0:
-        if criteria_operator == "EqualTo":
-            group_operator = "OR"
-        elif criteria_operator == "NotEqualTo":
-            group_operator = "AND"
-        else:
-            raise ValueError('The value of "operator" must be either ' +
-                             '"EqualTo" or "NotEqualTo".')
         group = {"operator": group_operator, "criteria": criteria}
 
     else:
@@ -772,42 +792,72 @@ def create_search_group(recordset, field, values,
     return group
 
 
-def add_search_filter(search_group, recordset, field, value, operator):
+def add_search_filter(search_group = None, recordset = None, field = None,
+                      value = None, criteria_operator = "EqualTo"):
     """
     Transform a Coalesce search group/filter object by inserting a new
     criteria set, for example, a start-after date.  The effect is always to
     make the search query more restrictive, but how this is done depends on
     the operator of the top-level search group.
 
-    If the operator is "AND", the new filter is inserted into the top-level
-    group, either appending to the exist criteria list, or creating a new
-    list if none exists already.  If the group already has the specified
-    type of criteria set in the top-level criteria list, the function
-    overwrites it with the new one.
+    If the top-level operator is "AND", the new filter is inserted into the
+    top-level group, either appending to the exist criteria list, or
+    creating a new list if none exists already.  If the group's top-level
+    criteria list already includes a criteria set with he specified
+    recordset, field, and operator, the function overwrites it with the new
+    one.
 
-    If the current operator is "OR", a new top-level search group is
-    created with an operator of "AND", and with the new filter as the sole
-    member of he top-level criteria list.  The original search group
+    If the current top-level operator is "OR", a new top-level search group
+    is created with an operator of "AND", and with the new filter as the
+    sole member of the top-level criteria list.  The original search group
     becomes a sub-group of the top-level group.
 
     :param search_group:  a Coalesce search_group as a :class:`dict` or a
         JSON object (string)
-    :param recordset:  the recordset of the field to be search on
-    :param field:  the field that holds the value on which to filter
-    :param value:  the filter value
-    :param operator:  the operator to use for the filter
+    :param recordset:  the (:class:`str`) recordset of the field to be
+        search on
+    :param field:  the (:class:`str`) field to be searched on
+    :param value:  the value to be searched for, an instance of a simple,
+        JSON-serializable type (e.g., string, number, Boolean)
+    :param criteria_operator:  the operator to use for the filter itself
+        (not to be confused with the top-level operator of "search_group")
 
     :returns:  a modified Coalesce search group as a :class:`dict`
 
     """
 
-    # If the search group is a JSON object, convert it to a dict.
-    if isinstance(search_group, str):
+    # Check for valid input for "search_group", and if the search group is
+    # a JSON object, convert it to a dict.
+    if not search_group:
+        raise TypeError("Please supply a search group.")
+    elif isinstance(search_group, str):
         search_group = json.loads(search_group)
+
+    # Check for valid input for "recordset", "field", and "criteria_operator".
+    if not isinstance(recordset, str):
+        raise TypeError("Please supply a recordset as a string.")
+    if not isinstance(field, str):
+        raise TypeError("Please supply a field to search on, as a string.")
+    if not isinstance(criteria_operator, str):
+        raise TypeError("Please supply an operator for the search criteria " +
+                        "set, as a string.")
+
+    # Check for valid input for "value".  This one is a bit more complex.
+    if not value:
+        raise TypeError("Please supply a value to be searched for.")
+    elif not isinstance(value, str):
+        try:
+            value[0]
+        except TypeError: # This is what we want to happen.
+            pass
+        else:
+            raise TypeError("The value to be searched for must be an instance" +
+                            "of a simple, JSON-serializable type (e.g., " +
+                            "string, number, Boolean).")
 
     # Create the new/modified criteria set.
     new_criteria_set = {"recordset": recordset, "field": field,
-                        "operator": operator, "value": value,
+                        "operator": criteria_operator, "value": value,
                         "matchCase": False}
 
     # Is the top-level search group an "AND" or an "OR" group?
@@ -824,8 +874,9 @@ def add_search_filter(search_group, recordset, field, value, operator):
         # Check for a top-level criteria list.
         if "criteria" in new_search_group:
 
-            # Check for an existing criteria set, and replace it if it's
-            # found, or add one if it's not.
+            # Check for an existing criteria set with the same recordset,
+            # field, and operator. If such a set is found, replace it.
+            # Otherwise, add a new criteria set.
 
             filter_found = False
             top_criteria_list = new_search_group["criteria"]
@@ -833,7 +884,7 @@ def add_search_filter(search_group, recordset, field, value, operator):
             for i, current_set in enumerate(top_criteria_list):
                 if current_set["recordset"].lower() == recordset.lower() and \
                   current_set["field"].lower() == field.lower() and \
-                  current_set["operator"].lower() == operator.lower():
+                  current_set["operator"].lower() == criteria_operator.lower():
                     search_group["criteria"][i] = new_criteria_set
                     filter_found = True
                     break
@@ -1565,7 +1616,7 @@ def register_template(server = None, key = None):
         server_obj = server
 
     if not key:
-        raise ValueError("Please specify a UUID key.")
+        raise TypeError("Please specify a UUID key.")
     else:
         key_str = _test_key(key)
 
@@ -1866,7 +1917,7 @@ def delete_template(server = None, key = None):
         server_obj = server
 
     if not key:
-        raise ValueError("Please specify a UUID key.")
+        raise TypeError("Please specify a UUID key.")
 
     else:
         key_str = _test_key(key)
