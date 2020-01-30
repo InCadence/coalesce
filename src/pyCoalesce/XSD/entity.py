@@ -97,7 +97,7 @@ except ImportError:
 try:
     from generatedssuper import GeneratedsSuper
 except ImportError as exp:
-    
+
     class GeneratedsSuper(object):
         tzoff_pattern = re_.compile(r'(\+|-)((0\d|1[0-3]):[0-5]\d|14:00)$')
         class _FixedOffsetTZ(datetime_.tzinfo):
@@ -397,7 +397,7 @@ except ImportError as exp:
             return None
         @classmethod
         def gds_reverse_node_mapping(cls, mapping):
-            return dict(((v, k) for k, v in mapping.iteritems()))
+            return dict(((v, k) for k, v in mapping.items()))
         @staticmethod
         def gds_encode(instring):
             if sys.version_info.major == 2:
@@ -423,7 +423,7 @@ except ImportError as exp:
             return self.__dict__ == other.__dict__
         def __ne__(self, other):
             return not self.__eq__(other)
-    
+
     def getSubclassFromModule_(module, class_):
         '''Get the subclass of a class from a specific module.'''
         name = class_.__name__ + 'Sub'
@@ -844,7 +844,7 @@ class coalesceObjectType(GeneratedsSuper):
             outfile.write('/>%s' % (eol_, ))
     def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='coalesceObjectType'):
         unique_counter = 0
-        for name, value in self.anyAttributes_.items():
+        for name, value in list(self.anyAttributes_.items()):
             xsinamespaceprefix = 'xsi'
             xsinamespace1 = 'http://www.w3.org/2001/XMLSchema-instance'
             xsinamespace2 = '{%s}' % (xsinamespace1, )
@@ -982,7 +982,7 @@ class coalesceObjectType(GeneratedsSuper):
             already_processed.add('previoushistorykey')
             self.previoushistorykey = value
         self.anyAttributes_ = {}
-        for name, value in attrs.items():
+        for name, value in list(attrs.items()):
             if name not in already_processed:
                 self.anyAttributes_[name] = value
         value = find_attr_value_('xsi:type', node)

@@ -212,7 +212,7 @@ try:
     from version import project, author
 except ImportError:
     project = "pyCoalesce"
-    author = u"Dhruva Venkat, Scott Orr"
+    author = "Dhruva Venkat, Scott Orr"
 
 setuptools.setup(
     name = project,
@@ -227,7 +227,7 @@ setuptools.setup(
     packages = ["pyCoalesce", "pyCoalesce.classes", "pyCoalesce.utilities"],
     install_requires = ["simplejson", "xmltodict", "requests", "urllib3"],
     classifiers = (
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ),

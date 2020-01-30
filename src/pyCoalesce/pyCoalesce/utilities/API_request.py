@@ -18,7 +18,7 @@ from requests import Session, Request, ConnectionError, Timeout, \
                      ConnectTimeout
 import urllib3
 
-from logger import package_logger
+from .logger import package_logger
 
 
 # Set up logging.
@@ -101,7 +101,7 @@ def get_response(URL, method = "get", verify = True, cert = None, params = None,
 
     # Call the API, using exponential backoff as necessary.
 
-    for attempt in xrange(max_attempts):
+    for attempt in range(max_attempts):
 
         try:
 

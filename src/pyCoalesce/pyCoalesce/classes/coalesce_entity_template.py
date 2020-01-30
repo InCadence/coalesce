@@ -17,8 +17,8 @@ at once.
 
 from uuid import uuid4
 
-from coalesce_entity import CoalesceEntity
-from entity_utilities import parseString, to_XML_string
+from .coalesce_entity import CoalesceEntity
+from .entity_utilities import parseString, to_XML_string
 
 
 #
@@ -80,9 +80,10 @@ class CoalesceEntityTemplate(CoalesceEntity):
         (set by the server)
     :ivar linkagesection:  a child object of class
         :class:`~pyCoalesce.classes.coalesce_entity.CoalesceLinkageSection`
-        that contains an entity's :class:`linkages
-        <pyCoalesce.classes.coalesce_entity.linkageSub>`; included in
-        templates, but not used in any way
+        from :mod:`pyCoalesce.classes.coalesce_entity` that contains an
+        entity's
+        :class:`linkages <pyCoalesce.classes.coalesce_entity.linkageSub>`;
+        included in templates, but not used in any way
 
     """
 
@@ -124,7 +125,7 @@ class CoalesceEntityTemplate(CoalesceEntity):
         for current_recordset in current_section.recordset:
 
             # Create and populate the new records.
-            for i in xrange(current_recordset.minrecords):
+            for i in range(current_recordset.minrecords):
 
                 current_recordset.create_record_from_definitions()
 
@@ -135,9 +136,10 @@ class CoalesceEntityTemplate(CoalesceEntity):
                    silence = True):
         """
         Creates a new instance of class
-        :class:`pyCoalesce.classes.coalesce_entity.CoalesceEntity` based on
-        the template.  The method adds the template object as an attribute
-        of the new entity.
+        :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity` from
+        :mod:`pyCoalesce.classes.coalesce_entity` based on the template.
+        The method adds the template object as an attribute of the new
+        entity.
 
         :param key:  a UUID key, as a string.  For most applications,
             there's no real reason to supply one, since the server returns
@@ -150,6 +152,7 @@ class CoalesceEntityTemplate(CoalesceEntity):
 
         :returns:  a new instance of class
             :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity`
+            from :mod:`pyCoalesce.classes.coalesce_entity`
 
         """
 

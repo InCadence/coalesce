@@ -2,24 +2,25 @@
 """
 @author: Scott Orr
 
-This class is simple a subclass of :class:`unicode` with a :meth:`__new__`
-method that adds a check for a valid URL scheme.
+This class is simple a subclass of :class:`str` with a
+:meth:`~pyCoalesce.utilities.URL_class.__new__` method that adds a check for
+ a valid URL scheme.
 
 
 """
 
-from urlparse import urlsplit
+from urllib.parse import urlsplit
 
 
-class URL(unicode):
+class URL(str):
     """
-    Adds a check to the vanilla "unicode" constructor to make sure the
-    value is a valid and supported URL of a scheme appropriate for a
-    RESTful server (that is, HTTP or HTTPS).
+    Adds a check to the vanilla string constructor to make sure the value
+    is a valid and supported URL of a scheme appropriate for a RESTful
+    server (that is, HTTP or HTTPS).
 
     """
 
-    VALID_SCHEMES = (u"http", u"https")
+    VALID_SCHEMES = ("http", "https")
 
     def __new__(cls, value):
         """
@@ -28,7 +29,7 @@ class URL(unicode):
         """
 
         scheme = urlsplit(value).scheme
-        if scheme == u"":
+        if scheme == "":
             raise ValueError("The provided address is not a URL.")
         elif scheme.lower() not in cls.VALID_SCHEMES:
                 raise ValueError('"' + scheme + '" is not a valid URL scheme.')

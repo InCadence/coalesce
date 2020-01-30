@@ -10,6 +10,6 @@ of which provides a handful of useful objects not directly related to the API.
 
 """
 
-from coalesce_request import *
+from .coalesce_request import *
 
 __all__ = ["coalesce_request"]
