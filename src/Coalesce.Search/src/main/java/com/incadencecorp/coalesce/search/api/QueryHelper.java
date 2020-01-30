@@ -19,7 +19,7 @@
 package com.incadencecorp.coalesce.search.api;
 
 import org.geotools.data.Query;
-import org.geotools.factory.Hints;
+import org.geotools.util.factory.Hints;
 
 import java.util.HashMap;
 import java.util.Map;

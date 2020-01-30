@@ -23,7 +23,6 @@ import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.EFilterEnumerationModes;
 import com.incadencecorp.coalesce.search.api.ICoalesceExpressionVistor;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.vividsolutions.jts.geom.Geometry;
 import org.geotools.data.jdbc.FilterToSQL;
 import org.geotools.data.jdbc.FilterToSQLException;
 import org.geotools.data.postgis.PostGISPSDialect;
@@ -70,6 +69,7 @@ import org.opengis.filter.temporal.EndedBy;
 import org.opengis.filter.temporal.Ends;
 import org.opengis.filter.temporal.TContains;
 import org.opengis.filter.temporal.TEquals;
+import org.locationtech.jts.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

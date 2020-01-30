@@ -23,10 +23,10 @@ import java.util.UUID;
 import com.incadencecorp.coalesce.api.ICoalesceMapper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceCircle;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 
 /**
  * This implementation maps Coalesce types to Java classes.
