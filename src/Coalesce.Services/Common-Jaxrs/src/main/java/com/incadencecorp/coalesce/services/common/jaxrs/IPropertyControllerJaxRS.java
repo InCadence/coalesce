@@ -1,8 +1,15 @@
 package com.incadencecorp.coalesce.services.common.jaxrs;
 
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.services.common.api.IPropertyController;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -50,5 +57,10 @@ interface IPropertyControllerJaxRS extends IPropertyController {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     void setProperties(Map<String, String> values) throws RemoteException;
+
+    @GET
+    @Path("/whoami")
+    @Produces(MediaType.APPLICATION_JSON)
+    ICoalescePrincipal whoami();
 
 }

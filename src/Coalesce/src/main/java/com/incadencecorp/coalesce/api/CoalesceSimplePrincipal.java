@@ -21,7 +21,6 @@ package com.incadencecorp.coalesce.api;
 import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -55,7 +54,7 @@ public class CoalesceSimplePrincipal implements ICoalescePrincipal {
      */
     public CoalesceSimplePrincipal(String name)
     {
-        this(name, getHostIP());
+        this(name, "");
     }
 
     /**
@@ -65,7 +64,7 @@ public class CoalesceSimplePrincipal implements ICoalescePrincipal {
      */
     public CoalesceSimplePrincipal(Principal principal)
     {
-        this(principal.getName(), getHostIP());
+        this(principal.getName(), "");
     }
 
     /**
@@ -122,14 +121,12 @@ public class CoalesceSimplePrincipal implements ICoalescePrincipal {
 
     public void addAttribute(String key, String value)
     {
-        if (attributes.containsKey(key))
+        if (!attributes.containsKey(key))
         {
-            attributes.get(key).add(value);
+            attributes.put(key, new ArrayList<>());
         }
-        else
-        {
-            attributes.put(key, Collections.singletonList(value));
-        }
+
+        attributes.get(key).add(value);
     }
 
     public void addAttributes(Map<String, List<String>> attributes)
