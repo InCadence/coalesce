@@ -42,7 +42,6 @@ import com.incadencecorp.coalesce.services.search.service.data.model.SearchCrite
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchGroup;
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchQuery;
 import com.incadencecorp.coalesce.services.search.service.data.model.SearchQueryDetails;
-import com.vividsolutions.jts.io.ParseException;
 import org.geotools.data.Query;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
@@ -52,6 +51,7 @@ import org.geotools.referencing.CRS;
 import org.geotools.temporal.object.DefaultInstant;
 import org.geotools.temporal.object.DefaultPeriod;
 import org.geotools.temporal.object.DefaultPosition;
+import org.locationtech.jts.io.ParseException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.PropertyIsBetween;

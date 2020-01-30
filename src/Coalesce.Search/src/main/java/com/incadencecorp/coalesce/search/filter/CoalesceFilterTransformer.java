@@ -21,7 +21,6 @@ import java.util.Set;
 
 import javax.xml.transform.TransformerException;
 
-import org.geotools.filter.FilterTransformer;
 import org.geotools.gml.producer.GeometryTransformer;
 import org.geotools.xml.transform.TransformerBase;
 import org.opengis.filter.And;
@@ -81,12 +80,12 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * An XMLEncoder for Filters and Expressions. (n78554) Derived from
- * {@link FilterTransformer} to add support for matchCase
+ * FilterTransformer to add support for matchCase
  *
  * @author Ian Schneider
  * @author n78554

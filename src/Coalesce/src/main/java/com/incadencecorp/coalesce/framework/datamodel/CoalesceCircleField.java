@@ -18,7 +18,7 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 
 /**
  * 

@@ -2,8 +2,8 @@ package com.incadencecorp.coalesce.framework.datamodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Point;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved

@@ -74,7 +74,7 @@ public class CoalescePropertyFactory {
 
         if (ff == null)
         {
-            ff = CommonFactoryFinder.getFilterFactory2(null);
+            ff = CommonFactoryFinder.getFilterFactory2();
         }
 
         return ff;

@@ -24,9 +24,9 @@ import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Polygon;
 import org.apache.commons.lang3.NotImplementedException;
 import org.joda.time.DateTime;
 

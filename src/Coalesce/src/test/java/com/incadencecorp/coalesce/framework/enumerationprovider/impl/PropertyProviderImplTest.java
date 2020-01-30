@@ -20,11 +20,11 @@ package com.incadencecorp.coalesce.framework.enumerationprovider.impl;
 import java.io.File;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
-import com.vividsolutions.jts.util.Assert;
 
 /**
  * These test ensure proper behavior of the PropertyProviderImpl
@@ -63,9 +63,9 @@ public class PropertyProviderImplTest {
     {
         List<String> values = EnumerationProviderUtil.getValues(null, "valid");
 
-        Assert.equals(2, values.size());
-        Assert.isTrue(values.contains("HELLO"));
-        Assert.isTrue(values.contains("WORLD"));
+        Assert.assertEquals(2, values.size());
+        Assert.assertTrue(values.contains("HELLO"));
+        Assert.assertTrue(values.contains("WORLD"));
     }
 
     @Test
@@ -77,9 +77,9 @@ public class PropertyProviderImplTest {
 
         List<String> values = provider.lookup(null, "valid");
 
-        Assert.equals(2, values.size());
-        Assert.isTrue(values.contains("HELLO"));
-        Assert.isTrue(values.contains("WORLD"));
+        Assert.assertEquals(2, values.size());
+        Assert.assertTrue(values.contains("HELLO"));
+        Assert.assertTrue(values.contains("WORLD"));
     }
 
 }

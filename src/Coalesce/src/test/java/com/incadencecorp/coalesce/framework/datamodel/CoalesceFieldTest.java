@@ -10,14 +10,14 @@ import com.incadencecorp.coalesce.common.helpers.MimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.WKTWriter;
-import com.vividsolutions.jts.util.GeometricShapeFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.WKTWriter;
+import org.locationtech.jts.util.GeometricShapeFactory;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -1358,7 +1358,7 @@ public class CoalesceFieldTest {
         Coordinate desLocation = desField.getCoordinateValue();
 
         assertEquals(pentagon, desLocation);
-        assertEquals("POINT (38.87116 -77.056138 0)", field.getBaseValue());
+        assertEquals("POINT Z(38.87116 -77.056138 0)", field.getBaseValue());
     }
 
     @Test
@@ -1373,31 +1373,31 @@ public class CoalesceFieldTest {
         docProps.initialize(filePath);
 
         field.setTypedValue(new Coordinate(docProps.getLongitude(), docProps.getLatitude()));
-        assertEquals("POINT (8.67243350003624 49.39875240003339 0)", field.getBaseValue());
+        assertEquals("POINT Z(8.67243350003624 49.39875240003339 0)", field.getBaseValue());
 
         field.setTypedValue(new Coordinate(0, 0));
-        assertEquals("POINT (0 0 0)", field.getBaseValue());
+        assertEquals("POINT Z(0 0 0)", field.getBaseValue());
 
         field.setTypedValue(new Coordinate(-90, -90));
-        assertEquals("POINT (-90 -90 0)", field.getBaseValue());
+        assertEquals("POINT Z(-90 -90 0)", field.getBaseValue());
 
         field.setTypedValue(new Coordinate(90, 90));
-        assertEquals("POINT (90 90 0)", field.getBaseValue());
+        assertEquals("POINT Z(90 90 0)", field.getBaseValue());
 
         field.setTypedValue(new Coordinate(90, 0));
-        assertEquals("POINT (90 0 0)", field.getBaseValue());
+        assertEquals("POINT Z(90 0 0)", field.getBaseValue());
 
         field.setTypedValue(new Coordinate(-90, 0));
-        assertEquals("POINT (-90 0 0)", field.getBaseValue());
+        assertEquals("POINT Z(-90 0 0)", field.getBaseValue());
 
         field.setTypedValue(new Coordinate(0, 90));
-        assertEquals("POINT (0 90 0)", field.getBaseValue());
+        assertEquals("POINT Z(0 90 0)", field.getBaseValue());
 
         field.setTypedValue(new Coordinate(0, -90));
-        assertEquals("POINT (0 -90 0)", field.getBaseValue());
+        assertEquals("POINT Z(0 -90 0)", field.getBaseValue());
 
         field.setTypedValue(new Coordinate(-77.05613800, 38.87116000));
-        assertEquals("POINT (-77.056138 38.87116 0)", field.getBaseValue());
+        assertEquals("POINT Z(-77.056138 38.87116 0)", field.getBaseValue());
 
     }
 
@@ -1424,7 +1424,7 @@ public class CoalesceFieldTest {
         field.setValue(new Coordinate(1, 2, 3));
         point = field.getValueAsPoint();
 
-        assertEquals("POINT (1 2 3)", field.getBaseValue());
+        assertEquals("POINT Z(1 2 3)", field.getBaseValue());
         assertEquals(1, point.getX(), 0);
         assertEquals(2, point.getY(), 0);
         assertEquals(3, point.getCoordinate().z, 0);
@@ -1434,7 +1434,7 @@ public class CoalesceFieldTest {
         field.setValue(new Coordinate(4, 5));
         point = field.getValueAsPoint();
 
-        assertEquals("POINT (4 5 0)", field.getBaseValue());
+        assertEquals("POINT Z(4 5 0)", field.getBaseValue());
         assertEquals(4, point.getX(), 0);
         assertEquals(5, point.getY(), 0);
         assertEquals(0, point.getCoordinate().z, 0);
@@ -1444,7 +1444,7 @@ public class CoalesceFieldTest {
         field.setValue(7, 6);
         point = field.getValueAsPoint();
 
-        assertEquals("POINT (6 7 0)", field.getBaseValue());
+        assertEquals("POINT Z(6 7 0)", field.getBaseValue());
         assertEquals(6, point.getX(), 0);
         assertEquals(7, point.getY(), 0);
         assertEquals(0, point.getCoordinate().z, 0);
@@ -1613,7 +1613,7 @@ public class CoalesceFieldTest {
         });
         coords = field.getCoordinateListValue();
 
-        assertEquals("MULTIPOINT ((1 2 3), (4 5 0))", field.getBaseValue());
+        assertEquals("MULTIPOINT Z((1 2 3), (4 5 0))", field.getBaseValue());
         assertEquals(1, coords[0].x, 0);
         assertEquals(2, coords[0].y, 0);
         assertEquals(3, coords[0].z, 0);
@@ -2230,42 +2230,20 @@ public class CoalesceFieldTest {
 
     }
 
-    // @Test
-    // public void parseCoordinateMultipointMissingBothParenTest() throws
-    // CoalesceDataFormatException
-    // {
-    // _thrown.expect(CoalesceDataFormatException.class);
-    // //_thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
-    //
-    // CoalesceEntity entity =
-    // CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-    //
-    // CoalesceField<?> field = (CoalesceField<?>)
-    // entity.getCoalesceObjectForNamePath("TREXMission/Mission Information
-    // Section/Mission Information Recordset/Mission Information Recordset
-    // Record/MissionGeoLocationList");
-    //
-    // field.setBaseValue("MULTIPOINT (0 0)");
-    //
-    // field.getValue();
-    //
-    // }
-
     @Test
     public void parseCoordinateMultipointMissingPointParenTest() throws CoalesceDataFormatException
     {
-        _thrown.expect(CoalesceDataFormatException.class);
-        // _thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
 
-        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        record.getGeoListField().setBaseValue("MULTIPOINT (0 0, (89 9))");
 
-        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(
-                "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
-
-        field.setBaseValue("MULTIPOINT (0 0, (89 9))");
-
-        field.getValue();
-
+        Assert.assertEquals(2, record.getGeoListField().getValue().length);
+        Assert.assertEquals(0, record.getGeoListField().getValue()[0].x, 0);
+        Assert.assertEquals(0, record.getGeoListField().getValue()[0].y, 0);
+        Assert.assertEquals(89, record.getGeoListField().getValue()[1].x, 0);
+        Assert.assertEquals(9, record.getGeoListField().getValue()[1].y, 0);
     }
 
     @Test
