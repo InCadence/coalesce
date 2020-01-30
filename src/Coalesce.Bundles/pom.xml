@@ -38,6 +38,8 @@
         <module>bundle-hdfs-client</module>
         <module>bundle-cosmos</module>
         <module>bundle-mongo</module>
+        <module>bundle-stanford-nlp</module>
+        <module>bundle-tika</module>
     </modules>
 
 </project>
