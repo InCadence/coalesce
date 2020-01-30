@@ -78,7 +78,8 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
     private String subSubProtocol;
     private String schema = "";
 
-    public final static String DERBY_OBJECT_ALREADY_EXISTS_SQL_STATE = "X0Y32";
+    public static final String DERBY_OBJECT_ALREADY_EXISTS_SQL_STATE = "X0Y32";
+    public static final int MAX_STRING_LENGTH = 256;
 
     /**
      * Note: Derby stored procedures cannot handle long XML types. So, we will
@@ -742,7 +743,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         case POLYGON_TYPE:
         case CIRCLE_TYPE:
         case FILE_TYPE:
-            return "varchar(256)";
+            return "varchar(" + MAX_STRING_LENGTH + ")";
 
         case ENUMERATION_TYPE:
         case INTEGER_TYPE:
@@ -758,7 +759,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         case FLOAT_LIST_TYPE:
         case GUID_LIST_TYPE:
         case BOOLEAN_LIST_TYPE:
-            return "varchar(256)";
+            return "varchar(" + MAX_STRING_LENGTH + ")";
 
         case GUID_TYPE:
             return "varchar(128)";

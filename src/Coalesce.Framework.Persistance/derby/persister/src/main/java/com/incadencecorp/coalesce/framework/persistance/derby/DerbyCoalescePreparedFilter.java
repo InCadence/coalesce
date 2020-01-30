@@ -37,11 +37,40 @@ import org.geotools.filter.capability.FunctionNameImpl;
 import org.geotools.jdbc.JDBCDataStore;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.filter.*;
-import org.opengis.filter.expression.*;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.PropertyIsEqualTo;
+import org.opengis.filter.PropertyIsLike;
+import org.opengis.filter.PropertyIsNotEqualTo;
+import org.opengis.filter.PropertyIsNull;
+import org.opengis.filter.expression.BinaryExpression;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Function;
+import org.opengis.filter.expression.Literal;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.spatial.*;
-import org.opengis.filter.temporal.*;
+import org.opengis.filter.spatial.BBOX;
+import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.filter.spatial.Contains;
+import org.opengis.filter.spatial.Crosses;
+import org.opengis.filter.spatial.Disjoint;
+import org.opengis.filter.spatial.DistanceBufferOperator;
+import org.opengis.filter.spatial.Equals;
+import org.opengis.filter.spatial.Intersects;
+import org.opengis.filter.spatial.Overlaps;
+import org.opengis.filter.spatial.Touches;
+import org.opengis.filter.spatial.Within;
+import org.opengis.filter.temporal.After;
+import org.opengis.filter.temporal.Before;
+import org.opengis.filter.temporal.Begins;
+import org.opengis.filter.temporal.BegunBy;
+import org.opengis.filter.temporal.During;
+import org.opengis.filter.temporal.EndedBy;
+import org.opengis.filter.temporal.Ends;
+import org.opengis.filter.temporal.TContains;
+import org.opengis.filter.temporal.TEquals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +78,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -111,8 +140,8 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
     private boolean ignoreSecurity;
 
-    private List<String> propertyNameList;
-    private List<SortBy> sortByList;
+    private final List<String> propertyNameList = new ArrayList<>();
+    private final List<SortBy> sortByList = new ArrayList<>();
 
     private Object currentContext;
     private String currentProperty;
@@ -231,26 +260,19 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
             throw new FilterToSQLException("Can't encode to a null writer.");
         }
 
-        if (true)//capability.supports(filter))
+        try
         {
-            try
+            if (!inline)
             {
-                if (!inline)
-                {
-                    out.write("WHERE ");
-                }
-
-                filter.accept(this, null);
-
+                out.write("WHERE ");
             }
-            catch (java.io.IOException ioe)
-            {
-                throw new FilterToSQLException("Problem writing filter: ", ioe);
-            }
+
+            filter.accept(this, null);
+
         }
-        else
+        catch (java.io.IOException ioe)
         {
-            throw new FilterToSQLException("Filter type not supported");
+            throw new FilterToSQLException("Problem writing filter: ", ioe);
         }
     }
 
@@ -475,10 +497,6 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
             }
             else
             {
-
-                Expression e1 = (Expression) property;
-                Expression e2 = (Expression) geometry;
-
                 String closingParenthesis = ")";
                 if (filter instanceof Equals)
                 {
@@ -525,9 +543,9 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
                 }
                 out.write("(");
 
-                e1.accept(this, extraData);
+                property.accept(this, extraData);
                 out.write("::geometry, ");
-                e2.accept(this, extraData);
+                geometry.accept(this, extraData);
 
                 out.write(closingParenthesis);
             }
@@ -665,13 +683,13 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
                 };
                 f.setName("lower");
 
-                f.setParameters(Arrays.asList(left));
-                f.accept(this, Arrays.asList(leftContext));
+                f.setParameters(Collections.singletonList(left));
+                f.accept(this, Collections.singletonList(leftContext));
 
                 out.write(" " + type + " ");
 
-                f.setParameters(Arrays.asList(right));
-                f.accept(this, Arrays.asList(rightContext));
+                f.setParameters(Collections.singletonList(right));
+                f.accept(this, Collections.singletonList(rightContext));
             }
 
         }
@@ -772,10 +790,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
             if (LOGGER.isDebugEnabled())
             {
-                LOGGER.debug("Converted ({}) Value ({}) => ({})",
-                             currentProperty,
-                             (String) expression.getValue(),
-                             literalValue);
+                LOGGER.debug("Converted ({}) Value ({}) => ({})", currentProperty, expression.getValue(), literalValue);
             }
         }
         else
@@ -787,11 +802,6 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
     }
 
-    /**
-     * @param expression
-     * @param context
-     * @return
-     */
     private Object getLiteralValue(Literal expression, Object context)
     {
         Object literalValue;
@@ -854,10 +864,6 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
         return literalValue;
     }
 
-    /**
-     * @param literalValue
-     * @throws IOException
-     */
     private void checkLiteralValue(Object literalValue) throws IOException
     {
 
@@ -926,8 +932,6 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     /**
      * Sets the offset to be (page number - 1)*(page size). The page numbering
      * starts at 1; anything else will be treated as page 1.
-     *
-     * @param value
      */
     public void setOffset(int value)
     {
@@ -937,14 +941,9 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     /**
      * Sets the names of the properties that this Query should retrieve as part
      * of the returned.
-     *
-     * @param values
      */
     public void setPropertNames(String... values)
     {
-
-        propertyNameList = new ArrayList<String>();
-
         if (values != null)
         {
             for (String name : values)
@@ -959,18 +958,13 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
                 }
             }
         }
-
     }
 
     /**
      * Sets the columns and directions that the query should be sorted on.
-     *
-     * @param sort
      */
     public void setSortBy(SortBy... sort)
     {
-        sortByList = new ArrayList<>();
-
         if (sort != null)
         {
             for (SortBy sortBy : sort)
@@ -1032,8 +1026,6 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
     /**
      * Sets whether security checking is enabled.
-     *
-     * @param ignoreSecurity
      */
     public void setIgnoreSecurity(boolean ignoreSecurity)
     {
@@ -1091,8 +1083,8 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
             if (StringHelper.isNullOrEmpty(lastTable))
             {
                 // from = currentTable;
-                sb.append(" LEFT JOIN " + currentTable + " ON " + currentTable + "." + column
-                                  + "=" + databaseSchema + ".coalesceentity.objectkey");
+                sb.append(" LEFT JOIN " + currentTable + " ON " + currentTable + "." + column + "=" + databaseSchema
+                                  + ".coalesceentity.objectkey");
 
             }
             else
@@ -1128,7 +1120,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     }
 
     /**
-     * @param postfix
+     * @param postfix to append to column names
      * @return the columns that should be returned as a part of the query.
      */
     public String getColumns(String postfix)
@@ -1136,21 +1128,28 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
         StringBuilder sb = new StringBuilder(String.format(SQL_COLUMNS, databaseSchema, postfix));
 
-        if (propertyNameList != null)
+        for (String column : propertyNameList)
         {
-            for (String column : propertyNameList)
+            String normalizedColumn = column.replaceAll(databaseSchema + "\\.|[.\"]", "");
+
+            if (isEnumeration(column))
             {
-                String normalizedColumn = column.replaceAll(databaseSchema + "\\.|[.\"]", "");
+                column = String.format(getEnumProperty(), enumList.indexOf(column)) + " AS " + normalizedColumn;
+            }
+            else
+            {
+                column = column + " AS " + normalizedColumn;
+            }
 
-                if (isEnumeration(column))
-                {
-                    column = String.format(getEnumProperty(), enumList.indexOf(column)) + " AS " + normalizedColumn;
-                }
-                else
-                {
-                    column = column + " AS " + normalizedColumn;
-                }
+            sb.append(COMMA_SPACE + column + postfix);
+        }
 
+        for (SortBy sortby : sortByList)
+        {
+            String column = sortby.getPropertyName().getPropertyName();
+
+            if (!propertyNameList.contains(column))
+            {
                 sb.append(COMMA_SPACE + column + postfix);
             }
         }

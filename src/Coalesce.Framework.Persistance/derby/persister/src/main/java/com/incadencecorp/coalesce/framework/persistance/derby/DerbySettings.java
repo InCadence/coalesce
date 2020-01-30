@@ -74,7 +74,7 @@ public class DerbySettings {
     /**
      * Configures the settings to use a particular connector.
      *
-     * @param connector
+     * @param connector used for storing / retrieving properties
      */
     public static void setConnector(final IConfigurationsConnector connector)
     {
@@ -84,8 +84,8 @@ public class DerbySettings {
     /**
      * Configures the settings to use a particular connector and property name.
      * 
-     * @param connector
-     * @param name
+     * @param connector  used for storing / retrieving properties
+     * @param name of property file
      */
     public static void setConnector(final IConfigurationsConnector connector, final String name)
     {
@@ -106,8 +106,6 @@ public class DerbySettings {
 
     /**
      * Sets the address of the database.
-     *
-     * @param databaseAddress
      */
     public static void setDatabaseAddress(String databaseAddress)
     {
@@ -124,8 +122,6 @@ public class DerbySettings {
 
     /**
      * Sets the username used for accessing the database.
-     *
-     * @param userName
      */
     public static void setUserName(String userName)
     {
@@ -142,8 +138,6 @@ public class DerbySettings {
 
     /**
      * Sets the password used for accessing the database.
-     *
-     * @param userPassword
      */
     public static void setUserPassword(String userPassword)
     {
@@ -160,8 +154,6 @@ public class DerbySettings {
 
     /**
      * Sets the schema used for the database.
-     *
-     * @param databaseSchema
      */
     public static void setDatabaseSchema(String databaseSchema)
     {
@@ -178,8 +170,6 @@ public class DerbySettings {
 
     /**
      * Sets the database name.
-     *
-     * @param databaseName
      */
     public static void setDatabaseName(String databaseName)
     {
@@ -196,8 +186,6 @@ public class DerbySettings {
 
     /**
      * Sets the port to be used for accessing the database.
-     *
-     * @param databasePort
      */
     public static void setDatabasePort(int databasePort)
     {
@@ -234,8 +222,6 @@ public class DerbySettings {
     /**
      * Sets the Spatial Reference Identifier (SRID) - required for geospatial
      * fields
-     *
-     * @param srid
      */
     public static void setSRID(int srid)
     {

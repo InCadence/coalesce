@@ -95,6 +95,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -188,6 +189,13 @@ public class SearchDataController extends SearchQueryController {
             }
         }
 
+        PropertyVisitor visitor = new PropertyVisitor();
+        Set<String> props = visitor.getProperties(filter);
+
+        // Don't persist queries that are only used to pull entity attributes
+        boolean saveQuery =
+                props.size() >= 2 || !props.contains(CoalescePropertyFactory.getEntityKey().getPropertyName().toLowerCase());
+
         if (searchQuery.isUserLimited())
         {
             filter = FF.and(filter, CoalescePropertyFactory.getCreatedBy(getPrincipal().getName()));
@@ -222,10 +230,17 @@ public class SearchDataController extends SearchQueryController {
             QueryResult result = createResponse(framework.searchBulk(searchQuery.getCapabilities(), query).get(0),
                                                 searchQuery.getPropertyNames());
 
-            SearchQueryDetails details = new SearchQueryDetails();
-            details.setQuery(searchQuery);
+            if (saveQuery)
+            {
+                SearchQueryDetails details = new SearchQueryDetails();
+                details.setQuery(searchQuery);
 
-            save(details);
+                save(details);
+            }
+            else
+            {
+                LOGGER.debug("Not persisting query: {}", searchQuery.getCql());
+            }
 
             return result;
         }
@@ -405,8 +420,7 @@ public class SearchDataController extends SearchQueryController {
                         List<String> capabilities = Arrays.asList(rowset.getString(idx++).split("[,]"));
 
                         EnumSet<EPersistorCapabilities> set = capabilities.stream().map(EPersistorCapabilities::valueOf).collect(
-                                Collectors.toCollection(() -> EnumSet.noneOf(
-                                EPersistorCapabilities.class)));
+                                Collectors.toCollection(() -> EnumSet.noneOf(EPersistorCapabilities.class)));
 
                         record.setCapabilities(set);
 
