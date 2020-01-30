@@ -75,8 +75,8 @@ public final class XSDGeneratorUtil {
     private static final String REGEX_UUID = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
     private static final String REGEX_AXIS = "-?([0-9]*\\.)?[0-9]+";
     private static final String REGEX_COORD = "\\(?" + REGEX_AXIS + " " + REGEX_AXIS + " (" + REGEX_AXIS + ")?\\)?";
-    private static final String REGEX_MULITPLE = " \\((" + REGEX_COORD + "(, )?){0," + MAX_POINT + "}\\)";
-    private static final String REGEX_POINT = "POINT " + REGEX_COORD;
+    private static final String REGEX_MULITPLE = " Z?\\((" + REGEX_COORD + "(, )?){0," + MAX_POINT + "}\\)";
+    private static final String REGEX_POINT = "POINT Z?" + REGEX_COORD;
     private static final String REGEX_MULTIPOINT = "MULTIPOINT" + REGEX_MULITPLE;
     private static final String REGEX_POLYGON = "POLYGON" + REGEX_MULITPLE;
     private static final String REGEX_LINESTRING = "LINESTRING" + REGEX_MULITPLE;

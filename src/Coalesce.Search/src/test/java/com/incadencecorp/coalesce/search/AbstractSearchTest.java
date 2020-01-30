@@ -40,13 +40,13 @@ import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.QueryHelper;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.WKTReader;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.WKTReader;
 import org.geotools.data.Query;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
@@ -66,6 +66,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
+import org.opengis.geometry.BoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.temporal.Instant;
 import org.slf4j.Logger;
@@ -1207,7 +1208,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Coordinate point1 = new Coordinate(40, -5);
         Coordinate point2 = new Coordinate(60, 0);
 
-        ReferencedEnvelope bbox = new ReferencedEnvelope(createSquare(point1, point2).getEnvelopeInternal(), crs);
+        BoundingBox bbox = createSquare(point1, point2);
 
         List<PropertyName> props = new ArrayList<>();
         props.add(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()));
@@ -1229,7 +1230,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         }
 
         // Create bound box filter that excludes the field
-        bbox = new ReferencedEnvelope(createSquare(new Coordinate(59, -5), point2).getEnvelopeInternal(), crs);
+        bbox = createSquare(new Coordinate(59, -5), point2);
         query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()),
                                FF.bbox(CoalescePropertyFactory.getFieldProperty(record.getGeoField()), bbox)));
 
@@ -1244,9 +1245,9 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         persistor.saveEntity(true, entity);
     }
 
-    private Polygon createSquare(Coordinate p1, Coordinate p2)
+    private BoundingBox createSquare(Coordinate p1, Coordinate p2)
     {
-        return GF.createPolygon(new Coordinate[] { p1, new Coordinate(p1.x, p2.y), p2, new Coordinate(p2.x, p1.y), p1 });
+        return new ReferencedEnvelope(p1.x, p2.x, p1.y, p2.y, crs);
     }
 
     /**

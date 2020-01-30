@@ -19,7 +19,7 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import org.geotools.data.postgis.PostgisPSFilterToSql;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.Hints;
+import org.geotools.util.factory.Hints;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.junit.Assert;
 import org.junit.Test;

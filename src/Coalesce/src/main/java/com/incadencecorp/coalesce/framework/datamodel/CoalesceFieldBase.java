@@ -35,16 +35,16 @@ import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
-import com.vividsolutions.jts.io.WKTWriter;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
+import org.locationtech.jts.io.WKTWriter;
 
 /**
  * Abstract class that provides common functionality between fields and their
@@ -1020,9 +1020,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         if (value.endsWith("MULTIPOINT EMPTY"))
             return;
 
-        if (value.startsWith("MULTIPOINT (") || value.startsWith("MULTIPOINT("))
+        if (value.startsWith("MULTIPOINT (") || value.startsWith("MULTIPOINT(") || value.startsWith("MULTIPOINT Z("))
         {
-            String trimmed = value.replace("MULTIPOINT (", "").replace("MULTIPOINT(", "");
+            String trimmed = value.replace("MULTIPOINT (", "").replace("MULTIPOINT(", "").replace("MULTIPOINT Z(", "");
 
             if (trimmed.endsWith(")"))
             {
