@@ -47,11 +47,14 @@
         </dependency>
 
         <!-- SSL Support -->
+        <!--
         <dependency>
             <groupId>ironhide</groupId>
             <artifactId>ironhide-client</artifactId>
             <version>${ironhide.version}</version>
         </dependency>
+        -->
+
 
         <!-- Elastic Search Client -->
         <dependency>
