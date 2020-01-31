@@ -2,18 +2,19 @@ package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import com.google.common.net.HostAndPort;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import ironhide.client.IronhideClient;
-import ironhide.client.IronhideClient.Builder;
+import org.apache.http.HttpHost;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.support.AbstractClient;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.cluster.ClusterName;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class ElasticSearchDataConnector implements AutoCloseable {
 
             try
             {
-                client = isSSLEnabled ? createSSLClient(props) : createClient(props);
+                client = isSSLEnabled ? createClient(props) : createClient(props);
             }
             catch (CoalescePersistorException e)
             {
@@ -59,9 +60,9 @@ public class ElasticSearchDataConnector implements AutoCloseable {
     public void close()
     {
         if (client != null)
-        {
-            client.close();
-        }
+            {
+                client.close();
+            }
     }
 
     private AbstractClient createClient(Properties props) throws CoalescePersistorException
@@ -81,8 +82,7 @@ public class ElasticSearchDataConnector implements AutoCloseable {
 
                 try
                 {
-                    return new InetSocketTransportAddress(InetAddress.getByName(hostAndPort.getHost()),
-                                                          hostAndPort.getPort());
+                    return new TransportAddress(InetAddress.getByName(hostAndPort.getHost()), hostAndPort.getPort());
                 }
                 catch (UnknownHostException e)
                 {
@@ -99,6 +99,43 @@ public class ElasticSearchDataConnector implements AutoCloseable {
         return client;
     }
 
+    private RestClient createRestClient(Properties props) throws CoalescePersistorException
+    {
+        boolean sslEnabled =
+                props.containsKey(ElasticSearchSettings.PARAM_SSL_ENABLED) && Boolean.parseBoolean((String) props.get(
+                        ElasticSearchSettings.PARAM_SSL_ENABLED));
+
+        try
+        {
+            Settings.Builder builder = Settings.builder();
+            builder.put(ClusterName.CLUSTER_NAME_SETTING.getKey(),
+                        props.getProperty(ElasticSearchSettings.PARAM_CLUSTER_NAME));
+
+            String hosts = props.getProperty(ElasticSearchSettings.PARAM_HOSTS);
+            String scheme = sslEnabled ? "https" : "http";
+            HttpHost[] hostsArray = Stream.of(hosts.split(",")).map(host -> {
+                HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9300);
+
+                try
+                {
+                    return new HttpHost(InetAddress.getByName(hostAndPort.getHost()), hostAndPort.getPort(), scheme);
+                }
+                catch (UnknownHostException e)
+                {
+                    LOGGER.warn(e.getMessage(), e);
+                    return null;
+                }
+            }).toArray(HttpHost[]::new);
+
+            return RestClient.builder(hostsArray).build();
+        }
+        catch (ElasticsearchException ex)
+        {
+            throw new CoalescePersistorException(ex.getMessage(), ex);
+        }
+    }
+
+/*
     private AbstractClient createSSLClient(Properties props) throws CoalescePersistorException
     {
         IronhideClient client;
@@ -157,5 +194,5 @@ public class ElasticSearchDataConnector implements AutoCloseable {
 
         return client;
     }
-
+*/
 }
