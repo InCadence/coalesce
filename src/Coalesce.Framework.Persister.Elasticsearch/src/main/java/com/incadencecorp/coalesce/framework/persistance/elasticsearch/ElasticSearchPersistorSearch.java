@@ -2,7 +2,6 @@ package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
@@ -106,7 +105,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
         try
         {
             DataStore datastore = getDataStore(index);
-            SimpleFeatureType feature = datastore.getSchema(type);
+            SimpleFeatureType feature = datastore.getSchema(index);
 
             for (AttributeDescriptor attr : feature.getAttributeDescriptors())
             {
@@ -157,28 +156,13 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
 
             Query localQuery = rewriter.rewrite(query);
 
-            String typeName;
-
-            switch (localQuery.getTypeName())
-            {
-            case ElasticSearchPersistor.COALESCE_ENTITY_INDEX:
-                typeName = ElasticSearchPersistor.COALESCE_ENTITY;
-                break;
-            case ElasticSearchPersistor.COALESCE_LINKAGE_INDEX:
-                typeName = CoalesceLinkage.NAME;
-                break;
-            default:
-                typeName = "recordset";
-                break;
-            }
-
             //The datastore factory needs an index in order to find a matching store
             SearchResults results = new SearchResults();
             DataStore datastore = getDataStore(localQuery.getTypeName());
 
             try
             {
-                SimpleFeatureSource featureSource = datastore.getFeatureSource(typeName);
+                SimpleFeatureSource featureSource = datastore.getFeatureSource(localQuery.getTypeName());
 
                 LOGGER.debug("Doing this search: " + localQuery.toString());
 
@@ -305,7 +289,7 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
         Map<String, String> props = new HashMap<>();
         props.put(ElasticDataStoreFactory.HOSTNAME.key, params.get(ElasticSearchSettings.PARAM_HTTP_HOST));
         props.put(ElasticDataStoreFactory.HOSTPORT.key, params.get(ElasticSearchSettings.PARAM_HTTP_PORT));
-        props.put(ElasticDataStoreFactory.SSL_ENABLED.key, params.get(ElasticSearchSettings.PARAM_SSL_ENABLED));
+        //props.put(ElasticDataStoreFactory.SSL_ENABLED.key, params.get(ElasticSearchSettings.PARAM_SSL_ENABLED));
         props.put(ElasticDataStoreFactory.SSL_REJECT_UNAUTHORIZED.key,
                   params.get(ElasticSearchSettings.PARAM_SSL_REJECT_UNAUTHORIZED));
         props.put(ElasticDataStoreFactory.SOURCE_FILTERING_ENABLED.key, Boolean.TRUE.toString());

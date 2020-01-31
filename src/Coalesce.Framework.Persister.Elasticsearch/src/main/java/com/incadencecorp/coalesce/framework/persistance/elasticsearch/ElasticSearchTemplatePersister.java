@@ -44,6 +44,7 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.support.AbstractClient;
+import org.elasticsearch.common.settings.SecureSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -102,7 +103,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     public static final String LINKAGE_ENTITY2_SOURCE_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageSource());
     public static final String LINKAGE_ENTITY2_VERSION_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageVersion());
 
-    private final HashMap<String, String> defaultSettings = new HashMap<>();
+    private final Settings defaultSettings;
 
     protected final Map<String, String> params;
     protected final ElasticSearchIterator iterator;
@@ -143,14 +144,18 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
             }
         }
 
+        Settings.Builder buidler = Settings.builder();
+
         for (Map.Entry<String, String> entry : params.entrySet())
         {
             if (entry.getKey().startsWith(ElasticSearchSettings.PARAM_INDEX_SETTING_PREFIX))
             {
-                defaultSettings.put(entry.getKey().replace(ElasticSearchSettings.PARAM_INDEX_SETTING_PREFIX, ""),
+                buidler.put(entry.getKey().replace(ElasticSearchSettings.PARAM_INDEX_SETTING_PREFIX, ""),
                                     entry.getValue());
             }
         }
+
+        defaultSettings = buidler.build();
     }
 
     @Override
@@ -366,7 +371,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
                 CreateIndexRequest request = new CreateIndexRequest();
                 request.index(index);
-                request.settings(Settings.builder().put(defaultSettings).build());
+                request.settings(defaultSettings);
                 request.mapping("recordset", Collections.singletonMap("properties", source));
 
                 // Add a type / recordset
@@ -444,7 +449,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         mapping.put(FIELD_XML, Collections.singletonMap("enabled", "false"));
 
         CreateIndexRequest request = new CreateIndexRequest();
-        request.settings(Settings.builder().put(defaultSettings).build());
+        request.settings(defaultSettings);
         request.index(COALESCE_ENTITY_INDEX);
         request.mapping(COALESCE_ENTITY, Collections.singletonMap("properties", mapping));
         request.mapping(COALESCE_TEMPLATE, Collections.singletonMap("properties", mapping));
@@ -478,7 +483,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     private CreateIndexRequest createCoalesceLinkageIndexRequest()
     {
         CreateIndexRequest request = new CreateIndexRequest();
-        request.settings(Settings.builder().put(defaultSettings).build());
+        request.settings(defaultSettings);
         request.index(COALESCE_LINKAGE_INDEX);
         request.mapping(COALESCE_LINKAGE, Collections.singletonMap("properties", createLinkageMapping()));
 

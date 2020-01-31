@@ -27,7 +27,7 @@ import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.geotools.data.Query;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.Hints;
+import org.geotools.util.factory.Hints;
 import org.geotools.filter.visitor.DuplicatingFilterVisitor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsEqualTo;

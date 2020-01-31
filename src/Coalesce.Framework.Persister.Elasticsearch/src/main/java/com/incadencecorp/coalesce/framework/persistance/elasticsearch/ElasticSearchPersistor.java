@@ -192,7 +192,7 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
                     if (!recordKeys.get(hit.getIndex()).contains(hit.getId()))
                     {
                         // This check should not be required
-                        String key = (String) hit.getSource().get(ENTITY_KEY_COLUMN_NAME);
+                        String key = (String) hit.getSourceAsMap().get(ENTITY_KEY_COLUMN_NAME);
 
                         // Verify the record belongs to an entity being updated
                         if (key != null && keys.contains(key))
