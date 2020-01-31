@@ -241,19 +241,22 @@ class ElasticSearchQueryRewriter extends DuplicatingFilterVisitor {
         newQuery.setPropertyNames(properties);
 
         // Rewrite the any sorts also
-        SortBy[] sorts = newQuery.getSortBy();
-        if (sorts != null && sorts.length > 0)
+        if (newQuery.getSortBy() != null && newQuery.getSortBy().length > 0)
         {
-            for (int i = 0; i < sorts.length; i++)
+            SortBy[] sorts = new SortBy[newQuery.getSortBy().length];
+
+            int ii=0;
+
+            for (SortBy sortby : newQuery.getSortBy())
             {
-                String name = getNormalizedPropertyName(sorts[i].getPropertyName().getPropertyName());
+                String name = getNormalizedPropertyName(sortby.getPropertyName().getPropertyName());
 
                 if (isStringField(name))
                 {
                     name = name + ".keyword";
                 }
 
-                sorts[i] = ff.sort(name, sorts[i].getSortOrder());
+                sorts[ii++] = ff.sort(name, sortby.getSortOrder());
             }
 
             newQuery.setSortBy(sorts);
