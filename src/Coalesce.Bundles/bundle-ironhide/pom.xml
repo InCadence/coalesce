@@ -44,7 +44,6 @@
                         <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Export-Package>
-                            ironhide.client.*;version=${ironhide.version};-split-package:=merge-last,
                             org.elasticsearch.*;version=${elasticsearch.version};-split-package:=merge-last,
                             mil.nga.giat.data.elasticsearch*;version=${elasticgeo.version}
                         </Export-Package>
@@ -65,12 +64,13 @@
     </build>
 
     <dependencies>
-
+<!--
         <dependency>
             <groupId>ironhide</groupId>
             <artifactId>ironhide-client</artifactId>
             <version>${ironhide.version}</version>
         </dependency>
+-->
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
