@@ -44,7 +44,6 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.support.AbstractClient;
-import org.elasticsearch.common.settings.SecureSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -69,9 +68,9 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
     private static final ICoalesceNormalizer NORMALIZER = new ElasticSearchNormalizer();
 
     public static final String COALESCE_ENTITY_INDEX = "coalesce";
+    public static final String COALESCE_TEMPLATE_INDEX = COALESCE_ENTITY_INDEX + "-templates";
     public static final String COALESCE_LINKAGE_INDEX = COALESCE_ENTITY_INDEX + "-linkages";
     public static final String COALESCE_ENTITY = "entity";
-    public static final String COALESCE_TEMPLATE = "template";
     public static final String COALESCE_LINKAGE = CoalesceLinkage.NAME;
     public static final String FIELD_XML = normalize(CoalescePropertyFactory.getEntityXml());
 
@@ -151,7 +150,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
             if (entry.getKey().startsWith(ElasticSearchSettings.PARAM_INDEX_SETTING_PREFIX))
             {
                 buidler.put(entry.getKey().replace(ElasticSearchSettings.PARAM_INDEX_SETTING_PREFIX, ""),
-                                    entry.getValue());
+                            entry.getValue());
             }
         }
 
@@ -177,8 +176,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 properties.put(FIELD_XML, template.toXml());
 
                 IndexRequest request = new IndexRequest();
-                request.index(COALESCE_ENTITY_INDEX);
-                request.type(COALESCE_TEMPLATE);
+                request.index(COALESCE_TEMPLATE_INDEX);
                 request.id(template.getKey());
                 request.source(properties);
 
@@ -198,7 +196,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
             AbstractClient client = conn.getDBConnector(params);
             for (String key : keys)
             {
-                deleteFromElasticSearch(client, COALESCE_ENTITY_INDEX, COALESCE_TEMPLATE, key);
+                deleteFromElasticSearch(client, COALESCE_TEMPLATE_INDEX, key);
             }
         }
     }
@@ -211,8 +209,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
             AbstractClient client = conn.getDBConnector(params);
             for (String key : keys)
             {
-                deleteFromElasticSearch(client, COALESCE_ENTITY_INDEX, COALESCE_TEMPLATE, key);
-                deleteFromElasticSearch(client, COALESCE_ENTITY_INDEX, COALESCE_ENTITY, key);
+                deleteFromElasticSearch(client, COALESCE_TEMPLATE_INDEX, key);
             }
         }
     }
@@ -229,8 +226,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 AbstractClient client = conn.getDBConnector(params);
 
                 GetRequest request = new GetRequest();
-                request.index(COALESCE_ENTITY_INDEX);
-                request.type(COALESCE_TEMPLATE);
+                request.index(COALESCE_TEMPLATE_INDEX);
                 request.id(key);
 
                 GetResponse response = client.get(request).actionGet();
@@ -289,8 +285,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                     ENTITY_SOURCE_COLUMN_NAME,
                     source)).must(QueryBuilders.matchQuery(ENTITY_VERSION_COLUMN_NAME, version));
 
-            SearchRequestBuilder searchRequest = client.prepareSearch(COALESCE_ENTITY_INDEX).setTypes(COALESCE_TEMPLATE).setQuery(
-                    boolQuery);
+            SearchRequestBuilder searchRequest = client.prepareSearch(COALESCE_TEMPLATE_INDEX).setQuery(boolQuery);
 
             //LOGGER.debug("Trying this search: " + searchRequest.toString());
 
@@ -328,8 +323,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         {
             AbstractClient client = conn.getDBConnector(params);
 
-            SearchRequestBuilder searchRequest = client.prepareSearch(COALESCE_ENTITY_INDEX).setTypes(COALESCE_TEMPLATE).setQuery(
-                    QueryBuilders.matchAllQuery());
+            SearchRequestBuilder searchRequest = client.prepareSearch(COALESCE_TEMPLATE_INDEX).setQuery(QueryBuilders.matchAllQuery());
 
             SearchResponse response = searchRequest.get();
 
@@ -387,6 +381,13 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                     response = client.admin().indices().create(request).actionGet();
                     LOGGER.debug("Registered Coalesce Template Index {}: {}", index, response);
 
+                    if (!doesExists(client, COALESCE_TEMPLATE_INDEX))
+                    {
+                        response = client.admin().indices().create(createCoalesceTemplateIndexRequest()).actionGet();
+
+                        LOGGER.debug("Registered Coalesce Template Index {}: {}", template.getName(), response);
+                    }
+
                     if (!doesExists(client, COALESCE_ENTITY_INDEX))
                     {
                         response = client.admin().indices().create(createCoalesceEntityIndexRequest()).actionGet();
@@ -430,11 +431,10 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         return client.admin().indices().exists(request).actionGet().isExists();
     }
 
-    private void deleteFromElasticSearch(AbstractClient conn, String index, String type, String id)
+    private void deleteFromElasticSearch(AbstractClient conn, String index, String id)
     {
         DeleteRequest entityRequest = new DeleteRequest();
         entityRequest.index(index);
-        entityRequest.type(type);
         entityRequest.id(id);
 
         DeleteResponse entityResponse = conn.delete(entityRequest).actionGet();
@@ -452,7 +452,20 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         request.settings(defaultSettings);
         request.index(COALESCE_ENTITY_INDEX);
         request.mapping(COALESCE_ENTITY, Collections.singletonMap("properties", mapping));
-        request.mapping(COALESCE_TEMPLATE, Collections.singletonMap("properties", mapping));
+
+        return request;
+    }
+
+    private CreateIndexRequest createCoalesceTemplateIndexRequest()
+    {
+        Map<String, Object> mapping = createEntityMapping();
+
+        mapping.put(FIELD_XML, Collections.singletonMap("enabled", "false"));
+
+        CreateIndexRequest request = new CreateIndexRequest();
+        request.settings(defaultSettings);
+        request.index(COALESCE_TEMPLATE_INDEX);
+        request.mapping(COALESCE_ENTITY, Collections.singletonMap("properties", mapping));
 
         return request;
     }
