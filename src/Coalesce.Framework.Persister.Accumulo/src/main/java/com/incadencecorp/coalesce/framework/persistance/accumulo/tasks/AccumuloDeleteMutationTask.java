@@ -20,14 +20,13 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo.tasks;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloSettings;
-import com.incadencecorp.coalesce.framework.persistance.accumulo.CloseableBatchDeleter;
 import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
 import org.apache.accumulo.core.client.AccumuloException;
+import org.apache.accumulo.core.client.BatchDeleter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
 import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.data.Range;
@@ -74,11 +73,10 @@ public class AccumuloDeleteMutationTask
     {
         CoalesceStringResponseType result = new CoalesceStringResponseType();
 
-        try (CloseableBatchDeleter bd = new CloseableBatchDeleter(parameters.getTarget().getDBConnector(),
-                                                                  tablename,
-                                                                  Authorizations.EMPTY,
-                                                                  AccumuloSettings.getQueryThreads(),
-                                                                  config))
+        try (BatchDeleter bd = parameters.getTarget().getDBConnector().createBatchDeleter(tablename,
+                                                                                          Authorizations.EMPTY,
+                                                                                          AccumuloSettings.getQueryThreads(),
+                                                                                          config))
         {
             List<Range> ranges = new ArrayList<>();
 

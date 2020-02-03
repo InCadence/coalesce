@@ -34,18 +34,18 @@ import com.incadencecorp.coalesce.framework.filter.CoalesceVersionFilter;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.resultset.CoalesceCommonColumns;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import com.vividsolutions.jts.util.GeometricShapeFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
+import org.locationtech.jts.util.GeometricShapeFactory;
 import org.geotools.data.DataStore;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.Hints;
+import org.geotools.util.factory.Hints;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.joda.time.DateTime;
 import org.opengis.feature.IllegalAttributeException;
@@ -67,7 +67,7 @@ import java.util.Map;
 public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, FeatureCollections>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloFeatureIterator.class);
-    private static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2();
+    private static final FilterFactory2 FF = CoalescePropertyFactory.getFilterFactory();
 
     private final String ENTITY_KEY_COLUMN_NAME;
     private final String ENTITY_NAME_COLUMN_NAME;

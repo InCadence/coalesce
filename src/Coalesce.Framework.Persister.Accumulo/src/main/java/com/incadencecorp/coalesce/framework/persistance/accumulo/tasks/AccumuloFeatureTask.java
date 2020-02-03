@@ -27,6 +27,7 @@ import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloSetting
 import com.incadencecorp.coalesce.framework.persistance.accumulo.FeatureCollections;
 import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureWriter;
 import org.geotools.data.Transaction;
@@ -55,7 +56,7 @@ import java.util.Map;
 public class AccumuloFeatureTask extends
         AbstractTask<Map.Entry<String, FeatureCollections>, CoalesceStringResponseType, DataStore> {
 
-    private static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2();
+    private static final FilterFactory2 FF = CoalescePropertyFactory.getFilterFactory();
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloFeatureTask.class);
 
     @Override

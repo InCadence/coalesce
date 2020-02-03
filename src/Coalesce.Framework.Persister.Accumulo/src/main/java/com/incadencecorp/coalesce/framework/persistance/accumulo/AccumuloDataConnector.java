@@ -12,7 +12,6 @@ import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.client.Instance;
 import org.apache.accumulo.core.client.TableExistsException;
 import org.apache.accumulo.core.client.ZooKeeperInstance;
-import org.apache.accumulo.core.client.mock.MockInstance;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFactorySpi;
@@ -66,19 +65,19 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
     public static final String ENTITY_FEATURE_NAME = "coalesceentity";
 
     // Datastore Properties
-    public static final String INSTANCE_ID = "instanceId";
+    public static final String INSTANCE_ID = "accumulo.instance.id";
     public static final String ZOOKEEPERS = "zookeepers";
-    public static final String USER = "user";
-    public static final String PASSWORD = "password";
-    public static final String TABLE_NAME = "tableName";
-    public static final String QUERY_THREADS = "queryThreads";
-    public static final String RECORD_THREADS = "recordThreads";
-    public static final String WRITE_THREADS = "writeThreads";
-    public static final String GENERATE_STATS = "generateStats";
+    public static final String USER = "accumulo.user";
+    public static final String PASSWORD = "accumulo.password";
+    public static final String TABLE_NAME = "accumulo.catalog";
+    public static final String QUERY_THREADS = "geomesa.query.threads";
+    public static final String RECORD_THREADS = "accumulo.query.record-threads";
+    public static final String WRITE_THREADS = "accumulo.write.threads";
+    public static final String GENERATE_STATS = "geomesa.stats.enable";
     public static final String COLLECT_USAGE_STATS = "collectStats";//"collectUsageStats";
-    public static final String CACHING = "caching";
+    public static final String CACHING = "geomesa.query.caching";
     public static final String LOOSE_B_BOX = "looseBBox";
-    public static final String USE_MOCK = "useMock";
+    public static final String USE_MOCK = "accumulo.mock";
     public static final String USE_COMPRESSION = "compression.enabled";
     public static final String RETURN_TOTALS = "returnTotals";
 
@@ -229,15 +228,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
                 LOGGER.info("Connecting: Instance: {}  Zookeepers: {}", dsConf.get(INSTANCE_ID), dsConf.get(ZOOKEEPERS));
 
                 // Use a Mock Instance?
-                if (Boolean.parseBoolean(dsConf.get(USE_MOCK)))
-                {
-                    LOGGER.warn("Using Mock Instance");
-                    instance = new MockInstance(dsConf.get(ZOOKEEPERS));
-                }
-                else
-                {
-                    instance = new ZooKeeperInstance(dsConf.get(INSTANCE_ID), dsConf.get(ZOOKEEPERS));
-                }
+                instance = new ZooKeeperInstance(dsConf.get(INSTANCE_ID), dsConf.get(ZOOKEEPERS));
 
                 watch.finish();
                 LOGGER.debug("Got Instance in {} ms", watch.getTotalLife());
@@ -270,7 +261,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
                     LOGGER.debug("List Available Stores:");
                     while (availableStores.hasNext())
                     {
-                        LOGGER.debug("\t{}", availableStores.next().toString());
+                        LOGGER.debug("\t{}", availableStores.next());
                     }
 
                     watch.finish();
