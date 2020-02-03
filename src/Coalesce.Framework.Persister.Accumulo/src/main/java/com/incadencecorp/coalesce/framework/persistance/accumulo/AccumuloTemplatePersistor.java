@@ -33,9 +33,11 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.jobs.AccumuloCreateSchemaJob;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.jobs.AccumuloDeleteSchemaJob;
 import com.incadencecorp.coalesce.search.resultset.CoalesceCommonColumns;
+import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
 import org.apache.accumulo.core.client.IteratorSetting;
 import org.apache.accumulo.core.client.MutationsRejectedException;
+import org.apache.accumulo.core.client.Scanner;
 import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Mutation;
@@ -50,7 +52,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -144,9 +152,8 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
         // config.setDurability(Durability.DEFAULT); // Requires Accumulo 1.7
         config.setMaxWriteThreads(10);
 
-        try (CloseableBatchWriter writer = new CloseableBatchWriter(getDataConnector().getDBConnector(),
-                                                                    AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
-                                                                    config))
+        try (BatchWriter writer = getDataConnector().getDBConnector().createBatchWriter(AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
+                                                                                        config))
         {
             for (CoalesceEntityTemplate template : templates)
             {
@@ -288,9 +295,8 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
 
         CoalesceEntityTemplate template;
 
-        try (CloseableScanner scanner = new CloseableScanner(getDataConnector().getDBConnector(),
-                                                             AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
-                                                             Authorizations.EMPTY))
+        try (Scanner scanner = getDataConnector().getDBConnector().createScanner(AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
+                                                                                 Authorizations.EMPTY))
         {
             String xml = null;
 
@@ -340,9 +346,8 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
     {
         String key = null;
 
-        try (CloseableScanner keyscanner = new CloseableScanner(getDataConnector().getDBConnector(),
-                                                                AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
-                                                                Authorizations.EMPTY))
+        try (Scanner keyscanner = getDataConnector().getDBConnector().createScanner(AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
+                                                                                    Authorizations.EMPTY))
         {
             // Uses special columnqualifier that is a concat of name+source+version
             keyscanner.fetchColumn(new Text(coalesceTemplateColumnFamily), new Text(name + source + version));
@@ -367,9 +372,8 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
     {
         List<ObjectMetaData> results = new ArrayList<>();
 
-        try (CloseableScanner scanner = new CloseableScanner(getDataConnector().getDBConnector(),
-                                                             AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
-                                                             Authorizations.EMPTY))
+        try (Scanner scanner = getDataConnector().getDBConnector().createScanner(AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
+                                                                                 Authorizations.EMPTY))
         {
             Text templateColumnFamily = new Text(coalesceTemplateColumnFamily);
             scanner.fetchColumn(templateColumnFamily, new Text(columns.getName()));
@@ -455,7 +459,7 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
         return useCompression;
     }
 
-        /**
+    /**
      * @return whether or not a second query will be execute to get the totals if the result set exceeds the page size.
      */
     protected boolean isReturnTotalsEnabled()
