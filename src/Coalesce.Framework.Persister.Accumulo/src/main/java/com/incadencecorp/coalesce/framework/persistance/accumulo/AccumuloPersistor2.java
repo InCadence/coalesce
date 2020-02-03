@@ -28,6 +28,7 @@ import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.jobs.AccumuloFeatureJob;
 import com.incadencecorp.coalesce.framework.util.CoalesceCompressionUtil;
+import org.apache.accumulo.core.client.BatchScanner;
 import org.apache.accumulo.core.client.IteratorSetting;
 import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.data.Key;
@@ -42,7 +43,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -185,10 +190,9 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
             ranges.add(new Range(key));
         }
 
-        try (CloseableBatchScanner scanner = new CloseableBatchScanner(getDataConnector().getDBConnector(),
-                                                                       AccumuloDataConnector.COALESCE_ENTITY_TABLE,
-                                                                       Authorizations.EMPTY,
-                                                                       4))
+        try (BatchScanner scanner = getDataConnector().getDBConnector().createBatchScanner(AccumuloDataConnector.COALESCE_ENTITY_TABLE,
+                                                                                           Authorizations.EMPTY,
+                                                                                           4))
         {
             scanner.setRanges(ranges);
             IteratorSetting iterator = new IteratorSetting(1, "modifiedFilter", RegExFilter.class);

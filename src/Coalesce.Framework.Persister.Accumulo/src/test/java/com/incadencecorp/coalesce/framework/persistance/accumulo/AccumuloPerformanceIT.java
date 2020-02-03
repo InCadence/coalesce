@@ -22,7 +22,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,7 +48,7 @@ public class AccumuloPerformanceIT {
             CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
 
             createPersister().registerTemplate(template);
-            new AccumuloPersistor().saveTemplate(template);
+            new AccumuloPersistor2().saveTemplate(template);
         }
         catch (CoalesceException e)
         {
@@ -69,7 +69,7 @@ public class AccumuloPerformanceIT {
         AccumuloSettings.setPersistLinkageAttr(false);
 
         long[][] results1 = run(persister);
-        long[][] results2 = run(new AccumuloPersistor());
+        long[][] results2 = run(new AccumuloPersistor2());
 
         for (int ii = 0; ii < COUNT; ii++)
         {
