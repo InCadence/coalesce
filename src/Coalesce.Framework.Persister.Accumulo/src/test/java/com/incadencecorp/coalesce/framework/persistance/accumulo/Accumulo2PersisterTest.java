@@ -17,85 +17,32 @@
 
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.persistance.AbstractCoalescePersistorTest;
-import org.apache.accumulo.minicluster.MiniAccumuloCluster;
-import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Derek Clemenzi
  */
-public class Accumulo2PersisterTest extends AbstractCoalescePersistorTest<AccumuloPersistor2> {
-
-    private static final Path DB = Paths.get("Src", "test", "resources", "db");
-    private static MiniAccumuloCluster accumulo;
+public class Accumulo2PersisterTest extends Accumulo2PersisterIT {
 
     @BeforeClass
     public static void initialize() throws Exception
     {
-        String version = System.getProperty("java.version");
-
-        if (!version.contains("1.8"))
-        {
-            // skip these tests
-            Assume.assumeTrue(String.format("JRE %s Detected. These unit tests require JRE 1.8", version), false);
-        }
-
-        FileUtils.deleteDirectory(DB.toFile());
-        Files.createDirectory(DB);
-
-        accumulo = new MiniAccumuloCluster(DB.toFile(), "unit_test");
-        accumulo.start();
+        MiniClusterUtil.startCluster();
     }
 
     @Override
-    protected AccumuloPersistor2 createPersister()
-    {
-        return new AccumuloPersistor2(getParameters());
-    }
-
-    @Override
-    public String getFieldValue(String key) throws CoalescePersistorException
-    {
-        return (String) createPersister().getFieldValue(key);
-    }
-
     protected Map<String, String> getParameters()
     {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put(AccumuloDataConnector.INSTANCE_ID, accumulo.getInstanceName());
-        parameters.put(AccumuloDataConnector.ZOOKEEPERS, accumulo.getZooKeepers());
-        parameters.put(AccumuloDataConnector.USER, "root");
-        parameters.put(AccumuloDataConnector.PASSWORD, "unit_test");
-        parameters.put(AccumuloDataConnector.TABLE_NAME, AccumuloDataConnector.COALESCE_SEARCH_TABLE);
-        parameters.put(AccumuloDataConnector.QUERY_THREADS, Integer.toString(AccumuloSettings.getQueryThreads()));
-        parameters.put(AccumuloDataConnector.RECORD_THREADS, Integer.toString(AccumuloSettings.getRecordThreads()));
-        parameters.put(AccumuloDataConnector.WRITE_THREADS, Integer.toString(AccumuloSettings.getWriteThreads()));
-        parameters.put(AccumuloDataConnector.GENERATE_STATS, "false");
-        parameters.put(AccumuloDataConnector.COLLECT_USAGE_STATS, "false");
-        parameters.put(AccumuloDataConnector.CACHING, "false");
-        parameters.put(AccumuloDataConnector.LOOSE_B_BOX, "false");
-        parameters.put(AccumuloDataConnector.USE_MOCK, "false");
-        parameters.put(AccumuloDataConnector.USE_COMPRESSION, "true");
-
-        return parameters;
+        return MiniClusterUtil.addClusterParameters(super.getParameters());
     }
 
     @AfterClass
     public static void cleanup() throws Exception
     {
-        accumulo.stop();
-
-        FileUtils.deleteDirectory(DB.toFile());
+        MiniClusterUtil.stopCluster();
     }
 
 }

@@ -121,7 +121,6 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
             LOGGER.debug("Zookeepers: {} ", params.get(AccumuloDataConnector.ZOOKEEPERS));
             LOGGER.debug("Instance: {} ", params.get(AccumuloDataConnector.INSTANCE_ID));
             LOGGER.debug("User: {} ", params.get(AccumuloDataConnector.USER));
-            LOGGER.debug("Mock: {} ", params.get(AccumuloDataConnector.USE_MOCK));
             LOGGER.debug("Compression: {} ", useCompression);
         }
 

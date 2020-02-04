@@ -66,7 +66,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
 
     // Datastore Properties
     public static final String INSTANCE_ID = "accumulo.instance.id";
-    public static final String ZOOKEEPERS = "zookeepers";
+    public static final String ZOOKEEPERS = "accumulo.zookeepers";
     public static final String USER = "accumulo.user";
     public static final String PASSWORD = "accumulo.password";
     public static final String TABLE_NAME = "accumulo.catalog";
@@ -77,7 +77,6 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
     public static final String COLLECT_USAGE_STATS = "collectStats";//"collectUsageStats";
     public static final String CACHING = "geomesa.query.caching";
     public static final String LOOSE_B_BOX = "looseBBox";
-    public static final String USE_MOCK = "accumulo.mock";
     public static final String USE_COMPRESSION = "compression.enabled";
     public static final String RETURN_TOTALS = "returnTotals";
 
@@ -150,7 +149,6 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
         params.put(COLLECT_USAGE_STATS, "false");
         params.put(CACHING, "false");
         params.put(LOOSE_B_BOX, "false");
-        params.put(USE_MOCK, "false");
 
         return params;
     }
