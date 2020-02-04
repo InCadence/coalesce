@@ -17,23 +17,79 @@
 
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
+import com.incadencecorp.coalesce.search.AbstractSearchTest;
+import org.junit.Assume;
+import org.junit.BeforeClass;
+
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Derek Clemenzi
  */
-public class Accumulo2SearchIT extends Accumulo2SearchTest {
+public class Accumulo2SearchIT extends AbstractSearchTest<AccumuloSearchPersistor> {
+
+    @BeforeClass
+    public static void initialize() throws Exception
+    {
+        String version = System.getProperty("java.version");
+
+        if (!version.contains("1.8"))
+        {
+            // skip these tests
+            Assume.assumeTrue(String.format("JRE %s Detected. These unit tests require JRE 1.8", version), false);
+        }
+    }
+
+    /**
+     * TODO Need to resolve #113 (https://github.com/InCadence/coalesce/issues/113) before removing this override.
+     */
+    @Override
+    public void testUpdateRecordKey() throws Exception
+    {
+        Assume.assumeTrue(false);
+    }
+
+    /**
+     * TODO Need to resolve #71 (https://github.com/InCadence/coalesce/issues/71) before removing this override.
+     */
+    @Override
+    public void testPaging() throws Exception
+    {
+        Assume.assumeTrue(false);
+    }
 
     @Override
+    public void test20KRecords() throws Exception
+    {
+        Assume.assumeTrue(false);
+    }
+
     protected Map<String, String> getParameters()
     {
-        Map<String, String> parameters = super.getParameters();
+        Map<String, String> parameters = new HashMap<>();
+
         parameters.put(AccumuloDataConnector.INSTANCE_ID, AccumuloSettings.getDatabaseName());
         parameters.put(AccumuloDataConnector.ZOOKEEPERS, AccumuloSettings.getZookeepers());
         parameters.put(AccumuloDataConnector.USER, AccumuloSettings.getUserName());
         parameters.put(AccumuloDataConnector.PASSWORD, AccumuloSettings.getUserPassword());
-        parameters.put(AccumuloDataConnector.USE_MOCK, "false");
+        parameters.put(AccumuloDataConnector.TABLE_NAME, AccumuloDataConnector.COALESCE_SEARCH_TABLE);
+        parameters.put(AccumuloDataConnector.QUERY_THREADS, Integer.toString(AccumuloSettings.getQueryThreads()));
+        parameters.put(AccumuloDataConnector.RECORD_THREADS, Integer.toString(AccumuloSettings.getRecordThreads()));
+        parameters.put(AccumuloDataConnector.WRITE_THREADS, Integer.toString(AccumuloSettings.getWriteThreads()));
+        parameters.put(AccumuloDataConnector.GENERATE_STATS, "false");
+        parameters.put(AccumuloDataConnector.COLLECT_USAGE_STATS, "false");
+        parameters.put(AccumuloDataConnector.CACHING, "false");
+        parameters.put(AccumuloDataConnector.LOOSE_B_BOX, "false");
+        parameters.put(AccumuloDataConnector.USE_COMPRESSION, "true");
 
         return parameters;
     }
+
+    @Override
+    protected AccumuloSearchPersistor createPersister()
+    {
+        return new AccumuloSearchPersistor(getParameters());
+    }
+
 }

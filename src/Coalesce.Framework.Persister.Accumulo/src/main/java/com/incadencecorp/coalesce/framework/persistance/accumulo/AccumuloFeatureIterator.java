@@ -34,6 +34,10 @@ import com.incadencecorp.coalesce.framework.filter.CoalesceVersionFilter;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.resultset.CoalesceCommonColumns;
+import org.geotools.data.DataStore;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.util.factory.Hints;
+import org.joda.time.DateTime;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -43,11 +47,6 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.locationtech.jts.util.GeometricShapeFactory;
-import org.geotools.data.DataStore;
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.util.factory.Hints;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.joda.time.DateTime;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -162,10 +161,13 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
             {
                 FeatureCollections collection = getCollection(features, featureName);
 
+                String id = entity.getKey();
+
                 if (!entity.isMarkedDeleted())
                 {
-                    SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[] {}, entity.getKey());
+                    SimpleFeature feature = new SimpleFeatureBuilder(featureType).buildFeature(id);
                     feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
+                    feature.getUserData().put(AccumuloRegisterIterator.DTG_INDEX, null);
 
                     populateFeature(feature, entity);
 
@@ -175,7 +177,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
                 }
                 else
                 {
-                    collection.keysToDelete.add(FF.featureId(entity.getKey()));
+                    collection.keysToDelete.add(FF.featureId(id));
                 }
             }
         }
