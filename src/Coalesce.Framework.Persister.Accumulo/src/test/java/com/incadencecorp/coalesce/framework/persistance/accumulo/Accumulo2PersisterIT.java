@@ -17,23 +17,61 @@
 
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.persistance.AbstractCoalescePersistorTest;
+import org.junit.Assume;
+import org.junit.BeforeClass;
+
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Derek Clemenzi
  */
-public class Accumulo2PersisterIT extends Accumulo2PersisterTest {
+public class Accumulo2PersisterIT extends AbstractCoalescePersistorTest<AccumuloPersistor2> {
+
+    @BeforeClass
+    public static void initialize() throws Exception
+    {
+        String version = System.getProperty("java.version");
+
+        if (!version.contains("1.8"))
+        {
+            // skip these tests
+            Assume.assumeTrue(String.format("JRE %s Detected. These unit tests require JRE 1.8", version), false);
+        }
+    }
 
     @Override
+    protected AccumuloPersistor2 createPersister()
+    {
+        return new AccumuloPersistor2(getParameters());
+    }
+
+    @Override
+    public String getFieldValue(String key) throws CoalescePersistorException
+    {
+        return (String) createPersister().getFieldValue(key);
+    }
+
     protected Map<String, String> getParameters()
     {
-        Map<String, String> parameters = super.getParameters();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put(AccumuloDataConnector.INSTANCE_ID, AccumuloSettings.getDatabaseName());
         parameters.put(AccumuloDataConnector.ZOOKEEPERS, AccumuloSettings.getZookeepers());
         parameters.put(AccumuloDataConnector.USER, AccumuloSettings.getUserName());
         parameters.put(AccumuloDataConnector.PASSWORD, AccumuloSettings.getUserPassword());
-        parameters.put(AccumuloDataConnector.USE_MOCK, "false");
+        parameters.put(AccumuloDataConnector.TABLE_NAME, AccumuloDataConnector.COALESCE_SEARCH_TABLE);
+        parameters.put(AccumuloDataConnector.QUERY_THREADS, Integer.toString(AccumuloSettings.getQueryThreads()));
+        parameters.put(AccumuloDataConnector.RECORD_THREADS, Integer.toString(AccumuloSettings.getRecordThreads()));
+        parameters.put(AccumuloDataConnector.WRITE_THREADS, Integer.toString(AccumuloSettings.getWriteThreads()));
+        parameters.put(AccumuloDataConnector.GENERATE_STATS, "false");
+        parameters.put(AccumuloDataConnector.COLLECT_USAGE_STATS, "false");
+        parameters.put(AccumuloDataConnector.CACHING, "false");
+        parameters.put(AccumuloDataConnector.LOOSE_B_BOX, "false");
+        parameters.put(AccumuloDataConnector.USE_COMPRESSION, "true");
 
         return parameters;
     }
+
 }

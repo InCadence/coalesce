@@ -165,7 +165,6 @@ public class AccumuloPerformanceIT {
         parameters.put(AccumuloDataConnector.COLLECT_USAGE_STATS, "false");
         parameters.put(AccumuloDataConnector.CACHING, "false");
         parameters.put(AccumuloDataConnector.LOOSE_B_BOX, "false");
-        parameters.put(AccumuloDataConnector.USE_MOCK, Boolean.toString(USE_MOCK));
 
         return parameters;
     }
