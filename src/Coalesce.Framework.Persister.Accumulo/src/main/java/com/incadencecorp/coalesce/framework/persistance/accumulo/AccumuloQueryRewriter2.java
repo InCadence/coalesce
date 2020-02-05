@@ -14,7 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 /**
@@ -22,7 +24,7 @@ import java.util.function.Predicate;
  */
 class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
 
-    private final ArrayList<String> features = new ArrayList<>();
+    private final Set<String> features = new HashSet<>();
     private final ICoalesceNormalizer normalizer;
 
     /**
@@ -88,13 +90,16 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
         newQuery.setPropertyNames(properties);
 
         // Rewrite the any sorts also
-        SortBy[] sorts = newQuery.getSortBy();
-        if (sorts != null)
+        if (newQuery.getSortBy() != null && newQuery.getSortBy().length > 0)
         {
-            for (int i = 0; i < sorts.length; i++)
+            SortBy[] sorts = new SortBy[newQuery.getSortBy().length];
+
+            int ii=0;
+
+            for (SortBy sortby : newQuery.getSortBy())
             {
-                sorts[i] = ff.sort(getNormalizedPropertyName(sorts[i].getPropertyName().getPropertyName()),
-                                   sorts[i].getSortOrder());
+                String name = getNormalizedPropertyName(sortby.getPropertyName().getPropertyName());
+                sorts[ii++] = ff.sort(name, sortby.getSortOrder());
             }
 
             newQuery.setSortBy(sorts);
@@ -110,7 +115,7 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
         }
         else if (features.size() == 1)
         {
-            newQuery.setTypeName(normalizer.normalize(features.get(0)));
+            newQuery.setTypeName(normalizer.normalize(features.iterator().next()));
         }
         else
         {
@@ -128,7 +133,7 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
                 }
                 throw new CoalescePersistorException("Multiple featuretypes in query is not supported");
             }
-            newQuery.setTypeName(normalizer.normalize(features.get(0)));
+            newQuery.setTypeName(normalizer.normalize(features.iterator().next()));
         }
 
         features.clear();
