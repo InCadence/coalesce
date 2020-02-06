@@ -21,18 +21,11 @@ package com.incadencecorp.coalesce.framework.persistance.cosmos;
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.framework.DefaultNormalizer;
 
-import java.util.Collections;
-
 /**
- * This normalizer changes the separating character when specifying property names to be valid for Cosmos.
+ * Normalizer used by the Cosmos implementation
  *
  * @author Derek Clemenzi
  */
 public class CosmosNormalizer extends DefaultNormalizer implements ICoalesceNormalizer {
-
-    public CosmosNormalizer()
-    {
-        super(Collections.singletonMap(EParameters.SEPARATOR.getName(), "_"));
-    }
 
 }

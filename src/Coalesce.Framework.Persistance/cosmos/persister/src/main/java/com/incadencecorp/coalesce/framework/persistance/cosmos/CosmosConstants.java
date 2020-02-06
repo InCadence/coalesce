@@ -30,13 +30,15 @@ public class CosmosConstants {
 
     private static final ICoalesceNormalizer NORMALIZER = new CosmosNormalizer();
 
-    protected static final String DATABASE_ID = "coalesce";
+    protected static final String DATABASE_ID = CosmosSettings.getDatabaseName();
     protected static final String DATABASE_LINK = "/dbs/" + DATABASE_ID;
 
+    protected static final String COLLECTION_PREFIX = CosmosSettings.getCollectionPrefix();
+
     protected static final String COLLECTION_LINK = "/dbs/" + DATABASE_ID + "/colls/";
-    protected static final String COLLECTION_TEMPLATE = DATABASE_ID + "-templates";
-    protected static final String COLLECTION_ENTITIES = DATABASE_ID + "-entities";
-    protected static final String COLLECTION_LINKAGES = DATABASE_ID + "-linkages";
+    protected static final String COLLECTION_TEMPLATE = COLLECTION_PREFIX + "-templates";
+    protected static final String COLLECTION_ENTITIES = COLLECTION_PREFIX + "-entities";
+    protected static final String COLLECTION_LINKAGES = COLLECTION_PREFIX + "-linkages";
 
     public static final String FIELD_XML = normalize(CoalescePropertyFactory.getEntityXml());
 
@@ -75,7 +77,7 @@ public class CosmosConstants {
 
     public static String getCollectionName(String name)
     {
-        return String.format("%s-%s", DATABASE_ID, normalize(name));
+        return String.format("%s-%s", COLLECTION_PREFIX, normalize(name));
     }
 
     private static String normalize(PropertyName property)
@@ -87,6 +89,6 @@ public class CosmosConstants {
     {
         String[] parts = value.split("[.]");
 
-        return parts.length >= 2 ? NORMALIZER.normalize(parts[0], parts[1]) : NORMALIZER.normalize(value);
+        return parts.length >= 2 ? NORMALIZER.normalize(parts[1]) : NORMALIZER.normalize(value);
     }
 }

@@ -18,10 +18,11 @@
 
 package com.incadencecorp.coalesce.framework.persistance.cosmos;
 
+import com.incadencecorp.coalesce.framework.DefaultNormalizer;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.microsoft.azure.documentdb.Document;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.geotools.geojson.geom.GeometryJSON;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,8 +31,10 @@ import org.opengis.filter.expression.PropertyName;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -48,10 +51,13 @@ public class CosmosDocumentIterator implements Iterator<Object[]> {
         this.featureIterator = featureIterator;
         this.properties = new ArrayList<>();
 
+        Map<String, String> params = new HashMap<>();
+        params.put(DefaultNormalizer.EParameters.SEPARATOR.getName(), "_");
+
         // Normalize
         for (PropertyName property : properties)
         {
-            this.properties.add(CoalescePropertyFactory.getColumnName(new CosmosNormalizer(), property));
+            this.properties.add(CoalescePropertyFactory.getColumnName(new DefaultNormalizer(params), property));
         }
     }
 

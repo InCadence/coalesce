@@ -58,6 +58,16 @@ public class CosmosSettings {
      */
     public static final String PARAM_IS_AUTHORITATIVE = PARAM_BASE + "isAuthoritative";
 
+    /**
+     * (String) Name of the database; defaults to {@value DEFAULT_DATABASE_NAME}.
+     */
+    public static final String PARAM_DATABASE_NAME = PARAM_BASE + "name";
+
+    /**
+     * (String) Prefix to use when creating collections; defaults to {@value DEFAULT_DATABASE_NAME}.
+     */
+    public static final String PARAM_COLLECTION_PREFIX = PARAM_BASE + "prefix";
+
     /*--------------------------------------------------------------------------
     Default Values
     --------------------------------------------------------------------------*/
@@ -67,7 +77,7 @@ public class CosmosSettings {
     // The default values are credentials of the local emulator, which are not used in any production environment.
     private static final String DEFAULT_HOST = "https://localhost:8081/";
     private static final String DEFAULT_KEY = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
-
+    private static final String DEFAULT_DATABASE_NAME = "coalesce";
 
     /*--------------------------------------------------------------------------
     Initialization
@@ -95,7 +105,7 @@ public class CosmosSettings {
      * Configures the settings to use a particular connector and property name.
      *
      * @param connector to use for settings
-     * @param name of configuration file
+     * @param name      of configuration file
      */
     public static void setConnector(final IConfigurationsConnector connector, final String name)
     {
@@ -144,7 +154,42 @@ public class CosmosSettings {
      */
     public static boolean isAuthoritative()
     {
-        return Boolean.parseBoolean(settings.getSetting(config_name, PARAM_IS_AUTHORITATIVE, DEFAULT_IS_AUTHORITATIVE, false));
+        return Boolean.parseBoolean(settings.getSetting(config_name,
+                                                        PARAM_IS_AUTHORITATIVE,
+                                                        DEFAULT_IS_AUTHORITATIVE,
+                                                        false));
+    }
+
+    /**
+     * @return the database's name.
+     */
+    public static String getDatabaseName()
+    {
+        return settings.getSetting(config_name, PARAM_DATABASE_NAME, DEFAULT_DATABASE_NAME, false);
+    }
+
+    /**
+     * Set the name to use for the database.
+     */
+    public static void setDatabaseName(String value)
+    {
+        settings.setSetting(config_name, PARAM_DATABASE_NAME, value);
+    }
+
+    /**
+     * @return the prefix to use when creating collections.
+     */
+    public static String getCollectionPrefix()
+    {
+        return settings.getSetting(config_name, PARAM_COLLECTION_PREFIX, DEFAULT_DATABASE_NAME, false);
+    }
+
+    /**
+     * Sets the prefix to use when creating collections.
+     */
+    public static void setCollectionPrefix(String value)
+    {
+        settings.setSetting(config_name, PARAM_COLLECTION_PREFIX, value);
     }
 
     /**
@@ -155,7 +200,7 @@ public class CosmosSettings {
         settings.setSetting(config_name, PARAM_IS_AUTHORITATIVE, value);
     }
 
-        public static Map<String, String> getParameters()
+    public static Map<String, String> getParameters()
     {
         Map<String, String> params = new HashMap<>();
 
