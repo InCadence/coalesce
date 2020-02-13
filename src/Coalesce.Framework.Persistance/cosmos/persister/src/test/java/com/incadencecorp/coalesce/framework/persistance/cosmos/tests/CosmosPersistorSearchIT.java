@@ -18,15 +18,9 @@
 
 package com.incadencecorp.coalesce.framework.persistance.cosmos.tests;
 
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.persistance.cosmos.CosmosSearchPersistor;
-import com.incadencecorp.coalesce.framework.persistance.cosmos.CosmosSettings;
 import com.incadencecorp.coalesce.search.AbstractSearchTest;
-import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.junit.Assume;
-import org.junit.BeforeClass;
-
-import java.nio.file.Paths;
 
 /**
  * This implementation execute test against {@link com.incadencecorp.coalesce.framework.persistance.cosmos.CosmosSearchPersistor}.
@@ -34,19 +28,6 @@ import java.nio.file.Paths;
  * @author Derek Clemenzi
  */
 public class CosmosPersistorSearchIT extends AbstractSearchTest<CosmosSearchPersistor> {
-
-    /**
-     * Initializes the test configuration.
-     */
-    @BeforeClass
-    public static void initialize() throws Exception
-    {
-        FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
-        connector.setReadOnly(true);
-
-        CosmosSettings.setConnector(connector);
-        CoalesceSettings.setConnector(connector);
-    }
 
     @Override
     protected CosmosSearchPersistor createPersister()

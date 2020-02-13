@@ -74,8 +74,8 @@ public class CosmosHelper {
 
         if (query.getProperties() != null && !query.getProperties().isEmpty())
         {
-            parameters.addAll(query.getProperties().stream().map(s -> "c."
-                    + s.getPropertyName()).collect(Collectors.toList()));
+            parameters.addAll(query.getProperties().stream().map(s -> "c." + s.getPropertyName() + " AS "
+                    + s.getPropertyName().replace(".", "_")).collect(Collectors.toList()));
         }
 
         if (parameters.isEmpty())
@@ -102,11 +102,9 @@ public class CosmosHelper {
 
         // Offset does work as expected and throws an exception from within Karaf; therefore its been disabled.
         String sql = String.format("SELECT %s FROM c %s %s", // OFFSET %d LIMIT %d",
-                                   String.join(",", parameters),
-                                   clause,
-                                   getOrderBy(query.getSortBy()));//,
-                                   //query.getStartIndex(),
-                                   //query.getMaxFeatures());
+                                   String.join(",", parameters), clause, getOrderBy(query.getSortBy()));//,
+        //query.getStartIndex(),
+        //query.getMaxFeatures());
 
         LOGGER.debug("Link: {}, SQL: {}", CosmosConstants.COLLECTION_LINK + query.getTypeName(), sql);
 
@@ -334,7 +332,7 @@ public class CosmosHelper {
         // Create Partition Key
         PartitionKeyDefinition partitionKeyDefinition = new PartitionKeyDefinition();
         Collection<String> paths = new ArrayList<>();
-        paths.add("/" + CosmosConstants.ENTITY_KEY_COLUMN_NAME);
+        paths.add("/coalesceentity/" + CosmosConstants.ENTITY_KEY_COLUMN_NAME);
         partitionKeyDefinition.setPaths(paths);
 
         // Create Indexes

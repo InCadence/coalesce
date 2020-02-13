@@ -26,6 +26,7 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.microsoft.azure.documentdb.Document;
 import com.microsoft.azure.documentdb.RequestOptions;
 import com.microsoft.azure.documentdb.ResourceResponse;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,7 +100,7 @@ public class CosmosPersistor extends CosmosTemplatePersistor implements ICoalesc
                                                                             key);
             if (response.getStatusCode() / 100 == 2)
             {
-                entities.add(response.getResource().getString(CosmosConstants.FIELD_XML));
+                entities.add(((JSONObject) response.getResource().get("coalesceentity")).getString(CosmosConstants.FIELD_XML));
             }
         }
 

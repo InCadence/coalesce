@@ -33,8 +33,10 @@ import com.microsoft.azure.documentdb.FeedOptions;
 import com.microsoft.azure.documentdb.FeedResponse;
 import com.microsoft.azure.documentdb.PartitionKey;
 import com.microsoft.azure.documentdb.RequestOptions;
+import com.microsoft.azure.documentdb.ResourceResponse;
 import org.apache.commons.lang3.NotImplementedException;
 import org.geotools.data.Query;
+import org.json.JSONObject;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 
@@ -84,6 +86,15 @@ public class CosmosTemplatePersistor implements ICoalesceTemplatePersister, Clos
 
         isAuthoritative = Boolean.parseBoolean(parameters.get(CosmosSettings.PARAM_IS_AUTHORITATIVE));
 
+        if (parameters.containsKey(CosmosSettings.PARAM_COLLECTION_PREFIX))
+        {
+            CosmosSettings.setCollectionPrefix(parameters.get(CosmosSettings.PARAM_COLLECTION_PREFIX));
+        }
+
+        if (parameters.containsKey(CosmosSettings.PARAM_DATABASE_NAME))
+        {
+            CosmosSettings.setDatabaseName(parameters.get(CosmosSettings.PARAM_DATABASE_NAME));
+        }
     }
 
     /*--------------------------------------------------------------------------
@@ -95,15 +106,18 @@ public class CosmosTemplatePersistor implements ICoalesceTemplatePersister, Clos
     {
         for (CoalesceEntityTemplate template : templates)
         {
+            Map<String, Object> mapping = new HashMap<>();
+            mapping.put(CosmosConstants.ENTITY_KEY_COLUMN_NAME, template.getKey());
+            mapping.put(CosmosConstants.ENTITY_NAME_COLUMN_NAME, template.getName());
+            mapping.put(CosmosConstants.ENTITY_SOURCE_COLUMN_NAME, template.getSource());
+            mapping.put(CosmosConstants.ENTITY_VERSION_COLUMN_NAME, template.getVersion());
+            mapping.put(CosmosConstants.ENTITY_DATE_CREATED_COLUMN_NAME, template.getDateCreated());
+            mapping.put(CosmosConstants.ENTITY_LAST_MODIFIED_COLUMN_NAME, template.getLastModified());
+            mapping.put(CosmosConstants.FIELD_XML, template.toXml());
+
             Map<String, Object> properties = new HashMap<>();
             properties.put("id", template.getKey());
-            properties.put(CosmosConstants.ENTITY_KEY_COLUMN_NAME, template.getKey());
-            properties.put(CosmosConstants.ENTITY_NAME_COLUMN_NAME, template.getName());
-            properties.put(CosmosConstants.ENTITY_SOURCE_COLUMN_NAME, template.getSource());
-            properties.put(CosmosConstants.ENTITY_VERSION_COLUMN_NAME, template.getVersion());
-            properties.put(CosmosConstants.ENTITY_DATE_CREATED_COLUMN_NAME, template.getDateCreated());
-            properties.put(CosmosConstants.ENTITY_LAST_MODIFIED_COLUMN_NAME, template.getLastModified());
-            properties.put(CosmosConstants.FIELD_XML, template.toXml());
+            properties.put("coalesceentity", mapping);
 
             CosmosHelper.createDocument(client,
                                         CosmosConstants.COLLECTION_TEMPLATE,
@@ -155,23 +169,15 @@ public class CosmosTemplatePersistor implements ICoalesceTemplatePersister, Clos
     @Override
     public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-        FeedOptions options = new FeedOptions();
-        options.setPartitionKey(new PartitionKey(key));
-
-        Query query = new Query();
-        query.setTypeName(CosmosConstants.COLLECTION_TEMPLATE);
-        query.setPropertyNames(new String[] { CosmosConstants.FIELD_XML });
-        query.setFilter(FF.equals(FF.property("id"), FF.literal(key)));
-
-        FeedResponse<Document> queryResults = CosmosHelper.queryDocument(client, query, options);
-
-        Iterator<Document> it = queryResults.getQueryIterator();
-
-        if (it.hasNext())
+        ResourceResponse<Document> response = CosmosHelper.readDocument(getClient(),
+                                                                        CosmosConstants.COLLECTION_TEMPLATE,
+                                                                        key);
+        if (response.getStatusCode() / 100 == 2)
         {
             try
             {
-                return CoalesceEntityTemplate.create(it.next().getString(CosmosConstants.FIELD_XML));
+                return CoalesceEntityTemplate.create((((JSONObject) response.getResource().get("coalesceentity")).getString(
+                        CosmosConstants.FIELD_XML)));
             }
             catch (CoalesceException e)
             {
@@ -218,7 +224,7 @@ public class CosmosTemplatePersistor implements ICoalesceTemplatePersister, Clos
 
         FeedResponse<Document> queryResults = CosmosHelper.queryDocument(client, query, options);
         Iterator<Document> it = queryResults.getQueryIterator();
-        // TODO Query the database
+
         return it.hasNext() ? it.next().getId() : null;
     }
 

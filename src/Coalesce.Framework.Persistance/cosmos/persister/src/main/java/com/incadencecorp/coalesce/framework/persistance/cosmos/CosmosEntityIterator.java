@@ -44,13 +44,15 @@ import com.microsoft.azure.documentdb.ResourceResponse;
 import com.vividsolutions.jts.geom.Coordinate;
 import org.json.JSONArray;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author Derek Clemenzi
  */
-public class CosmosEntityIterator extends CoalesceIterator<CosmosEntityIterator.Parameters> {
+public class CosmosEntityIterator extends CoalesceIterator<Map<String, Object>> {
 
     private final ICoalesceNormalizer normalizer;
     private final boolean isAuthoritative;
@@ -81,112 +83,97 @@ public class CosmosEntityIterator extends CoalesceIterator<CosmosEntityIterator.
             {
                 options.setPartitionKey(new PartitionKey(entity.getKey()));
 
-                Parameters params = new Parameters(entity);
-                params.allowRemoval = allowRemoval;
+                Map<String, Object> mapping = new HashMap<>();
+                mapping.put("coalesceentity", createMapping(entity));
 
-                processAllElements(entity, params);
+                processAllElements(entity, mapping);
+
+                mapping.put("id", entity.getKey());
+                mapping.put("coalescelinkage", createMapping(entity.getLinkageSection()));
+
+                if (isAuthoritative)
+                {
+                    ((Map<String, Object>) mapping.get("coalesceentity")).put(CosmosConstants.FIELD_XML, entity.toXml());
+                }
+
+                saveMapping(allowRemoval && entity.isMarkedDeleted(), CosmosConstants.COLLECTION_ENTITIES, mapping);
             }
         }
 
     }
 
-    @Override
-    protected boolean visitCoalesceEntity(CoalesceEntity entity, Parameters param) throws CoalesceException
+    private void saveMapping(boolean delete, String collectionId, Map<String, Object> mapping) throws CoalesceException
     {
-        Map<String, Object> mapping = createMapping(entity);
-        mapping.putAll(param.common);
-        mapping.put("id", entity.getKey());
-
-        if (isAuthoritative)
-        {
-            mapping.put(CosmosConstants.FIELD_XML, entity.toXml());
-        }
-
-        Document document = CosmosHelper.createDocument(mapping);
-
         ResourceResponse<Document> response;
 
-        if (param.allowRemoval && entity.isMarkedDeleted())
+        if (delete)
         {
-            response = CosmosHelper.deleteDocument(client, CosmosConstants.COLLECTION_ENTITIES, document, options);
+            response = CosmosHelper.deleteDocument(client, collectionId, CosmosHelper.createDocument(mapping), options);
         }
         else
         {
-            response = CosmosHelper.createDocument(client, CosmosConstants.COLLECTION_ENTITIES, document, options);
+            response = CosmosHelper.createDocument(client, collectionId, CosmosHelper.createDocument(mapping), options);
         }
 
         if (response.getStatusCode() / 100 != 2)
         {
             throw new CoalesceException("(FAILED) Invalid Status Code: " + response.getStatusCode());
         }
-
-        return true;
     }
 
     @Override
-    protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section, Parameters param) throws CoalesceException
+    protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section, Map<String, Object> mapping)
+            throws CoalesceException
     {
-        for (CoalesceLinkage linkage : section.getLinkages().values())
+        boolean delete = section.getEntity().isMarkedDeleted();
+
+        for (CoalesceLinkage linkage : section.getLinkagesAsList())
         {
-            Map<String, Object> mapping = createMapping(linkage);
-            mapping.putAll(param.common);
+            mapping.put("id", linkage.getKey());
 
-            Document document = CosmosHelper.createDocument(mapping);
-
-            ResourceResponse<Document> response;
-
-            if (linkage.isMarkedDeleted() || linkage.getEntity().isMarkedDeleted())
+            if (!delete && linkage.isFlatten() && !linkage.isMarkedDeleted())
             {
-                response = CosmosHelper.deleteDocument(client, CosmosConstants.COLLECTION_LINKAGES, document, options);
+                mapping.put("coalescelinkage", createMapping(linkage));
+                saveMapping(false, CosmosConstants.COLLECTION_LINKAGES, mapping);
             }
             else
             {
-                response = CosmosHelper.createDocument(client, CosmosConstants.COLLECTION_LINKAGES, document, options);
+                saveMapping(true, CosmosConstants.COLLECTION_LINKAGES, mapping);
             }
-
-            if (response.getStatusCode() / 100 != 2)
-            {
-                throw new CoalesceException("(FAILED) Invalid Status Code: " + response.getStatusCode());
-            }
-
         }
+
+        mapping.remove("coalescelinkage");
 
         return false;
     }
 
     @Override
-    protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, Parameters param) throws CoalesceException
+    protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, Map<String, Object> mapping)
+            throws CoalesceException
     {
-        //String type = normalize(recordset.getName());
         if (recordset.isFlatten())
         {
+            boolean delete = recordset.getEntity().isMarkedDeleted();
+            String colectionId = CosmosConstants.getCollectionName(recordset.getEntity().getName());
+
+            String namespace = normalizer.normalize(recordset.getName());
+
             for (CoalesceRecord record : recordset.getAllRecords())
             {
-                if (record.isFlatten())
+                mapping.put("id", record.getKey());
+
+                if (!delete && record.isFlatten() && !record.isMarkedDeleted())
                 {
-                    Map<String, Object> mapping = createMapping(record);
-                    mapping.putAll(param.common);
-
-                    Document document = CosmosHelper.createDocument(mapping);
-                    String collectionId = CosmosConstants.getCollectionName(record.getEntity().getName());
-
-                    ResourceResponse<Document> response;
-
-                    if (record.isMarkedDeleted() || record.getEntity().isMarkedDeleted())
-                    {
-                        response = CosmosHelper.deleteDocument(client, collectionId, document, options);
-                    }
-                    else
-                    {
-                        response = CosmosHelper.createDocument(client, collectionId, document, options);
-                    }
-
-                    if (response.getStatusCode() / 100 != 2)
-                    {
-                        throw new CoalesceException("(FAILED) Invalid Status Code: " + response.getStatusCode());
-                    }
+                    mapping.put(namespace, createMapping(record));
+                    saveMapping(false, colectionId, mapping);
+                }
+                else
+                {
+                    saveMapping(true, colectionId, mapping);
                 }
             }
+
+            mapping.remove(namespace);
         }
 
         // Stop Recursion
@@ -213,12 +200,24 @@ public class CosmosEntityIterator extends CoalesceIterator<CosmosEntityIterator.
         return properties;
     }
 
+    private List<Map<String, Object>> createMapping(CoalesceLinkageSection linkages)
+    {
+        List<Map<String, Object>> mapping = new ArrayList<>();
+
+        for (CoalesceLinkage linkage : linkages.getLinkagesAsList())
+        {
+            mapping.add(createMapping(linkage));
+        }
+
+        //If the index response is returned and no exception was thrown, the index operation was successful
+        return mapping;
+    }
+
     private Map<String, Object> createMapping(CoalesceLinkage linkage)
     {
         //HashMap representation of the linkage for indexing in ElasticSearch
         Map<String, Object> properties = new HashMap<>();
 
-        properties.put("id", linkage.getKey());
         properties.put(CosmosConstants.LINKAGE_KEY_COLUMN_NAME, linkage.getKey());
 
         properties.put(CosmosConstants.LINKAGE_ENTITY2_KEY_COLUMN_NAME, linkage.getEntity2Key());
@@ -239,14 +238,14 @@ public class CosmosEntityIterator extends CoalesceIterator<CosmosEntityIterator.
     private Map<String, Object> createMapping(CoalesceRecord record) throws CoalesceDataFormatException
     {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("id", record.getKey());
+        properties.put("objectkey", record.getKey());
 
         for (CoalesceField field : record.getFields())
         {
             if (field.isFlatten() && (field.getBaseValue() != null
                     || field.getDataType() == ECoalesceFieldDataTypes.FILE_TYPE))
             {
-                String name = normalize(field);
+                String name = normalizer.normalize(field.getName());
 
                 switch (field.getDataType())
                 {
@@ -387,22 +386,4 @@ public class CosmosEntityIterator extends CoalesceIterator<CosmosEntityIterator.
         return coord2;
     }
 
-    private String normalize(CoalesceField<?> field)
-    {
-        return normalizer.normalize(field.getParent().getParent().getName(), field.getName());
-    }
-
-    /**
-     * Internal class used for passing parameters within this iterator.
-     */
-    protected class Parameters {
-
-        private Parameters(CoalesceEntity entity)
-        {
-            common = createMapping(entity);
-        }
-
-        private Map<String, Object> common;
-        private boolean allowRemoval;
-    }
 }
