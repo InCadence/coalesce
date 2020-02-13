@@ -34,7 +34,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.bundles</groupId>
         <artifactId>coalesce-bundle-parent</artifactId>
-        <version>0.0.43-SNAPSHOT</version>
+        <version>0.0.43</version>
         <relativePath>..</relativePath>
     </parent>
 

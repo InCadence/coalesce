@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>com.incadencecorp.coalesce.services</groupId>
 		<artifactId>coalesce-services-parent</artifactId>
-		<version>0.0.43-SNAPSHOT</version>
+		<version>0.0.43</version>
 		<relativePath>..</relativePath>
 	</parent>
 
