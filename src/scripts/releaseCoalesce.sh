@@ -8,29 +8,38 @@ version=${preVersion}
 
 echo "Current version: ${preVersion}"
 
-case $version in
+case ${version} in
     *-SNAPSHOT) isSnapshot=true;;
     * ) isSnapshot=false;;
 esac
 
 while true; do
     read -p "Update Versions (yes / no / exit)? " doVersions
-    case $doVersions in
+    case ${doVersions} in
         y | yes)
 		git fetch
 
 		cleaned=`echo ${version} | sed -e 's/[^0-9][^0-9]*$//'`
 
-  	    build=`echo ${cleaned} | sed -e 's/[0-9]*\.//g'`
-		build=`expr ${build} + 1`
+		build=`echo ${cleaned} | sed -e 's/[0-9]*\.//g'`
+
+		if (! ${isSnapshot}) ; then
+		    build="`expr ${build} + 1`-SNAPSHOT"
+		fi
 
 		version=`echo ${cleaned} | sed -e "s/[0-9][0-9]*\([^0-9]*\)$/${build}/"`
 
-        read -p "New Version (${version}): " version
+        read -p "New Version (${version}): " newVersion
+
+        if [[ -z "${newVersion}" ]] ; then
+            // version=newVersion
+        else
+            version=${newVersion}
+        fi
 
 		echo "Maven Setting version to ${version}..."
 
-        case $version in
+        case ${version} in
             *-SNAPSHOT) isSnapshot=true;;
             * ) isSnapshot=false;;
         esac
@@ -41,7 +50,7 @@ while true; do
         find ../Coalesce.React -maxdepth 2 -type f -path '*/package.json' -exec sed -i "s|${preVersion}|${version}|" {} +
 
 		#set tags
-		if [ "${isSnapshot}" = false ] ; then
+		if [[ "${isSnapshot}" = false ]] ; then
 
 		    sed -i "s|\(<changelog.end.tag>\)[^<>]*\(</changelog.end.tag>\)|\1"${tagname}-${version}"\2|" ${parentpom}
 
@@ -58,7 +67,7 @@ while true; do
 
 		git status
 
-		if [ "${isSnapshot}" = false ] ; then
+		if [[ "${isSnapshot}" = false ]] ; then
 
 		    echo "Grepping for snapshot versions"
 
@@ -84,14 +93,14 @@ function release {
 
     while true; do
 	read -p "Did you run out of memory? " doSuck
-	case $doSuck in
+	case ${doSuck} in
 	    y | yes) rerun=true; break;;
 	    n | no) rerun=false; break;;
 	    * ) echo "Please enter yes or no";;
 	esac
     done
 
-    if [ "${rerun}" = true ] ; then
+    if [[ "${rerun}" = true ]] ; then
 
 	read -p "Enter artifact Id to resume from: " artifactid
 
@@ -101,24 +110,24 @@ function release {
     fi
 }
 
-while true; do
-    read -p "Deploy (${tagname} / done)? " doDeploy
-    case $doDeploy in
-        ${tagname}) release ${parentpom};;
-	exit)  exit 0;;
- 	done) break;;
-	* ) echo "Invalid Selction";;
-    esac
-done
+#while true; do
+#    read -p "Deploy (${tagname} / done)? " doDeploy
+#    case ${doDeploy} in
+#        ${tagname}) release ${parentpom};;
+#	exit)  exit 0;;
+# 	done) break;;
+#	* ) echo "Invalid Selction";;
+#    esac
+#done
 
 while true; do
     read -p "Commit (yes / no / exit)? " doCommit
-    case $doCommit in
+    case ${doCommit} in
         y | yes)
 	    git add ../../ -u
         git commit -m "${name} version ${version}"
 
-	    if [ "${isSnapshot}" = false ] ; then
+	    if [[ "${isSnapshot}" = false ]] ; then
 
 		git tag ${tagname}-${version}
 
@@ -134,13 +143,13 @@ done
 
 while true; do
     read -p "Push to release (yes / no / exit)? " doPush
-    case $doPush in
+    case ${doPush} in
         y | yes)
 	    echo "pushing code to release"
 	    git push origin HEAD:refs/heads/release
 
 
-	    if [ "${isSnapshot}" = false ] ; then
+	    if [[ "${isSnapshot}" = false ]] ; then
 		echo 'pushing tag'
 		git push origin tag ${tagname}-${version}
 

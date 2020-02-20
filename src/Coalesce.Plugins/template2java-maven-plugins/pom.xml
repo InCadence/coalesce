@@ -12,7 +12,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.plugins</groupId>
         <artifactId>coalesce-plugins-parent</artifactId>
-        <version>0.0.43-SNAPSHOT</version>
+        <version>0.0.44-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
