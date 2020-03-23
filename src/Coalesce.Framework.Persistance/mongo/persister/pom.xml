@@ -27,7 +27,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
         <artifactId>persister-mongo-parent</artifactId>
-        <version>0.0.44</version>
+        <version>0.0.45-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
