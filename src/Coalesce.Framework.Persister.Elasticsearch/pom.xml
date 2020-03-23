@@ -10,7 +10,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
         <artifactId>persister-elasticsearch-parent</artifactId>
-        <version>0.0.44-SNAPSHOT</version>
+        <version>0.0.44</version>
         <relativePath>../Coalesce.Framework.Persistance/elasticsearch</relativePath>
     </parent>
 
