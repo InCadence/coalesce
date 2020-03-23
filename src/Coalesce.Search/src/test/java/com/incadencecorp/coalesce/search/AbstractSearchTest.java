@@ -219,6 +219,39 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     }
 
     @Test
+    public void testLike() throws Exception
+    {
+        T persister = createPersister();
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        TestRecord record = entity.addRecord1();
+        record.getStringField().setValue("Hello World");
+
+        CoalesceSearchFramework framework = new CoalesceSearchFramework();
+        framework.setAuthoritativePersistor(createPersister());
+        framework.saveCoalesceEntity(entity);
+
+        // Create Query
+        Query query = new Query();
+        query.setFilter(FF.and(CoalescePropertyFactory.getEntityKey(entity.getKey()), FF.like(CoalescePropertyFactory.getFieldProperty(record.getStringField()), "Hello%")));
+        query.setMaxFeatures(200);
+
+        QueryHelper.setHighlightingEnabled(query, true);
+
+        try (CachedRowSet results = framework.search(query).getResults())
+        {
+            Assert.assertEquals(1, results.size());
+            Assert.assertTrue(results.next());
+        }
+
+        entity.markAsDeleted();
+
+        framework.saveCoalesceEntity(true, entity);
+    }
+
+    @Test
     public void testHighlighing() throws Exception
     {
         T persister = createPersister();

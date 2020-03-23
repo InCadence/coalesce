@@ -28,11 +28,13 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import org.geotools.data.postgis.PostGISPSDialect;
 import org.geotools.data.postgis.PostgisPSFilterToSql;
+import org.geotools.filter.LikeFilterImpl;
 import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.util.Converters;
 import org.joda.time.DateTime;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -157,6 +159,55 @@ public class CosmosFilterToSql extends PostgisPSFilterToSql {
             throw new RuntimeException("io problem writing filter", e);
         }
 
+    }
+
+    /**
+     * Cosmos uses 'contains(field, value)' instead of 'field like value'
+     */
+    @Override
+    public Object visit(PropertyIsLike filter, Object extraData)
+    {
+        char esc = filter.getEscape().charAt(0);
+        char multi = filter.getWildCard().charAt(0);
+        char single = filter.getSingleChar().charAt(0);
+        boolean matchCase = filter.isMatchingCase();
+        String literal = filter.getLiteral();
+        Expression att = filter.getExpression();
+        AttributeDescriptor ad = (AttributeDescriptor) att.evaluate(this.featureType);
+        if (ad != null && Date.class.isAssignableFrom(ad.getType().getBinding()))
+        {
+            literal = literal + multi;
+        }
+
+        String pattern = LikeFilterImpl.convertToSQL92(esc, multi, single, matchCase, literal).replaceAll("%", "");
+
+        try
+        {
+            this.out.write(" contains(");
+            if (!matchCase)
+            {
+                this.out.write("UPPER(");
+            }
+
+            att.accept(this, extraData);
+            if (!matchCase)
+            {
+                this.out.write("), '");
+            }
+            else
+            {
+                this.out.write(", '");
+            }
+
+            this.out.write(pattern);
+            this.out.write("'");
+            this.out.write(") ");
+            return extraData;
+        }
+        catch (IOException var12)
+        {
+            throw new RuntimeException("io problem writing filter", var12);
+        }
     }
 
     @Override
