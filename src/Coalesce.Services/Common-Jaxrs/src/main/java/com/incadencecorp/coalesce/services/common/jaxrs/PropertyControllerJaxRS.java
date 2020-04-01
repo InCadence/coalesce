@@ -17,6 +17,16 @@ public class PropertyControllerJaxRS extends PropertyController implements IProp
     @Context
     SecurityContext securityContext;
 
+    public PropertyControllerJaxRS()
+    {
+        super();
+    }
+
+    public PropertyControllerJaxRS(String path)
+    {
+        super(path);
+    }
+
     @Override
     public ICoalescePrincipal whoami()
     {
