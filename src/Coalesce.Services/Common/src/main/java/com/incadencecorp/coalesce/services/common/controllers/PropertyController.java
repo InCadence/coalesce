@@ -39,6 +39,17 @@ public class PropertyController implements IPropertyController {
     private String key = "client.properties";
     private boolean isReadOnly = false;
     private ICoalesceNotifier notifier = new Log4jNotifierImpl();
+    private Path rootPath;
+
+    public PropertyController()
+    {
+        this(CoalesceParameters.COALESCE_CONFIG_LOCATION);
+    }
+
+    public PropertyController(String path)
+    {
+        this.rootPath = Paths.get(path);
+    }
 
     /**
      * Sets the connector to use when getting / setting properties.
@@ -144,7 +155,7 @@ public class PropertyController implements IPropertyController {
 
         try
         {
-            Path path = Paths.get(CoalesceParameters.COALESCE_CONFIG_LOCATION).resolve(name + ".json");
+            Path path = rootPath.resolve(name + ".json");
             try (InputStream stream = path.toUri().toURL().openStream())
             {
                 json = new JSONObject(new JSONTokener(stream));
@@ -171,7 +182,7 @@ public class PropertyController implements IPropertyController {
 
         try
         {
-            Path path = Paths.get(CoalesceParameters.COALESCE_CONFIG_LOCATION).resolve(name + ".json");
+            Path path = rootPath.resolve(name + ".json");
             try (FileWriter writer = new FileWriter(path.toString()))
             {
                 writer.write(json);
