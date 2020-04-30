@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.incadencecorp.coalesce</groupId>
     <artifactId>coalesce-parent</artifactId>
-    <version>0.0.44-SNAPSHOT</version>
+    <version>0.0.45-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <url>https://github.com/InCadence/coalesce/blob/master/</url>
@@ -32,7 +32,7 @@
         <findbugs.skip>true</findbugs.skip>
         <jacoco.skip>true</jacoco.skip>
 
-        <changelog.start.tag>coalesce-0.0.43</changelog.start.tag>
+        <changelog.start.tag>coalesce-0.0.44</changelog.start.tag>
         <changelog.end.tag>HEAD</changelog.end.tag>
     </properties>
 
