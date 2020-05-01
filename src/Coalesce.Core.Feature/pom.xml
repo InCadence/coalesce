@@ -71,10 +71,25 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- JSON Support Provided Dependencies -->
+
         <dependency>
-            <groupId>com.sun.activation</groupId>
-            <artifactId>javax.activation</artifactId>
-            <version>1.2.0</version>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${javax.jaxb.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>${sun.jaxb.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>${sun.jaxb.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Provided Dependencies -->
