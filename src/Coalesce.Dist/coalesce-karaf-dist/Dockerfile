@@ -2,8 +2,7 @@ FROM openjdk:8-jre
 
 RUN apt-get update && \
     apt-get install -y procps && \
-    apt-get install -y vim && \
-    apt-get install -y supervisor
+    apt-get install -y vim
 
 ENV KARAF_INSTALL_PATH /opt
 ENV KARAF_HOME $KARAF_INSTALL_PATH/karaf
@@ -15,8 +14,7 @@ ENV JAVA_MAX_MEM=1G
 WORKDIR $KARAF_HOME
 
 ADD ./target/*.tar.gz $KARAF_HOME
-COPY supervisord.conf /etc/supervisord.conf
 
 EXPOSE 8101 8181 5005
 
-CMD ["/usr/bin/supervisord"]
+CMD ["karaf", "run"]

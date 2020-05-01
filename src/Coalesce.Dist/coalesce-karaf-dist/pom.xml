@@ -125,8 +125,8 @@
                                 <descriptor>mvn:org.apache.karaf.features/spring/${karaf.version}/xml/features</descriptor>
                                 <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf.version}/xml/features
                                 </descriptor>
-                                <descriptor>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</descriptor>
                                 <!--
+                                <descriptor>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</descriptor>
                                 <descriptor>mvn:org.apache.cxf.dosgi/cxf-dosgi/${cxf-dosgi.version}/xml/features</descriptor>
                                 <descriptor>mvn:org.apache.karaf.decanter/apache-karaf-decanter/${decanter.version}/xml/features</descriptor>
                                 -->
@@ -221,6 +221,9 @@
             <classifier>features</classifier>
             <type>xml</type>
         </dependency>
+        -->
+
+        <!--
         <dependency>
             <groupId>org.apache.karaf.decanter</groupId>
             <artifactId>apache-karaf-decanter</artifactId>
@@ -273,7 +276,7 @@
             </snapshots>
         </repository>
         -->
-        <!-- OPS4J SNAPSHOT repository -->
+        <!-- OPS4J SNAPSHOT repository
         <repository>
             <id>ops4j.sonatype.snapshots.deploy</id>
             <name>OPS4J snapshot repository</name>
@@ -285,7 +288,8 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-        <!-- Apache SNAPSHOT -->
+        -->
+        <!-- Apache SNAPSHOT
         <repository>
             <id>apache.snapshots.deploy</id>
             <name>Apache snapshot repository</name>
@@ -297,5 +301,6 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        -->
     </repositories>
 </project>

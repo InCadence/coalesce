@@ -210,13 +210,6 @@
             <version>${sun.jaxb.version}</version>
         </dependency>
 
-        <!-- TODO Remove this dependency. This should be configured via blueprint -->
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.eventadmin</artifactId>
-            <version>1.4.8</version>
-        </dependency>
-
         <!-- These dependencies are for the custom validator -->
         <dependency>
             <groupId>org.apache.felix</groupId>
