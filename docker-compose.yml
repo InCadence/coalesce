@@ -105,6 +105,10 @@ services:
     #image: docker-oebdp.di2e.net/oebdp:0.0.7
     image: incadencecorp/coalesce-karaf:0.0.42
     container_name: coalesce-karaf
+    environment:
+      - JAVA_MIN_MEM=5G
+      - JAVA_MAX_MEM=5G
+      - KARAF_DEBUG=true
     depends_on:
       - "elasticsearch"
     ports:
