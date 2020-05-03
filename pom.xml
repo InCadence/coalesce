@@ -283,17 +283,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        <repository>
-            <id>devforce</id>
-            <name>DevForce repository</name>
-            <url>https://nexus.devforce.disa.mil/repository/releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
     </repositories>
 
     <distributionManagement>
