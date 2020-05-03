@@ -1,4 +1,4 @@
-<!-- Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!-- Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
 	Notwithstanding any contractor copyright notice, the Government has Unlimited
 	Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014. Use
 	of this work other than as specifically authorized by these DFARS Clauses
@@ -7,17 +7,7 @@
 	right to use, modify, reproduce, perform, display, release or disclose this
 	computer software and to have or authorize others to do so. Distribution
 	Statement D. Distribution authorized to the Department of Defense and U.S.
-	DoD contractors only in support of U.S. DoD efforts. -->
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
-           xmlns:http="http://cxf.apache.org/transports/http/configuration"
-           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
-                http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
-                http://cxf.apache.org/transports/http/configuration
-                http://cxf.apache.org/schemas/configuration/http-conf.xsd
-
- 				http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd">
+	DoD contractors only in support of U.S. DoD efforts. --><blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:http="http://cxf.apache.org/transports/http/configuration" xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0                 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd                 http://cxf.apache.org/transports/http/configuration                 http://cxf.apache.org/schemas/configuration/http-conf.xsd       http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd">
 
 
     <!-- ========================== -->
@@ -61,25 +51,22 @@
     <!-- Service Implementations -->
     <!-- ========================== -->
 
-    <bean id="linkagesImpl" class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.LinkageDataControllerJaxRS">
+    <bean class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.LinkageDataControllerJaxRS" id="linkagesImpl">
         <argument ref="framework"/>
     </bean>
 
-    <bean id="networkImpl"
-          class="com.incadencecorp.coalesce.services.network.controller.jaxrs.impl.NetworkControllerJaxRS">
+    <bean class="com.incadencecorp.coalesce.services.network.controller.jaxrs.impl.NetworkControllerJaxRS" id="networkImpl">
     </bean>
 
-    <bean id="enumerationImpl" class="com.incadencecorp.coalesce.services.common.jaxrs.EnumerationDataControllerJaxRS">
+    <bean class="com.incadencecorp.coalesce.services.common.jaxrs.EnumerationDataControllerJaxRS" id="enumerationImpl">
         <argument ref="framework"/>
     </bean>
 
-    <bean id="entityImpl"
-          class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.EntityDataControllerJaxRS">
+    <bean class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.EntityDataControllerJaxRS" id="entityImpl">
         <argument ref="framework"/>
     </bean>
 
-    <bean id="templateServiceImpl"
-          class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.TemplateDataControllerJaxRS">
+    <bean class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.TemplateDataControllerJaxRS" id="templateServiceImpl">
         <argument>
             <bean class="com.incadencecorp.coalesce.framework.CoalesceFramework">
                 <property name="authoritativePersistor" ref="template"/>
@@ -98,39 +85,36 @@
         </argument>
     </bean>
 
-    <bean id="optionsServiceImpl"
-          class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.OptionsDataControllerJaxRS">
+    <bean class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.OptionsDataControllerJaxRS" id="optionsServiceImpl">
     </bean>
 
-    <bean id="searchServiceImpl"
-          class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.SearchDataControllerJaxRS">
+    <bean class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.SearchDataControllerJaxRS" id="searchServiceImpl">
         <argument ref="framework"/>
     </bean>
 
     <!-- ========================== -->
     <!-- Persisters -->
     <!-- ========================== -->
-    <bean class="com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch" id="persister"
-          xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+    <bean class="com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch" id="persister">
         <argument>
             <map>
                 <entry key="ssl.enabled" value="false"/>
                 <entry key="elastic.clustername" value="elasticsearch"/>
-                <entry key="elastic.hosts" value="elasticsearch:9300"/>
+                <entry key="elastic.hosts" value="elasticsearch:9200"/>
                 <entry key="elastic.http.host" value="elasticsearch"/>
                 <entry key="elastic.http.port" value="9200"/>
+                <entry key="elastic.index.refreshpolicy" value="true"/>
             </map>
         </argument>
     </bean>
 
-    <bean id="template"
-          class="com.incadencecorp.coalesce.framework.persistance.FilePersistorImpl">
+    <bean class="com.incadencecorp.coalesce.framework.persistance.FilePersistorImpl" id="template">
     </bean>
 
     <!-- ========================== -->
     <!-- Framework -->
     <!-- ========================== -->
-    <bean id="framework" class="com.incadencecorp.coalesce.search.CoalesceSearchFramework">
+    <bean class="com.incadencecorp.coalesce.search.CoalesceSearchFramework" id="framework">
         <property name="authoritativePersistor" ref="persister"/>
     </bean>
 
