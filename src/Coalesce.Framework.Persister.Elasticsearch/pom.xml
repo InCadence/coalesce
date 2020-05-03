@@ -99,7 +99,7 @@
         <dependency>
             <artifactId>joda-time</artifactId>
             <groupId>joda-time</groupId>
-            <version>2.8</version>
+            <version>${joda.version}</version>
         </dependency>
 
         <dependency>
