@@ -67,7 +67,7 @@ services:
       - coalesce_network
     restart: unless-stopped
   kibana5:
-    image: docker.elastic.co/kibana/kibana:5.4.0
+    image: docker.elastic.co/kibana/kibana:7.4.0
     container_name: coalesce-kibana
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
@@ -103,10 +103,12 @@ services:
 
   karaf:
     #image: docker-oebdp.di2e.net/oebdp:0.0.7
-    image: incadencecorp/coalesce-karaf:0.0.42
+    image: incadencecorp/coalesce-karaf:0.0.45-SNAPSHOT
     container_name: coalesce-karaf
     depends_on:
       - "elasticsearch"
+    environment:
+      - KARAF_DEBUG=true
     ports:
       - "8101:8101"
       - "8181:8181"
