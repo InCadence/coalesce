@@ -76,7 +76,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Override GeoTool Versions -->
+        <!-- Override GeoTool Versions (21.2) -->
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-process-feature</artifactId>
