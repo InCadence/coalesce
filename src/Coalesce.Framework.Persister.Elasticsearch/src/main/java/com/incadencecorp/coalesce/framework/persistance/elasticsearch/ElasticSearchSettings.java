@@ -316,11 +316,12 @@ public class ElasticSearchSettings {
     }
 
     /**
-     * @return the Index Refresh Policy for all indices
+     * @return the Index Refresh Policy for all indices (NONE("false"), IMMEDIATE("true"), WAIT_UNTIL("wait_for"))
+
      */
     public static String getIndexRefreshPolicy()
     {
-        return settings.getSetting(config_name, PARAM_REFRESH_POLICY, "NONE", false);
+        return settings.getSetting(config_name, PARAM_REFRESH_POLICY, "false", false);
     }
 
     /**
