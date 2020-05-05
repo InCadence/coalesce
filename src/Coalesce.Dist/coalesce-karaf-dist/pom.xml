@@ -126,8 +126,10 @@
                                 <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf.version}/xml/features
                                 </descriptor>
                                 <descriptor>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</descriptor>
+                                <!--
                                 <descriptor>mvn:org.apache.cxf.dosgi/cxf-dosgi/${cxf-dosgi.version}/xml/features</descriptor>
                                 <descriptor>mvn:org.apache.karaf.decanter/apache-karaf-decanter/${decanter.version}/xml/features</descriptor>
+                                -->
                             </descriptors>
                             <features>
                                 <feature>coalesce-feature</feature>
@@ -211,6 +213,7 @@
             <classifier>features</classifier>
             <type>xml</type>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.apache.cxf.dosgi</groupId>
             <artifactId>cxf-dosgi</artifactId>
@@ -225,6 +228,7 @@
             <classifier>features</classifier>
             <type>xml</type>
         </dependency>
+        -->
 
     </dependencies>
 

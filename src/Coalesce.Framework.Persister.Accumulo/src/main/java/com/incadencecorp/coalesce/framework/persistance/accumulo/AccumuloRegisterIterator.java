@@ -30,7 +30,7 @@ import com.incadencecorp.coalesce.framework.iterators.CoalesceIteratorDataTypes;
 import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.apache.commons.lang3.StringUtils;
-import org.geotools.factory.Hints;
+import org.geotools.util.factory.Hints;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.expression.PropertyName;
@@ -119,6 +119,8 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
     protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, List<SimpleFeatureType> features)
             throws CoalesceException
     {
+        final String[] indexes = { "id" };
+
         if (recordset.isFlatten())
         {
             String featureName = normalizer.normalize(recordset.getName());
@@ -145,7 +147,8 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
             }
 
             feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
-            feature.getUserData().put(DTG_INDEX, null);
+            feature.getUserData().put(INDEXES, StringUtils.join(indexes, ","));
+            feature.getUserData().put(DTG_INDEX, ENTITY_LAST_MODIFIED_COLUMN_NAME);
 
             features.add(feature);
         }
@@ -156,7 +159,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
     @Override
     protected boolean visitCoalesceEntity(CoalesceEntity entity, List<SimpleFeatureType> features) throws CoalesceException
     {
-        final String[] indexes = { "records", "attr" };
+        final String[] indexes = { "id" };
 
         // Get Feature Fields
         Map<String, ECoalesceFieldDataTypes> fields = getCommonFields();
@@ -171,8 +174,6 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
                                                                                        fields,
                                                                                        new AccumuloMapperImpl());
 
-        feature.getUserData().put(DTG_INDEX, ENTITY_LAST_MODIFIED_COLUMN_NAME);
-
         // Create Indexes (Key index is high because there is only one record per entity)
         createIndex(feature, ENTITY_KEY_COLUMN_NAME, EIndex.FULL, ECardinality.HIGH);
         createIndex(feature, ENTITY_NAME_COLUMN_NAME, EIndex.JOIN, ECardinality.LOW);
@@ -182,6 +183,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
 
         feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
         feature.getUserData().put(INDEXES, StringUtils.join(indexes, ","));
+        feature.getUserData().put(DTG_INDEX, ENTITY_LAST_MODIFIED_COLUMN_NAME);
 
         features.add(feature);
 
@@ -192,7 +194,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
     protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section, List<SimpleFeatureType> features)
             throws CoalesceException
     {
-        final String[] indexes = { "records", "attr" };
+        final String[] indexes = { "id" };
 
         // Get Feature Fields
         Map<String, ECoalesceFieldDataTypes> fields = getCommonFields();
@@ -210,8 +212,6 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
                                                                                        fields,
                                                                                        new AccumuloMapperImpl());
 
-        feature.getUserData().put(DTG_INDEX, LINKAGE_LAST_MODIFIED_COLUMN_NAME);
-
         //createIndex(feature, LINKAGE_ENTITY1_KEY_COLUMN_NAME, EIndex.JOIN, ECardinality.HIGH);
         createIndex(feature, LINKAGE_ENTITY2_KEY_COLUMN_NAME, EIndex.JOIN, ECardinality.HIGH);
         createIndex(feature, LINKAGE_LABEL_COLUMN_NAME, EIndex.JOIN, ECardinality.LOW);
@@ -219,6 +219,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
 
         feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
         feature.getUserData().put(INDEXES, StringUtils.join(indexes, ","));
+        feature.getUserData().put(DTG_INDEX, LINKAGE_LAST_MODIFIED_COLUMN_NAME);
 
         features.add(feature);
 

@@ -21,9 +21,9 @@
         <felix.scr.annotations.version>1.7.0</felix.scr.annotations.version>
         <cxf.xjc.version>3.3.0</cxf.xjc.version>
         <cxf.version>3.3.4</cxf.version>
-        <geotools.version>18.1</geotools.version>
-        <accumulo.geomesa.version>1.3.5</accumulo.geomesa.version>
-        <accumulo.version>1.7.4</accumulo.version>
+        <geotools.version>22.0</geotools.version>
+        <accumulo.geomesa.version>2.4.0</accumulo.geomesa.version>
+        <accumulo.version>1.8.1</accumulo.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.2.2.RELEASE</spring.version>
         <joda.version>2.9.7</joda.version>

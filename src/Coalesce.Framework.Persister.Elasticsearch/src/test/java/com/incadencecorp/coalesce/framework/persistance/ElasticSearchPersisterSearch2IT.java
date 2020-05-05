@@ -25,7 +25,9 @@ import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSea
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchSettings;
 import com.incadencecorp.coalesce.search.AbstractSearchTest;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
+import org.junit.Assume;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 
 import java.nio.file.Paths;
 
@@ -46,6 +48,13 @@ public class ElasticSearchPersisterSearch2IT extends AbstractSearchTest<ElasticS
 
         ElasticSearchSettings.setConnector(connector);
         CoalesceSettings.setConnector(connector);
+    }
+
+    @Ignore
+    @Override
+    public void test20KRecords() throws Exception
+    {
+        // Skip Test
     }
 
     @Override

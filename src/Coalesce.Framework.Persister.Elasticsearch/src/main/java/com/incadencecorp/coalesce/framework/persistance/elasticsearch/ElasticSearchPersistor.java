@@ -17,7 +17,13 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchScrollRequest;
+import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.support.AbstractClient;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.common.unit.TimeValue;
@@ -38,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.io.IOException;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -93,20 +100,24 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
     Protected Methods
     --------------------------------------------------------------------------*/
 
-    public boolean checkIfIndexExists(AbstractClient client, String index)
+    public boolean checkIfIndexExists(RestHighLevelClient client, String index) throws CoalescePersistorException
     {
-        index = index.toLowerCase();
-
-        if (!index.startsWith("coalesce"))
+        try
         {
-            index = "coalesce-" + index;
+            index = index.toLowerCase();
+
+            if (!index.startsWith("coalesce"))
+            {
+                index = "coalesce-" + index;
+            }
+
+            GetIndexRequest request = new GetIndexRequest(COALESCE_ENTITY_INDEX + "-" + NORMALIZER.normalize(index));
+            return client.indices().exists(request,RequestOptions.DEFAULT);
         }
-
-        IndicesExistsRequest request = new IndicesExistsRequest();
-        request.indices(index);
-
-        IndicesExistsResponse response = client.admin().indices().exists(request).actionGet();
-        return response.isExists();
+        catch (IOException e)
+        {
+            throw new CoalescePersistorException(e);
+        }
     }
 
     @Override
@@ -116,7 +127,7 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
         {
             try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
             {
-                AbstractClient client = conn.getDBConnector(params);
+                RestHighLevelClient client = conn.getDBConnector(params);
 
                 BulkRequest request = iterator.iterate(allowRemoval, entities);
 
@@ -135,120 +146,131 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
         return true;
     }
 
-    private void executeCleanup(AbstractClient client, BulkRequest request, CoalesceEntity... entities)
+    private void executeCleanup(RestHighLevelClient client, BulkRequest request, CoalesceEntity... entities) throws CoalescePersistorException
     {
         Map<String, Set<String>> recordKeys = new HashMap<>();
         List<String> keys = new ArrayList<>();
 
-        // Create List of Indices
-        for (DocWriteRequest task : request.requests())
+        try
         {
-            // Don't cleanup coalesce index
-            if (!task.index().equalsIgnoreCase(COALESCE_ENTITY_INDEX))
+            // Create List of Indices
+            for (DocWriteRequest task : request.requests())
             {
-                if (!recordKeys.containsKey(task.index()))
+                // Don't cleanup coalesce index
+                if (!task.index().equalsIgnoreCase(COALESCE_ENTITY_INDEX))
                 {
-                    recordKeys.put(task.index(), new HashSet<>());
+                    if (!recordKeys.containsKey(task.index()))
+                    {
+                        recordKeys.put(task.index(), new HashSet<>());
+                    }
+
+                    recordKeys.get(task.index()).add(task.id());
+                }
+            }
+
+            if (!recordKeys.isEmpty())
+            {
+                int original = request.requests().size();
+
+                StopWatch watch = new StopWatch();
+                watch.start();
+
+                for (CoalesceEntity entity : entities)
+                {
+                    keys.add(entity.getKey().toLowerCase());
                 }
 
-                recordKeys.get(task.index()).add(task.id());
-            }
-        }
+                // Build Query; only records belonging to an entity being updated
+                BoolQueryBuilder query = QueryBuilders.boolQuery();
+                query.should().add(QueryBuilders.termsQuery(ENTITY_KEY_COLUMN_NAME, keys.toArray(new String[keys.size()])));
 
-        if (!recordKeys.isEmpty())
-        {
-            int original = request.requests().size();
+                int pageSize = 1000;
 
-            StopWatch watch = new StopWatch();
-            watch.start();
+                SearchRequest searchRequest = new SearchRequest(recordKeys.keySet().toArray(new String[recordKeys.keySet().size()]));
+                searchRequest.source().query(query);
+                searchRequest.source().size(pageSize);
+                searchRequest.scroll(new TimeValue(60000));
 
-            for (CoalesceEntity entity : entities)
-            {
-                keys.add(entity.getKey().toLowerCase());
-            }
-
-            // Build Query; only records belonging to an entity being updated
-            BoolQueryBuilder query = QueryBuilders.boolQuery();
-            query.should().add(QueryBuilders.termsQuery(ENTITY_KEY_COLUMN_NAME, keys.toArray(new String[keys.size()])));
-
-            SearchRequestBuilder builder = client.prepareSearch(recordKeys.keySet().toArray(new String[0]));
-            builder.setSource(new SearchSourceBuilder().fetchSource(ENTITY_KEY_COLUMN_NAME, null));
-            builder.setQuery(query);
-            builder.setSize(1000);
-            builder.setScroll(new TimeValue(60000));
-
-            if (LOGGER.isTraceEnabled())
-            {
-                LOGGER.trace("Query: {} Indices: {}", builder, recordKeys.keySet());
-            }
-
-            SearchResponse response = builder.get();
-
-            while (response.getHits().getHits().length != 0)
-            {
-                for (SearchHit hit : response.getHits().getHits())
+                if (LOGGER.isTraceEnabled())
                 {
-                    // Records being updated by this request
-                    if (!recordKeys.get(hit.getIndex()).contains(hit.getId()))
+                    LOGGER.trace("Query: {} Indices: {}", query, recordKeys.keySet());
+                }
+
+                SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
+
+                while (response.getHits().getHits().length != 0)
+                {
+                    for (SearchHit hit : response.getHits().getHits())
                     {
-                        // This check should not be required
-                        String key = (String) hit.getSource().get(ENTITY_KEY_COLUMN_NAME);
-
-                        // Verify the record belongs to an entity being updated
-                        if (key != null && keys.contains(key))
+                        // Records being updated by this request
+                        if (!recordKeys.get(hit.getIndex()).contains(hit.getId()))
                         {
-                            // Create Delete Request
-                            DeleteRequest deleteRequest = new DeleteRequest();
-                            deleteRequest.index(hit.getIndex());
-                            deleteRequest.type(hit.getType());
-                            deleteRequest.id(hit.getId());
+                            // This check should not be required
+                            String key = (String) hit.getSourceAsMap().get(ENTITY_KEY_COLUMN_NAME);
 
-                            request.requests().add(deleteRequest);
-
-                            if (LOGGER.isTraceEnabled())
+                            // Verify the record belongs to an entity being updated
+                            if (key != null && keys.contains(key))
                             {
-                                LOGGER.trace("Deleting Phantom Record: ({}) From {}", hit.getId(), hit.getIndex());
+                                // Create Delete Request
+                                DeleteRequest deleteRequest = new DeleteRequest();
+                                deleteRequest.index(hit.getIndex());
+                                deleteRequest.type(hit.getType());
+                                deleteRequest.id(hit.getId());
+
+                                request.requests().add(deleteRequest);
+
+                                if (LOGGER.isTraceEnabled())
+                                {
+                                    LOGGER.trace("Deleting Phantom Record: ({}) From {}", hit.getId(), hit.getIndex());
+                                }
+                            }
+                            else if (LOGGER.isTraceEnabled())
+                            {
+                                // Should never trigger therefore log it as a warning.
+                                LOGGER.warn("Ignoring Phantom Record: ({}) in ({}) From {}", hit.getId(), key, hit.getIndex());
                             }
                         }
-                        else if (LOGGER.isTraceEnabled())
-                        {
-                            // Should never trigger therefore log it as a warning.
-                            LOGGER.warn("Ignoring Phantom Record: ({}) in ({}) From {}", hit.getId(), key, hit.getIndex());
-                        }
                     }
+
+                    SearchScrollRequest scrollRequest = new SearchScrollRequest(response.getScrollId());
+                    scrollRequest.scroll(new TimeValue(60000));
+                    response = client.scroll(scrollRequest, RequestOptions.DEFAULT);
                 }
 
-                response = client.prepareSearchScroll(response.getScrollId()).setScroll(new TimeValue(60000)).get();
-            }
+                watch.finish();
 
-            watch.finish();
-
-            if (LOGGER.isDebugEnabled())
-            {
-                LOGGER.debug("Created {} Delete Request for Phantom Records in {} ms",
-                             request.requests().size() - original,
-                             watch.getWorkLife());
+                if (LOGGER.isDebugEnabled())
+                {
+                    LOGGER.debug("Created {} Delete Request for Phantom Records in {} ms",
+                            request.requests().size() - original,
+                            watch.getWorkLife());
+                }
             }
+        }
+        catch (IOException e)
+        {
+            throw new CoalescePersistorException(e.getMessage(),e);
         }
     }
 
-    private void executeRequest(AbstractClient client, BulkRequest request, int attempt)
+    private void executeRequest(RestHighLevelClient client, BulkRequest request, int attempt)
             throws CoalescePersistorException, InterruptedException
     {
+
         if (!request.requests().isEmpty())
         {
             try
             {
-                BulkResponse response = client.bulk(request).actionGet();
+                BulkResponse response = client.bulk(request, RequestOptions.DEFAULT);
 
                 for (BulkItemResponse item : response.getItems())
                 {
                     LOGGER.trace("({}) ID = {}, Index = {}, Type = {} : {}",
-                                 item.status().toString(),
-                                 item.getId(),
-                                 item.getIndex(),
-                                 item.getType(),
-                                 LOGGER.isTraceEnabled() ? response : response.getClass().getSimpleName());
+                            item.status().toString(),
+                            item.getId(),
+                            item.getIndex(),
+                            item.getType(),
+                            LOGGER.isTraceEnabled() ? response : response.getClass().getSimpleName());
 
                     if (item.isFailed())
                     {
@@ -275,7 +297,7 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
                     }
 
                     // Back off to allow other threads to close their locks.
-                    Thread.sleep((long) millis * attempt);
+                    Thread.sleep(millis * attempt);
 
                     if (LOGGER.isDebugEnabled())
                     {
@@ -285,6 +307,10 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
                     LOGGER.warn("(RETRYING) No Nodes Available - Attempt: {} after backing off for {} ms", attempt, millis);
                     executeRequest(client, request, ++attempt);
                 }
+            }
+            catch (IOException e)
+            {
+                throw new CoalescePersistorException("(FAILED) Executing Request",e);
             }
         }
     }
@@ -308,16 +334,15 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
         List<String> results = new ArrayList<>();
         try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
         {
-            AbstractClient client = conn.getDBConnector(params);
+            RestHighLevelClient client = conn.getDBConnector(params);
 
             for (String key : keys)
             {
                 GetRequest request = new GetRequest();
                 request.index(COALESCE_ENTITY_INDEX);
-                request.type(COALESCE_ENTITY);
                 request.id(key);
 
-                GetResponse getResponse = client.get(request).actionGet();
+                GetResponse getResponse = client.get(request, RequestOptions.DEFAULT);
 
                 if (getResponse != null && getResponse.getSource() != null)
                 {
@@ -335,6 +360,10 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
             {
                 throw new CoalescePersistorException(e);
             }
+        }
+        catch (IOException e)
+        {
+            throw new CoalescePersistorException(e.getMessage(),e);
         }
 
         return results.toArray(new String[results.size()]);

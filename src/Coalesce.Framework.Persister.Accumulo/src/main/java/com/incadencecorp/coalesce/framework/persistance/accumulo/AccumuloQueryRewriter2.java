@@ -34,7 +34,7 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
 
     AccumuloQueryRewriter2(ICoalesceNormalizer normalizer)
     {
-        super(CommonFactoryFinder.getFilterFactory2());
+        super(CoalescePropertyFactory.getFilterFactory());
 
         this.normalizer = normalizer;
     }
@@ -111,7 +111,7 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
         // If there are none use coalesceentity
         if (features.isEmpty())
         {
-            newQuery.setTypeName(AccumuloPersistor.ENTITY_FEATURE_NAME);
+            newQuery.setTypeName(AccumuloDataConnector.ENTITY_FEATURE_NAME);
         }
         else if (features.size() == 1)
         {
@@ -120,7 +120,7 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
         else
         {
             // Remove ENTITY_FEATURE_NAME if it is also used.
-            Predicate<String> namePredicate = s -> s.equalsIgnoreCase(AccumuloPersistor.ENTITY_FEATURE_NAME);
+            Predicate<String> namePredicate = s -> s.equalsIgnoreCase(AccumuloDataConnector.ENTITY_FEATURE_NAME);
             features.removeIf(namePredicate);
 
             // Now if there is more than one feature throw an exception

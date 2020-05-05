@@ -118,6 +118,8 @@ public class ElasticSearchSettings {
      */
     public static final String PARAM_DATASTORE_CACHE_ENABLED = PARAM_ELASTIC_BASE + "datastore.cache.enabled";
 
+    public static final String PARAM_REFRESH_POLICY = PARAM_ELASTIC_BASE + "index.refreshpolicy";
+
     private static final String DEFAULT_KEYSTORE_FILE = getSystemProperty("javax.net.ssl.keyStore");
     private static final String DEFAULT_KEYSTORE_PASSWORD = getSystemProperty("javax.net.ssl.keyStorePassword");
     private static final String DEFAULT_TRUSTSTORE_FILE = getSystemProperty("javax.net.ssl.trustStore");
@@ -313,6 +315,27 @@ public class ElasticSearchSettings {
         settings.setSetting(config_name, PARAM_DATASTORE_CACHE_ENABLED, value);
     }
 
+    /**
+     * @return the Index Refresh Policy for all indices (NONE("false"), IMMEDIATE("true"), WAIT_UNTIL("wait_for"))
+
+     */
+    public static String getIndexRefreshPolicy()
+    {
+        return settings.getSetting(config_name, PARAM_REFRESH_POLICY, "false", false);
+    }
+
+    /**
+     * Sets the Index Refresh Policy for all indices to refresh upon ingesting new data.
+     *
+     * Valid values: false, true, wait_for
+     *
+     * @param value
+     */
+    public static void setIndexRefreshPolicy(String value)
+    {
+        settings.setSetting(config_name, PARAM_REFRESH_POLICY, value);
+    }
+
     public static Map<String, String> getParameters()
     {
         Map<String, String> params = new HashMap<>();
@@ -330,6 +353,7 @@ public class ElasticSearchSettings {
         params.put(PARAM_HTTP_PORT, getHTTPPort());
         params.put(PARAM_RETRY_ATTEMPTS, Integer.toString(getRetryAttempts()));
         params.put(PARAM_DATASTORE_CACHE_ENABLED, Boolean.toString(isDataStoreCacheEnabled()));
+        params.put(PARAM_REFRESH_POLICY, getIndexRefreshPolicy());
 
         return params;
     }

@@ -360,25 +360,7 @@ public class AccumuloSettings {
         settings.setSetting(config_name, PARAM_THREADS_WRITE, value);
     }
 
-    /**
-     * @return the number of write threads
-     */
-    public static boolean isMockMode()
-    {
-        return settings.getSetting(config_name, PARAM_USE_MOCK, false, false);
-    }
-
-    /**
-     * Sets the number of write threads
-     *
-     * @param value
-     */
-    public static void setIsMockMode(boolean value)
-    {
-        settings.setSetting(config_name, PARAM_USE_MOCK, value);
-    }
-
-        /**
+     /**
      * @return the number of write threads
      */
     public static boolean isCompressionEnabled()
@@ -428,7 +410,6 @@ public class AccumuloSettings {
         params.put(AccumuloDataConnector.COLLECT_USAGE_STATS, "false");
         params.put(AccumuloDataConnector.CACHING, "false");
         params.put(AccumuloDataConnector.LOOSE_B_BOX, "false");
-        params.put(AccumuloDataConnector.USE_MOCK, Boolean.toString(AccumuloSettings.isMockMode()));
         params.put(AccumuloDataConnector.USE_COMPRESSION, Boolean.toString(AccumuloSettings.isCompressionEnabled()));
 
         return params;

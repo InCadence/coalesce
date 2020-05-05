@@ -64,6 +64,27 @@ public class FeatureColumnIterator implements Iterator<Object[]> {
                     String[] values = ((String) value).substring(1, ((String) value).length() - 1).split("(, )");
                     value = StringUtils.join(Arrays.stream(values).parallel().map(StringEscapeUtils::escapeCsv).collect(
                             Collectors.toList()), ",");
+/** TODO this may not be needed
+                    try{
+                        value = org.apache.commons.lang.StringUtils.join(new JSONArray((String) value).iterator(), ",");
+                    } catch (JSONException e){
+                        //Fall Back to good old matt logic
+                        value = ((String) value).substring(1).substring(0,((String) value).length()-2);
+
+                        String[] values = ((String) value).split(", ");
+
+                        for(int ii=0; ii < values.length; ii++){
+
+                            if(values[ii].equals(",")){
+                                values[ii] = Character.toString('"') + values[ii] + Character.toString('"');
+                            }
+
+                        }
+
+                        value = String.join(",",values);
+
+                    }**/
+
                 }
             }
             else

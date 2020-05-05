@@ -34,20 +34,16 @@ import com.incadencecorp.coalesce.framework.filter.CoalesceVersionFilter;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.resultset.CoalesceCommonColumns;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import com.vividsolutions.jts.util.GeometricShapeFactory;
 import org.geotools.data.DataStore;
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.Hints;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.util.factory.Hints;
 import org.joda.time.DateTime;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.util.GeometricShapeFactory;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -67,7 +63,7 @@ import java.util.Map;
 public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, FeatureCollections>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloFeatureIterator.class);
-    private static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2();
+    private static final FilterFactory2 FF = CoalescePropertyFactory.getFilterFactory();
 
     private final String ENTITY_KEY_COLUMN_NAME;
     private final String ENTITY_NAME_COLUMN_NAME;
@@ -162,10 +158,13 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
             {
                 FeatureCollections collection = getCollection(features, featureName);
 
+                String id = entity.getKey();
+
                 if (!entity.isMarkedDeleted())
                 {
-                    SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[] {}, entity.getKey());
+                    SimpleFeature feature = new SimpleFeatureBuilder(featureType).buildFeature(id);
                     feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
+                    feature.getUserData().put(AccumuloRegisterIterator.DTG_INDEX, null);
 
                     populateFeature(feature, entity);
 
@@ -175,7 +174,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
                 }
                 else
                 {
-                    collection.keysToDelete.add(FF.featureId(entity.getKey()));
+                    collection.keysToDelete.add(FF.featureId(id));
                 }
             }
         }
@@ -477,19 +476,11 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
     private Polygon createWorldPolygon()
     {
         // create a polygon of the WORLD!!!!!
-        Coordinate coord1 = new Coordinate(-180, -90);
-        Coordinate coord2 = new Coordinate(-180, 90);
-        Coordinate coord3 = new Coordinate(180, 90);
-        Coordinate coord4 = new Coordinate(180, -90);
+        Coordinate[] points = { new Coordinate(-180, -90), new Coordinate(-180, 90), new Coordinate(180, 90),
+                                new Coordinate(180, -90), new Coordinate(-180, -90)
+        };
 
-        GeometryFactory geoFactory = new GeometryFactory();
-
-        CoordinateSequence coordSeq = new CoordinateArraySequence(new Coordinate[] { coord1, coord2, coord3, coord4, coord1
-        });
-
-        LinearRing linearRing = new LinearRing(new CoordinateArraySequence(coordSeq), geoFactory);
-
-        return new Polygon(linearRing, null, geoFactory);
+        return (new GeometryFactory()).createPolygon(points);
     }
 
     private void setFeatureAttribute(SimpleFeature feature,
@@ -498,98 +489,98 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Featur
                                      Object fieldValue)
     {
 
-            if (fieldValue == null)
+        if (fieldValue == null)
+        {
+            feature.setAttribute(fieldName, null);
+        }
+        else
+        {
+            try
             {
-                feature.setAttribute(fieldName, null);
-            }
-            else
-            {
-                try
-                {
-                    switch (dataType)
-                    {
-
-                    // These types should be able to be handled directly
-                    case ENUMERATION_TYPE:
-                    case BOOLEAN_TYPE:
-                    case DOUBLE_TYPE:
-                    case FLOAT_TYPE:
-                    case INTEGER_TYPE:
-                    case LONG_TYPE:
-                    case STRING_TYPE:
-                    case URI_TYPE:
-                        feature.setAttribute(fieldName, fieldValue);
-                        break;
-
-                    case STRING_LIST_TYPE:
-                    case DOUBLE_LIST_TYPE:
-                    case INTEGER_LIST_TYPE:
-                    case LONG_LIST_TYPE:
-                    case FLOAT_LIST_TYPE:
-                    case GUID_LIST_TYPE:
-                    case BOOLEAN_LIST_TYPE:
-                    case ENUMERATION_LIST_TYPE:
-                        feature.setAttribute(fieldName, fieldValue);
-                        break;
-
-                    case GUID_TYPE:
-                        String guid = fieldValue.toString();
-                        feature.setAttribute(fieldName, guid);
-                        break;
-
-                    case GEOCOORDINATE_LIST_TYPE:
-                        MultiPoint points = new GeometryFactory().createMultiPoint((Coordinate[]) fieldValue);
-                        feature.setAttribute(fieldName, points);
-                        break;
-
-                    case GEOCOORDINATE_TYPE:
-                        Point point = new GeometryFactory().createPoint((Coordinate) fieldValue);
-                        feature.setAttribute(fieldName, point);
-                        break;
-
-                    case LINE_STRING_TYPE:
-                        feature.setAttribute(fieldName, fieldValue);
-                        break;
-
-                    case POLYGON_TYPE:
-                        feature.setAttribute(fieldName, fieldValue);
-                        break;
-
-                    // Circles will be converted to polygons
-                    case CIRCLE_TYPE:
-                        // Create Polygon
-
-                        CoalesceCircle circle = (CoalesceCircle) fieldValue;
-                        GeometricShapeFactory factory = new GeometricShapeFactory();
-                        factory.setSize(circle.getRadius());
-                        factory.setNumPoints(360); // 1 degree points
-                        factory.setCentre(circle.getCenter());
-                        Polygon shape = factory.createCircle();
-                        feature.setAttribute(fieldName, shape);
-                        break;
-
-                    case DATE_TIME_TYPE:
-                        feature.setAttribute(fieldName, ((DateTime) fieldValue).toDate());
-                        break;
-                    case FILE_TYPE:
-                    case BINARY_TYPE:
-                    default:
-                        break;
-                    }
-
-                    if (LOGGER.isTraceEnabled())
-                    {
-                        LOGGER.trace("Set Feature ({}) = ({})", fieldName, feature.getAttribute(fieldName));
-                    }
-                }
-                catch (IllegalAttributeException e)
+                switch (dataType)
                 {
 
-                    LOGGER.warn("{} => {}",
-                                feature.getName(),
-                                String.format(CoalesceErrors.INVALID_INPUT_REASON, fieldName, e.getMessage()));
+                // These types should be able to be handled directly
+                case ENUMERATION_TYPE:
+                case BOOLEAN_TYPE:
+                case DOUBLE_TYPE:
+                case FLOAT_TYPE:
+                case INTEGER_TYPE:
+                case LONG_TYPE:
+                case STRING_TYPE:
+                case URI_TYPE:
+                    feature.setAttribute(fieldName, fieldValue);
+                    break;
+
+                case STRING_LIST_TYPE:
+                case DOUBLE_LIST_TYPE:
+                case INTEGER_LIST_TYPE:
+                case LONG_LIST_TYPE:
+                case FLOAT_LIST_TYPE:
+                case GUID_LIST_TYPE:
+                case BOOLEAN_LIST_TYPE:
+                case ENUMERATION_LIST_TYPE:
+                    feature.setAttribute(fieldName, fieldValue);
+                    break;
+
+                case GUID_TYPE:
+                    String guid = fieldValue.toString();
+                    feature.setAttribute(fieldName, guid);
+                    break;
+
+                case GEOCOORDINATE_LIST_TYPE:
+                    MultiPoint points = new GeometryFactory().createMultiPoint((Coordinate[]) fieldValue);
+                    feature.setAttribute(fieldName, points);
+                    break;
+
+                case GEOCOORDINATE_TYPE:
+                    Point point = new GeometryFactory().createPoint((Coordinate) fieldValue);
+                    feature.setAttribute(fieldName, point);
+                    break;
+
+                case LINE_STRING_TYPE:
+                    feature.setAttribute(fieldName, fieldValue);
+                    break;
+
+                case POLYGON_TYPE:
+                    feature.setAttribute(fieldName, fieldValue);
+                    break;
+
+                // Circles will be converted to polygons
+                case CIRCLE_TYPE:
+                    // Create Polygon
+
+                    CoalesceCircle circle = (CoalesceCircle) fieldValue;
+                    GeometricShapeFactory factory = new GeometricShapeFactory();
+                    factory.setSize(circle.getRadius());
+                    factory.setNumPoints(360); // 1 degree points
+                    factory.setCentre(circle.getCenter());
+                    Polygon shape = factory.createCircle();
+                    feature.setAttribute(fieldName, shape);
+                    break;
+
+                case DATE_TIME_TYPE:
+                    feature.setAttribute(fieldName, ((DateTime) fieldValue).toDate());
+                    break;
+                case FILE_TYPE:
+                case BINARY_TYPE:
+                default:
+                    break;
+                }
+
+                if (LOGGER.isTraceEnabled())
+                {
+                    LOGGER.trace("Set Feature ({}) = ({})", fieldName, feature.getAttribute(fieldName));
                 }
             }
+            catch (IllegalAttributeException e)
+            {
+
+                LOGGER.warn("{} => {}",
+                            feature.getName(),
+                            String.format(CoalesceErrors.INVALID_INPUT_REASON, fieldName, e.getMessage()));
+            }
+        }
 
     }
 

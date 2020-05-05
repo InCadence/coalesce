@@ -22,7 +22,6 @@ import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
-
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchSettings;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.junit.BeforeClass;
@@ -39,7 +38,8 @@ public class ElasticSearchPersistor2IT extends AbstractCoalescePersistorTest<Ela
     @BeforeClass
     public static void initialize()
     {
-        System.setProperty(CoalesceParameters.COALESCE_CONFIG_LOCATION_PROPERTY, "src/test/resources");
+        System.setProperty(CoalesceParameters.COALESCE_CONFIG_LOCATION_PROPERTY,
+                           Paths.get("src", "test", "resources").toString());
 
         FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
         connector.setReadOnly(true);

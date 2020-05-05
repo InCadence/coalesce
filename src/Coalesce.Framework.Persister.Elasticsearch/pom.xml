@@ -46,17 +46,26 @@
             <artifactId>coalesce-search</artifactId>
         </dependency>
 
-        <!-- SSL Support -->
-        <dependency>
-            <groupId>ironhide</groupId>
-            <artifactId>ironhide-client</artifactId>
-            <version>${ironhide.version}</version>
-        </dependency>
-
         <!-- Elastic Search Client -->
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
-            <artifactId>transport</artifactId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>${elasticsearch.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${elasticsearch.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.locationtech.spatial4j</groupId>
+            <artifactId>spatial4j</artifactId>
+            <version>0.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client</artifactId>
             <version>${elasticsearch.version}</version>
         </dependency>
         <dependency>
@@ -73,8 +82,19 @@
         <!-- Search API -->
         <dependency>
             <groupId>mil.nga.giat</groupId>
+            <artifactId>gs-web-elasticsearch</artifactId>
+            <version>${elasticgeo.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mil.nga.giat</groupId>
             <artifactId>gt-elasticsearch</artifactId>
             <version>${elasticgeo.version}</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>joda-time</artifactId>
+            <groupId>joda-time</groupId>
+            <version>${joda.version}</version>
         </dependency>
 
         <dependency>
@@ -91,11 +111,6 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-metadata</artifactId>
-            <version>${geotools.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-data</artifactId>
             <version>${geotools.version}</version>
         </dependency>
         <dependency>

@@ -21,12 +21,11 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloDataConnector;
-import com.incadencecorp.coalesce.framework.persistance.accumulo.CloseableBatchWriter;
 import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
+import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
 import org.apache.accumulo.core.client.MutationsRejectedException;
 import org.apache.accumulo.core.client.TableNotFoundException;
@@ -71,7 +70,7 @@ public class AccumuloWriteMutationTask
     {
         CoalesceStringResponseType result = new CoalesceStringResponseType();
 
-        try (CloseableBatchWriter writer = new CloseableBatchWriter(parameters.getTarget().getDBConnector(), tablename, config))
+        try (BatchWriter writer = parameters.getTarget().getDBConnector().createBatchWriter(tablename, config))
         {
             for (Mutation mutation : parameters.getParams())
             {

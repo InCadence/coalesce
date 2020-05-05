@@ -17,7 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 /**
  * Represents a circle.
