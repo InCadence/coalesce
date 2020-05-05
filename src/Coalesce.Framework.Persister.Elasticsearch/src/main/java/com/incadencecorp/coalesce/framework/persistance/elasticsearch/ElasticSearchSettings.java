@@ -353,6 +353,7 @@ public class ElasticSearchSettings {
         params.put(PARAM_HTTP_PORT, getHTTPPort());
         params.put(PARAM_RETRY_ATTEMPTS, Integer.toString(getRetryAttempts()));
         params.put(PARAM_DATASTORE_CACHE_ENABLED, Boolean.toString(isDataStoreCacheEnabled()));
+        params.put(PARAM_REFRESH_POLICY, getIndexRefreshPolicy());
 
         return params;
     }
