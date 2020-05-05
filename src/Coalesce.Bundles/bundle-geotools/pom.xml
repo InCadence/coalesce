@@ -133,6 +133,9 @@
             <artifactId>gt-metadata</artifactId>
             <version>${geotools.version}</version>
         </dependency>
+
+        <!-- Requires Java 1.9 -->
+        <!--
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-imagemosaic</artifactId>
@@ -148,6 +151,7 @@
             <artifactId>gt-process-feature</artifactId>
             <version>${geotools.version}</version>
         </dependency>
+        -->
         <!-- INC version removes the Skunkwords class which is missing the packagename preventing the packages to be bundled into our bundle-geotool package for use within OSGi container using maven-bundle-plugin. -->
         <dependency>
             <groupId>org.geotools</groupId>
