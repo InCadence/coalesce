@@ -2,21 +2,17 @@ package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
 import com.google.common.net.HostAndPort;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-
 import org.apache.http.HttpHost;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.support.AbstractClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -56,7 +52,7 @@ public class ElasticSearchDataConnector implements AutoCloseable {
 
             try
             {
-                client = isSSLEnabled ? createSSLClient(props) : createClient(props);
+                client = createClient(isSSLEnabled, props);
             }
             catch (CoalescePersistorException e)
             {
@@ -72,21 +68,21 @@ public class ElasticSearchDataConnector implements AutoCloseable {
     {
         if (client != null)
         {
-            try {
+            try
+            {
                 client.close();
-            } catch (IOException e) {
-                LOGGER.error(e.getMessage(),e);
+            }
+            catch (IOException e)
+            {
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
 
-    private RestHighLevelClient createClient(Properties props) throws CoalescePersistorException
+    private RestHighLevelClient createClient(boolean isSSLEnabled, Properties props) throws CoalescePersistorException
     {
-        RestHighLevelClient client;
-
         try
         {
-
             List<HttpHost> hostList = new ArrayList<>();
 
             String hosts = props.getProperty(ElasticSearchSettings.PARAM_HOSTS);
@@ -95,8 +91,7 @@ public class ElasticSearchDataConnector implements AutoCloseable {
 
                 try
                 {
-                    return new HttpHost(InetAddress.getByName(hostAndPort.getHost()),
-                            hostAndPort.getPort());
+                    return new HttpHost(InetAddress.getByName(hostAndPort.getHost()), hostAndPort.getPort(), isSSLEnabled ? "https" : "http");
                 }
                 catch (UnknownHostException e)
                 {
@@ -105,22 +100,30 @@ public class ElasticSearchDataConnector implements AutoCloseable {
                 }
             }).forEach(hostList::add);
 
-            RestClientBuilder builder = RestClient.builder(hostList.toArray(new HttpHost[hostList.size()]));
-            client = new RestHighLevelClient(builder);
+            RestClientBuilder clientBuilder = RestClient.builder(hostList.toArray(new HttpHost[0]));
+
+            if (isSSLEnabled)
+            {
+                SSLContext context = getSslContext(props);
+
+                clientBuilder.setHttpClientConfigCallback(httpAsyncClientBuilder -> httpAsyncClientBuilder.setSSLContext(
+                        context));
+            }
+
+            return new RestHighLevelClient(clientBuilder);
 
         }
         catch (ElasticsearchException ex)
         {
-            throw new CoalescePersistorException(ex.getMessage(), ex);
-        }
+            throw new CoalescePersistorException(ex);
 
-        return client;
+        }
     }
 
     private SSLContext getSslContext(Properties props) throws CoalescePersistorException
     {
 
-        if(sslContext == null)
+        if (sslContext == null)
         {
 
             if (LOGGER.isDebugEnabled())
@@ -146,12 +149,14 @@ public class ElasticSearchDataConnector implements AutoCloseable {
                     truststore.load(is, props.getProperty(ElasticSearchSettings.PARAM_TRUSTSTORE_PASSWORD).toCharArray());
                 }
 
-                SSLContextBuilder sslBuilder = SSLContexts.custom()
-                        .loadTrustMaterial(truststore, null).loadKeyMaterial(keyStore, props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD).toCharArray());
+                SSLContextBuilder sslBuilder = SSLContexts.custom().loadTrustMaterial(truststore, null).loadKeyMaterial(
+                        keyStore,
+                        props.getProperty(ElasticSearchSettings.PARAM_KEYSTORE_PASSWORD).toCharArray());
                 sslContext = sslBuilder.build();
 
             }
-            catch(Exception e){
+            catch (Exception e)
+            {
 
                 throw new CoalescePersistorException(e);
 
@@ -162,56 +167,4 @@ public class ElasticSearchDataConnector implements AutoCloseable {
         return sslContext;
 
     }
-
-    private RestHighLevelClient createSSLClient(Properties props) throws CoalescePersistorException
-    {
-        RestHighLevelClient client;
-
-        try
-        {
-
-            List<HttpHost> hostList = new ArrayList<>();
-
-            String hosts = props.getProperty(ElasticSearchSettings.PARAM_HOSTS);
-            Stream.of(hosts.split(",")).map(host -> {
-                HostAndPort hostAndPort = HostAndPort.fromString(host).withDefaultPort(9200);
-
-                try
-                {
-                    return new HttpHost(InetAddress.getByName(hostAndPort.getHost()),
-                            hostAndPort.getPort(), "https");
-                }
-                catch (UnknownHostException e)
-                {
-                    LOGGER.warn(e.getMessage(), e);
-                    return null;
-                }
-            }).forEach(hostList::add);
-
-            RestClientBuilder clientBuilder = RestClient.builder(hostList.toArray(new HttpHost[hostList.size()]));
-
-            SSLContext context = getSslContext(props);
-
-            clientBuilder.setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback()
-            {
-                @Override
-                public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpAsyncClientBuilder)
-                {
-                    return httpAsyncClientBuilder.setSSLContext(context);
-                }
-            });
-
-
-            client =  new RestHighLevelClient(clientBuilder);
-
-        }
-        catch (ElasticsearchException ex)
-        {
-            throw new CoalescePersistorException(ex);
-
-        }
-
-        return client;
-    }
-
 }
