@@ -103,7 +103,7 @@ services:
 
   karaf:
     #image: docker-oebdp.di2e.net/oebdp:0.0.7
-    image: incadencecorp/coalesce-karaf:0.0.45-SNAPSHOT
+    image: incadencecorp/coalesce-karaf:0.1.0-SNAPSHOT
     container_name: coalesce-karaf
     environment:
       - JAVA_MIN_MEM=5G
@@ -111,8 +111,6 @@ services:
       - KARAF_DEBUG=true
     depends_on:
       - "elasticsearch"
-    environment:
-      - KARAF_DEBUG=true
     ports:
       - "8101:8101"
       - "8181:8181"
