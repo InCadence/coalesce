@@ -31,27 +31,23 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.ResourceAlreadyExistsException;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchAction;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.rest.RestStatus;
@@ -127,6 +123,22 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
     public ElasticSearchTemplatePersister(Map<String, String> params)
     {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        try
+        {
+            // Required within OSGi due to the ServiceLoader used by org.elasticsearch.common.xcontent.XContentBuilder
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+            XContentFactory.contentBuilder(XContentType.JSON);
+        }
+        catch (IOException ex)
+        {
+            throw new RuntimeException(ex);
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader(loader);
+        }
+
         this.params = ElasticSearchSettings.getParameters();
         this.params.putAll(params);
 
@@ -267,7 +279,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
             }
             catch (IOException e)
             {
-                throw new CoalescePersistorException(e.getMessage(),e);
+                throw new CoalescePersistorException(e.getMessage(), e);
             }
         }
         else
@@ -311,7 +323,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
             //LOGGER.debug("Trying this search: " + searchRequest.toString());
 
-            SearchResponse response = client.search(searchRequest,RequestOptions.DEFAULT);
+            SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
 
             SearchHits hits = response.getHits();
 
@@ -332,8 +344,9 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                                                                            + version), e);
             }
         }
-        catch (IOException e){
-            throw new CoalescePersistorException(e.getMessage(),e);
+        catch (IOException e)
+        {
+            throw new CoalescePersistorException(e.getMessage(), e);
         }
 
         return null;
@@ -354,7 +367,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
             SearchRequest searchRequest = new SearchRequest(COALESCE_TEMPLATE_INDEX);
             searchRequest.source(sourceBuilder);
 
-            SearchResponse response = client.search(searchRequest,RequestOptions.DEFAULT);
+            SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
 
             SearchHits hits = response.getHits();
 
@@ -375,7 +388,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         }
         catch (IOException e)
         {
-            LOGGER.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(), e);
         }
         return metaDatas;
     }
@@ -396,7 +409,8 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 Map<String, Object> source = createMapping(template);
                 String index = COALESCE_ENTITY_INDEX + "-" + NORMALIZER.normalize(template.getName());
 
-                CreateIndexRequest request = new CreateIndexRequest(index);;
+                CreateIndexRequest request = new CreateIndexRequest(index);
+                
                 request.settings(defaultSettings);
                 request.mapping(Collections.singletonMap("properties", source));
 
@@ -407,14 +421,14 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
 
                     if (!doesExists(client, COALESCE_TEMPLATE_INDEX))
                     {
-                        response = client.indices().create(createCoalesceTemplateIndexRequest(),RequestOptions.DEFAULT);
+                        response = client.indices().create(createCoalesceTemplateIndexRequest(), RequestOptions.DEFAULT);
 
                         LOGGER.debug("Registered Coalesce Template Index {}: {}", template.getName(), response);
                     }
 
                     if (!doesExists(client, COALESCE_ENTITY_INDEX))
                     {
-                        response = client.indices().create(createCoalesceEntityIndexRequest(),RequestOptions.DEFAULT);
+                        response = client.indices().create(createCoalesceEntityIndexRequest(), RequestOptions.DEFAULT);
 
                         LOGGER.debug("Registered Coalesce Index {}: {}", template.getName(), response);
                     }
@@ -432,8 +446,9 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
                 }
             }
         }
-        catch (IOException e){
-            throw new CoalescePersistorException(e.getMessage(),e);
+        catch (IOException e)
+        {
+            throw new CoalescePersistorException(e.getMessage(), e);
         }
     }
 
@@ -472,7 +487,7 @@ public class ElasticSearchTemplatePersister implements ICoalesceTemplatePersiste
         }
         catch (IOException e)
         {
-            LOGGER.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
