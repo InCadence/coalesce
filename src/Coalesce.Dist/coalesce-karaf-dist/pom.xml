@@ -89,15 +89,17 @@
                         <feature>minimal</feature>
                         <feature>cxf</feature>
                         <feature>cxf-jaxrs</feature>
+                        <feature>cxf-jackson</feature>
+                        <feature>coalesce-core-feature</feature>
                         <feature>persister-accumulo-feature</feature>
                         <feature>persister-elasticsearch-feature</feature>
                         <feature>persister-derby-feature</feature>
                         <feature>persister-rest-feature</feature>
                         <feature>coalesce-services-feature</feature>
-                        <feature>coalesce-frontend</feature>
-                        <feature>coalesce-javadocs</feature>
                         <feature>coalesce-synchronizer-feature</feature>
+                        <feature>coalesce-frontend</feature>
                         <feature>coalesce-notification-feature</feature>
+                        <feature>coalesce-javadocs</feature>
                     </bootFeatures>
                     <installedFeatures>
                         <feature>standard</feature>
@@ -105,7 +107,6 @@
                         <feature>spring</feature>
                         <feature>spring-dm-web</feature>
                         <feature>coalesce-feature</feature>
-                        <feature>cxf</feature>
                         <feature>cxf-commands</feature>
                     </installedFeatures>
                     <usePathPrefix>false</usePathPrefix>

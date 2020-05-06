@@ -62,6 +62,9 @@
                         </Export-Package>
                         <Import-Package>
                             org.joda.time*;version="[1.6.2, 3)",
+                            javax.xml.bind;version="[0, 3)",
+                            javax.xml.bind.annotation;version="[0, 3)",
+                            javax.xml.bind.annotation.adapters;version="[0, 3)",
                             *
                         </Import-Package>
                         <Embed-Dependency>
