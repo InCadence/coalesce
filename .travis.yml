@@ -1,7 +1,8 @@
 sudo: true
 language: java
+# Mini Accumulo does not compile w/ Java 9+ https://github.com/apache/accumulo-website/issues/147
 jdk:
-- openjdk11
+- openjdk8
 cache:
   directories:
   - "$HOME/.m2"
