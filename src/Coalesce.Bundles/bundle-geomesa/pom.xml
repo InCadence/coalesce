@@ -62,10 +62,6 @@
 					<groupId>org.geotools</groupId>
 					<artifactId>*</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>com.vividsolutions</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
 			</exclusions>
  		</dependency>
 		<!--

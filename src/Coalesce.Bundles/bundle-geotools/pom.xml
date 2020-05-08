@@ -35,38 +35,6 @@
                             org.joda.time*;version="[1.6.2, 3)",
                             *;resolution:=optional
                         </Import-Package>
-
-                        <!--
-                            javax.measure.unit,
-                            javax.measure.quantity,
-                            javax.measure.converter,
-                            javax.media.jai,
-                            javax.media.jai.iterator,
-                            javax.media.jai.operator,
-                            com.vividsolutions.jts.algorithm,
-                            com.vividsolutions.jts.geom,
-                            com.vividsolutions.jts.geom.impl,
-                            com.vividsolutions.jts.geom.prep,
-                            com.vividsolutions.jts.geom.util,
-                            com.vividsolutions.jts.io,
-                            com.vividsolutions.jts.index.quadtree,
-                            com.vividsolutions.jts.index.strtree,
-                            it.geosolutions.imageio.maskband,
-                            it.geosolutions.imageio.plugins.tiff,
-                            it.geosolutions.jaiext.range,
-                            it.geosolutions.jaiext.classifier,
-                            it.geosolutions.jaiext.lookup,
-                            it.geosolutions.jaiext.colorindexer,
-                            it.geosolutions.jaiext.piecewise,
-                            org.jaitools.imageutils,
-                            org.jaitools.numeric,
-                            org.jdom,
-                            org.picocontainer,
-                            org.picocontainer.defaults,
-                            org.eclipse.xsd,
-                            net.opengis.fes20,
-                            net.opengis.ows10,
-                                                    -->
                         <Embed-Dependency>
                             *;artifactId=!org.osgi.compendium;scope=compile|runtime;type=!pom;inline=false
                         </Embed-Dependency>
