@@ -6,12 +6,12 @@
     <name>Coalesce Accumulo Persister</name>
     <description>Persister used by Coalesce to connect to a Accumulo database.</description>
 
-    <parent>
-        <groupId>com.incadencecorp.coalesce</groupId>
-        <artifactId>coalesce-pom</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
-        <relativePath>../Coalesce.Pom</relativePath>
-    </parent>
+	<parent>
+		<groupId>com.incadencecorp.coalesce</groupId>
+		<artifactId>coalesce-pom</artifactId>
+		<version>0.2.0-SNAPSHOT</version>
+		<relativePath>../Coalesce.Pom</relativePath>
+	</parent>
 
     <build>
         <plugins>
