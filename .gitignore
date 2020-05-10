@@ -8,6 +8,9 @@ logs/
 
 #Maven
 target/
+.mvn/
+mvnw
+mvnw.cmd
  
 # Eclipse
 .settings/

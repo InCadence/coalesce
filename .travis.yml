@@ -2,68 +2,75 @@ sudo: true
 language: java
 jdk:
 - openjdk8
+
 cache:
   directories:
   - "$HOME/.m2"
   - "$HOME/.npm"
-  - node_modules
+  - target
 stages:
-  - name: install
+  - name: setup
+  - name: build
     if: branch != release
   - name: test
     if: branch != release AND !(tag IS present)
   - name: deploy
     if: tag IS present OR type = cron
-  - name: deploy-feature
-    if: tag IS present OR type = cron
-  - name: deploy-karaf
+  - name: docker
     if: tag IS present
 jobs:
   include:
-    - stage: install
+
+    - stage: setup
+      name: "Setup"
+      install: skip
+      script:
+        - cp .travis.settings.xml $HOME/.m2/settings.xml
+
+    - stage: build
       name: "Coalesce"
       install:
-        - sudo keytool -importcert -v -trustcacerts -alias devforce -keystore "$JAVA_HOME/jre/lib/security/cacerts" -storepass changeit --noprompt -file src/Coalesce.Framework.Persister.Elasticsearch/devforce_DoD_Root.crt
         - cp .travis.settings.xml $HOME/.m2/settings.xml
-      script: mvn install -Dfindbugs.skip=false -DskipTests -P bundles -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
-
-    - stage: install
-      name: "Coalesce UI"
-      install: npm config set cache $HOME/.npm
+        - sudo keytool -importcert -v -trustcacerts -alias devforce -keystore "$JAVA_HOME/jre/lib/security/cacerts" -storepass changeit --noprompt -file src/Coalesce.Framework.Persister.Elasticsearch/devforce_DoD_Root.crt
       script:
+        - mvn install -P bundles -Dfindbugs.skip=false -DskipTests -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+
+    - stage: build
+      name: "Coalesce UI"
+      install:
+        - cp .travis.settings.xml $HOME/.m2/settings.xml
+        - npm config set cache $HOME/.npm
         - unset CI
+      script:
         - mvn install -f src/Coalesce.React -DskipTests -P react -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
     - stage: test
       name: "Coalesce"
-      install:
-        - sudo keytool -importcert -v -trustcacerts -alias devforce -keystore "$JAVA_HOME/jre/lib/security/cacerts" -storepass changeit --noprompt -file src/Coalesce.Framework.Persister.Elasticsearch/devforce_DoD_Root.crt
-        - cp .travis.settings.xml $HOME/.m2/settings.xml
-      script: mvn verify -Djacoco.skip=false -fae -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+      install: skip
+      script:
+        - mvn verify -Djacoco.skip=false -fae -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+      after_success:
+        - mkdir -p target/classes/com
+        - find src -type d -path '**/classes/com/incadencecorp' -exec cp -at target/classes/com/. {} +
 
     - stage: deploy
       name: "Coalesce"
       install: skip
-      script: mvn deploy -P bundles -DskipTests -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+      script:
+        - mvn deploy -P bundles -DskipTests -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        - mvn deploy -f src/Coalesce.Feature -DskipTests -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
     - stage: deploy
       name: "Coalesce UI"
-      install: npm config set cache $HOME/.npm
-      script: 
-        - unset CI 
+      install:
+        - npm config set cache $HOME/.npm
+        - unset CI
+      script:
         - mvn deploy -f src/Coalesce.React -DskipTests -P react -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
     - stage: deploy
       name: "Coalesce Documentation"
-      install:
-        # Compute Code Coverage / Find Bugs
-        - sudo keytool -importcert -v -trustcacerts -alias devforce -keystore "$JAVA_HOME/jre/lib/security/cacerts" -storepass changeit --noprompt -file src/Coalesce.Framework.Persister.Elasticsearch/devforce_DoD_Root.crt
-        - cp .travis.settings.xml $HOME/.m2/settings.xml
-      before_script:
-        # Copy Classes
-        - mvn install -Dfindbugs.skip=false -Djacoco.skip=false -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
-        - mkdir -p target/classes/com
-        - find -type d -path '**/classes/com/incadencecorp' -exec cp -at target/classes/com/. {} +
+      install: skip
       script:
         # Create Site and Deploy
         - mvn site -DskipDocker -Dfindbugs.skip=false -Djacoco.skip=false -Dcheckstyle.skip=false  -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
@@ -71,13 +78,7 @@ jobs:
         - cp -r src/pyCoalesce/target/site target/site/pycoalesce
         - mvn deploy -f src/Coalesce.Dist/coalesce-javadocs  -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
-    - stage: deploy-feature
-      name: "Coalesce Feature"
-      install: skip
-      script:
-        - mvn deploy -f src/Coalesce.Feature -DskipTests -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
-
-    - stage: deploy-karaf
+    - stage: docker
       name: "Coalesce Karaf"
       install: skip
       script:
