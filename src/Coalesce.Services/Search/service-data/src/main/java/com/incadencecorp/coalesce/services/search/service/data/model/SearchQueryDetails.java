@@ -18,6 +18,7 @@
 
 package com.incadencecorp.coalesce.services.search.service.data.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.joda.time.DateTime;
 
 /**
@@ -25,6 +26,7 @@ import org.joda.time.DateTime;
  */
 public class SearchQueryDetails {
 
+    @Schema(description = "Last time this query was modified.")
     private DateTime lastModified;
     private SearchQuery query;
     private String title;

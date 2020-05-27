@@ -28,4 +28,7 @@
 	<feature name="coalesce-javadocs" start-level="75" version="${project.version}">
 		<bundle>mvn:com.incadencecorp.coalesce.dist/coalesce-javadocs/${project.version}/war</bundle>
 	</feature>
+    <feature name="swagger-ui" version="${project.version}">
+        <bundle>mvn:org.webjars/swagger-ui/${swagger-ui.version}</bundle>
+    </feature>
 </features>

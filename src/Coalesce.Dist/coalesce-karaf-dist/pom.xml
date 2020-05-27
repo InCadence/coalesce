@@ -100,6 +100,7 @@
                         <feature>coalesce-frontend</feature>
                         <feature>coalesce-notification-feature</feature>
                         <feature>coalesce-javadocs</feature>
+                        <feature>cxf-rs-description-openapi-v3</feature>
                     </bootFeatures>
                     <installedFeatures>
                         <feature>standard</feature>
@@ -108,6 +109,7 @@
                         <feature>spring-dm-web</feature>
                         <feature>coalesce-feature</feature>
                         <feature>cxf-commands</feature>
+                        <feature>swagger-ui</feature>
                     </installedFeatures>
                     <usePathPrefix>false</usePathPrefix>
                 </configuration>
