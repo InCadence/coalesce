@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>coalesce-openapi-feature</artifactId>
+    <packaging>feature</packaging>
+    <name>Coalesce Open API Feature</name>
+
+    <parent>
+        <groupId>com.incadencecorp.coalesce.openapi</groupId>
+        <artifactId>openapi-parent</artifactId>
+        <version>0.2.0</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.openapi</groupId>
+            <artifactId>openapi-core</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.openapi</groupId>
+            <artifactId>openapi-data</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+
+    </dependencies>
+
+
+</project>
