@@ -23,7 +23,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.nifi</groupId>
         <artifactId>json-csv-extractor</artifactId>
-        <version>0.2.0</version>
+        <version>0.2.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
