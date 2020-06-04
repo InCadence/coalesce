@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.ingest</groupId>
         <artifactId>ingest-plugins</artifactId>
-        <version>0.2.1-SNAPSHOT</version>
+        <version>0.2.1</version>
         <relativePath>..</relativePath>
     </parent>
 
