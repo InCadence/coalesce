@@ -317,6 +317,14 @@
         </repository>
     </repositories>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>incadence</id>
+            <name>InCadence Repo</name>
+            <url>http://incadencenexus.incadencecorp.com:8081/nexus/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <distributionManagement>
         <repository>
             <id>nexus-public</id>
