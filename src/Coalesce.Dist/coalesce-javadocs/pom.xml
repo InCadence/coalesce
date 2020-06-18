@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.dist</groupId>
         <artifactId>coalesce-dist-parent</artifactId>
-        <version>0.2.0-SNAPSHOT</version>
+        <version>0.2.1</version>
         <relativePath>..</relativePath>
     </parent>
 

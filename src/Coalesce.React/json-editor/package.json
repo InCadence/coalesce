@@ -2,7 +2,7 @@
   "name": "json-editor",
   "title": "JSON Editor",
   "icon": "/images/svg/json.svg",
-  "version": "0.2.0-SNAPSHOT",
+  "version": "0.2.1",
   "description": " This UI is for viewing and modifying JSON properties.",
   "main": "index.js",
   "author": "InCadence",

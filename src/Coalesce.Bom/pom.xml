@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce</groupId>
         <artifactId>coalesce-parent</artifactId>
-        <version>0.2.0-SNAPSHOT</version>
+        <version>0.2.1</version>
         <relativePath>../../</relativePath>
     </parent>
 
@@ -28,6 +28,8 @@
         <spring.version>4.2.2.RELEASE</spring.version>
         <joda.version>2.9.7</joda.version>
         <slf4j.version>1.7.5</slf4j.version>
+        <swagger-ui.version>3.25.2</swagger-ui.version>
+        <io.swagger.v3.version>2.0.10</io.swagger.v3.version>
 
         <maven.bundle.version>3.5.0</maven.bundle.version>
         <dependency.bndlib.version>3.5.0</dependency.bndlib.version>

@@ -19,14 +19,19 @@ package com.incadencecorp.coalesce.services.common.controllers.datamodel;
 
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class GraphLink {
 
+    @Schema(description = "The source of the linkage")
     private String source;
+    @Schema(description = "The target of the linkage")
     private String target;
+    @Schema(description = "Labels can be used to differentiate between linkages of the same type or source and target.")
     private String label;
     private ELinkTypes type;
     private ECoalesceObjectStatus status;
+    @Schema(description = "Specified whether the linkage when created should go both directions.")
     private boolean isBiDirectional;
 
     public String getSource()

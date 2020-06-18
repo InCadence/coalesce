@@ -2,6 +2,7 @@ package com.incadencecorp.coalesce.services.search.service.data.model;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.services.api.search.SortByType;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -12,15 +13,22 @@ import java.util.List;
  */
 public class SearchQuery {
 
+    @Schema(description = "Unique Identifier")
     private String key;
+    @Schema(description = "Specifies the name of the template being targeted by this query.")
     private String type;
+    @Schema(description = "(Optional) Criteria groups")
     private SearchGroup group;
+    @Schema(description = "(Optional) If specified will be used over groups.")
     private String cql;
     private int pageSize;
     private int pageNumber;
     private List<SortByType> sortBy;
+    @Schema(description = "Property names that should be returned from the query.")
     private List<String> propertyNames;
+    @Schema(description = "Required capabilities of this query which will determine which datastore is targeted.")
     private final EnumSet<EPersistorCapabilities> capabilities = EnumSet.of(EPersistorCapabilities.SEARCH);
+    @Schema(description = "Whether or not to restrict the results to entities created by the current user.")
     private boolean isUserLimited;
 
     public String getKey()

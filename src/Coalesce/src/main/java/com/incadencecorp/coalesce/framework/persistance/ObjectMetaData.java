@@ -18,6 +18,7 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.joda.time.DateTime;
 
 /**
@@ -28,11 +29,17 @@ import org.joda.time.DateTime;
  */
 public class ObjectMetaData {
 
+    @Schema(description = "Unique identifier.")
     private String key;
+    @Schema(description = "Name of the Entity.")
     private String name;
+    @Schema(description = "Source of the Entity.")
     private String source;
+    @Schema(description = "Version of the Entity.")
     private String version;
+    @Schema(description = "When the Entity was created.")
     private DateTime created;
+    @Schema(description = "When the Entity was last modified.")
     private DateTime lastModified;
 
     /**

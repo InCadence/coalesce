@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>openapi-core</artifactId>
+    <packaging>war</packaging>
+    <name>Coalesce Open API Core</name>
+
+    <parent>
+        <groupId>com.incadencecorp.coalesce.openapi</groupId>
+        <artifactId>openapi-parent</artifactId>
+        <version>0.2.1</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.openapitools.swagger</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <configuration>
+                    <swaggerConfig>
+                        <servers>
+                            <server>
+                                <url>/cxf/core</url>
+                            </server>
+                        </servers>
+                        <info>
+                            <version>${project.version}</version>
+                            <title>Coalesce Core Endpoints</title>
+                            <description>These are the core services for the Coalesce Data Fabric.</description>
+                        </info>
+                    </swaggerConfig>
+                    <resourcePackages>
+                        <resourcePackage>com.incadencecorp.coalesce.openapi.core</resourcePackage>
+                    </resourcePackages>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.services</groupId>
+            <artifactId>coalesce-services-common-jaxrs</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${io.swagger.v3.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>

@@ -20,7 +20,7 @@ import java.util.Map;
  * @author Derek Clemenzi
  */
 @Path("property")
-interface IPropertyControllerJaxRS extends IPropertyController {
+public interface IPropertyControllerJaxRS extends IPropertyController {
 
     @GET
     @Path("/{name}.json")

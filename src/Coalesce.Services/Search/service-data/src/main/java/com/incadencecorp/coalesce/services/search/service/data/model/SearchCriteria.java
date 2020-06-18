@@ -17,18 +17,28 @@
 
 package com.incadencecorp.coalesce.services.search.service.data.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.opengis.style.Description;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class SearchCriteria {
 
+    @Schema(description = "Unique identifier")
     private String key;
+    @Schema(description = "Specifies the recordset that contains the field.")
     private String recordset;
+    @Schema(description = "Specifies the field")
     private String field;
+    @Schema(description = "Specifies the compare options that should be performed following OGC standards.")
     private String operator;
+    @Schema(description = "Specifies the values that should be compared.")
     private List<String> values = new ArrayList<>();
+    @Schema(description = "Specifies whether NOT should be included within this criteria.")
     private boolean isNot;
+    @Schema(description = "Specifies whether this criteria should be case sensitive (Not all datastores support this)")
     private boolean matchCase;
 
     public String getKey()

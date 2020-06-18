@@ -1,12 +1,17 @@
 package com.incadencecorp.coalesce.services.search.service.data.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class SearchGroup {
 
+    @Schema(description = "Operator to be used within this group ( AND | OR )")
     private String operator = "AND";
+    @Schema(description = "List of criteria which are transformed into a WHERE (or the equivalent) clause.")
     private List<SearchCriteria> criteria;
+    @Schema(description = "Sub groups allowing to complex queries.")
     private List<SearchGroup> groups;
 
     public String getOperator()

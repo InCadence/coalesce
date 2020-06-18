@@ -22,7 +22,6 @@ import com.incadencecorp.coalesce.services.common.api.IBlueprintController;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.awt.*;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -32,7 +31,7 @@ import java.util.List;
  * @author Derek Clemenzi
  */
 @Path("blueprints")
-interface IBlueprintControllerJaxRS extends IBlueprintController {
+public interface IBlueprintControllerJaxRS extends IBlueprintController {
 
     @GET
     @Path("/")

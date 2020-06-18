@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce</groupId>
         <artifactId>coalesce-pom</artifactId>
-        <version>0.2.0-SNAPSHOT</version>
+        <version>0.2.1</version>
         <relativePath>../Coalesce.Pom</relativePath>
     </parent>
 
@@ -211,6 +211,11 @@
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
             <version>${sun.jaxb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${io.swagger.v3.version}</version>
         </dependency>
 
         <!-- These dependencies are for the custom validator -->
