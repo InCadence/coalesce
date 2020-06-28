@@ -1,4 +1,4 @@
-  version: "2"
+version: "2"
 
 volumes:
   db-backups:
@@ -103,7 +103,7 @@ services:
 
   karaf:
     #image: docker-oebdp.di2e.net/oebdp:0.0.7
-    image: incadencecorp/coalesce-karaf:0.2.0
+    image: incadencecorp/coalesce-karaf:0.2.1
     container_name: coalesce-karaf
     environment:
       - JAVA_MIN_MEM=5G
