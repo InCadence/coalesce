@@ -101,6 +101,8 @@
                         <feature>coalesce-notification-feature</feature>
                         <feature>coalesce-javadocs</feature>
                         <feature>cxf-rs-description-openapi-v3</feature>
+                        <feature>coalesce-openapi-feature</feature>
+                        <feature>swagger-ui</feature>
                     </bootFeatures>
                     <installedFeatures>
                         <feature>standard</feature>
