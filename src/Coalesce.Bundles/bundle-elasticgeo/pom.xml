@@ -28,7 +28,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
         <artifactId>persister-elasticsearch-parent</artifactId>
-        <version>0.2.1</version>
+        <version>0.2.2-SNAPSHOT</version>
         <relativePath>../../Coalesce.Framework.Persistance/elasticsearch</relativePath>
     </parent>
 
