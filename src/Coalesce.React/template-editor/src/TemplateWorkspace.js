@@ -480,7 +480,7 @@ class TemplateWorkspace extends Component {
               img: "/images/svg/home.svg",
               title: "Home",
               onClick: () => {
-                window.location.href = "/home";
+                window.location.href = "/home/";
               }
             },
             {
