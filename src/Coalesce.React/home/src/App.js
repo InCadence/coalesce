@@ -1,4 +1,8 @@
 import React from "react";
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 
 import { withTheme } from '@material-ui/core/styles';
 
@@ -11,29 +15,58 @@ class App extends React.PureComponent {
   constructor(props) {
     super(props);
 
+    this.state = {
+      tabindex: 0
+    }
     this.renderGroup = this.renderGroup.bind(this);
     this.renderCard = this.renderCard.bind(this);
   }
 
+  handleChange = (event, newValue) => {
+    console.log(newValue);
+    
+    this.setState(() => { return {tabindex: newValue}})
+  }
+
   render() {
     const { settings } = this.props;
+    const { tabindex } = this.state;
+
+    console.log(tabindex);
+    
 
     return (
       <center>
         <img alt="Coalesce" src={settings.banner} />
-        {
-            settings.groups.map(this.renderGroup)
+        <Tabs
+        value={tabindex}
+        onChange={this.handleChange}
+        indicatorColor="primary"
+        textColor="primary"
+        centered
+      >
+          {
+          settings.groups.map(this.renderGroupTab)
+          }
+        </Tabs>
+        { tabindex != undefined &&
+          this.renderGroup(settings.groups[tabindex])
         }
       </center>
     )
   }
 
+  renderGroupTab(group) {
+    return (
+      <Tab label={group.name} />
+    )
+  }
+
   renderGroup(group) {
     return (
-      <div key={group.name}>
-        <h2>{group.name}</h2>
+      <div key={group.name} >
         {group.cards.map(this.renderCard)}
-      </div>
+      </div>      
     )
   }
 

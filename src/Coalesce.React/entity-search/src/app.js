@@ -348,7 +348,7 @@ export class App extends React.Component {
   }
 
   handleOnClick = (hit) => {
-    window.open(`${this.props.karafRootAddr}/entityeditor/?entitykey=${hit.entityKey}`);
+    window.open(`/entityeditor/?entitykey=${hit.entityKey}`);
   }
 
   handleLoadQuery = (key) => {
