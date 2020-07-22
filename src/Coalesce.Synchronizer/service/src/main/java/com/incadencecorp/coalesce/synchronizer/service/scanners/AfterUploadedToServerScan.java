@@ -31,6 +31,7 @@ import org.geotools.temporal.object.DefaultInstant;
 import org.geotools.temporal.object.DefaultPeriod;
 import org.geotools.temporal.object.DefaultPosition;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.opengis.filter.Filter;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -99,9 +101,9 @@ public class AfterUploadedToServerScan extends AbstractScan {
         {
             LOGGER.info("Last Successful Scan: {}", lastScanned);
         }
-//        DateTime start = JodaDateTimeHelper.fromXmlDateTimeUTC(lastScanned);
-        DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
-        DateTime start = formatter.parseDateTime(lastScanned);
+        DateTime start = JodaDateTimeHelper.fromXmlDateTimeUTC(lastScanned);
+//        DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
+//        DateTime start = formatter.parseDateTime(lastScanned);
         if (LOGGER.isInfoEnabled())
         {
             LOGGER.info("Start time: {}", start);
@@ -142,9 +144,9 @@ public class AfterUploadedToServerScan extends AbstractScan {
 
         }
 
-        if (LOGGER.isTraceEnabled())
+        if (LOGGER.isInfoEnabled())
         {
-            LOGGER.trace("Filter Specified: {}", query.getFilter().toString());
+            LOGGER.info("Filter Specified: {}", query.getFilter().toString());
         }
 
         // Add Last Modified Property and entity Key
@@ -166,8 +168,8 @@ public class AfterUploadedToServerScan extends AbstractScan {
             if (result.last())
             {
                 String timestamp = result.getString(properties.size() + 1);
-
-                pendingLastScan = JodaDateTimeHelper.parseDateTime(timestamp).toString();
+                pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.getMySQLDateTime(timestamp));
+                LOGGER.info("Pending last scan is: {}", pendingLastScan);
             }
             result.beforeFirst();
         }

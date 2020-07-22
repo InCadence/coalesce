@@ -22,9 +22,11 @@ import com.incadencecorp.coalesce.api.IExceptionHandler;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.MockPersister;
 import com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor;
+import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
 import com.incadencecorp.coalesce.framework.persistance.sql.impl.SQLSearchPersisterImpl;
 import com.incadencecorp.coalesce.framework.persistance.sql.impl.TrexSqlPersisterImpl;
 import com.incadencecorp.coalesce.handlers.FileExceptionHandlerImpl;
@@ -39,6 +41,7 @@ import com.incadencecorp.coalesce.synchronizer.service.SynchronizerService;
 import com.incadencecorp.coalesce.synchronizer.service.drivers.IntervalDriverImpl;
 import com.incadencecorp.coalesce.synchronizer.service.operations.CopyOperationImpl;
 import com.incadencecorp.coalesce.synchronizer.service.operations.ExceptionOperationImpl;
+import com.incadencecorp.coalesce.synchronizer.service.operations.TrexMergeOperationImpl;
 import com.incadencecorp.coalesce.synchronizer.service.scanners.AfterLastModifiedScanImpl;
 import com.incadencecorp.coalesce.synchronizer.service.scanners.AfterUploadedToServerScan;
 import org.junit.Assert;
@@ -121,7 +124,8 @@ public class SynchronizerTest {
 
     @BeforeClass
             public static void initialize(){
-        CoalesceSettings.setTimePatterns(Collections.singletonList("yyyy-MM-dd HH:mm:ss.SSS"));
+        //CoalesceSettings.setTimePatterns(Collections.singletonList("1978-09-12T00:00:00Z"));
+        CoalesceSettings.setTimePatterns(Arrays.asList("yyyy-MM-dd'T'hh:mm:ss'Z'","yyyy-MM-dd HH:mm:ss.SSS"));
 
     }
     @Test
@@ -130,13 +134,18 @@ public class SynchronizerTest {
         Map<String, String> params;
 
         params = new HashMap<>();
-//        params.put(SynchronizerParameters.PARAM_DRIVER_INTERVAL_UNITS, TimeUnit.MINUTES.toString());
-//        params.put(SynchronizerParameters.PARAM_OP_WINDOW_SIZE, "20");
-//        params.put(SynchronizerParameters.PARAM_SCANNER_WINDOW,"10");
-//        params.put(SynchronizerParameters.PARAM_SCANNER_WINDOW_UNITS, TimeUnit.MINUTES.toString());
-        params.put(SynchronizerParameters.PARAM_SCANNER_MAX,"4");
+        params.put(SynchronizerParameters.PARAM_SCANNER_MAX,"500");
         params.put(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS,
-                   JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusMinutes(100000)));
+                   JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusMinutes(10000)));
+
+//        Map<String,String> dbTargetParams;
+//        dbTargetParams = new HashMap<>();
+//        dbTargetParams.put("asid.dbServerName","192.168.11.56:4223");
+//        dbTargetParams.put("asid.dbServerPort","1433");
+//        dbTargetParams.put("asid.database","IdentityHubDatabase");
+//        dbTargetParams.put("asid.dbUser","idhub_user");
+//        dbTargetParams.put("asid.dbPassword","Passw0rd");
+//        dbTargetParams.put("asid.dbSchema","dbo");
 
         Map<String,String> dbSourceParams;
         dbSourceParams = new HashMap<>();
@@ -149,26 +158,17 @@ public class SynchronizerTest {
 
         Map<String,String> dbTargetParams;
         dbTargetParams = new HashMap<>();
-        dbTargetParams.put("asid.dbServerName","192.168.11.50");
-        dbTargetParams.put("asid.dbServerPort","4102");
-        dbTargetParams.put("asid.database","IdentityHubDatabase");
-        dbTargetParams.put("asid.dbUser","idhub_user");
-        dbTargetParams.put("asid.dbPassword","Passw0rd");
-        dbTargetParams.put("asid.dbSchema","dbo");
-
-//        Map<String,String> dbTargetParams;
-//        dbTargetParams = new HashMap<>();
-//        dbTargetParams.put("elastic.isAuthoritative","true");
-//        dbTargetParams.put("elastic.clustername","elasticsearch");
-//        dbTargetParams.put("elastic.hosts","localhost:9300");
-//        dbTargetParams.put("elastic.http.host","localhost");
-//        dbTargetParams.put("elastic.port","9300");
-//        dbTargetParams.put("elastic.datastore.cache.enabled","false");
+        dbTargetParams.put("elastic.isAuthoritative","true");
+        dbTargetParams.put("elastic.clustername","elasticsearch");
+        dbTargetParams.put("elastic.hosts","localhost:9300");
+        dbTargetParams.put("elastic.http.host","localhost");
+        dbTargetParams.put("elastic.port","9300");
+        dbTargetParams.put("elastic.datastore.cache.enabled","false");
 
         TrexSqlPersisterImpl source = new TrexSqlPersisterImpl(dbSourceParams);
         SQLSearchPersisterImpl source2 = new SQLSearchPersisterImpl(dbSourceParams);
-        TrexSqlPersisterImpl target = new TrexSqlPersisterImpl(dbTargetParams);
-//        ElasticSearchPersistor target = new ElasticSearchPersistor(dbTargetParams);
+//        TrexSqlPersisterImpl target = new TrexSqlPersisterImpl(dbTargetParams);
+        ElasticSearchPersistor target = new ElasticSearchPersistor(dbTargetParams);
 
 
         IPersistorScan scan = new AfterUploadedToServerScan();

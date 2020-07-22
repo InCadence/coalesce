@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
   ~  Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
   ~
   ~  Notwithstanding any contractor copyright notice, the Government has Unlimited
@@ -14,27 +14,17 @@
   ~  Distribution Statement D. Distribution authorized to the Department of
   ~  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
   ~
-  -->
+  --><blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:http="http://cxf.apache.org/transports/http/configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0             http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd             http://cxf.apache.org/transports/http/configuration             http://cxf.apache.org/schemas/configuration/http-conf.xsd">
 
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns:http="http://cxf.apache.org/transports/http/configuration"
-           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
-            http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
-            http://cxf.apache.org/transports/http/configuration
-            http://cxf.apache.org/schemas/configuration/http-conf.xsd">
-
-    <bean id="service" class="com.incadencecorp.coalesce.synchronizer.service.SynchronizerService" init-method="start"
-          destroy-method="stop">
+    <bean class="com.incadencecorp.coalesce.synchronizer.service.SynchronizerService" destroy-method="stop" id="service" init-method="start">
         <property name="drivers">
             <array>
-                <!--ref component-id="myDriver"/-->
+                <ref component-id="myDriver"/>
             </array>
         </property>
     </bean>
 
-    <bean id="myDriver" class="com.incadencecorp.coalesce.synchronizer.service.drivers.IntervalDriverImpl"
-          init-method="setup">
+    <bean class="com.incadencecorp.coalesce.synchronizer.service.drivers.IntervalDriverImpl" id="myDriver" init-method="setup">
         <property name="name" value="Driver"/>
         <property name="scan" ref="myScanner"/>
         <property name="operations">
@@ -44,29 +34,31 @@
         </property>
         <property name="properties">
             <map>
-                <entry key="com.incadencecorp.driver.interval" value="60"/>
+                <entry key="com.incadencecorp.driver.interval" value="59"/>
                 <entry key="com.incadencecorp.driver.intervalunits" value="SECONDS"/>
                 <entry key="com.incadencecorp.driver.threads" value="100"/>
-                <entry key="com.incadencecorp.driver.delay" value="30"/>
             </map>
         </property>
     </bean>
 
-    <bean class="com.incadencecorp.coalesce.synchronizer.service.scanners.AfterLastModifiedScanImpl2" id="myScanner"
-          init-method="setup">
-        <property name="name" value="Last Modified Scan"/>
+    <bean class="com.incadencecorp.coalesce.synchronizer.service.scanners.AfterUploadedToServerScan" id="myScanner" init-method="setup">
+        <property name="name" value="Uploaded to ServerScan"/>
         <property name="source" ref="derby"/>
         <property name="properties">
             <map>
-                <entry key="com.incadencecorp.scanners.lastscan" value="2017-11-01T20:20:32.111+00:00"/>
-                <entry key="com.incadencecorp.scanners.days" value="1"/>
                 <entry key="com.incadencecorp.scanners.max" value="50"/>
-                <entry key="com.incadencecorp.scanners.pattern" value=" yyyy-MM-dd HH:mm:ss.S"/>
+                <entry key="com.incadencecorp.scanners.pattern" value=" yyyy-MM-dd HH:mm:ss.SSS"/>
             </map>
+        </property>
+ <property name="propertyLoader">
+            <bean class="com.incadencecorp.coalesce.framework.PropertyLoader">
+                <argument ref="connector"/>
+                <argument value="sql-config.properties"/>
+            </bean>
         </property>
     </bean>
 
-    <bean id="myOperation" class="com.incadencecorp.coalesce.synchronizer.service.operations.CopyOperationImpl">
+    <bean class="com.incadencecorp.coalesce.synchronizer.service.operations.CopyOperationImpl" id="myOperation">
         <property name="name" value="Operation"/>
         <property name="source" ref="derby"/>
         <property name="target">
@@ -76,7 +68,7 @@
         </property>
         <property name="properties">
             <map>
-                <entry key="com.incadencecorp.operations.window" value="4"/>
+                <entry key="com.incadencecorp.operations.window" value="50"/>
             </map>
         </property>
     </bean>
@@ -84,23 +76,31 @@
     <!-- ========================== -->
     <!-- Persisters -->
     <!-- ========================== -->
-    <bean id="derby" class="com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor">
-    </bean>
-
-    <bean id="file" class="com.incadencecorp.coalesce.framework.persistance.FilePersistorImpl">
-    </bean>
-
-    <bean id="rest" class="com.incadencecorp.coalesce.framework.persistance.rest.impl.RESTPersisterImpl">
+    <bean class="com.incadencecorp.coalesce.framework.persistance.sql.impl.SQLSearchPersisterImpl" id="derby">
         <argument>
             <map>
-                <entry key="com.incadencecorp.coalesce.persister.rest.template.url"
-                       value="http://localhost:8282/cxf/data/templates"/>
-                <entry key="com.incadencecorp.coalesce.persister.rest.entity.url"
-                       value="http://localhost:8282/cxf/data/entity"/>
-                <entry key="com.incadencecorp.coalesce.persister.rest.search.url"
-                       value="http://localhost:8282/cxf/data/search"/>
+                <entry key="asid.dbServerName" value="192.168.75.1"/>
+                <entry key="asid.dbServerPort" value="1433"/>
+                <entry key="asid.database" value="IdentityHubDatabase"/>
+                <entry key="asid.dbUser" value="idhub_user"/>
+                <entry key="asid.dbPassword" value="Passw0rd"/>
             </map>
         </argument>
     </bean>
 
-</blueprint>
+    
+
+    <bean class="com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistorSearch" id="rest">
+        <argument>
+            <map>
+                <entry key="elastic.isAuthoritative" value="true"/>
+                <entry key="elastic.clustername" value="elasticsearch"/>
+                <entry key="elastic.hosts" value="192.168.75.1:9300"/>
+                <entry key="elastic.http.host" value="192.168.75.1"/>
+                <entry key="elastic.http.port" value="9300"/>
+                <entry key="elastic.datastore.cache.enabled" value="false"/>
+            </map>
+        </argument>
+    </bean>
+
+<bean class="com.incadencecorp.unity.common.connectors.FilePropertyConnector" id="connector"/></blueprint>
