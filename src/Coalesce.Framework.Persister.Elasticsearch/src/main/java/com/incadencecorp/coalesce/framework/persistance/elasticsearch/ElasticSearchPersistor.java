@@ -4,6 +4,7 @@ import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import org.elasticsearch.ElasticsearchException;
@@ -35,6 +36,8 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -125,6 +128,32 @@ public class ElasticSearchPersistor extends ElasticSearchTemplatePersister imple
     {
         if (entities != null && entities.length > 0)
         {
+            for(int i = 0; i<entities.length; i++)
+            {
+                if(entities[i].getName().equalsIgnoreCase("IDENTITYHUBMISSION") )
+                {
+                    try
+                    {
+                        try
+                        {
+                            CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entities[i]);
+                            FileWriter fileWriter = new FileWriter("C:\\Users\\GiovanniGaito\\Desktop\\replication\\coalesce\\src\\Coalesce.Objects\\templates\\" + template.getKey());
+                            PrintWriter printWriter = new PrintWriter(fileWriter);
+                            printWriter.print(template.toXml());
+                            printWriter.close();
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                    catch (CoalesceException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
             try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector())
             {
                 RestHighLevelClient client = conn.getDBConnector(params);

@@ -172,7 +172,7 @@ public class ElasticSearchIterator extends CoalesceIterator<ElasticSearchIterato
                     if (record.isFlatten())
                     {
                         mapping.putAll(createMapping(record));
-                        param.request.add(visitObject(record, param.recordIndex, "entity", mapping));
+                        param.request.add(visitObject(record, param.recordIndex, mapping));
 
                     }
                 }

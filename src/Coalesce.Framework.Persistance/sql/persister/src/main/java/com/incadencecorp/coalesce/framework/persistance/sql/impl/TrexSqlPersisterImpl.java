@@ -1,5 +1,4 @@
 package com.incadencecorp.coalesce.framework.persistance.sql.impl;
-
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -10,10 +9,8 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.ECoalesceCacheStates;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.microsoft.sqlserver.jdbc.Geography;
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
@@ -742,12 +739,11 @@ public class TrexSqlPersisterImpl extends SQLPersisterImpl {
                             if(coordinate == null)
                             {
                                 geography = Geography.point(0,0,4326);
-                                missionLocation = geography;
                             }else
                             {
                                 geography = Geography.point(coordinate.x, coordinate.y, 4326);
-                                missionLocation = geography;
                             }
+                        missionLocation = geography;
                         break;
                     case "EVENTTITLE":
                         if(information != null)
