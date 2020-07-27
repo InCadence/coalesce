@@ -96,6 +96,7 @@ public final class FilterUtil {
                     xml = new CoalesceFilterTransformer().transform(filter);
                     break;
                 case V1_0:
+                    //branch fix
                     xml = encode(new org.geotools.filter.v1_0.OGCConfiguration(),
                                  org.geotools.filter.v1_0.OGC.Filter,
                                  filter);
