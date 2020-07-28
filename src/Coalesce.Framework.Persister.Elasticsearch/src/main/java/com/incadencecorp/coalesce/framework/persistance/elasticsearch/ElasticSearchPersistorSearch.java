@@ -105,18 +105,28 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
         try
         {
             DataStore datastore = getDataStore(index);
-            SimpleFeatureType feature = datastore.getSchema(index);
-
-            for (AttributeDescriptor attr : feature.getAttributeDescriptors())
+            try
             {
-                if (!attr.getLocalName().startsWith("_"))
-                {
-                    Object value = attr.getUserData().getOrDefault("analyzed", Boolean.FALSE);
+                SimpleFeatureType feature = datastore.getSchema(index);
 
-                    if (value instanceof Boolean && !((Boolean) value))
+                for (AttributeDescriptor attr : feature.getAttributeDescriptors())
+                {
+                    if (!attr.getLocalName().startsWith("_"))
                     {
-                        keywords.add(attr.getLocalName());
+                        Object value = attr.getUserData().getOrDefault("analyzed", Boolean.FALSE);
+
+                        if (value instanceof Boolean && !((Boolean) value))
+                        {
+                            keywords.add(attr.getLocalName());
+                        }
                     }
+                }
+            }
+            finally
+            {
+                if (!isDataStoreCacheEnabled())
+                {
+                    datastore.dispose();
                 }
             }
         }
