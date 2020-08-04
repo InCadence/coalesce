@@ -1,7 +1,7 @@
 import React from 'react';
 import { withTheme } from '@material-ui/core/styles';
 
-import {FieldInput} from 'coalesce-components/lib/components/FieldInput.js'
+import {FieldInput} from 'coalesce-components/lib/components'
 
 export class RecordView extends React.PureComponent {
 
