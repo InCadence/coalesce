@@ -31,9 +31,8 @@ from simplejson import JSONDecodeError
 import xmltodict
 
 from .utilities.logger import package_logger
-from .utilities.URL_class import URL
 from .classes import CoalesceEntityTemplate, parseString, to_XML_string, \
-                    set_entity_fields, CoalesceAPILinkage
+                     set_entity_fields, CoalesceAPILinkage, URL
 from .utilities.API_request import get_response
 
 # Set up logging.
@@ -83,7 +82,7 @@ ENTITY_UPLOAD_OPERATIONS = ("create", "update", "create_template",
 # something that isn't needed for the other constants (the valid values
 # they define are documented in docstrings of the corresponding functions,
 # but this list is a little long for that treatment, and the operators are
-# used by two different functions, "search" and "search_simple".
+# used by two different functions, "search" and "search_simple").
 SEARCH_OPERATORS = {
         "EqualTo": 1,
         "GreaterThan": 1,
@@ -1287,7 +1286,7 @@ def create(server = None, entity = None, key = None, full_response = False):
     """
 
     response = save_entity(server = server, entity = entity, key = key,
-                             operation = "create")
+                           operation = "create")
 
     status = response.status_code
 
@@ -1536,7 +1535,8 @@ def create_template(server = None, template = None, full_response = False):
 
     """
     Creates an entity template on the Coalesce server.  This function is a
-    wrapper for the "save_entity" function.
+    wrapper for the :func:`~pyCoalesce.coalesce_request.save_entity`
+    function.
 
     Note that the user need not supply a key for the template: the server
     will autogenerate the key as a hash of the template's name, source,

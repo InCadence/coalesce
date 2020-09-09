@@ -28,12 +28,16 @@ import sys
 from io import StringIO
 from copy import copy
 from collections import deque
+import csv
 
 try:
     from lxml import etree as etree_
 except ImportError:
     from xml.etree import ElementTree as etree_
+from shapely import wkt
+
 from . import entity as supermod
+from .coalesce_entity import DATA_TYPE_MAP
 
 
 OBJECT_TYPES = ["field", "record", "fielddefinition", "recordset",
@@ -207,10 +211,10 @@ def to_XML_string(Coalesce_object, indent_level = 1, pretty_print = True):
 
     :param Coalesce_object:  a Coalesce object with an "export" method
     :param level:  multiply by 4 to determine the number of spaces for each
-        level of indentation
-    :param pretty_print:  if ``True``, add indentation
+        level of indentation.
+    :param pretty_print:  if ``True``, add indentation.
 
-    :returns:  a Unicode XML string
+    :returns:  an XML string
 
     """
 
@@ -225,6 +229,101 @@ def to_XML_string(Coalesce_object, indent_level = 1, pretty_print = True):
     return string_file.getvalue()
 
 
+def from_field_value(field_object, raw_value = None, data_type = None):
+    """
+    Retrieves the XML :attr:`~pyCoalesce.classes.entity.fieldSub.value` of
+    a :attr:`Caolesce field <pyCoalesce.classes.coalesce_entity.fieldSub>`
+    and converts it to the appropriate Python object.  The function
+    potentially uses one level of recursion, so that the individual
+    elements of list data types can be parsed.
+
+    This function is called mainly by the
+    :func:`~pyCoalesce.classes.coalesce_utilities.get_child_value`
+    function, below.  The corresponding "to" function is
+    :func:`pyCoalesce.classes.coalesce_entity.to_field_value`.
+
+    :param field_object:  an instance of
+        :attr:`CaolesceField <pyCoalesce.classes.coalesce_entity.fieldSub>`
+    :param raw_value:  the raw XML value (a string or number) to be parsed.
+        Normally, this value is drawn from "field_object" itself, but in
+        the case of a recursive call to parse individual list items, the
+         raw value is supplied as an argument to the function.
+    :param data_type:  the Caalesce data type of the value to be parsed.
+        As with "raw_value", this parameter must be supplied as an argument
+        in the case of a recursive call.
+    :returns:  the value of the field, as a Python object of the
+        appropriate type.
+
+    """
+
+    # We can the raw XML value from "field_object", but in the case of a
+    # recursive call to parse list items, it has to be supplied as an
+    # argument.
+    if not raw_value:
+        raw_value = field_object.value
+
+    # The Coalesce data type will determine how we need to parse "value".
+    # We can read this from "field_object", but in the case of a recursive
+    # call to parse list items, it has to be supplied as an argument.
+    if not data_type:
+        data_type = field_object.datatype
+    python_type = DATA_TYPE_MAP[data_type]
+
+    # Both list types and geometric ("WKT") types are expressed as tuples.
+    if isinstance(python_type, tuple):
+
+        primary_type = python_type[0]
+        secondary_type = python_type[1]
+
+        # If the data type is a list, we need to parse the CSV string, then
+        # parse each element separately.  Doing this involves calling a CSV
+        # reader, which is designed for parsing files--hence we need to
+        # create a string buffer to act in place of a file, and then read
+        # the XML value as the first (and only) line of the output.
+        if primary_type == list:
+            in_buffer = StringIO(raw_value)
+            reader = csv.reader(in_buffer)
+            raw_list = next(reader)
+            value = [from_field_value(field_object, raw_item, secondary_type)
+                     for raw_item in raw_list]
+
+        # If the data type is a well-known text (WKT) string describing a
+        # geometric object, create that object.
+        elif primary_type == "WKT":
+
+            # If this is a simple WKT type, we instantiate it as a Shapely
+            # Python object.
+            if isinstance(secondary_type, str):
+                value = wkt.loads(raw_value)
+
+            # If this data type requires a custom object class, instantiate
+            # that class; this may require additional attributes stored in
+            # Coalesce as "anyAttributes" (and if an object doesn't have
+            # any additional attributes, "anyAttributes_" has been
+            # initialized as an empty dict, which means reading won't raise
+            # an errors).
+            else:
+                any_attributes = field_object.anyAttributes_
+                if len(any_attributes) == 0:
+                    value = secondary_type.from_Coalesce(raw_value)
+                else:
+                    value = secondary_type.from_Coalesce(raw_value,
+                                                         any_attributes)
+
+        # This should be impossible, unless there's an error in
+        # "DATA_TYPE_MAP".
+        else:
+            raise ValueError('Coalesce data type "' + data_type + '" cannot ' +
+                             'be handled by this function.')
+
+    # Otherwise, "python_type" is a type, and we can just feed the XML
+    # value to the class constructor.
+    else:
+        value = python_type(raw_value)
+
+    return value
+
+
 def find_child(Coalesce_object, name, match_case = False,
                include_fielddefinitions = False):
     """
@@ -232,8 +331,7 @@ def find_child(Coalesce_object, name, match_case = False,
         matching "name".
 
     :param Coalesce_object:  a Coalesce object whose tree is to be searched
-    :param name:  the (ASCII or Unicode) name of the object being searched
-        for.
+    :param name:  the name of the object being searched for
     :param match_case:  if ``True``, match the case of "name".
     :param include_fielddefinitions:  if ``True``, include
         :class:`field definitions
@@ -300,7 +398,8 @@ def find_child(Coalesce_object, name, match_case = False,
     return found
 
 
-def get_child_attrib(Coalesce_object, path = ["<root>"], attrib = "value"):
+def get_child_attrib(Coalesce_object, path = ["<root>"], attrib = "value",
+                     return_python = True):
     """
     Retrieves the value of one attribute of a child Coalesce object
     specified by "path".
@@ -311,7 +410,12 @@ def get_child_attrib(Coalesce_object, path = ["<root>"], attrib = "value"):
         the  first (and presumably only) item in this argument is "<root>",
         retrieve the attribute from "Coalesce_object" itself.
     :param attrib:  the name of the attribute to be retrieved.  Defaults to
-        "value".
+        "value".  If the input value is "anyAttributes_" or
+        "any_attributes", the entire :class:`dict` of additional attributes
+        will be returned.
+    :param return_python:  return the attribute's value as a regular Python
+        object, rather than Coalesce XML.  This flag is meaningful only if
+        "attrib" is "value".
 
     :returns:  the value of the target attribute
 
@@ -323,6 +427,12 @@ def get_child_attrib(Coalesce_object, path = ["<root>"], attrib = "value"):
     if not isinstance(attrib, str):
         raise TypeError('Argument "attrib" must be an ASCII or Unicode string.')
 
+    # If "any_attributes" is supplied as "attrib", switch to the internal
+    # representation of that attribute.
+    if attrib == "any_attributes":
+        attrib = "anyAttributes_"
+
+    # Initialize "target"--we start with the root object.
     target = Coalesce_object
 
     # We don't need the following loop if we don't need to descend into the
@@ -339,9 +449,30 @@ def get_child_attrib(Coalesce_object, path = ["<root>"], attrib = "value"):
         for i in range(path_length):
             child = path_queue.popleft()
             index = path_queue.popleft()
-            target = getattr(target, child)[index]
+            try:
+                target = getattr(target, child)[index]
+            except (AttributeError, IndexError):
+                raise AttributeError('The path "' + str(path) + '" is not ' +
+                                     'valid.')
 
-    attrib_value = getattr(target, attrib)
+    # If we're retrieving a field value, we may need to parse it so that
+    # we can return a Python object other htan a string or number.
+    if attrib == "value" and return_python:
+        attrib_value = from_field_value(target)
+
+    # Otherwise, just return the raw XMl, or the Python dict stored for
+    # "anyAttributes".
+    else:
+        try:
+            attrib_value = getattr(target, attrib)
+        except AttributeError:
+            any_attributes = getattr(target, "anyAttributes_")
+            try:
+                attrib_value = any_attributes[attrib]
+            except IndexError:
+                raise AttributeError('The object at path "' + str(path) + '" ' +
+                                     'does not have an attribute named "' +
+                                     attrib + '".')
 
     return attrib_value
 
@@ -352,26 +483,56 @@ def set_child_attrib(Coalesce_object, path = ["<root>"], attrib = "value",
     Sets the value of one attribute of a child Coalesce object specified by
     "path".
 
-    :param Coalesce_object:  the root Coalesce object
+    :param Coalesce_object:  the root Coalesce object, an instance of
+        :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity` or one
+        of its subclasses.
     :param path:  a list of object types and indices that specifies the path
         to the child object whose attribute is to be set.  If the first (and
         presumably only) item in this argument is "<root>", set the
         attribute on the "Coalesce_object" itself.
-    :param attrib:  the name of the attribute to be retrieved.  Defaults to
+    :param attrib:  the name of the attribute to be set.  Defaults to
         "value".  If the attribute does not already exist, it will be
-        created.
-    :param value:  the value to which the attribute is to be set
+        added to the :class:`dict` that makes up the object's
+        "anyAttributes_" attribute, which will overwrite any exsiting
+        value of "attrib", but not effect any other attributes in
+        "anyAttributes_".  If the input value is "anyAttributes_" or
+        "any_attributes", the entire :class:`dict` of additional attributes
+        will be overwritten.
+    :param value:  the value to which the attribute is to be set.  This can
+        be either an XML string or a Python object convertible to an XML
+        string; if "attrib" is "anyAttributes_" or "any_attributes", the
+        input value must be a dict-like.  If the object being modified is
+        an instance of :class:`CoalesceField
+        <pyCoalesce.classes.entity.coalesce_entity.fieldsub>`, "attrib" is
+        "value" and the supplied value is an object with an
+        "any_attributes" attribute, those attributes will also be set--see
+        the setter method for the
+        :attr:`~pyCoalesce.classes.coalesce_entity.fieldSub.value`
+        attribute of :class:`pyCoalesce.classes.entity.coalesce_entity.fieldsub`
+        for details.
 
     :returns:  ``True``, indicating the attribute has been set successfully
 
     """
 
+    # Check for valid input.
+
+    if not isinstance(Coalesce_object, supermod):
+        raise ValueError('The argument "Coalesce_entity" must be an instance ' +
+                        'of class CoalesceEntity or one of its subclasses.')
+
     if len(path) == 0:
         raise ValueError("The specified path is empty.")
 
     if not isinstance(attrib, str):
-        raise TypeError('Argument "attrib" must be an ASCII or Unicode string.')
+        raise TypeError('Argument "attrib" must be a string.')
 
+    # If "any_attributes" is supplied as "attrib", switch to the internal
+    # representation of that attribute.
+    if attrib == "any_attributes":
+        attrib = "anyAttributes_"
+
+    # Initialize "target"--we start with the root object.
     target = Coalesce_object
 
     # We don't need the following loop if we don't need to descend into the
@@ -388,33 +549,49 @@ def set_child_attrib(Coalesce_object, path = ["<root>"], attrib = "value",
         for i in range(path_length):
             child = path_queue.popleft()
             index = path_queue.popleft()
-            target = getattr(target, child)[index]
+            try:
+                target = getattr(target, child)[index]
+            except (AttributeError, IndexError):
+                raise AttributeError('The path "' + str(path) + '" is not ' +
+                                     'valid.')
 
-    setattr(target, attrib, value)
+    if hasattr(target, attrib):
+        setattr(target, attrib, value)
+    else:
+        target.anyAttributes_[attrib] = value
 
     return True
 
 
-def set_entity_fields(Coalesce_entity = None, fields = None, match_case = False):
+def set_entity_fields(Coalesce_object, fields = {}, match_case = False):
     """
     A convenience function to fill any or all of an entity's :class:`fields
-    <.pyCoalesce.classes.coalesce_entity.CoalesceField>` with specified
+    <pyCoalesce.classes.coalesce_entity.CoalesceField>` with specified
     values.
 
-    :param Coalesce_entity:  an instance of
+    :param Coalesce_object:  the root Coalesce object, an instance of
         :class:`~pyCoalesce.classes.coalesce_entity.CoalesceEntity` or one
         of its subclasses.
     :param fields:  a dict-like of :class:`fields
         <pyCoalesce.classes.coalesce_entity.fieldSub>` and values to set
-        on those fields.  The keys can be either string (ASCII or Unicode)
-        names (in which case the function searches for each field, and
-        throws
-        an error if duplicates are found) or path lists, alternating
-        between child object type and list index.  The values of the
-        dict-like must be the values to be set on the
+        on those fields.  The keys can be either string names (in which
+        case the function searches for each field, and throws an error if
+        duplicates are found) or path lists, alternating between child
+        object type and list index.  The values of the dict-like must be
+        the values to be set on the
         :attr:`~pyCoalesce.classes.coalesce_entity.fieldSub.value`
-        attribute of each field--use another method for setting other
-        attributes.
+        attribute of each field; specifically, each value can
+        be either an XML string or a Python object convertible to an XML
+        string.  Note that, while this function calls
+        :func:`~pyCoalesce.classes.set_child_attrib` to set each value,
+        unlike that function, this one cannot set attributes other than
+        "value", unless the object being modified is an instance of
+        :class:`CoalesceField
+        <pyCoalesce.classes.entity.coalesce_entity.fieldsub>`, and the
+        supplied value is an object with an "any_attributes" attribute,
+        in which case those attributes will also be set--see
+        :class:`pyCoalesce.classes.entity.coalesce_entity.fieldsub` for
+        details.
     :param match_case:  if ``True``, match the case of child object names
         in "fields".  This argument has no meaning if the keys of "fields"
         are paths.
@@ -429,7 +606,7 @@ def set_entity_fields(Coalesce_entity = None, fields = None, match_case = False)
 
     # Check for valid input.
 
-    if not Coalesce_entity:
+    if not isinstance(Coalesce_object, supermod):
         raise ValueError('The argument "Coalesce_entity" must be an instance ' +
                         'of class CoalesceEntity or one of its subclasses.')
 
@@ -448,7 +625,7 @@ def set_entity_fields(Coalesce_entity = None, fields = None, match_case = False)
 
         # If necessary, find the path to the field in question.
         if isinstance(key, str):
-            matches = find_child(Coalesce_entity, key,
+            matches = find_child(Coalesce_object, key,
                                  include_fielddefinitions = False)
             num_matches = len(matches)
             if num_matches == 0:
@@ -463,8 +640,6 @@ def set_entity_fields(Coalesce_entity = None, fields = None, match_case = False)
         else:
             path = key
 
-        set_child_attrib(Coalesce_entity, path = path, value = value)
+        set_child_attrib(Coalesce_object, path = path, value = value)
 
     return True
-
-

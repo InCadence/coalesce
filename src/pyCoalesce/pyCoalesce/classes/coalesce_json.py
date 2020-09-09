@@ -362,7 +362,7 @@ class CoalesceAPILinkage(dict):
 
     def reverse_to_XSD(self):
         """
-        For a bidrectional linkage, returns a version of the the reverse
+        For a bidrectional linkage, returns a version of the reverse
         linkage as an instance of
         :class:`pyCoalesce.classes.coalesce_entity.CoalesceLinkage`.
         Calling this method on a unidirectional linkage will raise an
