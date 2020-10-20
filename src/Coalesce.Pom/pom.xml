@@ -26,7 +26,7 @@
         <module>../Coalesce.Ingest</module>
         <module>../Coalesce.NiFi</module>
         <module>../Coalesce.Objects</module>
-        <module>../Coalesce.OpenAPI</module>
+        <!--<module>../Coalesce.OpenAPI</module>-->
     </modules>
 
     <!-- Build flags to skip components -->
