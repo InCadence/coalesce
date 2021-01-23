@@ -29,7 +29,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.bundles</groupId>
         <artifactId>coalesce-bundle-parent</artifactId>
-        <version>0.2.2</version>
+        <version>0.2.3-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
