@@ -45,6 +45,10 @@
         <jaxrs:inInterceptors>
             <bean class="com.incadencecorp.coalesce.services.common.jaxrs.interceptors.HeaderSecurityContextInInterceptor"/>
         </jaxrs:inInterceptors>
+        <jaxrs:features>
+            <bean class="org.apache.cxf.jaxrs.openapi.OpenApiFeature">
+            </bean>
+        </jaxrs:features>          
     </jaxrs:server>
 
     <!-- ========================== -->
