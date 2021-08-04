@@ -120,6 +120,15 @@ public class ElasticSearchSettings {
 
     public static final String PARAM_REFRESH_POLICY = PARAM_ELASTIC_BASE + "index.refreshpolicy";
 
+    /**
+     * (String) Specifies the username.
+     */
+    public static final String PARAM_USERNAME = PARAM_ELASTIC_BASE + "auth.username";
+    /**
+     * (String) Specifies the password.
+     */
+    public static final String PARAM_PASSWORD = PARAM_ELASTIC_BASE + "auth.password";
+
     private static final String DEFAULT_KEYSTORE_FILE = getSystemProperty("javax.net.ssl.keyStore");
     private static final String DEFAULT_KEYSTORE_PASSWORD = getSystemProperty("javax.net.ssl.keyStorePassword");
     private static final String DEFAULT_TRUSTSTORE_FILE = getSystemProperty("javax.net.ssl.trustStore");
@@ -336,6 +345,51 @@ public class ElasticSearchSettings {
         settings.setSetting(config_name, PARAM_REFRESH_POLICY, value);
     }
 
+    /**
+     * Returns whether auth is enabled.
+     */
+    public static boolean isAuthEnabled()
+    {
+        return !getUsername().isEmpty();
+    }
+
+    /**
+     * Sets the username to use when authenticating with the database.
+     *
+     * @param value
+     */
+    public static void setUsername(String value)
+    {
+        settings.setSetting(config_name, PARAM_USERNAME, value);
+    }
+
+    /**
+     * @return the username to use when authenticating with the database.
+
+     */
+    public static String getUsername()
+    {
+        return settings.getSetting(config_name, PARAM_USERNAME, "", false);
+    }
+
+    /**
+     * Sets the password to use when authenticating with the database.
+     *
+     * @param value
+     */
+    public static void setPassword(String value)
+    {
+        settings.setSetting(config_name, PARAM_PASSWORD, value);
+    }
+
+    /**
+     * @return the password to use when authenticating with the database.
+     */
+    public static String getPassword()
+    {
+        return settings.getSetting(config_name, PARAM_PASSWORD, "", false);
+    }
+
     public static Map<String, String> getParameters()
     {
         Map<String, String> params = new HashMap<>();
@@ -354,6 +408,8 @@ public class ElasticSearchSettings {
         params.put(PARAM_RETRY_ATTEMPTS, Integer.toString(getRetryAttempts()));
         params.put(PARAM_DATASTORE_CACHE_ENABLED, Boolean.toString(isDataStoreCacheEnabled()));
         params.put(PARAM_REFRESH_POLICY, getIndexRefreshPolicy());
+        params.put(PARAM_USERNAME, getUsername());
+        params.put(PARAM_PASSWORD, getPassword());
 
         return params;
     }
