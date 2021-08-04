@@ -3,6 +3,11 @@ package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 import com.google.common.net.HostAndPort;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.elasticsearch.ElasticsearchException;
@@ -108,6 +113,18 @@ public class ElasticSearchDataConnector implements AutoCloseable {
 
                 clientBuilder.setHttpClientConfigCallback(httpAsyncClientBuilder -> httpAsyncClientBuilder.setSSLContext(
                         context));
+            }
+
+            if (!props.getProperty(ElasticSearchSettings.PARAM_USERNAME).isEmpty())
+            {
+                LOGGER.debug("Adding credentials for: {}", props.getProperty(ElasticSearchSettings.PARAM_USERNAME));
+                final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(
+                        props.getProperty(ElasticSearchSettings.PARAM_USERNAME),
+                        props.getProperty(ElasticSearchSettings.PARAM_PASSWORD))
+                );
+
+                clientBuilder.setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider));
             }
 
             return new RestHighLevelClient(clientBuilder);
