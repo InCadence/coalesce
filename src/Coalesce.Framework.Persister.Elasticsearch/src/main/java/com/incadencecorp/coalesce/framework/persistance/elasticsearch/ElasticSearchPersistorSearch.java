@@ -302,6 +302,8 @@ public class ElasticSearchPersistorSearch extends ElasticSearchPersistor impleme
         props.put(ElasticDataStoreFactory.SSL_REJECT_UNAUTHORIZED.key,
                   params.get(ElasticSearchSettings.PARAM_SSL_REJECT_UNAUTHORIZED));
         props.put(ElasticDataStoreFactory.SOURCE_FILTERING_ENABLED.key, Boolean.TRUE.toString());
+        props.put(ElasticDataStoreFactory.USER.key, params.get(ElasticSearchSettings.PARAM_USERNAME));
+        props.put(ElasticDataStoreFactory.PASSWD.key, params.get(ElasticSearchSettings.PARAM_PASSWORD));
 
         if (Boolean.parseBoolean(params.get(ElasticSearchSettings.PARAM_SSL_ENABLED)))
         {
