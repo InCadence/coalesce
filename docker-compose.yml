@@ -50,7 +50,7 @@ services:
     restart: unless-stopped
     user: root
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.3
     container_name: coalesce-elasticsearch
     environment:
       - cluster.name=elasticsearch
@@ -67,7 +67,7 @@ services:
       - coalesce_network
     restart: unless-stopped
   kibana5:
-    image: docker.elastic.co/kibana/kibana:7.4.0
+    image: docker.elastic.co/kibana/kibana:7.13.3
     container_name: coalesce-kibana
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200

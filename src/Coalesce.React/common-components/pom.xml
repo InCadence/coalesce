@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.incadencecorp.coalesce.react</groupId>
 		<artifactId>coalesce-react-parent</artifactId>
-		<version>0.2.3-SNAPSHOT</version>
+		<version>0.2.3</version>
 		<relativePath>..</relativePath>
 	</parent>
 

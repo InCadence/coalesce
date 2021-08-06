@@ -28,7 +28,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
         <artifactId>persister-elasticsearch-parent</artifactId>
-        <version>0.2.3-SNAPSHOT</version>
+        <version>0.2.3</version>
         <relativePath>../../Coalesce.Framework.Persistance/elasticsearch</relativePath>
     </parent>
 
@@ -148,19 +148,5 @@
         </dependency>
 
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>devforce</id>
-            <name>DevForce repository</name>
-            <url>https://nexus.devforce.io/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
 </project>

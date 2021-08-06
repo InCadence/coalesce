@@ -4,13 +4,6 @@
 
   <servers>
 
-    <!-- These crendetials are required to compile the Elastic persister which has a dependency on IronHide -->
-    <server>
-      <id>devforce</id>
-      <username>${env.devforce_user}</username>
-      <password>${env.devforce_password}</password>
-    </server>
-
     <!-- These credentials are only required when running mvn deploy -->
     <server>
       <id>nexus-public</id>
