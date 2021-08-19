@@ -31,6 +31,8 @@
         <checkstyle.skip>true</checkstyle.skip>
         <findbugs.skip>true</findbugs.skip>
         <jacoco.skip>true</jacoco.skip>
+        <dependency-check.skip>true</dependency-check.skip>
+        <dependency-check.version>6.2.2</dependency-check.version>
 
         <changelog.start.tag>coalesce-0.2.2</changelog.start.tag>
         <changelog.end.tag>HEAD</changelog.end.tag>
@@ -188,7 +190,18 @@
                     <argLine>${surefireArgLine}</argLine>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${dependency-check.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -286,6 +299,18 @@
                     <reportSet>
                         <reports>
                             <report>changelog</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${dependency-check.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>aggregate</report>
                         </reports>
                     </reportSet>
                 </reportSets>
