@@ -111,20 +111,20 @@ public class ElasticSearchDataConnector implements AutoCloseable {
             {
                 SSLContext context = getSslContext(props);
 
-                clientBuilder.setHttpClientConfigCallback(httpAsyncClientBuilder -> httpAsyncClientBuilder.setSSLContext(
-                        context));
-            }
-
-            if (!props.getProperty(ElasticSearchSettings.PARAM_USERNAME).isEmpty())
-            {
-                LOGGER.debug("Adding credentials for: {}", props.getProperty(ElasticSearchSettings.PARAM_USERNAME));
                 final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-                credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(
-                        props.getProperty(ElasticSearchSettings.PARAM_USERNAME),
-                        props.getProperty(ElasticSearchSettings.PARAM_PASSWORD))
-                );
 
-                clientBuilder.setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider));
+                if (!props.getProperty(ElasticSearchSettings.PARAM_USERNAME).isEmpty())
+                {
+                    LOGGER.debug("Adding credentials for: {}", props.getProperty(ElasticSearchSettings.PARAM_USERNAME));
+
+                    credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(
+                            props.getProperty(ElasticSearchSettings.PARAM_USERNAME),
+                            props.getProperty(ElasticSearchSettings.PARAM_PASSWORD))
+                    );
+                }
+
+                clientBuilder.setHttpClientConfigCallback(httpAsyncClientBuilder -> httpAsyncClientBuilder.setSSLContext(
+                        context).setDefaultCredentialsProvider(credentialsProvider));
             }
 
             return new RestHighLevelClient(clientBuilder);
